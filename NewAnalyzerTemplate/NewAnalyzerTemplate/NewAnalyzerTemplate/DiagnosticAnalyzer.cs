@@ -23,7 +23,7 @@ namespace NewAnalyzerTemplate
 
         public override void Initialize(AnalysisContext context)
         {
-            
+            throw new NotImplementedException();
         }
     }
 }

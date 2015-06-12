@@ -14,6 +14,45 @@ namespace MetaCompilation
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class MetaCompilationAnalyzer : DiagnosticAnalyzer
     {
+        #region rule rules
+
+        public const string missingIdDeclaration = "MetaAnalyzer017";
+        internal static DiagnosticDescriptor missingIdDeclarationRule = new DiagnosticDescriptor(
+            id: missingIdDeclaration,
+            title: "This diagnoctic id has not been declared.",
+            messageFormat: "This diagnoctic id has not been declared.",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string defaultSeverityError = "MetaAnalyzer016";
+        internal static DiagnosticDescriptor defaultSeverityErrorRule = new DiagnosticDescriptor(
+            id: defaultSeverityError,
+            title: "defaultSeverity must be of the form: DiagnosticSeverity.[severity].",
+            messageFormat: "defaultSeverity must be of the form: DiagnosticSeverity.[severity].",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string enabledByDefaultError = "MetaAnalyzer015";
+        internal static DiagnosticDescriptor enabledByDefaultErrorRule = new DiagnosticDescriptor(
+            id: enabledByDefaultError,
+            title: "isEnabledByDefault should be set to true.",
+            messageFormat: "isEnabledByDefault should be set to true.",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string internalAndStaticError = "MetaAnalyzer014";
+        internal static DiagnosticDescriptor internalAndStaticErrorRule = new DiagnosticDescriptor(
+            id: internalAndStaticError,
+            title: "The DiagnosticDescriptor should be internal and static.",
+            messageFormat: "The DiagnosticDescriptor should be internal and static.",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+        #endregion
+
 
         #region id rules
         public const string missingId = "missingId";
@@ -77,7 +116,7 @@ namespace MetaCompilation
         {
             get
             {
-                return ImmutableArray.Create(missingIdRule, missingInitRule, missingRegisterRule, tooManyInitStatementsRule, incorrectInitStatementRule, incorrectInitSigRule);
+                return ImmutableArray.Create(missingIdRule, missingInitRule, missingRegisterRule, tooManyInitStatementsRule, incorrectInitStatementRule, incorrectInitSigRule, missingIdDeclarationRule, enabledByDefaultErrorRule, defaultSeverityErrorRule, internalAndStaticErrorRule);
             }
         }
 
@@ -221,18 +260,81 @@ namespace MetaCompilation
             {
                 throw new NotImplementedException();
             }
-            
+
             //returns a list of rule names
             internal List<string> CheckRules(List<string> idNames, string branch, string kind, CompilationAnalysisContext context)
             {
-                throw new NotImplementedException();
+                Dictionary<string, string> foundRules = new Dictionary<string, string>(); //Dicitonary(Rule Id, Rule)
+                List<string> ruleNames = new List<string>();
 
+                foreach (var fieldSymbol in analyzerFieldSymbols)
+                {
+                    if (fieldSymbol.Type.MetadataName == "DiagnosticDescriptor")
+                    {
+                        if (fieldSymbol.DeclaredAccessibility != Accessibility.Internal || !fieldSymbol.IsStatic)
+                        {
+                            ReportDiagnostic(context, internalAndStaticErrorRule, fieldSymbol.Locations[0] ,internalAndStaticErrorRule.MessageFormat );
+                        }
+
+                        var declaratorSyntax = fieldSymbol.DeclaringSyntaxReferences[0].GetSyntax() as VariableDeclaratorSyntax;
+                        var objectCreationSyntax = declaratorSyntax.Initializer.Value as ObjectCreationExpressionSyntax;
+                        var ruleArgumentList = objectCreationSyntax.ArgumentList;
+
+                        for (int i = 0; i < ruleArgumentList.Arguments.Count; i++)
+                        {
+                            var currentArg = ruleArgumentList.Arguments[i];
+                            var currentArgName = currentArg.NameColon.Name.ToString();
+                            var currentArgExpr = currentArg.Expression.ToString();
+
+                            if (currentArgName == "isEnabledByDefault" && currentArgExpr != "true")
+                            {
+                                ReportDiagnostic(context, enabledByDefaultErrorRule, currentArg.Expression.GetLocation(), enabledByDefaultErrorRule.MessageFormat);
+                            };
+
+                            if (currentArgName == "defaultSeverity")
+                            {
+
+                                var memberAccessExpr = currentArg.Expression as MemberAccessExpressionSyntax;
+                                var identifierExpr = memberAccessExpr.Expression.ToString();
+                                var identifierName = memberAccessExpr.Name.ToString();
+                                if (identifierExpr != "DiagnosticSeverity" || identifierName == null)
+                                {
+                                    ReportDiagnostic(context, defaultSeverityErrorRule, currentArg.Expression.GetLocation(), defaultSeverityErrorRule.MessageFormat);
+                                }
+
+                            }
+
+                            if (currentArgName == "id")
+                            {
+                                foundRules.Add(currentArgExpr, fieldSymbol.Name.ToString());
+                                bool ruleIdFound = false;
+
+                                foreach (string idName in idNames)
+                                {
+                                    if (idName == foundRules.Last().Key)
+                                    {
+                                        ruleNames.Add(foundRules.Last().Value);
+                                        ruleIdFound = true;
+                                    }
+                                }
+
+                                if (!ruleIdFound)
+                                {
+                                    var ruleNotFound = foundRules.Last().Value;
+                                    ReportDiagnostic(context, missingIdDeclarationRule, currentArg.Expression.GetLocation(), missingIdDeclarationRule.MessageFormat);
+                                }
+                            }
+                        }
+                    }
+                }
+                return ruleNames;
             }
-            
+
             //returns a list of id names, empty if none found
             internal List<string> CheckIds(string branch, string kind, CompilationAnalysisContext context)
             {
                 List<string> idNames = new List<string>();
+
                 foreach (IFieldSymbol field in analyzerFieldSymbols)
                 {
                     if (field.IsConst && field.IsStatic && field.DeclaredAccessibility.ToString() == "public" && field.Type.ToString() == "string")
@@ -241,6 +343,7 @@ namespace MetaCompilation
                         idNames.Add(field.Name.ToString());
                     }
                 }
+
                 return idNames;
             }
 

@@ -29,9 +29,11 @@ namespace SyntaxNodeAnalyzer
         {
             get
             {
-                return ImmutableArray.Create(Rule);
+                return ImmutableArray.Create();
             }
         }
+
+    
 
         public override void Initialize(AnalysisContext context)
          {

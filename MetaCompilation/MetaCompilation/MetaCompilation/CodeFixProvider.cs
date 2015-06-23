@@ -44,7 +44,13 @@ namespace MetaCompilation
                     MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
                     MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
                     MetaCompilationAnalyzer.ReturnStatementIncorrect,
-                    MetaCompilationAnalyzer.TooManyStatements);
+                    MetaCompilationAnalyzer.TooManyStatements,
+                    MetaCompilationAnalyzer.IncorrectSigSuppDiag,
+                    MetaCompilationAnalyzer.MissingAccessor,
+                    MetaCompilationAnalyzer.IncorrectAccessorReturn,
+                    MetaCompilationAnalyzer.SuppDiagReturnValue,
+                    MetaCompilationAnalyzer.TooManyAccessors,
+                    MetaCompilationAnalyzer.SupportedRules);
             }
         }
 
@@ -185,6 +191,37 @@ namespace MetaCompilation
                     IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: Thre are too many statments within this if block; its only purpose is to return if the statement is formatted properly", c => TooManyStatementsAsync(context.Document, declaration, c)), diagnostic);
                 }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectSigSuppDiag))
+                {
+                    PropertyDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Change SupportedDiagnostics method signature to public override.", c => IncorrectSigSuppDiagAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingAccessor))
+                {
+                    PropertyDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Insert an accessor declaration.", c => MissingAccessorAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectAccessorReturn) || diagnostic.Id.Equals(MetaCompilationAnalyzer.SuppDiagReturnValue))
+                {
+                    PropertyDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Insert a correct return statement for the get accessor.", c => AccessorReturnValueAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TooManyAccessors))
+                {
+                    PropertyDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Remove excess accesors.", c => TooManyAccessorsAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.SupportedRules))
+                {
+                    ClassDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Include all rules in the immutable array.", c => SupportedRulesAsync(context.Document, declaration, c)), diagnostic);
+
+                }
             }
         }
 
@@ -317,7 +354,6 @@ namespace MetaCompilation
 
             return newDocument;
         }
-
 
         private async Task<Document> InternalStaticAsync(Document document, FieldDeclarationSyntax declaration, CancellationToken c)
         {
@@ -468,7 +504,6 @@ namespace MetaCompilation
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(oldBlock, newBlock);
             var newDocument = document.WithSyntaxRoot(newRoot);
-
             return newDocument;
         }
 
@@ -500,6 +535,71 @@ namespace MetaCompilation
             return newDocument;
         }
 
+        private async Task<Document> IncorrectSigSuppDiagAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
+        {
+            var whiteSpace = SyntaxFactory.Whitespace(" ");
+            var newIdentifier = SyntaxFactory.ParseToken("SupportedDiagnostics").WithLeadingTrivia(whiteSpace);
+            var publicKeyword = SyntaxFactory.ParseToken("public").WithTrailingTrivia(whiteSpace);
+            var overrideKeyword = SyntaxFactory.ParseToken("override").WithTrailingTrivia(whiteSpace);
+            var modifierList = SyntaxFactory.TokenList(publicKeyword, overrideKeyword);
+            var newPropertyDeclaration = declaration.WithIdentifier(newIdentifier).WithModifiers(modifierList).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(whiteSpace);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, newPropertyDeclaration);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+         }
+
+        private async Task<Document> MissingAccessorAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
+        {
+            var generator = SyntaxGenerator.GetGenerator(document);
+            SemanticModel semanticModel = await document.GetSemanticModelAsync();
+            INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
+            var throwStatement = new[] { generator.ThrowStatement(generator.ObjectCreationExpression(notImplementedException)) };
+            var type = generator.GetType(declaration);
+            var newPropertyDeclaration = generator.PropertyDeclaration("SupportedDiagnostics", type,
+                Accessibility.Public, DeclarationModifiers.Override, throwStatement) as PropertyDeclarationSyntax;
+
+            newPropertyDeclaration = newPropertyDeclaration.RemoveNode(newPropertyDeclaration.AccessorList.Accessors[1],0);
+
+            //var newStatements = SyntaxFactory.ParseStatement("");
+            //var newBody = SyntaxFactory.Block(newStatements);
+            //var newGetAccessor = generator.insert ; //SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration, newBody);
+
+            //var accessorList = declaration.AccessorList as AccessorListSyntax;
+            //var newAccessorList = accessorList.AddAccessors(newGetAccessor);
+            ////var newPropertyDeclaration = declaration.WithAccessorList(newAccessorList);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, newPropertyDeclaration);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> AccessorReturnValueAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
+        {
+            var returnStatement = SyntaxFactory.ParseStatement("return ImmutableArray.Create();") as ReturnStatementSyntax;
+            var firstAccessor = declaration.AccessorList.Accessors.First();
+            var oldBody = firstAccessor.Body as BlockSyntax;
+            var oldReturnStatement = oldBody.Statements.OfType<ReturnStatementSyntax>().First();
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root;
+            ///hey there
+            if (oldReturnStatement == null)
+            {
+                var newAccessorDeclaration = firstAccessor.AddBodyStatements(returnStatement);
+                newRoot = root.ReplaceNode(firstAccessor, newAccessorDeclaration);
+            }
+            else
+            {
+                newRoot = root.ReplaceNode(oldReturnStatement, returnStatement);
+            }
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
 
         private async Task<Document> MissingIdDeclarationAsync(Document document, VariableDeclaratorSyntax ruleDeclarationField, CancellationToken c)
         {
@@ -708,5 +808,85 @@ namespace MetaCompilation
         }
         #endregion
 
+        private async Task<Document> TooManyAccessorsAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
+        {
+            var allAccessors = declaration.AccessorList.Accessors.OfType<AccessorDeclarationSyntax>();
+            bool foundGetAccessor = false;
+            AccessorDeclarationSyntax accessorToKeep = null;
+            var accessorList = declaration.AccessorList;
+
+            foreach (AccessorDeclarationSyntax accessor in allAccessors)
+            {
+                var keyword = accessor.Keyword.ValueText;
+                if (keyword == "get" && !foundGetAccessor)
+                {
+                    accessorToKeep = accessor;
+                    foundGetAccessor = true;
+                }
+                else
+                {
+                    accessorList = accessorList.RemoveNode(accessor, 0);
+                }
+            }
+
+            if (!foundGetAccessor)
+            {
+                var newStatements = SyntaxFactory.ParseStatement("");
+                var newBody = SyntaxFactory.Block(newStatements);
+                accessorToKeep = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration, newBody);
+                accessorList = accessorList.AddAccessors(accessorToKeep);
+            }
+
+            var newPropertyDeclaration = declaration.WithAccessorList(accessorList);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, newPropertyDeclaration);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> SupportedRulesAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        {
+            List<string> ruleNames = new List<string>();
+            var fieldMembers = declaration.Members.OfType<FieldDeclarationSyntax>();
+            foreach (FieldDeclarationSyntax fieldSyntax in fieldMembers)
+            {
+                var fieldType = fieldSyntax.Declaration.Type;
+                if (fieldType != null && fieldType.ToString() == "DiagnosticDescriptor")
+                {
+                    var ruleName = fieldSyntax.Declaration.Variables[0].Identifier.Text;
+                    ruleNames.Add(ruleName);
+                }
+            }
+
+            var propertyMembers = declaration.Members.OfType<PropertyDeclarationSyntax>();
+            foreach (PropertyDeclarationSyntax propertySyntax in propertyMembers)
+            {
+                if (propertySyntax.Identifier.Text != "SupportedDiagnostics") continue;
+
+                AccessorDeclarationSyntax getAccessor = propertySyntax.AccessorList.Accessors.First();
+                var returnStatement = getAccessor.Body.Statements.First() as ReturnStatementSyntax;
+                var invocationExpression = returnStatement.Expression as InvocationExpressionSyntax;
+                var oldArgumentList = invocationExpression.ArgumentList as ArgumentListSyntax;
+
+                string argumentListString = "";
+                foreach (string ruleName in ruleNames)
+                {
+                    if (ruleName == ruleNames.First()) argumentListString += ruleName;
+                    else argumentListString += ", " + ruleName;
+                }
+
+                var argumentListSyntax = SyntaxFactory.ParseArgumentList("(" + argumentListString + ")");
+
+                var root = await document.GetSyntaxRootAsync();
+                var newRoot = root.ReplaceNode(oldArgumentList, argumentListSyntax);
+                var newDocument = document.WithSyntaxRoot(newRoot);
+
+                return newDocument;
+            }
+
+            return document;
+        }
     }
 }

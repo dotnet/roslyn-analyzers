@@ -563,14 +563,6 @@ namespace MetaCompilation
 
             newPropertyDeclaration = newPropertyDeclaration.RemoveNode(newPropertyDeclaration.AccessorList.Accessors[1],0);
 
-            //var newStatements = SyntaxFactory.ParseStatement("");
-            //var newBody = SyntaxFactory.Block(newStatements);
-            //var newGetAccessor = generator.insert ; //SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration, newBody);
-
-            //var accessorList = declaration.AccessorList as AccessorListSyntax;
-            //var newAccessorList = accessorList.AddAccessors(newGetAccessor);
-            ////var newPropertyDeclaration = declaration.WithAccessorList(newAccessorList);
-
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(declaration, newPropertyDeclaration);
             var newDocument = document.WithSyntaxRoot(newRoot);
@@ -580,14 +572,20 @@ namespace MetaCompilation
 
         private async Task<Document> AccessorReturnValueAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
         {
-            var returnStatement = SyntaxFactory.ParseStatement("return ImmutableArray.Create();") as ReturnStatementSyntax;
+            var generator = SyntaxGenerator.GetGenerator(document);
+            var expressionString = generator.IdentifierName("ImmutableArray");
+            var identifierString = generator.IdentifierName("Create");
+            var expression = generator.MemberAccessExpression(expressionString, identifierString);
+            var invocationExpression = generator.InvocationExpression(expression);
+            var returnStatement = generator.ReturnStatement(invocationExpression) as ReturnStatementSyntax; //SyntaxFactory.ParseStatement("return ImmutableArray.Create();") as ReturnStatementSyntax;
+
             var firstAccessor = declaration.AccessorList.Accessors.First();
             var oldBody = firstAccessor.Body as BlockSyntax;
-            var oldReturnStatement = oldBody.Statements.OfType<ReturnStatementSyntax>().First();
+            var oldReturnStatement = oldBody.Statements.First();
 
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root;
-            ///hey there
+        
             if (oldReturnStatement == null)
             {
                 var newAccessorDeclaration = firstAccessor.AddBodyStatements(returnStatement);

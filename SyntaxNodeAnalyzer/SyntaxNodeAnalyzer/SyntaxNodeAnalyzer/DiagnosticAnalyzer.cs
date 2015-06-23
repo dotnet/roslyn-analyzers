@@ -29,7 +29,7 @@ namespace SyntaxNodeAnalyzer
         {
             get
             {
-                return ImmutableArray.Create();
+                return ImmutableArray.Create(Rule);
             }
         }
 

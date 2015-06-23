@@ -33,8 +33,6 @@ namespace SyntaxNodeAnalyzer
             }
         }
 
-    
-
         public override void Initialize(AnalysisContext context)
          {
              context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);

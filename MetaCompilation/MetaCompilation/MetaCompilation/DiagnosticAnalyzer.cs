@@ -1722,11 +1722,10 @@ namespace MetaCompilation
 
                 if (statements.Count == 0)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, propertyDeclaration.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
                     return false;
                 }
 
-                var getAccessorKeywordLocation = propertyDeclaration.AccessorList.Accessors.First().GetLocation();
+                var getAccessorKeywordLocation = propertyDeclaration.AccessorList.Accessors.First().Keyword.GetLocation();
 
                 IEnumerable<ReturnStatementSyntax> returnStatements = statements.OfType<ReturnStatementSyntax>();
                 if (returnStatements.Count() == 0)
@@ -1788,14 +1787,16 @@ namespace MetaCompilation
                     return null;
                 }
 
+                PropertyDeclarationSyntax propertySyntax = _propertySymbol.DeclaringSyntaxReferences[0].GetSyntax() as PropertyDeclarationSyntax;
+
                 if (_propertySymbol.Name != "SupportedDiagnostics" || _propertySymbol.DeclaredAccessibility != Accessibility.Public ||
                     !_propertySymbol.IsOverride)
                 {
-                    ReportDiagnostic(context, IncorrectSigSuppDiagRule, _propertySymbol.Locations[0], IncorrectSigSuppDiagRule.MessageFormat);
+                    ReportDiagnostic(context, IncorrectSigSuppDiagRule, propertySyntax.Identifier.GetLocation(), IncorrectSigSuppDiagRule.MessageFormat);
                     return null;
                 }
 
-                return _propertySymbol.DeclaringSyntaxReferences[0].GetSyntax() as PropertyDeclarationSyntax;
+                return propertySyntax;
             }
 
             //returns the statements of the get accessor, empty list if get accessor not found/incorrect
@@ -1812,19 +1813,19 @@ namespace MetaCompilation
                 SyntaxList<AccessorDeclarationSyntax> accessors = accessorList.Accessors;
                 if (accessors == null || accessors.Count == 0)
                 {
-                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), MissingAccessorRule.MessageFormat);
+                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.Identifier.GetLocation(), MissingAccessorRule.MessageFormat);
                     return emptyResult;
                 }
                 if (accessors.Count > 1)
                 {
-                    ReportDiagnostic(context, TooManyAccessorsRule, accessorList.GetLocation(), TooManyAccessorsRule.MessageFormat);
+                    ReportDiagnostic(context, TooManyAccessorsRule, accessors[1].Keyword.GetLocation(), TooManyAccessorsRule.MessageFormat);
                     return emptyResult;
                 }
 
                 var getAccessor = accessors.First() as AccessorDeclarationSyntax;
                 if (getAccessor == null || getAccessor.Keyword.Kind() != SyntaxKind.GetKeyword)
                 {
-                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), MissingAccessorRule.MessageFormat);
+                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.Identifier.GetLocation(), MissingAccessorRule.MessageFormat);
                     return emptyResult;
                 }
 
@@ -1835,7 +1836,14 @@ namespace MetaCompilation
                     return emptyResult;
                 }
 
-                return accessorBody.Statements;
+                SyntaxList<StatementSyntax> statements = accessorBody.Statements;
+                if (statements == null || statements.Count == 0)
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    return emptyResult;
+                }
+
+                return statements;
             }
 
             //checks the return value of the get accessor within SupportedDiagnostics
@@ -1863,12 +1871,20 @@ namespace MetaCompilation
                 var valueArguments = valueClause.ArgumentList as ArgumentListSyntax;
                 if (valueArguments == null)
                 {
+                    ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
                     return;
                 }
 
                 SeparatedSyntaxList<ArgumentSyntax> valueArgs = valueArguments.Arguments;
-                if (valueArgs == null)
+                if (valueArgs.Count == 0)
                 {
+                    ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
+                    return;
+                }
+
+                if (ruleNames.Count != valueArgs.Count)
+                {
+                    ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
                     return;
                 }
 
@@ -1880,14 +1896,19 @@ namespace MetaCompilation
 
                 foreach (ArgumentSyntax arg in valueArgs)
                 {
-                    if (newRuleNames.Count == 0)
+
+                    bool foundRule = false;
+                    foreach (string ruleName in ruleNames)
+                    {
+                        if (arg.ToString() == ruleName)
+                        {
+                            foundRule = true;
+                        }
+                    }
+                    if (!foundRule)
                     {
                         ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
                         return;
-                    }
-                    if (newRuleNames.Contains(arg.ToString()))
-                    {
-                        newRuleNames.Remove(arg.ToString());
                     }
                 }
             }

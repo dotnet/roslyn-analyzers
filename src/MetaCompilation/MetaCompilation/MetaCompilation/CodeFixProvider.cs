@@ -998,7 +998,7 @@ namespace MetaCompilation
                 }
             }
 
-            var idToken = SyntaxFactory.ParseToken(currentRuleId);
+            var idToken = SyntaxFactory.ParseToken(currentRuleId);// as IdentifierNameSyntax;
             var expressionKind = SyntaxFactory.ParseExpression("\"DescriptiveId\"") as ExpressionSyntax;
             var newClassDeclaration = CodeFixNodeCreator.NewIdCreator(idToken, expressionKind, classDeclaration);
 

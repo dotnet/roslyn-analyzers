@@ -13354,6 +13354,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -13468,6 +13469,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -13582,6 +13584,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -13696,6 +13699,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -13810,6 +13814,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -13924,6 +13929,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -14038,6 +14044,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -14152,6 +14159,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -14266,6 +14274,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -14380,6 +14389,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -14611,6 +14621,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -14663,6 +14674,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             VerifyCSharpFix(test, fixtest);
         }
         #endregion
@@ -14720,6 +14732,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckMissing,
@@ -14727,6 +14740,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -14780,6 +14794,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             VerifyCSharpFix(test, fixtest);
         }
         #endregion
@@ -14838,6 +14853,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
@@ -14845,6 +14861,9 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
+
+            VerifyCSharpDiagnostic(test, expected);
+
             var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
             using Microsoft.CodeAnalysis.CSharp;
@@ -14896,6 +14915,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             VerifyCSharpFix(test, fixtest);
         }
 
@@ -14962,6 +14982,8 @@ namespace SyntaxNodeAnalyzer
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
+            VerifyCSharpDiagnostic(test, expected);
+
             var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
             using Microsoft.CodeAnalysis.CSharp;
@@ -15013,6 +15035,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
         }
 
@@ -15080,6 +15103,8 @@ namespace SyntaxNodeAnalyzer
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
+            VerifyCSharpDiagnostic(test, expected);
+
             var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
             using Microsoft.CodeAnalysis.CSharp;
@@ -15131,6 +15156,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             VerifyCSharpFix(test, fixtest);
         }
 
@@ -15189,6 +15215,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
@@ -15196,6 +15223,8 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
+
+            VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
@@ -15248,6 +15277,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             VerifyCSharpFix(test, fixtest);
         }
 
@@ -15314,6 +15344,8 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
+
+            VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
@@ -15433,6 +15465,9 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
+
+            VerifyCSharpDiagnostic(test, expected);
+
             var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
             using Microsoft.CodeAnalysis.CSharp;
@@ -15551,6 +15586,8 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
+
+            VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
@@ -15671,6 +15708,8 @@ namespace SyntaxNodeAnalyzer
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
+            VerifyCSharpDiagnostic(test, expected);
+
             var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
             using Microsoft.CodeAnalysis.CSharp;
@@ -15788,6 +15827,8 @@ namespace SyntaxNodeAnalyzer
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
+            VerifyCSharpDiagnostic(test, expected);
+
             var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
             using Microsoft.CodeAnalysis.CSharp;
@@ -15839,6 +15880,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             VerifyCSharpFix(test, fixtest);
         }
 
@@ -15898,6 +15940,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
@@ -15905,6 +15948,8 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
+
+            VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
@@ -15958,6 +16003,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             VerifyCSharpFix(test, fixtest);
         }
         #endregion
@@ -16055,7 +16101,6 @@ namespace SyntaxNodeAnalyzerAnalyzer
 
             VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
         }
-
         #endregion
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

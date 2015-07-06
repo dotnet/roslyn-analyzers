@@ -136,7 +136,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingId,
-                Message = "The analyzer 'SyntaxNodeAnalyzer' is missing a diagnostic id",
+                Message = "Tutorial: The analyzer 'SyntaxNodeAnalyzer' is missing a diagnostic id",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
             };
@@ -225,7 +225,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingId,
-                Message = "The analyzer 'SyntaxNodeAnalyzer' is missing a diagnostic id",
+                Message = "Tutorial: The analyzer 'SyntaxNodeAnalyzer' is missing a diagnostic id",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
             };
@@ -313,7 +313,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingId,
-                Message = "The analyzer 'SyntaxNodeAnalyzer' is missing a diagnostic id",
+                Message = "Tutorial: The analyzer 'SyntaxNodeAnalyzer' is missing a diagnostic id",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
             };
@@ -394,7 +394,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingId,
-                Message = "The analyzer 'SyntaxNodeAnalyzer' is missing a diagnostic id",
+                Message = "Tutorial: The analyzer 'SyntaxNodeAnalyzer' is missing a diagnostic id",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
             };
@@ -475,7 +475,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingId,
-                Message = "The analyzer 'SyntaxNodeAnalyzer' is missing a diagnostic id",
+                Message = "Tutorial: The analyzer 'SyntaxNodeAnalyzer' is missing a diagnostic id",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
             };
@@ -556,7 +556,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingId,
-                Message = "The analyzer 'SyntaxNodeAnalyzer' is missing a diagnostic id",
+                Message = "Tutorial: The analyzer 'SyntaxNodeAnalyzer' is missing a diagnostic id",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
             };
@@ -634,7 +634,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingInit,
-                Message = "The analyzer 'SyntaxNodeAnalyzer' is missing the required Initialize method",
+                Message = "Tutorial: The analyzer 'SyntaxNodeAnalyzer' is missing the required Initialize method",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 16, 22) }
             };
@@ -715,7 +715,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingInit,
-                Message = "The analyzer 'SyntaxNodeAnalyzer' is missing the required Initialize method",
+                Message = "Tutorial: The analyzer 'SyntaxNodeAnalyzer' is missing the required Initialize method",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 16, 22) }
             };
@@ -793,7 +793,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingInit,
-                Message = "The analyzer 'SyntaxNodeAnalyzer' is missing the required Initialize method",
+                Message = "Tutorial: The analyzer 'SyntaxNodeAnalyzer' is missing the required Initialize method",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
             };
@@ -914,7 +914,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingRegisterStatement,
-                Message = "An action must be registered within the 'Initialize' method",
+                Message = "Tutorial: An action must be registered within the 'Initialize' method",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
             };
@@ -1003,7 +1003,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingRegisterStatement,
-                Message = "An action must be registered within the 'Initialize' method",
+                Message = "Tutorial: An action must be registered within the 'Initialize' method",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
             };
@@ -1090,7 +1090,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = "The 'Initialize' method registers multiple actions",
+                Message = "Tutorial: The 'Initialize' method registers multiple actions",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
             };
@@ -1170,7 +1170,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = "The 'Initialize' method registers multiple actions",
+                Message = "Tutorial: The 'Initialize' method registers multiple actions",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
             };
@@ -1250,7 +1250,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = "The 'Initialize' method registers multiple actions",
+                Message = "Tutorial: The 'Initialize' method registers multiple actions",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
             };
@@ -1331,7 +1331,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = "The 'Initialize' method registers multiple actions",
+                Message = "Tutorial: The 'Initialize' method registers multiple actions",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
             };
@@ -1412,7 +1412,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = "The 'Initialize' method registers multiple actions",
+                Message = "Tutorial: The 'Initialize' method registers multiple actions",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
             };
@@ -1489,7 +1489,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = "The 'Initialize' method registers multiple actions",
+                Message = "Tutorial: The 'Initialize' method registers multiple actions",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 22, 30) }
             };
@@ -1564,7 +1564,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = "The Initialize method only registers actions: the statement 'throw new NotImplementedException();' is invalid",
+                Message = "Tutorial: The Initialize method only registers actions: the statement 'throw new NotImplementedException();' is invalid",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 24, 12) }
             };
@@ -1637,7 +1637,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = "The Initialize method only registers actions: the statement 'break;' is invalid",
+                Message = "Tutorial: The Initialize method only registers actions: the statement 'break;' is invalid",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
             };
@@ -1711,7 +1711,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = "The Initialize method only registers actions: the statement 'checked { var num = num + 1; }' is invalid",
+                Message = "Tutorial: The Initialize method only registers actions: the statement 'checked { var num = num + 1; }' is invalid",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
             };
@@ -1785,7 +1785,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = "The Initialize method only registers actions: the statement 'continue;' is invalid",
+                Message = "Tutorial: The Initialize method only registers actions: the statement 'continue;' is invalid",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
             };
@@ -1859,7 +1859,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = "The Initialize method only registers actions: the statement 'do { var i = 1; } while (i > 3);' is invalid",
+                Message = "Tutorial: The Initialize method only registers actions: the statement 'do { var i = 1; } while (i > 3);' is invalid",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
             };
@@ -1933,7 +1933,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = "The Initialize method only registers actions: the statement 'context.GetHashCode();' is invalid",
+                Message = "Tutorial: The Initialize method only registers actions: the statement 'context.GetHashCode();' is invalid",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
             };
@@ -2007,7 +2007,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = "The Initialize method only registers actions: the statement 'foreach() { break; }' is invalid",
+                Message = "Tutorial: The Initialize method only registers actions: the statement 'foreach() { break; }' is invalid",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
             };
@@ -2081,7 +2081,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = "The Initialize method only registers actions: the statement 'for(int i = 1; i < 3; i++) { i++; }' is invalid",
+                Message = "Tutorial: The Initialize method only registers actions: the statement 'for(int i = 1; i < 3; i++) { i++; }' is invalid",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
             };
@@ -2155,7 +2155,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = "The Initialize method only registers actions: the statement 'if (i < 3) { i++; }' is invalid",
+                Message = "Tutorial: The Initialize method only registers actions: the statement 'if (i < 3) { i++; }' is invalid",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
             };
@@ -2229,7 +2229,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = "The Initialize method only registers actions: the statement 'context: return context;' is invalid",
+                Message = "Tutorial: The Initialize method only registers actions: the statement 'context: return context;' is invalid",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
             };
@@ -2303,7 +2303,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = "The Initialize method only registers actions: the statement 'int i;' is invalid",
+                Message = "Tutorial: The Initialize method only registers actions: the statement 'int i;' is invalid",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
             };
@@ -2377,7 +2377,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = "The Initialize method only registers actions: the statement 'lock () {}' is invalid",
+                Message = "Tutorial: The Initialize method only registers actions: the statement 'lock () {}' is invalid",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
             };
@@ -2451,7 +2451,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = "The Initialize method only registers actions: the statement 'return;' is invalid",
+                Message = "Tutorial: The Initialize method only registers actions: the statement 'return;' is invalid",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
             };
@@ -2526,7 +2526,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = "The Initialize method only registers actions: the statement 'int one = 1;' is invalid",
+                Message = "Tutorial: The Initialize method only registers actions: the statement 'int one = 1;' is invalid",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
             };
@@ -2600,7 +2600,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = "The Initialize method only registers actions: the statement 'int one = 1;' is invalid",
+                Message = "Tutorial: The Initialize method only registers actions: the statement 'int one = 1;' is invalid",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 24, 17) }
             };
@@ -2673,7 +2673,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = "The Initialize method only registers actions: the statement 'int one = 1;' is invalid",
+                Message = "Tutorial: The Initialize method only registers actions: the statement 'int one = 1;' is invalid",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 24, 17) }
             };
@@ -2749,7 +2749,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = "The Initialize method only registers actions: the statement 'int one = 1;' is invalid",
+                Message = "Tutorial: The Initialize method only registers actions: the statement 'int one = 1;' is invalid",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 17) }
             };
@@ -2830,7 +2830,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = "The signature for the 'Initialize' method is incorrect",
+                Message = "Tutorial: The signature for the 'Initialize' method is incorrect",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 30) }
             };
@@ -2911,7 +2911,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = "The signature for the 'Initialize' method is incorrect",
+                Message = "Tutorial: The signature for the 'Initialize' method is incorrect",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 30) }
             };
@@ -2992,7 +2992,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = "The signature for the 'Initialize' method is incorrect",
+                Message = "Tutorial: The signature for the 'Initialize' method is incorrect",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 31) }
             };
@@ -3073,7 +3073,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = "The signature for the 'Initialize' method is incorrect",
+                Message = "Tutorial: The signature for the 'Initialize' method is incorrect",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 21) }
             };
@@ -3154,7 +3154,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = "The signature for the 'Initialize' method is incorrect",
+                Message = "Tutorial: The signature for the 'Initialize' method is incorrect",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 29) }
             };
@@ -3251,7 +3251,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfStatementIncorrect,
-                Message = "This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
+                Message = "Tutorial: This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 13) }
             };
@@ -3360,7 +3360,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfStatementIncorrect,
-                Message = "This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
+                Message = "Tutorial: This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 13) }
             };
@@ -3469,7 +3469,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfStatementIncorrect,
-                Message = "This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
+                Message = "Tutorial: This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
             };
@@ -3578,7 +3578,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfStatementIncorrect,
-                Message = "This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
+                Message = "Tutorial: This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
             };
@@ -3687,7 +3687,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfStatementIncorrect,
-                Message = "This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
+                Message = "Tutorial: This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
             };
@@ -3796,7 +3796,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfStatementIncorrect,
-                Message = "This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
+                Message = "Tutorial: This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
             };
@@ -3905,7 +3905,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfStatementIncorrect,
-                Message = "This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
+                Message = "Tutorial: This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
             };
@@ -4015,7 +4015,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfStatementIncorrect,
-                Message = "This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
+                Message = "Tutorial: This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
             };
@@ -4128,7 +4128,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfKeywordIncorrect,
-                Message = "This statement should extract the 'if' keyword from ifStatement",
+                Message = "Tutorial: This statement should extract the 'if' keyword from ifStatement",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
             };
@@ -4239,7 +4239,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfKeywordIncorrect,
-                Message = "This statement should extract the 'if' keyword from ifStatement",
+                Message = "Tutorial: This statement should extract the 'if' keyword from ifStatement",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
             };
@@ -4350,7 +4350,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfKeywordIncorrect,
-                Message = "This statement should extract the 'if' keyword from ifStatement",
+                Message = "Tutorial: This statement should extract the 'if' keyword from ifStatement",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
             };
@@ -4461,7 +4461,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfKeywordIncorrect,
-                Message = "This statement should extract the 'if' keyword from ifStatement",
+                Message = "Tutorial: This statement should extract the 'if' keyword from ifStatement",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
             };
@@ -4572,7 +4572,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfKeywordIncorrect,
-                Message = "This statement should extract the 'if' keyword from ifStatement",
+                Message = "Tutorial: This statement should extract the 'if' keyword from ifStatement",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
             };
@@ -4686,7 +4686,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfKeywordIncorrect,
-                Message = "This statement should extract the 'if' keyword from ifStatement",
+                Message = "Tutorial: This statement should extract the 'if' keyword from ifStatement",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
             };
@@ -4800,7 +4800,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfStatementMissing,
-                Message = "The first step of the node analysis is to extract the if statement from context",
+                Message = "Tutorial: The first step of the node analysis is to extract the if statement from context",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 40, 26) }
             };
@@ -4909,7 +4909,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfStatementMissing,
-                Message = "The first step of the node analysis is to extract the if statement from context",
+                Message = "Tutorial: The first step of the node analysis is to extract the if statement from context",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 40, 26) }
             };
@@ -5021,7 +5021,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfKeywordMissing,
-                Message = "The second step is to extract the 'if' keyword from ifStatement",
+                Message = "Tutorial: The second step is to extract the 'if' keyword from ifStatement",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
             };
@@ -5132,7 +5132,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfKeywordMissing,
-                Message = "The second step is to extract the 'if' keyword from ifStatement",
+                Message = "Tutorial: The second step is to extract the 'if' keyword from ifStatement",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
             };
@@ -5246,7 +5246,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaCheckMissing,
-                Message = "The third step is to begin looking for the space between 'if' and '(' by checking if ifKeyword has trailing trivia",
+                Message = "Tutorial: The third step is to begin looking for the space between 'if' and '(' by checking if ifKeyword has trailing trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
             };
@@ -5363,7 +5363,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaCheckMissing,
-                Message = "The third step is to begin looking for the space between 'if' and '(' by checking if ifKeyword has trailing trivia",
+                Message = "Tutorial: The third step is to begin looking for the space between 'if' and '(' by checking if ifKeyword has trailing trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
             };
@@ -5484,7 +5484,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
-                Message = "This statement should be an if statement that checks to see if ifKeyword has trailing trivia",
+                Message = "Tutorial: This statement should be an if statement that checks to see if ifKeyword has trailing trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 17) }
             };
@@ -5604,7 +5604,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
-                Message = "This statement should be an if statement that checks to see if ifKeyword has trailing trivia",
+                Message = "Tutorial: This statement should be an if statement that checks to see if ifKeyword has trailing trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 17) }
             };
@@ -5721,7 +5721,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
-                Message = "This statement should be an if statement that checks to see if ifKeyword has trailing trivia",
+                Message = "Tutorial: This statement should be an if statement that checks to see if ifKeyword has trailing trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 17) }
             };
@@ -5831,7 +5831,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
-                Message = "This statement should be an if statement that checks to see if ifKeyword has trailing trivia",
+                Message = "Tutorial: This statement should be an if statement that checks to see if ifKeyword has trailing trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
             };
@@ -5939,7 +5939,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
-                Message = "This statement should be an if statement that checks to see if ifKeyword has trailing trivia",
+                Message = "Tutorial: This statement should be an if statement that checks to see if ifKeyword has trailing trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
             };
@@ -6049,7 +6049,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
-                Message = "This statement should be an if statement that checks to see if ifKeyword has trailing trivia",
+                Message = "Tutorial: This statement should be an if statement that checks to see if ifKeyword has trailing trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
             };
@@ -6157,7 +6157,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
-                Message = "This statement should be an if statement that checks to see if ifKeyword has trailing trivia",
+                Message = "Tutorial: This statement should be an if statement that checks to see if ifKeyword has trailing trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
             };
@@ -6266,7 +6266,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarMissing,
-                Message = "The fourth step is to extract the last trailing trivia of ifKeyword into a variable",
+                Message = "Tutorial: The fourth step is to extract the last trailing trivia of ifKeyword into a variable",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 40, 17) }
             };
@@ -6375,7 +6375,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarMissing,
-                Message = "The fourth step is to extract the last trailing trivia of ifKeyword into a variable",
+                Message = "Tutorial: The fourth step is to extract the last trailing trivia of ifKeyword into a variable",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 40, 17) }
             };
@@ -6485,7 +6485,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarMissing,
-                Message = "The fourth step is to extract the last trailing trivia of ifKeyword into a variable",
+                Message = "Tutorial: The fourth step is to extract the last trailing trivia of ifKeyword into a variable",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 40, 17) }
             };
@@ -6597,7 +6597,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                Message = "This statement should extract the last trailing trivia of ifKeyword into a variable",
+                Message = "Tutorial: This statement should extract the last trailing trivia of ifKeyword into a variable",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
             };
@@ -6706,7 +6706,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                Message = "This statement should extract the last trailing trivia of ifKeyword into a variable",
+                Message = "Tutorial: This statement should extract the last trailing trivia of ifKeyword into a variable",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
             };
@@ -6815,7 +6815,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                Message = "This statement should extract the last trailing trivia of ifKeyword into a variable",
+                Message = "Tutorial: This statement should extract the last trailing trivia of ifKeyword into a variable",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
             };
@@ -6923,7 +6923,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                Message = "This statement should extract the last trailing trivia of ifKeyword into a variable",
+                Message = "Tutorial: This statement should extract the last trailing trivia of ifKeyword into a variable",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
             };
@@ -7032,7 +7032,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                Message = "This statement should extract the last trailing trivia of ifKeyword into a variable",
+                Message = "Tutorial: This statement should extract the last trailing trivia of ifKeyword into a variable",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
             };
@@ -7141,7 +7141,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                Message = "This statement should extract the last trailing trivia of ifKeyword into a variable",
+                Message = "Tutorial: This statement should extract the last trailing trivia of ifKeyword into a variable",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
             };
@@ -7251,7 +7251,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                Message = "This statement should extract the last trailing trivia of ifKeyword into a variable",
+                Message = "Tutorial: This statement should extract the last trailing trivia of ifKeyword into a variable",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
             };
@@ -7364,7 +7364,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                Message = "This statement should extract the last trailing trivia of ifKeyword into a variable",
+                Message = "Tutorial: This statement should extract the last trailing trivia of ifKeyword into a variable",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
             };
@@ -7478,7 +7478,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                Message = "This statement should extract the last trailing trivia of ifKeyword into a variable",
+                Message = "Tutorial: This statement should extract the last trailing trivia of ifKeyword into a variable",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
             };
@@ -7583,7 +7583,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InternalAndStaticError,
-                Message = "The Rule field should be internal and static",
+                Message = "Tutorial: The Rule field should be internal and static",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 19, 37) }
             };
@@ -7681,7 +7681,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InternalAndStaticError,
-                Message = "The Rule field should be internal and static",
+                Message = "Tutorial: The Rule field should be internal and static",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 19, 39) }
             };
@@ -7779,7 +7779,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InternalAndStaticError,
-                Message = "The Rule field should be internal and static",
+                Message = "Tutorial: The Rule field should be internal and static",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 19, 31) }
             };
@@ -7926,7 +7926,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.EnabledByDefaultError,
-                Message = "isEnabledByDefault should be set to true",
+                Message = "Tutorial: isEnabledByDefault should be set to true",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 33) }
             };
@@ -8024,7 +8024,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.EnabledByDefaultError,
-                Message = "isEnabledByDefault should be set to true",
+                Message = "Tutorial: isEnabledByDefault should be set to true",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 33) }
             };
@@ -8127,7 +8127,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.EnabledByDefaultError,
-                Message = "isEnabledByDefault should be set to true",
+                Message = "Tutorial: isEnabledByDefault should be set to true",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 33) }
             };
@@ -8231,7 +8231,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.EnabledByDefaultError,
-                Message = "isEnabledByDefault should be set to true",
+                Message = "Tutorial: isEnabledByDefault should be set to true",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 23, 13) }
             };
@@ -8332,7 +8332,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.DefaultSeverityError,
-                Message = "defaultSeverity must be of the form: DiagnosticSeverity.[severity]",
+                Message = "Tutorial: defaultSeverity must be of the form: DiagnosticSeverity.[severity]",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 24, 30) }
             };
@@ -8556,7 +8556,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.DefaultSeverityError,
-                Message = "defaultSeverity must be of the form: DiagnosticSeverity.[severity]",
+                Message = "Tutorial: defaultSeverity must be of the form: DiagnosticSeverity.[severity]",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 24, 30) }
             };
@@ -8776,7 +8776,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.DefaultSeverityError,
-                Message = "defaultSeverity must be of the form: DiagnosticSeverity.[severity]",
+                Message = "Tutorial: defaultSeverity must be of the form: DiagnosticSeverity.[severity]",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 22, 13) }
             };
@@ -8986,7 +8986,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IdDeclTypeError,
-                Message = "The diagnostic id should be the const declared above this",
+                Message = "Tutorial: The diagnostic id should be the const declared above this",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 20, 17) }
             };
@@ -9085,7 +9085,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IdDeclTypeError,
-                Message = "The diagnostic id should be the const declared above this",
+                Message = "Tutorial: The diagnostic id should be the const declared above this",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 18, 17) }
             };
@@ -9185,7 +9185,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IdDeclTypeError,
-                Message = "The diagnostic id should be the const declared above this",
+                Message = "Tutorial: The diagnostic id should be the const declared above this",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 18, 17) }
             };
@@ -9285,7 +9285,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IdDeclTypeError,
-                Message = "The diagnostic id should be the const declared above this",
+                Message = "Tutorial: The diagnostic id should be the const declared above this",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 18, 13) }
             };
@@ -9386,7 +9386,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingIdDeclaration,
-                Message = "This diagnostic id has not been declared",
+                Message = "Tutorial: This diagnostic id has not been declared",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 20, 17) }
             };
@@ -9506,7 +9506,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.OpenParenMissing,
-                Message = "The next step is to extract the open parenthesis of the if statement condition",
+                Message = "Tutorial: The next step is to extract the open parenthesis of the if statement condition",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 45, 17) }
             };
@@ -9644,7 +9644,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.OpenParenIncorrect,
-                Message = "This statement should extract the open parenthesis of ifState to use as the end of the diagnostic span",
+                Message = "Tutorial: This statement should extract the open parenthesis of ifState to use as the end of the diagnostic span",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 57, 17) }
             };
@@ -9760,7 +9760,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingSuppDiag,
-                Message = "You are missing the required SupportedDiagnostics property",
+                Message = "Tutorial: You are missing the required SupportedDiagnostics property",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
             };
@@ -9868,7 +9868,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectSigSuppDiag,
-                Message = "The signature of the SupportedDiagnostics property is incorrect",
+                Message = "Tutorial: The signature of the SupportedDiagnostics property is incorrect",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 55) }
             };
@@ -9974,7 +9974,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectSigSuppDiag,
-                Message = "The signature of the SupportedDiagnostics property is incorrect",
+                Message = "Tutorial: The signature of the SupportedDiagnostics property is incorrect",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 53) }
             };
@@ -10080,7 +10080,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectSigSuppDiag,
-                Message = "The signature of the SupportedDiagnostics property is incorrect",
+                Message = "Tutorial: The signature of the SupportedDiagnostics property is incorrect",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 46) }
             };
@@ -10185,7 +10185,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingAccessor,
-                Message = "The SupportedDiagnostics property is missing a get accessor",
+                Message = "Tutorial: The SupportedDiagnostics property is missing a get accessor",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 62) }
             };
@@ -10291,7 +10291,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingAccessor,
-                Message = "The SupportedDiagnostics property is missing a get accessor",
+                Message = "Tutorial: The SupportedDiagnostics property is missing a get accessor",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 62) }
             };
@@ -10404,7 +10404,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyAccessors,
-                Message = "The SupportedDiagnostics property only needs one get accessor, no additional get accessors or any set accessors are needed",
+                Message = "Tutorial: The SupportedDiagnostics property only needs one get accessor, no additional get accessors or any set accessors are needed",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 32, 13) }
             };
@@ -10515,7 +10515,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyAccessors,
-                Message = "The SupportedDiagnostics property only needs one get accessor, no additional get accessors or any set accessors are needed",
+                Message = "Tutorial: The SupportedDiagnostics property only needs one get accessor, no additional get accessors or any set accessors are needed",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 32, 13) }
             };
@@ -10626,7 +10626,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyAccessors,
-                Message = "The SupportedDiagnostics property only needs one get accessor, no additional get accessors or any set accessors are needed",
+                Message = "Tutorial: The SupportedDiagnostics property only needs one get accessor, no additional get accessors or any set accessors are needed",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 32, 13) }
             };
@@ -10736,7 +10736,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SupportedRules,
-                Message = "The immutable array should contain every DiagnosticDescriptor rule that was created",
+                Message = "Tutorial: The immutable array should contain every DiagnosticDescriptor rule that was created",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 29) }
             };
@@ -10795,7 +10795,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAccessorReturn,
-                Message = "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
+                Message = "Tutorial: The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 62) }
             };
@@ -10901,7 +10901,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAccessorReturn,
-                Message = "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
+                Message = "Tutorial: The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 28, 13) }
             };
@@ -11007,7 +11007,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAccessorReturn,
-                Message = "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
+                Message = "Tutorial: The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 17) }
             };
@@ -11113,7 +11113,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAccessorReturn,
-                Message = "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
+                Message = "Tutorial: The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 17) }
             };
@@ -11219,7 +11219,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SuppDiagReturnValue,
-                Message = "The SupportedDiagnostics property's get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
+                Message = "Tutorial: The SupportedDiagnostics property's get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 17) }
             };
@@ -11327,7 +11327,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SupportedRules,
-                Message = "The immutable array should contain every DiagnosticDescriptor rule that was created",
+                Message = "Tutorial: The immutable array should contain every DiagnosticDescriptor rule that was created",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 24) }
             };
@@ -11434,7 +11434,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SupportedRules,
-                Message = "The immutable array should contain every DiagnosticDescriptor rule that was created",
+                Message = "Tutorial: The immutable array should contain every DiagnosticDescriptor rule that was created",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 29) }
             };
@@ -11549,7 +11549,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SupportedRules,
-                Message = "The immutable array should contain every DiagnosticDescriptor rule that was created",
+                Message = "Tutorial: The immutable array should contain every DiagnosticDescriptor rule that was created",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 38, 24) }
             };
@@ -11672,7 +11672,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SupportedRules,
-                Message = "The immutable array should contain every DiagnosticDescriptor rule that was created",
+                Message = "Tutorial: The immutable array should contain every DiagnosticDescriptor rule that was created",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 38, 29) }
             };
@@ -11805,7 +11805,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.StartSpanMissing,
-                Message = "The next step is to determine the start of the span for the diagnostic that will be reported",
+                Message = "Tutorial: The next step is to determine the start of the span for the diagnostic that will be reported",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 57, 13) }
             };
@@ -11945,7 +11945,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.StartSpanIncorrect,
-                Message = "This statement should extract the start of the span of ifKeyword into a variable, to be used as the start of the diagnostic span",
+                Message = "Tutorial: This statement should extract the start of the span of ifKeyword into a variable, to be used as the start of the diagnostic span",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 58, 13) }
             };
@@ -12087,7 +12087,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.EndSpanMissing,
-                Message = "The next step is to determine the end of the span for the diagnostic that is going to be reported",
+                Message = "Tutorial: The next step is to determine the end of the span for the diagnostic that is going to be reported",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 58, 13) }
             };
@@ -12229,7 +12229,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.EndSpanIncorrect,
-                Message = "This statement should extract the start of the span of open into a variable, to be used as the end of the diagnostic span",
+                Message = "Tutorial: This statement should extract the start of the span of open into a variable, to be used as the end of the diagnostic span",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 59, 13) }
             };
@@ -12373,7 +12373,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SpanMissing,
-                Message = "The next step is to create a variable that is the span of the diagnostic that will be reported",
+                Message = "Tutorial: The next step is to create a variable that is the span of the diagnostic that will be reported",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 59, 13) }
             };
@@ -12517,7 +12517,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SpanIncorrect,
-                Message = "This statement should use TextSpan.FromBounds, start, and end to create the span of the diagnostic that will be reported",
+                Message = "Tutorial: This statement should use TextSpan.FromBounds, start, and end to create the span of the diagnostic that will be reported",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 60, 13) }
             };
@@ -12663,7 +12663,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.LocationMissing,
-                Message = "The next step is to create a location for the diagnostic",
+                Message = "Tutorial: The next step is to create a location for the diagnostic",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 60, 13) }
             };
@@ -12809,7 +12809,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.LocationIncorrect,
-                Message = "This statement should use Location.Create, ifState, and span to create the location of the diagnostic",
+                Message = "Tutorial: This statement should use Location.Create, ifState, and span to create the location of the diagnostic",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 61, 13) }
             };
@@ -12957,7 +12957,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.DiagnosticMissing,
-                Message = "The next step is to create a variable to hold the diagnostic",
+                Message = "Tutorial: The next step is to create a variable to hold the diagnostic",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 61, 13) }
             };
@@ -13105,7 +13105,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.DiagnosticIncorrect,
-                Message = "This statement should use Diagnostic.Create, spacingRule, and location to create the diagnostic that will be reported",
+                Message = "Tutorial: This statement should use Diagnostic.Create, spacingRule, and location to create the diagnostic that will be reported",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 62, 13) }
             };
@@ -13235,7 +13235,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckMissing,
-                Message = "The fifth step is to check the kind of trailingTrivia",
+                Message = "Tutorial: The fifth step is to check the kind of trailingTrivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
             };
@@ -13350,7 +13350,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             { 
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = "This statement should check to see if the kind of trailingTrivia is whitespace trivia",
+                Message = "Tutorial: This statement should check to see if the kind of trailingTrivia is whitespace trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
@@ -13464,7 +13464,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             { 
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = "This statement should check to see if the kind of trailingTrivia is whitespace trivia",
+                Message = "Tutorial: This statement should check to see if the kind of trailingTrivia is whitespace trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
@@ -13578,7 +13578,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = "This statement should check to see if the kind of trailingTrivia is whitespace trivia",
+                Message = "Tutorial: This statement should check to see if the kind of trailingTrivia is whitespace trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
@@ -13692,7 +13692,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = "This statement should check to see if the kind of trailingTrivia is whitespace trivia",
+                Message = "Tutorial: This statement should check to see if the kind of trailingTrivia is whitespace trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
@@ -13806,7 +13806,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             { 
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = "This statement should check to see if the kind of trailingTrivia is whitespace trivia",
+                Message = "Tutorial: This statement should check to see if the kind of trailingTrivia is whitespace trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
@@ -13920,7 +13920,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = "This statement should check to see if the kind of trailingTrivia is whitespace trivia",
+                Message = "Tutorial: This statement should check to see if the kind of trailingTrivia is whitespace trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
@@ -14034,7 +14034,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = "This statement should check to see if the kind of trailingTrivia is whitespace trivia",
+                Message = "Tutorial: This statement should check to see if the kind of trailingTrivia is whitespace trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
@@ -14148,7 +14148,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = "This statement should check to see if the kind of trailingTrivia is whitespace trivia",
+                Message = "Tutorial: This statement should check to see if the kind of trailingTrivia is whitespace trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
@@ -14262,7 +14262,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = "This statement should check to see if the kind of trailingTrivia is whitespace trivia",
+                Message = "Tutorial: This statement should check to see if the kind of trailingTrivia is whitespace trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
@@ -14376,7 +14376,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = "This statement should check to see if the kind of trailingTrivia is whitespace trivia",
+                Message = "Tutorial: This statement should check to see if the kind of trailingTrivia is whitespace trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
@@ -14490,7 +14490,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = "This statement should check to see if the kind of trailingTrivia is whitespace trivia",
+                Message = "Tutorial: This statement should check to see if the kind of trailingTrivia is whitespace trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
@@ -14607,7 +14607,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = "This statement should check to see if the kind of trailingTrivia is whitespace trivia",
+                Message = "Tutorial: This statement should check to see if the kind of trailingTrivia is whitespace trivia",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
@@ -14723,7 +14723,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckMissing,
-                Message = "The sixth step is to make sure trailingTrivia is a single whitespace",
+                Message = "Tutorial: The sixth step is to make sure trailingTrivia is a single whitespace",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 21) }
             };
@@ -14841,7 +14841,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                Message = "This statement should check to see if trailingTrivia is a single whitespace",
+                Message = "Tutorial: This statement should check to see if trailingTrivia is a single whitespace",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -14957,7 +14957,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                Message = "This statement should check to see if trailingTrivia is a single whitespace",
+                Message = "Tutorial: This statement should check to see if trailingTrivia is a single whitespace",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -15075,7 +15075,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                Message = "This statement should check to see if trailingTrivia is a single whitespace",
+                Message = "Tutorial: This statement should check to see if trailingTrivia is a single whitespace",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -15192,7 +15192,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                Message = "This statement should check to see if trailingTrivia is a single whitespace",
+                Message = "Tutorial: This statement should check to see if trailingTrivia is a single whitespace",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -15310,7 +15310,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                Message = "This statement should check to see if trailingTrivia is a single whitespace",
+                Message = "Tutorial: This statement should check to see if trailingTrivia is a single whitespace",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -15429,7 +15429,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                Message = "This statement should check to see if trailingTrivia is a single whitespace",
+                Message = "Tutorial: This statement should check to see if trailingTrivia is a single whitespace",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -15547,7 +15547,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                Message = "This statement should check to see if trailingTrivia is a single whitespace",
+                Message = "Tutorial: This statement should check to see if trailingTrivia is a single whitespace",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -15666,7 +15666,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                Message = "This statement should check to see if trailingTrivia is a single whitespace",
+                Message = "Tutorial: This statement should check to see if trailingTrivia is a single whitespace",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -15783,7 +15783,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                Message = "This statement should check to see if trailingTrivia is a single whitespace",
+                Message = "Tutorial: This statement should check to see if trailingTrivia is a single whitespace",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -15901,7 +15901,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                Message = "This statement should check to see if trailingTrivia is a single whitespace",
+                Message = "Tutorial: This statement should check to see if trailingTrivia is a single whitespace",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -16007,7 +16007,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingRule,
-                Message = "You need to have at least one DiagnosticDescriptor rule",
+                Message = "Tutorial: You need to have at least one DiagnosticDescriptor rule",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 17, 29) }
             };

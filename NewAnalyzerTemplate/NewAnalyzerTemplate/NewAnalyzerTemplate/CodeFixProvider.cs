@@ -25,8 +25,8 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace NewAnalyzerTemplate
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SyntaxNodeAnalyzerCodeFixProvider)), Shared]
-    public class SyntaxNodeAnalyzerCodeFixProvider : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(NewAnalyzerTemplateCodeFixProvider)), Shared]
+    public class NewAnalyzerTemplateCodeFixProvider : CodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds
         {

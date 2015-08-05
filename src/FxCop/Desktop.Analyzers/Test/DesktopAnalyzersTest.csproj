@@ -16,8 +16,8 @@
     <SolutionDir Condition="'$(SolutionDir)' == '' OR '$(SolutionDir)' == '*Undefined*'">..\..\..\..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <SemanticVersion>$(DesktopAnalyzersSemanticVersion)</SemanticVersion>  
-    <PreReleaseVersion>$(DesktopAnalyzersPreReleaseVersion)</PreReleaseVersion> 
+    <SemanticVersion>$(DesktopAnalyzersSemanticVersion)</SemanticVersion>
+    <PreReleaseVersion>$(DesktopAnalyzersPreReleaseVersion)</PreReleaseVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -152,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Security\DoNotCatchCorruptedStateExceptionsTests.cs" />
+    <Compile Include="Security\DoNotUseInsecureCryptographicAlgorithmsTests.cs" />
   </ItemGroup>
   <ItemGroup />
   <ImportGroup Label="Targets">

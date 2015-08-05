@@ -18,8 +18,8 @@
     <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
     <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
     <RestorePackages>true</RestorePackages>
-    <SemanticVersion>$(DesktopAnalyzersSemanticVersion)</SemanticVersion>  
-    <PreReleaseVersion>$(DesktopAnalyzersPreReleaseVersion)</PreReleaseVersion>  
+    <SemanticVersion>$(DesktopAnalyzersSemanticVersion)</SemanticVersion>
+    <PreReleaseVersion>$(DesktopAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
   </PropertyGroup>
@@ -100,8 +100,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Compile Include="Security\DoNotUseInsecureCryptographicAlgorithms.cs" />
     <Compile Include="Shared\SyntaxNodeHelper.cs" />
-    <Compile Include="Security\DoNotCatchCorruptedStateExceptionsAnalyzer.cs" />
+    <Compile Include="Security\DoNotCatchCorruptedStateExceptions.cs" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\..\build\Targets\Analyzers.Imports.targets" />

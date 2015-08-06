@@ -161,7 +161,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor ReturnStatementIncorrectRule = CreateRule(ReturnStatementIncorrect, "Incorrect return", s_messagePrefix + "This statement should return from '{0}', because reaching this point in the code means that the if-statement being analyzed has the correct spacing", "If the analyzer determines that there are no issues with the code it is analyzing, it can simply return from the analysis method without reporting any diagnostics");
 
         public const string StartSpanMissing = "MetaAnalyzer036";
-        internal static DiagnosticDescriptor StartSpanMissingRule = CreateRule(StartSpanMissing, "Start span variable missing", s_messagePrefix + "Each span needs a start and end position, so create the start position of '{0}' using the SpanStart of the OpenParenToken of '{1}'", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up");
+        internal static DiagnosticDescriptor StartSpanMissingRule = CreateRule(StartSpanMissing, "Start span variable missing", s_messagePrefix + "Each span needs a start and end position, so create the start position of '{0}' using the SpanStart of '{1}'", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up");
 
         public const string StartSpanIncorrect = "MetaAnalyzer037";
         internal static DiagnosticDescriptor StartSpanIncorrectRule = CreateRule(StartSpanIncorrect, "Start span variable incorrect", s_messagePrefix + "This statement should extract the start of the span of '{0}' into a variable, to be used as the start of the diagnostic span", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up");
@@ -672,15 +672,15 @@ namespace MetaCompilation
                             //check diagnostic reporting statements
                             if (statementCount > 3)
                             {
-                                bool diagnosticReportingCorrect = CheckDiagnosticCreation(context, statementIdentifierToken, keywordIdentifierToken, ruleNames, statements, contextParameter);
-                                if (!diagnosticReportingCorrect)
+                                if (statementCount > 9)
                                 {
+                                    ReportDiagnostic(context, TooManyStatementsRule, methodDeclaration.Identifier.GetLocation(), "method", "9", "walk through the Syntax Tree and check the spacing of the if-statement");
                                     return false;
                                 }
 
-                                if (statementCount > 9)
+                                bool diagnosticReportingCorrect = CheckDiagnosticCreation(context, statementIdentifierToken, keywordIdentifierToken, ruleNames, statements, contextParameter);
+                                if (!diagnosticReportingCorrect)
                                 {
-                                    ReportDiagnostic(context, TooManyStatementsRule, methodDeclaration.Identifier.GetLocation(), "method", "10", "walk through the Syntax Tree and check the spacing of the if-statement");
                                     return false;
                                 }
                             }

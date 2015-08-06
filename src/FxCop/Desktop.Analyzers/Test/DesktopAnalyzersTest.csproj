@@ -154,7 +154,6 @@
     <Compile Include="Security\DoNotCatchCorruptedStateExceptionsTests.cs" />
     <Compile Include="Security\DoNotUseInsecureCryptographicAlgorithmsTests.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\..\build\Targets\Analyzers.Imports.targets" />
   </ImportGroup>

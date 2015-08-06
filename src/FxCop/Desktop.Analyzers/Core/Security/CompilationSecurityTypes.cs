@@ -12,13 +12,16 @@ namespace Desktop.Analyzers.Common
         public INamedTypeSymbol SystemSystemException { get; private set; }
         public INamedTypeSymbol DES { get; private set; }
         public INamedTypeSymbol DSA { get; private set; }
-        public INamedTypeSymbol DSASignatureFormatter { get; private set; } 
+        public INamedTypeSymbol DSASignatureFormatter { get; private set; }
+        public INamedTypeSymbol MD5 { get; private set; }
         public INamedTypeSymbol HMACMD5 { get; private set; }
         public INamedTypeSymbol RC2 { get; private set; }
         public INamedTypeSymbol Rijndael { get; private set; }  
         public INamedTypeSymbol TripleDES { get; private set; }
         public INamedTypeSymbol RIPEMD160 { get; private set; }
         public INamedTypeSymbol HMACRIPEMD160 { get; private set; }
+        public INamedTypeSymbol SHA1 { get; private set; }
+        public INamedTypeSymbol HMACSHA1 { get; private set; }
 
         public CompilationSecurityTypes(Compilation compilation)
         {
@@ -30,12 +33,15 @@ namespace Desktop.Analyzers.Common
             DES = SecurityTypes.DES(compilation);
             DSA = SecurityTypes.DSA(compilation);
             DSASignatureFormatter = SecurityTypes.DSASignatureFormatter(compilation);
+            MD5 = SecurityTypes.MD5(compilation);
             HMACMD5 = SecurityTypes.HMACMD5(compilation);
             RC2 = SecurityTypes.RC2(compilation);
             Rijndael = SecurityTypes.Rijndael(compilation);
             TripleDES = SecurityTypes.TripleDES(compilation);
             RIPEMD160 = SecurityTypes.RIPEMD160(compilation);
             HMACRIPEMD160 = SecurityTypes.HMACRIPEMD160(compilation);
+            SHA1 = SecurityTypes.SHA1(compilation);
+            HMACSHA1 = SecurityTypes.HMACSHA1(compilation);
         }
     }
 

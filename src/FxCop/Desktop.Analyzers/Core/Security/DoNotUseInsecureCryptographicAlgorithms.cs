@@ -18,7 +18,8 @@ namespace Desktop.Analyzers
         internal const string DoNotUseMD5RuleId = "CA5350";
         internal const string DoNotUseDESRuleId = "CA5351";
         internal const string DoNotUseRC2RuleId = "CA5352";
-        internal const string DoNotUseTripleDESRuleId = "CA5353";  
+        internal const string DoNotUseTripleDESRuleId = "CA5353";
+        internal const string DoNotUseSHA1RuleId = "CA5354";
         internal const string DoNotUseRIPEMD160RuleId = "CA5355";
         internal const string DoNotUseDSARuleId = "CA5356";
         internal const string DoNotUseRijndaelRuleId = "CA5357";
@@ -31,6 +32,8 @@ namespace Desktop.Analyzers
         private static readonly LocalizableString s_localizableDoNotUseRC2Description = new LocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseRC2Description), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         private static readonly LocalizableString s_localizableDoNotUseTripleDESTitle = new LocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseTripleDES), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         private static readonly LocalizableString s_localizableDoNotUseTripleDESDescription = new LocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseTripleDESDescription), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
+        private static readonly LocalizableString s_localizableDoNotUseSHA1Title = new LocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseSHA1), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
+        private static readonly LocalizableString s_localizableDoNotUseSHA1Description = new LocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseSHA1Description), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         private static readonly LocalizableString s_localizableDoNotUseRIPEMD160Title = new LocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseRIPEMD160), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         private static readonly LocalizableString s_localizableDoNotUseRIPEMD160Description = new LocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseRIPEMD160Description), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         private static readonly LocalizableString s_localizableDoNotUseDSATitle = new LocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseDSA), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
@@ -54,7 +57,11 @@ namespace Desktop.Analyzers
         internal static DiagnosticDescriptor DoNotUseTripleDESRule = CreateDiagnosticDescriptor(DoNotUseTripleDESRuleId,
                                                                                                 s_localizableDoNotUseTripleDESTitle,
                                                                                                 s_localizableDoNotUseTripleDESDescription);
-                                                                                                                                                     
+
+        internal static DiagnosticDescriptor DoNotUseSHA1Rule = CreateDiagnosticDescriptor(DoNotUseSHA1RuleId,
+                                                                                           s_localizableDoNotUseSHA1Title,
+                                                                                           s_localizableDoNotUseSHA1Description);
+
         internal static DiagnosticDescriptor DoNotUseRIPEMD160Rule = CreateDiagnosticDescriptor(DoNotUseRIPEMD160RuleId,
                                                                                                 s_localizableDoNotUseRIPEMD160Title,
                                                                                                 s_localizableDoNotUseRIPEMD160Description);
@@ -73,6 +80,7 @@ namespace Desktop.Analyzers
                                                                                                                   DoNotUseDESRule,
                                                                                                                   DoNotUseRC2Rule,
                                                                                                                   DoNotUseTripleDESRule, 
+                                                                                                                  DoNotUseSHA1Rule,
                                                                                                                   DoNotUseRIPEMD160Rule,
                                                                                                                   DoNotUseDSARule,
                                                                                                                   DoNotUseRijndaelRule);
@@ -110,10 +118,13 @@ namespace Desktop.Analyzers
         {
             return types.DES != null
                 || types.DSA != null
-                || types.DSASignatureFormatter != null  
+                || types.DSASignatureFormatter != null
+                || types.MD5 != null
                 || types.HMACMD5 != null
                 || types.RC2 != null
-                || types.Rijndael != null 
+                || types.Rijndael != null
+                || types.SHA1 != null
+                || types.HMACSHA1 != null
                 || types.TripleDES != null
                 || types.RIPEMD160 != null
                 || types.HMACRIPEMD160 != null;
@@ -153,7 +164,8 @@ namespace Desktop.Analyzers
                 {
                     rule = DoNotUseDSARule;
                 }
-                else if (type.IsDerivedFrom(_cryptTypes.HMACMD5, baseTypesOnly: true))
+                else if (type.IsDerivedFrom(_cryptTypes.MD5, baseTypesOnly: true) ||
+                         type.IsDerivedFrom(_cryptTypes.HMACMD5, baseTypesOnly: true))
                 {
                     rule = DoNotUseMD5Rule;
                 }
@@ -168,6 +180,11 @@ namespace Desktop.Analyzers
                 else if (type.IsDerivedFrom(_cryptTypes.TripleDES, baseTypesOnly: true))
                 {
                     rule = DoNotUseTripleDESRule;
+                }
+                else if (type.IsDerivedFrom(_cryptTypes.SHA1, baseTypesOnly: true) ||
+                         type.IsDerivedFrom(_cryptTypes.HMACSHA1, baseTypesOnly: true))
+                {
+                    rule = DoNotUseSHA1Rule;
                 }
                 else if (type.IsDerivedFrom(_cryptTypes.RIPEMD160, baseTypesOnly: true) ||
                          type.IsDerivedFrom(_cryptTypes.HMACRIPEMD160, baseTypesOnly: true))

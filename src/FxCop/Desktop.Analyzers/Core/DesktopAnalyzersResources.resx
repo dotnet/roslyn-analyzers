@@ -168,4 +168,10 @@
   <data name="DoNotUseTripleDESDescription" xml:space="preserve">
     <value>This type implements TripleDES, a cryptographically insecure encryption algorithm. Replace this usage with an AES encryption algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits.</value>
   </data>
+  <data name="DoNotUseSHA1" xml:space="preserve">
+    <value>Do not use insecure cryptographic algorithm SHA1.</value>
+  </data>
+  <data name="DoNotUseSHA1Description" xml:space="preserve">
+    <value>This type implements SHA1, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the SHA-1 and SHA-0 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</value>
+  </data>
 </root>

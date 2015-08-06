@@ -42,6 +42,11 @@ namespace Desktop.Analyzers.Common
             return compilation.GetTypeByMetadataName("System.Security.Cryptography.DSASignatureFormatter");
         }
 
+        public static INamedTypeSymbol MD5(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Security.Cryptography.MD5");
+        }
+
         public static INamedTypeSymbol HMACMD5(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName("System.Security.Cryptography.HMACMD5");
@@ -70,6 +75,14 @@ namespace Desktop.Analyzers.Common
         public static INamedTypeSymbol HMACRIPEMD160(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName("System.Security.Cryptography.HMACRIPEMD160");
+        }
+        public static INamedTypeSymbol SHA1(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Security.Cryptography.SHA1");
+        }
+        public static INamedTypeSymbol HMACSHA1(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Security.Cryptography.HMACSHA1");
         }
     }
 }

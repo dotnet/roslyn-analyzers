@@ -160,12 +160,6 @@ namespace MetaCompilation
         public const string ReturnStatementIncorrect = "MetaAnalyzer033";
         internal static DiagnosticDescriptor ReturnStatementIncorrectRule = CreateRule(ReturnStatementIncorrect, "Incorrect return", s_messagePrefix + "This statement should return from '{0}', because reaching this point in the code means that the if-statement being analyzed has the correct spacing", "If the analyzer determines that there are no issues with the code it is analyzing, it can simply return from the analysis method without reporting any diagnostics");
 
-        public const string OpenParenMissing = "MetaAnalyzer034";
-        internal static DiagnosticDescriptor OpenParenMissingRule = CreateRule(OpenParenMissing, "Missing open parenthesis variable", s_messagePrefix + "Moving on to the creation and reporting of the diagnostic, extract the open parenthesis of '{0}' into a variable to use as the end of the diagnostic span", "The open parenthesis of the condition is going to be the end point of the diagnostic squiggle that is created");
-
-        public const string OpenParenIncorrect = "MetaAnalyzer035";
-        internal static DiagnosticDescriptor OpenParenIncorrectRule = CreateRule(OpenParenIncorrect, "Open parenthesis variable incorrect", s_messagePrefix + "This statement should extract the open parenthesis of '{0}' to use as the end of the diagnostic span", "The open parenthesis of the condition is going to be the end point of the diagnostic squiggle that is created");
-
         public const string StartSpanMissing = "MetaAnalyzer036";
         internal static DiagnosticDescriptor StartSpanMissingRule = CreateRule(StartSpanMissing, "Start span variable missing", s_messagePrefix + "Each span needs a start and end position, so create the start position of '{0}' using the SpanStart of the OpenParenToken of '{1}'", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up");
 
@@ -272,8 +266,6 @@ namespace MetaCompilation
                                              WhitespaceCheckIncorrectRule,
                                              ReturnStatementMissingRule,
                                              ReturnStatementIncorrectRule,
-                                             OpenParenIncorrectRule,
-                                             OpenParenMissingRule,
                                              StartSpanIncorrectRule,
                                              StartSpanMissingRule,
                                              EndSpanIncorrectRule,
@@ -1304,7 +1296,7 @@ namespace MetaCompilation
                         string locationCorrect = LocationAnalysis(statementIdentifierToken, diagnosticInfo[1], statements[statementCount - 2]);
                         if (locationCorrect == "")
                         {
-                            IfDiagnostic(context, statements[3], LocationIncorrectRule, statementIdentifierToken.Text);
+                            IfDiagnostic(context, statements[statementCount - 2], LocationIncorrectRule, statementIdentifierToken.Text);
                             return false;
                         }
 
@@ -1313,7 +1305,7 @@ namespace MetaCompilation
                             List<string> spanNames = SpanAnalysis(statements[statementCount - 3], locationCorrect);
                             if (spanNames.Count == 0 || spanNames[0] == "" || spanNames[1] == "")
                             {
-                                IfDiagnostic(context, statements[3], SpanIncorrectRule, locationCorrect);
+                                IfDiagnostic(context, statements[statementCount - 3], SpanIncorrectRule, locationCorrect);
                                 return false;
                             }
 

@@ -167,28 +167,28 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor OpenParenIncorrectRule = CreateRule(OpenParenIncorrect, "Open parenthesis variable incorrect", s_messagePrefix + "This statement should extract the open parenthesis of '{0}' to use as the end of the diagnostic span", "The open parenthesis of the condition is going to be the end point of the diagnostic squiggle that is created");
 
         public const string StartSpanMissing = "MetaAnalyzer036";
-        internal static DiagnosticDescriptor StartSpanMissingRule = CreateRule(StartSpanMissing, "Start span variable missing", s_messagePrefix + "Next, extract the start of the span of '{0}' into a variable, to be used as the start of the diagnostic span", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up");
+        internal static DiagnosticDescriptor StartSpanMissingRule = CreateRule(StartSpanMissing, "Start span variable missing", s_messagePrefix + "Each span needs a start and end position, so create the start position of '{0}' using the SpanStart of the OpenParenToken of '{1}'", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up");
 
         public const string StartSpanIncorrect = "MetaAnalyzer037";
         internal static DiagnosticDescriptor StartSpanIncorrectRule = CreateRule(StartSpanIncorrect, "Start span variable incorrect", s_messagePrefix + "This statement should extract the start of the span of '{0}' into a variable, to be used as the start of the diagnostic span", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up");
 
         public const string EndSpanMissing = "MetaAnalyzer038";
-        internal static DiagnosticDescriptor EndSpanMissingRule = CreateRule(EndSpanMissing, "End span variable missing", s_messagePrefix + "Next, determine the end of the span of the diagnostic that is going to be reported", "The open parenthesis of the condition is going to be the end point of the diagnostic squiggle that is created");
+        internal static DiagnosticDescriptor EndSpanMissingRule = CreateRule(EndSpanMissing, "End span variable missing", s_messagePrefix + "Each span needs a start and end position, so create the end position of '{0}' using the SpanStart of the OpenParenToken of '{1}'", "The open parenthesis of the condition is going to be the end point of the diagnostic squiggle that is created");
 
         public const string EndSpanIncorrect = "MetaAnalyzer039";
-        internal static DiagnosticDescriptor EndSpanIncorrectRule = CreateRule(EndSpanIncorrect, "End span variable incorrect", s_messagePrefix + "This statement should extract the start of the span of '{0}' into a variable, to be used as the end of the diagnostic span", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up");
+        internal static DiagnosticDescriptor EndSpanIncorrectRule = CreateRule(EndSpanIncorrect, "End span variable incorrect", s_messagePrefix + "This statement should extract the start of the span of the OpenParenToken of '{0}' into a variable, to be used as the end of the diagnostic span", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up");
 
         public const string SpanMissing = "MetaAnalyzer040";
-        internal static DiagnosticDescriptor SpanMissingRule = CreateRule(SpanMissing, "Diagnostic span variable missing", s_messagePrefix + "Next, using TextSpan.FromBounds, create a variable that is the span of the diagnostic that will be reported", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up");
+        internal static DiagnosticDescriptor SpanMissingRule = CreateRule(SpanMissing, "Diagnostic span variable missing", s_messagePrefix + "The location needs a span to represent the range where the squiggle will appear, so create a span using TextSpan.FromBounds and indices for the start and end of the span", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up");
 
         public const string SpanIncorrect = "MetaAnalyzer041";
-        internal static DiagnosticDescriptor SpanIncorrectRule = CreateRule(SpanIncorrect, "Diagnostic span variable incorrect", s_messagePrefix + "This statement should use TextSpan.FromBounds, '{0}', and '{1}' to create the span of the diagnostic that will be reported", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up. TextSpan.FromBounds(start, end) can be used to create a span to use for a diagnostic");
+        internal static DiagnosticDescriptor SpanIncorrectRule = CreateRule(SpanIncorrect, "Diagnostic span variable incorrect", s_messagePrefix + "This statement should create a span of the diagnostic to be reported, called '{0}', using TextSpan.FromBounds and indices for the start and end of the span", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up. TextSpan.FromBounds(start, end) can be used to create a span to use for a diagnostic");
 
         public const string LocationMissing = "MetaAnalyzer042";
-        internal static DiagnosticDescriptor LocationMissingRule = CreateRule(LocationMissing, "Diagnostic location variable missing", s_messagePrefix + "Next, using Location.Create, create a location for the diagnostic", "A location can be created by combining a span with a syntax tree. The span is applied to the given syntax tree so that the location within the syntax tree is determined");
+        internal static DiagnosticDescriptor LocationMissingRule = CreateRule(LocationMissing, "Diagnostic location variable missing", s_messagePrefix + "Every diagnostic needs a location, so create a diagnostic location using the SyntaxTree of '{0}' and a diagnostic span", "A location can be created by combining a span with a syntax tree. The span is applied to the given syntax tree so that the location within the syntax tree is determined");
 
         public const string LocationIncorrect = "MetaAnalyzer043";
-        internal static DiagnosticDescriptor LocationIncorrectRule = CreateRule(LocationIncorrect, "Diagnostic location variable incorrect", s_messagePrefix + "This statement should use Location.Create, '{0}', and '{1}' to create the location of the diagnostic", "A location can be created by combining a span with a syntax tree. The span is applied to the given syntax tree so that the location within the syntax tree is determined");
+        internal static DiagnosticDescriptor LocationIncorrectRule = CreateRule(LocationIncorrect, "Diagnostic location variable incorrect", s_messagePrefix + "This statement should use Location.Create, '{0}', and a diagnostic span to create the location of the diagnostic", "A location can be created by combining a span with a syntax tree. The span is applied to the given syntax tree so that the location within the syntax tree is determined");
 
         public const string TrailingTriviaCountMissing = "MetaAnalyzer057";
         internal static DiagnosticDescriptor TriviaCountMissingRule = CreateRule(TrailingTriviaCountMissing, "Trailing trivia count missing", s_messagePrefix + "Next, check that '{0}' only has one trailing trivia element");
@@ -214,10 +214,10 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor TooManyStatementsRule = CreateRule(TooManyStatements, "Too many statements", s_messagePrefix + "This {0} should only have {1} statement(s), which should {2}", "For the purpose of this tutorial there are too many statements here, use the code fixes to guide you through the creation of this section");
 
         public const string DiagnosticMissing = "MetaAnalyzer046";
-        internal static DiagnosticDescriptor DiagnosticMissingRule = CreateRule(DiagnosticMissing, "Diagnostic variable missing", s_messagePrefix + "Next, use Diagnostic.Create to create the diagnostic", "This is the diagnostic that will be reported to the user as an error squiggle");
+        internal static DiagnosticDescriptor DiagnosticMissingRule = CreateRule(DiagnosticMissing, "Diagnostic variable missing", s_messagePrefix + "Moving on to the creation and reporting of the diagnostic, create a new diagnostic with a DiagnosticDescriptor rule and a location", "This is the diagnostic that will be reported to the user as an error squiggle");
 
         public const string DiagnosticIncorrect = "MetaAnalyzer047";
-        internal static DiagnosticDescriptor DiagnosticIncorrectRule = CreateRule(DiagnosticIncorrect, "Diagnostic variable incorrect", s_messagePrefix + "This statement should use Diagnostic.Create, '{0}', and '{1}' to create the diagnostic that will be reported", "The diagnostic is created with a DiagnosticDescriptor, a Location, and message arguments. The message arguments are the inputs to the DiagnosticDescriptor MessageFormat format string");
+        internal static DiagnosticDescriptor DiagnosticIncorrectRule = CreateRule(DiagnosticIncorrect, "Diagnostic variable incorrect", s_messagePrefix + "This statement should use Diagnostic.Create, '{0}', and a location to create the diagnostic that will be reported", "The diagnostic is created with a DiagnosticDescriptor, a Location, and message arguments. The message arguments are the inputs to the DiagnosticDescriptor MessageFormat format string");
 
         public const string DiagnosticReportMissing = "MetaAnalyzer048";
         internal static DiagnosticDescriptor DiagnosticReportMissingRule = CreateRule(DiagnosticReportMissing, "Diagnostic report missing", s_messagePrefix + "Next, use '{0}'.ReportDiagnostic to report the diagnostic that has been created", "A diagnostic is reported to a context so that the diagnostic will appear as a squiggle and in the eroor list");
@@ -686,7 +686,7 @@ namespace MetaCompilation
                                     return false;
                                 }
 
-                                if (statementCount > 10)
+                                if (statementCount > 9)
                                 {
                                     ReportDiagnostic(context, TooManyStatementsRule, methodDeclaration.Identifier.GetLocation(), "method", "10", "walk through the Syntax Tree and check the spacing of the if-statement");
                                     return false;
@@ -694,7 +694,7 @@ namespace MetaCompilation
                             }
                             else
                             {
-                                IfDiagnostic(context, statements[2], OpenParenMissingRule, statementIdentifierToken.Text);
+                                IfDiagnostic(context, statements[2], DiagnosticMissingRule);
                                 return false;
                             }
                         }
@@ -1290,317 +1290,320 @@ namespace MetaCompilation
             private bool CheckDiagnosticCreation(CompilationAnalysisContext context, SyntaxToken statementIdentifierToken, SyntaxToken keywordIdentifierToken, List<string> ruleNames, SyntaxList<StatementSyntax> statements, ParameterSyntax contextParameter)
             {
                 int statementCount = statements.Count;
-
-                SyntaxToken openParenToken = OpenParenAnalysis(statementIdentifierToken, statements);
-                if (openParenToken.Text == "")
+                if (statementCount < 9)
                 {
-                    IfDiagnostic(context, statements[3], OpenParenIncorrectRule, statementIdentifierToken.Text);
-                    return false;
-                }
-
-                if (statementCount > 4)
-                {
-                    SyntaxToken startToken = StartAnalysis(keywordIdentifierToken, statements);
-                    if (startToken.Text == "")
+                    List<string> diagnosticInfo = DiagnosticCreationCheck(ruleNames, statements[statementCount - 1]);
+                    if (diagnosticInfo.Count == 0 || diagnosticInfo[0] == "" || diagnosticInfo[1] == "")
                     {
-                        IfDiagnostic(context, statements[4], StartSpanIncorrectRule, keywordIdentifierToken.Text);
+                        IfDiagnostic(context, statements[statementCount - 1], DiagnosticIncorrectRule, ruleNames[0]);
                         return false;
                     }
 
-                    if (statementCount > 5)
+                    if (statementCount > 4)
                     {
-                        SyntaxToken endToken = EndAnalysis(openParenToken, statements);
-                        if (endToken.Text == "")
+                        string locationCorrect = LocationAnalysis(statementIdentifierToken, diagnosticInfo[1], statements[statementCount - 2]);
+                        if (locationCorrect == "")
                         {
-                            IfDiagnostic(context, statements[5], EndSpanIncorrectRule, openParenToken.Text);
+                            IfDiagnostic(context, statements[3], LocationIncorrectRule, statementIdentifierToken.Text);
                             return false;
                         }
 
-                        if (statementCount > 6)
+                        if (statementCount > 5)
                         {
-                            SyntaxToken spanToken = SpanAnalysis(startToken, endToken, statements);
-                            if (spanToken.Text == "")
+                            List<string> spanNames = SpanAnalysis(statements[statementCount - 3], locationCorrect);
+                            if (spanNames.Count == 0 || spanNames[0] == "" || spanNames[1] == "")
                             {
-                                IfDiagnostic(context, statements[6], SpanIncorrectRule, startToken.Text, endToken.Text);
+                                IfDiagnostic(context, statements[3], SpanIncorrectRule, locationCorrect);
                                 return false;
                             }
 
-                            if (statementCount > 7)
+                            if (statementCount > 6)
                             {
-                                SyntaxToken locationToken = LocationAnalysis(statementIdentifierToken, spanToken, statements);
-                                if (locationToken.Text == "")
+                                bool startSpanCorrect = StartAnalysis(keywordIdentifierToken, statements, spanNames[0]);
+                                bool endSpanCorrect = EndAnalysis(statementIdentifierToken, statements, spanNames[1]);
+                                if (!endSpanCorrect && startSpanCorrect)
                                 {
-                                    IfDiagnostic(context, statements[7], LocationIncorrectRule, statementIdentifierToken.Text, spanToken.Text);
-                                    return false;
-                                }
-
-                                if (statementCount > 8)
-                                {
-                                    SyntaxToken diagnosticToken = DiagnosticCreationCheck(ruleNames, locationToken, statements);
-                                    if (diagnosticToken == null || diagnosticToken.Text == "")
+                                    if (statementCount == 7)
                                     {
-                                        IfDiagnostic(context, statements[8], DiagnosticIncorrectRule, ruleNames[0], locationToken.Text);
+                                        var argument = ((statements[4] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Initializer.Value as InvocationExpressionSyntax).ArgumentList.Arguments[1];
+                                        ReportDiagnostic(context, EndSpanMissingRule, argument.GetLocation(), locationCorrect, statementIdentifierToken.Text);
                                         return false;
-                                    }
-
-                                    if (statementCount > 9)
-                                    {
-                                        bool reportCorrect = DiagnosticReportCheck(context, diagnosticToken, contextParameter, statements);
-                                        if (!reportCorrect)
-                                        {
-                                            IfDiagnostic(context, statements[9], DiagnosticReportIncorrectRule, contextParameter.Identifier.Text, diagnosticToken.Text);
-                                            return false;
-                                        }
                                     }
                                     else
                                     {
-                                        ReportDiagnostic(context, DiagnosticReportMissingRule, statements[8].GetLocation(), contextParameter.Identifier.Text);
+                                        var argument = ((statements[5] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Initializer.Value as InvocationExpressionSyntax).ArgumentList.Arguments[1];
+                                        ReportDiagnostic(context, EndSpanMissingRule, argument.GetLocation(), locationCorrect, statementIdentifierToken.Text);
                                         return false;
                                     }
                                 }
-                                else
+                                else if (!endSpanCorrect && !startSpanCorrect)
                                 {
-                                    ReportDiagnostic(context, DiagnosticMissingRule, statements[7].GetLocation());
+                                    IfDiagnostic(context, statements[3], EndSpanIncorrectRule, statementIdentifierToken.Text);
+                                    return false;
+                                }
+
+                                if (!startSpanCorrect)
+                                {
+                                    if (statementCount == 7)
+                                    {
+                                        var argument = ((statements[4] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Initializer.Value as InvocationExpressionSyntax).ArgumentList.Arguments[0];
+                                        ReportDiagnostic(context, StartSpanMissingRule, argument.GetLocation(), locationCorrect, keywordIdentifierToken.Text);
+                                        return false;
+                                    }
+                                    else
+                                    {
+                                        var argument = ((statements[5] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Initializer.Value as InvocationExpressionSyntax).ArgumentList.Arguments[0];
+                                        ReportDiagnostic(context, StartSpanMissingRule, argument.GetLocation(), locationCorrect, keywordIdentifierToken.Text);
+                                        return false;
+                                    }
+                                }
+                                
+                                if (startSpanCorrect && endSpanCorrect)
+                                {
+                                    ReportDiagnostic(context, DiagnosticReportMissingRule, statements[7].GetLocation(), contextParameter.Identifier.Text);
                                     return false;
                                 }
                             }
                             else
                             {
-                                ReportDiagnostic(context, LocationMissingRule, statements[6].GetLocation(), statementIdentifierToken.Text, spanToken.Text);
+                                var argument = ((statements[3] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Initializer.Value as InvocationExpressionSyntax).ArgumentList.Arguments[1];
+                                ReportDiagnostic(context, EndSpanMissingRule, argument.GetLocation(), locationCorrect, statementIdentifierToken.Text);
                                 return false;
                             }
                         }
                         else
                         {
-                            ReportDiagnostic(context, SpanMissingRule, statements[5].GetLocation(), startToken.Text, endToken.Text);
+                            var argument = ((statements[3] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Initializer.Value as InvocationExpressionSyntax).ArgumentList.Arguments[1];
+                            ReportDiagnostic(context, SpanMissingRule, argument.GetLocation(), statementIdentifierToken.Text);
                             return false;
                         }
                     }
                     else
                     {
-                        ReportDiagnostic(context, EndSpanMissingRule, statements[4].GetLocation(), openParenToken.Text);
+                        var argument = ((statements[3] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Initializer.Value as InvocationExpressionSyntax).ArgumentList.Arguments[1];
+                        ReportDiagnostic(context, LocationMissingRule, argument.GetLocation(), statementIdentifierToken.Text);
                         return false;
                     }
                 }
                 else
                 {
-                    ReportDiagnostic(context, StartSpanMissingRule, statements[3].GetLocation(), keywordIdentifierToken.Text);
-                    return false;
-                }
+                    if (statementCount > 9)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        List<string> diagnosticInfo = DiagnosticCreationCheck(ruleNames, statements[statementCount - 2]);
+                        if (diagnosticInfo.Count == 0 || diagnosticInfo[0] == "" || diagnosticInfo[1] == "")
+                        {
+                            IfDiagnostic(context, statements[statementCount - 2], DiagnosticIncorrectRule, ruleNames[0]);
+                            return false;
+                        }
 
+                        bool reportCorrect = DiagnosticReportCheck(context, diagnosticInfo[0], contextParameter, statements);
+                        if (!reportCorrect)
+                        {
+                            IfDiagnostic(context, statements[8], DiagnosticReportIncorrectRule, contextParameter.Identifier.Text, diagnosticInfo[0]);
+                            return false;
+                        }
+                    }
+                }
                 return true;
             }
 
-            // Checks the open parenthesis variable, returns a SyntaxToken of "" if analysis failed
-            private SyntaxToken OpenParenAnalysis(SyntaxToken statementIdentifierToken, SyntaxList<StatementSyntax> statements)
-            {
-                var emptyResult = SyntaxFactory.Identifier("");
-
-                var statement = statements[3] as LocalDeclarationStatementSyntax;
-                if (statement == null)
-                {
-                    return emptyResult;
-                }
-
-                SyntaxToken openParenIdentifier = GetIdentifierTokenFromLocalDecl(statement);
-                if (openParenIdentifier == null || openParenIdentifier.Text == "")
-                {
-                    return emptyResult;
-                }
-
-                EqualsValueClauseSyntax equalsValueClause = GetEqualsValueClauseFromLocalDecl(statement);
-                if (equalsValueClause == null)
-                {
-                    return emptyResult;
-                }
-
-                var memberExpression = equalsValueClause.Value as MemberAccessExpressionSyntax;
-                if (memberExpression == null)
-                {
-                    return emptyResult;
-                }
-
-                var identifier = memberExpression.Expression as IdentifierNameSyntax;
-                if (identifier == null || identifier.Identifier.Text != statementIdentifierToken.Text)
-                {
-                    return emptyResult;
-                }
-
-                var name = memberExpression.Name as IdentifierNameSyntax;
-                if (name == null || name.Identifier.Text != "OpenParenToken")
-                {
-                    return emptyResult;
-                }
-
-                return openParenIdentifier;
-            }
-
             // Checks the start of the diagnostic span, returns a SyntaxToken of "" if analysis failed
-            private SyntaxToken StartAnalysis(SyntaxToken keywordIdentifierToken, SyntaxList<StatementSyntax> statements)
+            private bool StartAnalysis(SyntaxToken keywordIdentifierToken, SyntaxList<StatementSyntax> statements, string startSpanName)
             {
-                var emptyResult = SyntaxFactory.Identifier("");
-
-                var statement = statements[4] as LocalDeclarationStatementSyntax;
-                if (statement == null)
+                bool found = false;
+                for (int i = 3; i < 5; i++)
                 {
-                    return emptyResult;
-                }
-
-                SyntaxToken startToken = GetIdentifierTokenFromLocalDecl(statement);
-                if (startToken == null || startToken.Text == "")
-                {
-                    return emptyResult;
-                }
-
-                EqualsValueClauseSyntax equalsValueClause = GetEqualsValueClauseFromLocalDecl(statement);
-                if (equalsValueClause == null)
-                {
-                    return emptyResult;
-                }
-
-                var memberExpression = equalsValueClause.Value as MemberAccessExpressionSyntax;
-                if (memberExpression == null)
-                {
-                    return emptyResult;
-                }
-
-                var identifierExpressionName = memberExpression.Expression as IdentifierNameSyntax;
-                var memberExpressionName = memberExpression.Expression as MemberAccessExpressionSyntax;
-                if (identifierExpressionName == null && memberExpressionName == null)
-                {
-                    return emptyResult;
-                }
-
-                if (identifierExpressionName != null)
-                {
-                    if (identifierExpressionName.Identifier.Text != keywordIdentifierToken.Text)
+                    var statement = statements[i] as LocalDeclarationStatementSyntax;
+                    if (statement == null)
                     {
-                        return emptyResult;
+                        continue;
                     }
 
-                    var expressionMember = memberExpression.Name as IdentifierNameSyntax;
-                    if (expressionMember == null || expressionMember.Identifier.Text != "SpanStart")
+                    SyntaxToken startToken = GetIdentifierTokenFromLocalDecl(statement);
+                    if (startToken == null || startToken.Text == "" || startToken.Text != startSpanName)
                     {
-                        return emptyResult;
+                        continue;
+                    }
+
+                    EqualsValueClauseSyntax equalsValueClause = GetEqualsValueClauseFromLocalDecl(statement);
+                    if (equalsValueClause == null)
+                    {
+                        continue;
+                    }
+
+                    var memberExpression = equalsValueClause.Value as MemberAccessExpressionSyntax;
+                    if (memberExpression == null)
+                    {
+                        continue;
+                    }
+
+                    var identifierExpressionName = memberExpression.Expression as IdentifierNameSyntax;
+                    var memberExpressionName = memberExpression.Expression as MemberAccessExpressionSyntax;
+                    if (identifierExpressionName == null && memberExpressionName == null)
+                    {
+                        continue;
+                    }
+
+                    if (identifierExpressionName != null)
+                    {
+                        if (identifierExpressionName.Identifier.Text != keywordIdentifierToken.Text)
+                        {
+                            continue;
+                        }
+
+                        var expressionMember = memberExpression.Name as IdentifierNameSyntax;
+                        if (expressionMember == null || expressionMember.Identifier.Text != "SpanStart")
+                        {
+                            continue;
+                        }
+
+                        found = true;
+                    }
+
+                    if (memberExpressionName != null)
+                    {
+                        var identifierExpression = memberExpressionName.Expression as IdentifierNameSyntax;
+                        if (identifierExpression == null || identifierExpression.Identifier.Text != keywordIdentifierToken.Text)
+                        {
+                            continue;
+                        }
+
+                        var memberName = memberExpressionName.Name as IdentifierNameSyntax;
+                        if (memberName == null || memberName.Identifier.Text != "Span")
+                        {
+                            continue;
+                        }
+
+                        var finalName = memberExpression.Name as IdentifierNameSyntax;
+                        if (finalName == null || finalName.Identifier.Text != "Start")
+                        {
+                            continue;
+                        }
+
+                        found = true;
                     }
                 }
-
-                if (memberExpressionName != null)
-                {
-                    var identifierExpression = memberExpressionName.Expression as IdentifierNameSyntax;
-                    if (identifierExpression == null || identifierExpression.Identifier.Text != keywordIdentifierToken.Text)
-                    {
-                        return emptyResult;
-                    }
-
-                    var memberName = memberExpressionName.Name as IdentifierNameSyntax;
-                    if (memberName == null || memberName.Identifier.Text != "Span")
-                    {
-                        return emptyResult;
-                    }
-
-                    var finalName = memberExpression.Name as IdentifierNameSyntax;
-                    if (finalName == null || finalName.Identifier.Text != "Start")
-                    {
-                        return emptyResult;
-                    }
-                }
-
-                return startToken;
+                return found;
             }
 
             // Checks the end of the diagnostic span, returns a SyntaxToken of "" if analysis failed
-            private SyntaxToken EndAnalysis(SyntaxToken openParenToken, SyntaxList<StatementSyntax> statements)
+            private bool EndAnalysis(SyntaxToken statementIdentifierToken, SyntaxList<StatementSyntax> statements, string endSpanName)
             {
-                var emptyResult = SyntaxFactory.Identifier("");
-
-                var statement = statements[5] as LocalDeclarationStatementSyntax;
-                if (statement == null)
+                bool found = false;
+                for (int i = 3; i < 5; i++)
                 {
-                    return emptyResult;
-                }
-
-                SyntaxToken endToken = GetIdentifierTokenFromLocalDecl(statement);
-                if (endToken == null || endToken.Text == "")
-                {
-                    return emptyResult;
-                }
-
-                EqualsValueClauseSyntax equalsValueClause = GetEqualsValueClauseFromLocalDecl(statement);
-                if (equalsValueClause == null)
-                {
-                    return emptyResult;
-                }
-
-                var memberExpression = equalsValueClause.Value as MemberAccessExpressionSyntax;
-                if (memberExpression == null)
-                {
-                    return emptyResult;
-                }
-
-                var identifierExpressionName = memberExpression.Expression as IdentifierNameSyntax;
-                var memberExpressionName = memberExpression.Expression as MemberAccessExpressionSyntax;
-                if (identifierExpressionName == null && memberExpressionName == null)
-                {
-                    return emptyResult;
-                }
-
-                if (identifierExpressionName != null)
-                {
-                    if (identifierExpressionName.Identifier.Text != openParenToken.Text)
+                    var statement = statements[i] as LocalDeclarationStatementSyntax;
+                    if (statement == null)
                     {
-                        return emptyResult;
+                        continue;
+                    }
+
+                    SyntaxToken endToken = GetIdentifierTokenFromLocalDecl(statement);
+                    if (endToken == null || endToken.Text == "" || endToken.Text != endSpanName)
+                    {
+                        continue;
+                    }
+
+                    EqualsValueClauseSyntax equalsValueClause = GetEqualsValueClauseFromLocalDecl(statement);
+                    if (equalsValueClause == null)
+                    {
+                        continue;
+                    }
+
+                    var memberExpression = equalsValueClause.Value as MemberAccessExpressionSyntax;
+                    if (memberExpression == null)
+                    {
+                        continue;
+                    }
+                    var memberExpressionName = memberExpression.Expression as MemberAccessExpressionSyntax;
+                    if (memberExpressionName == null)
+                    {
+                        continue;
                     }
 
                     var expressionMember = memberExpression.Name as IdentifierNameSyntax;
-                    if (expressionMember == null || expressionMember.Identifier.Text != "SpanStart")
+                    if (expressionMember == null)
                     {
-                        return emptyResult;
+                        continue;
+                    }
+
+                    if (expressionMember.Identifier.Text == "SpanStart")
+                    {
+                        var identifierExpression = memberExpressionName.Expression as IdentifierNameSyntax;
+                        if (identifierExpression == null || identifierExpression.Identifier.Text != statementIdentifierToken.Text)
+                        {
+                            continue;
+                        }
+
+                        var memberName = memberExpressionName.Name as IdentifierNameSyntax;
+                        if (memberName == null || memberName.Identifier.Text != "OpenParenToken")
+                        {
+                            continue;
+                        }
+
+                        found = true;
+                    }
+
+                    else if (expressionMember.Identifier.Text == "Start")
+                    {
+                        var identifierExpression = memberExpressionName.Expression as MemberAccessExpressionSyntax;
+                        if (identifierExpression == null)
+                        {
+                            continue;
+                        }
+
+                        var firstAccessor = identifierExpression.Expression as IdentifierNameSyntax;
+                        if (firstAccessor == null || firstAccessor.Identifier.Text != statementIdentifierToken.Text)
+                        {
+                            continue;
+                        }
+
+                        var secondAccessor = identifierExpression.Name as IdentifierNameSyntax;
+                        if (secondAccessor == null || secondAccessor.Identifier.Text != "OpenParenToken")
+                        {
+                            continue;
+                        }
+
+                        var memberName = memberExpression.Name as IdentifierNameSyntax;
+                        if (memberName == null || memberName.Identifier.Text != "Span")
+                        {
+                            continue;
+                        }
+
+                        found = true;
+                    }
+
+                    else
+                    {
+                        continue;
                     }
                 }
 
-                if (memberExpressionName != null)
-                {
-                    var identifierExpression = memberExpressionName.Expression as IdentifierNameSyntax;
-                    if (identifierExpression == null || identifierExpression.Identifier.Text != openParenToken.Text)
-                    {
-                        return emptyResult;
-                    }
-
-                    var memberName = memberExpressionName.Name as IdentifierNameSyntax;
-                    if (memberName == null || memberName.Identifier.Text != "Span")
-                    {
-                        return emptyResult;
-                    }
-
-                    var finalName = memberExpression.Name as IdentifierNameSyntax;
-                    if (finalName == null || finalName.Identifier.Text != "Start")
-                    {
-                        return emptyResult;
-                    }
-                }
-
-                return endToken;
+                return found;
             }
 
-            // Checks the creation of the diagnostic span, returns a SyntaxToken of "" if analysis failed
-            private SyntaxToken SpanAnalysis(SyntaxToken startToken, SyntaxToken endToken, SyntaxList<StatementSyntax> statements)
+            // Checks the creation of the diagnostic span, returns an empty list if failed, otherwise a list with the name of start span variable and end span variable
+            private List<string> SpanAnalysis(StatementSyntax statement, string spanName)
             {
-                var emptyResult = SyntaxFactory.Identifier("");
+                var emptyResult = new List<string>();
 
-                var statement = statements[6] as LocalDeclarationStatementSyntax;
-                if (statement == null)
+                var newStatement = statement as LocalDeclarationStatementSyntax;
+                if (newStatement == null)
                 {
                     return emptyResult;
                 }
 
-                SyntaxToken spanToken = GetIdentifierTokenFromLocalDecl(statement);
-                if (spanToken == null || spanToken.Text == "")
+                SyntaxToken spanToken = GetIdentifierTokenFromLocalDecl(newStatement);
+                if (spanToken == null || spanToken.Text == "" || spanToken.Text != spanName)
                 {
                     return emptyResult;
                 }
 
-                EqualsValueClauseSyntax equalsValueClause = GetEqualsValueClauseFromLocalDecl(statement);
+                EqualsValueClauseSyntax equalsValueClause = GetEqualsValueClauseFromLocalDecl(newStatement);
                 if (equalsValueClause == null)
                 {
                     return emptyResult;
@@ -1649,7 +1652,7 @@ namespace MetaCompilation
                 }
 
                 var startArgIdentifier = startArg.Expression as IdentifierNameSyntax;
-                if (startArgIdentifier == null || startArgIdentifier.Identifier.Text != startToken.Text)
+                if (startArgIdentifier == null)
                 {
                     return emptyResult;
                 }
@@ -1661,32 +1664,33 @@ namespace MetaCompilation
                 }
 
                 var endArgIdentifier = endArg.Expression as IdentifierNameSyntax;
-                if (endArgIdentifier == null || endArgIdentifier.Identifier.Text != endToken.Text)
+                if (endArgIdentifier == null)
                 {
                     return emptyResult;
                 }
 
-                return spanToken;
+                emptyResult.Add(startArgIdentifier.Identifier.Text);
+                emptyResult.Add(endArgIdentifier.Identifier.Text);
+                return emptyResult;
             }
 
-            // Checks the creation of the diagnostics location, returns a SyntaxToken of "" if analysis failed
-            private SyntaxToken LocationAnalysis(SyntaxToken statementIdentifierToken, SyntaxToken spanToken, SyntaxList<StatementSyntax> statements)
+            // Checks the creation of the diagnostics location, returns a string of "" if analysis failed, else returns name of span variable
+            private string LocationAnalysis(SyntaxToken statementIdentifierToken, string locationName, StatementSyntax statement)
             {
-                var emptyResult = SyntaxFactory.Identifier("");
-
-                var statement = statements[7] as LocalDeclarationStatementSyntax;
-                if (statement == null)
+                string emptyResult = "";
+                var newStatement = statement as LocalDeclarationStatementSyntax;
+                if (newStatement == null)
                 {
                     return emptyResult;
                 }
 
-                SyntaxToken locationToken = GetIdentifierTokenFromLocalDecl(statement);
+                SyntaxToken locationToken = GetIdentifierTokenFromLocalDecl(newStatement);
                 if (locationToken == null || locationToken.Text == "")
                 {
                     return emptyResult;
                 }
 
-                EqualsValueClauseSyntax equalsValueClause = GetEqualsValueClauseFromLocalDecl(statement);
+                EqualsValueClauseSyntax equalsValueClause = GetEqualsValueClauseFromLocalDecl(newStatement);
                 if (equalsValueClause == null)
                 {
                     return emptyResult;
@@ -1759,32 +1763,26 @@ namespace MetaCompilation
                 }
 
                 var spanArgIdentifier = spanArg.Expression as IdentifierNameSyntax;
-                if (spanArgIdentifier == null || spanArgIdentifier.Identifier.Text != spanToken.Text)
+                if (spanArgIdentifier == null)
                 {
                     return emptyResult;
                 }
 
-                return locationToken;
+                return spanArgIdentifier.Identifier.Text;
             }
 
-            // Checks the creation of the diagnostic itself, returns a SyntaxToken of "" if analysis failed
-            private SyntaxToken DiagnosticCreationCheck(List<string> ruleNames, SyntaxToken locationToken, SyntaxList<StatementSyntax> statements)
+            // Checks the creation of the diagnostic itself, returns an empty list if analysis failed, else returns a list with diagnostic name, then diagnostic location names
+            private List<string> DiagnosticCreationCheck(List<string> ruleNames, StatementSyntax statement)
             {
-                var emptyResult = SyntaxFactory.Identifier("");
+                var emptyResult = new List<string>();
 
-                var statement = statements[8] as LocalDeclarationStatementSyntax;
-                if (statement == null)
+                var newStatement = statement as LocalDeclarationStatementSyntax;
+                if (newStatement == null)
                 {
                     return emptyResult;
                 }
 
-                SyntaxToken diagnosticToken = GetIdentifierTokenFromLocalDecl(statement);
-                if (locationToken == null || locationToken.Text == "")
-                {
-                    return emptyResult;
-                }
-
-                EqualsValueClauseSyntax equalsValueClause = GetEqualsValueClauseFromLocalDecl(statement);
+                EqualsValueClauseSyntax equalsValueClause = GetEqualsValueClauseFromLocalDecl(newStatement);
                 if (equalsValueClause == null)
                 {
                     return emptyResult;
@@ -1845,18 +1843,22 @@ namespace MetaCompilation
                 }
 
                 var locationArgIdentifier = locationArg.Expression as IdentifierNameSyntax;
-                if (locationArgIdentifier == null || locationArgIdentifier.Identifier.Text != locationToken.Text)
+                if (locationArgIdentifier == null)
                 {
                     return emptyResult;
                 }
 
-                return diagnosticToken;
+                SyntaxToken diagnosticToken = GetIdentifierTokenFromLocalDecl(newStatement);
+                emptyResult.Add(diagnosticToken.Text);
+                emptyResult.Add(locationArgIdentifier.Identifier.Text);
+
+                return emptyResult;
             }
 
             // Checks the reporting of the diagnostic, returns a bool representing whether or not analysis failed
-            private bool DiagnosticReportCheck(CompilationAnalysisContext context, SyntaxToken diagnosticToken, ParameterSyntax contextParameter, SyntaxList<StatementSyntax> statements)
+            private bool DiagnosticReportCheck(CompilationAnalysisContext context, string diagnosticName, ParameterSyntax contextParameter, SyntaxList<StatementSyntax> statements)
             {
-                var statement = statements[9] as ExpressionStatementSyntax;
+                var statement = statements[8] as ExpressionStatementSyntax;
                 if (statement == null)
                 {
                     return false;
@@ -1905,7 +1907,7 @@ namespace MetaCompilation
                 }
 
                 var diagnosticArgIdentifier = diagnosticArg.Expression as IdentifierNameSyntax;
-                if (diagnosticArgIdentifier == null || diagnosticArgIdentifier.Identifier.Text != diagnosticToken.Text)
+                if (diagnosticArgIdentifier == null || diagnosticArgIdentifier.Identifier.Text != diagnosticName)
                 {
                     return false;
                 }

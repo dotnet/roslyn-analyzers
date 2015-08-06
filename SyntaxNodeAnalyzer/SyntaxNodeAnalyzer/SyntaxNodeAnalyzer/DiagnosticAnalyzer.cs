@@ -49,28 +49,46 @@ namespace SyntaxNodeAnalyzer
             // This statement navigates down the syntax tree one level to extract the 'if' keyword
             var ifKeyword = ifStatement.IfKeyword;
 
+            // Checks if there is any trailing trivia (eg spaces or comments) associated with the if-keyword.
             if (ifKeyword.HasTrailingTrivia)
             {
+                // Checks that there is only one piece of trailing trivia.
                 if (ifKeyword.TrailingTrivia.Count == 1)
                 {
                     var trailingTrivia = ifKeyword.TrailingTrivia.First();
 
+                    // Checks that the single trailing trivia is of kind whitespace (as opposed to a comment for example).
                     if (trailingTrivia.IsKind(SyntaxKind.WhitespaceTrivia))
                     {
+                        // Finally, this statement checks that the trailing trivia is one single space.
                         if (trailingTrivia.ToString() == " ")
                         {
+<<<<<<< HEAD
                             // If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
+=======
+                            // If the analyzer is satisfied that there is only a single space between 'if' and '(', it will return from this method without reporting a diagnostic
+>>>>>>> dotnet/master
                             return;
                         }
                     }
                 }
             }
 
+<<<<<<< HEAD
+=======
+            // Extracts the opening parenthesis of the if-statement condition
+            var openParen = ifStatement.OpenParenToken;
+
+>>>>>>> dotnet/master
             // Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle
             var startDiagnosticSpan = ifKeyword.SpanStart;
 
             // Determines the end of the span of the diagnostic that will be reported
+<<<<<<< HEAD
             var endDiagnosticSpan = ifStatement.OpenParenToken.SpanStart;
+=======
+            var endDiagnosticSpan = openParen.SpanStart;
+>>>>>>> dotnet/master
 
             // The span is the range of integers that define the position of the characters the red squiggle will underline
             var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);

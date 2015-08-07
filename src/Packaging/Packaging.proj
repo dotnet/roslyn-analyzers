@@ -8,6 +8,7 @@
     <Project Include="..\CodeAnalysis\NuGet\CodeAnalysisDiagnosticAnalyzers.NuGet.proj" />
     <Project Include="..\FxCop\Desktop.Analyzers\NuGet\DesktopAnalyzers.NuGet.proj" />
     <Project Include="..\FxCop\System.Runtime.Analyzers\NuGet\SystemRuntimeAnalyzers.NuGet.proj" />
+    <Project Include="..\FxCop\System.Runtime.InteropServices.Analyzers\NuGet\SystemRuntimeInteropServicesAnalyzers.NuGet.proj" />
     <Project Include="..\AnalyzerPowerPack\NuGet\AnalyzerPowerPack.NuGet.proj" />
   </ItemGroup>
   <ImportGroup Label="Imports">

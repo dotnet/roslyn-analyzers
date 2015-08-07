@@ -1391,26 +1391,20 @@ namespace MetaCompilation
                 }
                 else
                 {
-                    if (statementCount > 9)
+                    List<string> diagnosticInfo = DiagnosticCreationCheck(ruleNames, statements[statementCount - 2]);
+                    if (diagnosticInfo.Count == 0 || diagnosticInfo[0] == "" || diagnosticInfo[1] == "")
                     {
+                        IfDiagnostic(context, statements[statementCount - 2], DiagnosticIncorrectRule, ruleNames[0]);
                         return false;
                     }
-                    else
-                    {
-                        List<string> diagnosticInfo = DiagnosticCreationCheck(ruleNames, statements[statementCount - 2]);
-                        if (diagnosticInfo.Count == 0 || diagnosticInfo[0] == "" || diagnosticInfo[1] == "")
-                        {
-                            IfDiagnostic(context, statements[statementCount - 2], DiagnosticIncorrectRule, ruleNames[0]);
-                            return false;
-                        }
 
-                        bool reportCorrect = DiagnosticReportCheck(context, diagnosticInfo[0], contextParameter, statements);
-                        if (!reportCorrect)
-                        {
-                            IfDiagnostic(context, statements[8], DiagnosticReportIncorrectRule, contextParameter.Identifier.Text, diagnosticInfo[0]);
-                            return false;
-                        }
+                    bool reportCorrect = DiagnosticReportCheck(context, diagnosticInfo[0], contextParameter, statements);
+                    if (!reportCorrect)
+                    {
+                        IfDiagnostic(context, statements[8], DiagnosticReportIncorrectRule, contextParameter.Identifier.Text, diagnosticInfo[0]);
+                        return false;
                     }
+                    
                 }
                 return true;
             }
@@ -1594,6 +1588,7 @@ namespace MetaCompilation
             private List<string> SpanAnalysis(StatementSyntax statement, string spanName)
             {
                 var emptyResult = new List<string>();
+                var result = new List<string>();
 
                 var newStatement = statement as LocalDeclarationStatementSyntax;
                 if (newStatement == null)
@@ -1673,15 +1668,15 @@ namespace MetaCompilation
                     return emptyResult;
                 }
 
-                emptyResult.Add(startArgIdentifier.Identifier.Text);
-                emptyResult.Add(endArgIdentifier.Identifier.Text);
-                return emptyResult;
+                result.Add(startArgIdentifier.Identifier.Text);
+                result.Add(endArgIdentifier.Identifier.Text);
+                return result;
             }
 
             // Checks the creation of the diagnostics location, returns a string of "" if analysis failed, else returns name of span variable
             private string LocationAnalysis(SyntaxToken statementIdentifierToken, string locationName, StatementSyntax statement)
             {
-                string emptyResult = "";
+                string emptyResult = null;
                 var newStatement = statement as LocalDeclarationStatementSyntax;
                 if (newStatement == null)
                 {
@@ -1689,7 +1684,7 @@ namespace MetaCompilation
                 }
 
                 SyntaxToken locationToken = GetIdentifierTokenFromLocalDecl(newStatement);
-                if (locationToken == null || locationToken.Text == "")
+                if (locationToken == null || locationToken.Text == "" || locationToken.Text != locationName)
                 {
                     return emptyResult;
                 }
@@ -1779,6 +1774,7 @@ namespace MetaCompilation
             private List<string> DiagnosticCreationCheck(List<string> ruleNames, StatementSyntax statement)
             {
                 var emptyResult = new List<string>();
+                var result = new List<string>();
 
                 var newStatement = statement as LocalDeclarationStatementSyntax;
                 if (newStatement == null)
@@ -1853,10 +1849,10 @@ namespace MetaCompilation
                 }
 
                 SyntaxToken diagnosticToken = GetIdentifierTokenFromLocalDecl(newStatement);
-                emptyResult.Add(diagnosticToken.Text);
-                emptyResult.Add(locationArgIdentifier.Identifier.Text);
+                result.Add(diagnosticToken.Text);
+                result.Add(locationArgIdentifier.Identifier.Text);
 
-                return emptyResult;
+                return result;
             }
 
             // Checks the reporting of the diagnostic, returns a bool representing whether or not analysis failed

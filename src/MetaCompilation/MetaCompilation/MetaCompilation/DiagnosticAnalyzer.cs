@@ -1306,7 +1306,7 @@ namespace MetaCompilation
                     if (statementCount > 4)
                     {
                         string locationCorrect = LocationAnalysis(statementIdentifierToken, diagnosticInfo[1], statements[statementCount - 2]);
-                        if (locationCorrect == "")
+                        if (locationCorrect == "" || locationCorrect == null)
                         {
                             IfDiagnostic(context, statements[statementCount - 2], LocationIncorrectRule, statementIdentifierToken.Text);
                             return false;

@@ -58,6 +58,7 @@
       <TestAssemblies Include="Binaries\$(Configuration)\Roslyn.CodeAnalysis.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\Desktop.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\System.Runtime.Analyzers.UnitTests.dll" />
+      <TestAssemblies Include="Binaries\$(Configuration)\System.Runtime.InteropServices.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\Microsoft.AnalyzerPowerPack.UnitTests.dll" />
     </ItemGroup>
 

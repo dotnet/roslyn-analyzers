@@ -70,15 +70,14 @@ namespace SyntaxNodeAnalyzer
                     }
                 }
             }
-
             // Extracts the opening parenthesis of the if-statement condition
             var openParen = ifStatement.OpenParenToken;
-
+            
             // Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle
             var startDiagnosticSpan = ifKeyword.SpanStart;
 
             // Determines the end of the span of the diagnostic that will be reported
-            var endDiagnosticSpan = openParen.SpanStart;
+            var endDiagnosticSpan = ifStatement.OpenParenToken.SpanStart;
 
             // The span is the range of integers that define the position of the characters the red squiggle will underline
             var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);

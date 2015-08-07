@@ -87,9 +87,8 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var openParen = ifStatement.OpenParenToken;
             var startDiagnosticSpan = ifKeyword.SpanStart;
-            var endDiagnosticSpan = openParen.SpanStart;
+            var endDiagnosticSpan = ifStatement.OpenParenToken.SpanStart;
             var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
             var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
             var diagnostic = Diagnostic.Create(Rule, diagnosticLocation, Rule.MessageFormat);
@@ -173,9 +172,8 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var openParen = ifStatement.OpenParenToken;
             var startDiagnosticSpan = ifKeyword.SpanStart;
-            var endDiagnosticSpan = openParen.SpanStart;
+            var endDiagnosticSpan = ifStatement.OpenParentToken.SpanStart;
             var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
             var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
             var diagnostic = Diagnostic.Create(Rule, diagnosticLocation, Rule.MessageFormat);
@@ -259,9 +257,8 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var openParen = ifStatement.OpenParenToken;
             var startDiagnosticSpan = ifKeyword.SpanStart;
-            var endDiagnosticSpan = openParen.SpanStart;
+            var endDiagnosticSpan = ifStatement.OpenParenToken.SpanStart;
             var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
             var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
             var diagnostic = Diagnostic.Create(Rule, diagnosticLocation, Rule.MessageFormat);
@@ -10821,300 +10818,6 @@ namespace SyntaxNodeAnalyzer
         }
         #endregion
 
-        #region OpenParenTests
-
-        private const string s_missingOpenParenMessage = s_messagePrefix + "Moving on to the creation and reporting of the diagnostic, extract the open parenthesis of 'ifState' into a variable to use as the end of the diagnostic span";
-        private const string s_incorrectOpenParenMessage = s_messagePrefix + "This statement should extract the open parenthesis of 'ifState' to use as the end of the diagnostic span";
-
-        [Fact]
-        public void MissingOpenParen() // no DiagnosticDescriptor field
-        {
-            var test = @"using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Threading;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Text;
-
-namespace SyntaxNodeAnalyzer
-{
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
-    {
-        public const string spacingRuleId = ""IfSpacing"";
-
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
-            id: spacingRuleId,
-            title: ""If statement must have a space between 'if' and the boolean expression"",
-            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"",
-            category: ""Syntax"",
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return ImmutableArray.Create(Rule);
-            }
-        }
-
-        public override void Initialize(AnalysisContext context)
-        {
-            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-        }
-
-        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
-        {
-            var ifState = (IfStatementSyntax)context.Node;
-            var ifKeyword = ifState.IfKeyword;
-
-            if (ifKeyword.HasTrailingTrivia)
-            {
-                if (ifKeyword.TrailingTrivia.Count == 1)
-                {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
-                    {
-                        if (trailingTrivia.ToString() == "" "")
-                        {
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.OpenParenMissing,
-                Message = s_missingOpenParenMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 45, 13) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
-            var fixtest = @"using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Threading;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Text;
-
-namespace SyntaxNodeAnalyzer
-{
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
-    {
-        public const string spacingRuleId = ""IfSpacing"";
-
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
-            id: spacingRuleId,
-            title: ""If statement must have a space between 'if' and the boolean expression"",
-            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"",
-            category: ""Syntax"",
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return ImmutableArray.Create(Rule);
-            }
-        }
-
-        public override void Initialize(AnalysisContext context)
-        {
-            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-        }
-
-        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
-        {
-            var ifState = (IfStatementSyntax)context.Node;
-            var ifKeyword = ifState.IfKeyword;
-
-            if (ifKeyword.HasTrailingTrivia)
-            {
-                if (ifKeyword.TrailingTrivia.Count == 1)
-                {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
-                    {
-                        if (trailingTrivia.ToString() == "" "")
-                        {
-                            return;
-                        }
-                    }
-                }
-            }
-
-            // Extracts the opening parenthesis of the if-statement condition
-            var openParen = ifState.OpenParenToken;
-        }
-    }
-}";
-
-            VerifyCSharpFix(test, fixtest);
-        }
-
-        [Fact]
-        public void IncorrectOpenParen()
-        {
-            var test = @"using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Threading;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Text;
-
-namespace SyntaxNodeAnalyzer
-{
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
-    {
-        public const string spacingRuleId = ""IfSpacing"";
-
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
-            id: spacingRuleId,
-            title: ""If statement must have a space between 'if' and the boolean expression"",
-            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"",
-            category: ""Syntax"",
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true);
-
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-            {
-                get
-                {
-                    return ImmutableArray.Create(Rule);
-                }
-            }
-
-            public override void Initialize(AnalysisContext context)
-            {
-                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-            }
-
-            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
-            {
-                var ifState = (IfStatementSyntax)context.Node;
-                var ifKeyword = ifState.IfKeyword;
-
-                if (ifKeyword.HasTrailingTrivia)
-                {
-                    if (ifKeyword.TrailingTrivia.Count == 1)
-                    {
-                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
-                        {
-                            if (trailingTrivia.ToString() == "" "")
-                            {
-                                return;
-                            }
-                        }
-                    }
-                }
-
-                var test = ifState.Equals;
-            }
-    }
-}";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.OpenParenIncorrect,
-                Message = s_incorrectOpenParenMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 60, 17) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
-            var fixtest = @"using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Threading;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Text;
-
-namespace SyntaxNodeAnalyzer
-{
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
-    {
-        public const string spacingRuleId = ""IfSpacing"";
-
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
-            id: spacingRuleId,
-            title: ""If statement must have a space between 'if' and the boolean expression"",
-            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"",
-            category: ""Syntax"",
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true);
-
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-            {
-                get
-                {
-                    return ImmutableArray.Create(Rule);
-                }
-            }
-
-            public override void Initialize(AnalysisContext context)
-            {
-                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-            }
-
-            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
-            {
-                var ifState = (IfStatementSyntax)context.Node;
-                var ifKeyword = ifState.IfKeyword;
-
-                if (ifKeyword.HasTrailingTrivia)
-                {
-                    if (ifKeyword.TrailingTrivia.Count == 1)
-                    {
-                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
-                        {
-                            if (trailingTrivia.ToString() == "" "")
-                            {
-                                return;
-                            }
-                        }
-                    }
-                }
-
-            // Extracts the opening parenthesis of the if-statement condition
-            var openParen = ifState.OpenParenToken;
-        }
-    }
-}";
-
-            VerifyCSharpFix(test, fixtest);
-        }
-        #endregion
-
         #region MissingSuppDiag
 
         private const string s_missingSuppDiagMessage = s_messagePrefix + "You are missing the required inherited SupportedDiagnostics property";
@@ -13706,7 +13409,7 @@ namespace SyntaxNodeAnalyzer
 
         #region StartSpanTests
 
-        private const string s_startSpanMissingMessage = s_messagePrefix + "Next, extract the start of the span of 'ifKeyword' into a variable, to be used as the start of the diagnostic span";
+        private const string s_startSpanMissingMessage = s_messagePrefix + "Each span needs a start and end position, so create the start position of 'diagnosticSpan' using the SpanStart of 'ifKeyword'";
         private const string s_startSpanIncorrectMessage = s_messagePrefix + "This statement should extract the start of the span of 'ifKeyword' into a variable, to be used as the start of the diagnostic span";
 
         [Fact]
@@ -13771,7 +13474,10 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
+            var endDiagnosticSpan = ifState.OpenParenToken.SpanStart;
+            var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+            var diagnosticLocation = Location.Create(ifState.SyntaxTree, diagnosticSpan);
+            var diagnostic = Diagnostic.Create(Rule, diagnosticLocation);
         }
     }
 }";
@@ -13781,7 +13487,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.StartSpanMissing,
                 Message = s_startSpanMissingMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 60, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 61, 54) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -13845,10 +13551,12 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
-
             // Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle
             var startDiagnosticSpan = ifKeyword.SpanStart;
+            var endDiagnosticSpan = ifState.OpenParenToken.SpanStart;
+            var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+            var diagnosticLocation = Location.Create(ifState.SyntaxTree, diagnosticSpan);
+            var diagnostic = Diagnostic.Create(Rule, diagnosticLocation);
         }
     }
 }";
@@ -13918,18 +13626,21 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
             var start = ifState.SpanStart;
+            var endDiagnosticSpan = ifState.OpenParenToken.SpanStart;
+            var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+            var diagnosticLocation = Location.Create(ifState.SyntaxTree, diagnosticSpan);
+            var diagnostic = Diagnostic.Create(Rule, diagnosticLocation);
         }
     }
 }";
 
             var expected = new DiagnosticResult
             {
-                Id = MetaCompilationAnalyzer.StartSpanIncorrect,
-                Message = s_startSpanIncorrectMessage,
+                Id = MetaCompilationAnalyzer.StartSpanMissing,
+                Message = s_startSpanMissingMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 61, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 62, 54) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -13993,10 +13704,13 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
-
             // Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle
             var startDiagnosticSpan = ifKeyword.SpanStart;
+            var start = ifState.SpanStart;
+            var endDiagnosticSpan = ifState.OpenParenToken.SpanStart;
+            var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+            var diagnosticLocation = Location.Create(ifState.SyntaxTree, diagnosticSpan);
+            var diagnostic = Diagnostic.Create(Rule, diagnosticLocation);
         }
     }
 }";
@@ -14068,9 +13782,8 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var openParen = ifStatement.OpenParenToken;
             var startDiagnosticSpan = ifKeyword.Span.Start;
-            var endDiagnosticSpan = openParen.SpanStart;
+            var endDiagnosticSpan = ifStatement.OpenParenToken.SpanStart;
             var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
             var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
             var diagnostic = Diagnostic.Create(Rule, diagnosticLocation, Rule.MessageFormat);
@@ -14093,11 +13806,12 @@ namespace SyntaxNodeAnalyzer
 
         #region EndSpanTests
 
-        private const string s_endSpanMissingMessage = s_messagePrefix + "Next, determine the end of the span of the diagnostic that is going to be reported";
-        private const string s_endSpanIncorrectMessage = s_messagePrefix + "This statement should extract the start of the span of 'open' into a variable, to be used as the end of the diagnostic span";
+        private const string s_endSpanMissingMessage = s_messagePrefix + "Each span needs a start and end position, so create the end position of 'diagnosticSpan' using the SpanStart of the OpenParenToken of 'ifState'";
+        private const string s_endSpanIncorrectMessage = s_messagePrefix + "This statement should extract the start of the span of the OpenParenToken of 'ifState' into a variable, to be used as the end of the diagnostic span";
 
+        //Insert end span above textspan
         [Fact]
-        public void MissingEndSpan()
+        public void MissingEndSpan1()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -14158,8 +13872,9 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
-            var start = ifKeyword.SpanStart;
+            var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+            var diagnosticLocation = Location.Create(ifState.SyntaxTree, diagnosticSpan);
+            var diagnostic = Diagnostic.Create(Rule, diagnosticLocation);
         }
     }
 }";
@@ -14169,7 +13884,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.EndSpanMissing,
                 Message = s_endSpanMissingMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 61, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 60, 75) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -14233,11 +13948,163 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
-            var start = ifKeyword.SpanStart;
+            // Determines the end of the span of the diagnostic that will be reported
+            var endDiagnosticSpan = ifState.OpenParenToken.SpanStart;
+            var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+            var diagnosticLocation = Location.Create(ifState.SyntaxTree, diagnosticSpan);
+            var diagnostic = Diagnostic.Create(Rule, diagnosticLocation);
+        }
+    }
+}";
+
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        //Insert endspan if startspan already exists
+        [Fact]
+        public void MissingEndSpan2()
+        {
+            var test = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""If statement must have a space between 'if' and the boolean expression"",
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                return ImmutableArray.Create(Rule);
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+        {
+            var ifState = (IfStatementSyntax)context.Node;
+            var ifKeyword = ifState.IfKeyword;
+
+            if (ifKeyword.HasTrailingTrivia)
+            {
+                if (ifKeyword.TrailingTrivia.Count == 1)
+                {
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    {
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
+                    }
+                }
+            }
+            var startDiagnosticSpan = ifKeyword.Span.Start;
+            var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+            var diagnosticLocation = Location.Create(ifState.SyntaxTree, diagnosticSpan);
+            var diagnostic = Diagnostic.Create(Rule, diagnosticLocation);
+        }
+    }
+}";
+
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.EndSpanMissing,
+                Message = s_endSpanMissingMessage,
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 60, 75) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""If statement must have a space between 'if' and the boolean expression"",
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                return ImmutableArray.Create(Rule);
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+        {
+            var ifState = (IfStatementSyntax)context.Node;
+            var ifKeyword = ifState.IfKeyword;
+
+            if (ifKeyword.HasTrailingTrivia)
+            {
+                if (ifKeyword.TrailingTrivia.Count == 1)
+                {
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    {
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
+                    }
+                }
+            }
 
             // Determines the end of the span of the diagnostic that will be reported
-            var endDiagnosticSpan = open.SpanStart;
+            var endDiagnosticSpan = ifState.OpenParenToken.SpanStart;
+            var startDiagnosticSpan = ifKeyword.Span.Start;
+            var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+            var diagnosticLocation = Location.Create(ifState.SyntaxTree, diagnosticSpan);
+            var diagnostic = Diagnostic.Create(Rule, diagnosticLocation);
         }
     }
 }";
@@ -14307,9 +14174,10 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
-            var start = ifKeyword.SpanStart;
             return 1;
+            var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+            var diagnosticLocation = Location.Create(ifState.SyntaxTree, diagnosticSpan);
+            var diagnostic = Diagnostic.Create(Rule, diagnosticLocation);
         }
     }
 }";
@@ -14319,7 +14187,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.EndSpanIncorrect,
                 Message = s_endSpanIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 62, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 60, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -14383,16 +14251,16 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
-            var start = ifKeyword.SpanStart;
-
             // Determines the end of the span of the diagnostic that will be reported
-            var endDiagnosticSpan = open.SpanStart;
+            var endDiagnosticSpan = ifState.OpenParenToken.SpanStart;
+            var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+            var diagnosticLocation = Location.Create(ifState.SyntaxTree, diagnosticSpan);
+            var diagnostic = Diagnostic.Create(Rule, diagnosticLocation);
         }
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
         }
 
         // Check that functionality start.span is supported
@@ -14459,9 +14327,8 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var openParen = ifStatement.OpenParenToken;
             var startDiagnosticSpan = ifKeyword.SpanStart;
-            var endDiagnosticSpan = openParen.Span.Start;
+            var endDiagnosticSpan = ifStatement.OpenParenToken.Span.Start;
             var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
             var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
             var diagnostic = Diagnostic.Create(Rule, diagnosticLocation, Rule.MessageFormat);
@@ -14484,8 +14351,8 @@ namespace SyntaxNodeAnalyzer
 
         #region SpanTests
 
-        private const string s_spanMissingMessage = s_messagePrefix + "Next, using TextSpan.FromBounds, create a variable that is the span of the diagnostic that will be reported";
-        private const string s_spanIncorrectMessage = s_messagePrefix + "This statement should use TextSpan.FromBounds, 'start', and 'end' to create the span of the diagnostic that will be reported";
+        private const string s_spanMissingMessage = s_messagePrefix + "The location needs a span to represent the range where the squiggle will appear, so create a span using TextSpan.FromBounds and indices for the start and end of the span";
+        private const string s_spanIncorrectMessage = s_messagePrefix + "This statement should create a span of the diagnostic to be reported, called 'diagnosticSpan', using TextSpan.FromBounds and indices for the start and end of the span";
 
         [Fact]
         public void MissingSpan()
@@ -14549,9 +14416,11 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
-            var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
+            // Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument
+            var diagnosticLocation = Location.Create(ifState.SyntaxTree, diagnosticSpan);
+
+            // Holds the diagnostic and all necessary information to be reported
+            var diagnostic = Diagnostic.Create(Rule, diagnosticLocation);
         }
     }
 }";
@@ -14561,7 +14430,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.SpanMissing,
                 Message = s_spanMissingMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 62, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 61, 74) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -14625,17 +14494,19 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
-            var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
-
             // The span is the range of integers that define the position of the characters the red squiggle will underline
-            var diagnosticSpan = TextSpan.FromBounds(start, end);
+            var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+
+            // Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument
+            var diagnosticLocation = Location.Create(ifState.SyntaxTree, diagnosticSpan);
+
+            // Holds the diagnostic and all necessary information to be reported
+            var diagnostic = Diagnostic.Create(Rule, diagnosticLocation);
         }
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
         }
 
         [Fact]
@@ -14700,10 +14571,13 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
-            var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
             if (true) {}
+
+            // Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument
+            var diagnosticLocation = Location.Create(ifState.SyntaxTree, diagnosticSpan);
+
+            // Holds the diagnostic and all necessary information to be reported
+            var diagnostic = Diagnostic.Create(Rule, diagnosticLocation);
         }
     }
 }";
@@ -14713,7 +14587,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.SpanIncorrect,
                 Message = s_spanIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 63, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 60, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -14777,24 +14651,26 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
-            var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
-
             // The span is the range of integers that define the position of the characters the red squiggle will underline
-            var diagnosticSpan = TextSpan.FromBounds(start, end);
+            var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+
+            // Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument
+            var diagnosticLocation = Location.Create(ifState.SyntaxTree, diagnosticSpan);
+
+            // Holds the diagnostic and all necessary information to be reported
+            var diagnostic = Diagnostic.Create(Rule, diagnosticLocation);
         }
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
         }
         #endregion
 
         #region LocationTests
 
-        private const string s_locationMissingMessage = s_messagePrefix + "Next, using Location.Create, create a location for the diagnostic";
-        private const string s_locationIncorrectMessage = s_messagePrefix + "This statement should use Location.Create, 'ifState', and 'span' to create the location of the diagnostic";
+        private const string s_locationMissingMessage = s_messagePrefix + "Every diagnostic needs a location, so create a diagnostic location using the SyntaxTree of 'ifState' and a diagnostic span";
+        private const string s_locationIncorrectMessage = s_messagePrefix + "This statement should use Location.Create, 'ifState', and a diagnostic span to create the location of the diagnostic";
 
         [Fact]
         public void MissingLocation()
@@ -14858,10 +14734,8 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
-            var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
-            var span = TextSpan.FromBounds(start, end);
+            // Holds the diagnostic and all necessary information to be reported
+            var diagnostic = Diagnostic.Create(Rule, location);
         }
     }
 }";
@@ -14871,7 +14745,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.LocationMissing,
                 Message = s_locationMissingMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 63, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 61, 54) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -14935,13 +14809,11 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
-            var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
-            var span = TextSpan.FromBounds(start, end);
-
             // Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument
-            var diagnosticLocation = Location.Create(ifState.SyntaxTree, span);
+            var location = Location.Create(ifState.SyntaxTree, diagnosticSpan);
+
+            // Holds the diagnostic and all necessary information to be reported
+            var diagnostic = Diagnostic.Create(Rule, location);
         }
     }
 }";
@@ -15011,11 +14883,10 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
-            var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
-            var span = TextSpan.FromBounds(start, end);
             var diagnosticLocation = ""Hello World"";
+
+            // Holds the diagnostic and all necessary information to be reported
+            var diagnostic = Diagnostic.Create(Rule, diagnosticLocation);
         }
     }
 }";
@@ -15025,7 +14896,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.LocationIncorrect,
                 Message = s_locationIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 64, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 60, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -15089,25 +14960,23 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
-            var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
-            var span = TextSpan.FromBounds(start, end);
-
             // Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument
-            var diagnosticLocation = Location.Create(ifState.SyntaxTree, span);
+            var diagnosticLocation = Location.Create(ifState.SyntaxTree, diagnosticSpan);
+
+            // Holds the diagnostic and all necessary information to be reported
+            var diagnostic = Diagnostic.Create(Rule, diagnosticLocation);
         }
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
         }
         #endregion
 
         #region DiagnosticTests
 
-        private const string s_diagnosticMissingMessage = s_messagePrefix + "Next, use Diagnostic.Create to create the diagnostic";
-        private const string s_diagnosticIncorrectMessage = s_messagePrefix + "This statement should use Diagnostic.Create, 'spacingRule', and 'location' to create the diagnostic that will be reported";
+        private const string s_diagnosticMissingMessage = s_messagePrefix + "Moving on to the creation and reporting of the diagnostic, create a new diagnostic with a DiagnosticDescriptor rule and a location";
+        private const string s_diagnosticIncorrectMessage = s_messagePrefix + "This statement should use Diagnostic.Create, 'spacingRule', and a location to create the diagnostic that will be reported";
 
         [Fact]
         public void MissingDiagnostic()
@@ -15171,11 +15040,6 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
-            var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
-            var span = TextSpan.FromBounds(start, end);
-            var location = Location.Create(ifState.SyntaxTree, span);
         }
     }
 }";
@@ -15185,7 +15049,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.DiagnosticMissing,
                 Message = s_diagnosticMissingMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 64, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 45, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -15249,19 +15113,13 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
-            var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
-            var span = TextSpan.FromBounds(start, end);
-            var location = Location.Create(ifState.SyntaxTree, span);
-
             // Holds the diagnostic and all necessary information to be reported
-            var diagnostic = Diagnostic.Create(spacingRule, location);
+            var diagnostic = Diagnostic.Create(spacingRule, diagnosticLocation);
         }
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
         }
 
         [Fact]
@@ -15326,12 +15184,7 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
-            var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
-            var span = TextSpan.FromBounds(start, end);
-            var location = Location.Create(ifState.SyntaxTree, span);
-            diagnostic = Diagnostic.Create(spacingRule, location, spacingRule.MessageFormat);
+            diagnostic = Diagnostic.Create(spacingRule, diagnosticLocation, spacingRule.MessageFormat);
         }
     }
 }";
@@ -15341,7 +15194,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.DiagnosticIncorrect,
                 Message = s_diagnosticIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 65, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 60, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -15405,14 +15258,8 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
-            var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
-            var span = TextSpan.FromBounds(start, end);
-            var location = Location.Create(ifState.SyntaxTree, span);
-
             // Holds the diagnostic and all necessary information to be reported
-            var diagnostic = Diagnostic.Create(spacingRule, location);
+            var diagnostic = Diagnostic.Create(spacingRule, diagnosticLocation);
         }
     }
 }";
@@ -20397,9 +20244,8 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
             var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
+            var end = ifStatement.OpenParenToken.SpanStart;
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             var diagnostic = Diagnostic.Create(spacingRule, location);
@@ -20412,7 +20258,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyStatements,
-                Message = s_messagePrefix + "This method should only have 10 statement(s), which should walk through the Syntax Tree and check the spacing of the if-statement",
+                Message = s_messagePrefix + "This method should only have 9 statement(s), which should walk through the Syntax Tree and check the spacing of the if-statement",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 40, 22) }
             };
@@ -20610,9 +20456,8 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
             var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
+            var end = ifState.OpenParenToken.SpanStart;
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             var diagnostic = Diagnostic.Create(spacingRule, location);
@@ -20625,7 +20470,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.DiagnosticReportMissing,
                 Message = s_diagnosticReportMissingMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 65, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 64, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -20689,9 +20534,8 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
             var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
+            var end = ifState.OpenParenToken.SpanStart;
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             var diagnostic = Diagnostic.Create(spacingRule, location);
@@ -20774,9 +20618,8 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
             var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
+            var end = ifStatement.OpenParenToken.SpanStart;
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             var diagnostic = Diagnostic.Create(spacingRule, location);
@@ -20790,7 +20633,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.DiagnosticReportIncorrect,
                 Message = s_diagnosticReportIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 66, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 65, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -20854,9 +20697,8 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
             var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
+            var end = ifStatement.OpenParenToken.SpanStart;
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             var diagnostic = Diagnostic.Create(spacingRule, location);
@@ -20933,9 +20775,8 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
             var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
+            var end = ifStatement.OpenParenToken.SpanStart;
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             var diagnostic = Diagnostic.Create(spacingRule, location);
@@ -20949,7 +20790,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.DiagnosticReportIncorrect,
                 Message = s_diagnosticReportIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 66, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 65, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -21013,9 +20854,8 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
             var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
+            var end = ifStatement.OpenParenToken.SpanStart;
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             var diagnostic = Diagnostic.Create(spacingRule, location);
@@ -21092,9 +20932,8 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
             var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
+            var end = ifStatement.OpenParenToken.SpanStart;
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             var diagnostic = Diagnostic.Create(spacingRule, location);
@@ -21108,7 +20947,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.DiagnosticReportIncorrect,
                 Message = s_diagnosticReportIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 66, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 65, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -21172,9 +21011,8 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
             var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
+            var end = ifStatement.OpenParenToken.SpanStart;
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             var diagnostic = Diagnostic.Create(spacingRule, location);
@@ -21251,9 +21089,8 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
             var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
+            var end = ifStatement.OpenParenToken.SpanStart;
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             var diagnostic = Diagnostic.Create(spacingRule, location);
@@ -21267,7 +21104,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.DiagnosticReportIncorrect,
                 Message = s_diagnosticReportIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 66, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 65, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -21331,9 +21168,8 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            var open = ifState.OpenParenToken;
             var start = ifKeyword.SpanStart;
-            var end = open.SpanStart;
+            var end = ifStatement.OpenParenToken.SpanStart;
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             var diagnostic = Diagnostic.Create(spacingRule, location);

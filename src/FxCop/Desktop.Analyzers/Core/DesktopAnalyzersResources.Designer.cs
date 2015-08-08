@@ -197,24 +197,6 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Do not use insecure cryptographic algorithm SHA1..
-        /// </summary>
-        internal static string DoNotUseSHA1 {
-            get {
-                return ResourceManager.GetString("DoNotUseSHA1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This type implements SHA1, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the SHA-1 and SHA-0 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256)..
-        /// </summary>
-        internal static string DoNotUseSHA1Description {
-            get {
-                return ResourceManager.GetString("DoNotUseSHA1Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Do not use insecure cryptographic algorithm TripleDES..
         /// </summary>
         internal static string DoNotUseTripleDES {

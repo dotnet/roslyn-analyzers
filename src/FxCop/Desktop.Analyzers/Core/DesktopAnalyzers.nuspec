@@ -4,7 +4,7 @@
     <id>Desktop.Analyzers</id>
     <summary>Desktop Analyzers</summary>
     <description>
-      Analyzers for the APIs only exist in .NET Framework.
+      Analyzers for APIs specific to the desktop .NET Framework.
     </description>
     <dependencies>
     </dependencies>

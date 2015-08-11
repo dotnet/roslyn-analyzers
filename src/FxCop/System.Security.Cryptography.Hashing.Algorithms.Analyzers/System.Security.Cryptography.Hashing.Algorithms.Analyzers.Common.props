@@ -8,6 +8,8 @@
   -->
   <PropertyGroup>
     <CodeAnalysisRuleSetOverrides>$(CodeAnalysisRuleSetOverrides);
+      -Microsoft.Security.Cryptography#CA5350;
+      -Microsoft.Security.Cryptography#CA5354;
     </CodeAnalysisRuleSetOverrides>
   </PropertyGroup>
 </Project>

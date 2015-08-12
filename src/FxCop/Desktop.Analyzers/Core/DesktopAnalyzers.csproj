@@ -83,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="DesktopAnalyzers.nuspec" />
     <None Include="install.ps1" />
     <None Include="uninstall.ps1" />
     <None Include="ThirdPartyNotices.rtf" />

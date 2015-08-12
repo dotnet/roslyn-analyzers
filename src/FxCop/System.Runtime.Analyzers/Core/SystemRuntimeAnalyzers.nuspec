@@ -2,10 +2,12 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>System.Runtime.Analyzers</id>
-    <summary>Analyzers for .NET System.Runtime APIs</summary>
+    <summary>System.Runtime Analyzers</summary>
     <description>
-      Guidelines for using .NET System.Runtime APIs.
+      Analyzers for the APIs in System.Runtime.
     </description>
+    <dependencies>
+    </dependencies>
 
     <language>en-US</language>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
@@ -15,7 +17,6 @@
     <projectUrl>$projectUrl$</projectUrl>
     <releaseNotes>$releaseNotes$</releaseNotes>
     <tags>$tags$ analyzers</tags>
-
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework="" />
     </frameworkAssemblies>
@@ -25,8 +26,11 @@
     <file src="$binaries$System.Runtime.CSharp.Analyzers.dll" target="analyzers\dotnet\cs" />
     <file src="$binaries$System.Runtime.Analyzers.dll" target="analyzers\dotnet\vb" />
     <file src="$binaries$System.Runtime.VisualBasic.Analyzers.dll" target="analyzers\dotnet\vb" />
-    <file src="Install.ps1" target="tools" />
-    <file src="Uninstall.ps1" target="tools" />
+    <file src="$binaries$System.Runtime.Analyzers.Common.props" target="build" />
+    <file src="$binaries$System.Runtime.CSharp.Analyzers.props" target="build" />
+    <file src="$binaries$System.Runtime.VisualBasic.Analyzers.props" target="build" />
+    <file src="install.ps1" target="tools" />
+    <file src="uninstall.ps1" target="tools" />
     <file src="ThirdPartyNotices.rtf" target="" />
   </files>
 </package>

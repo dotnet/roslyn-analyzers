@@ -9,6 +9,14 @@
   <PropertyGroup>
     <CodeAnalysisRuleSetOverrides>$(CodeAnalysisRuleSetOverrides);
       -Microsoft.Security#CA2153;
+      
+      -Microsoft.Security.Cryptography#CA5350;
+      -Microsoft.Security.Cryptography#CA5351;
+      -Microsoft.Security.Cryptography#CA5352;
+      -Microsoft.Security.Cryptography#CA5353;
+      -Microsoft.Security.Cryptography#CA5355;
+      -Microsoft.Security.Cryptography#CA5356;
+      -Microsoft.Security.Cryptography#CA5357;
     </CodeAnalysisRuleSetOverrides>
   </PropertyGroup>
 </Project>

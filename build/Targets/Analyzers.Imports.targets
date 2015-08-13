@@ -156,14 +156,9 @@
          Support for real-signing assemblies
 
        ==================================================================================== -->
-
-  <PropertyGroup>
-    <OutputExtension Condition="'$(OutputType)' == 'Library'">dll</OutputExtension>
-    <OutputExtension Condition="'$(OutputType)' == 'Exe'">exe</OutputExtension>
-  </PropertyGroup>
   
   <ItemGroup Condition="'$(DelaySign)' == 'true' AND '$(ShouldSignBuild)' == 'true' AND ('$(Language)' == 'C#' OR '$(Language)' == 'VB')">
-    <FilesToSign Include="$(OutDir)\$(OutputName).$(OutputExtension)">
+    <FilesToSign Include="$(OutDir)$(TargetFileName)">
       <AuthenticodeCertificateName>MicrosoftSHA1</AuthenticodeCertificateName>
       <StrongName>MsSharedLib72</StrongName>
     </FilesToSign>

@@ -87,6 +87,8 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "BasicRoslynDiagnosticAnalyz
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoslynDiagnosticAnalyzersTest", "Roslyn\Test\RoslynDiagnosticAnalyzersTest.csproj", "{BBDC84C8-AE58-4D0F-B5A4-384CDCB9069E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoslynDiagnosticsSetup", "Roslyn\Setup\RoslynDiagnosticsSetup.csproj", "{DEC6D219-A523-422C-AA36-D17662722C0B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -221,6 +223,10 @@ Global
 		{BBDC84C8-AE58-4D0F-B5A4-384CDCB9069E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBDC84C8-AE58-4D0F-B5A4-384CDCB9069E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBDC84C8-AE58-4D0F-B5A4-384CDCB9069E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEC6D219-A523-422C-AA36-D17662722C0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEC6D219-A523-422C-AA36-D17662722C0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEC6D219-A523-422C-AA36-D17662722C0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEC6D219-A523-422C-AA36-D17662722C0B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -261,5 +267,6 @@ Global
 		{B82F1C54-2D3E-497B-8C31-4AB16D6508FA} = {C213BD59-9F9F-4FC2-8039-FD5AFF71A0D1}
 		{640B92E8-ED8A-44AC-85C6-50B53837DB91} = {C213BD59-9F9F-4FC2-8039-FD5AFF71A0D1}
 		{BBDC84C8-AE58-4D0F-B5A4-384CDCB9069E} = {C213BD59-9F9F-4FC2-8039-FD5AFF71A0D1}
+		{DEC6D219-A523-422C-AA36-D17662722C0B} = {C213BD59-9F9F-4FC2-8039-FD5AFF71A0D1}
 	EndGlobalSection
 EndGlobal

@@ -24,14 +24,14 @@ namespace Microsoft.AnalyzerPowerPack.Usage
                 AnalyzerPowerPackRulesResources.ResourceManager, typeof (AnalyzerPowerPackRulesResources));
 
         internal static DiagnosticDescriptor RuleCA2229 = new DiagnosticDescriptor(RuleCA2229Id,
-            s_localizableTitleCA2229,
-            "{0}",
-            AnalyzerPowerPackDiagnosticCategory.Usage,
-            DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            description: s_localizableDescriptionCA2229,
-            helpLinkUri: "http://msdn.microsoft.com/library/ms182343.aspx",
-            customTags: DiagnosticCustomTags.Microsoft);
+                                                                        s_localizableTitleCA2229,
+                                                                        "{0}",
+                                                                        AnalyzerPowerPackDiagnosticCategory.Usage,
+                                                                        DiagnosticSeverity.Warning,
+                                                                        isEnabledByDefault: true,
+                                                                        description: s_localizableDescriptionCA2229,
+                                                                        helpLinkUri: "http://msdn.microsoft.com/library/ms182343.aspx",
+                                                                        customTags: DiagnosticCustomTags.Microsoft);
 
         // Mark ISerializable types with SerializableAttribute
         internal const string RuleCA2237Id = "CA2237";
@@ -50,14 +50,14 @@ namespace Microsoft.AnalyzerPowerPack.Usage
                 AnalyzerPowerPackRulesResources.ResourceManager, typeof (AnalyzerPowerPackRulesResources));
 
         internal static DiagnosticDescriptor RuleCA2237 = new DiagnosticDescriptor(RuleCA2237Id,
-            s_localizableTitleCA2237,
-            s_localizableMessageCA2237,
-            AnalyzerPowerPackDiagnosticCategory.Usage,
-            DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            description: s_localizableDescriptionCA2237,
-            helpLinkUri: "http://msdn.microsoft.com/library/ms182350.aspx",
-            customTags: DiagnosticCustomTags.Microsoft);
+                                                                        s_localizableTitleCA2237,
+                                                                        s_localizableMessageCA2237,
+                                                                        AnalyzerPowerPackDiagnosticCategory.Usage,
+                                                                        DiagnosticSeverity.Warning,
+                                                                        isEnabledByDefault: true,
+                                                                        description: s_localizableDescriptionCA2237,
+                                                                        helpLinkUri: "http://msdn.microsoft.com/library/ms182350.aspx",
+                                                                        customTags: DiagnosticCustomTags.Microsoft);
 
         // Mark all non-serializable fields
         internal const string RuleCA2235Id = "CA2235";
@@ -76,59 +76,47 @@ namespace Microsoft.AnalyzerPowerPack.Usage
                 AnalyzerPowerPackRulesResources.ResourceManager, typeof (AnalyzerPowerPackRulesResources));
 
         internal static DiagnosticDescriptor RuleCA2235 = new DiagnosticDescriptor(RuleCA2235Id,
-            s_localizableTitleCA2235,
-            s_localizableMessageCA2235,
-            AnalyzerPowerPackDiagnosticCategory.Usage,
-            DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            description: s_localizableDescriptionCA2235,
-            helpLinkUri: "http://msdn.microsoft.com/library/ms182349.aspx",
-            customTags: DiagnosticCustomTags.Microsoft);
+                                                                        s_localizableTitleCA2235,
+                                                                        s_localizableMessageCA2235,
+                                                                        AnalyzerPowerPackDiagnosticCategory.Usage,
+                                                                        DiagnosticSeverity.Warning,
+                                                                        isEnabledByDefault: true,
+                                                                        description: s_localizableDescriptionCA2235,
+                                                                        helpLinkUri: "http://msdn.microsoft.com/library/ms182349.aspx",
+                                                                        customTags: DiagnosticCustomTags.Microsoft);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics =
-            ImmutableArray.Create(RuleCA2229, RuleCA2235, RuleCA2237);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get { return s_supportedDiagnostics; }
-        }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleCA2229, RuleCA2235, RuleCA2237);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
-                    var iserializableTypeSymbol =
-                        context.Compilation.GetTypeByMetadataName("System.Runtime.Serialization.ISerializable");
+                    var iserializableTypeSymbol = context.Compilation.GetTypeByMetadataName("System.Runtime.Serialization.ISerializable");
                     if (iserializableTypeSymbol == null)
                     {
                         return;
                     }
 
-                    var serializationInfoTypeSymbol =
-                        context.Compilation.GetTypeByMetadataName("System.Runtime.Serialization.SerializationInfo");
+                    var serializationInfoTypeSymbol = context.Compilation.GetTypeByMetadataName("System.Runtime.Serialization.SerializationInfo");
                     if (serializationInfoTypeSymbol == null)
                     {
                         return;
                     }
 
-                    var streamingContextTypeSymbol =
-                        context.Compilation.GetTypeByMetadataName("System.Runtime.Serialization.StreamingContext");
+                    var streamingContextTypeSymbol = context.Compilation.GetTypeByMetadataName("System.Runtime.Serialization.StreamingContext");
                     if (streamingContextTypeSymbol == null)
                     {
                         return;
                     }
 
-                    var serializableAttributeTypeSymbol =
-                        context.Compilation.GetTypeByMetadataName("System.SerializableAttribute");
+                    var serializableAttributeTypeSymbol = context.Compilation.GetTypeByMetadataName("System.SerializableAttribute");
                     if (serializableAttributeTypeSymbol == null)
                     {
                         return;
                     }
 
-                    context.RegisterSymbolAction(
-                        new Analyzer(iserializableTypeSymbol, serializationInfoTypeSymbol, streamingContextTypeSymbol,
-                            serializableAttributeTypeSymbol).AnalyzeSymbol, SymbolKind.NamedType);
+                    context.RegisterSymbolAction(new Analyzer(iserializableTypeSymbol, serializationInfoTypeSymbol, streamingContextTypeSymbol, serializableAttributeTypeSymbol).AnalyzeSymbol, SymbolKind.NamedType);
                 });
         }
 
@@ -156,8 +144,7 @@ namespace Microsoft.AnalyzerPowerPack.Usage
                 var namedTypeSymbol = (INamedTypeSymbol) context.Symbol;
 
                 // If the type is public and implements ISerializable
-                if (namedTypeSymbol.DeclaredAccessibility == Accessibility.Public &&
-                    namedTypeSymbol.AllInterfaces.Contains(_iserializableTypeSymbol))
+                if (namedTypeSymbol.DeclaredAccessibility == Accessibility.Public && namedTypeSymbol.AllInterfaces.Contains(_iserializableTypeSymbol))
                 {
                     if (!IsSerializable(namedTypeSymbol))
                     {
@@ -236,6 +223,7 @@ namespace Microsoft.AnalyzerPowerPack.Usage
             {
                 return IsPrimitiveType(namedTypeSymbol) ||
                        namedTypeSymbol.SpecialType == SpecialType.System_String ||
+                       namedTypeSymbol.SpecialType == SpecialType.System_Decimal ||
                        namedTypeSymbol.GetAttributes()
                            .Any(a => a.AttributeClass.Equals(_serializableAttributeTypeSymbol));
             }

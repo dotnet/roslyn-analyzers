@@ -159,7 +159,7 @@
   
   <ItemGroup Condition="'$(DelaySign)' == 'true' AND '$(ShouldSignBuild)' == 'true' AND ('$(Language)' == 'C#' OR '$(Language)' == 'VB')">
     <FilesToSign Include="$(OutDir)$(TargetFileName)">
-      <AuthenticodeCertificateName>MicrosoftSHA1</AuthenticodeCertificateName>
+      <Authenticode>MicrosoftSHA1</Authenticode>
       <StrongName>MsSharedLib72</StrongName>
     </FilesToSign>
   </ItemGroup>

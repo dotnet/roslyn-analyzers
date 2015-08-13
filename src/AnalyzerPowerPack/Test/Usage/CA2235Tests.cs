@@ -26,6 +26,39 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
         [WorkItem(858655, "DevDiv")]
         #region CA2235
 
+
+        [Fact]
+        public void CA2235WithOnlyPrimitiveFields()
+        {
+            VerifyCSharp(@"
+                using System;
+    
+                [Serializable]
+                public class CA2235WithOnlyPrimitiveFields
+                {
+                    public string s1;
+                    internal string s2;
+                    private string s3;
+                    public int i1;
+                    internal int i2;
+                    private int i3;
+                }");
+
+            VerifyBasic(@"
+                Imports System
+
+                <Serializable>
+                Public Class CA2235WithOnlyPrimitiveFields 
+
+                    Public s1 As String;
+                    Friend s2 As String;
+                    Private s3 As String;
+                    Public i1 As Integer;
+                    Friend i2 As Integer;
+                    Private i3 As Integer;
+                End Class");
+        }
+
         [Fact]
         public void CA2235WithOnlySerializableFields()
         {

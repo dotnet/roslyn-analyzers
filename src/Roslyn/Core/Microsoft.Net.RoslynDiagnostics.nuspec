@@ -8,9 +8,6 @@
       Supported Platforms:
       - .NET Framework 4.5
     </description>
-    <dependencies>
-      <dependency id="Microsoft.Net.ToolsetCompilers" version="$currentVersion$" />
-    </dependencies>
     <language>en-US</language>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <version>$currentVersion$</version>

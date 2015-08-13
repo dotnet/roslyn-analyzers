@@ -17,9 +17,6 @@
     
     <SystemRuntimeInteropServicesAnalyzersSemanticVersion>1.0.2</SystemRuntimeInteropServicesAnalyzersSemanticVersion>
     <SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>beta1</SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>
-    
-    <SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>1.0.0</SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>
-    <SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>beta1</SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>
 
     <SharedTestSemanticVersion>1.0.0</SharedTestSemanticVersion>
     <SharedTestPreReleaseVersion>beta1</SharedTestPreReleaseVersion>

@@ -23,5 +23,8 @@
 
     <AnalyzerPowerPackSemanticVersion>1.0.1</AnalyzerPowerPackSemanticVersion>
     <AnalyzerPowerPackPreReleaseVersion>beta1</AnalyzerPowerPackPreReleaseVersion>
+    
+    <RoslynDiagnosticsAnalyzersSemanticVersion>1.1.1</RoslynDiagnosticsAnalyzersSemanticVersion>
+    <RoslynDiagnosticsAnalyzersPreReleaseVersion>beta1</RoslynDiagnosticsAnalyzersPreReleaseVersion>
   </PropertyGroup>
 </Project>

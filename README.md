@@ -21,6 +21,13 @@ AsyncPackage
 
 The AsyncPackage analyzer enforces good practices when writing code that makes use of C#'s `async` and `await` language features.
 
+
+Desktop.Analyzers
+-----------------
+
+Analyzers for APIs specific to the desktop .NET Framework.
+
+
 MetaCompilation
 ---------------
 
@@ -30,15 +37,44 @@ The MetaCompilation Analyzer is an analyzer that functions as a tutorial to teac
 
 For instructions on using this tutorial, see [Instructions](https://github.com/dotnet/roslyn-analyzers/blob/master/src/MetaCompilation/MetaCompilation/MetaCompilation/ReadMe.md#instructions).
 
+
 Microsoft.AnalyzerPowerPack
 ---------------------------
 
 General language rules implemented as analyzers using the .NET Compiler Platform ("Roslyn").
 
+*Latest stable version:* [1.0.1](https://www.nuget.org/packages/Microsoft.AnalyzerPowerPack/)
+
+
 Microsoft.CodeAnalysis.Analyzers
 --------------------------------
 
 Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
+
+*Latest stable version:* [1.0.0](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers/)
+
+
+Microsoft.Net.RoslynDiagnostics
+-------------------------------
+
+Contains analyzers specific to the .NET Compiler Platform ("Roslyn") project.
+
+
+System.Runtime.Analyzers
+------------------------
+
+Provides guidelines for using APIs in the System.Runtime namespace.
+
+*Latest stable version:* [1.0.1](https://www.nuget.org/packages/System.Runtime.Analyzers/)
+
+
+System.Runtime.InteropServices.Analyzers
+----------------------------------------
+
+Provides guidelines for using APIs in the System.Runtime.InteropServices namespace.
+
+*Latest stable version:* [1.0.1](https://www.nuget.org/packages/System.Runtime.InteropServices.Analyzers/)
+
 
 Getting Started
 ===============

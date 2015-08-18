@@ -152,6 +152,19 @@
   </Target>
 
   <!-- ====================================================================================
+  
+         Support for real-signing assemblies
+
+       ==================================================================================== -->
+  
+  <ItemGroup Condition="'$(DelaySign)' == 'true' AND '$(ShouldSignBuild)' == 'true' AND ('$(Language)' == 'C#' OR '$(Language)' == 'VB')">
+    <FilesToSign Include="$(OutDir)$(TargetFileName)">
+      <Authenticode>MicrosoftSHA1</Authenticode>
+      <StrongName>MsSharedLib72</StrongName>
+    </FilesToSign>
+  </ItemGroup>
+
+  <!-- ====================================================================================
        
          Generation of AssemblyVersion attributes from the BuildVersion property
        

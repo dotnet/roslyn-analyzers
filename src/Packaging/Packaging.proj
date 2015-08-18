@@ -11,6 +11,7 @@
     <Project Include="..\FxCop\System.Runtime.InteropServices.Analyzers\NuGet\SystemRuntimeInteropServicesAnalyzers.NuGet.proj" />
     <Project Include="..\FxCop\System.Security.Cryptography.Hashing.Algorithms.Analyzers\NuGet\SystemSecurityCryptographyHashingAlgorithmsAnalyzers.NuGet.proj" />
     <Project Include="..\AnalyzerPowerPack\NuGet\AnalyzerPowerPack.NuGet.proj" />
+    <Project Include="..\Roslyn\NuGet\RoslynDiagnosticAnalyzers.NuGet.proj" />
   </ItemGroup>
   <ImportGroup Label="Imports">
     <Import Project="..\..\build\Targets\Analyzers.Imports.targets" />

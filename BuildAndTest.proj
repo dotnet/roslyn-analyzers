@@ -61,6 +61,7 @@
       <TestAssemblies Include="Binaries\$(Configuration)\System.Runtime.InteropServices.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\System.Security.Cryptography.Hashing.Algorithms.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\Microsoft.AnalyzerPowerPack.UnitTests.dll" />
+      <TestAssemblies Include="Binaries\$(Configuration)\Roslyn.Diagnostics.Analyzers.UnitTests.dll" />
     </ItemGroup>
 
     <Exec Command="&quot;$(PackagesDirectory)\xunit.runner.console.2.0.0\tools\xunit.console.x86.exe&quot; @(TestAssemblies, ' ') $(RunTestArgs)" />

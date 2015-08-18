@@ -98,7 +98,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
             {
                 Id = rule.Id,
                 Severity = rule.DefaultSeverity,
-                Message = rule.MessageFormat.ToString()
+                Message = String.Format(rule.MessageFormat.ToString(), messageArguments)
             };
         }
 

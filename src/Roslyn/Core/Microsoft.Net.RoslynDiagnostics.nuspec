@@ -1,0 +1,29 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.Net.RoslynDiagnostics</id>
+    <description>
+      Roslyn Diagnostics Toolset package. Contains analyzers specific to the .NET Compiler Platform ("Roslyn") project.
+
+      Supported Platforms:
+      - .NET Framework 4.5
+    </description>
+    <language>en-US</language>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <version>$currentVersion$</version>
+    <authors>$authors$</authors>
+    <licenseUrl>$licenseUrl$</licenseUrl>
+    <projectUrl>$projectUrl$</projectUrl>
+    <releaseNotes>$releaseNotes$</releaseNotes>
+    <tags>$tags$</tags>
+    <developmentDependency>true</developmentDependency>
+  </metadata>
+  <files>
+    <file src="$binaries$Microsoft.Net.RoslynDiagnostics.props" target="build" />
+    <file src="$binaries$Roslyn.Diagnostics.Analyzers.dll" target="tools" />
+    <file src="$binaries$Roslyn.Diagnostics.Analyzers.CSharp.dll" target="tools" />
+    <file src="$binaries$Roslyn.Diagnostics.Analyzers.VisualBasic.dll" target="tools" />
+    <file src="ThirdPartyNotices.rtf" target="" />
+  </files>
+</package>
+

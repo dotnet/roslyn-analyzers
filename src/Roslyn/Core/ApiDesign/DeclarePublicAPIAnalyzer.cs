@@ -190,7 +190,7 @@ namespace Roslyn.Diagnostics.Analyzers.ApiDesign
         private static ApiData ReadApiData(string path, SourceText sourceText)
         {
             var apiBuilder = ImmutableArray.CreateBuilder<ApiLine>();
-            var removedBuilder = ImmutableArray.CreateBuilder<ApiLine>();
+            var removedBuilder = ImmutableArray.CreateBuilder<RemovedApiLine>();
 
             foreach (var line in sourceText.Lines)
             {
@@ -203,7 +203,8 @@ namespace Roslyn.Diagnostics.Analyzers.ApiDesign
                 var apiLine = new ApiLine(text, line.Span, sourceText, path);
                 if (text.StartsWith(RemovedApiPrefix, StringComparison.Ordinal))
                 {
-                    removedBuilder.Add(apiLine);
+                    var removedtext = text.Substring(RemovedApiPrefix.Length);
+                    removedBuilder.Add(new RemovedApiLine(removedtext, apiLine));
                 }
                 else
                 {

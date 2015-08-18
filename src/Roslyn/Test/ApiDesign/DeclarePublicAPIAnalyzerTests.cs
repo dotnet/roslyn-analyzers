@@ -196,6 +196,7 @@ C
 C.Field -> int
 C.Property.get -> int
 C.Property.set -> void
+C.Method() -> void
 ";
 
             var unshippedText = $@"

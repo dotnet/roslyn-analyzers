@@ -30,12 +30,24 @@ namespace Roslyn.Diagnostics.Analyzers.ApiDesign
             }
         }
 
+        private struct RemovedApiLine
+        {
+            public readonly string Text;
+            public readonly ApiLine ApiLine;
+
+            internal RemovedApiLine(string text, ApiLine apiLine)
+            {
+                Text = text;
+                ApiLine = apiLine;
+            }
+        }
+
         private struct ApiData
         {
             public readonly ImmutableArray<ApiLine> ApiList;
-            public readonly ImmutableArray<ApiLine> RemovedApiList;
+            public readonly ImmutableArray<RemovedApiLine> RemovedApiList;
 
-            internal ApiData(ImmutableArray<ApiLine> apiList, ImmutableArray<ApiLine> removedApiList)
+            internal ApiData(ImmutableArray<ApiLine> apiList, ImmutableArray<RemovedApiLine> removedApiList)
             {
                 ApiList = apiList;
                 RemovedApiList = removedApiList;

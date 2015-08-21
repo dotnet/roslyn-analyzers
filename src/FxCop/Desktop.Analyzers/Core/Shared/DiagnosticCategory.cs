@@ -4,9 +4,7 @@ namespace Desktop.Analyzers.Common
 {
     public class DiagnosticCategory
     {
-        public const string Security = "Microsoft.Security";
-        public const string Cryptography = "Microsoft.Security.Cryptography";
-        public const string Xml = "Microsoft.Security.Xml";
+        public const string Security = "Microsoft.Security";            
         public const string Globalization = "Microsoft.Globalization";
     }
 }

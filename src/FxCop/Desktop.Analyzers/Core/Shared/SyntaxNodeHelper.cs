@@ -16,6 +16,8 @@ namespace Desktop.Analyzers.Common
             AnyCall = Invocation | ObjectCreation,
         };
 
+        public abstract IMethodSymbol GetCallerMethodSymbol(SyntaxNode node, SemanticModel semanticModel);
+        public abstract ITypeSymbol GetEnclosingTypeSymbol(SyntaxNode node, SemanticModel semanticModel);
         public abstract ITypeSymbol GetClassDeclarationTypeSymbol(SyntaxNode node, SemanticModel semanticModel);
         public abstract SyntaxNode GetAssignmentLeftNode(SyntaxNode node);
         public abstract SyntaxNode GetAssignmentRightNode(SyntaxNode node);
@@ -28,6 +30,32 @@ namespace Desktop.Analyzers.Common
         // This will return true iff the SyntaxNode is either InvocationExpression or ObjectCreationExpression (in C# or VB)
         public abstract bool IsMethodInvocationNode(SyntaxNode node);
         protected abstract IEnumerable<SyntaxNode> GetCallArgumentExpressionNodes(SyntaxNode node, CallKind callKind);
+        public abstract IEnumerable<SyntaxNode> GetDescendantAssignmentExpressionNodes(SyntaxNode node);
+        public abstract IEnumerable<SyntaxNode> GetDescendantMemberAccessExpressionNodes(SyntaxNode node);
+
+        // returns true if node is an ObjectCreationExpression and is under a FieldDeclaration node
+        public abstract bool IsObjectCreationExpressionUnderFieldDeclaration(SyntaxNode node);
+        // returns the ancestor VariableDeclarator node for an ObjectCreationExpression if 
+        // IsObjectCreationExpressionUnderFieldDeclaration(node) returns true, return null otherwise.
+        public abstract SyntaxNode GetVariableDeclaratorOfAFieldDeclarationNode(SyntaxNode objectCreationExpression);
+
+
+        public ISymbol GetEnclosingConstructSymbol(SyntaxNode node, SemanticModel semanticModel)
+        {
+            if (node == null)
+            {
+                return null;
+            }
+
+            ISymbol symbol = GetCallerMethodSymbol(node, semanticModel);
+
+            if (symbol == null)
+            {
+                symbol = GetEnclosingTypeSymbol(node, semanticModel);
+            }
+
+            return symbol;
+        }
 
         public IEnumerable<SyntaxNode> GetCallArgumentExpressionNodes(SyntaxNode node)
         {

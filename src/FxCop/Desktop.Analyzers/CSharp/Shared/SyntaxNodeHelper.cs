@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -221,6 +222,86 @@ namespace Desktop.Analyzers.Common
             }
             SyntaxKind kind = node.Kind();
             return kind == SyntaxKind.InvocationExpression || kind == SyntaxKind.ObjectCreationExpression;
+        }
+
+        public override IMethodSymbol GetCallerMethodSymbol(SyntaxNode node, SemanticModel semanticModel)
+        {
+            if (node == null)
+            {
+                return null;
+            }
+
+            MethodDeclarationSyntax declaration = node.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().FirstOrDefault();
+            if (declaration != null)
+            {
+                return semanticModel.GetDeclaredSymbol(declaration);
+            }
+
+            ConstructorDeclarationSyntax contructor = node.AncestorsAndSelf().OfType<ConstructorDeclarationSyntax>().FirstOrDefault();
+            if (contructor != null)
+            {
+                return semanticModel.GetDeclaredSymbol(contructor);
+            }
+
+            return null;
+        }
+
+        public override ITypeSymbol GetEnclosingTypeSymbol(SyntaxNode node, SemanticModel semanticModel)
+        {
+            if (node == null)
+            {
+                return null;
+            }
+
+            ClassDeclarationSyntax declaration = node.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+
+            if (declaration == null)
+            {
+                return null;
+            }
+
+            return semanticModel.GetDeclaredSymbol(declaration);
+        }
+
+        public override IEnumerable<SyntaxNode> GetDescendantAssignmentExpressionNodes(SyntaxNode node)
+        {
+            var empty = Enumerable.Empty<SyntaxNode>();
+            if (node == null)
+            {
+                return empty;
+            }
+
+            return node.DescendantNodesAndSelf().OfType<AssignmentExpressionSyntax>();
+        }
+
+        public override IEnumerable<SyntaxNode> GetDescendantMemberAccessExpressionNodes(SyntaxNode node)
+        {
+            var empty = Enumerable.Empty<SyntaxNode>();
+            if (node == null)
+            {
+                return empty;
+            }
+
+            return node.DescendantNodesAndSelf().OfType<MemberAccessExpressionSyntax>();
+        }
+
+        public override bool IsObjectCreationExpressionUnderFieldDeclaration(SyntaxNode node)
+        {
+            return node != null &&
+                   node.Kind() == SyntaxKind.ObjectCreationExpression &&
+                   node.AncestorsAndSelf().OfType<FieldDeclarationSyntax>().FirstOrDefault() != null;
+        }
+
+        public override SyntaxNode GetVariableDeclaratorOfAFieldDeclarationNode(SyntaxNode node)
+        {
+            if (IsObjectCreationExpressionUnderFieldDeclaration(node))
+            {
+                return node.AncestorsAndSelf().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

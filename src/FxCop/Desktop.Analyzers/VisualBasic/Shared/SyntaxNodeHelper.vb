@@ -224,5 +224,29 @@ Namespace Desktop.Analyzers.Common
             Dim kind As SyntaxKind = node.Kind()
             Return kind = SyntaxKind.InvocationExpression OrElse kind = SyntaxKind.ObjectCreationExpression
         End Function
+
+        Public Overrides Function GetCallerMethodSymbol(node As SyntaxNode, semanticModel As SemanticModel) As IMethodSymbol
+            Throw New NotImplementedException()
+        End Function
+
+        Public Overrides Function GetEnclosingTypeSymbol(node As SyntaxNode, semanticModel As SemanticModel) As ITypeSymbol
+            Throw New NotImplementedException()
+        End Function
+
+        Public Overrides Function GetDescendantAssignmentExpressionNodes(node As SyntaxNode) As IEnumerable(Of SyntaxNode)
+            Throw New NotImplementedException()
+        End Function
+
+        Public Overrides Function GetDescendantMemberAccessExpressionNodes(node As SyntaxNode) As IEnumerable(Of SyntaxNode)
+            Throw New NotImplementedException()
+        End Function
+
+        Public Overrides Function IsObjectCreationExpressionUnderFieldDeclaration(node As SyntaxNode) As Boolean
+            Throw New NotImplementedException()
+        End Function
+
+        Public Overrides Function GetVariableDeclaratorOfAFieldDeclarationNode(objectCreationExpression As SyntaxNode) As SyntaxNode
+            Throw New NotImplementedException()
+        End Function
     End Class
 End Namespace

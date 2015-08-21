@@ -24,11 +24,11 @@ namespace Desktop.Analyzers
          */
 
         //TODO: create new strings
-        internal static DiagnosticDescriptor RuleXslCompiledTransformLoadInsecureInputSettings = CreateDiagnosticDescriptor(DesktopAnalyzersResources.XslCompiledTransformLoadInsecureInputDiagnosis,
-                                                                                                                          DesktopAnalyzersResources.InsecureXsltScriptProcessingDescription);
+        internal static DiagnosticDescriptor RuleXslCompiledTransformLoadInsecureInputSettings = CreateDiagnosticDescriptor(GetLocalizableResourceString(DesktopAnalyzersResources.XslCompiledTransformLoadInsecureInputDiagnosis),
+                                                                                                                         GetLocalizableResourceString(DesktopAnalyzersResources.InsecureXsltScriptProcessingDescription));
 
-        internal static DiagnosticDescriptor RuleXslCompiledTransformLoadInsecureConstructedSettings = CreateDiagnosticDescriptor(DesktopAnalyzersResources.XslCompiledTransformLoadInsecureConstructedDiagnosis,
-                                                                                                                          DesktopAnalyzersResources.InsecureXsltScriptProcessingDescription);
+        internal static DiagnosticDescriptor RuleXslCompiledTransformLoadInsecureConstructedSettings = CreateDiagnosticDescriptor(GetLocalizableResourceString(DesktopAnalyzersResources.XslCompiledTransformLoadInsecureConstructedDiagnosis),
+                                                                                                                          GetLocalizableResourceString(DesktopAnalyzersResources.InsecureXsltScriptProcessingDescription));
 
         private static readonly ImmutableArray<DiagnosticDescriptor> supportDiagnostics = ImmutableArray.Create(RuleXslCompiledTransformLoadInsecureInputSettings,
                                                                                                                 RuleXslCompiledTransformLoadInsecureConstructedSettings);
@@ -61,16 +61,22 @@ namespace Desktop.Analyzers
         }
 
 
-        private static DiagnosticDescriptor CreateDiagnosticDescriptor(string messageFormat, string description, string helpLink = null)
+        private static DiagnosticDescriptor CreateDiagnosticDescriptor(LocalizableResourceString messageFormat, LocalizableResourceString description, string helpLink = null)
         {
             return new DiagnosticDescriptor(RuleId,
-                                            DesktopAnalyzersResources.InsecureXsltScriptProcessing,
+                                            GetLocalizableResourceString(DesktopAnalyzersResources.InsecureXsltScriptProcessing),
                                             messageFormat,
                                             DiagnosticCategory.Security,
                                             DiagnosticSeverity.Warning,
-                                            true,
+                                            isEnabledByDefault: true,
                                             description: description,
-                                            helpLinkUri: helpLink);
+                                            helpLinkUri: helpLink,
+                                            customTags: WellKnownDiagnosticTags.Telemetry);
+        }
+
+        private static LocalizableResourceString GetLocalizableResourceString(string resourceString)
+        {
+            return new LocalizableResourceString(nameof(resourceString), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         }
 
         protected abstract Analyzer GetAnalyzer(CodeBlockStartAnalysisContext<TLanguageKindEnum> context, CompilationSecurityTypes types);

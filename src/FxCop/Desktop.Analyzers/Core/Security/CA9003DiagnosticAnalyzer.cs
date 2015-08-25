@@ -60,10 +60,15 @@ namespace Desktop.Analyzers
                     var xmlTypes = new CompilationSecurityTypes(compilation);
                     if (ReferencesAnyTargetType(xmlTypes))
                     {
-                        Version version = DiagnosticHelpers.GetFrameworkVersionFromCompilation(compilation);
+                        Version version = DiagnosticHelpers.GetDotNetFrameworkVersion(compilation);
 
-                        Analyzer analyzer = GetAnalyzer(context, xmlTypes, version);
-                        context.RegisterSymbolAction(analyzer.AnalyzeSymbol, SymbolKind.NamedType);
+                        // bail if we are not analyzing project targeting .NET Framework
+                        // TODO: should we throw an exception to notify user?
+                        if (version != null)
+                        {
+                            Analyzer analyzer = GetAnalyzer(context, xmlTypes, version);
+                            context.RegisterSymbolAction(analyzer.AnalyzeSymbol, SymbolKind.NamedType);
+                        }
                     }
                 });
         }

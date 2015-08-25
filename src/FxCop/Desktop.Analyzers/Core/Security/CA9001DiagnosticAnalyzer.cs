@@ -116,13 +116,17 @@ namespace Desktop.Analyzers
                     var xmlTypes = new CompilationSecurityTypes(compilation);
                     if (ReferencesAnyTargetType(xmlTypes))
                     {
-                        Version version = DiagnosticHelpers.GetFrameworkVersionFromCompilation(compilation);
-
-                        context.RegisterCodeBlockStartAction<TLanguageKindEnum>(
-                            (c) =>
-                            {
-                                RegisterAnalyzer(c, xmlTypes, version);
-                            });
+                        Version version = DiagnosticHelpers.GetDotNetFrameworkVersion(compilation);
+                        // bail if we are not analyzing project targeting .NET Framework
+                        // TODO: should we throw an exception to notify user?
+                        if (version != null)
+                        {
+                            context.RegisterCodeBlockStartAction<TLanguageKindEnum>(
+                                (c) =>
+                                {
+                                    RegisterAnalyzer(c, xmlTypes, version);
+                                });
+                        }
                     }
                 });
         }

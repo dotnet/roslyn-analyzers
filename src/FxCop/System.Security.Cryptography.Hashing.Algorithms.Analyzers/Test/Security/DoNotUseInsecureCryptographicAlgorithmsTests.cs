@@ -38,7 +38,7 @@ Module TestClass
 End Module",
             GetBasicResultAt(6, 29, CA5350RuleName, CA5350Message));
         }
-
+//NO VB
         [Fact]
 	    public void CA5350UseMD5CreateInPropertyDeclaration()
         {
@@ -52,6 +52,8 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(7, 30, CA5350RuleName, CA5350Message));
+
+           
         }
 
         [Fact]
@@ -70,6 +72,20 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(9, 26, CA5350RuleName, CA5350Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass1
+		Public ReadOnly Property GetAlg() As HashAlgorithm
+			Get
+				Return MD5.Create()
+			End Get
+		End Property
+	End Class
+End Namespace",
+         GetBasicResultAt(7, 12, CA5350RuleName, CA5350Message));
+
         }
 
         [Fact]
@@ -85,6 +101,16 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(7, 36, CA5350RuleName, CA5350Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass1
+		Public Alg As HashAlgorithm = MD5.Create()
+	End Class
+End Namespace",
+         GetBasicResultAt(5, 33, CA5350RuleName, CA5350Message));
+
         }   
         
         [Fact]
@@ -104,6 +130,21 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(10, 36, CA5350RuleName, CA5350Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Imports System.Threading.Tasks
+Namespace TestNamespace
+	Class TestClass
+		Private Function TestMethod() As Task
+			Await Task.Run(Function() 
+			MD5.Create()
+End Function)
+		End Function
+	End Class
+End Namespace",
+         GetBasicResultAt(8, 4, CA5350RuleName, CA5350Message));
+
         }
         
         [Fact]
@@ -120,6 +161,17 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(8, 31, CA5350RuleName, CA5350Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private Delegate Sub Del()
+		Private d As Del = Sub() MD5.Create()
+	End Class
+End Namespace",
+        GetBasicResultAt(6, 28, CA5350RuleName, CA5350Message));
+
         }        
         
         [Fact]
@@ -166,6 +218,42 @@ namespace TestNamespace
     }
 }" },
             GetCSharpResultAt(10, 25, CA5350RuleName, CA5350Message));
+
+            VerifyBasic(new[] {
+//Test0
+@"
+Imports System.Security.Cryptography
+
+Namespace TestNamespace
+	Class TestClass
+		Private Shared Sub TestMethod(inBytes As Byte())
+			Dim myMd5 = New MyMD5()
+		End Sub
+	End Class
+End Namespace",
+
+//Test1
+@"
+Imports System.Security.Cryptography
+
+Namespace TestNamespace
+	Class MyMD5
+		Inherits MD5
+		Public Overrides Sub Initialize()
+			Throw New NotImplementedException()
+		End Sub
+
+		Protected Overrides Sub HashCore(array As Byte(), ibStart As Integer, cbSize As Integer)
+			Throw New NotImplementedException()
+		End Sub
+
+		Protected Overrides Function HashFinal() As Byte()
+			Throw New NotImplementedException()
+		End Function
+	End Class
+End Namespace"},
+
+        GetBasicResultAt(7, 16, CA5350RuleName, CA5350Message));
         }
 
         #endregion
@@ -200,7 +288,7 @@ Module TestClass
 End Module",
             GetBasicResultAt(6, 31, CA5354RuleName, CA5354Message));
         }
-
+//NO VB
         [Fact]
         public void CA5354UseSHA1CreateInPropertyDeclaration()
         {
@@ -232,6 +320,19 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(9, 26, CA5354RuleName, CA5354Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass1
+		Public ReadOnly Property GetAlg() As HashAlgorithm
+			Get
+				Return SHA1.Create()
+			End Get
+		End Property
+	End Class
+End Namespace",
+           GetBasicResultAt(7, 12, CA5354RuleName, CA5354Message));
         }
 
         [Fact]
@@ -247,6 +348,15 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(7, 36, CA5354RuleName, CA5354Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass1
+		Public Alg As HashAlgorithm = SHA1.Create()
+	End Class
+End Namespace",
+         GetBasicResultAt(5, 33, CA5354RuleName, CA5354Message));
         }
 
         [Fact]
@@ -266,6 +376,20 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(10, 36, CA5354RuleName, CA5354Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Imports System.Threading.Tasks
+Namespace TestNamespace
+	Class TestClass
+		Private Function TestMethod() As Task
+			Await Task.Run(Function() 
+			SHA1.Create()
+End Function)
+		End Function
+	End Class
+End Namespace",
+        GetBasicResultAt(8, 4, CA5354RuleName, CA5354Message));
         }
 
         [Fact]
@@ -282,6 +406,16 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(8, 31, CA5354RuleName, CA5354Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private Delegate Sub Del()
+		Private d As Del = Sub() SHA1.Create()
+	End Class
+End Namespace",
+        GetBasicResultAt(6, 28, CA5354RuleName, CA5354Message));
         }
 
         [Fact]
@@ -328,6 +462,39 @@ namespace TestNamespace
     }
 }" },
             GetCSharpResultAt(10, 26, CA5354RuleName, CA5354Message));
+
+            VerifyBasic(new[] {
+//Test0
+@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private Shared Sub TestMethod(inBytes As Byte())
+			Dim mySHA1 = New MySHA1()
+		End Sub
+	End Class
+End Namespace",
+//Test1
+@"
+Imports System.Security.Cryptography
+
+Namespace TestNamespace
+	Class MySHA1
+		Inherits SHA1
+		Public Overrides Sub Initialize()
+			Throw New NotImplementedException()
+		End Sub
+
+		Protected Overrides Sub HashCore(array As Byte(), ibStart As Integer, cbSize As Integer)
+			Throw New NotImplementedException()
+		End Sub
+
+		Protected Overrides Function HashFinal() As Byte()
+			Throw New NotImplementedException()
+		End Function
+	End Class
+End Namespace" },
+            GetBasicResultAt(6, 17, CA5354RuleName, CA5354Message));
         }
 
         [Fact]
@@ -387,7 +554,7 @@ Module TestClass
 End Module",
             GetBasicResultAt(6, 36, CA5354RuleName, CA5354Message));
         }
-
+//No VB
         [Fact]
         public void CA5354CreateHMACSHA1ObjectInPropertyDeclaration()
         {
@@ -419,6 +586,19 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(9, 26, CA5354RuleName, CA5354Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass1
+		Public ReadOnly Property GetAlg() As HMAC
+			Get
+				Return New HMACSHA1()
+			End Get
+		End Property
+	End Class
+End Namespace",
+            GetBasicResultAt(7, 12, CA5354RuleName, CA5354Message));
         }
 
         [Fact]
@@ -434,8 +614,17 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(7, 27, CA5354RuleName, CA5354Message));
-        }
 
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass1
+		Public Alg As HMAC = New HMACSHA1()
+	End Class
+End Namespace",
+            GetBasicResultAt(5, 24, CA5354RuleName, CA5354Message));
+        }
+//No VB
         [Fact]
         public void CA5354CreateHMACSHA1ObjectInLambdaExpression()
         {
@@ -453,8 +642,9 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(10, 36, CA5354RuleName, CA5354Message));
+            
         }
-
+//No VB
         [Fact]
         public void CA5354CreateHMACSHA1ObjectInAnonymousMethodExpression()
         {
@@ -515,6 +705,41 @@ namespace TestNamespace
     }
 }" },
             GetCSharpResultAt(10, 30, CA5354RuleName, CA5354Message));
+
+            VerifyBasic(new[] {
+//Test0
+@"
+Imports System.Security.Cryptography
+
+Namespace TestNamespace
+	Class TestClass
+		Private Shared Sub TestMethod(inBytes As Byte())
+			Dim myHMACSHA1 = New MyHMACSHA1()
+		End Sub
+	End Class
+End Namespace",
+//Test1
+@"
+Imports System.Security.Cryptography
+
+Namespace TestNamespace
+	Class MyHMACSHA1
+		Inherits HMACSHA1
+		Public Overrides Sub Initialize()
+			Throw New NotImplementedException()
+		End Sub
+
+		Protected Overrides Sub HashCore(array As Byte(), ibStart As Integer, cbSize As Integer)
+			Throw New NotImplementedException()
+		End Sub
+
+		Protected Overrides Function HashFinal() As Byte()
+			Throw New NotImplementedException()
+		End Function
+	End Class
+End Namespace
+" },
+            GetBasicResultAt(7, 21, CA5354RuleName, CA5354Message));
         }
         #endregion 
 

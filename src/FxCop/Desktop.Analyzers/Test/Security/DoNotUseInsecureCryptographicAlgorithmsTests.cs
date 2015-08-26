@@ -10,7 +10,7 @@ namespace Desktop.Analyzers.UnitTests
     {
         #region CA5350 
         [Fact]
-		public void UseHMACMD5ShouldGenerateDiagnostic()
+		public void CA5350UseHMACMD5CreateInMethodDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -26,10 +26,22 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(10, 23, CA5350RuleName, CA5350Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+
+Namespace TestNamespace
+	Class TestClass
+		Private Shared Sub TestMethod()
+			Dim md5 = New HMACMD5()
+		End Sub
+	End Class
+End Namespace",
+           GetBasicResultAt(7, 14, CA5350RuleName, CA5350Message));
         }        
         
         [Fact]
-		public void UseHMACMD5DerivedClassShouldGenerateDiagnostic()
+		public void CA5350CreateObjectFromHMACMD5DerivedClass()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -47,10 +59,25 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(12, 23, CA5350RuleName, CA5350Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class MyHMACMD5
+		Inherits HMACMD5
+	End Class
+
+	Class TestClass
+		Private Shared Sub TestMethod()
+			Dim md5 = New MyHMACMD5()
+		End Sub
+	End Class
+End Namespace",
+           GetBasicResultAt(10, 14, CA5350RuleName, CA5350Message));
         }        
         
         [Fact]
-		public void UseHMACMD5WithGetShouldGenerateDiagnostic()
+		public void CA5350UseHMACMD5CreateInGetDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -65,35 +92,23 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(9, 26, CA5350RuleName, CA5350Message));
-        }        
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass1
+		Public ReadOnly Property GetHMACMD5() As HMACMD5
+			Get
+				Return New HMACMD5()
+			End Get
+		End Property
+	End Class
+End Namespace",
+GetBasicResultAt(7, 12, CA5350RuleName, CA5350Message));
+        }         
         
         [Fact]
-		public void UseHMACMD5WithSetShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        HMACMD5 privateMd5;
-        public HMACMD5 GetHMACMD5
-        {
-            set
-            {
-                if (value == null)
-                    privateMd5 = new HMACMD5();
-                else
-                    privateMd5 = value;
-            }
-        }
-    }
-}",
-            GetCSharpResultAt(13, 34, CA5350RuleName, CA5350Message));
-        }        
-        
-        [Fact]
-		public void UseHMACMD5WithFieldInitializerShouldGenerateDiagnostic()
+		public void CA5350UseHMACMD5InFieldDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -105,123 +120,19 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(7, 30, CA5350RuleName, CA5350Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private privateMd5 As New HMACMD5()
+	End Class
+End Namespace",
+GetBasicResultAt(5, 25, CA5350RuleName, CA5350Message));
         }         
-        
+ //No VB            
         [Fact]
-		public void UseHMACMD5WithListCollectionInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        List<HMACMD5> md5List = new List<HMACMD5>() { new HMACMD5() };
-    }
-}",
-            GetCSharpResultAt(8, 55, CA5350RuleName, CA5350Message));
-        }        
-        
-        [Fact]
-		public void UseHMACMD5WithArrayCollectionInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        HMACMD5[] md5List = new HMACMD5[] { new HMACMD5() };
-    }
-}",
-            GetCSharpResultAt(7, 45, CA5350RuleName, CA5350Message));
-        }        
-        
-        [Fact]
-		public void UseHMACMD5WithDictionaryInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        Dictionary<int, HMACMD5> md5List = new Dictionary<int, HMACMD5>() { { 1, new HMACMD5() } };
-    }
-}",
-            GetCSharpResultAt(8, 82, CA5350RuleName, CA5350Message));
-        }         
-        
-        [Fact]
-		public void UseHMACMD5InTryBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try
-            {
-                var md5 = new HMACMD5();
-            }
-            catch (Exception) { throw; }
-            finally { }
-        }
-    }
-}",
-            GetCSharpResultAt(12, 27, CA5350RuleName, CA5350Message));
-        }        
-        
-        [Fact]
-		public void UseHMACMD5InCatchBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try { }
-            catch (Exception) { var md5 = new HMACMD5(); }
-            finally { }
-        }
-    }
-}",
-            GetCSharpResultAt(11, 43, CA5350RuleName, CA5350Message));
-        }        
-        
-        [Fact]
-		public void UseHMACMD5InFinallyBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try { }
-            catch (Exception) { }
-            finally { var md5 = new HMACMD5(); }
-        }
-    }
-}",
-            GetCSharpResultAt(12, 33, CA5350RuleName, CA5350Message));
-        }        
-        
-        [Fact]
-		public void UseHMACMD5AwaitShouldGenerateDiagnostic()
+		public void CA5350UseHMACMD5InLambdaExpression()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -234,17 +145,13 @@ namespace TestNamespace
         {
             await Task.Run(() => { new HMACMD5(); });
         }
-        private async void TestMethod2()
-        {
-            await TestMethod();
-        }
     }
 }",
             GetCSharpResultAt(10, 36, CA5350RuleName, CA5350Message));
         }        
-        
+//No VB        
         [Fact]
-		public void UseHMACMD5WithDelegateShouldGenerateDiagnostic()
+		public void CA5350UseHMACMD5InAnonymousMethodExpression()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -264,7 +171,7 @@ namespace TestNamespace
         #region CA5351
         
         [Fact]
-        public void UseDESCreateShouldGenerateDiagnostic()
+        public void CA5351UseDESCreateInMethodDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -280,10 +187,20 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(10, 23, CA5351RuleName, CA5351Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+
+Module TestClass
+    Sub TestMethod()
+        Dim desalg As DES = DES.Create()
+    End Sub
+End Module",
+GetBasicResultAt(6, 29, CA5351RuleName, CA5351Message));
         }
 
         [Fact]
-        public void UseDESCreateWithGetShouldGenerateDiagnostic()
+        public void CA5351UseDESCreateInGetDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -298,35 +215,24 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(9, 26, CA5351RuleName, CA5351Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Public ReadOnly Property GetDES() As DES
+			Get
+				Return DES.Create()
+			End Get
+		End Property
+	End Class
+End Namespace
+",
+GetBasicResultAt(7, 12, CA5351RuleName, CA5351Message));
         }
 
         [Fact]
-        public void UseDESCreateWithSetShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        DES privateDES;
-        public DES GetDES
-        {
-            set
-            {
-                if (value == null)
-                    privateDES = DES.Create();
-                else
-                    privateDES = value;
-            }
-        }
-    }
-}",
-            GetCSharpResultAt(13, 34, CA5351RuleName, CA5351Message));
-        }
-
-        [Fact]
-        public void UseDESCreateWithFieldInitializerShouldGenerateDiagnostic()
+        public void CA5351UseDESCreateInFieldDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -338,123 +244,19 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(7, 26, CA5351RuleName, CA5351Message));
-        }
 
-        [Fact]
-        public void UseDESCreateWithListCollectionInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        List<DES> DESList = new List<DES>() { DES.Create() };
-    }
-}",
-            GetCSharpResultAt(8, 47, CA5351RuleName, CA5351Message));
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private privateDES As DES = DES.Create()
+	End Class
+End Namespace",
+GetBasicResultAt(5, 31, CA5351RuleName, CA5351Message));
         }
         
         [Fact]
-        public void UseDESCreateWithArrayCollectionInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        DES[] DESList = new DES[] { DES.Create() };
-    }
-}",
-            GetCSharpResultAt(7, 37, CA5351RuleName, CA5351Message));
-        }
-        
-        [Fact]
-        public void UseDESCreateWithDictionaryInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        Dictionary<int, DES> DESList = new Dictionary<int, DES>() { { 1, DES.Create() } };
-    }
-}",
-            GetCSharpResultAt(8, 74, CA5351RuleName, CA5351Message));
-        }
-        
-        [Fact]
-        public void UseDESCreateInTryBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try
-            {
-                var des = DES.Create();
-            }
-            catch (Exception) { throw; }
-            finally { }
-        }
-    }
-}",
-            GetCSharpResultAt(12, 27, CA5351RuleName, CA5351Message));
-        }
-        
-        [Fact]
-        public void UseDESCreateInCatchBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try { }
-            catch (Exception) { var des = DES.Create(); }
-            finally { }
-        }
-    }
-}",
-            GetCSharpResultAt(11, 43, CA5351RuleName, CA5351Message));
-        }
-        
-        [Fact]
-        public void UseDESCreateInFinallyBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try { }
-            catch (Exception) { }
-            finally { var des = DES.Create(); }
-        }
-    }
-}",
-            GetCSharpResultAt(12, 33, CA5351RuleName, CA5351Message));
-        }
-        
-        [Fact]
-        public void UseDESCreateAwaitShouldGenerateDiagnostic()
+        public void CA5351UseDESCreateInLambdaExpression()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -467,17 +269,27 @@ namespace TestNamespace
         {
             await Task.Run(() => { DES.Create(); });
         }
-        private async void TestMethod2()
-        {
-            await TestMethod();
-        }
     }
 }",
             GetCSharpResultAt(10, 36, CA5351RuleName, CA5351Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Imports System.Threading.Tasks
+Namespace TestNamespace
+	Class TestClass
+		Private Function TestMethod() As Task
+			Await Task.Run(Function() 
+			DES.Create()
+End Function)
+		End Function
+	End Class
+End Namespace",
+GetBasicResultAt(8, 4, CA5351RuleName, CA5351Message));
         }
         
         [Fact]
-        public void UseDESCreateWithDelegateShouldGenerateDiagnostic()
+        public void CA5351UseDESCreateInAnonymousMethodExpression()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -490,10 +302,20 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(8, 31, CA5351RuleName, CA5351Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private Delegate Sub Del()
+		Private d As Del = Sub() DES.Create()
+	End Class
+End Namespace",
+GetBasicResultAt(6, 28, CA5351RuleName, CA5351Message));
         }
         
         [Fact]
-        public void UseDESCryptoServiceProviderShouldGenerateDiagnostic()
+        public void CA5351UseDESCryptoServiceProviderCreateInMethodDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -509,10 +331,21 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(10, 23, CA5351RuleName, CA5351Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private Shared Sub TestMethod()
+			Dim des As DES = New DESCryptoServiceProvider()
+		End Sub
+	End Class
+End Namespace",
+            GetBasicResultAt(6, 21, CA5351RuleName, CA5351Message));
         }
         
         [Fact]
-        public void UseDESCryptoServiceProviderCreateWithGetShouldGenerateDiagnostic()
+        public void CA5351UseDESCryptoServiceProviderCreateInGetDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -527,35 +360,23 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(9, 26, CA5351RuleName, CA5351Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Public ReadOnly Property GetDES() As DESCryptoServiceProvider
+			Get
+				Return New DESCryptoServiceProvider()
+			End Get
+		End Property
+	End Class
+End Namespace",
+           GetBasicResultAt(7, 12, CA5351RuleName, CA5351Message));
         }
         
         [Fact]
-        public void UseDESCryptoServiceProviderCreateWithSetShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        DESCryptoServiceProvider privateDES;
-        public DESCryptoServiceProvider GetDES
-        {
-            set
-            {
-                if (value == null)
-                    privateDES = new DESCryptoServiceProvider();
-                else
-                    privateDES = value;
-            }
-        }
-    }
-}",
-            GetCSharpResultAt(13, 34, CA5351RuleName, CA5351Message));
-        }
-        
-        [Fact]
-        public void UseDESCryptoServiceProviderCreateWithFieldInitializerShouldGenerateDiagnostic()
+        public void CA5351UseDESCryptoServiceProviderCreateInFieldDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -567,123 +388,19 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(7, 47, CA5351RuleName, CA5351Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private privateDES As New DESCryptoServiceProvider()
+	End Class
+End Namespace",
+GetBasicResultAt(5, 25, CA5351RuleName, CA5351Message));
         }
-        
+//No VB        
         [Fact]
-        public void UseDESCryptoServiceProviderCreateWithListCollectionInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        List<DESCryptoServiceProvider> DESList = new List<DESCryptoServiceProvider>() { new DESCryptoServiceProvider() };
-    }
-}",
-            GetCSharpResultAt(8, 89, CA5351RuleName, CA5351Message));
-        }
-        
-        [Fact]
-        public void UseDESCryptoServiceProviderCreateWithArrayCollectionInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        DESCryptoServiceProvider[] DESList = new DESCryptoServiceProvider[] { new DESCryptoServiceProvider(); };
-    }
-}",
-            GetCSharpResultAt(7, 79, CA5351RuleName, CA5351Message));
-        }
-        
-        [Fact]
-        public void UseDESCryptoServiceProviderCreateWithDictionaryInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        Dictionary<int, DESCryptoServiceProvider> DESList = new Dictionary<int, DESCryptoServiceProvider>() { { 1, new DESCryptoServiceProvider(); } };
-    }
-}",
-            GetCSharpResultAt(8, 116, CA5351RuleName, CA5351Message));
-        }
-        
-        [Fact]
-        public void UseDESCryptoServiceProviderCreateInTryBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try
-            {
-                var des = new DESCryptoServiceProvider();
-            }
-            catch (Exception) { throw; }
-            finally { }
-        }
-    }
-}",
-            GetCSharpResultAt(12, 27, CA5351RuleName, CA5351Message));
-        }
-        
-        [Fact]
-        public void UseDESCryptoServiceProviderCreateInCatchBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try { }
-            catch (Exception) { var des = new DESCryptoServiceProvider(); }
-            finally { }
-        }
-    }
-}",
-            GetCSharpResultAt(11, 43, CA5351RuleName, CA5351Message));
-        }  
-        
-        [Fact]
-        public void UseDESCryptoServiceProviderCreateInFinallyBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try { }
-            catch (Exception) { }
-            finally { var des = new DESCryptoServiceProvider(); }
-        }
-    }
-}",
-            GetCSharpResultAt(12, 33, CA5351RuleName, CA5351Message));
-        }
-        
-        [Fact]
-        public void UseDESCryptoServiceProviderCreateAwaitShouldGenerateDiagnostic()
+        public void CA5351UseDESCryptoServiceProviderInLambdaExpression()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -696,17 +413,13 @@ namespace TestNamespace
         {
             await Task.Run(() => { new DESCryptoServiceProvider(); });
         }
-        private async void TestMethod2()
-        {
-            await TestMethod();
-        }
     }
 }",
             GetCSharpResultAt(10, 36, CA5351RuleName, CA5351Message));
         }
-        
+//No VB        
         [Fact]
-        public void UseDESCryptoServiceProviderCreateWithDelegateShouldGenerateDiagnostic()
+        public void CA5351UseDESCryptoServiceProviderInAnonymousMethodExpression()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -720,33 +433,12 @@ namespace TestNamespace
 }",
             GetCSharpResultAt(8, 31, CA5351RuleName, CA5351Message));
         }
-        
+                
         [Fact]
-        public void UseMultipleDESCryptoServiceProvidersShouldGenerateMultipleDiagnostics()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private static void TestMethod()
-        {
-            DES des = new DESCryptoServiceProvider();
-            DES des2 = new DESCryptoServiceProvider();   
-        }
-    }
-}",
-            GetCSharpResultAt(10, 23, CA5351RuleName, CA5351Message),
-            GetCSharpResultAt(11, 24, CA5351RuleName, CA5351Message));
-        }
-        
-        [Fact]
-        public void UseDESDerivedClassShouldGenerateDiagnostics()
+        public void CA5351CreateObjectFromDESDerivedClass()
         {
             VerifyCSharp(new[] {
-                //Test0
+//Test0
                 @"
 using System.Security.Cryptography;
 
@@ -761,7 +453,7 @@ namespace TestNamespace
         }
     }
 }",
-                //Test1
+//Test1
                 @"
 using System;
 using System.Security.Cryptography;
@@ -792,28 +484,54 @@ namespace TestNamespace
     }
 }" },
             GetCSharpResultAt(10, 25, CA5351RuleName, CA5351Message),
-            GetCSharpResultAt(11, 13, CA5351RuleName, CA5351Message)); 
+            GetCSharpResultAt(11, 13, CA5351RuleName, CA5351Message));
+
+            VerifyBasic(new[] {
+//Test0
+                @"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private Shared Sub TestMethod()
+			Dim des As New MyDES()
+			des.GenerateKey()
+		End Sub
+	End Class
+End Namespace",
+//Test1
+                @"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class MyDES
+		Inherits DES
+		Public Overrides Function CreateDecryptor(rgbKey As Byte(), rgbIV As Byte()) As ICryptoTransform
+			Throw New NotImplementedException()
+		End Function
+
+		Public Overrides Function CreateEncryptor(rgbKey As Byte(), rgbIV As Byte()) As ICryptoTransform
+			Throw New NotImplementedException()
+		End Function
+
+		Public Overrides Sub GenerateIV()
+			Throw New NotImplementedException()
+		End Sub
+
+		Public Overrides Sub GenerateKey()
+			Throw New NotImplementedException()
+		End Sub
+	End Class
+End Namespace
+" },
+           GetBasicResultAt(6, 15, CA5351RuleName, CA5351Message),
+           GetBasicResultAt(7, 4, CA5351RuleName, CA5351Message));
         }                                          
         
-        [Fact]
-        public void UseDESCreateInVBShouldGenerateDiagnostic()
-        {
-            VerifyBasic(@"
-Imports System.Security.Cryptography
-
-Module TestClass
-    Sub TestMethod()
-        Dim desalg As DES = DES.Create()
-    End Sub
-End Module",
-            GetBasicResultAt(6, 29, CA5351RuleName, CA5351Message));
-        }
         #endregion
 
         #region CA5352
 
         [Fact] 
-        public void UseRC2CryptoServiceProviderShouldGenerateDiagnostic()
+        public void CA5352UseRC2CryptoServiceProviderInMethodDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -829,10 +547,20 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(10, 23, CA5352RuleName, CA5352Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+
+Module TestClass
+    Sub TestMethod()
+        Dim rc2alg As New RC2CryptoServiceProvider
+    End Sub
+End Module",
+GetBasicResultAt(6, 23, CA5352RuleName, CA5352Message));
         }        
         
         [Fact]
-        public void UseRC2CryptoServiceProviderCreateWithGetShouldGenerateDiagnostic()
+        public void CA5352UseRC2CryptoServiceProviderInGetDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -847,35 +575,23 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(9, 26, CA5352RuleName, CA5352Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Public ReadOnly Property GetRC2() As RC2CryptoServiceProvider
+			Get
+				Return New RC2CryptoServiceProvider()
+			End Get
+		End Property
+	End Class
+End Namespace",
+GetBasicResultAt(7, 12, CA5352RuleName, CA5352Message));
         }        
         
         [Fact]
-        public void UseRC2CryptoServiceProviderCreateWithSetShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        RC2CryptoServiceProvider privateRC2;
-        public RC2CryptoServiceProvider GetRC2
-        {
-            set
-            {
-                if (value == null)
-                    privateRC2 = new RC2CryptoServiceProvider();
-                else
-                    privateRC2 = value;
-            }
-        }
-    }
-}",
-            GetCSharpResultAt(13, 34, CA5352RuleName, CA5352Message));
-        }
-        
-        [Fact]
-        public void UseRC2CryptoServiceProviderCreateWithFieldInitializerShouldGenerateDiagnostic()
+        public void CA5352UseRC2CryptoServiceProviderInFieldDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -887,123 +603,20 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(7, 47, CA5352RuleName, CA5352Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private privateRC2 As New RC2CryptoServiceProvider()
+	End Class
+End Namespace
+",
+GetBasicResultAt(5, 25, CA5352RuleName, CA5352Message));
         }
-        
+//No VB            
         [Fact]
-        public void UseRC2CryptoServiceProviderCreateWithListCollectionInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        List<RC2CryptoServiceProvider> RC2List = new List<RC2CryptoServiceProvider>() { new RC2CryptoServiceProvider() };
-    }
-}",
-            GetCSharpResultAt(8, 89, CA5352RuleName, CA5352Message));
-        }
-        
-        [Fact]
-        public void UseRC2CryptoServiceProviderCreateWithArrayCollectionInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        RC2CryptoServiceProvider[] RC2List = new RC2CryptoServiceProvider[] { new RC2CryptoServiceProvider(); };
-    }
-}",
-            GetCSharpResultAt(7, 79, CA5352RuleName, CA5352Message));
-        }
-        
-        [Fact]
-        public void UseRC2CryptoServiceProviderCreateWithDictionaryInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        Dictionary<int, RC2CryptoServiceProvider> RC2List = new Dictionary<int, RC2CryptoServiceProvider>() { { 1, new RC2CryptoServiceProvider(); } };
-    }
-}",
-            GetCSharpResultAt(8, 116, CA5352RuleName, CA5352Message));
-        }
-   
-        [Fact]
-        public void UseRC2CryptoServiceProviderCreateInTryBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try
-            {
-                var des = new RC2CryptoServiceProvider();
-            }
-            catch (Exception) { throw; }
-            finally { }
-        }
-    }
-}",
-            GetCSharpResultAt(12, 27, CA5352RuleName, CA5352Message));
-        }
-        
-        [Fact]
-        public void UseRC2CryptoServiceProviderCreateInCatchBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try { }
-            catch (Exception) { var des = new RC2CryptoServiceProvider(); }
-            finally { }
-        }
-    }
-}",
-            GetCSharpResultAt(11, 43, CA5352RuleName, CA5352Message));
-        }
-        
-        [Fact]
-        public void UseRC2CryptoServiceProviderCreateInFinallyBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try { }
-            catch (Exception) { }
-            finally { var des = new RC2CryptoServiceProvider(); }
-        }
-    }
-}",
-            GetCSharpResultAt(12, 33, CA5352RuleName, CA5352Message));
-        } 
-        
-        [Fact]
-        public void UseRC2CryptoServiceProviderCreateAwaitShouldGenerateDiagnostic()
+        public void CA5352UseRC2CryptoServiceProviderInLambdaExpression()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1016,17 +629,13 @@ namespace TestNamespace
         {
             await Task.Run(() => { new RC2CryptoServiceProvider(); });
         }
-        private async void TestMethod2()
-        {
-            await TestMethod();
-        }
     }
 }",
             GetCSharpResultAt(10, 36, CA5352RuleName, CA5352Message));
         } 
-        
+//No VB        
         [Fact]
-        public void UseRC2CryptoServiceProviderCreateWithDelegateShouldGenerateDiagnostic()
+        public void CA5352UseRC2CryptoServiceProviderInAnonymousMethodExpression()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1042,7 +651,7 @@ namespace TestNamespace
         }
         
         [Fact]
-        public void UseRC2DerivedClassShouldGenerateDiagnostic()
+        public void CA5352CreateObjectFromRC2DerivedClass()
         {
             VerifyCSharp( new[] {
 //Test0
@@ -1090,27 +699,51 @@ namespace TestNamespace
     }
 }" },
             GetCSharpResultAt(10, 23, CA5352RuleName, CA5352Message));
+
+            VerifyBasic(new[] {
+//Test0
+@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private Shared Sub TestMethod()
+			Dim rc2 = New MyRC2()
+		End Sub
+	End Class
+End Namespace",
+//Test1
+@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class MyRC2
+		Inherits RC2
+		Public Overrides Function CreateDecryptor(rgbKey As Byte(), rgbIV As Byte()) As ICryptoTransform
+			Throw New NotImplementedException()
+		End Function
+
+		Public Overrides Function CreateEncryptor(rgbKey As Byte(), rgbIV As Byte()) As ICryptoTransform
+			Throw New NotImplementedException()
+		End Function
+
+		Public Overrides Sub GenerateIV()
+			Throw New NotImplementedException()
+		End Sub
+
+		Public Overrides Sub GenerateKey()
+			Throw New NotImplementedException()
+		End Sub
+	End Class
+End Namespace
+" },
+           GetBasicResultAt(6, 14, CA5352RuleName, CA5352Message));
         }
         
-        [Fact]
-        public void UseRC2CryptoServiceProviderInVBShouldGenerateDiagnostic()
-        {
-            VerifyBasic(@"
-Imports System.Security.Cryptography
-
-Module TestClass
-    Sub TestMethod()
-        Dim rc2alg As New RC2CryptoServiceProvider
-    End Sub
-End Module",
-            GetBasicResultAt(6, 23, CA5352RuleName, CA5352Message));
-        }
         #endregion
 
         #region CA5353 
         
         [Fact]
-        public void UseTripleDESCreateShouldGenerateDiagnostic()
+        public void CA5353TripleDESCreateInMethodDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1126,10 +759,21 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(10, 29, CA5353RuleName, CA5353Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private Shared Sub TestMethod()
+			Dim tripleDES__1 = TripleDES.Create(""TripleDES"")
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(6, 23, CA5353RuleName, CA5353Message));
         } 
         
         [Fact]
-        public void UseTripleDESCreateWithGetShouldGenerateDiagnostic()
+        public void CA5353TripleDESCreateInGetDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1144,35 +788,23 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(9, 26, CA5353RuleName, CA5353Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Public ReadOnly Property GetTripleDES() As TripleDES
+			Get
+				Return TripleDES.Create(""TripleDES"")
+            End Get
+        End Property
+    End Class
+End Namespace",
+           GetBasicResultAt(7, 12, CA5353RuleName, CA5353Message));
         }
         
         [Fact]
-        public void UseTripleDESCreateWithSetShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        TripleDES privateDES;
-        public TripleDES GetDES
-        {
-            set
-            {
-                if (value == null)
-                    privateDES = TripleDES.Create(""TripleDES"");
-                else
-                    privateDES = value;
-            }
-        }
-    }
-}",
-            GetCSharpResultAt(13, 34, CA5353RuleName, CA5353Message));
-        } 
-        
-        [Fact]
-        public void UseTripleDESCreateWithFieldInitializerShouldGenerateDiagnostic()
+        public void CA5353TripleDESCreateInFieldDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1184,123 +816,19 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(7, 32, CA5353RuleName, CA5353Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private privateDES As TripleDES = TripleDES.Create(""TripleDES"")
+    End Class
+End Namespace",
+           GetBasicResultAt(5, 37, CA5353RuleName, CA5353Message));
         } 
-        
+//No VB
         [Fact]
-        public void UseTripleDESCreateWithListCollectionInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        List<TripleDES> DESList = new List<TripleDES>() { TripleDES.Create(""TripleDES"") };
-    }
-}",
-            GetCSharpResultAt(8, 59, CA5353RuleName, CA5353Message));
-        } 
-        
-        [Fact]
-        public void UseTripleDESCreateWithArrayCollectionInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        TripleDES[] DESList = new TripleDES[] { TripleDES.Create(""TripleDES"") };
-    }
-}",
-            GetCSharpResultAt(7, 49, CA5353RuleName, CA5353Message));
-        }
-        
-        [Fact]
-        public void UseTripleDESCreateWithDictionaryInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        Dictionary<int, TripleDES> DESList = new Dictionary<int, TripleDES>() { { 1, TripleDES.Create(""TripleDES"") } };
-    }
-}",
-            GetCSharpResultAt(8, 86, CA5353RuleName, CA5353Message));
-        }
-        
-        [Fact]
-        public void UseTripleDESCreateInTryBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try
-            {
-                var des = TripleDES.Create(""TripleDES"");
-            }
-            catch (Exception) { throw; }
-            finally { }
-        }
-    }
-}",
-            GetCSharpResultAt(12, 27, CA5353RuleName, CA5353Message));
-        }
-        
-        [Fact]
-        public void UseTripleDESCreateInCatchBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try { }
-            catch (Exception) { var des = TripleDES.Create(""TripleDES""); }
-            finally { }
-        }
-    }
-}",
-            GetCSharpResultAt(11, 43, CA5353RuleName, CA5353Message));
-        }
-        
-        [Fact]
-        public void UseTripleDESCreateInFinallyBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try { }
-            catch (Exception) { }
-            finally { var des = TripleDES.Create(""TripleDES""); }
-        }
-    }
-}",
-            GetCSharpResultAt(12, 33, CA5353RuleName, CA5353Message));
-        }
-        
-        [Fact]
-        public void UseTripleDESCreateAwaitShouldGenerateDiagnostic()
+        public void CA5353TripleDESCreateInLambdaExpression()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1313,17 +841,13 @@ namespace TestNamespace
         {
             await Task.Run(() => { TripleDES.Create(""TripleDES""); });
         }
-        private async void TestMethod2()
-        {
-            await TestMethod();
-        }
     }
 }",
             GetCSharpResultAt(10, 36, CA5353RuleName, CA5353Message));
         }
         
         [Fact]
-        public void UseTripleDESCreateWithDelegateShouldGenerateDiagnostic()
+        public void CA5353TripleDESCreateInAnonymousMethodExpression()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1336,10 +860,20 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(8, 31, CA5353RuleName, CA5353Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private Delegate Sub Del()
+		Private d As Del = Sub() TripleDES.Create(""TripleDES"")
+    End Class
+End Namespace",
+GetBasicResultAt(6, 28, CA5353RuleName, CA5353Message));
         }
         
         [Fact]
-        public void UseTripleDESCryptoServiceProviderShouldGenerateDiagnostic()
+        public void CA5353TripleDESCryptoServiceProviderInMethodDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1355,10 +889,20 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(10, 56, CA5353RuleName, CA5353Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+
+Module TestClass
+    Sub TestMethod()
+        Dim tDESalg As New TripleDESCryptoServiceProvider
+    End Sub
+End Module",
+GetBasicResultAt(6, 24, CA5353RuleName, CA5353Message));
         }
         
         [Fact]
-        public void UseTripleDESCryptoServiceProviderCreateWithGetShouldGenerateDiagnostic()
+        public void CA5353TripleDESCryptoServiceProviderInGetDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1373,35 +917,23 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(9, 26, CA5353RuleName, CA5353Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Public ReadOnly Property GetDES() As TripleDESCryptoServiceProvider
+			Get
+				Return New TripleDESCryptoServiceProvider()
+			End Get
+		End Property
+	End Class
+End Namespace",
+            GetBasicResultAt(7, 12, CA5353RuleName, CA5353Message));
         }
-        
+                
         [Fact]
-        public void UseTripleDESCryptoServiceProviderCreateWithSetShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        TripleDESCryptoServiceProvider privateDES;
-        public TripleDESCryptoServiceProvider GetDES
-        {
-            set
-            {
-                if (value == null)
-                    privateDES = new TripleDESCryptoServiceProvider();
-                else
-                    privateDES = value;
-            }
-        }
-    }
-}",
-            GetCSharpResultAt(13, 34, CA5353RuleName, CA5353Message));
-        } 
-        
-        [Fact]
-        public void UseTripleDESCryptoServiceProviderCreateWithFieldInitializerShouldGenerateDiagnostic()
+        public void CA5353TripleDESCryptoServiceProviderInFieldDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1413,123 +945,19 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(7, 53, CA5353RuleName, CA5353Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private privateDES As New TripleDESCryptoServiceProvider()
+	End Class
+End Namespace",
+GetBasicResultAt(5, 25, CA5353RuleName, CA5353Message));
         }
-        
+//No VB       
         [Fact]
-        public void UseTripleDESCryptoServiceProviderCreateWithListCollectionInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        List<TripleDESCryptoServiceProvider> DESList = new List<TripleDESCryptoServiceProvider>() { new TripleDESCryptoServiceProvider() };
-    }
-}",
-            GetCSharpResultAt(8, 101, CA5353RuleName, CA5353Message));
-        } 
-        
-        [Fact]
-        public void UseTripleDESCryptoServiceProviderCreateWithArrayCollectionInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        TripleDESCryptoServiceProvider[] DESList = new TripleDESCryptoServiceProvider[] { new TripleDESCryptoServiceProvider(); };
-    }
-}",
-            GetCSharpResultAt(7, 91, CA5353RuleName, CA5353Message));
-        }
-        
-        [Fact]
-        public void UseTripleDESCryptoServiceProviderCreateWithDictionaryInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        Dictionary<int, TripleDESCryptoServiceProvider> DESList = new Dictionary<int, TripleDESCryptoServiceProvider>() { { 1, new TripleDESCryptoServiceProvider(); } };
-    }
-}",
-            GetCSharpResultAt(8, 128, CA5353RuleName, CA5353Message));
-        }
-        
-        [Fact]
-        public void UseTripleDESCryptoServiceProviderCreateInTryBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try
-            {
-                var des = new TripleDESCryptoServiceProvider();
-            }
-            catch (Exception) { throw; }
-            finally { }
-        }
-    }
-}",
-            GetCSharpResultAt(12, 27, CA5353RuleName, CA5353Message));
-        } 
-        
-        [Fact]
-        public void UseTripleDESCryptoServiceProviderCreateInCatchBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try { }
-            catch (Exception) { var des = new TripleDESCryptoServiceProvider(); }
-            finally { }
-        }
-    }
-}",
-            GetCSharpResultAt(11, 43, CA5353RuleName, CA5353Message));
-        }  
-        
-        [Fact]
-        public void UseTripleDESCryptoServiceProviderCreateInFinallyBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try { }
-            catch (Exception) { }
-            finally { var des = new TripleDESCryptoServiceProvider(); }
-        }
-    }
-}",
-            GetCSharpResultAt(12, 33, CA5353RuleName, CA5353Message));
-        } 
-        
-        [Fact]
-        public void UseTripleDESCryptoServiceProviderCreateAwaitShouldGenerateDiagnostic()
+        public void CA5353TripleDESCryptoServiceProviderInLambdaExpression()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1542,17 +970,13 @@ namespace TestNamespace
         {
             await Task.Run(() => { new TripleDESCryptoServiceProvider(); });
         }
-        private async void TestMethod2()
-        {
-            await TestMethod();
-        }
     }
 }",
             GetCSharpResultAt(10, 36, CA5353RuleName, CA5353Message));
         }  
-        
+//No VB        
         [Fact]
-        public void UseTripleDESCryptoServiceProviderCreateWithDelegateShouldGenerateDiagnostic()
+        public void CA5353TripleDESCryptoServiceProviderInAnonymousMethodExpression()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1568,10 +992,10 @@ namespace TestNamespace
         }
         
         [Fact]
-        public void UseTripleDESDerivedClassShouldGenerateDiagnostics()
+        public void CA5353CreateObjectFromTripleDESDerivedClass()
         {
             VerifyCSharp( new[] {
-                //Test0
+//Test0
                 @"
 using System.Security.Cryptography;
 
@@ -1586,7 +1010,7 @@ namespace TestNamespace
         }
     }
 }",
-                //Test1
+//Test1
                 @"
 using System;
 using System.Security.Cryptography;
@@ -1618,27 +1042,56 @@ namespace TestNamespace
 }" },
             GetCSharpResultAt(10, 26, CA5353RuleName, CA5353Message),
             GetCSharpResultAt(11, 13, CA5353RuleName, CA5353Message));
-        }
-        
-        [Fact]
-        public void UseTripleESCryptoServiceProviderInVBShouldGenerateDiagnostic()
-        {
-            VerifyBasic(@"
+
+            VerifyBasic(new[] {
+//Test0
+                @"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private Shared Sub TestMethod()
+			Dim my3DES = New My3DES()
+			my3DES.GenerateKey()
+		End Sub
+	End Class
+End Namespace",
+
+//Test1
+                @"
 Imports System.Security.Cryptography
 
-Module TestClass
-    Sub TestMethod()
-        Dim tDESalg As New TripleDESCryptoServiceProvider
-    End Sub
-End Module",
-            GetBasicResultAt(6, 24, CA5353RuleName, CA5353Message));
+Namespace TestNamespace
+	Class My3DES
+		Inherits TripleDES
+		Public Overrides Function CreateDecryptor(rgbKey As Byte(), rgbIV As Byte()) As ICryptoTransform
+			Throw New NotImplementedException()
+		End Function
+
+		Public Overrides Function CreateEncryptor(rgbKey As Byte(), rgbIV As Byte()) As ICryptoTransform
+			Throw New NotImplementedException()
+		End Function
+
+		Public Overrides Sub GenerateIV()
+			Throw New NotImplementedException()
+		End Sub
+
+		Public Overrides Sub GenerateKey()
+			Throw New NotImplementedException()
+		End Sub
+	End Class
+End Namespace
+" },
+            GetBasicResultAt(6, 17, CA5353RuleName, CA5353Message),
+            GetBasicResultAt(7, 4, CA5353RuleName, CA5353Message));
+
         }
+       
         #endregion  
 
         #region CA5355
         
         [Fact]
-        public void UseRIPEMD160ManagedShouldGenerateDiagnostic()
+        public void CA5355RIPEMD160ManagedInMethodDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1654,10 +1107,20 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(10, 25, CA5355RuleName, CA5355Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+
+Module TestClass
+    Sub TestMethod()
+        Dim md1601alg As New RIPEMD160Managed
+    End Sub
+End Module",
+GetBasicResultAt(6, 26, CA5355RuleName, CA5355Message));
         } 
         
         [Fact]
-        public void UseRIPEMD160ManagedWithGetShouldGenerateDiagnostic()
+        public void CA5355RIPEMD160ManagedInGetDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1672,35 +1135,23 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(9, 26, CA5355RuleName, CA5355Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass1
+		Public ReadOnly Property GetRIPEMD160() As RIPEMD160Managed
+			Get
+				Return New RIPEMD160Managed()
+			End Get
+		End Property
+	End Class
+End Namespace",
+            GetBasicResultAt(7, 12, CA5355RuleName, CA5355Message));
         }
         
         [Fact]
-        public void UseRIPEMD160ManagedWithSetShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        RIPEMD160Managed privateRIPEMD160;
-        public RIPEMD160Managed GetRIPEMD160
-        {
-            set
-            {
-                if (value == null)
-                    privateRIPEMD160 = new RIPEMD160Managed();
-                else
-                    privateRIPEMD160 = value;
-            }
-        }
-    }
-}",
-            GetCSharpResultAt(13, 40, CA5355RuleName, CA5355Message));
-        } 
-        
-        [Fact]
-        public void UseRIPEMD160ManagedWithFieldInitializerShouldGenerateDiagnostic()
+        public void CA5355RIPEMD160ManagedInFieldDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1712,123 +1163,20 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(7, 45, CA5355RuleName, CA5355Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private privateRIPEMD160 As New RIPEMD160Managed()
+	End Class
+End Namespace
+", 
+        GetBasicResultAt(5, 31, CA5355RuleName, CA5355Message));
         } 
-        
+//No VB               
         [Fact]
-        public void UseRIPEMD160ManagedWithListCollectionInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        List<RIPEMD160Managed> RIPEMD160List = new List<RIPEMD160Managed>() { new RIPEMD160Managed() };
-    }
-}",
-            GetCSharpResultAt(8, 79, CA5355RuleName, CA5355Message));
-        } 
-        
-        [Fact]
-        public void UseRIPEMD160ManagedWithArrayCollectionInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        RIPEMD160Managed[] RIPEMD160List = new RIPEMD160Managed[] { new RIPEMD160Managed() };
-    }
-}",
-            GetCSharpResultAt(7, 69, CA5355RuleName, CA5355Message));
-        }
-        
-        [Fact]
-        public void UseRIPEMD160ManagedWithDictionaryInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        Dictionary<int, RIPEMD160Managed> RIPEMD160List = new Dictionary<int, RIPEMD160Managed>() { { 1, new RIPEMD160Managed() } };
-    }
-}",
-            GetCSharpResultAt(8, 106, CA5355RuleName, CA5355Message));
-        }
-        
-        [Fact]
-        public void UseRIPEMD160ManagedInTryBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try
-            {
-                var RIPEMD160var = new RIPEMD160Managed();
-            }
-            catch (Exception) { throw; }
-            finally { }
-        }
-    }
-}",
-            GetCSharpResultAt(12, 36, CA5355RuleName, CA5355Message));
-        }
-        
-        [Fact]
-        public void UseRIPEMD160ManagedInCatchBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try { }
-            catch (Exception) { var RIPEMD160var = new RIPEMD160Managed(); }
-            finally { }
-        }
-    }
-}",
-            GetCSharpResultAt(11, 52, CA5355RuleName, CA5355Message));
-        }
-        
-        [Fact]
-        public void UseRIPEMD160ManagedInFinallyBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try { }
-            catch (Exception) { }
-            finally { var RIPEMD160var = new RIPEMD160Managed(); }
-        }
-    }
-}",
-            GetCSharpResultAt(12, 42, CA5355RuleName, CA5355Message));
-        }
-        
-        [Fact]
-        public void UseRIPEMD160ManagedAwaitShouldGenerateDiagnostic()
+        public void CA5355RIPEMD160ManagedInLambdaExpression()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1841,17 +1189,13 @@ namespace TestNamespace
         {
             await Task.Run(() => { new RIPEMD160Managed(); });
         }
-        private async void TestMethod2()
-        {
-            await TestMethod();
-        }
     }
 }",
             GetCSharpResultAt(10, 36, CA5355RuleName, CA5355Message));
         }
-        
+//No VB        
         [Fact]
-        public void UseRIPEMD160ManagedWithDelegateShouldGenerateDiagnostic()
+        public void CA5355RIPEMD160ManagedInAnonymousMethodExpression()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1867,7 +1211,7 @@ namespace TestNamespace
         }
         
         [Fact]
-        public void UseRIPEMD160CreateShouldGenerateDiagnostic()
+        public void CA5355RIPEMD160CreateInMethodDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1883,10 +1227,21 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(10, 31, CA5355RuleName, CA5355Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private Shared Sub TestMethod()
+			Dim md160 As RIPEMD160 = RIPEMD160.Create()
+		End Sub
+	End Class
+End Namespace",
+            GetBasicResultAt(6, 29, CA5355RuleName, CA5355Message));
         }
         
         [Fact]
-        public void UseRIPEMD160CreateWithGetShouldGenerateDiagnostic()
+        public void CA5355RIPEMD160CreateInGetDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1901,35 +1256,23 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(9, 26, CA5355RuleName, CA5355Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass1
+		Public ReadOnly Property GetRIPEMD160() As RIPEMD160
+			Get
+				Return RIPEMD160.Create()
+			End Get
+		End Property
+	End Class
+End Namespace",
+GetBasicResultAt(7, 12, CA5355RuleName, CA5355Message));
         }
         
         [Fact]
-        public void UseRIPEMD160CreateWithSetShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        RIPEMD160 privateRIPEMD160;
-        public RIPEMD160 GetRIPEMD160
-        {
-            set
-            {
-                if (value == null)
-                    privateRIPEMD160 = RIPEMD160.Create();
-                else
-                    privateRIPEMD160 = value;
-            }
-        }
-    }
-}",
-            GetCSharpResultAt(13, 40, CA5355RuleName, CA5355Message));
-        }
-        
-        [Fact]
-        public void UseRIPEMD160CreateWithFieldInitializerShouldGenerateDiagnostic()
+        public void CA5355RIPEMD160CreateInFieldDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1941,123 +1284,19 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(7, 38, CA5355RuleName, CA5355Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private privateRIPEMD160 As RIPEMD160 = RIPEMD160.Create()
+	End Class
+End Namespace",
+            GetBasicResultAt(5, 43, CA5355RuleName, CA5355Message));
         }
-        
+//No VB                
         [Fact]
-        public void UseRIPEMD160CreateWithListCollectionInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        List<RIPEMD160> RIPEMD160List = new List<RIPEMD160>() { RIPEMD160.Create() };
-    }
-}",
-            GetCSharpResultAt(8, 65, CA5355RuleName, CA5355Message));
-        }
-        
-        [Fact]
-        public void UseRIPEMD160CreateWithArrayCollectionInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        RIPEMD160[] RIPEMD160List = new RIPEMD160[] { RIPEMD160.Create() };
-    }
-}",
-            GetCSharpResultAt(7, 55, CA5355RuleName, CA5355Message));
-        }
-        
-        [Fact]
-        public void UseRIPEMD160CreateWithDictionaryInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        Dictionary<int, RIPEMD160> RIPEMD160List = new Dictionary<int, RIPEMD160>() { { 1, RIPEMD160.Create() } };
-    }
-}",
-            GetCSharpResultAt(8, 92, CA5355RuleName, CA5355Message));
-        }
-        
-        [Fact]
-        public void UseRIPEMD160CrateInTryBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try
-            {
-                var RIPEMD160var = RIPEMD160.Create();
-            }
-            catch (Exception) { throw; }
-            finally { }
-        }
-    }
-}",
-            GetCSharpResultAt(12, 36, CA5355RuleName, CA5355Message));
-        }
-        
-        [Fact]
-        public void UseRIPEMD160CreateInCatchBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try { }
-            catch (Exception) { var RIPEMD160var = RIPEMD160.Create(); }
-            finally { }
-        }
-    }
-}",
-            GetCSharpResultAt(11, 52, CA5355RuleName, CA5355Message));
-        }
-        
-        [Fact]
-        public void UseRIPEMD160CreateInFinallyBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try { }
-            catch (Exception) { }
-            finally { var RIPEMD160var = RIPEMD160.Create(); }
-        }
-    }
-}",
-            GetCSharpResultAt(12, 42, CA5355RuleName, CA5355Message));
-        } 
-        
-        [Fact]
-        public void UseRIPEMD160CreateAwaitShouldGenerateDiagnostic()
+        public void CA5355RIPEMD160CreateInLambdaExpression()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -2070,17 +1309,13 @@ namespace TestNamespace
         {
             await Task.Run(() => { RIPEMD160.Create(); });
         }
-        private async void TestMethod2()
-        {
-            await TestMethod();
-        }
     }
 }",
             GetCSharpResultAt(10, 36, CA5355RuleName, CA5355Message));
         }
         
         [Fact]
-        public void UseRIPEMD160CreateWithDelegateShouldGenerateDiagnostic()
+        public void CA5355RIPEMD160CreateInAnonymousMethodExpression()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -2093,10 +1328,20 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(8, 31, CA5355RuleName, CA5355Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+    Class TestClass
+        Private Delegate Sub Del()
+        Private d As Del = Sub() RIPEMD160.Create()
+    End Class
+End Namespace",
+          GetBasicResultAt(6, 34, CA5355RuleName, CA5355Message));
         }
         
         [Fact]
-        public void UseHMACRIPEMD160ShouldGenerateDiagnostic()
+        public void CA5355HMACRIPEMD160InMethodDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -2112,10 +1357,21 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(10, 25, CA5355RuleName, CA5355Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private Shared Sub TestMethod()
+			Dim md160 = New HMACRIPEMD160()
+		End Sub
+	End Class
+End Namespace",
+            GetBasicResultAt(6, 16, CA5355RuleName, CA5355Message));
         }
         
         [Fact]
-        public void UseHMACRIPEMD160WithGetShouldGenerateDiagnostic()
+        public void CA5355HMACRIPEMD160InGetDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -2130,35 +1386,23 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(9, 26, CA5355RuleName, CA5355Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass1
+		Public ReadOnly Property GetHMARIPEMD160() As HMACRIPEMD160
+			Get
+				Return New HMACRIPEMD160()
+			End Get
+		End Property
+	End Class
+End Namespace",
+            GetBasicResultAt(7, 12, CA5355RuleName, CA5355Message));
         }
         
         [Fact]
-        public void UseHMACRIPEMD160WithSetShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        HMACRIPEMD160 privateHMARIPEMD160;
-        public HMACRIPEMD160 GetHMARIPEMD160
-        {
-            set
-            {
-                if (value == null)
-                    privateRIPEMD160 = new HMACRIPEMD160();
-                else
-                    privateRIPEMD160 = value;
-            }
-        }
-    }
-}",
-            GetCSharpResultAt(13, 40, CA5355RuleName, CA5355Message));
-        }
-        
-        [Fact]
-        public void UseHMACRIPEMD160WithFieldInitializerShouldGenerateDiagnostic()
+        public void CA5355HMACRIPEMD160InFieldDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -2170,123 +1414,19 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(7, 45, CA5355RuleName, CA5355Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private privateHMARIPEMD160 As New HMACRIPEMD160()
+	End Class
+End Namespace",
+           GetBasicResultAt(5, 34, CA5355RuleName, CA5355Message));
         } 
-        
+//No VB        
         [Fact]
-        public void UseHMACRIPEMD160WithListCollectionInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        List<HMACRIPEMD160> RIPEMD160List = new List<HMACRIPEMD160>() { new HMACRIPEMD160() };
-    }
-}",
-            GetCSharpResultAt(8, 73, CA5355RuleName, CA5355Message));
-        } 
-        
-        [Fact]
-        public void UseHMACRIPEMD160WithArrayCollectionInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        HMACRIPEMD160[] RIPEMD160List = new HMACRIPEMD160[] { new HMACRIPEMD160() };
-    }
-}",
-            GetCSharpResultAt(7, 63, CA5355RuleName, CA5355Message));
-        }  
-        
-        [Fact]
-        public void UseHMACRIPEMD160WithDictionaryInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        Dictionary<int, HMACRIPEMD160> RIPEMD160List = new Dictionary<int, HMACRIPEMD160>() { { 1, new HMACRIPEMD160() } };
-    }
-}",
-            GetCSharpResultAt(8, 100, CA5355RuleName, CA5355Message));
-        }  
-        
-        [Fact]
-        public void UseHMACRIPEMD160InTryBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try
-            {
-                var RIPEMD160var = new HMACRIPEMD160();
-            }
-            catch (Exception) { throw; }
-            finally { }
-        }
-    }
-}",
-            GetCSharpResultAt(12, 36, CA5355RuleName, CA5355Message));
-        } 
-        
-        [Fact]
-        public void UseHMACRIPEMD160InCatchBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try { }
-            catch (Exception) { var RIPEMD160var = new HMACRIPEMD160(); }
-            finally { }
-        }
-    }
-}",
-            GetCSharpResultAt(11, 52, CA5355RuleName, CA5355Message));
-        }     
-        
-        [Fact]
-        public void UseHMACRIPEMD160InFinallyBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try { }
-            catch (Exception) { }
-            finally { var RIPEMD160var = new HMACRIPEMD160(); }
-        }
-    }
-}",
-            GetCSharpResultAt(12, 42, CA5355RuleName, CA5355Message));
-        } 
-        
-        [Fact]
-        public void UseHMACRIPEMD160AwaitShouldGenerateDiagnostic()
+        public void CA5355HMACRIPEMD160InLambdaExpression()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -2299,17 +1439,13 @@ namespace TestNamespace
         {
             await Task.Run(() => { new HMACRIPEMD160(); });
         }
-        private async void TestMethod2()
-        {
-            await TestMethod();
-        }
     }
 }",
             GetCSharpResultAt(10, 36, CA5355RuleName, CA5355Message));
         }
-        
+//No VB        
         [Fact]
-        public void UseHMACRIPEMD160WithDelegateShouldGenerateDiagnostic()
+        public void CA5355HMACRIPEMD160InAnonymousMethodExpression()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -2325,10 +1461,10 @@ namespace TestNamespace
         }   
         
         [Fact]
-        public void UseRIPEMD160DerivedClassShouldGenerateDiagnostic()
+        public void CA5355CreateObjectFromRIPEMD160DerivedClass()
         {
             VerifyCSharp( new[] {
-                //Test0
+//Test0
                 @"
 using System.Security.Cryptography;
 
@@ -2342,7 +1478,7 @@ namespace TestNamespace
         }
     }
 }",
-                //Test1
+//Test1
                 @"
 using System;
 using System.Security.Cryptography;
@@ -2368,13 +1504,45 @@ namespace TestNamespace
     }
 }" },
             GetCSharpResultAt(10, 25, CA5355RuleName, CA5355Message));
+
+            VerifyBasic(new[] {
+//Test0
+                @"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private Shared Sub TestMethod(inBytes As Byte())
+			Dim md160 = New MyRIPEMD160()
+		End Sub
+	End Class
+End Namespace",
+//Test1
+                @"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class MyRIPEMD160
+		Inherits RIPEMD160
+		Public Overrides Sub Initialize()
+			Throw New NotImplementedException()
+		End Sub
+
+		Protected Overrides Sub HashCore(array As Byte(), ibStart As Integer, cbSize As Integer)
+			Throw New NotImplementedException()
+		End Sub
+
+		Protected Overrides Function HashFinal() As Byte()
+			Throw New NotImplementedException()
+		End Function
+	End Class
+End Namespace" },
+            GetBasicResultAt(6, 16, CA5355RuleName, CA5355Message));
         }
         
         [Fact]
-        public void UseRIPEMD160ManagedDerivedClassShouldGenerateDiagnostic()
+        public void CA5355CreateObjectFromRIPEMD160ManagedDerivedClass()
         {
             VerifyCSharp( new[] {
-                //Test0
+//Test0
                 @"
 using System.Security.Cryptography;
 
@@ -2388,7 +1556,7 @@ namespace TestNamespace
         }
     }
 }",
-                //Test1
+//Test1
                 @"
 using System;
 using System.Security.Cryptography;
@@ -2414,10 +1582,43 @@ namespace TestNamespace
     }
 }" },
             GetCSharpResultAt(10, 25, CA5355RuleName, CA5355Message));
+
+            VerifyBasic(new[] {
+//Test0
+                @"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private Shared Sub TestMethod(inBytes As Byte())
+			Dim md160 = New MyRIPEMD160()
+		End Sub
+	End Class
+End Namespace",
+//Test1
+                @"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class MyRIPEMD160
+		Inherits RIPEMD160Managed
+		Public Overrides Sub Initialize()
+			Throw New NotImplementedException()
+		End Sub
+
+		Protected Overrides Sub HashCore(array As Byte(), ibStart As Integer, cbSize As Integer)
+			Throw New NotImplementedException()
+		End Sub
+
+		Protected Overrides Function HashFinal() As Byte()
+			Throw New NotImplementedException()
+		End Function
+	End Class
+End Namespace
+" },
+            GetBasicResultAt(6, 16, CA5355RuleName, CA5355Message));
         } 
         
         [Fact]
-        public void UseHMACRIPEMD160DerivedClassShouldGenerateDiagnostic()
+        public void CA5355CreateObjectFromHMACRIPEMD160DerivedClass()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -2435,27 +1636,29 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(12, 25, CA5355RuleName, CA5355Message));
-        }   
-        
-        [Fact]
-        public void UseRIPEMD160ManagedInVBShouldGenerateDiagnostic()
-        {
+
             VerifyBasic(@"
 Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class MyHMACRIPEMD160
+		Inherits HMACRIPEMD160
+	End Class
 
-Module TestClass
-    Sub TestMethod()
-        Dim md1601alg As New RIPEMD160Managed
-    End Sub
-End Module",
-            GetBasicResultAt(6, 26, CA5355RuleName, CA5355Message));
-        }
+	Class TestClass
+		Private Shared Sub TestMethod()
+			Dim md160 = New MyHMACRIPEMD160()
+		End Sub
+	End Class
+End Namespace",
+            GetBasicResultAt(10, 16, CA5355RuleName, CA5355Message));
+        }   
+
         #endregion
 
         #region CA5356 
         
         [Fact]
-        public void UseDSACreateSignatureShouldGenerateDiagnostic()
+        public void CA5356DSACreateSignatureInMethodDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -2470,45 +1673,22 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 23, CA5356RuleName, CA5356Message)); 
+            GetCSharpResultAt(10, 23, CA5356RuleName, CA5356Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+
+Module TestClass
+    Function TestMethod(ByVal bytes As Byte())
+        Dim dsa As New DSACryptoServiceProvider
+        Return dsa.CreateSignature(bytes)
+    End Function
+End Module",
+GetBasicResultAt(7, 16, CA5356RuleName, CA5356Message));
         } 
         
         [Fact]
-        public void CA5356UseDSACreateSignatureWithListShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-
-class TestClass
-{
-    private void TestMethod(DSA dsa, byte[] inBytes)
-    {
-        List<byte[]> dsaList = new List<byte[]> { dsa.CreateSignature(inBytes) };
-    }
-}",
-            GetCSharpResultAt(9, 51, CA5356RuleName, CA5356Message));
-        }                 
-        
-        [Fact]
-        public void CA5356UseDSACreateSignatureWithDictionaryShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-
-class TestClass
-{
-    private void TestMethod(DSA dsa, byte[] inBytes)
-    {
-        Dictionary<int, byte[]> dsaDictionary = new Dictionary<int, byte[]>() { { 1, dsa.CreateSignature(inBytes) } };
-    }
-}",
-            GetCSharpResultAt(9, 86, CA5356RuleName, CA5356Message));
-        }  
-        
-        [Fact]
-        public void CA5356UseDSACreateSignatureInGetShouldGenerateDiagnostic()
+        public void CA5356UseDSACreateSignatureInGetDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -2526,10 +1706,24 @@ class TestClass
     }
 }",
             GetCSharpResultAt(12, 20, CA5356RuleName, CA5356Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+
+Class TestClass
+	Private dsa1 As DSA = Nothing
+	Public ReadOnly Property MyProperty() As Byte()
+		Get
+			Dim inBytes As Byte() = Nothing
+			Return dsa1.CreateSignature(inBytes)
+		End Get
+	End Property
+End Class",
+            GetBasicResultAt(9, 11, CA5356RuleName, CA5356Message));
         }
         
         [Fact]
-        public void UseDSASignatureFormatterCtorShouldGenerateDiagnostic()
+        public void CA5356DSASignatureFormatterInMethodDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -2547,48 +1741,24 @@ namespace TestNamespace
 }",
             GetCSharpResultAt(10, 23, CA5356RuleName, CA5356Message),
             GetCSharpResultAt(11, 23, CA5356RuleName, CA5356Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+
+Namespace TestNamespace
+    Class TestClass
+        Private Shared Sub TestMethod()
+            Dim sf1 = New DSASignatureFormatter()
+            Dim sf2 = New DSASignatureFormatter(New DSACryptoServiceProvider())
+        End Sub
+    End Class
+End Namespace",
+           GetBasicResultAt(7, 23, CA5356RuleName, CA5356Message),
+           GetBasicResultAt(8, 23, CA5356RuleName, CA5356Message));
         }  
-        
+     
         [Fact]
-        public void CA5356UseDSACreateSignatureFormatterWithListShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-
-class TestClass
-{
-    private void TestMethod(DSA dsa, byte[] inBytes)
-    {
-        List<DSASignatureFormatter> dsaList = new List<DSASignatureFormatter> { new DSASignatureFormatter() };
-        List<DSASignatureFormatter> dsaList1 = new List<DSASignatureFormatter> { new DSASignatureFormatter(new DSACryptoServiceProvider()) };
-    }
-}",
-            GetCSharpResultAt(9, 81, CA5356RuleName, CA5356Message),
-            GetCSharpResultAt(10, 82, CA5356RuleName, CA5356Message));
-        }     
-        
-        [Fact]
-        public void CA5356UseDSACreateSignatureFormatterWithDictionaryShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-
-class TestClass
-{
-    private void TestMethod(DSA dsa, byte[] inBytes)
-    {
-        Dictionary<int, DSASignatureFormatter> dsaDictionary = new Dictionary<int, DSASignatureFormatter>() { { 1, new DSASignatureFormatter() } };
-        Dictionary<int, DSASignatureFormatter> dsaDictionar1 = new Dictionary<int, DSASignatureFormatter>() { { 1, new DSASignatureFormatter(new DSACryptoServiceProvider()) } };
-    }
-}",
-            GetCSharpResultAt(9, 116, CA5356RuleName, CA5356Message),
-            GetCSharpResultAt(10, 116, CA5356RuleName, CA5356Message));
-        } 
-        
-        [Fact]
-        public void CA5356UseDSACreateSignatureFormatterInGetShouldGenerateDiagnostic()
+        public void CA5356UseDSACreateSignatureFormatterInGetDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -2608,10 +1778,28 @@ class TestClass
 }",
             GetCSharpResultAt(12, 43, CA5356RuleName, CA5356Message),
             GetCSharpResultAt(13, 25, CA5356RuleName, CA5356Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Class TestClass
+	Private dsa1 As DSA = Nothing
+	Public ReadOnly Property MyProperty() As DSASignatureFormatter
+		Get
+			Dim inBytes As DSASignatureFormatter = Nothing
+			If inBytes Is Nothing Then
+				Return New DSASignatureFormatter()
+			Else
+				Return New DSASignatureFormatter(New DSACryptoServiceProvider())
+			End If
+		End Get
+	End Property
+End Class",
+            GetBasicResultAt(9, 12, CA5356RuleName, CA5356Message),
+            GetBasicResultAt(11, 12, CA5356RuleName, CA5356Message));
         }
         
         [Fact]
-        public void UseCreateSignatureFromDSADerivedClassShouldGenerateDiagnostic()
+        public void CA5356CreateSignatureFromDSADerivedClass()
         {
             VerifyCSharp( new[] {
                 //Test0
@@ -2676,28 +1864,64 @@ namespace TestNamespace
     }
 }" },
             GetCSharpResultAt(11, 13, CA5356RuleName, CA5356Message));
-        } 
-        
-        [Fact]
-        public void UseDSACreateSignatureInVBShouldGenerateDiagnostic()
-        {
-            VerifyBasic(@"
+
+            VerifyBasic(new[] {
+//Test0
+                @"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private Shared Sub TestMethod(inBytes As Byte())
+			Dim myDsa = New MyDsa()
+			myDsa.CreateSignature(inBytes)
+		End Sub
+	End Class
+End Namespace",
+//Test1
+                @"
 Imports System.Security.Cryptography
 
-Module TestClass
-    Function TestMethod(ByVal bytes As Byte())
-        Dim dsa As New DSACryptoServiceProvider
-        Return dsa.CreateSignature(bytes)
-    End Function
-End Module",
-            GetBasicResultAt(7, 16, CA5356RuleName, CA5356Message));
-        }
+Namespace TestNamespace
+	Class MyDsa
+		Inherits DSA
+		Public Overrides ReadOnly Property KeyExchangeAlgorithm() As String
+			Get
+				Throw New NotImplementedException()
+			End Get
+		End Property
+
+		Public Overrides ReadOnly Property SignatureAlgorithm() As String
+			Get
+				Throw New NotImplementedException()
+			End Get
+		End Property
+
+		Public Overrides Function CreateSignature(rgbHash As Byte()) As Byte()
+			Throw New NotImplementedException()
+		End Function
+
+		Public Overrides Function ExportParameters(includePrivateParameters As Boolean) As DSAParameters
+			Throw New NotImplementedException()
+		End Function
+
+		Public Overrides Sub ImportParameters(parameters As DSAParameters)
+			Throw New NotImplementedException()
+		End Sub
+
+		Public Overrides Function VerifySignature(rgbHash As Byte(), rgbSignature As Byte()) As Boolean
+			Throw New NotImplementedException()
+		End Function
+	End Class
+End Namespace" },
+           GetBasicResultAt(7, 4, CA5356RuleName, CA5356Message));
+        } 
+        
         #endregion
 
         #region CA5357 
         
         [Fact]
-        public void UseRijndaelManagedShouldGenerateDiagnostic()
+        public void CA5357RijndaelManagedInMethodDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -2713,10 +1937,20 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(10, 23, CA5357RuleName, CA5357Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+
+Module TestClass
+    Sub TestMethod()
+        Dim rijndaelalg As New RijndaelManaged
+    End Sub
+End Module",
+GetBasicResultAt(6, 28, CA5357RuleName, CA5357Message));
         }
                                                    
         [Fact]
-        public void UseRijndaelManagedWithGetShouldGenerateDiagnostic()
+        public void CA5357RijndaelManagedInGetDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -2731,35 +1965,23 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(9, 26, CA5357RuleName, CA5357Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass1
+		Public ReadOnly Property GetRijndael() As RijndaelManaged
+			Get
+				Return New RijndaelManaged()
+			End Get
+		End Property
+	End Class
+End Namespace",
+            GetBasicResultAt(7, 12, CA5357RuleName, CA5357Message));
         } 
-        
+                
         [Fact]
-        public void UseRijndaelManagedWithSetShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        RijndaelManaged privateRijndael;
-        public RijndaelManaged GetRijndael
-        {
-            set
-            {
-                if (value == null)
-                    privateRijndael = new RijndaelManaged();
-                else
-                    privateRijndael = value;
-            }
-        }
-    }
-}",
-            GetCSharpResultAt(13, 39, CA5357RuleName, CA5357Message));
-        }
-        
-        [Fact]
-        public void UseRijndaelManagedWithFieldInitializerShouldGenerateDiagnostic()
+        public void CA5357RijndaelManagedInFieldDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -2771,123 +1993,19 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(7, 43, CA5357RuleName, CA5357Message));
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private privateRijndael As New RijndaelManaged()
+	End Class
+End Namespace",
+            GetBasicResultAt(5, 30, CA5357RuleName, CA5357Message));
         } 
-        
+//No VB                    
         [Fact]
-        public void UseRijndaelManagedWithListCollectionInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        List<RijndaelManaged> RijndaelList = new List<RijndaelManaged>() { new RijndaelManaged(); };
-    }
-}",
-            GetCSharpResultAt(8, 76, CA5357RuleName, CA5357Message));
-        } 
-        
-        [Fact]
-        public void UseRijndaelManagedWithArrayCollectionInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        RijndaelManaged[] RijndaelList = new RijndaelManaged[] { new RijndaelManaged() };
-    }
-}",
-            GetCSharpResultAt(7, 66, CA5357RuleName, CA5357Message));
-        }
-        
-        [Fact]
-        public void UseRijndaelManagedWithDictionaryInitializerShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Collections.Generic;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        Dictionary<int, RijndaelManaged> RijndaelList = new Dictionary<int, RijndaelManaged>() { { 1, new RijndaelManaged() } };
-    }
-}",
-            GetCSharpResultAt(8, 103, CA5357RuleName, CA5357Message));
-        }
-        
-        [Fact]
-        public void UseRijndaelManagedInTryBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try
-            {
-                var rijndael = new RijndaelManaged();
-            }
-            catch (Exception) { throw; }
-            finally { }
-        }
-    }
-}",
-            GetCSharpResultAt(12, 32, CA5357RuleName, CA5357Message));
-        } 
-        
-        [Fact]
-        public void UseRijndaelManagedInCatchBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try { }
-            catch (Exception) { var rijndael = new RijndaelManaged(); }
-            finally { }
-        }
-    }
-}",
-            GetCSharpResultAt(11, 48, CA5357RuleName, CA5357Message));
-        }
-                         
-        [Fact]
-        public void UseRijndaelManagedInFinallyBlockShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-namespace TestNamespace
-{
-    class TestClass
-    {
-        private void TestMethod()
-        {
-            try { }
-            catch (Exception) { }
-            finally { var rijndael = new RijndaelManaged(); }
-        }
-    }
-}",
-            GetCSharpResultAt(12, 38, CA5357RuleName, CA5357Message));
-        }  
-        
-        [Fact]
-        public void UseRijndaelManagedAwaitShouldGenerateDiagnostic()
+        public void CA5357RijndaelManagedInLambdaExpression()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -2900,17 +2018,13 @@ namespace TestNamespace
         {
             await Task.Run(() => { new RijndaelManaged(); });
         }
-        private async void TestMethod2()
-        {
-            await TestMethod();
-        }
     }
 }",
             GetCSharpResultAt(10, 36, CA5357RuleName, CA5357Message));
         }  
-        
+//No VB        
         [Fact]
-        public void UseRijndaelManagedWithDelegateShouldGenerateDiagnostic()
+        public void CA5357RijndaelManagedInAnonymousMethodExpression()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -2926,10 +2040,10 @@ namespace TestNamespace
         } 
         
         [Fact]
-        public void UseRijndaelDerivedClassShouldGenerateDiagnostic()
+        public void CA5357CreateObjectFromRijndaelDerivedClass()
         {
             VerifyCSharp( new[] {
-                //Test0
+//Test0
                 @"
 using System.Security.Cryptography;
 
@@ -2943,7 +2057,7 @@ namespace TestNamespace
         }
     }
 }",
-                //Test1
+//Test1
                 @"
 using System;
 using System.Security.Cryptography;
@@ -2974,22 +2088,44 @@ namespace TestNamespace
     }
 }" },
             GetCSharpResultAt(10, 23, CA5357RuleName, CA5357Message));
-        }
 
-        
-        [Fact]
-        public void UseRijndaelManagedInVBShouldGenerateDiagnostic()
-        {
-            VerifyBasic(@"
+            VerifyBasic(new[] {
+//Test0
+                @"
 Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class TestClass
+		Private Shared Sub TestMethod()
+			Dim rc2 = New MyRijndael()
+		End Sub
+	End Class
+End Namespace",
+//Test1
+                @"
+Imports System.Security.Cryptography
+Namespace TestNamespace
+	Class MyRijndael
+		Inherits Rijndael
+		Public Overrides Function CreateDecryptor(rgbKey As Byte(), rgbIV As Byte()) As ICryptoTransform
+			Throw New NotImplementedException()
+		End Function
 
-Module TestClass
-    Sub TestMethod()
-        Dim rijndaelalg As New RijndaelManaged
-    End Sub
-End Module",
-            GetBasicResultAt(6, 28, CA5357RuleName, CA5357Message));
+		Public Overrides Function CreateEncryptor(rgbKey As Byte(), rgbIV As Byte()) As ICryptoTransform
+			Throw New NotImplementedException()
+		End Function
+
+		Public Overrides Sub GenerateIV()
+			Throw New NotImplementedException()
+		End Sub
+
+		Public Overrides Sub GenerateKey()
+			Throw New NotImplementedException()
+		End Sub
+	End Class
+End Namespace" },
+            GetBasicResultAt(6, 14, CA5357RuleName, CA5357Message));
         }
+
         #endregion
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

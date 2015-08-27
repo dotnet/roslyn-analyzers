@@ -10,7 +10,7 @@ using Desktop.Analyzers.Common;
 namespace Desktop.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CSharpCA9003DiagnosticAnalyzer : CA9003DiagnosticAnalyzer
+    public class CSharpCA3077DiagnosticAnalyzer : CA3077DiagnosticAnalyzer
     {
         protected override Analyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes types, Version targetFrameworkVersion)
         {

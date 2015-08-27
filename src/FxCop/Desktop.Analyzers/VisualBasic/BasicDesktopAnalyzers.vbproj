@@ -92,9 +92,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Security\BasicCA9001DiagnosticAnalyzers.vb" />
-    <Compile Include="Security\BasicCA9002DiagnosticAnalyzers.vb" />
-    <Compile Include="Security\BasicCA9003DiagnosticAnalyzers.vb" />
+    <Compile Include="Security\BasicCA3075DiagnosticAnalyzers.vb" />
+    <Compile Include="Security\BasicCA3076DiagnosticAnalyzers.vb" />
+    <Compile Include="Security\BasicCA3077DiagnosticAnalyzers.vb" />
     <Compile Include="Security\DoNotCatchCorruptedStateExceptionsAnalyzer.vb" />
     <Compile Include="Shared\SyntaxNodeHelper.vb" />
     <Content Include="..\Desktop.Analyzers.Common.props">

@@ -119,127 +119,130 @@
   </resheader>
   <data name="DoNotCatchCorruptedStateExceptions" xml:space="preserve">
     <value>Do not catch corrupted state exceptions in general handlers.</value>
+    <comment>CA2153</comment>
   </data>
   <data name="DoNotCatchCorruptedStateExceptionsDescription" xml:space="preserve">
     <value>Do not author general catch handlers in code that receives corrupted state exceptions. Code that receives and intends to handle corrupted state exceptions should author distinct handlers for each exception type.</value>
+    <comment>CA2153</comment>
   </data>
   <data name="DoNotCatchCorruptedStateExceptionsMessage" xml:space="preserve">
     <value>Modify {0} to catch and handle a more specific set of exception type(s) than {1} or rethrow the exception. </value>
+    <comment>CA2153</comment>
   </data>
   <data name="DoNotUseDtdProcessingOverloadsDescription" xml:space="preserve">
     <value>This API internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</value>
-    <comment>CA9001</comment>
+    <comment>CA3075</comment>
   </data>
   <data name="DoNotUseDtdProcessingOverloadsDiagnosis" xml:space="preserve">
     <value>Do not use unsafe overload of '{0}' method, replace with an overload that takes an XmlReader instance.</value>
-    <comment>CA9001</comment>
+    <comment>CA3075</comment>
   </data>
   <data name="DoNotUseSetInnerXmlDescription" xml:space="preserve">
     <value>Setting the InnerXml property of XmlDocument is potentially unsafe. This API internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</value>
-    <comment>CA9001</comment>
+    <comment>CA3075</comment>
   </data>
   <data name="DoNotUseSetInnerXmlDiagnosis" xml:space="preserve">
     <value>Do not use the unsafe setter of InnerXml property of System.Xml.XmlDocument, replace with a call to the Load() method overload that takes an XmlReader instance.</value>
-    <comment>CA9001</comment>
+    <comment>CA3075</comment>
   </data>
   <data name="InsecureDtdProcessingInApiDesign" xml:space="preserve">
     <value>Insecure DTD processing in API design.</value>
-    <comment>CA9003</comment>
+    <comment>CA3077</comment>
   </data>
   <data name="InsecureXmlDtdProcessing" xml:space="preserve">
     <value>Insecure DTD processing in XML</value>
-    <comment>CA9001</comment>
+    <comment>CA3075</comment>
   </data>
   <data name="InsecureXsltScriptProcessing" xml:space="preserve">
     <value>Insecure XSLT script processing.</value>
-    <comment>CA9002</comment>
+    <comment>CA3076</comment>
   </data>
   <data name="InsecureXsltScriptProcessingDescription" xml:space="preserve">
     <value>Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which, on untrusted XSL input, may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argurment with null or an XmlSecureResolver instance. This message may be suppressed if the input is known to be from a trusted source and external resource resolution from locations that are not known in advance must be supported.</value>
-    <comment>CA9002</comment>
+    <comment>CA3076</comment>
   </data>
   <data name="MakeDtdProcessingSecureInApiDesignXmlDocumentDescription" xml:space="preserve">
     <value>Ensure that  DTD processing is secure on all instances of classes derived from System.Xml.XmlDocument by explicitly setting XmlResolver property to a secure value (instance of XmlSecureResolver or null). Using default resolver for resolving external XML entities may lead to information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</value>
-    <comment>CA9003</comment>
+    <comment>CA3077</comment>
   </data>
   <data name="MakeDtdProcessingSecureInApiDesignXmlTextReaderDescription" xml:space="preserve">
     <value>Ensure that  DTD processing is secure on all instances of classes derived from System.Xml.XmlTextReader by setting XmlResolver and DtdProcessing properties to secure values. Enable DTD processing on the XmlTextReader and using UrlResolver for resolving external XML entities may lead to information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</value>
-    <comment>CA9003</comment>
+    <comment>CA3077</comment>
   </data>
   <data name="ReviewDtdProcessingPropertiesDescription" xml:space="preserve">
     <value>Review code to insure that the property is set from a trusted source. This pattern internally enables DTD processing in XML and uses XmlUrlResolver for resolving external XML entities, which, on untrusted input, may lead to information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</value>
-    <comment>CA9001</comment>
+    <comment>CA3075</comment>
   </data>
   <data name="ReviewDtdProcessingPropertiesDiagnosis" xml:space="preserve">
     <value>Ensure DataViewSettingCollectionString property of DataViewManager is assigned from a trusted source, otherwise avoid using this control.</value>
-    <comment>CA9001</comment>
+    <comment>CA3075</comment>
   </data>
   <data name="XmlDocumentDerivedClassConstructorNoSecureXmlResolverDiagnosis" xml:space="preserve">
     <value>Constructor of XmlDocument derived class implicitly uses insecure default value for DTD processing.</value>
-    <comment>CA9003</comment>
+    <comment>CA3077</comment>
   </data>
   <data name="XmlDocumentDerivedClassNoConstructorDiagnosis" xml:space="preserve">
     <value>XmlDocument derived class doesn't explictily define a constructor, therefore enables insecure DTD processing by default.</value>
-    <comment>CA9003</comment>
+    <comment>CA3077</comment>
   </data>
   <data name="XmlDocumentDerivedClassSetInsecureXmlResolverInMethodDiagnosis" xml:space="preserve">
     <value>Method of XmlDocument derived class sets XmlResolver property to an insecure value.</value>
-    <comment>CA9003</comment>
+    <comment>CA3077</comment>
   </data>
   <data name="XmlDocumentUseSecureResolverDescription" xml:space="preserve">
     <value>This usage is potentially unsafe as untrusted external resources may be resolved during read operations. Ensure to set the XmlResolver property to null or an instance of XmlSecureResolver when processing untrusted input. Using insecure resolver (including the dafault resolver) for resolving external XML entities may lead to information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</value>
-    <comment>CA9001</comment>
+    <comment>CA3075</comment>
   </data>
   <data name="XmlDocumentWithNoSecureResolverDiagnosis" xml:space="preserve">
     <value>An XmlDocument instance is created without setting its XmlResolver property to a secure value. </value>
-    <comment>CA9001</comment>
+    <comment>CA3075</comment>
   </data>
   <data name="XmlReaderCreateInsecureConstructedDiagnosis" xml:space="preserve">
     <value>An insecure XmlReaderSettings instance is provided to XmlReader.Create method.</value>
-    <comment>CA9001</comment>
+    <comment>CA3075</comment>
   </data>
   <data name="XmlReaderCreateInsecureDescription" xml:space="preserve">
     <value>Invoking XmlReader.Create method without providing a secure XmlReaderSettings instance is potentially unsafe as it enables DTD processing and uses XmlUrlResolver for resolving external XML entities, which, on untrusted input, may lead to information disclosure.  Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector. Ensure the XmlReaderSettings instance is secure by settings DtdProcessing property to false, or MaxCharactersFromEntities property to a small value and XmlResolver proeprty to a secure resolver (XmlSecureResolver or null).</value>
-    <comment>CA9001</comment>
+    <comment>CA3075</comment>
   </data>
   <data name="XmlReaderCreateInsecureInputDiagnosis" xml:space="preserve">
     <value>A potentially insecure XmlReaderSettings instance is provided to XmlReader.Create method. Consider explicitly setting secure values to the instance at call site.</value>
-    <comment>CA9001</comment>
+    <comment>CA3075</comment>
   </data>
   <data name="XmlReaderCreateWrongOverloadDiagnosis" xml:space="preserve">
     <value>Do not use an insecure overload of XmlReader.Create which does not accept an XmlReaderSettings argument.</value>
-    <comment>CA9001</comment>
+    <comment>CA3075</comment>
   </data>
   <data name="XmlTextReaderConstructedWithNoSecureResolutionDiagnosis" xml:space="preserve">
     <value>Do not create XmlTextReader instance with insecure default settings.</value>
-    <comment>CA9001</comment>
+    <comment>CA3075</comment>
   </data>
   <data name="XmlTextReaderDerivedClassConstructorNoSecureSettingsDiagnosis" xml:space="preserve">
     <value>Constructor of XmlTextReader derived class uses insecure default values for DTD processing.</value>
-    <comment>CA9003</comment>
+    <comment>CA3077</comment>
   </data>
   <data name="XmlTextReaderDerivedClassNoConstructorDiagnosis" xml:space="preserve">
     <value>XmlTextReader derived class doesn't explictily define a constructor.</value>
-    <comment>CA9003</comment>
+    <comment>CA3077</comment>
   </data>
   <data name="XmlTextReaderDerivedClassSetInsecureSettingsInMethodDiagnosis" xml:space="preserve">
     <value>Method of XmlTextReader derived class sets XmlResolver and/or DtdProcessing property to insecure value.</value>
-    <comment>CA9003</comment>
+    <comment>CA3077</comment>
   </data>
   <data name="XmlTextReaderInsecureResolutionDescription" xml:space="preserve">
     <value>Creating an XmlTextReader instance without disabling DTD processing  and using a secure resolver for resolving external XML entities may lead to information disclosure on untrusted input. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector. Ensure the DtdProcessing property to false and XmlResolver proeprty to a secure resolver (XmlSecureResolver or null), or use XmlReader.Create method with a secure XmlReaderSettings argument instead. </value>
-    <comment>CA9001</comment>
+    <comment>CA3075</comment>
   </data>
   <data name="XmlTextReaderSetInsecureResolutionDiagnosis" xml:space="preserve">
     <value>Do not set XmlTextReader instance with insecure values.</value>
-    <comment>CA9001</comment>
+    <comment>CA3075</comment>
   </data>
   <data name="XslCompiledTransformLoadInsecureConstructedDiagnosis" xml:space="preserve">
     <value>An insecure combination of XsltSettings and XmlResolver instances are provided to XslCompiledTransfor.Load as arguments. </value>
-    <comment>CA9002</comment>
+    <comment>CA3076</comment>
   </data>
   <data name="XslCompiledTransformLoadInsecureInputDiagnosis" xml:space="preserve">
     <value>A potentially insecure XsltSettings instance and an insecure XmlResolver instance are provided to XslCompiledTransform.Load as arguments. To avoid false alarm, consider creating a secure XsltSettings instance at the call site.</value>
-    <comment>CA9002</comment>
+    <comment>CA3076</comment>
   </data>
 </root>

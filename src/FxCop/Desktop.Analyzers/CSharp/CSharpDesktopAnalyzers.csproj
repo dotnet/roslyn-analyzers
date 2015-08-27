@@ -100,9 +100,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Compile Include="Security\CSharpCA9001DiagnosticAnalyzer.cs" />
-    <Compile Include="Security\CSharpCA9002DiagnosticAnalyzer.cs" />
-    <Compile Include="Security\CSharpCA9003DiagnosticAnalyzer.cs" />
+    <Compile Include="Security\CSharpCA3075DiagnosticAnalyzer.cs" />
+    <Compile Include="Security\CSharpCA3076DiagnosticAnalyzer.cs" />
+    <Compile Include="Security\CSharpCA3077DiagnosticAnalyzer.cs" />
     <Compile Include="Shared\SyntaxNodeHelper.cs" />
     <Compile Include="Security\DoNotCatchCorruptedStateExceptionsAnalyzer.cs" />
   </ItemGroup>

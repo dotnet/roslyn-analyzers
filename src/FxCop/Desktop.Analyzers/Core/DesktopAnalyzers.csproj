@@ -93,9 +93,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Security\CA9001DiagnosticAnalyzer.cs" />
-    <Compile Include="Security\CA9002DiagnosticAnalyzer.cs" />
-    <Compile Include="Security\CA9003DiagnosticAnalyzer.cs" />
+    <Compile Include="Security\CA3075DiagnosticAnalyzer.cs" />
+    <Compile Include="Security\CA3076DiagnosticAnalyzer.cs" />
+    <Compile Include="Security\CA3077DiagnosticAnalyzer.cs" />
     <Compile Include="Security\SecurityDiagnosticHelpers.cs" />
     <Compile Include="Security\SecurityMemberNames.cs" />
     <Compile Include="Security\SecurityTypes.cs" />

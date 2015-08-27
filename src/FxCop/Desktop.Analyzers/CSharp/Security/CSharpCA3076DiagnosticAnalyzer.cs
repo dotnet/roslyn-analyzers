@@ -9,7 +9,7 @@ using Desktop.Analyzers.Common;
 namespace Desktop.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CSharpCA9002DiagnosticAnalyzer : CA9002DiagnosticAnalyzer<SyntaxKind>
+    public class CSharpCA3076DiagnosticAnalyzer : CA3076DiagnosticAnalyzer<SyntaxKind>
     {
         protected override Analyzer GetAnalyzer(CodeBlockStartAnalysisContext<SyntaxKind> context, CompilationSecurityTypes types)
         {

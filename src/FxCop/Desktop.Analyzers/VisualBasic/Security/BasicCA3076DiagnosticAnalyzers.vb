@@ -11,8 +11,8 @@ Imports Desktop.Analyzers.Common
 
 Namespace Desktop.Analyzers
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
-    Public Class BasicCA9002DiagnosticAnalyzer
-        Inherits CA9002DiagnosticAnalyzer(Of SyntaxKind)
+    Public Class BasicCA3076DiagnosticAnalyzer
+        Inherits CA3076DiagnosticAnalyzer(Of SyntaxKind)
         Protected Overrides Function GetAnalyzer(context As CodeBlockStartAnalysisContext(Of SyntaxKind), types As CompilationSecurityTypes) As Analyzer
             Dim analyzer As New Analyzer(types, BasicSyntaxNodeHelper.DefaultInstance)
             context.RegisterSyntaxNodeAction(AddressOf analyzer.AnalyzeNode, SyntaxKind.InvocationExpression,

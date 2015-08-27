@@ -12,9 +12,9 @@ using Desktop.Analyzers.Common;
 
 namespace Desktop.Analyzers
 { 
-    public abstract class CA9002DiagnosticAnalyzer<TLanguageKindEnum> : DiagnosticAnalyzer where TLanguageKindEnum : struct
+    public abstract class CA3076DiagnosticAnalyzer<TLanguageKindEnum> : DiagnosticAnalyzer where TLanguageKindEnum : struct
     {
-        internal const string RuleId = "CA9002";
+        internal const string RuleId = "CA3076";
 
         /*
          * these 3 FxCop rules are removed since they only trigger on secure code:
@@ -24,11 +24,11 @@ namespace Desktop.Analyzers
          */
 
         //TODO: create new strings
-        internal static DiagnosticDescriptor RuleXslCompiledTransformLoadInsecureInputSettings = CreateDiagnosticDescriptor(GetLocalizableResourceString(DesktopAnalyzersResources.XslCompiledTransformLoadInsecureInputDiagnosis),
-                                                                                                                         GetLocalizableResourceString(DesktopAnalyzersResources.InsecureXsltScriptProcessingDescription));
+        internal static DiagnosticDescriptor RuleXslCompiledTransformLoadInsecureInputSettings = CreateDiagnosticDescriptor(DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XslCompiledTransformLoadInsecureInputDiagnosis)),
+                                                                                                                         DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.InsecureXsltScriptProcessingDescription)));
 
-        internal static DiagnosticDescriptor RuleXslCompiledTransformLoadInsecureConstructedSettings = CreateDiagnosticDescriptor(GetLocalizableResourceString(DesktopAnalyzersResources.XslCompiledTransformLoadInsecureConstructedDiagnosis),
-                                                                                                                          GetLocalizableResourceString(DesktopAnalyzersResources.InsecureXsltScriptProcessingDescription));
+        internal static DiagnosticDescriptor RuleXslCompiledTransformLoadInsecureConstructedSettings = CreateDiagnosticDescriptor(DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XslCompiledTransformLoadInsecureConstructedDiagnosis)),
+                                                                                                                          DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.InsecureXsltScriptProcessingDescription)));
 
         private static readonly ImmutableArray<DiagnosticDescriptor> supportDiagnostics = ImmutableArray.Create(RuleXslCompiledTransformLoadInsecureInputSettings,
                                                                                                                 RuleXslCompiledTransformLoadInsecureConstructedSettings);
@@ -37,7 +37,7 @@ namespace Desktop.Analyzers
         {
             get
             {
-                return CA9002DiagnosticAnalyzer<TLanguageKindEnum>.supportDiagnostics;
+                return CA3076DiagnosticAnalyzer<TLanguageKindEnum>.supportDiagnostics;
             }
         }
 
@@ -64,7 +64,7 @@ namespace Desktop.Analyzers
         private static DiagnosticDescriptor CreateDiagnosticDescriptor(LocalizableResourceString messageFormat, LocalizableResourceString description, string helpLink = null)
         {
             return new DiagnosticDescriptor(RuleId,
-                                            GetLocalizableResourceString(DesktopAnalyzersResources.InsecureXsltScriptProcessing),
+                                            DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.InsecureXsltScriptProcessing)),
                                             messageFormat,
                                             DiagnosticCategory.Security,
                                             DiagnosticSeverity.Warning,
@@ -72,12 +72,7 @@ namespace Desktop.Analyzers
                                             description: description,
                                             helpLinkUri: helpLink,
                                             customTags: WellKnownDiagnosticTags.Telemetry);
-        }
-
-        private static LocalizableResourceString GetLocalizableResourceString(string resourceString)
-        {
-            return new LocalizableResourceString(nameof(resourceString), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
-        }
+        } 
 
         protected abstract Analyzer GetAnalyzer(CodeBlockStartAnalysisContext<TLanguageKindEnum> context, CompilationSecurityTypes types);
 

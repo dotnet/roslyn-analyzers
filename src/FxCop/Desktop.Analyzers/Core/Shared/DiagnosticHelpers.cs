@@ -205,6 +205,10 @@ namespace Desktop.Analyzers.Common
                 return typeSymbol.GetMembers("CurrentThreadActivityId").IsEmpty ? new Version(4, 5) : new Version(4, 5, 1);
             }
             return new Version(4, 0);
+        } 
+        public static LocalizableResourceString GetLocalizableResourceString(string resourceName)
+        {
+            return new LocalizableResourceString(resourceName, DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         }
     }
 }

@@ -22,20 +22,20 @@ namespace Desktop.Analyzers
         internal const string DoNotUseDSARuleId = "CA5356";
         internal const string DoNotUseRijndaelRuleId = "CA5357";
 
-        private static readonly LocalizableString s_localizableDoNotUseMD5Title = GetLocalizableResourceString(DesktopAnalyzersResources.DoNotUseMD5);
-        private static readonly LocalizableString s_localizableDoNotUseMD5Description = GetLocalizableResourceString(DesktopAnalyzersResources.DoNotUseMD5Description);
-        private static readonly LocalizableString s_localizableDoNotUseDESTitle = GetLocalizableResourceString(DesktopAnalyzersResources.DoNotUseDES);
-        private static readonly LocalizableString s_localizableDoNotUseDESDescription = GetLocalizableResourceString(DesktopAnalyzersResources.DoNotUseDESDescription);
-        private static readonly LocalizableString s_localizableDoNotUseRC2Title = GetLocalizableResourceString(DesktopAnalyzersResources.DoNotUseRC2);
-        private static readonly LocalizableString s_localizableDoNotUseRC2Description = GetLocalizableResourceString(DesktopAnalyzersResources.DoNotUseRC2Description);
-        private static readonly LocalizableString s_localizableDoNotUseTripleDESTitle = GetLocalizableResourceString(DesktopAnalyzersResources.DoNotUseTripleDES);
-        private static readonly LocalizableString s_localizableDoNotUseTripleDESDescription = GetLocalizableResourceString(DesktopAnalyzersResources.DoNotUseTripleDESDescription);
-        private static readonly LocalizableString s_localizableDoNotUseRIPEMD160Title = GetLocalizableResourceString(DesktopAnalyzersResources.DoNotUseRIPEMD160);
-        private static readonly LocalizableString s_localizableDoNotUseRIPEMD160Description = GetLocalizableResourceString(DesktopAnalyzersResources.DoNotUseRIPEMD160Description);
-        private static readonly LocalizableString s_localizableDoNotUseDSATitle = GetLocalizableResourceString(DesktopAnalyzersResources.DoNotUseDSA);
-        private static readonly LocalizableString s_localizableDoNotUseDSADescription = GetLocalizableResourceString(DesktopAnalyzersResources.DoNotUseDSADescription);
-        private static readonly LocalizableString s_localizableDoNotUseRijndaelTitle = GetLocalizableResourceString(DesktopAnalyzersResources.DoNotUseRijndael);
-        private static readonly LocalizableString s_localizableDoNotUseRijndaelDescription = GetLocalizableResourceString(DesktopAnalyzersResources.DoNotUseRijndaelDescription);
+        private static readonly LocalizableString s_localizableDoNotUseMD5Title = GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseMD5));
+        private static readonly LocalizableString s_localizableDoNotUseMD5Description = GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseMD5Description));
+        private static readonly LocalizableString s_localizableDoNotUseDESTitle = GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseDES));
+        private static readonly LocalizableString s_localizableDoNotUseDESDescription = GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseDESDescription));
+        private static readonly LocalizableString s_localizableDoNotUseRC2Title = GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseRC2));
+        private static readonly LocalizableString s_localizableDoNotUseRC2Description = GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseRC2Description));
+        private static readonly LocalizableString s_localizableDoNotUseTripleDESTitle = GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseTripleDES));
+        private static readonly LocalizableString s_localizableDoNotUseTripleDESDescription = GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseTripleDESDescription));
+        private static readonly LocalizableString s_localizableDoNotUseRIPEMD160Title = GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseRIPEMD160));
+        private static readonly LocalizableString s_localizableDoNotUseRIPEMD160Description = GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseRIPEMD160Description));
+        private static readonly LocalizableString s_localizableDoNotUseDSATitle = GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseDSA));
+        private static readonly LocalizableString s_localizableDoNotUseDSADescription = GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseDSADescription));
+        private static readonly LocalizableString s_localizableDoNotUseRijndaelTitle = GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseRijndael));
+        private static readonly LocalizableString s_localizableDoNotUseRijndaelDescription = GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseRijndaelDescription));
 
 
         internal static DiagnosticDescriptor DoNotUseMD5Rule = CreateDiagnosticDescriptor(DoNotUseMD5RuleId,
@@ -92,9 +92,9 @@ namespace Desktop.Analyzers
                                             customTags: WellKnownDiagnosticTags.Telemetry);
         }
 
-        private static LocalizableResourceString GetLocalizableResourceString(string resourceString)
+        private static LocalizableResourceString GetLocalizableResourceString(string resourceName)
         {
-            return new LocalizableResourceString(nameof(resourceString), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
+            return new LocalizableResourceString(resourceName, DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         }
 
         public override void Initialize(AnalysisContext analysisContext)

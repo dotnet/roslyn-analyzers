@@ -581,24 +581,55 @@ End Class
 public class C23Base
 {
 }
-public class C23 : C22Base
+public class C23 : C23Base
 {
     public static void Foo() { }
 }
 ");
         }
+
         [Fact]
         public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndBaseClassBasic()
         {
             VerifyBasic(@"
-Public Class C23Base
+Public Class B23Base
 End Class
-Public Class C23
-	Inherits C22Base
+Public Class B23
+	Inherits B23Base
 	Public Shared Sub Foo()
 	End Sub
 End Class
 ");
+        }
+
+        [Fact]
+        public void CA1052DiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndEmptyBaseInterfaceCSharp()
+        {
+            VerifyCSharp(@"
+public interface IC24Base
+{
+}
+public class C24 : IC24Base
+{
+    public static void Foo() { }
+}
+",
+                CSharpResult(5, 14, "C24"));
+        }
+
+        [Fact]
+        public void CA1052DiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndEmptyBaseInterfaceBasic()
+        {
+            VerifyBasic(@"
+Public Interface IB24Base
+End Interface
+Public Class B24
+	Implements IB24Base
+	Public Shared Sub Foo()
+	End Sub
+End Class
+",
+                BasicResult(4, 14, "B24"));
         }
     }
 }

@@ -631,5 +631,39 @@ End Class
 ",
                 BasicResult(4, 14, "B24"));
         }
+
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndNotEmptyBaseInterfaceCSharp()
+        {
+            VerifyCSharp(@"
+public interface IC25Base
+{
+    void Moo();
+}
+public class C25 : IC24Base
+{
+    public static void Foo() { }
+    void C25Base.Moo() { }
+}
+");
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndNotEmptyBaseInterfaceBasic()
+        {
+            VerifyBasic(@"
+Public Interface IB25Base
+    Sub Moo()
+End Interface
+Public Class B25
+	Implements IB25Base
+	Public Shared Sub Foo()
+	End Sub
+	Private Sub B25Base_Moo() Implements B25Base.Moo
+	End Sub
+End Class
+");
+        }
+
     }
 }

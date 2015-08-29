@@ -75,7 +75,7 @@ namespace Microsoft.AnalyzerPowerPack.Design
         {
             if (!symbol.IsStatic
                 && (symbol.IsPublic() || symbol.IsProtected())
-                && symbol.IsStaticHolderType())
+                && symbol.IsStaticHolderType(compilation))
             {
                 addDiagnostic(symbol.CreateDiagnostic(Rule, symbol.Name));
             }
@@ -100,9 +100,14 @@ namespace Microsoft.AnalyzerPowerPack.Design
         /// "qualifying member" (<see cref="IsQualifyingMember(ISymbol)"/>) and no
         /// "disqualifying members" (<see cref="IsDisqualifyingMember(ISymbol)"/>).
         /// </remarks>
-        internal static bool IsStaticHolderType(this INamedTypeSymbol symbol)
+        internal static bool IsStaticHolderType(this INamedTypeSymbol symbol, Compilation compilation)
         {
             if (symbol.TypeKind != TypeKind.Class)
+            {
+                return false;
+            }
+
+            if (symbol.BaseType != compilation.GetTypeByMetadataName("System.Object"))
             {
                 return false;
             }

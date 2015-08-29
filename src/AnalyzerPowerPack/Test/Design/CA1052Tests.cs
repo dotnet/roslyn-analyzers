@@ -574,5 +574,31 @@ Public Class B22
 End Class
 ");
         }
+
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndBaseClassCSharp() {
+            VerifyCSharp(@"
+public class C23Base
+{
+}
+public class C23 : C22Base
+{
+    public static void Foo() { }
+}
+");
+        }
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndBaseClassBasic()
+        {
+            VerifyBasic(@"
+Public Class C23Base
+End Class
+Public Class C23
+	Inherits C22Base
+	Public Shared Sub Foo()
+	End Sub
+End Class
+");
+        }
     }
 }

@@ -665,5 +665,47 @@ End Class
 ");
         }
 
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndIncompleteBaseClassDefinitionCSharp()
+        {
+            VerifyCSharp(@"
+public class C26 :
+{
+    public static void Foo() { }
+}
+");
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndIncompleteBaseClassDefinitionBasic()
+        {
+            VerifyBasic(@"
+Public Class B26
+	Inherits
+	Public Shared Sub Foo()
+	End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForEmptyNonStaticClassWithIncompleteBaseClassDefinitionCSharp()
+        {
+            VerifyCSharp(@"
+public class C27 :
+{
+}
+");
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForEmptyNonStaticClassWithIncompleteBaseClassDefinitionBasic()
+        {
+            VerifyBasic(@"
+Public Class B27
+	Inherits
+End Class
+");
+        }
     }
 }

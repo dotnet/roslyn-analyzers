@@ -33,7 +33,7 @@ namespace Microsoft.AnalyzerPowerPack.Design
     /// Like FxCop, this analyzer does emit a diagnostic when the type has a private default
     /// constructor, even though the documentation of CA1053 says it should only trigger for public
     /// or protected default constructor. Like FxCop, this analyzer does not emit a diagnostic when 
-    /// class has a base class, however the diagnostic is emited if class supports empty interface".
+    /// class has a base class, however the diagnostic is emitted if class supports empty interface.
     /// </para>
     /// <para>
     /// The rationale for all of this is to facilitate a smooth transition from FxCop rules to the
@@ -91,9 +91,6 @@ namespace Microsoft.AnalyzerPowerPack.Design
         /// </summary>
         /// <param name="symbol">
         /// The symbol being examined.
-        /// </param>
-        /// <param name="compilation">
-        /// The compilation containing the examined symbol.
         /// </param>
         /// <returns>
         /// <c>true</c> if <paramref name="symbol"/> is a static holder type;

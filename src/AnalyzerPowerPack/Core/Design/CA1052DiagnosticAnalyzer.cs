@@ -32,7 +32,8 @@ namespace Microsoft.AnalyzerPowerPack.Design
     /// even though the title of CA1053 is "Static holder types should not have constructors".
     /// Like FxCop, this analyzer does emit a diagnostic when the type has a private default
     /// constructor, even though the documentation of CA1053 says it should only trigger for public
-    /// or protected default constructor.
+    /// or protected default constructor. Like FxCop, this analyzer does not emit a diagnostic when 
+    /// class has a base class, however the diagnostic is emitted if class supports empty interface.
     /// </para>
     /// <para>
     /// The rationale for all of this is to facilitate a smooth transition from FxCop rules to the
@@ -103,6 +104,11 @@ namespace Microsoft.AnalyzerPowerPack.Design
         internal static bool IsStaticHolderType(this INamedTypeSymbol symbol)
         {
             if (symbol.TypeKind != TypeKind.Class)
+            {
+                return false;
+            }
+
+            if (symbol.BaseType.SpecialType != SpecialType.System_Object)
             {
                 return false;
             }

@@ -574,5 +574,138 @@ Public Class B22
 End Class
 ");
         }
+
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndBaseClassCSharp() {
+            VerifyCSharp(@"
+public class C23Base
+{
+}
+public class C23 : C23Base
+{
+    public static void Foo() { }
+}
+");
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndBaseClassBasic()
+        {
+            VerifyBasic(@"
+Public Class B23Base
+End Class
+Public Class B23
+	Inherits B23Base
+	Public Shared Sub Foo()
+	End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public void CA1052DiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndEmptyBaseInterfaceCSharp()
+        {
+            VerifyCSharp(@"
+public interface IC24Base
+{
+}
+public class C24 : IC24Base
+{
+    public static void Foo() { }
+}
+",
+                CSharpResult(5, 14, "C24"));
+        }
+
+        [Fact]
+        public void CA1052DiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndEmptyBaseInterfaceBasic()
+        {
+            VerifyBasic(@"
+Public Interface IB24Base
+End Interface
+Public Class B24
+	Implements IB24Base
+	Public Shared Sub Foo()
+	End Sub
+End Class
+",
+                BasicResult(4, 14, "B24"));
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndNotEmptyBaseInterfaceCSharp()
+        {
+            VerifyCSharp(@"
+public interface IC25Base
+{
+    void Moo();
+}
+public class C25 : IC24Base
+{
+    public static void Foo() { }
+    void C25Base.Moo() { }
+}
+");
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndNotEmptyBaseInterfaceBasic()
+        {
+            VerifyBasic(@"
+Public Interface IB25Base
+    Sub Moo()
+End Interface
+Public Class B25
+	Implements IB25Base
+	Public Shared Sub Foo()
+	End Sub
+	Private Sub B25Base_Moo() Implements B25Base.Moo
+	End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndIncompleteBaseClassDefinitionCSharp()
+        {
+            VerifyCSharp(@"
+public class C26 :
+{
+    public static void Foo() { }
+}
+");
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndIncompleteBaseClassDefinitionBasic()
+        {
+            VerifyBasic(@"
+Public Class B26
+	Inherits
+	Public Shared Sub Foo()
+	End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForEmptyNonStaticClassWithIncompleteBaseClassDefinitionCSharp()
+        {
+            VerifyCSharp(@"
+public class C27 :
+{
+}
+");
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForEmptyNonStaticClassWithIncompleteBaseClassDefinitionBasic()
+        {
+            VerifyBasic(@"
+Public Class B27
+	Inherits
+End Class
+");
+        }
     }
 }

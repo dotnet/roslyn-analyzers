@@ -12,7 +12,7 @@ namespace System.Runtime.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer();
+            return new BasicTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
@@ -22,7 +22,7 @@ namespace System.Runtime.Analyzers.UnitTests
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer();
+            return new CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
@@ -119,7 +119,7 @@ using System.IO;
 // This class violates the rule.
 public class NoDisposeClass
 {
-    FileStream newFile;
+    FileStream newFile = new FileStream("""", FileMode.Append);
 
     void Dispose() {
 // Some content
@@ -133,7 +133,7 @@ using System.IO;
 // This class violates the rule.
 public class NoDisposeClass : IDisposable
 {
-    FileStream newFile;
+    FileStream newFile = new FileStream("""", FileMode.Append);
 
     public void Dispose() {
 // Some content
@@ -152,7 +152,7 @@ using System.IO;
 // This class violates the rule.
 public partial class NoDisposeClass
 {
-    FileStream newFile;
+    FileStream newFile = new FileStream("""", FileMode.Append);
 
     void Dispose(int x) {
 // Some content
@@ -166,7 +166,7 @@ using System.IO;
 // This class violates the rule.
 public partial class NoDisposeClass : IDisposable
 {
-    FileStream newFile;
+    FileStream newFile = new FileStream("""", FileMode.Append);
 
     void Dispose(int x) {
 // Some content
@@ -190,7 +190,7 @@ Imports System.IO
 ' This class violates the rule. 
 Public Class NoDisposeMethod
 
-    Dim newFile As FileStream
+    Dim newFile As FileStream = New FileStream("""", FileMode.Append)
 
     Sub Dispose()
 
@@ -205,7 +205,7 @@ Imports System.IO
 Public Class NoDisposeMethod
     Implements IDisposable
 
-    Dim newFile As FileStream
+    Dim newFile As FileStream = New FileStream("""", FileMode.Append)
 
     Public Sub Dispose() Implements IDisposable.Dispose
     End Sub
@@ -223,7 +223,7 @@ Imports System.IO
 ' This class violates the rule. 
 Public Class NoDisposeMethod
 
-    Dim newFile As FileStream
+    Dim newFile As FileStream = New FileStream("""", FileMode.Append)
 
     Sub Dispose(x As Integer)
     End Sub
@@ -237,7 +237,7 @@ Imports System.IO
 Public Class NoDisposeMethod
     Implements IDisposable
 
-    Dim newFile As FileStream
+    Dim newFile As FileStream = New FileStream("""", FileMode.Append)
 
     Sub Dispose(x As Integer)
     End Sub

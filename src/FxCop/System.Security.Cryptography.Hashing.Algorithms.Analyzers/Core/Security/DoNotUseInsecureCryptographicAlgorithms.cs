@@ -18,10 +18,10 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
         internal const string DoNotUseMD5RuleId = "CA5350";
         internal const string DoNotUseSHA1RuleId = "CA5354";
 
-        private static readonly LocalizableString s_localizableDoNotUseMD5Title = new LocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseMD5), SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.ResourceManager, typeof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources));
-        private static readonly LocalizableString s_localizableDoNotUseMD5Description = new LocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseMD5Description), SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.ResourceManager, typeof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources));
-        private static readonly LocalizableString s_localizableDoNotUseSHA1Title = new LocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseSHA1), SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.ResourceManager, typeof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources));
-        private static readonly LocalizableString s_localizableDoNotUseSHA1Description = new LocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseSHA1Description), SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.ResourceManager, typeof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources));
+        private static readonly LocalizableString s_localizableDoNotUseMD5Title = DiagnosticHelpers.GetLocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseMD5));
+        private static readonly LocalizableString s_localizableDoNotUseMD5Description = DiagnosticHelpers.GetLocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseMD5Description));
+        private static readonly LocalizableString s_localizableDoNotUseSHA1Title = DiagnosticHelpers.GetLocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseSHA1));
+        private static readonly LocalizableString s_localizableDoNotUseSHA1Description = DiagnosticHelpers.GetLocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseSHA1Description));
         
 
         internal static DiagnosticDescriptor DoNotUseMD5Rule = CreateDiagnosticDescriptor(DoNotUseMD5RuleId,

@@ -117,6 +117,11 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers.Common
             return true;
         }
 
+        public static LocalizableResourceString GetLocalizableResourceString(string resourceName)
+        {
+            return new LocalizableResourceString(resourceName, SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.ResourceManager, typeof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources));
+        }
+
         private static bool IsInvisibleOutsideAssemblyAtSymbolLevel(ISymbol symbol)
         {
             return SymbolIsPrivateOrInternal(symbol)
@@ -144,52 +149,5 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers.Common
 
             return false;
         }
-
-        public static Version GetFrameworkVersionFromCompilation(Compilation compilation)
-        {
-            if (compilation == null)
-            {
-                return null;
-            }
-
-            IAssemblySymbol assemblySymbol = compilation.Assembly;
-            INamedTypeSymbol targetFrameworkAttribute = compilation.GetTypeByMetadataName("System.Runtime.Versioning.TargetFrameworkAttribute");
-            AttributeData attrData = assemblySymbol.GetAttributes().FirstOrDefault(a => a.AttributeClass == targetFrameworkAttribute);
-
-            if (attrData == null)
-            {
-                return null;
-            }
-            
-            //constructor signature: 
-            //public TargetFrameworkAttribute(string frameworkName)
-            string fxName = (string)attrData.ConstructorArguments[0].Value;
-            return ParseFrameworkName(fxName);
-        }
-
-        public static Version ParseFrameworkName(string fxName)
-        {
-            if (String.IsNullOrEmpty(fxName))
-            {
-                return null;
-            }
-
-            try
-            {
-                Version version = null;
-                Match match = fxVerRegex.Match(fxName);
-                if (match.Success)
-                {
-                    Version.TryParse(match.Groups[1].Value, out version);
-                }
-                return version;
-            }
-            catch (RegexMatchTimeoutException) 
-            {
-                return null;
-            }
-        }
-
-        private static readonly Regex fxVerRegex = new Regex(@"Version=v([0-9\.]+)", RegexOptions.None, TimeSpan.FromSeconds(1));
     }
 }

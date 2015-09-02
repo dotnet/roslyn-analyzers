@@ -29,6 +29,7 @@ Namespace System.Runtime.Analyzers
                 ElseIf TypeOf node Is FieldDeclarationSyntax Then
                     Dim fieldDecls = DirectCast(node, FieldDeclarationSyntax).Declarators
                     For Each declarator As VariableDeclaratorSyntax In fieldDecls
+                        'Explicit initialization is not permitted with multiple variables declared with a single type specifier
                         If declarator.Names.Count > 1 Then
                             Continue For
                         End If

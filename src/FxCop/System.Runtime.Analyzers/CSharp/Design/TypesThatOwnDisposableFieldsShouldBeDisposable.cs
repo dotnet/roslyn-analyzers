@@ -39,12 +39,13 @@ namespace System.Runtime.Analyzers
                 else if (node is FieldDeclarationSyntax)
                 {
                     var fieldDecl = ((FieldDeclarationSyntax)node).Declaration;
-                    Debug.Assert(fieldDecl.Variables.Count == 1);
-                    var fieldInit = fieldDecl.Variables.First();
-                    if (fieldInit?.Initializer?.Value is ObjectCreationExpressionSyntax &&
-                        disposableFields.Contains(model.GetDeclaredSymbol(fieldInit, cancellationToken)))
-                    {
-                        return true;
+                    foreach (var fieldInit in fieldDecl.Variables)
+                    {                                               
+                        if (fieldInit?.Initializer?.Value is ObjectCreationExpressionSyntax &&
+                            disposableFields.Contains(model.GetDeclaredSymbol(fieldInit, cancellationToken)))
+                        {
+                            return true;
+                        }
                     }
                 }
                 return false;

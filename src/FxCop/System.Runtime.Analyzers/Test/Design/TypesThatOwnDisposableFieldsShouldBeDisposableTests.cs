@@ -53,7 +53,7 @@ using System.IO;
 
     public class NoDisposeClass
     {
-        FileStream newFile = new FileStream(""data.txt"", FileMode.Append);
+        FileStream newFile1, newFile2 = new FileStream(""data.txt"", FileMode.Append);
     }
 ",
             GetCA1001CSharpResultAt(4, 18, "NoDisposeClass"));
@@ -239,7 +239,7 @@ Imports System.IO
       
    ' This class violates the rule. 
     Public Class NoDisposeClass
-        Dim num As Integer, newFile As FileStream = New FileStream(""data.txt"", FileMode.Append)
+        Dim newFile1 As FileStream, newFile2 As FileStream = New FileStream(""data.txt"", FileMode.Append)
     End Class
 ",
             GetCA1001BasicResultAt(5, 18, "NoDisposeClass"));
@@ -249,8 +249,8 @@ Imports System.IO
     
    ' This class violates the rule. 
     Public Class NoDisposeClass
-        Dim num As Integer
-        Dim newFile As FileStream = New FileStream(""data.txt"", FileMode.Append)
+        Dim newFile1 As FileStream
+        Dim newFile2 As FileStream = New FileStream(""data.txt"", FileMode.Append)
     End Class
 ",
             GetCA1001BasicResultAt(5, 18, "NoDisposeClass"));

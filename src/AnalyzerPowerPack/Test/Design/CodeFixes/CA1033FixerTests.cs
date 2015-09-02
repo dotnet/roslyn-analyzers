@@ -132,8 +132,7 @@ public class ImplementsGeneralThree : IGeneral
             VerifyCSharpFix(code, expectedFixedCode);
         }
 
-        [WorkItem(2616, "https://github.com/dotnet/roslyn/issues/2616")]
-        [Fact(Skip = "2616")]
+        [Fact, WorkItem(2616, "https://github.com/dotnet/roslyn/issues/2616")]
         public void CA1033SimpleDiagnosticCasesCSharp_ImplicitImpl()
         {
             var code = @"
@@ -198,8 +197,7 @@ public class ImplementsGeneral  : IGeneral
             VerifyCSharpFix(code, expectedFixedCode);
         }
 
-        [WorkItem(2616, "https://github.com/dotnet/roslyn/issues/2616")]
-        [Fact(Skip = "2616")]
+        [Fact, WorkItem(2616, "https://github.com/dotnet/roslyn/issues/2616")]
         public void CA1033SimpleDiagnosticCasesCSharp_Indexer()
         {
             var code = @"
@@ -746,8 +744,7 @@ End Class
             VerifyBasicFix(code, expectedFixedCode);
         }
 
-        [WorkItem(2616, "https://github.com/dotnet/roslyn/issues/2616")]
-        [Fact(Skip = "2616")]
+        [Fact, WorkItem(2616, "https://github.com/dotnet/roslyn/issues/2616")]
         public void CA1033SimpleDiagnosticCasesBasic_ImplicitImpl()
         {
             var code = @"
@@ -797,8 +794,7 @@ End Class";
             VerifyBasicFix(code, expectedFixedCode);
         }
 
-        [WorkItem(2650, "https://github.com/dotnet/roslyn/issues/2650")]
-        [Fact(Skip = "2650")]
+        [Fact, WorkItem(2650, "https://github.com/dotnet/roslyn/issues/2650")]
         public void CA1033SimpleDiagnosticCasesBasic_Indexer()
         {
             var code = @"

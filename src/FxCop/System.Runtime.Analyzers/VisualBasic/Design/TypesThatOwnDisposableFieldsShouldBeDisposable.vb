@@ -8,7 +8,7 @@ Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
 Namespace System.Runtime.Analyzers
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
-    Public Class BasicTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer
+    Public NotInheritable Class BasicTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer
         Inherits TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer(Of TypeBlockSyntax)
         Protected Overrides Function GetAnalyzer(disposableTypeSymbol As INamedTypeSymbol) As DisposableFieldAnalyzer
             Return New BasicDisposableFieldAnalyzer(disposableTypeSymbol)

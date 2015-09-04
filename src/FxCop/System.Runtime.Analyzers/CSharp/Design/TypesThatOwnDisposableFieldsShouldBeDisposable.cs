@@ -12,14 +12,14 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace System.Runtime.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer : TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer<TypeDeclarationSyntax>
+    public sealed class CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer : TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer<TypeDeclarationSyntax>
     {
         protected override DisposableFieldAnalyzer GetAnalyzer(INamedTypeSymbol disposableTypeSymbol)
         {
             return new CSharpDisposableFieldAnalyzer(disposableTypeSymbol);
         }
 
-        protected sealed class CSharpDisposableFieldAnalyzer : DisposableFieldAnalyzer
+        private class CSharpDisposableFieldAnalyzer : DisposableFieldAnalyzer
         {
             public CSharpDisposableFieldAnalyzer(INamedTypeSymbol disposableTypeSymbol)
                 : base(disposableTypeSymbol)
@@ -41,7 +41,7 @@ namespace System.Runtime.Analyzers
                     var fieldDecl = ((FieldDeclarationSyntax)node).Declaration;
                     foreach (var fieldInit in fieldDecl.Variables)
                     {                                               
-                        if (fieldInit?.Initializer?.Value is ObjectCreationExpressionSyntax &&
+                        if (fieldInit.Initializer?.Value is ObjectCreationExpressionSyntax &&
                             disposableFields.Contains(model.GetDeclaredSymbol(fieldInit, cancellationToken)))
                         {
                             return true;

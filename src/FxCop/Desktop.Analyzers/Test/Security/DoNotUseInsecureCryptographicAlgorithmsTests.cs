@@ -130,7 +130,7 @@ Namespace TestNamespace
 End Namespace",
 GetBasicResultAt(5, 25, CA5350RuleName, CA5350Message));
         }         
- //No VB            
+   
         [Fact]
 		public void CA5350UseHMACMD5InLambdaExpression()
         {
@@ -148,8 +148,20 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(10, 36, CA5350RuleName, CA5350Message));
-        }        
-//No VB        
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+
+Module TestClass
+    Public Async Sub TestMethod()
+        Await Task.Run(Function()
+                           Return New HMACMD5()
+                       End Function)
+    End Sub
+End Module",
+            GetBasicResultAt(7, 35, CA5350RuleName, CA5350Message));
+        }
+             
         [Fact]
 		public void CA5350UseHMACMD5InAnonymousMethodExpression()
         {
@@ -164,6 +176,15 @@ namespace TestNamespace
     }
 }",
             GetCSharpResultAt(8, 31, CA5350RuleName, CA5350Message));
+                                 
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+
+Module TestClass 
+    Delegate Function Del() As HashAlgorithm
+    Dim d As Del = Function() New HMACMD5()
+End Module",
+            GetBasicResultAt(6, 31, CA5350RuleName, CA5350Message));
         }        
         
         #endregion

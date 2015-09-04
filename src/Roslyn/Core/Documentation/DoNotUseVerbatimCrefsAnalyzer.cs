@@ -37,6 +37,11 @@ namespace Roslyn.Diagnostics.Analyzers.Documentation
 
         protected void ProcessAttribute(SyntaxNodeAnalysisContext context, SyntaxTokenList textTokens)
         {
+            if (!textTokens.Any())
+            {
+                return;
+            }
+
             var token = textTokens.First();
 
             if (token.Span.Length >= 2)

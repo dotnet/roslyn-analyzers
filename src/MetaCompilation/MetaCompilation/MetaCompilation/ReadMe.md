@@ -1,4 +1,4 @@
-﻿Analyzer Tutorial
+Analyzer Tutorial
 =================
 
 This tutorial is going to guide you to write a diagnostic analyzer that enforces the placement of a single space between the `if` keyword of an if-statement and the opening parenthesis of the condition.
@@ -10,6 +10,7 @@ Analyzers are tools that produce live diagnostics in Visual Studio, highlighting
 An analyzer operates by examining the syntax tree representing the corresponding code.
 The information in the syntax tree is built up during compilation, and is exposed by the .NET Compiler Platform (aka Roslyn). An analyzer is triggered when changes are made to the syntax tree, which happens when you edit a piece of code. The analyzer can then walk through the syntax tree, looking at syntax nodes, syntax tokens and syntax trivia, and decide whether or not to surface a diagnostic.
 Analyzers can also examine the semantic model, a higher-level representation of the code, if the information required to surface a diagnostic cannot be obtained from the syntax tree.
+
 Tutorial Overview
 ------------
 Writing an analyzer can be broken down into the following high-level steps
@@ -22,15 +23,30 @@ Writing an analyzer can be broken down into the following high-level steps
 1. If the analysis finds an error, create and report a diagnostic to inform the user of this error.
 
 The syntax diagram for a sample if-statement can be found below. You will a write a diagnostic that will surface when the whitespace circled in red is either absent or anything other than a single space. 
-For more information on visualizing syntax trees see [Syntax Trees](https://github.com/dotnet/roslyn-analyzers/blob/master/NewAnalyzerTemplate/NewAnalyzerTemplate/NewAnalyzerTemplate/README.md#syntax-trees).
-![If Statement Syntax Tree](https://github.com/dotnet/roslyn-analyzers/blob/master/NewAnalyzerTemplate/NewAnalyzerTemplate/NewAnalyzerTemplate/IfSyntaxTree.jpg)
+For more information on visualizing syntax trees see [Syntax Trees](https://github.com/dotnet/roslyn-analyzers/blob/master/src/MetaCompilation/MetaCompilation/MetaCompilation/ReadMe.md#syntax-trees).
+![If Statement Syntax Tree](https://github.com/dotnet/roslyn-analyzers/blob/master/src/MetaCompilation/MetaCompilation/MetaCompilation/IfSyntaxTree.jpg)
 
 Instructions
 ------------
-* Before you begin, go to *Tools -> Extensions and Updates -> Online* and install .NET Compiler Platform SDK.
-* Restart Visual Studio.
+* Ensure you are running Visual Studio 2015 RTM, as this tutorial will not work on older versions of Visual Studio
+* Before you begin, go to *Tools -> Extensions and Updates -> Online* and install .NET Compiler Platform SDK
+* Restart Visual Studio
+* Open Solution Explorer, if there is a warning about Visual Studio Extensibility Tools, click on it and follow the instructions
+* Open Visual Studio Developer Command Prompt navigate to the roslyn-analyzers repository on your machine
+* Then type powershell -executionpolicy bypass src\.nuget\NuGetRestore.ps1
+* Restart Visual Studio
+* Clone the [roslyn-analyzers](https://github.com/dotnet/roslyn-analyzers) repository on your local machine
+* Open roslyn-analyzers/src/MetaCompilation/MetaCompilation.sln
+* Build the solution
+* Close Visual Studio
+* Navigate to roslyn-analyzers/Binaries. There may be multiple folders here. You want the one that has the same name as your configuration in Visual Studio (probably either Debug or Release)
+* In the appropriate folder, there will be a file called MetaCompilation.Vsix. Double click on this file to begin the installation of the tutorial
+* After the extension has been installed, go to *File -> New -> Project -> Visual C# -> Analyzer Tutorial Template*
+* Give your project a name and location, and click OK
+* Rebuild the solution
 * Open the DiagnosticAnalyzer.cs file
 * Open the Solution Explorer, right click on the .Vsix project, click "Set as StartUp project"
+* Open the error list
 * You will notice that something is squiggled in red, and there is a corresponding error in the error list. Errors directly related to this tutorial will begin with 'T':
 	* Read the error and try to fix the problem
 	* If you are stuck, hover over the squiggle and a light bulb will show up. Clicking on this lightbulb will bring up a list of code fixes.

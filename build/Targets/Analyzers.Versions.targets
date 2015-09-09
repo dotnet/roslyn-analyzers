@@ -21,7 +21,10 @@
     <SharedTestSemanticVersion>1.0.0</SharedTestSemanticVersion>
     <SharedTestPreReleaseVersion>beta1</SharedTestPreReleaseVersion>
 
-    <AnalyzerPowerPackSemanticVersion>1.0.1</AnalyzerPowerPackSemanticVersion>
+    <AnalyzerPowerPackSemanticVersion>1.0.2</AnalyzerPowerPackSemanticVersion>
     <AnalyzerPowerPackPreReleaseVersion>beta1</AnalyzerPowerPackPreReleaseVersion>
+    
+    <RoslynDiagnosticsAnalyzersSemanticVersion>1.1.1</RoslynDiagnosticsAnalyzersSemanticVersion>
+    <RoslynDiagnosticsAnalyzersPreReleaseVersion>beta1</RoslynDiagnosticsAnalyzersPreReleaseVersion>
   </PropertyGroup>
 </Project>

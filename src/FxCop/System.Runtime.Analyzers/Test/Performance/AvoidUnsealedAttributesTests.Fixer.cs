@@ -33,13 +33,17 @@ namespace System.Runtime.Analyzers.UnitTests
 
         #region CodeFix Tests
 
-        [Fact(Skip = "Bug 858655")]
+        [Fact]
         public void CA1813CSharpCodeFixProviderTestFired()
         {
             VerifyCSharpFix(@"
+using System;
+
 public class AttributeClass : Attribute
 {
 }", @"
+using System;
+
 public sealed class AttributeClass : Attribute
 {
 }");

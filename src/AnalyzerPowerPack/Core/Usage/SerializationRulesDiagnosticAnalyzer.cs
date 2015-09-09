@@ -21,7 +21,7 @@ namespace Microsoft.AnalyzerPowerPack.Usage
         private static readonly LocalizableString s_localizableDescriptionCA2229 =
             new LocalizableResourceString(
                 nameof(AnalyzerPowerPackRulesResources.ImplementSerializationConstructorDescription),
-                AnalyzerPowerPackRulesResources.ResourceManager, typeof(AnalyzerPowerPackRulesResources));
+                AnalyzerPowerPackRulesResources.ResourceManager, typeof (AnalyzerPowerPackRulesResources));
 
         internal static DiagnosticDescriptor RuleCA2229 = new DiagnosticDescriptor(RuleCA2229Id,
                                                                         s_localizableTitleCA2229,
@@ -38,16 +38,16 @@ namespace Microsoft.AnalyzerPowerPack.Usage
 
         private static readonly LocalizableString s_localizableTitleCA2237 =
             new LocalizableResourceString(nameof(AnalyzerPowerPackRulesResources.MarkISerializableTypesWithAttribute),
-                AnalyzerPowerPackRulesResources.ResourceManager, typeof(AnalyzerPowerPackRulesResources));
+                AnalyzerPowerPackRulesResources.ResourceManager, typeof (AnalyzerPowerPackRulesResources));
 
         private static readonly LocalizableString s_localizableMessageCA2237 =
             new LocalizableResourceString(nameof(AnalyzerPowerPackRulesResources.AddSerializableAttributeToType),
-                AnalyzerPowerPackRulesResources.ResourceManager, typeof(AnalyzerPowerPackRulesResources));
+                AnalyzerPowerPackRulesResources.ResourceManager, typeof (AnalyzerPowerPackRulesResources));
 
         private static readonly LocalizableString s_localizableDescriptionCA2237 =
             new LocalizableResourceString(
                 nameof(AnalyzerPowerPackRulesResources.MarkISerializableTypesWithAttributeDescription),
-                AnalyzerPowerPackRulesResources.ResourceManager, typeof(AnalyzerPowerPackRulesResources));
+                AnalyzerPowerPackRulesResources.ResourceManager, typeof (AnalyzerPowerPackRulesResources));
 
         internal static DiagnosticDescriptor RuleCA2237 = new DiagnosticDescriptor(RuleCA2237Id,
                                                                         s_localizableTitleCA2237,
@@ -64,16 +64,16 @@ namespace Microsoft.AnalyzerPowerPack.Usage
 
         private static readonly LocalizableString s_localizableTitleCA2235 =
             new LocalizableResourceString(nameof(AnalyzerPowerPackRulesResources.MarkAllNonSerializableFields),
-                AnalyzerPowerPackRulesResources.ResourceManager, typeof(AnalyzerPowerPackRulesResources));
+                AnalyzerPowerPackRulesResources.ResourceManager, typeof (AnalyzerPowerPackRulesResources));
 
         private static readonly LocalizableString s_localizableMessageCA2235 =
             new LocalizableResourceString(nameof(AnalyzerPowerPackRulesResources.FieldIsOfNonSerializableType),
-                AnalyzerPowerPackRulesResources.ResourceManager, typeof(AnalyzerPowerPackRulesResources));
+                AnalyzerPowerPackRulesResources.ResourceManager, typeof (AnalyzerPowerPackRulesResources));
 
         private static readonly LocalizableString s_localizableDescriptionCA2235 =
             new LocalizableResourceString(
                 nameof(AnalyzerPowerPackRulesResources.MarkAllNonSerializableFieldsDescription),
-                AnalyzerPowerPackRulesResources.ResourceManager, typeof(AnalyzerPowerPackRulesResources));
+                AnalyzerPowerPackRulesResources.ResourceManager, typeof (AnalyzerPowerPackRulesResources));
 
         internal static DiagnosticDescriptor RuleCA2235 = new DiagnosticDescriptor(RuleCA2235Id,
                                                                         s_localizableTitleCA2235,
@@ -145,7 +145,7 @@ namespace Microsoft.AnalyzerPowerPack.Usage
 
             public void AnalyzeSymbol(SymbolAnalysisContext context)
             {
-                var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
+                var namedTypeSymbol = (INamedTypeSymbol) context.Symbol;
 
                 // If the type is public and implements ISerializable
                 if (namedTypeSymbol.DeclaredAccessibility == Accessibility.Public && namedTypeSymbol.AllInterfaces.Contains(_iserializableTypeSymbol))
@@ -234,7 +234,8 @@ namespace Microsoft.AnalyzerPowerPack.Usage
                 return IsPrimitiveType(namedTypeSymbol) ||
                        namedTypeSymbol.SpecialType == SpecialType.System_String ||
                        namedTypeSymbol.SpecialType == SpecialType.System_Decimal ||
-                       namedTypeSymbol.GetAttributes().Any(a => a.AttributeClass.Equals(_serializableAttributeTypeSymbol));
+                       namedTypeSymbol.GetAttributes()
+                           .Any(a => a.AttributeClass.Equals(_serializableAttributeTypeSymbol));
             }
 
             private static bool IsPrimitiveType(ITypeSymbol type)

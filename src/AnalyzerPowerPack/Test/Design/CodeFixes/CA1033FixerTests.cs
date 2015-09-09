@@ -132,8 +132,7 @@ public class ImplementsGeneralThree : IGeneral
             VerifyCSharpFix(code, expectedFixedCode);
         }
 
-        [WorkItem(2616, "https://github.com/dotnet/roslyn/issues/2616")]
-        [Fact(Skip = "2616")]
+        [Fact, WorkItem(2616, "https://github.com/dotnet/roslyn/issues/2616")]
         public void CA1033SimpleDiagnosticCasesCSharp_ImplicitImpl()
         {
             var code = @"
@@ -198,8 +197,7 @@ public class ImplementsGeneral  : IGeneral
             VerifyCSharpFix(code, expectedFixedCode);
         }
 
-        [WorkItem(2616, "https://github.com/dotnet/roslyn/issues/2616")]
-        [Fact(Skip = "2616")]
+        [Fact, WorkItem(2616, "https://github.com/dotnet/roslyn/issues/2616")]
         public void CA1033SimpleDiagnosticCasesCSharp_Indexer()
         {
             var code = @"
@@ -672,16 +670,16 @@ public class NestedExplicitInterfaceImplementation
 Imports System
 
 Public Interface IGeneral
-	Function DoSomething() As Object
-	ReadOnly Property Name() As String
+    Function DoSomething() As Object
+    ReadOnly Property Name() As String
 End Interface
 
 Public Class ImplementsGeneralThree
-	Implements IGeneral
-	Public Sub New()
-	End Sub
+    Implements IGeneral
+    Public Sub New()
+    End Sub
 
-	Private Function IGeneral_DoSomething() As Object Implements IGeneral.DoSomething
+    Private Function IGeneral_DoSomething() As Object Implements IGeneral.DoSomething
         Return Nothing
     End Function
 
@@ -709,16 +707,16 @@ End Class
 Imports System
 
 Public Interface IGeneral
-	Function DoSomething() As Object
-	ReadOnly Property Name() As String
+    Function DoSomething() As Object
+    ReadOnly Property Name() As String
 End Interface
 
 Public Class ImplementsGeneralThree
-	Implements IGeneral
-	Public Sub New()
-	End Sub
+    Implements IGeneral
+    Public Sub New()
+    End Sub
 
-	Private Function IGeneral_DoSomething() As Object Implements IGeneral.DoSomething
+    Private Function IGeneral_DoSomething() As Object Implements IGeneral.DoSomething
         Return Nothing
     End Function
 
@@ -746,71 +744,72 @@ End Class
             VerifyBasicFix(code, expectedFixedCode);
         }
 
-        [WorkItem(2616, "https://github.com/dotnet/roslyn/issues/2616")]
-        [Fact(Skip = "2616")]
+        [Fact, WorkItem(2616, "https://github.com/dotnet/roslyn/issues/2616")]
         public void CA1033SimpleDiagnosticCasesBasic_ImplicitImpl()
         {
             var code = @"
 Imports System
 
 Public Interface IGeneral
-	Function DoSomething() As Object
-	ReadOnly Property Name() As String
+    Function DoSomething() As Object
+    ReadOnly Property Name() As String
 End Interface
 
 Public Class ImplementsGeneral
-	Implements IGeneral
-	Private Function IGeneral_DoSomething() As Object Implements IGeneral.DoSomething
-		Return Nothing
-	End Function
+    Implements IGeneral
 
-	Private ReadOnly Property IGeneral_Name() As String Implements IGeneral.Name
-		Get
-			Console.WriteLine(Me)
-			Return ""name""
-		End Get
-	End Property
+    Private Function IGeneral_DoSomething() As Object Implements IGeneral.DoSomething
+        Return Nothing
+    End Function
+
+    Private ReadOnly Property IGeneral_Name() As String Implements IGeneral.Name
+        Get
+            Console.WriteLine(Me)
+            Return ""name""
+        End Get
+    End Property
 End Class
 ";
             var expectedFixedCode = @"
 Imports System
 
 Public Interface IGeneral
-	Function DoSomething() As Object
-	ReadOnly Property Name() As String
+    Function DoSomething() As Object
+    ReadOnly Property Name() As String
 End Interface
 
 Public Class ImplementsGeneral
-	Implements IGeneral
-	Public Function IGeneral_DoSomething() As Object Implements IGeneral.DoSomething
-		Return Nothing
-	End Function
+    Implements IGeneral
 
-	Public ReadOnly Property IGeneral_Name() As String Implements IGeneral.Name
-		Get
-			Console.WriteLine(Me)
-			Return ""name""
-		End Get
-	End Property
-End Class";
+    Public Function DoSomething() As Object Implements IGeneral.DoSomething
+        Return Nothing
+    End Function
+
+    Public ReadOnly Property Name() As String Implements IGeneral.Name
+        Get
+            Console.WriteLine(Me)
+            Return ""name""
+        End Get
+    End Property
+End Class
+";
 
             VerifyBasicFix(code, expectedFixedCode);
         }
 
-        [WorkItem(2650, "https://github.com/dotnet/roslyn/issues/2650")]
-        [Fact(Skip = "2650")]
+        [Fact, WorkItem(2650, "https://github.com/dotnet/roslyn/issues/2650")]
         public void CA1033SimpleDiagnosticCasesBasic_Indexer()
         {
             var code = @"
 Imports System
 
 Public Interface IGeneral
-	ReadOnly Property Item(item_1 As Integer) As Integer
+    Default ReadOnly Property Item(item_1 As Integer) As Integer
 End Interface
 
 Public Class ImplementsGeneral
-	Implements IGeneral
-    Private ReadOnly Property IGeneral_Item(item As Integer) As Integer Implements IGeneral.Item
+    Implements IGeneral
+    Private ReadOnly Property IGeneral_Item(item_1 As Integer) As Integer Implements IGeneral.Item
         Get
             Console.WriteLine(Me)
             Return item
@@ -819,7 +818,8 @@ Public Class ImplementsGeneral
 End Class
 
 Public Class ImplementsGeneralThree
-	Implements IGeneral
+    Implements IGeneral
+
     Private ReadOnly Property IGeneral_Item(item As Integer) As Integer Implements IGeneral.Item
         Get
             Console.WriteLine(Me)
@@ -839,12 +839,13 @@ End Class
 Imports System
 
 Public Interface IGeneral
-	Default ReadOnly Property Item(item_1 As Integer) As Integer
+    Default ReadOnly Property Item(item_1 As Integer) As Integer
 End Interface
 
 Public Class ImplementsGeneral
-	Implements IGeneral
-    Public ReadOnly Property IGeneral_Item(item As Integer) As Integer Implements IGeneral.Item
+    Implements IGeneral
+
+    Public ReadOnly Property Item(item_1 As Integer) As Integer Implements IGeneral.Item
         Get
             Console.WriteLine(Me)
             Return item
@@ -853,7 +854,8 @@ Public Class ImplementsGeneral
 End Class
 
 Public Class ImplementsGeneralThree
-	Implements IGeneral
+    Implements IGeneral
+
     Private ReadOnly Property IGeneral_Item(item As Integer) As Integer Implements IGeneral.Item
         Get
             Console.WriteLine(Me)

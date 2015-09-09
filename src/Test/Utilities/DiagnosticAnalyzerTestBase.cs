@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis.CSharp;
@@ -98,7 +99,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
             {
                 Id = rule.Id,
                 Severity = rule.DefaultSeverity,
-                Message = rule.MessageFormat.ToString()
+                Message = String.Format(rule.MessageFormat.ToString(), messageArguments)
             };
         }
 
@@ -364,25 +365,32 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 compilation = EnableAnalyzer(analyzer, compilation);
 
                 var diags = compilation.GetAnalyzerDiagnostics(new[] { analyzer });
-
-                foreach (var diag in diags)
+                if (spans == null)
                 {
-                    if (diag.Location == Location.None || diag.Location.IsInMetadata)
+                    diagnostics.AddRange(diags);
+                }
+                else
+                {
+                    Debug.Assert(spans.Length == documents.Length);
+                    foreach (var diag in diags)
                     {
-                        diagnostics.Add(diag);
-                    }
-                    else
-                    {
-                        for (int i = 0; i < documents.Length; i++)
+                        if (diag.Location == Location.None || diag.Location.IsInMetadata)
                         {
-                            var document = documents[i];
-                            var tree = document.GetSyntaxTreeAsync().Result;
-                            if (tree == diag.Location.SourceTree)
+                            diagnostics.Add(diag);
+                        }
+                        else
+                        {
+                            for (int i = 0; i < documents.Length; i++)
                             {
-                                var span = spans != null ? spans[i] : null;
-                                if (span == null || span.Value.Contains(diag.Location.SourceSpan))
+                                var document = documents[i];
+                                var tree = document.GetSyntaxTreeAsync().Result;
+                                if (tree == diag.Location.SourceTree)
                                 {
-                                    diagnostics.Add(diag);
+                                    var span = spans[i];
+                                    if (span == null || span.Value.Contains(diag.Location.SourceSpan))
+                                    {
+                                        diagnostics.Add(diag);
+                                    }
                                 }
                             }
                         }

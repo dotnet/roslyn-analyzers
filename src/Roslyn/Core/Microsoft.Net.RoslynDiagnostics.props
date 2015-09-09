@@ -1,0 +1,10 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Condition="'$(ProjectLanguage)' == 'CSharp'">
+    <Analyzer Include="$(MSBuildThisFileDirectory)..\tools\Roslyn.Diagnostics.Analyzers.dll" />
+    <Analyzer Include="$(MSBuildThisFileDirectory)..\tools\Roslyn.Diagnostics.Analyzers.CSharp.dll" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(ProjectLanguage)' == 'VB'">
+    <Analyzer Include="$(MSBuildThisFileDirectory)..\tools\Roslyn.Diagnostics.Analyzers.dll" />
+    <Analyzer Include="$(MSBuildThisFileDirectory)..\tools\Roslyn.Diagnostics.Analyzers.VisualBasic.dll" />
+  </ItemGroup>
+</Project>

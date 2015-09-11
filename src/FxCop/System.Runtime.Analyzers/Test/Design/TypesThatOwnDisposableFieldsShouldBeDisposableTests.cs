@@ -11,12 +11,12 @@ namespace System.Runtime.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer();
+            return new BasicTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer();
+            return new CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer();
         }
 
         [Fact]
@@ -33,7 +33,34 @@ namespace System.Runtime.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA1001CSharpTestWithNoDisposeMethod()
+        public void CA1001CSharpTestWithNoCreationOfDisposableObject()
+        {
+            VerifyCSharp(@"
+using System.IO;
+
+    public class NoDisposeClass
+    {
+        FileStream newFile;
+    }
+");
+        }
+
+        [Fact]
+        public void CA1001CSharpTestWithFieldInitAndNoDisposeMethod()
+        {
+            VerifyCSharp(@"
+using System.IO;
+
+    public class NoDisposeClass
+    {
+        FileStream newFile1, newFile2 = new FileStream(""data.txt"", FileMode.Append);
+    }
+",
+            GetCA1001CSharpResultAt(4, 18, "NoDisposeClass"));
+        }
+
+        [Fact]
+        public void CA1001CSharpTestWithCtorInitAndNoDisposeMethod()
         {
             VerifyCSharp(@"
 using System.IO;
@@ -50,6 +77,41 @@ using System.IO;
     }
 ",
             GetCA1001CSharpResultAt(5, 18, "NoDisposeClass"));
+        }
+
+        [Fact]
+        public void CA1001CSharpTestWithCreationOfDisposableObjectInOtherClass()
+        {
+            VerifyCSharp(@"
+using System.IO;                 
+
+    public class NoDisposeClass
+    {
+        public FileStream newFile;
+    }                 
+
+    public class CreationClass
+    {
+        public void Create()
+        {
+            var obj = new NoDisposeClass() { newFile = new FileStream(""data.txt"", FileMode.Append) }; 
+        }
+    }
+");
+
+            VerifyCSharp(@"
+using System.IO;                 
+
+    public class NoDisposeClass
+    {
+        public FileStream newFile;
+
+        public NoDisposeClass(FileStream fs)
+        {
+            newFile = fs;
+        }
+    }
+");
         }
 
         [Fact]
@@ -148,7 +210,54 @@ End Module
         }
 
         [Fact]
-        public void CA1001BasicTestWithNoDisposeMethod()
+        public void CA1001BasicTestWithNoCreationOfDisposableObject()
+        {
+            VerifyBasic(@"
+Imports System.IO
+
+    Public Class NoDisposeClass
+	    Dim newFile As FileStream
+    End Class
+");
+        }
+
+        [Fact]
+        public void CA1001BasicTestWithFieldInitAndNoDisposeMethod()
+        {
+            VerifyBasic(@"
+Imports System.IO
+           
+   ' This class violates the rule. 
+    Public Class NoDisposeClass
+        Dim newFile As FileStream = New FileStream(""data.txt"", FileMode.Append)
+    End Class
+",
+            GetCA1001BasicResultAt(5, 18, "NoDisposeClass"));
+
+            VerifyBasic(@"
+Imports System.IO
+      
+   ' This class violates the rule. 
+    Public Class NoDisposeClass
+        Dim newFile1 As FileStream, newFile2 As FileStream = New FileStream(""data.txt"", FileMode.Append)
+    End Class
+",
+            GetCA1001BasicResultAt(5, 18, "NoDisposeClass"));
+
+            VerifyBasic(@"
+Imports System.IO
+    
+   ' This class violates the rule. 
+    Public Class NoDisposeClass
+        Dim newFile1 As FileStream
+        Dim newFile2 As FileStream = New FileStream(""data.txt"", FileMode.Append)
+    End Class
+",
+            GetCA1001BasicResultAt(5, 18, "NoDisposeClass"));
+        }
+
+        [Fact]
+        public void CA1001BasicTestWithCtorInitAndNoDisposeMethod()
         {
             VerifyBasic(@"
    Imports System
@@ -166,6 +275,36 @@ End Module
    End Class
 ",
             GetCA1001BasicResultAt(6, 17, "NoDisposeMethod"));
+        }
+
+        [Fact]
+        public void CA1001BasicTestWithCreationOfDisposableObjectInOtherClass()
+        {
+            VerifyBasic(@"
+Imports System.IO
+
+    Public Class NoDisposeClass
+        Public newFile As FileStream
+    End Class
+
+    Public Class CreationClass
+        Public Sub Create()
+            Dim obj As NoDisposeClass = New NoDisposeClass()
+            obj.newFile = New FileStream(""data.txt"", FileMode.Append)
+        End Sub
+    End Class
+");
+
+            VerifyBasic(@"
+Imports System.IO
+
+    Public Class NoDisposeClass
+        Public newFile As FileStream
+        Public Sub New(fs As FileStream)
+            newFile = fs
+        End Sub
+    End Class
+");
         }
 
         [Fact]

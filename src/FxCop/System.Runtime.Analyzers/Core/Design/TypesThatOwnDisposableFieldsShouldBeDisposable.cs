@@ -1,22 +1,23 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Roslyn.Utilities;
 
 namespace System.Runtime.Analyzers
 {
     /// <summary>
     /// CA1001: Types that own disposable fields should be disposable
     /// </summary>
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer : DiagnosticAnalyzer
+    public abstract class TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer<TTypeDeclarationSyntax> : DiagnosticAnalyzer
+            where TTypeDeclarationSyntax : SyntaxNode
     {
         internal const string RuleId = "CA1001";
-        internal const string Dispose = "Dispose";
+        internal const string Dispose = "Dispose";               
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                          new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposable), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources)),
@@ -33,35 +34,83 @@ namespace System.Runtime.Analyzers
         {
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                var disposableType = WellKnownTypes.IDisposable(compilationContext.Compilation);
+                var disposableType = WellKnownTypes.IDisposable(compilationContext.Compilation);        
+
                 if (disposableType == null)
                 {
                     return;
                 }
 
+                var analyzer = GetAnalyzer(disposableType);
                 compilationContext.RegisterSymbolAction(context =>
                 {
-                    AnalyzeSymbol((INamedTypeSymbol)context.Symbol, disposableType, context.ReportDiagnostic);
+                    analyzer.AnalyzeSymbol(context);
                 },
                 SymbolKind.NamedType);
             });
         }
 
-        private static void AnalyzeSymbol(INamedTypeSymbol symbol, INamedTypeSymbol disposableType, Action<Diagnostic> addDiagnostic)
-        {
-            if (!symbol.AllInterfaces.Contains(disposableType))
-            {
-                var disposableFields = from member in symbol.GetMembers()
-                                       where member.Kind == SymbolKind.Field && !member.IsStatic
-                                       let field = member as IFieldSymbol
-                                       where field.Type != null && field.Type.AllInterfaces.Contains(disposableType)
-                                       select field;
+        protected abstract DisposableFieldAnalyzer GetAnalyzer(INamedTypeSymbol disposableType);
 
-                if (disposableFields.Any())
+        protected abstract class DisposableFieldAnalyzer
+        {
+            private INamedTypeSymbol _disposableTypeSymbol;   
+
+            public DisposableFieldAnalyzer(INamedTypeSymbol disposableTypeSymbol)
+            {
+                _disposableTypeSymbol = disposableTypeSymbol;       
+            }
+                                                                               
+            public void AnalyzeSymbol(SymbolAnalysisContext symbolContext)
+            {
+                INamedTypeSymbol namedType = (INamedTypeSymbol)symbolContext.Symbol;
+                if (!namedType.AllInterfaces.Contains(_disposableTypeSymbol))
                 {
-                    addDiagnostic(symbol.CreateDiagnostic(Rule, symbol.Name));
+                    var disposableFields = from member in namedType.GetMembers()
+                                           where member.Kind == SymbolKind.Field && !member.IsStatic
+                                           let field = member as IFieldSymbol
+                                           where field.Type != null && field.Type.AllInterfaces.Contains(_disposableTypeSymbol)
+                                           select field;
+
+                    if (disposableFields.Any())
+                    {
+                        var disposableFieldsHashSet = new HashSet<ISymbol>(disposableFields);
+                        var classDecls = GetClassDeclarationNodes(namedType, symbolContext.CancellationToken);
+                        foreach (var classDecl in classDecls)
+                        {
+                            var model = symbolContext.Compilation.GetSemanticModel(classDecl.SyntaxTree);
+                            var syntaxNodes = classDecl.DescendantNodes(n => !(n is TTypeDeclarationSyntax) || ReferenceEquals(n, classDecl))
+                                .Where(n => IsDisposableFieldCreation(n, 
+                                                                    model, 
+                                                                    disposableFieldsHashSet,
+                                                                    symbolContext.CancellationToken));
+                            if (syntaxNodes.Any())
+                            {
+                                symbolContext.ReportDiagnostic(namedType.CreateDiagnostic(Rule, namedType.Name));
+                                return;
+                            }
+                        }  
+                    }
                 }
             }
+
+            private IEnumerable<TTypeDeclarationSyntax> GetClassDeclarationNodes(INamedTypeSymbol namedType, CancellationToken cancellationToken)
+            {
+                foreach (var syntax in namedType.DeclaringSyntaxReferences.Select(s => s.GetSyntax(cancellationToken)))
+                {
+                    if (syntax != null)
+                    {
+                        var classDecl = syntax.FirstAncestorOrSelf<TTypeDeclarationSyntax>(ascendOutOfTrivia: false);
+                        if (classDecl != null)
+                        {
+                            yield return classDecl;
+                        }
+                    }
+                }
+            }
+
+            protected abstract bool IsDisposableFieldCreation(SyntaxNode node, SemanticModel model, HashSet<ISymbol> disposableFields, CancellationToken cancellationToken);
+
         }
     }
 }

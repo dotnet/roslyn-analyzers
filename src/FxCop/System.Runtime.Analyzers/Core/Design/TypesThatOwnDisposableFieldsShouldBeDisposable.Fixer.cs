@@ -21,7 +21,7 @@ namespace System.Runtime.Analyzers
         protected const string NotImplementedExceptionName = "System.NotImplementedException";
         protected const string IDisposableName = "System.IDisposable";
 
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer<SyntaxNode>.RuleId);
 
         public async override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
@@ -66,7 +66,7 @@ namespace System.Runtime.Analyzers
             else
             {
                 var throwStatement = generator.ThrowStatement(generator.ObjectCreationExpression(WellKnownTypes.NotImplementedException(model.Compilation)));
-                var member = generator.MethodDeclaration(TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer.Dispose, statements: new[] { throwStatement });
+                var member = generator.MethodDeclaration(TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer<SyntaxNode>.Dispose, statements: new[] { throwStatement });
                 member = generator.AsPublicInterfaceImplementation(member, interfaceType);
                 editor.AddMember(declaration, member);
             }

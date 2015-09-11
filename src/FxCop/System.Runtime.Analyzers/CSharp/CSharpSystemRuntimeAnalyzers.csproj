@@ -18,8 +18,8 @@
     <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
     <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
     <RestorePackages>true</RestorePackages>
-    <SemanticVersion>$(SystemRuntimeAnalyzersSemanticVersion)</SemanticVersion>  
-    <PreReleaseVersion>$(SystemRuntimeAnalyzersPreReleaseVersion)</PreReleaseVersion>  
+    <SemanticVersion>$(SystemRuntimeAnalyzersSemanticVersion)</SemanticVersion>
+    <PreReleaseVersion>$(SystemRuntimeAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
   </PropertyGroup>
@@ -100,6 +100,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Compile Include="Design\TypesThatOwnDisposableFieldsShouldBeDisposable.cs" />
     <Compile Include="Design\UseGenericEventHandler.cs" />
     <Compile Include="Globalization\UseOrdinalStringComparison.Fixer.cs" />
     <Compile Include="Globalization\UseOrdinalStringComparison.cs" />

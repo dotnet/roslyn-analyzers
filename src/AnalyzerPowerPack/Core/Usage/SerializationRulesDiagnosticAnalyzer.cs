@@ -134,7 +134,12 @@ namespace Microsoft.AnalyzerPowerPack.Usage
             private readonly INamedTypeSymbol _serializableAttributeTypeSymbol;
             private readonly INamedTypeSymbol _nonSerializedAttributeTypeSymbol;
 
-            public Analyzer(INamedTypeSymbol iserializableTypeSymbol, INamedTypeSymbol serializationInfoTypeSymbol, INamedTypeSymbol streamingContextTypeSymbol, INamedTypeSymbol serializableAttributeTypeSymbol, INamedTypeSymbol nonSerializedAttributeTypeSymbol)
+            public Analyzer(
+                INamedTypeSymbol iserializableTypeSymbol, 
+                INamedTypeSymbol serializationInfoTypeSymbol, 
+                INamedTypeSymbol streamingContextTypeSymbol, 
+                INamedTypeSymbol serializableAttributeTypeSymbol, 
+                INamedTypeSymbol nonSerializedAttributeTypeSymbol)
             {
                 _iserializableTypeSymbol = iserializableTypeSymbol;
                 _serializationInfoTypeSymbol = serializationInfoTypeSymbol;

@@ -16,7 +16,7 @@ namespace Microsoft.AnalyzerPowerPack.Usage
 
         private static readonly LocalizableString s_localizableTitleCA2229 =
             new LocalizableResourceString(nameof(AnalyzerPowerPackRulesResources.ImplementSerializationConstructor),
-                AnalyzerPowerPackRulesResources.ResourceManager, typeof (AnalyzerPowerPackRulesResources));
+                AnalyzerPowerPackRulesResources.ResourceManager, typeof(AnalyzerPowerPackRulesResources));
 
         private static readonly LocalizableString s_localizableDescriptionCA2229 =
             new LocalizableResourceString(
@@ -116,7 +116,13 @@ namespace Microsoft.AnalyzerPowerPack.Usage
                         return;
                     }
 
-                    context.RegisterSymbolAction(new Analyzer(iserializableTypeSymbol, serializationInfoTypeSymbol, streamingContextTypeSymbol, serializableAttributeTypeSymbol).AnalyzeSymbol, SymbolKind.NamedType);
+                    var nonSerializedAttributeTypeSymbol = context.Compilation.GetTypeByMetadataName("System.NonSerializedAttribute");
+                    if (nonSerializedAttributeTypeSymbol == null)
+                    {
+                        return;
+                    }
+
+                    context.RegisterSymbolAction(new Analyzer(iserializableTypeSymbol, serializationInfoTypeSymbol, streamingContextTypeSymbol, serializableAttributeTypeSymbol, nonSerializedAttributeTypeSymbol).AnalyzeSymbol, SymbolKind.NamedType);
                 });
         }
 
@@ -126,17 +132,20 @@ namespace Microsoft.AnalyzerPowerPack.Usage
             private readonly INamedTypeSymbol _serializationInfoTypeSymbol;
             private readonly INamedTypeSymbol _streamingContextTypeSymbol;
             private readonly INamedTypeSymbol _serializableAttributeTypeSymbol;
+            private readonly INamedTypeSymbol _nonSerializedAttributeTypeSymbol;
 
             public Analyzer(
-                INamedTypeSymbol iserializableTypeSymbol,
-                INamedTypeSymbol serializationInfoTypeSymbol,
-                INamedTypeSymbol streamingContextTypeSymbol,
-                INamedTypeSymbol serializableAttributeTypeSymbol)
+                INamedTypeSymbol iserializableTypeSymbol, 
+                INamedTypeSymbol serializationInfoTypeSymbol, 
+                INamedTypeSymbol streamingContextTypeSymbol, 
+                INamedTypeSymbol serializableAttributeTypeSymbol, 
+                INamedTypeSymbol nonSerializedAttributeTypeSymbol)
             {
                 _iserializableTypeSymbol = iserializableTypeSymbol;
                 _serializationInfoTypeSymbol = serializationInfoTypeSymbol;
                 _streamingContextTypeSymbol = streamingContextTypeSymbol;
                 _serializableAttributeTypeSymbol = serializableAttributeTypeSymbol;
+                _nonSerializedAttributeTypeSymbol = nonSerializedAttributeTypeSymbol;
             }
 
             public void AnalyzeSymbol(SymbolAnalysisContext context)
@@ -205,6 +214,12 @@ namespace Microsoft.AnalyzerPowerPack.Usage
                         namedTypeSymbol.GetMembers().OfType<IFieldSymbol>().Where(m => !IsSerializable(m.Type));
                     foreach (var field in nonSerializableFields)
                     {
+                        // Check for [NonSerialized]
+                        if (field.GetAttributes().Any(x => x.AttributeClass.Equals(_nonSerializedAttributeTypeSymbol)))
+                        {
+                            continue;
+                        }
+
                         if (field.IsImplicitlyDeclared && field.AssociatedSymbol != null)
                         {
                             context.ReportDiagnostic(field.AssociatedSymbol.CreateDiagnostic(RuleCA2235,

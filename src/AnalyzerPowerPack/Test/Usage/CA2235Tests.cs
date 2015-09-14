@@ -26,7 +26,6 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
         [WorkItem(858655, "DevDiv")]
         #region CA2235
 
-
         [Fact]
         public void CA2235WithOnlyPrimitiveFields()
         {
@@ -56,6 +55,32 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
                     Public i1 As Integer;
                     Friend i2 As Integer;
                     Private i3 As Integer;
+                End Class");
+        }
+
+        [Fact]
+        [WorkItem(279, "https://github.com/dotnet/roslyn-analyzers/issues/279")]
+        public void CA2235WithNonSerialized()
+        {
+            VerifyCSharp(@"
+                using System;
+    
+                [Serializable]
+                public class CA2235WithOnlyPrimitiveFields
+                {
+                        [NonSerialized]
+                        public Action<string> SomeAction;
+                }");
+
+            VerifyBasic(@"
+                Imports System
+
+                <Serializable>
+                Public Class CA2235WithOnlyPrimitiveFields 
+
+                        <NonSerialized>
+                        public Action<string> SomeAction;
+
                 End Class");
         }
 

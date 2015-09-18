@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
-
+using System.Linq;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 
@@ -72,17 +72,8 @@ namespace Desktop.Analyzers.Common
             return GetCallArgumentExpressionNodes(node, CallKind.ObjectCreation);
         }
 
-        public static IMethodSymbol GetCalleeMethodSymbol(SyntaxNode node, SemanticModel semanticModel)
-        {
-            ISymbol symbol = GetReferencedSymbol(node, semanticModel);
-            if (symbol != null && symbol.Kind == SymbolKind.Method)
-            {
-                return (IMethodSymbol)symbol;
-            }
-
-            return null;
-        }
-
+        public abstract IMethodSymbol GetCalleeMethodSymbol(SyntaxNode node, SemanticModel semanticModel);
+        
         public static IEnumerable<IMethodSymbol> GetCandidateCalleeMethodSymbols(SyntaxNode node, SemanticModel semanticModel)
         {
             foreach (ISymbol symbol in GetCandidateReferencedSymbols(node, semanticModel))
@@ -94,7 +85,7 @@ namespace Desktop.Analyzers.Common
             }
         }
 
-        public static IEnumerable<IMethodSymbol> GetCalleeMethodSymbols(SyntaxNode node, SemanticModel semanticModel)
+        public IEnumerable<IMethodSymbol> GetCalleeMethodSymbols(SyntaxNode node, SemanticModel semanticModel)
         {
             IMethodSymbol symbol = GetCalleeMethodSymbol(node, semanticModel); 
             if (symbol != null)

@@ -185,11 +185,14 @@ namespace Desktop.Analyzers.Common
             {
                 return null;
             }
+
+            
             var mscorlibAssembly = compilation.GetTypeByMetadataName("System.String").ContainingAssembly;
             if (mscorlibAssembly.Identity.Version.Major < 4)
             {
                 return mscorlibAssembly.Identity.Version;
             }
+
             if (mscorlibAssembly.GetTypeByMetadataName("System.AppContext") != null)
             {
                 return new Version(4, 6);

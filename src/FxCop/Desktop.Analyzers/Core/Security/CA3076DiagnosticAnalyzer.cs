@@ -99,7 +99,7 @@ namespace Desktop.Analyzers
             {
                 SyntaxNode node = context.Node;
                 SemanticModel model = context.SemanticModel;
-                IMethodSymbol methodSymbol = SyntaxNodeHelper.GetCalleeMethodSymbol(node, model);
+                IMethodSymbol methodSymbol = syntaxNodeHelper.GetCalleeMethodSymbol(node, model);
 
                 if (SecurityDiagnosticHelpers.IsXslCompiledTransformLoad(methodSymbol, this.xmlTypes))
                 {
@@ -186,7 +186,7 @@ namespace Desktop.Analyzers
                     return;
                 }
 
-                IMethodSymbol rhsMethodSymbol = SyntaxNodeHelper.GetCalleeMethodSymbol(rhs, model);
+                IMethodSymbol rhsMethodSymbol = syntaxNodeHelper.GetCalleeMethodSymbol(rhs, model);
                 IPropertySymbol rhsPropertySymbol = SyntaxNodeHelper.GetCalleePropertySymbol(rhs, model);
 
                 if (SecurityDiagnosticHelpers.IsXsltSettingsCtor(rhsMethodSymbol, this.xmlTypes))

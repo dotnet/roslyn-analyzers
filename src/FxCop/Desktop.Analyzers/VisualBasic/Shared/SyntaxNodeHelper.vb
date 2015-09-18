@@ -174,7 +174,7 @@ Namespace Desktop.Analyzers.Common
             Dim argList As ArgumentListSyntax = Nothing
             Dim kind As SyntaxKind = node.Kind()
 
-            If (kind = SyntaxKind.InvocationExpression AndAlso ((callKind And CallKind.ObjectCreation) <> 0)) Then
+            If (kind = SyntaxKind.InvocationExpression AndAlso ((callKind And CallKind.Invocation) <> 0)) Then
                 argList = CType(node, InvocationExpressionSyntax).ArgumentList
             ElseIf ((kind = SyntaxKind.ObjectCreationExpression) AndAlso ((callKind And CallKind.ObjectCreation) <> 0))
                 argList = CType(node, ObjectCreationExpressionSyntax).ArgumentList
@@ -195,17 +195,17 @@ Namespace Desktop.Analyzers.Common
                 Return empty
             End If
 
-            Dim kind As SyntaxKind = node.Kind()
-            If (kind <> SyntaxKind.ObjectCreationExpression) Then
+            Dim objectCreationNode As ObjectCreationExpressionSyntax = node.DescendantNodesAndSelf().OfType(Of ObjectCreationExpressionSyntax)().FirstOrDefault()
+
+            If (objectCreationNode Is Nothing) Then
                 Return empty
             End If
 
-            Dim objectCreationNode As ObjectCreationExpressionSyntax = CType(node, ObjectCreationExpressionSyntax)
             If (objectCreationNode.Initializer Is Nothing) Then
                 Return empty
             End If
 
-            kind = objectCreationNode.Initializer.Kind()
+            Dim kind As SyntaxKind = objectCreationNode.Initializer.Kind()
             If (kind <> SyntaxKind.ObjectMemberInitializer) Then
                 Return empty
             End If
@@ -225,28 +225,93 @@ Namespace Desktop.Analyzers.Common
             Return kind = SyntaxKind.InvocationExpression OrElse kind = SyntaxKind.ObjectCreationExpression
         End Function
 
+        Public Overrides Function GetCalleeMethodSymbol(node As SyntaxNode, semanticModel As SemanticModel) As IMethodSymbol
+            If (node Is Nothing) Then
+                Return Nothing
+            End If
+
+            Dim symbol As ISymbol = GetReferencedSymbol(node, semanticModel)
+
+            If (symbol Is Nothing) Then
+                Dim children As IEnumerable(Of SyntaxNode) = node.ChildNodes()
+                If children.Any() Then
+                    symbol = GetReferencedSymbol(children.First(), semanticModel)
+                End If
+            End If
+
+            If (symbol IsNot Nothing) Then
+                If (symbol.Kind = SymbolKind.Method) Then
+                    Return CType(symbol, IMethodSymbol)
+                End If
+            End If
+
+            Return Nothing
+        End Function
         Public Overrides Function GetCallerMethodSymbol(node As SyntaxNode, semanticModel As SemanticModel) As IMethodSymbol
-            Throw New NotImplementedException()
+            If (node Is Nothing) Then
+                Return Nothing
+            End If
+
+            Dim declaration As MethodBlockSyntax = node.AncestorsAndSelf().OfType(Of MethodBlockSyntax)().FirstOrDefault()
+
+            If (declaration IsNot Nothing) Then
+                Return CType(semanticModel.GetDeclaredSymbol(declaration), IMethodSymbol)
+            End If
+
+            Dim constructor As SubNewStatementSyntax = node.AncestorsAndSelf().OfType(Of SubNewStatementSyntax)().FirstOrDefault()
+
+            If (constructor IsNot Nothing) Then
+                Return semanticModel.GetDeclaredSymbol(constructor)
+            End If
+
+            Return Nothing
         End Function
 
         Public Overrides Function GetEnclosingTypeSymbol(node As SyntaxNode, semanticModel As SemanticModel) As ITypeSymbol
-            Throw New NotImplementedException()
+            If (node Is Nothing) Then
+                Return Nothing
+            End If
+
+            Dim declaration As ClassBlockSyntax = node.AncestorsAndSelf().OfType(Of ClassBlockSyntax)().FirstOrDefault()
+
+            If (declaration Is Nothing) Then
+                Return Nothing
+            End If
+
+            Return semanticModel.GetDeclaredSymbol(declaration)
         End Function
 
         Public Overrides Function GetDescendantAssignmentExpressionNodes(node As SyntaxNode) As IEnumerable(Of SyntaxNode)
-            Throw New NotImplementedException()
+            Dim empty As IEnumerable(Of SyntaxNode) = Enumerable.Empty(Of SyntaxNode)()
+
+            If (node Is Nothing) Then
+                Return empty
+            End If
+
+            Return node.DescendantNodesAndSelf.OfType(Of AssignmentStatementSyntax)()
         End Function
 
         Public Overrides Function GetDescendantMemberAccessExpressionNodes(node As SyntaxNode) As IEnumerable(Of SyntaxNode)
-            Throw New NotImplementedException()
+            Dim empty As IEnumerable(Of SyntaxNode) = Enumerable.Empty(Of SyntaxNode)()
+
+            If (node Is Nothing) Then
+                Return empty
+            End If
+
+            Return node.DescendantNodesAndSelf().OfType(Of MemberAccessExpressionSyntax)()
         End Function
 
         Public Overrides Function IsObjectCreationExpressionUnderFieldDeclaration(node As SyntaxNode) As Boolean
-            Throw New NotImplementedException()
+            Return node IsNot Nothing And node.Kind() = SyntaxKind.ObjectCreationExpression _
+                And node.AncestorsAndSelf().OfType(Of FieldDeclarationSyntax)().FirstOrDefault() IsNot Nothing
         End Function
 
         Public Overrides Function GetVariableDeclaratorOfAFieldDeclarationNode(objectCreationExpression As SyntaxNode) As SyntaxNode
-            Throw New NotImplementedException()
+            If IsObjectCreationExpressionUnderFieldDeclaration(objectCreationExpression) Then
+                Return objectCreationExpression.AncestorsAndSelf().OfType(Of VariableDeclaratorSyntax)().FirstOrDefault()
+            Else
+                Return Nothing
+            End If
         End Function
     End Class
 End Namespace

@@ -221,7 +221,7 @@ namespace Desktop.Analyzers
                 SyntaxNode node = context.Node;
                 SemanticModel model = context.SemanticModel;
 
-                IMethodSymbol method = SyntaxNodeHelper.GetCalleeMethodSymbol(node, model);
+                IMethodSymbol method = syntaxNodeHelper.GetCalleeMethodSymbol(node, model);
                 if (method == null)
                 {
                     return;
@@ -427,7 +427,7 @@ namespace Desktop.Analyzers
                 }
 
                 CompilationSecurityTypes xmlTypes = this.xmlTypes;
-                IMethodSymbol rhsMethodSymbol = SyntaxNodeHelper.GetCalleeMethodSymbol(rhs, model);
+                IMethodSymbol rhsMethodSymbol = syntaxNodeHelper.GetCalleeMethodSymbol(rhs, model);
                 if (SecurityDiagnosticHelpers.IsXmlDocumentCtorDerived(rhsMethodSymbol, xmlTypes))
                 {
                     XmlDocumentEnvironment env = new XmlDocumentEnvironment();
@@ -531,7 +531,7 @@ namespace Desktop.Analyzers
                 }
 
                 CompilationSecurityTypes xmlTypes = this.xmlTypes;
-                IMethodSymbol rhsMethodSymbol = SyntaxNodeHelper.GetCalleeMethodSymbol(rhs, model);
+                IMethodSymbol rhsMethodSymbol = syntaxNodeHelper.GetCalleeMethodSymbol(rhs, model);
                 if (SecurityDiagnosticHelpers.IsXmlTextReaderCtorDerived(rhsMethodSymbol, xmlTypes))
                 {
                     XmlTextReaderEnvironment env = null;
@@ -672,7 +672,7 @@ namespace Desktop.Analyzers
                 }
 
                 CompilationSecurityTypes xmlTypes = this.xmlTypes;
-                IMethodSymbol rhsMethodSymbol = SyntaxNodeHelper.GetCalleeMethodSymbol(rhs, model);
+                IMethodSymbol rhsMethodSymbol = syntaxNodeHelper.GetCalleeMethodSymbol(rhs, model);
                 if (SecurityDiagnosticHelpers.IsXmlReaderSettingsCtor(rhsMethodSymbol, xmlTypes))
                 {
                     XmlReaderSettingsEnvironment env = new XmlReaderSettingsEnvironment(this.isFrameworkSecure);

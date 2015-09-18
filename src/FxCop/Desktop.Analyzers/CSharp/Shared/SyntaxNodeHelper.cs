@@ -224,6 +224,18 @@ namespace Desktop.Analyzers.Common
             return kind == SyntaxKind.InvocationExpression || kind == SyntaxKind.ObjectCreationExpression;
         }
 
+        public override IMethodSymbol GetCalleeMethodSymbol(SyntaxNode node, SemanticModel semanticModel)
+        {
+            ISymbol symbol = GetReferencedSymbol(node, semanticModel);
+
+            if(symbol != null && symbol.Kind == SymbolKind.Method)
+            {
+                return (IMethodSymbol)symbol;
+            }
+
+            return null;
+        }
+
         public override IMethodSymbol GetCallerMethodSymbol(SyntaxNode node, SemanticModel semanticModel)
         {
             if (node == null)

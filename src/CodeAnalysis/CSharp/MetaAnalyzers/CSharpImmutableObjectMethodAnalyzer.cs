@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
 {
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class CSharpImmutableObjectMethodAnalyzer : DiagnosticAnalyzer
     {
         // Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs
@@ -75,7 +76,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
             //Find invocations that ignore the return value
             var candidateInvocations = syntaxNode.DescendantNodes()
                 .OfType<InvocationExpressionSyntax>()
-                .Where(n => n.Parent is EqualsValueClauseSyntax);
+                .Where(n => !(n.Parent is EqualsValueClauseSyntax));
 
             foreach (var candidateInvocation in candidateInvocations)
             {
@@ -90,8 +91,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
                     continue;
 
                 //If we're not in one of the known immutable types, quit
-                var parentSymbol = methodSymbol.ContainingType;
-                if (!s_immutableObjectNames.Contains(parentSymbol.Name.ToString()))
+                var parentName = methodSymbol.ContainingType.ToString();
+                var baseTypesAndSelf = methodSymbol.ContainingType.GetBaseTypes().Select(n => n.ToString()).ToList();
+                baseTypesAndSelf.Add(parentName);
+
+                if (!baseTypesAndSelf.Any(n => s_immutableObjectNames.Contains(n)))
                     continue;
 
                 var location = candidateInvocation.GetLocation();

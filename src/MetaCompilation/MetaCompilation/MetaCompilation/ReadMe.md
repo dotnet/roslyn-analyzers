@@ -33,7 +33,7 @@ Instructions
 * Restart Visual Studio
 * Open Solution Explorer, if there is a warning about Visual Studio Extensibility Tools, click on it and follow the instructions
 * Open Visual Studio Developer Command Prompt navigate to the roslyn-analyzers repository on your machine
-* Then type powershell -executionpolicy bypass src\.nuget\NuGetRestore.ps1
+* Then type `powershell -executionpolicy bypass src\.nuget\NuGetRestore.ps1`
 * Restart Visual Studio
 * Clone the [roslyn-analyzers](https://github.com/dotnet/roslyn-analyzers) repository on your local machine
 * Open roslyn-analyzers/src/MetaCompilation/MetaCompilation.sln

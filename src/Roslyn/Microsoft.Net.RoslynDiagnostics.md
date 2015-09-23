@@ -156,9 +156,7 @@ Category: Reliability
 
 Severity: Error
 
-### RS0024: The contents of the public API files are invalid: {0} ###
-
-The contents of the public API files are invalid: {0}
+### RS0024: The contents of the public API files are invalid ###
 
 Category: ApiDesign
 

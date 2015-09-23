@@ -352,9 +352,18 @@ namespace Roslyn.Diagnostics.Analyzers {
         /// <summary>
         ///   Looks up a localized string similar to The contents of the public API files are invalid: {0}.
         /// </summary>
-        internal static string PublicApiFilesInvalid {
+        internal static string PublicApiFilesInvalidMessage {
             get {
-                return ResourceManager.GetString("PublicApiFilesInvalid", resourceCulture);
+                return ResourceManager.GetString("PublicApiFilesInvalidMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The contents of the public API files are invalid.
+        /// </summary>
+        internal static string PublicApiFilesInvalidTitle {
+            get {
+                return ResourceManager.GetString("PublicApiFilesInvalidTitle", resourceCulture);
             }
         }
         

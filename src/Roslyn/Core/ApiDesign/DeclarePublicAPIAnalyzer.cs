@@ -54,12 +54,11 @@ namespace Roslyn.Diagnostics.Analyzers.ApiDesign
 
         internal static readonly DiagnosticDescriptor PublicApiFilesInvalid = new DiagnosticDescriptor(
             id: RoslynDiagnosticIds.PublicApiFilesInvalid,
-            title: RoslynDiagnosticsResources.PublicApiFilesInvalid,
-            messageFormat: RoslynDiagnosticsResources.PublicApiFilesInvalid,
+            title: RoslynDiagnosticsResources.PublicApiFilesInvalidTitle,
+            messageFormat: RoslynDiagnosticsResources.PublicApiFilesInvalidMessage,
             category: "ApiDesign",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true,
-            description: RoslynDiagnosticsResources.PublicApiFilesInvalid,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         internal static readonly SymbolDisplayFormat ShortSymbolNameFormat =

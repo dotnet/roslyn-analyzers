@@ -22,6 +22,8 @@ Namespace Roslyn.Diagnostics.Analyzers.VisualBasic
                                                                              "Usage",
                                                                              DiagnosticSeverity.Error,
                                                                              False,
+                                                                             Nothing,
+                                                                             Nothing,
                                                                              WellKnownDiagnosticTags.Telemetry)
 
         Private Shared ReadOnly s_propertiesToValidateMap As Dictionary(Of String, String) = New Dictionary(Of String, String)(StringComparer.OrdinalIgnoreCase) From

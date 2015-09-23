@@ -18,8 +18,6 @@ Severity: Warning
 
 ### RS0004: Invoke the correct property to ensure correct use site diagnostics. ###
 
-Telemetry
-
 Category: Usage
 
 Severity: Error

@@ -77,7 +77,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
             //We're looking for invocations that are not within an equals value clause or a return statement.
             var candidateInvocations = syntaxNode.DescendantNodes()
                 .OfType<InvocationExpressionSyntax>()
-                .Where(n => !(n.Ancestors().Any(m => m is EqualsValueClauseSyntax || m is ReturnStatementSyntax)));
+                .Where(n => n.Parent is StatementSyntax && !(n.Parent is ReturnStatementSyntax));
 
             foreach (var candidateInvocation in candidateInvocations)
             {

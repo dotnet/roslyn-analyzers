@@ -81,21 +81,20 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
 
             foreach (var candidateInvocation in candidateInvocations)
             {
+                //If the method doesn't start with something like "With" or "Replace", quit
+                string methodName = candidateInvocation.DescendantNodes().OfType<IdentifierNameSyntax>().Last().Identifier.ValueText;
+                if (!s_immutableMethodNames.Any(n => methodName.StartsWith(n)))
+                    continue;
+                
                 //If we can't find the method symbol, quit
                 var methodSymbol = model.GetSymbolInfo(candidateInvocation).Symbol as IMethodSymbol;
                 if (methodSymbol == null)
-                    continue;
-
-                //If the method doesn't start with something like "With" or "Replace", quit
-                string methodName = methodSymbol.Name;
-                if (!s_immutableMethodNames.Any(n => methodName.StartsWith(n)))
                     continue;
 
                 //If we're not in one of the known immutable types, quit
                 var parentName = methodSymbol.ContainingType.ToString();
                 var baseTypesAndSelf = methodSymbol.ContainingType.GetBaseTypes().Select(n => n.ToString()).ToList();
                 baseTypesAndSelf.Add(parentName);
-
                 if (!baseTypesAndSelf.Any(n => s_immutableObjectNames.Contains(n)))
                     continue;
 

@@ -74,9 +74,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
             var syntaxNode = context.CodeBlock;
 
             //Find invocations that ignore the return value
+            //We're looking for invocations that are not within an equals value clause or a return statement.
             var candidateInvocations = syntaxNode.DescendantNodes()
                 .OfType<InvocationExpressionSyntax>()
-                .Where(n => !(n.Parent is EqualsValueClauseSyntax));
+                .Where(n => !(n.Ancestors().Any(m => m is EqualsValueClauseSyntax || m is ReturnStatementSyntax)));
 
             foreach (var candidateInvocation in candidateInvocations)
             {
@@ -99,7 +100,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
                     continue;
 
                 var location = candidateInvocation.GetLocation();
-                var diagnostic = Diagnostic.Create(DoNotIgnoreReturnValueDiagnosticRule, location);
+                var diagnostic = Diagnostic.Create(DoNotIgnoreReturnValueDiagnosticRule, location, methodSymbol.ContainingType.Name, methodSymbol.Name);
                 context.ReportDiagnostic(diagnostic);
             }
         }

@@ -93,6 +93,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{3FF3C547
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "a2md", "Tools\a2md\a2md.csproj", "{AD31451B-0D31-41A9-8447-66569D2E07B6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{476DFEEA-CE02-46D8-9D13-9DDFD0DAE29B}"
+	ProjectSection(SolutionItems) = preProject
+		Tools\Scripts\BuildAnalyzerMarkdown.bat = Tools\Scripts\BuildAnalyzerMarkdown.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -277,5 +282,6 @@ Global
 		{BBDC84C8-AE58-4D0F-B5A4-384CDCB9069E} = {C213BD59-9F9F-4FC2-8039-FD5AFF71A0D1}
 		{DEC6D219-A523-422C-AA36-D17662722C0B} = {C213BD59-9F9F-4FC2-8039-FD5AFF71A0D1}
 		{AD31451B-0D31-41A9-8447-66569D2E07B6} = {3FF3C547-451B-4BFF-86D2-FB6A0970D479}
+		{476DFEEA-CE02-46D8-9D13-9DDFD0DAE29B} = {3FF3C547-451B-4BFF-86D2-FB6A0970D479}
 	EndGlobalSection
 EndGlobal

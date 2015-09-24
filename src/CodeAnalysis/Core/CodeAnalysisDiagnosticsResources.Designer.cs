@@ -143,7 +143,7 @@ namespace Microsoft.CodeAnalysis.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The &apos;{0}&apos; object is immutable and &apos;{1}&apos; will not have any effect on it. Consider using the return value from &apos;{1}&apos;..
+        ///   Looks up a localized string similar to &apos;{0}&apos; is immutable and &apos;{1}&apos; will not have any effect on it. Consider using the return value from &apos;{1}&apos;..
         /// </summary>
         internal static string DoNotIgnoreReturnValueOnImmutableObjectMethodInvocationMessage {
             get {

@@ -240,7 +240,7 @@
     <value>Many objects exposed by Roslyn are immutable. The return value from a method invocation on these objects should not be ignored.</value>
   </data>
   <data name="DoNotIgnoreReturnValueOnImmutableObjectMethodInvocationMessage" xml:space="preserve">
-    <value>The '{0}' object is immutable and '{1}' will not have any effect on it. Consider using the return value from '{1}'.</value>
+    <value>'{0}' is immutable and '{1}' will not have any effect on it. Consider using the return value from '{1}'.</value>
   </data>
   <data name="DoNotIgnoreReturnValueOnImmutableObjectMethodInvocationTitle" xml:space="preserve">
     <value>Do not ignore return value from immutable object method invocation.</value>

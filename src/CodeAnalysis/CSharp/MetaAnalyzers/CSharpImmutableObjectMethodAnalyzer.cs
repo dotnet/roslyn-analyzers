@@ -92,8 +92,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
                     continue;
 
                 //If we're not in one of the known immutable types, quit
-                var parentName = methodSymbol.ContainingType.ToString();
-                var baseTypesAndSelf = methodSymbol.ContainingType.GetBaseTypes().Select(n => n.ToString()).ToList();
+                var parentName = methodSymbol.ReceiverType.ToString();
+                var baseTypesAndSelf = methodSymbol.ReceiverType.GetBaseTypes().Select(n => n.ToString()).ToList();
                 baseTypesAndSelf.Add(parentName);
 
                 if (!baseTypesAndSelf.Any(n => s_immutableObjectNames.Contains(n)))

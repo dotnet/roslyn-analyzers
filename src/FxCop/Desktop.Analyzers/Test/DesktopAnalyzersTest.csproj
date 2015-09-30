@@ -169,6 +169,8 @@
     <Compile Include="Security\CA3075DiagnosticAnalyzerXmlTextReaderConstructedWithNoSecureResolutionTests.cs" />
     <Compile Include="Security\CA3075DiagnosticAnalyzerXmlTextReaderSetInsecureResolutionTests.cs" />
     <Compile Include="Security\CA3075XmlReaderCreateUsingInsecureInputXmlReaderSettingsTests.cs" />
+    <Compile Include="Security\CA3076XslCompiledTransformLoadInsecureConstructedSettingsTests.cs" />
+    <Compile Include="Security\CA3076XslCompiledTransformLoadInsecureInputSettingsTests.cs" />
     <Compile Include="Security\DoNotCatchCorruptedStateExceptionsTests.cs" />
   </ItemGroup>
   <ImportGroup Label="Targets">

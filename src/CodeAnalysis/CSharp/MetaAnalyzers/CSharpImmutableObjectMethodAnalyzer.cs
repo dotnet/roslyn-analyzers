@@ -100,7 +100,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
                     continue;
 
                 var location = candidateInvocation.GetLocation();
-                var diagnostic = Diagnostic.Create(DoNotIgnoreReturnValueDiagnosticRule, location, methodSymbol.ContainingType.Name, methodSymbol.Name);
+                var diagnostic = Diagnostic.Create(DoNotIgnoreReturnValueDiagnosticRule, location, methodSymbol.ReceiverType.Name, methodSymbol.Name);
                 context.ReportDiagnostic(diagnostic);
             }
         }

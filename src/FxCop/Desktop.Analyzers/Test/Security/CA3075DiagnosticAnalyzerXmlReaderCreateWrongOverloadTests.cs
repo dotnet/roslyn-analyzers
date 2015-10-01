@@ -11,7 +11,7 @@ namespace Desktop.Analyzers.UnitTests
     {
         private static readonly string CA3075XmlReaderCreateWrongOverloadMessage = DesktopAnalyzersResources.XmlReaderCreateWrongOverloadDiagnosis;
 
-        private DiagnosticResult GetCA3075XmlReaderCreateWrongOverloadCSharpDiagnostic(int line, int column)
+        private DiagnosticResult GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(int line, int column)
         {
             return GetCSharpResultAt(line, column, CA3075RuleId, CA3075XmlReaderCreateWrongOverloadMessage);
         }
@@ -37,7 +37,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlReaderCreateWrongOverloadCSharpDiagnostic(10, 26)
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(10, 26)
             );
 
             VerifyBasic(@"
@@ -71,7 +71,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075XmlReaderCreateWrongOverloadCSharpDiagnostic(10, 32)
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(10, 32)
             );
 
             VerifyBasic(@"
@@ -110,7 +110,7 @@ class TestClass1
         }
     }
 }",
-                GetCA3075XmlReaderCreateWrongOverloadCSharpDiagnostic(12, 26)
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(12, 26)
             );
 
             VerifyBasic(@"
@@ -151,7 +151,7 @@ class TestClass
         finally { }
     }
 }",
-                GetCA3075XmlReaderCreateWrongOverloadCSharpDiagnostic(11, 26)
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(11, 26)
             );
 
             VerifyBasic(@"
@@ -189,7 +189,7 @@ class TestClass
         finally { }
     }
 }",
-                GetCA3075XmlReaderCreateWrongOverloadCSharpDiagnostic(11, 26)
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(11, 26)
             );
 
             VerifyBasic(@"
@@ -226,7 +226,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075XmlReaderCreateWrongOverloadCSharpDiagnostic(12, 26)
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(12, 26)
             );
 
             VerifyBasic(@"
@@ -265,7 +265,7 @@ class TestClass
         await TestMethod();
     }
 }",
-                GetCA3075XmlReaderCreateWrongOverloadCSharpDiagnostic(9, 45)
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(9, 45)
             );
 
             VerifyBasic(@"
@@ -300,7 +300,7 @@ class TestClass
 
     Del d = delegate () { var reader = XmlTextReader.Create(""doc.xml""); };
 }",
-                GetCA3075XmlReaderCreateWrongOverloadCSharpDiagnostic(8, 40)
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(8, 40)
             );
 
             VerifyBasic(@"

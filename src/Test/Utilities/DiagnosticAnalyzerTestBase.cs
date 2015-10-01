@@ -25,7 +25,6 @@ namespace Microsoft.CodeAnalysis.UnitTests
         private static readonly MetadataReference s_systemXmlDataReference = MetadataReference.CreateFromAssemblyInternal(typeof(System.Data.Rule).Assembly);
         private static readonly MetadataReference s_CSharpSymbolsReference = MetadataReference.CreateFromAssemblyInternal(typeof(CSharpCompilation).Assembly);
         private static readonly MetadataReference s_visualBasicSymbolsReference = MetadataReference.CreateFromAssemblyInternal(typeof(VisualBasicCompilation).Assembly);
-        private static readonly MetadataReference s_microsoftVisualBasicReference = MetadataReference.CreateFromAssemblyInternal(typeof(Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute).Assembly);
         private static readonly MetadataReference s_codeAnalysisReference = MetadataReference.CreateFromAssemblyInternal(typeof(Compilation).Assembly);
         private static readonly MetadataReference s_workspacesReference = MetadataReference.CreateFromAssemblyInternal(typeof(Workspace).Assembly);
         private static readonly MetadataReference s_immutableCollectionsReference = MetadataReference.CreateFromAssemblyInternal(typeof(ImmutableArray<int>).Assembly);
@@ -317,7 +316,6 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 .AddMetadataReference(projectId, s_systemCoreReference)
                 .AddMetadataReference(projectId, s_systemXmlReference)
                 .AddMetadataReference(projectId, s_systemXmlDataReference)
-                .AddMetadataReference(projectId, s_microsoftVisualBasicReference)
                 .AddMetadataReference(projectId, s_codeAnalysisReference)
                 .AddMetadataReference(projectId, SystemRuntimeFacadeRef)
                 .AddMetadataReference(projectId, SystemThreadingFacadeRef)

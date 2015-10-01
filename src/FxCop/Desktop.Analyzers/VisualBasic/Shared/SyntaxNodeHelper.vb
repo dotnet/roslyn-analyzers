@@ -230,13 +230,11 @@ Namespace Desktop.Analyzers.Common
                 Return Nothing
             End If
 
+            Dim kind As SyntaxKind = node.Kind()
             Dim symbol As ISymbol = GetReferencedSymbol(node, semanticModel)
 
-            If (symbol Is Nothing) Then
-                Dim children As IEnumerable(Of SyntaxNode) = node.ChildNodes()
-                If children.Any() Then
-                    symbol = GetReferencedSymbol(children.First(), semanticModel)
-                End If
+            If (symbol Is Nothing And kind = SyntaxKind.AsNewClause) Then
+                symbol = GetReferencedSymbol(node.ChildNodes().First(), semanticModel)
             End If
 
             If (symbol IsNot Nothing) Then

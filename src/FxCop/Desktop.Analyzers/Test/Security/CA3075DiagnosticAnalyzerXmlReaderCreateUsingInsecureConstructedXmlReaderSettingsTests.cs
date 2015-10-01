@@ -11,7 +11,7 @@ namespace Desktop.Analyzers.UnitTests
     {
         private static readonly string CA3075XmlReaderCreateUsingInsecureConstructedXmlReaderSettingsMessage = DesktopAnalyzersResources.XmlReaderCreateInsecureConstructedDiagnosis;
 
-        private DiagnosticResult GetCA3075XmlReaderCreateUsingInsecureConstructedXmlReaderSettingsCSharpDiagnostic(int line, int column)
+        private DiagnosticResult GetCA3075XmlReaderCreateUsingInsecureConstructedXmlReaderSettingsCSharpResultAt(int line, int column)
         {
             return GetCSharpResultAt(line, column, CA3075RuleId, CA3075XmlReaderCreateUsingInsecureConstructedXmlReaderSettingsMessage);
         }

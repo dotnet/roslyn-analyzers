@@ -171,6 +171,12 @@
     <Compile Include="Security\CA3075XmlReaderCreateUsingInsecureInputXmlReaderSettingsTests.cs" />
     <Compile Include="Security\CA3076XslCompiledTransformLoadInsecureConstructedSettingsTests.cs" />
     <Compile Include="Security\CA3076XslCompiledTransformLoadInsecureInputSettingsTests.cs" />
+    <Compile Include="Security\CA3077XmlDocumentDerivedClassDesignConstructorNoSecureXmlResolverTests.cs" />
+    <Compile Include="Security\CA3077XmlDocumentDerivedClassDesignNoConstructorTests.cs" />
+    <Compile Include="Security\CA3077XmlDocumentDerivedClassDesignSetInsecureXmlResolverInMethodTests.cs" />
+    <Compile Include="Security\CA3077XmlTextReaderDerivedClassDesignConstructorNoSecureSettingsTests.cs" />
+    <Compile Include="Security\CA3077XmlTextReaderDerivedClassDesignNoConstructorTests.cs" />
+    <Compile Include="Security\CA3077XmlTextReaderDerivedClassDesignSetInsecureSettingsInMethodTests.cs" />
     <Compile Include="Security\DoNotCatchCorruptedStateExceptionsTests.cs" />
   </ItemGroup>
   <ImportGroup Label="Targets">

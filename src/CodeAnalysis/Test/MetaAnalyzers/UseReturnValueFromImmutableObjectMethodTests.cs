@@ -58,6 +58,34 @@ class TestExtensionMethodTrivia
             VerifyCSharp(source, expected);
         }
 
+        [Fact]
+        public void CSharp_VerifyNoDiagnostic()
+        {
+            var source = @"
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
+
+namespace ConsoleApplication1
+{
+    class TestNoDiagnostic
+    {
+        public void M()
+        {
+            Document document = default(Document);
+            var newDocument = document.WithText(default(SourceText));
+            document = document.WithText(default(SourceText));
+
+            OtherMethod(document.WithText(default(SourceText)));
+        }
+
+        public void OtherMethod(Document document)
+        {
+        }
+    }
+}";
+            VerifyCSharp(source);
+        }
+
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {

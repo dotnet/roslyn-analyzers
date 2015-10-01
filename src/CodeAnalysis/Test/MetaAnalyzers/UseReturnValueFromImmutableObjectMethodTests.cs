@@ -32,9 +32,9 @@ class TestSimple
     }
 }
 ";
-            var documentExpected = GetCSharpExpectedDiagnostic(10, 9);
-            var projectExpected = GetCSharpExpectedDiagnostic(13, 9);
-            var solutionExpected = GetCSharpExpectedDiagnostic(16, 9);
+            var documentExpected = GetCSharpExpectedDiagnostic(10, 9, "Document", "WithText");
+            var projectExpected = GetCSharpExpectedDiagnostic(13, 9, "Project", "AddDocument");
+            var solutionExpected = GetCSharpExpectedDiagnostic(16, 9, "Solution", "AddProject");
 
             VerifyCSharp(source, documentExpected, projectExpected, solutionExpected);
         }
@@ -54,7 +54,7 @@ class TestExtensionMethodTrivia
         node.WithLeadingTrivia<SyntaxNode>();
     }
 }";
-            var expected = GetCSharpExpectedDiagnostic(10, 9);
+            var expected = GetCSharpExpectedDiagnostic(10, 9, "SyntaxNode", "WithLeadingTrivia");
             VerifyCSharp(source, expected);
         }
 
@@ -79,18 +79,18 @@ class TestExtensionMethodTrivia
             return new CSharpImmutableObjectMethodAnalyzer();
         }
 
-        private static DiagnosticResult GetCSharpExpectedDiagnostic(int line, int column)
+        private static DiagnosticResult GetCSharpExpectedDiagnostic(int line, int column, string objectName, string methodName)
         {
-            return GetExpectedDiagnostic(LanguageNames.CSharp, line, column);
+            return GetExpectedDiagnostic(LanguageNames.CSharp, line, column, objectName, methodName);
         }
 
-        private static DiagnosticResult GetExpectedDiagnostic(string language, int line, int column)
+        private static DiagnosticResult GetExpectedDiagnostic(string language, int line, int column, string objectName, string methodName)
         {
             var fileName = language == LanguageNames.CSharp ? "Test0.cs" : "Test0.vb";
             return new DiagnosticResult
             {
                 Id = DiagnosticIds.DoNotIgnoreReturnValueOnImmutableObjectMethodInvocation,
-                Message = CodeAnalysisDiagnosticsResources.DoNotIgnoreReturnValueOnImmutableObjectMethodInvocationMessage,
+                Message = string.Format(CodeAnalysisDiagnosticsResources.DoNotIgnoreReturnValueOnImmutableObjectMethodInvocationMessage, objectName, methodName),
                 Severity = DiagnosticSeverity.Warning,
                 Locations = new[]
                 {

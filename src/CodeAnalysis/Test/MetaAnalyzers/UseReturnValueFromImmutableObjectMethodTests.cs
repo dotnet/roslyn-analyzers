@@ -69,13 +69,14 @@ namespace ConsoleApplication1
 {
     class TestNoDiagnostic
     {
-        public void M()
+        public Document M()
         {
             Document document = default(Document);
             var newDocument = document.WithText(default(SourceText));
             document = document.WithText(default(SourceText));
 
             OtherMethod(document.WithText(default(SourceText)));
+            return document.WithText(default(SourceText));
         }
 
         public void OtherMethod(Document document)

@@ -142,10 +142,9 @@ namespace Desktop.Analyzers
 
                 IMethodSymbol methodSymbol = SyntaxNodeHelper.GetDeclaredSymbol(node, model) as IMethodSymbol;
 
-                bool hasContructor = false;
                 if (methodSymbol == null || 
                     methodSymbol.MethodKind != MethodKind.Constructor ||
-                    !this.xmlDocumentDerivedTypes.TryGetValue(methodSymbol.ContainingType, out hasContructor))
+                    !((methodSymbol.ContainingType != xmlTypes.XmlDocument) && methodSymbol.ContainingType.IsDerivedFrom(xmlTypes.XmlDocument, baseTypesOnly: true)))
                 {
                     return;
                 }
@@ -189,11 +188,10 @@ namespace Desktop.Analyzers
 
                 IMethodSymbol methodSymbol = SyntaxNodeHelper.GetDeclaredSymbol(node, model) as IMethodSymbol;
 
-                bool hasContructor = false;
                 if (methodSymbol == null ||
                     // skip constructors since we report on the absence of secure assignment in AnalyzeNodeForXmlDocumentDerivedTypeConstructorDecl
                     methodSymbol.MethodKind == MethodKind.Constructor ||
-                    !this.xmlDocumentDerivedTypes.TryGetValue(methodSymbol.ContainingType, out hasContructor))
+                    !((methodSymbol.ContainingType != xmlTypes.XmlDocument) && methodSymbol.ContainingType.IsDerivedFrom(xmlTypes.XmlDocument, baseTypesOnly: true)))
                 {
                     return;
                 }
@@ -230,10 +228,9 @@ namespace Desktop.Analyzers
 
                 IMethodSymbol methodSymbol = SyntaxNodeHelper.GetDeclaredSymbol(node, model) as IMethodSymbol;
 
-                bool hasContructor = false;
-                if (methodSymbol == null || 
+                if (methodSymbol == null ||
                     methodSymbol.MethodKind != MethodKind.Constructor ||
-                    !this.xmlTextReaderDerivedTypes.TryGetValue(methodSymbol.ContainingType, out hasContructor))
+                    !((methodSymbol.ContainingType != xmlTypes.XmlTextReader) && methodSymbol.ContainingType.IsDerivedFrom(xmlTypes.XmlTextReader, baseTypesOnly: true)))
                 {
                     return;
                 }
@@ -293,9 +290,8 @@ namespace Desktop.Analyzers
 
                 IMethodSymbol methodSymbol = SyntaxNodeHelper.GetDeclaredSymbol(node, model) as IMethodSymbol;
 
-                bool hasContructor = false;
                 if (methodSymbol == null ||
-                    !this.xmlTextReaderDerivedTypes.TryGetValue(methodSymbol.ContainingType, out hasContructor))
+                   !((methodSymbol.ContainingType != xmlTypes.XmlTextReader) && methodSymbol.ContainingType.IsDerivedFrom(xmlTypes.XmlTextReader, baseTypesOnly: true)))
                 {
                     return;
                 }

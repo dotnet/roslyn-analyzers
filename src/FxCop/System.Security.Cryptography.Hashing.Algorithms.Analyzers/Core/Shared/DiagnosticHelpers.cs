@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 
-namespace Desktop.Analyzers.Common
+namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers.Common
 {
     public static class DiagnosticHelpers
     {
@@ -119,7 +119,7 @@ namespace Desktop.Analyzers.Common
 
         public static LocalizableResourceString GetLocalizableResourceString(string resourceName)
         {
-            return new LocalizableResourceString(resourceName, DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
+            return new LocalizableResourceString(resourceName, SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.ResourceManager, typeof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources));
         }
 
         private static bool IsInvisibleOutsideAssemblyAtSymbolLevel(ISymbol symbol)

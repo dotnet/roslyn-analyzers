@@ -10,14 +10,37 @@ namespace Desktop.Analyzers.Common
         public INamedTypeSymbol SystemObject { get; private set; }
         public INamedTypeSymbol SystemException { get; private set; }
         public INamedTypeSymbol SystemSystemException { get; private set; }
+        public INamedTypeSymbol DES { get; private set; }
+        public INamedTypeSymbol DSA { get; private set; }
+        public INamedTypeSymbol DSASignatureFormatter { get; private set; } 
+        public INamedTypeSymbol HMACMD5 { get; private set; }
+        public INamedTypeSymbol RC2 { get; private set; }
+        public INamedTypeSymbol Rijndael { get; private set; }  
+        public INamedTypeSymbol TripleDES { get; private set; }
+        public INamedTypeSymbol RIPEMD160 { get; private set; }
+        public INamedTypeSymbol HMACRIPEMD160 { get; private set; } 
 
         public CompilationSecurityTypes(Compilation compilation)
         {
-            this.HandleProcessCorruptedStateExceptionsAttribute = 
+            HandleProcessCorruptedStateExceptionsAttribute = 
                 SecurityTypes.HandleProcessCorruptedStateExceptionsAttribute(compilation);
-            this.SystemObject = SecurityTypes.SystemObject(compilation);
-            this.SystemException = SecurityTypes.SystemException(compilation);
-            this.SystemSystemException = SecurityTypes.SystemSystemException(compilation);
+            SystemObject = SecurityTypes.SystemObject(compilation);
+            SystemException = SecurityTypes.SystemException(compilation);
+            SystemSystemException = SecurityTypes.SystemSystemException(compilation);
+            DES = SecurityTypes.DES(compilation);
+            DSA = SecurityTypes.DSA(compilation);
+            DSASignatureFormatter = SecurityTypes.DSASignatureFormatter(compilation); 
+            HMACMD5 = SecurityTypes.HMACMD5(compilation);
+            RC2 = SecurityTypes.RC2(compilation);
+            Rijndael = SecurityTypes.Rijndael(compilation);
+            TripleDES = SecurityTypes.TripleDES(compilation);
+            RIPEMD160 = SecurityTypes.RIPEMD160(compilation);
+            HMACRIPEMD160 = SecurityTypes.HMACRIPEMD160(compilation);
         }
+    }
+
+    public static class SecurityMemberNames
+    {
+        public const string CreateSignature = "CreateSignature";
     }
 }

@@ -8,18 +8,18 @@
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9A61D22F-A414-47C5-A72A-6546ACECDB23}</ProjectGuid>
+    <ProjectGuid>{9C86C9DB-6A03-487A-8A38-9D09DB7DFDFB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AnalyzerProject>true</AnalyzerProject>
-    <RootNamespace>Desktop.CSharp.Analyzers</RootNamespace>
-    <AssemblyName>Desktop.CSharp.Analyzers</AssemblyName>
+    <RootNamespace>System.Security.Cryptography.Hashing.Algorithms.CSharp.Analyzers</RootNamespace>
+    <AssemblyName>System.Security.Cryptography.Hashing.Algorithms.CSharp.Analyzers</AssemblyName>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
     <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
     <RestorePackages>true</RestorePackages>
-    <SemanticVersion>$(DesktopAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(DesktopAnalyzersPreReleaseVersion)</PreReleaseVersion>
+    <SemanticVersion>$(SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion)</SemanticVersion>
+    <PreReleaseVersion>$(SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
   </PropertyGroup>
@@ -30,9 +30,9 @@
     <Analyzer Include="..\..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\DesktopAnalyzers.csproj">
-      <Project>{D1B42764-D442-4E4C-B2E7-9BA36FFBDDF1}</Project>
-      <Name>DesktopAnalyzers</Name>
+    <ProjectReference Include="..\Core\SystemSecurityCryptographyHashingAlgorithmsAnalyzers.csproj">
+      <Project>{DAA5B1A4-9C03-4F0E-AC61-AAD0F96457F8}</Project>
+      <Name>SystemSecurityCryptographyHashingAlgorithmsAnalyzers</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -93,7 +93,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\Desktop.Analyzers.Common.props">
+    <Content Include="..\System.Security.Cryptography.Hashing.Algorithms.Analyzers.Common.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />
@@ -102,7 +102,6 @@
   <ItemGroup>
     <Compile Include="Security\DoNotUseInsecureCryptographicAlgorithms.cs" />
     <Compile Include="Shared\SyntaxNodeHelper.cs" />
-    <Compile Include="Security\DoNotCatchCorruptedStateExceptions.cs" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\..\build\Targets\Analyzers.Imports.targets" />

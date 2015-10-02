@@ -8,7 +8,6 @@
     </description>
     <dependencies>
     </dependencies>
-
     <language>en-US</language>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <version>$currentVersion$</version>

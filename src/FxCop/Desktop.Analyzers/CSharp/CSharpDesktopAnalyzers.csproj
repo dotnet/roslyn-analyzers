@@ -100,9 +100,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Compile Include="Security\DoNotUseInsecureCryptographicAlgorithms.cs" />
+    <Compile Include="Security\DoNotUseInsecureCryptographicAlgorithmsAnalyzer.cs" />
     <Compile Include="Shared\SyntaxNodeHelper.cs" />
-    <Compile Include="Security\DoNotCatchCorruptedStateExceptions.cs" />
+    <Compile Include="Security\DoNotCatchCorruptedStateExceptionsAnalyzer.cs" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\..\build\Targets\Analyzers.Imports.targets" />

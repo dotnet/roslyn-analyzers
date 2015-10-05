@@ -129,14 +129,6 @@ namespace Roslyn.Diagnostics.Analyzers.ApiDesign
             {
                 return _createChangedAdditionalDocument(cancellationToken);
             }
-
-            public override string EquivalenceKey
-            {
-                get
-                {
-                    return nameof(AdditionalDocumentChangeAction);
-                }
-            }
         }
 
         private class FixAllAdditionalDocumentChangeAction : CodeAction

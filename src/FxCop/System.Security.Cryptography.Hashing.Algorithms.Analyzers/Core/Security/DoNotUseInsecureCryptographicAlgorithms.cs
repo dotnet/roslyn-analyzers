@@ -61,7 +61,7 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
                     var cryptTypes = new CompilationSecurityTypes(context.Compilation);
                     if (ReferencesAnyTargetType(cryptTypes))
                     {
-                        Analyzer analyzer = GetAnalyzer(context, cryptTypes);
+                        GetAnalyzer(context, cryptTypes);
                     }
                 });
         }

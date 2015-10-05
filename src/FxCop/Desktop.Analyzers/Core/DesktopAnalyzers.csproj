@@ -93,10 +93,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Security\DoNotUseInsecureCryptographicAlgorithms.cs" />
+    <Compile Include="Security\DoNotUseInsecureCryptographicAlgorithmsAnalyzer.cs" />
     <Compile Include="Security\SecurityTypes.cs" />
     <Compile Include="Security\CompilationSecurityTypes.cs" />
-    <Compile Include="Security\DoNotCatchCorruptedStateExceptions.cs" />
+    <Compile Include="Security\DoNotCatchCorruptedStateExceptionsAnalyzer.cs" />
     <Compile Include="Shared\DiagnosticCategory.cs" />
     <Compile Include="Shared\DiagnosticHelpers.cs" />
     <Compile Include="Shared\SyntaxNodeHelper.cs" />

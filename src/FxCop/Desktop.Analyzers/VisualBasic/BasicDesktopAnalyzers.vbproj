@@ -92,8 +92,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Security\DoNotCatchCorruptedStateExceptions.vb" />
-    <Compile Include="Security\DoNotUseInsecureCryptographicAlgorithms.vb" />
+    <Compile Include="Security\DoNotCatchCorruptedStateExceptionsAnalyzer.vb" />
+    <Compile Include="Security\DoNotUseInsecureCryptographicAlgorithmsAnalyzer.vb" />
     <Compile Include="Shared\SyntaxNodeHelper.vb" />
     <Content Include="..\Desktop.Analyzers.Common.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

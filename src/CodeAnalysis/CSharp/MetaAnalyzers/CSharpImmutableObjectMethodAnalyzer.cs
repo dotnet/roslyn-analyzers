@@ -44,73 +44,70 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
         private static readonly string s_syntaxNodeFullName = @"Microsoft.CodeAnalysis.SyntaxNode";
 
         // A list of known immutable object names
-        private static readonly ImmutableArray<string> s_immutableObjectNames = new ImmutableArray<string>()
+        private static ImmutableArray<string> s_immutableObjectNames
         {
-            s_solutionFullName,
-            s_projectFullName,
-            s_documentFullName,
-            s_syntaxNodeFullName,
-        };
+            get
+            {
+                return ImmutableArray.Create(s_solutionFullName, s_projectFullName, s_documentFullName, s_syntaxNodeFullName);
+            }
+        }
 
         private static readonly string s_Add = "Add";
         private static readonly string s_Remove = "Remove";
         private static readonly string s_Replace = "Replace";
         private static readonly string s_With = "With";
 
-        private static readonly ImmutableArray<string> s_immutableMethodNames = new ImmutableArray<string>()
+        private static ImmutableArray<string> s_immutableMethodNames 
         {
-            s_Add,
-            s_Remove,
-            s_Replace,
-            s_With,
-        };
+            get
+            {
+                return ImmutableArray.Create(s_Add, s_Remove, s_Replace, s_With);
+            }
+        }
 
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCodeBlockAction(AnalyzeCodeBlockForIgnoredReturnValues);
+            context.RegisterSyntaxNodeAction(AnalzyeInvocationForIgnoredReturnValue, SyntaxKind.InvocationExpression);
         }
 
-        public void AnalyzeCodeBlockForIgnoredReturnValues(CodeBlockAnalysisContext context)
+        public void AnalzyeInvocationForIgnoredReturnValue(SyntaxNodeAnalysisContext context)
         {
             var model = context.SemanticModel;
-            var syntaxNode = context.CodeBlock;
+            var candidateInvocation = (InvocationExpressionSyntax)context.Node;
 
-            //Find invocations that ignore the return value
-            //We're looking for invocations that are not within an equals value clause or a return statement.
-            var candidateInvocations = syntaxNode.DescendantNodes()
-                .OfType<InvocationExpressionSyntax>()
-                .Where(n => n.Parent is StatementSyntax && !(n.Parent is ReturnStatementSyntax));
-
-            foreach (var candidateInvocation in candidateInvocations)
+            //We're looking for invocations that are children of a statement but not children of a return statement.
+            if(!(candidateInvocation.Parent is StatementSyntax) || candidateInvocation.Parent is ReturnStatementSyntax)
             {
-                //If we can't find the method symbol, quit
-                var methodSymbol = model.GetSymbolInfo(candidateInvocation).Symbol as IMethodSymbol;
-                if (methodSymbol == null)
-                {
-                    continue;
-                }
-
-                //If the method doesn't start with something like "With" or "Replace", quit
-                string methodName = methodSymbol.Name;
-                if (!s_immutableMethodNames.Any(n => methodName.StartsWith(n)))
-                {
-                    continue;
-                }
-
-                //If we're not in one of the known immutable types, quit
-                var parentName = methodSymbol.ReceiverType.ToString();
-                var baseTypesAndSelf = methodSymbol.ReceiverType.GetBaseTypes().Select(n => n.ToString()).ToList();
-                baseTypesAndSelf.Add(parentName);
-
-                if (!baseTypesAndSelf.Any(n => s_immutableObjectNames.Contains(n)))
-                {
-                    continue;
-                }
-
-                var location = candidateInvocation.GetLocation();
-                var diagnostic = Diagnostic.Create(DoNotIgnoreReturnValueDiagnosticRule, location, methodSymbol.ReceiverType.Name, methodSymbol.Name);
-                context.ReportDiagnostic(diagnostic);
+                return;
             }
+
+            //If we can't find the method symbol, quit
+            var methodSymbol = model.GetSymbolInfo(candidateInvocation).Symbol as IMethodSymbol;
+            if (methodSymbol == null)
+            {
+                return;
+            }
+
+            //If the method doesn't start with something like "With" or "Replace", quit
+            string methodName = methodSymbol.Name;
+            if (!s_immutableMethodNames.Any(n => methodName.StartsWith(n)))
+            {
+                return;
+            }
+
+            //If we're not in one of the known immutable types, quit
+            var parentName = methodSymbol.ReceiverType.ToString();
+            var baseTypesAndSelf = methodSymbol.ReceiverType.GetBaseTypes().Select(n => n.ToString()).ToList();
+            baseTypesAndSelf.Add(parentName);
+
+            if (!baseTypesAndSelf.Any(n => s_immutableObjectNames.Contains(n)))
+            {
+                return;
+            }
+
+            var location = candidateInvocation.GetLocation();
+            var diagnostic = Diagnostic.Create(DoNotIgnoreReturnValueDiagnosticRule, location, methodSymbol.ReceiverType.Name, methodSymbol.Name);
+            context.ReportDiagnostic(diagnostic);
         }
     }
 }

@@ -1,11 +1,13 @@
-﻿using Microsoft.CodeAnalysis.Diagnostics;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.Analyzers;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
@@ -42,7 +44,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
         private static readonly string s_syntaxNodeFullName = @"Microsoft.CodeAnalysis.SyntaxNode";
 
         // A list of known immutable object names
-        private static readonly List<string> s_immutableObjectNames = new List<string>()
+        private static readonly ImmutableArray<string> s_immutableObjectNames = new ImmutableArray<string>()
         {
             s_solutionFullName,
             s_projectFullName,
@@ -55,7 +57,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
         private static readonly string s_Replace = "Replace";
         private static readonly string s_With = "With";
 
-        private static readonly List<string> s_immutableMethodNames = new List<string>()
+        private static readonly ImmutableArray<string> s_immutableMethodNames = new ImmutableArray<string>()
         {
             s_Add,
             s_Remove,
@@ -84,12 +86,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
                 //If we can't find the method symbol, quit
                 var methodSymbol = model.GetSymbolInfo(candidateInvocation).Symbol as IMethodSymbol;
                 if (methodSymbol == null)
+                {
                     continue;
+                }
 
                 //If the method doesn't start with something like "With" or "Replace", quit
                 string methodName = methodSymbol.Name;
                 if (!s_immutableMethodNames.Any(n => methodName.StartsWith(n)))
+                {
                     continue;
+                }
 
                 //If we're not in one of the known immutable types, quit
                 var parentName = methodSymbol.ReceiverType.ToString();
@@ -97,7 +103,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
                 baseTypesAndSelf.Add(parentName);
 
                 if (!baseTypesAndSelf.Any(n => s_immutableObjectNames.Contains(n)))
+                {
                     continue;
+                }
 
                 var location = candidateInvocation.GetLocation();
                 var diagnostic = Diagnostic.Create(DoNotIgnoreReturnValueDiagnosticRule, location, methodSymbol.ReceiverType.Name, methodSymbol.Name);

@@ -1,9 +1,10 @@
-﻿using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
 using Xunit;
 using Microsoft.CodeAnalysis.Analyzers;
-using Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers;
 
 namespace Microsoft.CodeAnalysis.UnitTests.MetaAnalyzers
 {

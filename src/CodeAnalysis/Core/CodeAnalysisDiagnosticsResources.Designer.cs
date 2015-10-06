@@ -152,7 +152,7 @@ namespace Microsoft.CodeAnalysis.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Do not ignore return value from immutable object method invocation..
+        ///   Looks up a localized string similar to Do not ignore values returned by methods on immutable objects..
         /// </summary>
         internal static string DoNotIgnoreReturnValueOnImmutableObjectMethodInvocationTitle {
             get {

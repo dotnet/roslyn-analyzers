@@ -8,17 +8,17 @@
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
-    <ProjectGuid>{9468F53A-8B08-4DAC-9612-3BBB3BCF0783}</ProjectGuid>
+    <ProjectGuid>{811DBEC8-EC7E-43E9-ACAD-A59FF524B79E}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Desktop.Analyzers.UnitTests</RootNamespace>
-    <AssemblyName>Desktop.Analyzers.UnitTests</AssemblyName>
+    <RootNamespace>System.Security.Cryptography.Hashing.Algorithms.Analyzers.UnitTests</RootNamespace>
+    <AssemblyName>System.Security.Cryptography.Hashing.Algorithms.Analyzers.UnitTests</AssemblyName>
     <Nonshipping>true</Nonshipping>
     <SolutionDir Condition="'$(SolutionDir)' == '' OR '$(SolutionDir)' == '*Undefined*'">..\..\..\..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <SemanticVersion>$(DesktopAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(DesktopAnalyzersPreReleaseVersion)</PreReleaseVersion>
-    <NuGetPackageImportStamp>
+    <SemanticVersion>$(SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion)</SemanticVersion>
+    <PreReleaseVersion>$(SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion)</PreReleaseVersion>
+  <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Label="Start settings">
@@ -32,17 +32,17 @@
       <Project>{0A0621F2-D1DC-47FF-B643-C6646557505E}</Project>
       <Name>DiagnosticsTestUtilities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Core\DesktopAnalyzers.csproj">
-      <Project>{D1B42764-D442-4E4C-B2E7-9BA36FFBDDF1}</Project>
-      <Name>DesktopAnalyzers</Name>
+    <ProjectReference Include="..\Core\SystemSecurityCryptographyHashingAlgorithmsAnalyzers.csproj">
+      <Project>{DAA5B1A4-9C03-4F0E-AC61-AAD0F96457F8}</Project>
+      <Name>SystemSecurityCryptographyHashingAlgorithmsAnalyzers</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CSharp\CSharpDesktopAnalyzers.csproj">
-      <Project>{9A61D22F-A414-47C5-A72A-6546ACECDB23}</Project>
-      <Name>CSharpDesktopAnalyzers</Name>
+    <ProjectReference Include="..\CSharp\CSharpSystemSecurityCryptographyHashingAlgorithms.csproj">
+      <Project>{9C86C9DB-6A03-487A-8A38-9D09DB7DFDFB}</Project>
+      <Name>CSharpSystemSecurityCryptographyHashingAlgorithmsAnalyzers</Name>
     </ProjectReference>
-    <ProjectReference Include="..\VisualBasic\BasicDesktopAnalyzers.vbproj">
-      <Project>{219EC670-D9C3-4493-AC28-AD42697CCFAD}</Project>
-      <Name>BasicDesktopAnalyzers</Name>
+    <ProjectReference Include="..\VisualBasic\BasicSystemSecurityCryptographyHashingAlgorithmsAnalyzers.vbproj">
+      <Project>{857233D3-88FC-4CE5-9913-0456929A1B6E}</Project>
+      <Name>BasicSystemSecurityCryptographyHashingAlgorithmsAnalyzers</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -151,33 +151,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Security\CA3075DiagnosticAnalyzerDoNotUseLoadXmlTests.cs" />
-    <Compile Include="Security\CA3075DiagnosticAnalyzerDoNotUseSetInnerXmlTests.cs" />
-    <Compile Include="Security\CA3075DiagnosticAnalyzerReviewDataViewCollectionStringTests.cs" />
-    <Compile Include="Security\CA3075DiagnosticAnalyzerUseXmlReaderForDataSetReadXmlSchemaTests.cs" />
-    <Compile Include="Security\CA3075DiagnosticAnalyzerUseXmlReaderForDataSetReadXmlTests.cs" />
-    <Compile Include="Security\CA3075DiagnosticAnalyzerUseXmlReaderForDataTableReadXmlSchemaTests.cs" />
-    <Compile Include="Security\CA3075DiagnosticAnalyzerUseXmlReaderForDataTableReadXmlTests.cs" />
-    <Compile Include="Security\CA3075DiagnosticAnalyzerUseXmlReaderForDeserializeTests.cs" />
-    <Compile Include="Security\CA3075DiagnosticAnalyzerUseXmlReaderForLoadTests.cs" />
-    <Compile Include="Security\CA3075DiagnosticAnalyzerUseXmlReaderForSchemaReadTests.cs" />
-    <Compile Include="Security\CA3075DiagnosticAnalyzerUseXmlReaderForXPathDocumentTests.cs" />
-    <Compile Include="Security\CA3075DiagnosticAnalyzerXmlDocumentConstructedWithNoSecureResolverTests.cs" />
-    <Compile Include="Security\CA3075DiagnosticAnalyzerXmlDocumentSetInsecureResolverTests.cs" />
-    <Compile Include="Security\CA3075DiagnosticAnalyzerXmlReaderCreateUsingInsecureConstructedXmlReaderSettingsTests.cs" />
-    <Compile Include="Security\CA3075DiagnosticAnalyzerXmlReaderCreateWrongOverloadTests.cs" />
-    <Compile Include="Security\CA3075DiagnosticAnalyzerXmlTextReaderConstructedWithNoSecureResolutionTests.cs" />
-    <Compile Include="Security\CA3075DiagnosticAnalyzerXmlTextReaderSetInsecureResolutionTests.cs" />
-    <Compile Include="Security\CA3075XmlReaderCreateUsingInsecureInputXmlReaderSettingsTests.cs" />
-    <Compile Include="Security\CA3076XslCompiledTransformLoadInsecureConstructedSettingsTests.cs" />
-    <Compile Include="Security\CA3076XslCompiledTransformLoadInsecureInputSettingsTests.cs" />
-    <Compile Include="Security\CA3077XmlDocumentDerivedClassDesignConstructorNoSecureXmlResolverTests.cs" />
-    <Compile Include="Security\CA3077XmlDocumentDerivedClassDesignNoConstructorTests.cs" />
-    <Compile Include="Security\CA3077XmlDocumentDerivedClassDesignSetInsecureXmlResolverInMethodTests.cs" />
-    <Compile Include="Security\CA3077XmlTextReaderDerivedClassDesignConstructorNoSecureSettingsTests.cs" />
-    <Compile Include="Security\CA3077XmlTextReaderDerivedClassDesignNoConstructorTests.cs" />
-    <Compile Include="Security\CA3077XmlTextReaderDerivedClassDesignSetInsecureSettingsInMethodTests.cs" />
-    <Compile Include="Security\DoNotCatchCorruptedStateExceptionsTests.cs" />
     <Compile Include="Security\DoNotUseInsecureCryptographicAlgorithmsTests.cs" />
   </ItemGroup>
   <ImportGroup Label="Targets">

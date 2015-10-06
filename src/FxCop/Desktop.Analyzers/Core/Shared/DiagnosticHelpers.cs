@@ -214,9 +214,5 @@ namespace Desktop.Analyzers.Common
             }
             return new Version(4, 0);
         } 
-        public static LocalizableResourceString GetLocalizableResourceString(string resourceName)
-        {
-            return new LocalizableResourceString(resourceName, DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
-        }
     }
 }

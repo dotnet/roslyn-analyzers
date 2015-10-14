@@ -15,8 +15,8 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
     public abstract class DoNotUseInsecureCryptographicAlgorithmsAnalyzer : DiagnosticAnalyzer
     {
 
-        internal const string DoNotUseMD5RuleId = "CA5350";
-        internal const string DoNotUseSHA1RuleId = "CA5354";
+        internal const string DoNotUseWeakCryptographicRuleId = "CA5350";
+        internal const string DoNotUseBrokenCryptographicRuleId = "CA5351";
 
         private static readonly LocalizableString s_localizableDoNotUseMD5Title = DiagnosticHelpers.GetLocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseMD5));
         private static readonly LocalizableString s_localizableDoNotUseMD5Description = DiagnosticHelpers.GetLocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseMD5Description));
@@ -24,18 +24,18 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
         private static readonly LocalizableString s_localizableDoNotUseSHA1Description = DiagnosticHelpers.GetLocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseSHA1Description));
         
 
-        internal static DiagnosticDescriptor DoNotUseMD5Rule = CreateDiagnosticDescriptor(DoNotUseMD5RuleId,
+        internal static DiagnosticDescriptor DoNotUseMD5SpecificRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographicRuleId,
                                                                                           s_localizableDoNotUseMD5Title,
                                                                                           s_localizableDoNotUseMD5Description);
         
-        internal static DiagnosticDescriptor DoNotUseSHA1Rule = CreateDiagnosticDescriptor(DoNotUseSHA1RuleId,
+        internal static DiagnosticDescriptor DoNotUseSHA1SpecificRule = CreateDiagnosticDescriptor(DoNotUseWeakCryptographicRuleId,
                                                                                            s_localizableDoNotUseSHA1Title,
                                                                                            s_localizableDoNotUseSHA1Description);
          
         protected abstract Analyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes cryptTypes);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics = ImmutableArray.Create(DoNotUseMD5Rule, 
-                                                                                                                    DoNotUseSHA1Rule);
+        private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics = ImmutableArray.Create(DoNotUseMD5SpecificRule, 
+                                                                                                                    DoNotUseSHA1SpecificRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             => s_supportedDiagnostics;
@@ -99,12 +99,12 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
 
                 if (type.IsDerivedFrom(_cryptTypes.MD5, baseTypesOnly: true))
                 {
-                    rule = DoNotUseMD5Rule;
+                    rule = DoNotUseMD5SpecificRule;
                 } 
                 else if (type.IsDerivedFrom(_cryptTypes.SHA1, baseTypesOnly: true) ||
                          type.IsDerivedFrom(_cryptTypes.HMACSHA1, baseTypesOnly: true))
                 {
-                    rule = DoNotUseSHA1Rule;
+                    rule = DoNotUseSHA1SpecificRule;
                 }
 
                 if (rule != null)

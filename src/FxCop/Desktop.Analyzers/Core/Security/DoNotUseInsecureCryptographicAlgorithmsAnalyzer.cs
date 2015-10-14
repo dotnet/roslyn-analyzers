@@ -14,13 +14,8 @@ namespace Desktop.Analyzers
 {
     public abstract class DoNotUseInsecureCryptographicAlgorithmsAnalyzer : DiagnosticAnalyzer
     {
-        internal const string DoNotUseMD5RuleId = "CA5350";
-        internal const string DoNotUseDESRuleId = "CA5351";
-        internal const string DoNotUseRC2RuleId = "CA5352";
-        internal const string DoNotUseTripleDESRuleId = "CA5353"; 
-        internal const string DoNotUseRIPEMD160RuleId = "CA5355";
-        internal const string DoNotUseDSARuleId = "CA5356";
-        internal const string DoNotUseRijndaelRuleId = "CA5357";
+        internal const string DoNotUseWeakCryptographicRuleId = "CA5350";
+        internal const string DoNotUseBrokenCryptographicRuleId = "CA5351";
 
         private static readonly LocalizableString s_localizableDoNotUseMD5Title = DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseMD5));
         private static readonly LocalizableString s_localizableDoNotUseMD5Description = DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseMD5Description));
@@ -38,43 +33,43 @@ namespace Desktop.Analyzers
         private static readonly LocalizableString s_localizableDoNotUseRijndaelDescription = DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseRijndaelDescription));
 
 
-        internal static DiagnosticDescriptor DoNotUseMD5Rule = CreateDiagnosticDescriptor(DoNotUseMD5RuleId,
+        internal static DiagnosticDescriptor DoNotUseMD5SpecificRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographicRuleId,
                                                                                           s_localizableDoNotUseMD5Title,
                                                                                           s_localizableDoNotUseMD5Description);
 
-        internal static DiagnosticDescriptor DoNotUseDESRule = CreateDiagnosticDescriptor(DoNotUseDESRuleId,
+        internal static DiagnosticDescriptor DoNotUseDESSpecificRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographicRuleId,
                                                                                           s_localizableDoNotUseDESTitle,
                                                                                           s_localizableDoNotUseDESDescription);
 
-        internal static DiagnosticDescriptor DoNotUseRC2Rule = CreateDiagnosticDescriptor(DoNotUseRC2RuleId,
+        internal static DiagnosticDescriptor DoNotUseRC2SpecificRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographicRuleId,
                                                                                           s_localizableDoNotUseRC2Title,
                                                                                           s_localizableDoNotUseRC2Description);
 
-        internal static DiagnosticDescriptor DoNotUseTripleDESRule = CreateDiagnosticDescriptor(DoNotUseTripleDESRuleId,
+        internal static DiagnosticDescriptor DoNotUseTripleDESSpecificRule = CreateDiagnosticDescriptor(DoNotUseWeakCryptographicRuleId,
                                                                                                 s_localizableDoNotUseTripleDESTitle,
                                                                                                 s_localizableDoNotUseTripleDESDescription);
 
-        internal static DiagnosticDescriptor DoNotUseRIPEMD160Rule = CreateDiagnosticDescriptor(DoNotUseRIPEMD160RuleId,
+        internal static DiagnosticDescriptor DoNotUseRIPEMD160SpecificRule = CreateDiagnosticDescriptor(DoNotUseWeakCryptographicRuleId,
                                                                                                 s_localizableDoNotUseRIPEMD160Title,
                                                                                                 s_localizableDoNotUseRIPEMD160Description);
 
-        internal static DiagnosticDescriptor DoNotUseDSARule = CreateDiagnosticDescriptor(DoNotUseDSARuleId,
+        internal static DiagnosticDescriptor DoNotUseDSASpecificRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographicRuleId,
                                                                                           s_localizableDoNotUseDSATitle,
                                                                                           s_localizableDoNotUseDSADescription);
 
-        internal static DiagnosticDescriptor DoNotUseRijndaelRule = CreateDiagnosticDescriptor(DoNotUseRijndaelRuleId,
+        internal static DiagnosticDescriptor DoNotUseRijndaelSpecificRule = CreateDiagnosticDescriptor(DoNotUseWeakCryptographicRuleId,
                                                                                                s_localizableDoNotUseRijndaelTitle,
                                                                                                s_localizableDoNotUseRijndaelDescription);
 
         protected abstract Analyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes cryptTypes);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics = ImmutableArray.Create(DoNotUseMD5Rule,
-                                                                                                                  DoNotUseDESRule,
-                                                                                                                  DoNotUseRC2Rule,
-                                                                                                                  DoNotUseTripleDESRule, 
-                                                                                                                  DoNotUseRIPEMD160Rule,
-                                                                                                                  DoNotUseDSARule,
-                                                                                                                  DoNotUseRijndaelRule);
+        private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics = ImmutableArray.Create(DoNotUseMD5SpecificRule,
+                                                                                                                  DoNotUseDESSpecificRule,
+                                                                                                                  DoNotUseRC2SpecificRule,
+                                                                                                                  DoNotUseTripleDESSpecificRule, 
+                                                                                                                  DoNotUseRIPEMD160SpecificRule,
+                                                                                                                  DoNotUseDSASpecificRule,
+                                                                                                                  DoNotUseRijndaelSpecificRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             => s_supportedDiagnostics;
@@ -144,34 +139,34 @@ namespace Desktop.Analyzers
 
                 if (type.IsDerivedFrom(this._cryptTypes.DES, baseTypesOnly: true))
                 {
-                    rule = DoNotUseDESRule;
+                    rule = DoNotUseDESSpecificRule;
                 }
                 else if (method.MatchMethodDerived(_cryptTypes.DSA, SecurityMemberNames.CreateSignature) ||
                          (type == _cryptTypes.DSASignatureFormatter &&
                           method.MatchMethodDerived(_cryptTypes.DSASignatureFormatter, WellKnownMemberNames.InstanceConstructorName)))
                 {
-                    rule = DoNotUseDSARule;
+                    rule = DoNotUseDSASpecificRule;
                 }
                 else if (type.IsDerivedFrom(_cryptTypes.HMACMD5, baseTypesOnly: true))
                 {
-                    rule = DoNotUseMD5Rule;
+                    rule = DoNotUseMD5SpecificRule;
                 }
                 else if (type.IsDerivedFrom(_cryptTypes.RC2, baseTypesOnly: true))
                 {
-                    rule = DoNotUseRC2Rule;
+                    rule = DoNotUseRC2SpecificRule;
                 }
                 else if (type.IsDerivedFrom(_cryptTypes.Rijndael, baseTypesOnly: true))
                 {
-                    rule = DoNotUseRijndaelRule;
+                    rule = DoNotUseRijndaelSpecificRule;
                 }
                 else if (type.IsDerivedFrom(_cryptTypes.TripleDES, baseTypesOnly: true))
                 {
-                    rule = DoNotUseTripleDESRule;
+                    rule = DoNotUseTripleDESSpecificRule;
                 }
                 else if (type.IsDerivedFrom(_cryptTypes.RIPEMD160, baseTypesOnly: true) ||
                          type.IsDerivedFrom(_cryptTypes.HMACRIPEMD160, baseTypesOnly: true))
                 {
-                    rule = DoNotUseRIPEMD160Rule;
+                    rule = DoNotUseRIPEMD160SpecificRule;
                 }
 
                 if (rule != null)

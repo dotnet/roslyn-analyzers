@@ -25,7 +25,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 23, CA5350RuleName, CA5350Message));
+            GetCSharpResultAt(10, 23, CA5351RuleName, DoNotUseMD5Message));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -37,7 +37,7 @@ Namespace TestNamespace
 		End Sub
 	End Class
 End Namespace",
-           GetBasicResultAt(7, 14, CA5350RuleName, CA5350Message));
+           GetBasicResultAt(7, 14, CA5351RuleName, DoNotUseMD5Message));
         }        
         
         [Fact]
@@ -58,7 +58,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(12, 23, CA5350RuleName, CA5350Message));
+            GetCSharpResultAt(12, 23, CA5351RuleName, DoNotUseMD5Message));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -73,7 +73,7 @@ Namespace TestNamespace
 		End Sub
 	End Class
 End Namespace",
-           GetBasicResultAt(10, 14, CA5350RuleName, CA5350Message));
+           GetBasicResultAt(10, 14, CA5351RuleName, DoNotUseMD5Message));
         }        
         
         [Fact]
@@ -91,7 +91,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, CA5350RuleName, CA5350Message));
+            GetCSharpResultAt(9, 26, CA5351RuleName, DoNotUseMD5Message));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -104,7 +104,7 @@ Namespace TestNamespace
 		End Property
 	End Class
 End Namespace",
-GetBasicResultAt(7, 12, CA5350RuleName, CA5350Message));
+GetBasicResultAt(7, 12, CA5351RuleName, DoNotUseMD5Message));
         }         
         
         [Fact]
@@ -119,7 +119,7 @@ namespace TestNamespace
         HMACMD5 privateMd5 = new HMACMD5();
     }
 }",
-            GetCSharpResultAt(7, 30, CA5350RuleName, CA5350Message));
+            GetCSharpResultAt(7, 30, CA5351RuleName, DoNotUseMD5Message));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -128,7 +128,7 @@ Namespace TestNamespace
 		Private privateMd5 As New HMACMD5()
 	End Class
 End Namespace",
-GetBasicResultAt(5, 25, CA5350RuleName, CA5350Message));
+GetBasicResultAt(5, 25, CA5351RuleName, DoNotUseMD5Message));
         }         
    
         [Fact]
@@ -147,7 +147,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, CA5350RuleName, CA5350Message));
+            GetCSharpResultAt(10, 36, CA5351RuleName, DoNotUseMD5Message));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -159,7 +159,7 @@ Module TestClass
                        End Function)
     End Sub
 End Module",
-            GetBasicResultAt(7, 35, CA5350RuleName, CA5350Message));
+            GetBasicResultAt(7, 35, CA5351RuleName, DoNotUseMD5Message));
         }
              
         [Fact]
@@ -175,7 +175,7 @@ namespace TestNamespace
         Del d = delegate () { new HMACMD5(); };
     }
 }",
-            GetCSharpResultAt(8, 31, CA5350RuleName, CA5350Message));
+            GetCSharpResultAt(8, 31, CA5351RuleName, DoNotUseMD5Message));
                                  
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -184,7 +184,7 @@ Module TestClass
     Delegate Function Del() As HashAlgorithm
     Dim d As Del = Function() New HMACMD5()
 End Module",
-            GetBasicResultAt(6, 31, CA5350RuleName, CA5350Message));
+            GetBasicResultAt(6, 31, CA5351RuleName, DoNotUseMD5Message));
         }        
         
         #endregion
@@ -207,7 +207,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 23, CA5351RuleName, CA5351Message));
+            GetCSharpResultAt(10, 23, CA5351RuleName, DoNotUseDESMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -217,7 +217,7 @@ Module TestClass
         Dim desalg As DES = DES.Create()
     End Sub
 End Module",
-GetBasicResultAt(6, 29, CA5351RuleName, CA5351Message));
+GetBasicResultAt(6, 29, CA5351RuleName, DoNotUseDESMessage));
         }
 
         [Fact]
@@ -235,7 +235,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, CA5351RuleName, CA5351Message));
+            GetCSharpResultAt(9, 26, CA5351RuleName, DoNotUseDESMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -249,7 +249,7 @@ Namespace TestNamespace
 	End Class
 End Namespace
 ",
-GetBasicResultAt(7, 12, CA5351RuleName, CA5351Message));
+GetBasicResultAt(7, 12, CA5351RuleName, DoNotUseDESMessage));
         }
 
         [Fact]
@@ -264,7 +264,7 @@ namespace TestNamespace
         DES privateDES = DES.Create();
     }
 }",
-            GetCSharpResultAt(7, 26, CA5351RuleName, CA5351Message));
+            GetCSharpResultAt(7, 26, CA5351RuleName, DoNotUseDESMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -273,7 +273,7 @@ Namespace TestNamespace
 		Private privateDES As DES = DES.Create()
 	End Class
 End Namespace",
-GetBasicResultAt(5, 31, CA5351RuleName, CA5351Message));
+GetBasicResultAt(5, 31, CA5351RuleName, DoNotUseDESMessage));
         }
         
         [Fact]
@@ -292,7 +292,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, CA5351RuleName, CA5351Message));
+            GetCSharpResultAt(10, 36, CA5351RuleName, DoNotUseDESMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -306,7 +306,7 @@ End Function)
 		End Function
 	End Class
 End Namespace",
-GetBasicResultAt(8, 4, CA5351RuleName, CA5351Message));
+GetBasicResultAt(8, 4, CA5351RuleName, DoNotUseDESMessage));
         }
         
         [Fact]
@@ -322,7 +322,7 @@ namespace TestNamespace
         Del d = delegate () { DES.Create(); };
     }
 }",
-            GetCSharpResultAt(8, 31, CA5351RuleName, CA5351Message));
+            GetCSharpResultAt(8, 31, CA5351RuleName, DoNotUseDESMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -332,7 +332,7 @@ Namespace TestNamespace
 		Private d As Del = Sub() DES.Create()
 	End Class
 End Namespace",
-GetBasicResultAt(6, 28, CA5351RuleName, CA5351Message));
+GetBasicResultAt(6, 28, CA5351RuleName, DoNotUseDESMessage));
         }
         
         [Fact]
@@ -351,7 +351,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 23, CA5351RuleName, CA5351Message));
+            GetCSharpResultAt(10, 23, CA5351RuleName, DoNotUseDESMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -362,7 +362,7 @@ Namespace TestNamespace
 		End Sub
 	End Class
 End Namespace",
-            GetBasicResultAt(6, 21, CA5351RuleName, CA5351Message));
+            GetBasicResultAt(6, 21, CA5351RuleName, DoNotUseDESMessage));
         }
         
         [Fact]
@@ -380,7 +380,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, CA5351RuleName, CA5351Message));
+            GetCSharpResultAt(9, 26, CA5351RuleName, DoNotUseDESMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -393,7 +393,7 @@ Namespace TestNamespace
 		End Property
 	End Class
 End Namespace",
-           GetBasicResultAt(7, 12, CA5351RuleName, CA5351Message));
+           GetBasicResultAt(7, 12, CA5351RuleName, DoNotUseDESMessage));
         }
         
         [Fact]
@@ -408,7 +408,7 @@ namespace TestNamespace
         DESCryptoServiceProvider privateDES = new DESCryptoServiceProvider();
     }
 }",
-            GetCSharpResultAt(7, 47, CA5351RuleName, CA5351Message));
+            GetCSharpResultAt(7, 47, CA5351RuleName, DoNotUseDESMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -417,7 +417,7 @@ Namespace TestNamespace
 		Private privateDES As New DESCryptoServiceProvider()
 	End Class
 End Namespace",
-GetBasicResultAt(5, 25, CA5351RuleName, CA5351Message));
+GetBasicResultAt(5, 25, CA5351RuleName, DoNotUseDESMessage));
         }
 //No VB        
         [Fact]
@@ -436,7 +436,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, CA5351RuleName, CA5351Message));
+            GetCSharpResultAt(10, 36, CA5351RuleName, DoNotUseDESMessage));
         }
 //No VB        
         [Fact]
@@ -452,7 +452,7 @@ namespace TestNamespace
         Del d = delegate () { new DESCryptoServiceProvider(); };
     }
 }",
-            GetCSharpResultAt(8, 31, CA5351RuleName, CA5351Message));
+            GetCSharpResultAt(8, 31, CA5351RuleName, DoNotUseDESMessage));
         }
                 
         [Fact]
@@ -504,8 +504,8 @@ namespace TestNamespace
         }
     }
 }" },
-            GetCSharpResultAt(10, 25, CA5351RuleName, CA5351Message),
-            GetCSharpResultAt(11, 13, CA5351RuleName, CA5351Message));
+            GetCSharpResultAt(10, 25, CA5351RuleName, DoNotUseDESMessage),
+            GetCSharpResultAt(11, 13, CA5351RuleName, DoNotUseDESMessage));
 
             VerifyBasic(new[] {
 //Test0
@@ -543,8 +543,8 @@ Namespace TestNamespace
 	End Class
 End Namespace
 " },
-           GetBasicResultAt(6, 15, CA5351RuleName, CA5351Message),
-           GetBasicResultAt(7, 4, CA5351RuleName, CA5351Message));
+           GetBasicResultAt(6, 15, CA5351RuleName, DoNotUseDESMessage),
+           GetBasicResultAt(7, 4, CA5351RuleName, DoNotUseDESMessage));
         }                                          
         
         #endregion
@@ -567,7 +567,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 23, CA5352RuleName, CA5352Message));
+            GetCSharpResultAt(10, 23, CA5351RuleName, DoNotUseRC2Message));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -577,7 +577,7 @@ Module TestClass
         Dim rc2alg As New RC2CryptoServiceProvider
     End Sub
 End Module",
-GetBasicResultAt(6, 23, CA5352RuleName, CA5352Message));
+GetBasicResultAt(6, 23, CA5351RuleName, DoNotUseRC2Message));
         }        
         
         [Fact]
@@ -595,7 +595,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, CA5352RuleName, CA5352Message));
+            GetCSharpResultAt(9, 26, CA5351RuleName, DoNotUseRC2Message));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -608,7 +608,7 @@ Namespace TestNamespace
 		End Property
 	End Class
 End Namespace",
-GetBasicResultAt(7, 12, CA5352RuleName, CA5352Message));
+GetBasicResultAt(7, 12, CA5351RuleName, DoNotUseRC2Message));
         }        
         
         [Fact]
@@ -623,7 +623,7 @@ namespace TestNamespace
         RC2CryptoServiceProvider privateRC2 = new RC2CryptoServiceProvider();
     }
 }",
-            GetCSharpResultAt(7, 47, CA5352RuleName, CA5352Message));
+            GetCSharpResultAt(7, 47, CA5351RuleName, DoNotUseRC2Message));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -633,7 +633,7 @@ Namespace TestNamespace
 	End Class
 End Namespace
 ",
-GetBasicResultAt(5, 25, CA5352RuleName, CA5352Message));
+GetBasicResultAt(5, 25, CA5351RuleName, DoNotUseRC2Message));
         }
 //No VB            
         [Fact]
@@ -652,7 +652,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, CA5352RuleName, CA5352Message));
+            GetCSharpResultAt(10, 36, CA5351RuleName, DoNotUseRC2Message));
         } 
 //No VB        
         [Fact]
@@ -668,7 +668,7 @@ namespace TestNamespace
         Del d = delegate () { new RC2CryptoServiceProvider(); };
     }
 }",
-            GetCSharpResultAt(8, 31, CA5352RuleName, CA5352Message));
+            GetCSharpResultAt(8, 31, CA5351RuleName, DoNotUseRC2Message));
         }
         
         [Fact]
@@ -719,7 +719,7 @@ namespace TestNamespace
         }
     }
 }" },
-            GetCSharpResultAt(10, 23, CA5352RuleName, CA5352Message));
+            GetCSharpResultAt(10, 23, CA5351RuleName, DoNotUseRC2Message));
 
             VerifyBasic(new[] {
 //Test0
@@ -756,7 +756,7 @@ Namespace TestNamespace
 	End Class
 End Namespace
 " },
-           GetBasicResultAt(6, 14, CA5352RuleName, CA5352Message));
+           GetBasicResultAt(6, 14, CA5351RuleName, DoNotUseRC2Message));
         }
         
         #endregion
@@ -779,7 +779,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 29, CA5353RuleName, CA5353Message));
+            GetCSharpResultAt(10, 29, CA5350RuleName, DoNotUseTripleDESMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -790,7 +790,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(6, 23, CA5353RuleName, CA5353Message));
+            GetBasicResultAt(6, 23, CA5350RuleName, DoNotUseTripleDESMessage));
         } 
         
         [Fact]
@@ -808,7 +808,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, CA5353RuleName, CA5353Message));
+            GetCSharpResultAt(9, 26, CA5350RuleName, DoNotUseTripleDESMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -821,7 +821,7 @@ Namespace TestNamespace
         End Property
     End Class
 End Namespace",
-           GetBasicResultAt(7, 12, CA5353RuleName, CA5353Message));
+           GetBasicResultAt(7, 12, CA5350RuleName, DoNotUseTripleDESMessage));
         }
         
         [Fact]
@@ -836,7 +836,7 @@ namespace TestNamespace
         TripleDES privateDES = TripleDES.Create(""TripleDES"");
     }
 }",
-            GetCSharpResultAt(7, 32, CA5353RuleName, CA5353Message));
+            GetCSharpResultAt(7, 32, CA5350RuleName, DoNotUseTripleDESMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -845,7 +845,7 @@ Namespace TestNamespace
 		Private privateDES As TripleDES = TripleDES.Create(""TripleDES"")
     End Class
 End Namespace",
-           GetBasicResultAt(5, 37, CA5353RuleName, CA5353Message));
+           GetBasicResultAt(5, 37, CA5350RuleName, DoNotUseTripleDESMessage));
         } 
 //No VB
         [Fact]
@@ -864,7 +864,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, CA5353RuleName, CA5353Message));
+            GetCSharpResultAt(10, 36, CA5350RuleName, DoNotUseTripleDESMessage));
         }
         
         [Fact]
@@ -880,7 +880,7 @@ namespace TestNamespace
         Del d = delegate () { TripleDES.Create(""TripleDES""); };
     }
 }",
-            GetCSharpResultAt(8, 31, CA5353RuleName, CA5353Message));
+            GetCSharpResultAt(8, 31, CA5350RuleName, DoNotUseTripleDESMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -890,7 +890,7 @@ Namespace TestNamespace
 		Private d As Del = Sub() TripleDES.Create(""TripleDES"")
     End Class
 End Namespace",
-GetBasicResultAt(6, 28, CA5353RuleName, CA5353Message));
+GetBasicResultAt(6, 28, CA5350RuleName, DoNotUseTripleDESMessage));
         }
         
         [Fact]
@@ -909,7 +909,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 56, CA5353RuleName, CA5353Message));
+            GetCSharpResultAt(10, 56, CA5350RuleName, DoNotUseTripleDESMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -919,7 +919,7 @@ Module TestClass
         Dim tDESalg As New TripleDESCryptoServiceProvider
     End Sub
 End Module",
-GetBasicResultAt(6, 24, CA5353RuleName, CA5353Message));
+GetBasicResultAt(6, 24, CA5350RuleName, DoNotUseTripleDESMessage));
         }
         
         [Fact]
@@ -937,7 +937,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, CA5353RuleName, CA5353Message));
+            GetCSharpResultAt(9, 26, CA5350RuleName, DoNotUseTripleDESMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -950,7 +950,7 @@ Namespace TestNamespace
 		End Property
 	End Class
 End Namespace",
-            GetBasicResultAt(7, 12, CA5353RuleName, CA5353Message));
+            GetBasicResultAt(7, 12, CA5350RuleName, DoNotUseTripleDESMessage));
         }
                 
         [Fact]
@@ -965,7 +965,7 @@ namespace TestNamespace
         TripleDESCryptoServiceProvider privateDES = new TripleDESCryptoServiceProvider();
     }
 }",
-            GetCSharpResultAt(7, 53, CA5353RuleName, CA5353Message));
+            GetCSharpResultAt(7, 53, CA5350RuleName, DoNotUseTripleDESMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -974,7 +974,7 @@ Namespace TestNamespace
 		Private privateDES As New TripleDESCryptoServiceProvider()
 	End Class
 End Namespace",
-GetBasicResultAt(5, 25, CA5353RuleName, CA5353Message));
+GetBasicResultAt(5, 25, CA5350RuleName, DoNotUseTripleDESMessage));
         }
 //No VB       
         [Fact]
@@ -993,7 +993,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, CA5353RuleName, CA5353Message));
+            GetCSharpResultAt(10, 36, CA5350RuleName, DoNotUseTripleDESMessage));
         }  
 //No VB        
         [Fact]
@@ -1009,7 +1009,7 @@ namespace TestNamespace
         Del d = delegate () { new TripleDESCryptoServiceProvider(); };
     }
 }",
-            GetCSharpResultAt(8, 31, CA5353RuleName, CA5353Message));
+            GetCSharpResultAt(8, 31, CA5350RuleName, DoNotUseTripleDESMessage));
         }
         
         [Fact]
@@ -1061,8 +1061,8 @@ namespace TestNamespace
         }
     }
 }" },
-            GetCSharpResultAt(10, 26, CA5353RuleName, CA5353Message),
-            GetCSharpResultAt(11, 13, CA5353RuleName, CA5353Message));
+            GetCSharpResultAt(10, 26, CA5350RuleName, DoNotUseTripleDESMessage),
+            GetCSharpResultAt(11, 13, CA5350RuleName, DoNotUseTripleDESMessage));
 
             VerifyBasic(new[] {
 //Test0
@@ -1102,8 +1102,8 @@ Namespace TestNamespace
 	End Class
 End Namespace
 " },
-            GetBasicResultAt(6, 17, CA5353RuleName, CA5353Message),
-            GetBasicResultAt(7, 4, CA5353RuleName, CA5353Message));
+            GetBasicResultAt(6, 17, CA5350RuleName, DoNotUseTripleDESMessage),
+            GetBasicResultAt(7, 4, CA5350RuleName, DoNotUseTripleDESMessage));
 
         }
        
@@ -1127,7 +1127,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 25, CA5355RuleName, CA5355Message));
+            GetCSharpResultAt(10, 25, CA5350RuleName, DoNotUseRIPEMD160Message));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1137,7 +1137,7 @@ Module TestClass
         Dim md1601alg As New RIPEMD160Managed
     End Sub
 End Module",
-GetBasicResultAt(6, 26, CA5355RuleName, CA5355Message));
+GetBasicResultAt(6, 26, CA5350RuleName, DoNotUseRIPEMD160Message));
         } 
         
         [Fact]
@@ -1155,7 +1155,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, CA5355RuleName, CA5355Message));
+            GetCSharpResultAt(9, 26, CA5350RuleName, DoNotUseRIPEMD160Message));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1168,7 +1168,7 @@ Namespace TestNamespace
 		End Property
 	End Class
 End Namespace",
-            GetBasicResultAt(7, 12, CA5355RuleName, CA5355Message));
+            GetBasicResultAt(7, 12, CA5350RuleName, DoNotUseRIPEMD160Message));
         }
         
         [Fact]
@@ -1183,7 +1183,7 @@ namespace TestNamespace
         RIPEMD160Managed privateRIPEMD160 = new RIPEMD160Managed();
     }
 }",
-            GetCSharpResultAt(7, 45, CA5355RuleName, CA5355Message));
+            GetCSharpResultAt(7, 45, CA5350RuleName, DoNotUseRIPEMD160Message));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1193,7 +1193,7 @@ Namespace TestNamespace
 	End Class
 End Namespace
 ", 
-        GetBasicResultAt(5, 31, CA5355RuleName, CA5355Message));
+        GetBasicResultAt(5, 31, CA5350RuleName, DoNotUseRIPEMD160Message));
         } 
 //No VB               
         [Fact]
@@ -1212,7 +1212,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, CA5355RuleName, CA5355Message));
+            GetCSharpResultAt(10, 36, CA5350RuleName, DoNotUseRIPEMD160Message));
         }
 //No VB        
         [Fact]
@@ -1228,7 +1228,7 @@ namespace TestNamespace
         Del d = delegate () { new RIPEMD160Managed(); };
     }
 }",
-            GetCSharpResultAt(8, 31, CA5355RuleName, CA5355Message));
+            GetCSharpResultAt(8, 31, CA5350RuleName, DoNotUseRIPEMD160Message));
         }
         
         [Fact]
@@ -1247,7 +1247,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 31, CA5355RuleName, CA5355Message));
+            GetCSharpResultAt(10, 31, CA5350RuleName, DoNotUseRIPEMD160Message));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1258,7 +1258,7 @@ Namespace TestNamespace
 		End Sub
 	End Class
 End Namespace",
-            GetBasicResultAt(6, 29, CA5355RuleName, CA5355Message));
+            GetBasicResultAt(6, 29, CA5350RuleName, DoNotUseRIPEMD160Message));
         }
         
         [Fact]
@@ -1276,7 +1276,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, CA5355RuleName, CA5355Message));
+            GetCSharpResultAt(9, 26, CA5350RuleName, DoNotUseRIPEMD160Message));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1289,7 +1289,7 @@ Namespace TestNamespace
 		End Property
 	End Class
 End Namespace",
-GetBasicResultAt(7, 12, CA5355RuleName, CA5355Message));
+GetBasicResultAt(7, 12, CA5350RuleName, DoNotUseRIPEMD160Message));
         }
         
         [Fact]
@@ -1304,7 +1304,7 @@ namespace TestNamespace
         RIPEMD160 privateRIPEMD160 = RIPEMD160.Create();
     }
 }",
-            GetCSharpResultAt(7, 38, CA5355RuleName, CA5355Message));
+            GetCSharpResultAt(7, 38, CA5350RuleName, DoNotUseRIPEMD160Message));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1313,7 +1313,7 @@ Namespace TestNamespace
 		Private privateRIPEMD160 As RIPEMD160 = RIPEMD160.Create()
 	End Class
 End Namespace",
-            GetBasicResultAt(5, 43, CA5355RuleName, CA5355Message));
+            GetBasicResultAt(5, 43, CA5350RuleName, DoNotUseRIPEMD160Message));
         }
 //No VB                
         [Fact]
@@ -1332,7 +1332,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, CA5355RuleName, CA5355Message));
+            GetCSharpResultAt(10, 36, CA5350RuleName, DoNotUseRIPEMD160Message));
         }
         
         [Fact]
@@ -1348,7 +1348,7 @@ namespace TestNamespace
         Del d = delegate () { RIPEMD160.Create(); };
     }
 }",
-            GetCSharpResultAt(8, 31, CA5355RuleName, CA5355Message));
+            GetCSharpResultAt(8, 31, CA5350RuleName, DoNotUseRIPEMD160Message));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1358,7 +1358,7 @@ Namespace TestNamespace
         Private d As Del = Sub() RIPEMD160.Create()
     End Class
 End Namespace",
-          GetBasicResultAt(6, 34, CA5355RuleName, CA5355Message));
+          GetBasicResultAt(6, 34, CA5350RuleName, DoNotUseRIPEMD160Message));
         }
         
         [Fact]
@@ -1377,7 +1377,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 25, CA5355RuleName, CA5355Message));
+            GetCSharpResultAt(10, 25, CA5350RuleName, DoNotUseRIPEMD160Message));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1388,7 +1388,7 @@ Namespace TestNamespace
 		End Sub
 	End Class
 End Namespace",
-            GetBasicResultAt(6, 16, CA5355RuleName, CA5355Message));
+            GetBasicResultAt(6, 16, CA5350RuleName, DoNotUseRIPEMD160Message));
         }
         
         [Fact]
@@ -1406,7 +1406,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, CA5355RuleName, CA5355Message));
+            GetCSharpResultAt(9, 26, CA5350RuleName, DoNotUseRIPEMD160Message));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1419,7 +1419,7 @@ Namespace TestNamespace
 		End Property
 	End Class
 End Namespace",
-            GetBasicResultAt(7, 12, CA5355RuleName, CA5355Message));
+            GetBasicResultAt(7, 12, CA5350RuleName, DoNotUseRIPEMD160Message));
         }
         
         [Fact]
@@ -1434,7 +1434,7 @@ namespace TestNamespace
         HMACRIPEMD160 privateHMARIPEMD160 = new HMACRIPEMD160();
     }
 }",
-            GetCSharpResultAt(7, 45, CA5355RuleName, CA5355Message));
+            GetCSharpResultAt(7, 45, CA5350RuleName, DoNotUseRIPEMD160Message));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1443,7 +1443,7 @@ Namespace TestNamespace
 		Private privateHMARIPEMD160 As New HMACRIPEMD160()
 	End Class
 End Namespace",
-           GetBasicResultAt(5, 34, CA5355RuleName, CA5355Message));
+           GetBasicResultAt(5, 34, CA5350RuleName, DoNotUseRIPEMD160Message));
         } 
 //No VB        
         [Fact]
@@ -1462,7 +1462,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, CA5355RuleName, CA5355Message));
+            GetCSharpResultAt(10, 36, CA5350RuleName, DoNotUseRIPEMD160Message));
         }
 //No VB        
         [Fact]
@@ -1478,7 +1478,7 @@ namespace TestNamespace
         Del d = delegate () { new HMACRIPEMD160(); };
     }
 }",
-            GetCSharpResultAt(8, 31, CA5355RuleName, CA5355Message));
+            GetCSharpResultAt(8, 31, CA5350RuleName, DoNotUseRIPEMD160Message));
         }   
         
         [Fact]
@@ -1524,7 +1524,7 @@ namespace TestNamespace
         }
     }
 }" },
-            GetCSharpResultAt(10, 25, CA5355RuleName, CA5355Message));
+            GetCSharpResultAt(10, 25, CA5350RuleName, DoNotUseRIPEMD160Message));
 
             VerifyBasic(new[] {
 //Test0
@@ -1556,7 +1556,7 @@ Namespace TestNamespace
 		End Function
 	End Class
 End Namespace" },
-            GetBasicResultAt(6, 16, CA5355RuleName, CA5355Message));
+            GetBasicResultAt(6, 16, CA5350RuleName, DoNotUseRIPEMD160Message));
         }
         
         [Fact]
@@ -1602,7 +1602,7 @@ namespace TestNamespace
         }
     }
 }" },
-            GetCSharpResultAt(10, 25, CA5355RuleName, CA5355Message));
+            GetCSharpResultAt(10, 25, CA5350RuleName, DoNotUseRIPEMD160Message));
 
             VerifyBasic(new[] {
 //Test0
@@ -1635,7 +1635,7 @@ Namespace TestNamespace
 	End Class
 End Namespace
 " },
-            GetBasicResultAt(6, 16, CA5355RuleName, CA5355Message));
+            GetBasicResultAt(6, 16, CA5350RuleName, DoNotUseRIPEMD160Message));
         } 
         
         [Fact]
@@ -1656,7 +1656,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(12, 25, CA5355RuleName, CA5355Message));
+            GetCSharpResultAt(12, 25, CA5350RuleName, DoNotUseRIPEMD160Message));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1671,7 +1671,7 @@ Namespace TestNamespace
 		End Sub
 	End Class
 End Namespace",
-            GetBasicResultAt(10, 16, CA5355RuleName, CA5355Message));
+            GetBasicResultAt(10, 16, CA5350RuleName, DoNotUseRIPEMD160Message));
         }   
 
         #endregion
@@ -1694,7 +1694,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 23, CA5356RuleName, CA5356Message));
+            GetCSharpResultAt(10, 23, CA5351RuleName, DoNotUseDSAMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1705,7 +1705,7 @@ Module TestClass
         Return dsa.CreateSignature(bytes)
     End Function
 End Module",
-GetBasicResultAt(7, 16, CA5356RuleName, CA5356Message));
+GetBasicResultAt(7, 16, CA5351RuleName, DoNotUseDSAMessage));
         } 
         
         [Fact]
@@ -1726,7 +1726,7 @@ class TestClass
         }
     }
 }",
-            GetCSharpResultAt(12, 20, CA5356RuleName, CA5356Message));
+            GetCSharpResultAt(12, 20, CA5351RuleName, DoNotUseDSAMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1740,7 +1740,7 @@ Class TestClass
 		End Get
 	End Property
 End Class",
-            GetBasicResultAt(9, 11, CA5356RuleName, CA5356Message));
+            GetBasicResultAt(9, 11, CA5351RuleName, DoNotUseDSAMessage));
         }
         
         [Fact]
@@ -1760,8 +1760,8 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 23, CA5356RuleName, CA5356Message),
-            GetCSharpResultAt(11, 23, CA5356RuleName, CA5356Message));
+            GetCSharpResultAt(10, 23, CA5351RuleName, DoNotUseDSAMessage),
+            GetCSharpResultAt(11, 23, CA5351RuleName, DoNotUseDSAMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1774,8 +1774,8 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-           GetBasicResultAt(7, 23, CA5356RuleName, CA5356Message),
-           GetBasicResultAt(8, 23, CA5356RuleName, CA5356Message));
+           GetBasicResultAt(7, 23, CA5351RuleName, DoNotUseDSAMessage),
+           GetBasicResultAt(8, 23, CA5351RuleName, DoNotUseDSAMessage));
         }  
      
         [Fact]
@@ -1797,8 +1797,8 @@ class TestClass
         }
     }
 }",
-            GetCSharpResultAt(12, 43, CA5356RuleName, CA5356Message),
-            GetCSharpResultAt(13, 25, CA5356RuleName, CA5356Message));
+            GetCSharpResultAt(12, 43, CA5351RuleName, DoNotUseDSAMessage),
+            GetCSharpResultAt(13, 25, CA5351RuleName, DoNotUseDSAMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1815,8 +1815,8 @@ Class TestClass
 		End Get
 	End Property
 End Class",
-            GetBasicResultAt(9, 12, CA5356RuleName, CA5356Message),
-            GetBasicResultAt(11, 12, CA5356RuleName, CA5356Message));
+            GetBasicResultAt(9, 12, CA5351RuleName, DoNotUseDSAMessage),
+            GetBasicResultAt(11, 12, CA5351RuleName, DoNotUseDSAMessage));
         }
         
         [Fact]
@@ -1884,7 +1884,7 @@ namespace TestNamespace
         }
     }
 }" },
-            GetCSharpResultAt(11, 13, CA5356RuleName, CA5356Message));
+            GetCSharpResultAt(11, 13, CA5351RuleName, DoNotUseDSAMessage));
 
             VerifyBasic(new[] {
 //Test0
@@ -1934,7 +1934,7 @@ Namespace TestNamespace
 		End Function
 	End Class
 End Namespace" },
-           GetBasicResultAt(7, 4, CA5356RuleName, CA5356Message));
+           GetBasicResultAt(7, 4, CA5351RuleName, DoNotUseDSAMessage));
         } 
         
         #endregion
@@ -1957,7 +1957,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 23, CA5357RuleName, CA5357Message));
+            GetCSharpResultAt(10, 23, CA5350RuleName, DoNotUseRijndaelMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1967,7 +1967,7 @@ Module TestClass
         Dim rijndaelalg As New RijndaelManaged
     End Sub
 End Module",
-GetBasicResultAt(6, 28, CA5357RuleName, CA5357Message));
+GetBasicResultAt(6, 28, CA5350RuleName, DoNotUseRijndaelMessage));
         }
                                                    
         [Fact]
@@ -1985,7 +1985,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, CA5357RuleName, CA5357Message));
+            GetCSharpResultAt(9, 26, CA5350RuleName, DoNotUseRijndaelMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1998,7 +1998,7 @@ Namespace TestNamespace
 		End Property
 	End Class
 End Namespace",
-            GetBasicResultAt(7, 12, CA5357RuleName, CA5357Message));
+            GetBasicResultAt(7, 12, CA5350RuleName, DoNotUseRijndaelMessage));
         } 
                 
         [Fact]
@@ -2013,7 +2013,7 @@ namespace TestNamespace
         RijndaelManaged privateRijndael = new RijndaelManaged();
     }
 }",
-            GetCSharpResultAt(7, 43, CA5357RuleName, CA5357Message));
+            GetCSharpResultAt(7, 43, CA5350RuleName, DoNotUseRijndaelMessage));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -2022,7 +2022,7 @@ Namespace TestNamespace
 		Private privateRijndael As New RijndaelManaged()
 	End Class
 End Namespace",
-            GetBasicResultAt(5, 30, CA5357RuleName, CA5357Message));
+            GetBasicResultAt(5, 30, CA5350RuleName, DoNotUseRijndaelMessage));
         } 
 //No VB                    
         [Fact]
@@ -2041,7 +2041,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, CA5357RuleName, CA5357Message));
+            GetCSharpResultAt(10, 36, CA5350RuleName, DoNotUseRijndaelMessage));
         }  
 //No VB        
         [Fact]
@@ -2057,7 +2057,7 @@ namespace TestNamespace
         Del d = delegate () { new RijndaelManaged(); };
     }
 }",
-            GetCSharpResultAt(8, 31, CA5357RuleName, CA5357Message));
+            GetCSharpResultAt(8, 31, CA5350RuleName, DoNotUseRijndaelMessage));
         } 
         
         [Fact]
@@ -2108,7 +2108,7 @@ namespace TestNamespace
         }
     }
 }" },
-            GetCSharpResultAt(10, 23, CA5357RuleName, CA5357Message));
+            GetCSharpResultAt(10, 23, CA5350RuleName, DoNotUseRijndaelMessage));
 
             VerifyBasic(new[] {
 //Test0
@@ -2144,7 +2144,7 @@ Namespace TestNamespace
 		End Sub
 	End Class
 End Namespace" },
-            GetBasicResultAt(6, 14, CA5357RuleName, CA5357Message));
+            GetBasicResultAt(6, 14, CA5350RuleName, DoNotUseRijndaelMessage));
         }
 
         #endregion
@@ -2159,20 +2159,15 @@ End Namespace" },
             return new CSharpDoNotUseInsecureCryptographicAlgorithmsAnalyzer();
         }
 
-        private const string CA5350RuleName = DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseMD5RuleId;
-        private const string CA5351RuleName = DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseDESRuleId;
-        private const string CA5352RuleName = DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseRC2RuleId;
-        private const string CA5353RuleName = DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseTripleDESRuleId;
-        private const string CA5355RuleName = DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseRIPEMD160RuleId;
-        private const string CA5356RuleName = DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseDSARuleId;
-        private const string CA5357RuleName = DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseRijndaelRuleId;
+        private const string CA5350RuleName = DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographicRuleId;
+        private const string CA5351RuleName = DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographicRuleId;
 
-        private readonly string CA5350Message = DesktopAnalyzersResources.DoNotUseMD5;
-        private readonly string CA5351Message = DesktopAnalyzersResources.DoNotUseDES;
-        private readonly string CA5352Message = DesktopAnalyzersResources.DoNotUseRC2;
-        private readonly string CA5353Message = DesktopAnalyzersResources.DoNotUseTripleDES;  
-        private readonly string CA5355Message = DesktopAnalyzersResources.DoNotUseRIPEMD160;
-        private readonly string CA5356Message = DesktopAnalyzersResources.DoNotUseDSA;
-        private readonly string CA5357Message = DesktopAnalyzersResources.DoNotUseRijndael;
+        private readonly string DoNotUseMD5Message = DesktopAnalyzersResources.DoNotUseMD5;
+        private readonly string DoNotUseDESMessage = DesktopAnalyzersResources.DoNotUseDES;
+        private readonly string DoNotUseRC2Message = DesktopAnalyzersResources.DoNotUseRC2;
+        private readonly string DoNotUseTripleDESMessage = DesktopAnalyzersResources.DoNotUseTripleDES;  
+        private readonly string DoNotUseRIPEMD160Message = DesktopAnalyzersResources.DoNotUseRIPEMD160;
+        private readonly string DoNotUseDSAMessage = DesktopAnalyzersResources.DoNotUseDSA;
+        private readonly string DoNotUseRijndaelMessage = DesktopAnalyzersResources.DoNotUseRijndael;
     }
 }

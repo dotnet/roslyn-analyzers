@@ -37,7 +37,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
         private static readonly string s_documentFullName = @"Microsoft.CodeAnalysis.Document";
         private static readonly string s_syntaxNodeFullName = @"Microsoft.CodeAnalysis.SyntaxNode";
         private static readonly string s_compilationFullName = @"Microsoft.CodeAnalysis.Compilation";
-        private static readonly string s_semanticModelFullName = @"Microsoft.CodeAnalysis.SemanticModel";
 
         // A list of known immutable object names
         private static readonly ImmutableArray<string> s_immutableObjectNames = ImmutableArray.Create(
@@ -45,8 +44,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
             s_projectFullName,
             s_documentFullName,
             s_syntaxNodeFullName,
-            s_compilationFullName,
-            s_semanticModelFullName);
+            s_compilationFullName);
 
         private static readonly string s_Add = "Add";
         private static readonly string s_Remove = "Remove";

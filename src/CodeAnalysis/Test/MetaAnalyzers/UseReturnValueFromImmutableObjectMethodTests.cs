@@ -30,14 +30,18 @@ class TestSimple
 
         Solution solution = default(Solution);
         solution.AddProject(""Sample"", ""Sample"", ""CSharp"");
+
+        Compilation compilation = default(Compilation);
+        compilation.RemoveAllSyntaxTrees();
     }
 }
 ";
             var documentExpected = GetCSharpExpectedDiagnostic(10, 9, "Document", "WithText");
             var projectExpected = GetCSharpExpectedDiagnostic(13, 9, "Project", "AddDocument");
             var solutionExpected = GetCSharpExpectedDiagnostic(16, 9, "Solution", "AddProject");
+            var compilationExpected = GetCSharpExpectedDiagnostic(19, 9, "Compilation", "RemoveAllSyntaxTrees");
 
-            VerifyCSharp(source, documentExpected, projectExpected, solutionExpected);
+            VerifyCSharp(source, documentExpected, projectExpected, solutionExpected, compilationExpected);
         }
 
         [Fact]

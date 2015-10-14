@@ -30,53 +30,47 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
             description: s_localizableDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return ImmutableArray.Create(DoNotIgnoreReturnValueDiagnosticRule);
-            }
-        }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DoNotIgnoreReturnValueDiagnosticRule);
 
         private static readonly string s_solutionFullName = @"Microsoft.CodeAnalysis.Solution";
         private static readonly string s_projectFullName = @"Microsoft.CodeAnalysis.Project";
         private static readonly string s_documentFullName = @"Microsoft.CodeAnalysis.Document";
         private static readonly string s_syntaxNodeFullName = @"Microsoft.CodeAnalysis.SyntaxNode";
+        private static readonly string s_compilationFullName = @"Microsoft.CodeAnalysis.Compilation";
+        private static readonly string s_semanticModelFullName = @"Microsoft.CodeAnalysis.SemanticModel";
 
         // A list of known immutable object names
-        private static ImmutableArray<string> s_immutableObjectNames
-        {
-            get
-            {
-                return ImmutableArray.Create(s_solutionFullName, s_projectFullName, s_documentFullName, s_syntaxNodeFullName);
-            }
-        }
+        private static readonly ImmutableArray<string> s_immutableObjectNames = ImmutableArray.Create(
+            s_solutionFullName,
+            s_projectFullName,
+            s_documentFullName,
+            s_syntaxNodeFullName,
+            s_compilationFullName,
+            s_semanticModelFullName);
 
         private static readonly string s_Add = "Add";
         private static readonly string s_Remove = "Remove";
         private static readonly string s_Replace = "Replace";
         private static readonly string s_With = "With";
 
-        private static ImmutableArray<string> s_immutableMethodNames 
-        {
-            get
-            {
-                return ImmutableArray.Create(s_Add, s_Remove, s_Replace, s_With);
-            }
-        }
+        private static readonly ImmutableArray<string> s_immutableMethodNames = ImmutableArray.Create(
+            s_Add, 
+            s_Remove, 
+            s_Replace, 
+            s_With);
 
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(AnalzyeInvocationForIgnoredReturnValue, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(AnalyzeInvocationForIgnoredReturnValue, SyntaxKind.InvocationExpression);
         }
 
-        public void AnalzyeInvocationForIgnoredReturnValue(SyntaxNodeAnalysisContext context)
+        public void AnalyzeInvocationForIgnoredReturnValue(SyntaxNodeAnalysisContext context)
         {
             var model = context.SemanticModel;
             var candidateInvocation = (InvocationExpressionSyntax)context.Node;
 
-            //We're looking for invocations that are children of a statement but not children of a return statement.
-            if(!(candidateInvocation.Parent is StatementSyntax) || candidateInvocation.Parent is ReturnStatementSyntax)
+            //We're looking for invocations that are direct children of expression statements
+            if (!(candidateInvocation.Parent is ExpressionStatementSyntax))
             {
                 return;
             }

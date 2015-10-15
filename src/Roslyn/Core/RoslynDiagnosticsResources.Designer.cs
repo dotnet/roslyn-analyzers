@@ -251,6 +251,24 @@ namespace Roslyn.Diagnostics.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The symbol &apos;{0}&apos; appears more than once in the public API files..
+        /// </summary>
+        internal static string DuplicateSymbolsInPublicApiFilesMessage {
+            get {
+                return ResourceManager.GetString("DuplicateSymbolsInPublicApiFilesMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not duplicate symbols in public API files.
+        /// </summary>
+        internal static string DuplicateSymbolsInPublicApiFilesTitle {
+            get {
+                return ResourceManager.GetString("DuplicateSymbolsInPublicApiFilesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to When a base class is noninheritable because its constructor is internal, a derived class should not make it inheritable by having a public or protected constructor..
         /// </summary>
         internal static string ExposedNoninstantiableTypeDescription {

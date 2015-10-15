@@ -28,5 +28,6 @@ namespace Roslyn.Diagnostics.Analyzers
         public const string ExposedNoninstantiableTypeRuleId = "RS0022";
         public const string MissingSharedAttributeRuleId = "RS0023";
         public const string PublicApiFilesInvalid = "RS0024";
+        public const string DuplicatedSymbolInPublicApiFiles = "RS0025";
     }
 }

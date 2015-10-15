@@ -27,7 +27,7 @@ namespace Roslyn.Diagnostics.Analyzers.ApiDesign
             title: RoslynDiagnosticsResources.DeclarePublicApiTitle,
             messageFormat: RoslynDiagnosticsResources.DeclarePublicApiMessage,
             category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: RoslynDiagnosticsResources.DeclarePublicApiDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
@@ -37,7 +37,7 @@ namespace Roslyn.Diagnostics.Analyzers.ApiDesign
             title: RoslynDiagnosticsResources.RemoveDeletedApiTitle,
             messageFormat: RoslynDiagnosticsResources.RemoveDeletedApiMessage,
             category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: RoslynDiagnosticsResources.RemoveDeletedApiDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
@@ -47,7 +47,7 @@ namespace Roslyn.Diagnostics.Analyzers.ApiDesign
             title: RoslynDiagnosticsResources.ExposedNoninstantiableTypeTitle,
             messageFormat: RoslynDiagnosticsResources.ExposedNoninstantiableTypeMessage,
             category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: RoslynDiagnosticsResources.ExposedNoninstantiableTypeDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
@@ -57,7 +57,7 @@ namespace Roslyn.Diagnostics.Analyzers.ApiDesign
             title: RoslynDiagnosticsResources.PublicApiFilesInvalidTitle,
             messageFormat: RoslynDiagnosticsResources.PublicApiFilesInvalidMessage,
             category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             customTags: WellKnownDiagnosticTags.Telemetry);
 

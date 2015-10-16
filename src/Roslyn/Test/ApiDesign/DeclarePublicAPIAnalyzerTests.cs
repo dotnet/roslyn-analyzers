@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.Text;
 using Roslyn.Diagnostics.Analyzers;
 using Roslyn.Diagnostics.Analyzers.ApiDesign;
 using Roslyn.Diagnostics.Analyzers.CSharp.ApiDesign;
+using Roslyn.Diagnostics.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.CodeAnalysis.UnitTests.ApiDesign
@@ -230,6 +231,70 @@ C.Property.set -> void
             VerifyCSharp(source, shippedText, unshippedText,
                 // error RS0024: The contents of the public API files are invalid: The shipped API file can't have removed members
                 GetGlobalResult(DeclarePublicAPIAnalyzer.PublicApiFilesInvalid, DeclarePublicAPIAnalyzer.InvalidReasonShippedCantHaveRemoved));
+        }
+
+        [Fact]
+        [WorkItem(312, "https://github.com/dotnet/roslyn-analyzers/issues/312")]
+        public void DuplicateSymbolInSameAPIFile()
+        {
+            var source = @"
+public class C
+{
+    public int Field;
+    public int Property { get; set; }
+}
+";
+
+            var shippedText = @"
+C
+C.Field -> int
+C.Property.get -> int
+C.Property.set -> void
+C.Property.get -> int
+";
+
+            var unshippedText = @"";
+
+            VerifyCSharp(source, shippedText, unshippedText,
+                // Warning RS0025: The symbol 'C.Property.get -> int' appears more than once in the public API files.
+                GetResultAt(
+                    DeclarePublicAPIAnalyzer.ShippedFileName,
+                    DeclarePublicAPIAnalyzer.DuplicateSymbolInApiFiles.Id,
+                    string.Format(DeclarePublicAPIAnalyzer.DuplicateSymbolInApiFiles.MessageFormat.ToString(), "C.Property.get -> int"),
+                    DeclarePublicAPIAnalyzer.ShippedFileName + "(6,1)",
+                    DeclarePublicAPIAnalyzer.ShippedFileName + "(4,1)"));
+        }
+
+        [Fact]
+        [WorkItem(312, "https://github.com/dotnet/roslyn-analyzers/issues/312")]
+        public void DuplicateSymbolInDifferentAPIFiles()
+        {
+            var source = @"
+public class C
+{
+    public int Field;
+    public int Property { get; set; }
+}
+";
+
+            var shippedText = @"
+C
+C.Field -> int
+C.Property.get -> int
+C.Property.set -> void
+";
+
+            var unshippedText = @"
+C.Property.get -> int";
+
+            VerifyCSharp(source, shippedText, unshippedText,
+                // Warning RS0025: The symbol 'C.Property.get -> int' appears more than once in the public API files.
+                GetResultAt(
+                    DeclarePublicAPIAnalyzer.ShippedFileName,
+                    DeclarePublicAPIAnalyzer.DuplicateSymbolInApiFiles.Id,
+                    string.Format(DeclarePublicAPIAnalyzer.DuplicateSymbolInApiFiles.MessageFormat.ToString(), "C.Property.get -> int"),
+                    DeclarePublicAPIAnalyzer.UnshippedFileName + "(2,1)",
+                    DeclarePublicAPIAnalyzer.ShippedFileName + "(4,1)"));
         }
     }
 }

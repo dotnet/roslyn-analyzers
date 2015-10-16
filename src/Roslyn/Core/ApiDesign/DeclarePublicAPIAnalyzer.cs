@@ -27,7 +27,7 @@ namespace Roslyn.Diagnostics.Analyzers.ApiDesign
             title: RoslynDiagnosticsResources.DeclarePublicApiTitle,
             messageFormat: RoslynDiagnosticsResources.DeclarePublicApiMessage,
             category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: RoslynDiagnosticsResources.DeclarePublicApiDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
@@ -37,7 +37,7 @@ namespace Roslyn.Diagnostics.Analyzers.ApiDesign
             title: RoslynDiagnosticsResources.RemoveDeletedApiTitle,
             messageFormat: RoslynDiagnosticsResources.RemoveDeletedApiMessage,
             category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: RoslynDiagnosticsResources.RemoveDeletedApiDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
@@ -47,7 +47,7 @@ namespace Roslyn.Diagnostics.Analyzers.ApiDesign
             title: RoslynDiagnosticsResources.ExposedNoninstantiableTypeTitle,
             messageFormat: RoslynDiagnosticsResources.ExposedNoninstantiableTypeMessage,
             category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: RoslynDiagnosticsResources.ExposedNoninstantiableTypeDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
@@ -57,7 +57,16 @@ namespace Roslyn.Diagnostics.Analyzers.ApiDesign
             title: RoslynDiagnosticsResources.PublicApiFilesInvalidTitle,
             messageFormat: RoslynDiagnosticsResources.PublicApiFilesInvalidMessage,
             category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            customTags: WellKnownDiagnosticTags.Telemetry);
+
+        internal static readonly DiagnosticDescriptor DuplicateSymbolInApiFiles = new DiagnosticDescriptor(
+            id: RoslynDiagnosticIds.DuplicatedSymbolInPublicApiFiles,
+            title: RoslynDiagnosticsResources.DuplicateSymbolsInPublicApiFilesTitle,
+            messageFormat: RoslynDiagnosticsResources.DuplicateSymbolsInPublicApiFilesMessage,
+            category: "ApiDesign",
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
@@ -95,7 +104,7 @@ namespace Roslyn.Diagnostics.Analyzers.ApiDesign
                 miscellaneousOptions:
                     SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DeclareNewApiRule, RemoveDeletedApiRule, ExposedNoninstantiableType, PublicApiFilesInvalid);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DeclareNewApiRule, RemoveDeletedApiRule, ExposedNoninstantiableType, PublicApiFilesInvalid, DuplicateSymbolInApiFiles);
 
         private readonly ImmutableArray<AdditionalText> _extraAdditionalFiles;
 
@@ -257,15 +266,40 @@ namespace Roslyn.Diagnostics.Analyzers.ApiDesign
             return shippedText != null && unshippedText != null;
         }
 
-        private bool ValidateApiFiles(ApiData shippedData, ApiData unshippedData, out List<Diagnostic> list)
+        private bool ValidateApiFiles(ApiData shippedData, ApiData unshippedData, out List<Diagnostic> errors)
         {
-            list = new List<Diagnostic>();
+            errors = new List<Diagnostic>();
             if (shippedData.RemovedApiList.Length > 0)
             {
-                list.Add(Diagnostic.Create(PublicApiFilesInvalid, Location.None, InvalidReasonShippedCantHaveRemoved));
+                errors.Add(Diagnostic.Create(PublicApiFilesInvalid, Location.None, InvalidReasonShippedCantHaveRemoved));
             }
 
-            return list.Count == 0;
+            var publicApiMap = new Dictionary<string, ApiLine>(StringComparer.Ordinal);
+            ValidateApiList(publicApiMap, shippedData.ApiList, errors);
+            ValidateApiList(publicApiMap, unshippedData.ApiList, errors);
+
+            return errors.Count == 0;
+        }
+
+        private static void ValidateApiList(Dictionary<string, ApiLine> publicApiMap, ImmutableArray<ApiLine> apiList, List<Diagnostic> errors)
+        {
+            foreach (var cur in apiList)
+            {
+                ApiLine existingLine;
+                if (publicApiMap.TryGetValue(cur.Text, out existingLine))
+                {
+                    var existingLinePositionSpan = existingLine.SourceText.Lines.GetLinePositionSpan(existingLine.Span);
+                    var existingLocation = Location.Create(existingLine.Path, existingLine.Span, existingLinePositionSpan);
+
+                    var duplicateLinePositionSpan = cur.SourceText.Lines.GetLinePositionSpan(cur.Span);
+                    var duplicateLocation = Location.Create(cur.Path, cur.Span, duplicateLinePositionSpan);
+                    errors.Add(Diagnostic.Create(DuplicateSymbolInApiFiles, duplicateLocation, new[] { existingLocation }, cur.Text));
+                }
+                else
+                {
+                    publicApiMap.Add(cur.Text, cur);
+                }
+            }
         }
     }
 }

@@ -8,17 +8,17 @@
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{219EC670-D9C3-4493-AC28-AD42697CCFAD}</ProjectGuid>
+    <ProjectGuid>{857233D3-88FC-4CE5-9913-0456929A1B6E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AnalyzerProject>true</AnalyzerProject>
-    <AssemblyName>Desktop.VisualBasic.Analyzers</AssemblyName>
+    <AssemblyName>System.Security.Cryptography.Hashing.Algorithms.VisualBasic.Analyzers</AssemblyName>
     <ProjectTypeGuids>{14182A97-F7F0-4C62-8B27-98AA8AE2109A};{F184B08F-C81C-45F6-A57F-5ABD9991F28F}</ProjectTypeGuids>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
     <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
     <RestorePackages>true</RestorePackages>
-    <SemanticVersion>$(DesktopAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(DesktopAnalyzersPreReleaseVersion)</PreReleaseVersion>
+    <SemanticVersion>$(SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion)</SemanticVersion>
+    <PreReleaseVersion>$(SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
   </PropertyGroup>
@@ -29,9 +29,9 @@
     <Analyzer Include="..\..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\vb\Microsoft.CodeAnalysis.VisualBasic.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\DesktopAnalyzers.csproj">
-      <Project>{D1B42764-D442-4E4C-B2E7-9BA36FFBDDF1}</Project>
-      <Name>DesktopAnalyzers</Name>
+    <ProjectReference Include="..\Core\SystemSecurityCryptographyHashingAlgorithmsAnalyzers.csproj">
+      <Project>{DAA5B1A4-9C03-4F0E-AC61-AAD0F96457F8}</Project>
+      <Name>SystemSecurityCryptographyHashingAlgorithmsAnalyzers</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -92,10 +92,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Security\DoNotCatchCorruptedStateExceptionsAnalyzer.vb" />
-    <Compile Include="Security\DoNotUseInsecureCryptographicAlgorithmsAnalyzer.vb" />
+    <Compile Include="Security\DoNotUseInsecureCryptographicAlgorithms.vb" />
     <Compile Include="Shared\SyntaxNodeHelper.vb" />
-    <Content Include="..\Desktop.Analyzers.Common.props">
+    <Content Include="..\System.Security.Cryptography.Hashing.Algorithms.Analyzers.Common.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config">

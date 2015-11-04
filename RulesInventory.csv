@@ -260,7 +260,7 @@ CA2131,CriticalTypesMustNotParticipateInTypeEquivalence,System.Runtime,#N/A,Secu
 CA2128,#N/A,System.Runtime,#N/A,Security transparent code should not assert,"This rule analyzes all methods and types in an assembly which is either 100% transparent or mixed transparent/critical, and flags any declarative or imperative usage of CodeAccessPermission.Assert.",,3,0,0,,Security,Low,,,
 CA2150,TransparentCodeMustNotUseCriticalAttributes,System.Runtime,#N/A,#N/A,#N/A,No,,,,,,Low,,,
 CA2151,FieldsWithCriticalTypesShouldBeCriticalFxCopRule,System.Runtime,#N/A,#N/A,#N/A,No,,,,,,Low,,,
-CA2153,DoNotCatchCorruptedStateExceptionsInGeneralHandlers,System.Runtime,Desktop.Analyzers,Do not catch corrupted state exceptions in general handlers.,Do not author general catch handlers in code that receives corrupted state exceptions.,No,,,,,,,Yes,,
+CA2153,DoNotCatchCorruptedStateExceptionsInGeneralHandlers,System.Runtime,Desktop.Analyzers,Do not catch corrupted state exceptions in general handlers.,Do not author general catch handlers in code that receives corrupted state exceptions.,No,,,,,Security,,Yes,,
 CA5122,PInvokesShouldNotBeSafeCriticalFxCopRule,System.Runtime,#N/A,#N/A,#N/A,No,,,,,,Low,,,
 CA900,AptcaAssembliesShouldBeReviewed,System.Runtime,#N/A,Aptca assemblies should be reviewed,Microsoft only allows certain assemblies to have the AllowPartiallyTrustedCallers attribute. This rule can be ignored if the assembly is not for distribution outside of Microsoft.,No,,,,,,,Cut,,
 CA901,AptcaTypesShouldBeReviewed,System.Runtime,#N/A,Aptca types should be reviewed,"Types not on the list must either have both a LinkDemand and an InheritanceDemand, or have a LinkDemand and be sealed. This is a requirement of RTM security signoff.",No,,,,,,,Cut,,

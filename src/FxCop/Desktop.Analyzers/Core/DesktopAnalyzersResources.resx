@@ -144,12 +144,6 @@
   <data name="DoNotUseRC2Description" xml:space="preserve">
     <value>This type implements RC2, a cryptographically insecure encryption algorithm. Replace this usage with an AES encryption algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits.</value>
   </data>
-  <data name="DoNotUseRijndael" xml:space="preserve">
-    <value>Do not use insecure cryptographic algorithm Rijndael.</value>
-  </data>
-  <data name="DoNotUseRijndaelDescription" xml:space="preserve">
-    <value>This type implements Rijndael, a cryptographically insecure encryption algorithm. Replace this usage with an AES encryption algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits.</value>
-  </data>
   <data name="DoNotUseRIPEMD160" xml:space="preserve">
     <value>Do not use insecure cryptographic algorithm RIPEMD160.</value>
   </data>

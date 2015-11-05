@@ -29,9 +29,6 @@ namespace Desktop.Analyzers
         private static readonly LocalizableString s_localizableDoNotUseRIPEMD160Description = DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseRIPEMD160Description));
         private static readonly LocalizableString s_localizableDoNotUseDSATitle = DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseDSA));
         private static readonly LocalizableString s_localizableDoNotUseDSADescription = DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseDSADescription));
-        private static readonly LocalizableString s_localizableDoNotUseRijndaelTitle = DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseRijndael));
-        private static readonly LocalizableString s_localizableDoNotUseRijndaelDescription = DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseRijndaelDescription));
-
 
         internal static DiagnosticDescriptor DoNotUseMD5SpecificRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographicRuleId,
                                                                                           s_localizableDoNotUseMD5Title,
@@ -57,10 +54,6 @@ namespace Desktop.Analyzers
                                                                                           s_localizableDoNotUseDSATitle,
                                                                                           s_localizableDoNotUseDSADescription);
 
-        internal static DiagnosticDescriptor DoNotUseRijndaelSpecificRule = CreateDiagnosticDescriptor(DoNotUseWeakCryptographicRuleId,
-                                                                                               s_localizableDoNotUseRijndaelTitle,
-                                                                                               s_localizableDoNotUseRijndaelDescription);
-
         protected abstract Analyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes cryptTypes);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics = ImmutableArray.Create(DoNotUseMD5SpecificRule,
@@ -68,8 +61,7 @@ namespace Desktop.Analyzers
                                                                                                                   DoNotUseRC2SpecificRule,
                                                                                                                   DoNotUseTripleDESSpecificRule, 
                                                                                                                   DoNotUseRIPEMD160SpecificRule,
-                                                                                                                  DoNotUseDSASpecificRule,
-                                                                                                                  DoNotUseRijndaelSpecificRule);
+                                                                                                                  DoNotUseDSASpecificRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             => s_supportedDiagnostics;
@@ -107,7 +99,6 @@ namespace Desktop.Analyzers
                 || types.DSASignatureFormatter != null 
                 || types.HMACMD5 != null
                 || types.RC2 != null
-                || types.Rijndael != null
                 || types.TripleDES != null
                 || types.RIPEMD160 != null
                 || types.HMACRIPEMD160 != null;
@@ -154,10 +145,6 @@ namespace Desktop.Analyzers
                 else if (type.IsDerivedFrom(_cryptTypes.RC2, baseTypesOnly: true))
                 {
                     rule = DoNotUseRC2SpecificRule;
-                }
-                else if (type.IsDerivedFrom(_cryptTypes.Rijndael, baseTypesOnly: true))
-                {
-                    rule = DoNotUseRijndaelSpecificRule;
                 }
                 else if (type.IsDerivedFrom(_cryptTypes.TripleDES, baseTypesOnly: true))
                 {

@@ -134,6 +134,33 @@ namespace Microsoft.CodeAnalysis.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Many objects exposed by Roslyn are immutable. The return value from a method invocation on these objects should not be ignored..
+        /// </summary>
+        internal static string DoNotIgnoreReturnValueOnImmutableObjectMethodInvocationDescription {
+            get {
+                return ResourceManager.GetString("DoNotIgnoreReturnValueOnImmutableObjectMethodInvocationDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; is immutable and &apos;{1}&apos; will not have any effect on it. Consider using the return value from &apos;{1}&apos;..
+        /// </summary>
+        internal static string DoNotIgnoreReturnValueOnImmutableObjectMethodInvocationMessage {
+            get {
+                return ResourceManager.GetString("DoNotIgnoreReturnValueOnImmutableObjectMethodInvocationMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not ignore values returned by methods on immutable objects..
+        /// </summary>
+        internal static string DoNotIgnoreReturnValueOnImmutableObjectMethodInvocationTitle {
+            get {
+                return ResourceManager.GetString("DoNotIgnoreReturnValueOnImmutableObjectMethodInvocationTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Instance of a diagnostic analyzer might outlive the lifetime of compilation. Hence, storing per-compilation data, such as symbols, into the fields of a diagnostic analyzer might cause stale compilations to stay alive and cause memory leaks.  Instead, you should store this data on a separate type instantiated in a compilation start action, registered using &apos;{0}.{1}&apos; API. An instance of this type will be created per-compilation and it won&apos;t outlive compilation&apos;s lifetime, hence avoiding memory leaks..
         /// </summary>
         internal static string DoNotStorePerCompilationDataOntoFieldsDescription {

@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="FixAnalyzers\CSharpFixerWithFixAllAnalyzer.cs" />
     <Compile Include="MetaAnalyzers\CSharpDiagnosticDescriptorCreationAnalyzer.cs" />
+    <Compile Include="CSharpImmutableObjectMethodAnalyzer.cs" />
     <Compile Include="MetaAnalyzers\CSharpRegisterActionAnalyzer.cs" />
     <Compile Include="MetaAnalyzers\CSharpDiagnosticAnalyzerFieldsAnalyzer.cs" />
     <Compile Include="MetaAnalyzers\CSharpReportDiagnosticAnalyzer.cs" />

@@ -17,5 +17,6 @@ namespace Microsoft.CodeAnalysis.Analyzers
         public const string OverrideCodeActionEquivalenceKeyRuleId = "RS1011";
         public const string StartActionWithNoRegisteredActionsRuleId = "RS1012";
         public const string StartActionWithOnlyEndActionRuleId = "RS1013";
+        public const string DoNotIgnoreReturnValueOnImmutableObjectMethodInvocation = "RS1014";
     }
 }

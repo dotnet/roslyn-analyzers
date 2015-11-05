@@ -72,7 +72,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers
             var candidateInvocation = (InvocationExpressionSyntax)context.Node;
 
             //We're looking for invocations that are direct children of expression statements
-            if (!(candidateInvocation.Parent is ExpressionStatementSyntax))
+            if (!(candidateInvocation.Parent.IsKind(SyntaxKind.ExpressionStatement)))
             {
                 return;
             }

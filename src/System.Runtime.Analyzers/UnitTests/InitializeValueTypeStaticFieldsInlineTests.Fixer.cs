@@ -12,22 +12,22 @@ namespace System.Runtime.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicInitializeValueTypeStaticFieldsInlineAnalyzer();
+            return new BasicInitializeStaticFieldsInlineAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpInitializeValueTypeStaticFieldsInlineAnalyzer();
+            return new CSharpInitializeStaticFieldsInlineAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
-            return new BasicInitializeValueTypeStaticFieldsInlineFixer();
+            return new BasicInitializeStaticFieldsInlineFixer();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new CSharpInitializeValueTypeStaticFieldsInlineFixer();
+            return new CSharpInitializeStaticFieldsInlineFixer();
         }
     }
 }

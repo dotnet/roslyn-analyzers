@@ -211,11 +211,17 @@
   <data name="InitializeValueTypeStaticFieldsInlineTitle" xml:space="preserve">
     <value>Initialize value type static fields inline</value>
   </data>
+  <data name="InitializeReferenceTypeStaticFieldsInlineTitle" xml:space="preserve">
+    <value>Initialize reference type static fields inline</value>
+  </data>
   <data name="InitializeValueTypeStaticFieldsInlineDescription" xml:space="preserve">
     <value>A value type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.</value>
   </data>
-  <data name="InitializeValueTypeStaticFieldsInlineMessage" xml:space="preserve">
-    <value>Initialize value type static fields inline</value>
+  <data name="InitializeReferenceTypeStaticFieldsInlineDescription" xml:space="preserve">
+    <value>A reference type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.</value>
+  </data>
+  <data name="InitializeStaticFieldsInlineMessage" xml:space="preserve">
+    <value>Initialize all static fields in '{0}' when those fields are declared and remove the explicit static constructor</value>
   </data>
   <data name="DisposableFieldsShouldBeDisposedTitle" xml:space="preserve">
     <value>Disposable fields should be disposed</value>

@@ -29,7 +29,7 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_CA1810_LocalizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182275.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
@@ -39,7 +39,7 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_CA2207_LocalizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182346.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);

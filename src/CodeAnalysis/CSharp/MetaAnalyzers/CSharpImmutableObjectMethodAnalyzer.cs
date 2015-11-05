@@ -38,14 +38,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
         private static readonly string s_syntaxNodeFullName = @"Microsoft.CodeAnalysis.SyntaxNode";
         private static readonly string s_compilationFullName = @"Microsoft.CodeAnalysis.Compilation";
 
-        // A list of known immutable object names
-        private static readonly ImmutableArray<string> s_immutableObjectNames = ImmutableArray.Create(
-            s_solutionFullName,
-            s_projectFullName,
-            s_documentFullName,
-            s_syntaxNodeFullName,
-            s_compilationFullName);
-
         private static readonly string s_Add = "Add";
         private static readonly string s_Remove = "Remove";
         private static readonly string s_Replace = "Replace";
@@ -59,10 +51,25 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
 
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(AnalyzeInvocationForIgnoredReturnValue, SyntaxKind.InvocationExpression);
+            context.RegisterCompilationStartAction(compilationContext =>
+            {
+                var solutionSymbol = compilationContext.Compilation.GetTypeByMetadataName(s_solutionFullName);
+                var projectSymbol = compilationContext.Compilation.GetTypeByMetadataName(s_projectFullName);
+                var documentSymbol = compilationContext.Compilation.GetTypeByMetadataName(s_documentFullName);
+                var syntaxNodeSymbol = compilationContext.Compilation.GetTypeByMetadataName(s_syntaxNodeFullName);
+                var compilationSymbol = compilationContext.Compilation.GetTypeByMetadataName(s_compilationFullName);
+
+                var immutableSymbols = ImmutableArray.Create(solutionSymbol, projectSymbol, documentSymbol, syntaxNodeSymbol, compilationSymbol);
+                //Only register our node action if we can find the symbols for our immutable types
+                if (immutableSymbols.Any(n => n == null))
+                {
+                    return;
+                }
+                compilationContext.RegisterSyntaxNodeAction(sc => AnalyzeInvocationForIgnoredReturnValue(sc, immutableSymbols), SyntaxKind.InvocationExpression);
+            });
         }
 
-        public void AnalyzeInvocationForIgnoredReturnValue(SyntaxNodeAnalysisContext context)
+        public void AnalyzeInvocationForIgnoredReturnValue(SyntaxNodeAnalysisContext context, ImmutableArray<INamedTypeSymbol> immutableTypeSymbols)
         {
             var model = context.SemanticModel;
             var candidateInvocation = (InvocationExpressionSyntax)context.Node;
@@ -88,11 +95,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
             }
 
             //If we're not in one of the known immutable types, quit
-            var parentName = methodSymbol.ReceiverType.ToString();
-            var baseTypesAndSelf = methodSymbol.ReceiverType.GetBaseTypes().Select(n => n.ToString()).ToList();
-            baseTypesAndSelf.Add(parentName);
+            var parentType = methodSymbol.ReceiverType as INamedTypeSymbol;
+            if(parentType == null)
+            {
+                return;
+            }
+            var baseTypesAndSelf = methodSymbol.ReceiverType.GetBaseTypes().ToList();
+            baseTypesAndSelf.Add(parentType);
 
-            if (!baseTypesAndSelf.Any(n => s_immutableObjectNames.Contains(n)))
+            if (!baseTypesAndSelf.Any(n => immutableTypeSymbols.Contains(n)))
             {
                 return;
             }

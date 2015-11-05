@@ -1,36 +1,37 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <MetaCompilationSemanticVersion>1.0.0</MetaCompilationSemanticVersion>
-    <MetaCompilationPreReleaseVersion>beta1</MetaCompilationPreReleaseVersion>
+   <PropertyGroup>
+      <MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion>1.0.0</MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion>
+      <MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion>beta1</MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion>
 
-    <AsyncPackageSemanticVersion>1.0.0</AsyncPackageSemanticVersion>
-    <AsyncPackagePreReleaseVersion>beta1</AsyncPackagePreReleaseVersion>
+      <DesktopAnalyzersSemanticVersion>1.0.0</DesktopAnalyzersSemanticVersion>
+      <DesktopAnalyzersPreReleaseVersion>beta1</DesktopAnalyzersPreReleaseVersion>
 
-    <MicrosoftCodeAnalysisAnalyzersSemanticVersion>1.0.1</MicrosoftCodeAnalysisAnalyzersSemanticVersion>
-    <MicrosoftCodeAnalysisAnalyzersPreReleaseVersion>beta1</MicrosoftCodeAnalysisAnalyzersPreReleaseVersion>
+      <SystemRuntimeAnalyzersSemanticVersion>1.0.0</SystemRuntimeAnalyzersSemanticVersion>
+      <SystemRuntimeAnalyzersPreReleaseVersion>beta1</SystemRuntimeAnalyzersPreReleaseVersion>
 
-    <DesktopAnalyzersSemanticVersion>1.0.0</DesktopAnalyzersSemanticVersion>
-    <DesktopAnalyzersPreReleaseVersion>beta1</DesktopAnalyzersPreReleaseVersion>
+      <SystemRuntimeInteropServicesAnalyzersSemanticVersion>1.0.0</SystemRuntimeInteropServicesAnalyzersSemanticVersion>
+      <SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>beta1</SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>
 
-    <SystemRuntimeAnalyzersSemanticVersion>1.0.2</SystemRuntimeAnalyzersSemanticVersion>
-    <SystemRuntimeAnalyzersPreReleaseVersion>beta1</SystemRuntimeAnalyzersPreReleaseVersion>
-    
-    <SystemRuntimeInteropServicesAnalyzersSemanticVersion>1.0.2</SystemRuntimeInteropServicesAnalyzersSemanticVersion>
-    <SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>beta1</SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>
-    
-    <SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>1.0.0</SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>
-    <SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>beta1</SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>
+      <ApiReviewAnalyzersSemanticVersion>1.0.0</ApiReviewAnalyzersSemanticVersion>
+      <ApiReviewAnalyzersPreReleaseVersion>beta1</ApiReviewAnalyzersPreReleaseVersion>
 
-    <SharedTestSemanticVersion>1.0.0</SharedTestSemanticVersion>
-    <SharedTestPreReleaseVersion>beta1</SharedTestPreReleaseVersion>
+      <RoslynDiagnosticsAnalyzersSemanticVersion>1.0.0</RoslynDiagnosticsAnalyzersSemanticVersion>
+      <RoslynDiagnosticsAnalyzersPreReleaseVersion>beta1</RoslynDiagnosticsAnalyzersPreReleaseVersion>
 
-    <AnalyzerPowerPackSemanticVersion>1.0.2</AnalyzerPowerPackSemanticVersion>
-    <AnalyzerPowerPackPreReleaseVersion>beta1</AnalyzerPowerPackPreReleaseVersion>
-    
-    <RoslynDiagnosticsAnalyzersSemanticVersion>1.1.1</RoslynDiagnosticsAnalyzersSemanticVersion>
-    <RoslynDiagnosticsAnalyzersPreReleaseVersion>beta1</RoslynDiagnosticsAnalyzersPreReleaseVersion>
+      <SystemThreadingTasksAnalyzersSemanticVersion>1.0.0</SystemThreadingTasksAnalyzersSemanticVersion>
+      <SystemThreadingTasksAnalyzersPreReleaseVersion>beta1</SystemThreadingTasksAnalyzersPreReleaseVersion>
 
-    <ToolsSemanticVersion>0.0.0</ToolsSemanticVersion>
-    <ToolsPreReleaseVersion>beta1</ToolsPreReleaseVersion>
-  </PropertyGroup>
+      <MicrosoftCompositionAnalyzersSemanticVersion>1.0.0</MicrosoftCompositionAnalyzersSemanticVersion>
+      <MicrosoftCompositionAnalyzersPreReleaseVersion>beta1</MicrosoftCompositionAnalyzersPreReleaseVersion>
+
+      <XmlDocumentationCommentsAnalyzersSemanticVersion>1.0.0</XmlDocumentationCommentsAnalyzersSemanticVersion>
+      <XmlDocumentationCommentsAnalyzersPreReleaseVersion>beta1</XmlDocumentationCommentsAnalyzersPreReleaseVersion>
+
+      <SystemCollectionsImmutableAnalyzersSemanticVersion>1.0.0</SystemCollectionsImmutableAnalyzersSemanticVersion>
+      <SystemCollectionsImmutableAnalyzersPreReleaseVersion>beta1</SystemCollectionsImmutableAnalyzersPreReleaseVersion>
+
+
+      <SharedTestSemanticVersion>1.0.0</SharedTestSemanticVersion>
+      <SharedTestPreReleaseVersion>beta1</SharedTestPreReleaseVersion>
+   </PropertyGroup>
 </Project>

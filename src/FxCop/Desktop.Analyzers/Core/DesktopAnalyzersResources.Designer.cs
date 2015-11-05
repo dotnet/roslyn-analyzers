@@ -161,24 +161,6 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Do not use insecure cryptographic algorithm Rijndael..
-        /// </summary>
-        internal static string DoNotUseRijndael {
-            get {
-                return ResourceManager.GetString("DoNotUseRijndael", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This type implements Rijndael, a cryptographically insecure encryption algorithm. Replace this usage with an AES encryption algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits..
-        /// </summary>
-        internal static string DoNotUseRijndaelDescription {
-            get {
-                return ResourceManager.GetString("DoNotUseRijndaelDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Do not use insecure cryptographic algorithm RIPEMD160..
         /// </summary>
         internal static string DoNotUseRIPEMD160 {

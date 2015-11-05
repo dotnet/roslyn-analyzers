@@ -15,7 +15,6 @@ namespace Desktop.Analyzers.Common
         public INamedTypeSymbol DSASignatureFormatter { get; private set; } 
         public INamedTypeSymbol HMACMD5 { get; private set; }
         public INamedTypeSymbol RC2 { get; private set; }
-        public INamedTypeSymbol Rijndael { get; private set; }  
         public INamedTypeSymbol TripleDES { get; private set; }
         public INamedTypeSymbol RIPEMD160 { get; private set; }
         public INamedTypeSymbol HMACRIPEMD160 { get; private set; } 
@@ -32,7 +31,6 @@ namespace Desktop.Analyzers.Common
             DSASignatureFormatter = SecurityTypes.DSASignatureFormatter(compilation); 
             HMACMD5 = SecurityTypes.HMACMD5(compilation);
             RC2 = SecurityTypes.RC2(compilation);
-            Rijndael = SecurityTypes.Rijndael(compilation);
             TripleDES = SecurityTypes.TripleDES(compilation);
             RIPEMD160 = SecurityTypes.RIPEMD160(compilation);
             HMACRIPEMD160 = SecurityTypes.HMACRIPEMD160(compilation);

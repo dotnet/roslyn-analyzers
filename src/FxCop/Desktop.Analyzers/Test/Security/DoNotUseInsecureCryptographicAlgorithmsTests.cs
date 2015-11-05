@@ -1917,7 +1917,7 @@ End Namespace" },
         } 
         
         [Fact]
-        public void CA5357RijndaelManagedInMethodDeclaration()
+        public void CA5357RijndaelManagedInMethodDeclarationShouldNotGenerateDiagnostics()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1931,8 +1931,8 @@ namespace TestNamespace
             var rc2 = new RijndaelManaged();
         }
     }
-}",
-            GetCSharpResultAt(10, 23, CA5350RuleName, DoNotUseRijndaelMessage));
+}"
+            );
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1941,12 +1941,12 @@ Module TestClass
     Sub TestMethod()
         Dim rijndaelalg As New RijndaelManaged
     End Sub
-End Module",
-GetBasicResultAt(6, 28, CA5350RuleName, DoNotUseRijndaelMessage));
+End Module"
+            );
         }
                                                    
         [Fact]
-        public void CA5357RijndaelManagedInGetDeclaration()
+        public void CA5357RijndaelManagedInGetDeclarationShouldNotGenerateDiagnostics()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1959,8 +1959,8 @@ namespace TestNamespace
             get { return new RijndaelManaged(); }
         }
     }
-}",
-            GetCSharpResultAt(9, 26, CA5350RuleName, DoNotUseRijndaelMessage));
+}"
+            );
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1972,12 +1972,12 @@ Namespace TestNamespace
 			End Get
 		End Property
 	End Class
-End Namespace",
-            GetBasicResultAt(7, 12, CA5350RuleName, DoNotUseRijndaelMessage));
+End Namespace"
+            );
         } 
                 
         [Fact]
-        public void CA5357RijndaelManagedInFieldDeclaration()
+        public void CA5357RijndaelManagedInFieldDeclarationShouldNotGenerateDiagnostics()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -1987,8 +1987,8 @@ namespace TestNamespace
     {
         RijndaelManaged privateRijndael = new RijndaelManaged();
     }
-}",
-            GetCSharpResultAt(7, 43, CA5350RuleName, DoNotUseRijndaelMessage));
+}"
+            );
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1996,12 +1996,12 @@ Namespace TestNamespace
 	Class TestClass
 		Private privateRijndael As New RijndaelManaged()
 	End Class
-End Namespace",
-            GetBasicResultAt(5, 30, CA5350RuleName, DoNotUseRijndaelMessage));
+End Namespace"
+            );
         } 
 //No VB                    
         [Fact]
-        public void CA5357RijndaelManagedInLambdaExpression()
+        public void CA5357RijndaelManagedInLambdaExpressionShouldNotGenerateDiagnostics()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -2015,12 +2015,12 @@ namespace TestNamespace
             await Task.Run(() => { new RijndaelManaged(); });
         }
     }
-}",
-            GetCSharpResultAt(10, 36, CA5350RuleName, DoNotUseRijndaelMessage));
+}"
+            );
         }  
 //No VB        
         [Fact]
-        public void CA5357RijndaelManagedInAnonymousMethodExpression()
+        public void CA5357RijndaelManagedInAnonymousMethodExpressionShouldNotGenerateDiagnostics()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -2031,12 +2031,12 @@ namespace TestNamespace
         delegate void Del();
         Del d = delegate () { new RijndaelManaged(); };
     }
-}",
-            GetCSharpResultAt(8, 31, CA5350RuleName, DoNotUseRijndaelMessage));
+}"
+            );
         } 
         
         [Fact]
-        public void CA5357CreateObjectFromRijndaelDerivedClass()
+        public void CA5357CreateObjectFromRijndaelDerivedClassShouldNotGenerateDiagnostics()
         {
             VerifyCSharp( new[] {
 //Test0
@@ -2082,8 +2082,8 @@ namespace TestNamespace
             throw new NotImplementedException();
         }
     }
-}" },
-            GetCSharpResultAt(10, 23, CA5350RuleName, DoNotUseRijndaelMessage));
+}" }
+            );
 
             VerifyBasic(new[] {
 //Test0
@@ -2118,8 +2118,8 @@ Namespace TestNamespace
 			Throw New NotImplementedException()
 		End Sub
 	End Class
-End Namespace" },
-            GetBasicResultAt(6, 14, CA5350RuleName, DoNotUseRijndaelMessage));
+End Namespace" }
+            );
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
@@ -2141,6 +2141,5 @@ End Namespace" },
         private readonly string DoNotUseTripleDESMessage = DesktopAnalyzersResources.DoNotUseTripleDES;  
         private readonly string DoNotUseRIPEMD160Message = DesktopAnalyzersResources.DoNotUseRIPEMD160;
         private readonly string DoNotUseDSAMessage = DesktopAnalyzersResources.DoNotUseDSA;
-        private readonly string DoNotUseRijndaelMessage = DesktopAnalyzersResources.DoNotUseRijndael;
     }
 }

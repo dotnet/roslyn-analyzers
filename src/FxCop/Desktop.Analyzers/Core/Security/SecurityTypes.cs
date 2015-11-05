@@ -52,11 +52,6 @@ namespace Desktop.Analyzers.Common
             return compilation.GetTypeByMetadataName("System.Security.Cryptography.RC2");
         }
 
-        public static INamedTypeSymbol Rijndael(Compilation compilation)
-        {
-            return compilation.GetTypeByMetadataName("System.Security.Cryptography.Rijndael");
-        }
-
         public static INamedTypeSymbol TripleDES(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName("System.Security.Cryptography.TripleDES");

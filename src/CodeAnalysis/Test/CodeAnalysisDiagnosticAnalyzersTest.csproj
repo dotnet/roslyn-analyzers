@@ -163,7 +163,7 @@
     <Compile Include="MetaAnalyzers\UseLocalizableStringsInDescriptorTests.cs" />
     <Compile Include="MetaAnalyzers\AddLanguageSupportToAnalyzerRuleTests.cs" />
     <Compile Include="MetaAnalyzers\MissingDiagnosticAnalyzerAttributeRuleTests.cs" />
-    <Compile Include="MetaAnalyzers\UseReturnValueFromImmutableObjectMethodTests.cs" />
+    <Compile Include="UseReturnValueFromImmutableObjectMethodTests.cs" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

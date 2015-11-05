@@ -4,13 +4,12 @@ using Xunit;
 using Microsoft.CodeAnalysis.Analyzers;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers;
+using Microsoft.CodeAnalysis.CSharp.Analyzers;
 
-namespace Microsoft.CodeAnalysis.UnitTests.MetaAnalyzers
+namespace Microsoft.CodeAnalysis.UnitTests
 {
     public class UseReturnValueFromImmutableObjectMethodTests : CodeFixTestBase
     {
-
         [Fact]
         public void CSharpVerifyDiagnostics()
         {
@@ -91,7 +90,6 @@ namespace ConsoleApplication1
 }";
             VerifyCSharp(source);
         }
-
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {

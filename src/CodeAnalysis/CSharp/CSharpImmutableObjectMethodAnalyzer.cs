@@ -2,15 +2,12 @@
 
 using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.Analyzers;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
+namespace Microsoft.CodeAnalysis.CSharp.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class CSharpImmutableObjectMethodAnalyzer : DiagnosticAnalyzer
@@ -100,6 +97,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
             {
                 return;
             }
+            
             var baseTypesAndSelf = methodSymbol.ReceiverType.GetBaseTypes().ToList();
             baseTypesAndSelf.Add(parentType);
 

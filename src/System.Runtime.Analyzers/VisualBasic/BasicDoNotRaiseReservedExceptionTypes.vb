@@ -11,7 +11,17 @@ Namespace System.Runtime.Analyzers
     ''' </summary>
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
     Public NotInheritable Class BasicDoNotRaiseReservedExceptionTypesAnalyzer
-        Inherits DoNotRaiseReservedExceptionTypesAnalyzer
+        Inherits DoNotRaiseReservedExceptionTypesAnalyzer(Of SyntaxKind, ObjectCreationExpressionSyntax)
 
+        Public Overrides ReadOnly Property ObjectCreationExpressionKind As SyntaxKind
+            Get
+                Return SyntaxKind.ObjectCreationExpression
+            End Get
+        End Property
+
+        Public Overrides Function GetTypeSyntaxNode(node As ObjectCreationExpressionSyntax) As SyntaxNode
+            Debug.Assert(node IsNot Nothing)
+            Return node.Type
+        End Function
     End Class
 End Namespace

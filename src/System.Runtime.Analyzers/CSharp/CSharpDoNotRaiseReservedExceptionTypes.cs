@@ -4,16 +4,22 @@ using System.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Diagnostics;  
 
 namespace System.Runtime.Analyzers
-{                          
+{
     /// <summary>
     /// CA2201: Do not raise reserved exception types
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class CSharpDoNotRaiseReservedExceptionTypesAnalyzer : DoNotRaiseReservedExceptionTypesAnalyzer
+    public sealed class CSharpDoNotRaiseReservedExceptionTypesAnalyzer : DoNotRaiseReservedExceptionTypesAnalyzer<SyntaxKind, ObjectCreationExpressionSyntax>
     {
+        public override SyntaxKind ObjectCreationExpressionKind => SyntaxKind.ObjectCreationExpression;
 
+        public override SyntaxNode GetTypeSyntaxNode(ObjectCreationExpressionSyntax node)
+        {
+            Debug.Assert(node != null);
+            return node.Type;
+        } 
     }
 }

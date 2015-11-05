@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="Settings">
@@ -115,7 +115,6 @@
     <Compile Include="BasicRethrowToPreserveStackDetails.vb" />
     <Compile Include="BasicRethrowToPreserveStackDetails.Fixer.vb" />
     <Compile Include="BasicDoNotRaiseReservedExceptionTypes.vb" />
-    <Compile Include="BasicDoNotRaiseReservedExceptionTypes.Fixer.vb" />
     <Compile Include="BasicInitializeValueTypeStaticFieldsInline.vb" />
     <Compile Include="BasicInitializeValueTypeStaticFieldsInline.Fixer.vb" />
     <Compile Include="BasicDisposableFieldsShouldBeDisposed.vb" />
@@ -140,7 +139,6 @@
     <Compile Include="BasicAvoidZeroLengthArrayAllocations.Fixer.vb" />
     <Compile Include="BasicDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.vb" />
     <Compile Include="BasicDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.Fixer.vb" />
-
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

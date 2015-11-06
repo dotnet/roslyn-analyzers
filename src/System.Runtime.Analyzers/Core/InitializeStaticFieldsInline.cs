@@ -27,7 +27,7 @@ namespace System.Runtime.Analyzers
         internal static DiagnosticDescriptor CA1810Rule = new DiagnosticDescriptor(CA1810RuleId,
                                                                              s_CA1810_LocalizableTitle,
                                                                              s_localizableMessage,
-                                                                             DiagnosticCategory.Usage,
+                                                                             DiagnosticCategory.Performance,
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
                                                                              description: s_CA1810_LocalizableDescription,

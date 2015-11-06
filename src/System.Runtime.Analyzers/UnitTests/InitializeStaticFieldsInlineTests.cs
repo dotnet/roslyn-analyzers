@@ -1,27 +1,17 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
-using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace System.Runtime.Analyzers.UnitTests
 {
-    public class InitializeValueTypeStaticFieldsInlineTests : DiagnosticAnalyzerTestBase
+    public class InitializeStaticFieldsInlineTests : DiagnosticAnalyzerTestBase
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new BasicInitializeStaticFieldsInlineAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new CSharpInitializeStaticFieldsInlineAnalyzer();
-        }
+        #region Unit tests for no analyzer diagnostic
 
         [Fact]
-        public void CSharp_CA1810_NoDiagnostic_EmptyStaticConstructor()
+        public void CA1810_EmptyStaticConstructor()
         {
             VerifyCSharp(@"
 public class Class1
@@ -32,10 +22,17 @@ public class Class1
     }
 }
 ");
+            VerifyBasic(@"
+Public Class Class1
+	Private Shared ReadOnly field As Integer = 1
+	Shared Sub New() ' Empty
+	End Sub
+End Class
+");
         }
 
         [Fact]
-        public void CSharp_CA2207_NoDiagnostic_EmptyStaticConstructor()
+        public void CA2207_EmptyStaticConstructor()
         {
             VerifyCSharp(@"
 public struct Struct1
@@ -46,10 +43,17 @@ public struct Struct1
     }
 }
 ");
+            VerifyBasic(@"
+Public Structure Struct1
+	Private Shared ReadOnly field As Integer = 1
+	Shared Sub New() ' Empty
+	End Sub
+End Structure
+");
         }
 
         [Fact]
-        public void CSharp_CA1810_NoDiagnostic_NoStaticFieldInitializedInStaticConstructor()
+        public void CA1810_NoStaticFieldInitializedInStaticConstructor()
         {
             VerifyCSharp(@"
 public class Class1
@@ -62,141 +66,6 @@ public class Class1
     }
 }
 ");
-        }
-
-        [Fact]
-        public void CSharp_CA1810_NoDiagnostic_StaticPropertyInStaticConstructor()
-        {
-            VerifyCSharp(@"
-public class Class1
-{
-    private static int Property { get { return 0; } }
-
-    static Class1() // Static property initalization
-    {
-        Property = 1;
-    }
-}
-");
-        }
-
-        [Fact]
-        public void CSharp_CA1810_NoDiagnostic_InitializionInNonStaticConstructor()
-        {
-            VerifyCSharp(@"
-public class Class1
-{
-    private readonly static int field = 1;
-    public Class1() // Non static constructor
-    {
-        field = 0;
-    }
-
-    public static void Class1_Method() // Non constructor
-    {
-        field = 0;
-    }
-}
-");
-        }
-
-        [Fact]
-        public void CSharp_CA1810_Diagnostic_InitializationInStaticConstructor()
-        {
-            VerifyCSharp(@"
-public class Class1
-{
-    private readonly static int field;
-    static Class1() // Non static constructor
-    {
-        field = 0;
-    }
-}
-",
-    GetCA1810CSharpDefaultResultAt(5, 12, "Class1"));
-
-        }
-
-        [Fact]
-        public void CSharp_CA2207_Diagnostic_InitializationInStaticConstructor()
-        {
-            VerifyCSharp(@"
-public struct Struct1
-{
-    private readonly static int field;
-    static Struct1() // Non static constructor
-    {
-        field = 0;
-    }
-}
-",
-    GetCA2207CSharpDefaultResultAt(5, 12, "Struct1"));
-
-        }
-
-        [Fact]
-        public void CSharp_CA1810_Diagnostic_NoDuplicteDiagnostics()
-        {
-            VerifyCSharp(@"
-public class Class1
-{
-    private readonly static int field, field2;
-    static Class1() // Non static constructor
-    {
-        field = 0;
-        field2 = 0;
-    }
-}
-",
-    GetCA1810CSharpDefaultResultAt(5, 12, "Class1"));
-
-        }
-
-        [Fact]
-        public void CSharp_CA2207_Diagnostic_NoDuplicteDiagnostics()
-        {
-            VerifyCSharp(@"
-public struct Struct1
-{
-    private readonly static int field, field2;
-    static Struct1() // Non static constructor
-    {
-        field = 0;
-        field2 = 0;
-    }
-}
-",
-    GetCA2207CSharpDefaultResultAt(5, 12, "Struct1"));
-
-        }
-
-        [Fact]
-        public void VisualBasic_CA1810_NoDiagnostic_EmptyStaticConstructor()
-        {
-            VerifyBasic(@"
-Public Class Class1
-	Private Shared ReadOnly field As Integer = 1
-	Shared Sub New() ' Empty
-	End Sub
-End Class
-");
-        }
-
-        [Fact]
-        public void VisualBasic_CA2207_NoDiagnostic_EmptyStaticConstructor()
-        {
-            VerifyBasic(@"
-Public Structure Struct1
-	Private Shared ReadOnly field As Integer = 1
-	Shared Sub New() ' Empty
-	End Sub
-End Structure
-");
-        }
-
-        [Fact]
-        public void VisualBasic_CA1810_NoDiagnostic_NoStaticFieldInitializedInStaticConstructor()
-        {
             VerifyBasic(@"
 Public Class Class1
 	Private Shared ReadOnly field As Integer = 1
@@ -209,8 +78,20 @@ End Class
         }
 
         [Fact]
-        public void Basic_CA1810_NoDiagnostic_StaticPropertyInStaticConstructor()
+        public void CA1810_StaticPropertyInStaticConstructor()
         {
+            VerifyCSharp(@"
+public class Class1
+{
+    private static int Property { get { return 0; } }
+
+    static Class1() // Static property initalization
+    {
+        Property = 1;
+    }
+}
+");
+
             VerifyBasic(@"
 Public Class Class1
 	Private Shared ReadOnly Property [Property]() As Integer
@@ -228,9 +109,24 @@ End Class
         }
 
         [Fact]
-        public void Basic_CA1810_NoDiagnostic_InitializionInNonStaticConstructor()
+        public void CA1810_InitializionInNonStaticConstructor()
         {
-            VerifyBasic (@"
+            VerifyCSharp(@"
+public class Class1
+{
+    private readonly static int field = 1;
+    public Class1() // Non static constructor
+    {
+        field = 0;
+    }
+
+    public static void Class1_Method() // Non constructor
+    {
+        field = 0;
+    }
+}
+");
+            VerifyBasic(@"
 Public Class Class1
 	Private Shared ReadOnly field As Integer = 1
 	Public Sub New() ' Non static constructor
@@ -244,9 +140,25 @@ End Class
 ");
         }
 
+        #endregion
+
+        #region Unit tests for analyzer diagnostic(s)
+
         [Fact]
-        public void Basic_CA1810_Diagnostic_InitializationInStaticConstructor()
+        public void CA1810_InitializationInStaticConstructor()
         {
+            VerifyCSharp(@"
+public class Class1
+{
+    private readonly static int field;
+    static Class1() // Non static constructor
+    {
+        field = 0;
+    }
+}
+",
+    GetCA1810CSharpDefaultResultAt(5, 12, "Class1"));
+
             VerifyBasic(@"
 Public Class Class1
 	Private Shared ReadOnly field As Integer
@@ -261,8 +173,20 @@ End Class
         }
 
         [Fact]
-        public void Basic_CA2207_Diagnostic_InitializationInStaticConstructor()
+        public void CA2207_InitializationInStaticConstructor()
         {
+            VerifyCSharp(@"
+public struct Struct1
+{
+    private readonly static int field;
+    static Struct1() // Non static constructor
+    {
+        field = 0;
+    }
+}
+",
+    GetCA2207CSharpDefaultResultAt(5, 12, "Struct1"));
+
             VerifyBasic(@"
 Public Structure Struct1
 	Private Shared ReadOnly field As Integer
@@ -277,8 +201,21 @@ End Structure
         }
 
         [Fact]
-        public void Basic_CA1810_Diagnostic_NoDuplicteDiagnostics()
+        public void CA1810_NoDuplicateDiagnostics()
         {
+            VerifyCSharp(@"
+public class Class1
+{
+    private readonly static int field, field2;
+    static Class1() // Non static constructor
+    {
+        field = 0;
+        field2 = 0;
+    }
+}
+",
+    GetCA1810CSharpDefaultResultAt(5, 12, "Class1"));
+
             VerifyBasic(@"
 Public Class Class1
 	Private Shared ReadOnly field As Integer, field2 As Integer
@@ -293,8 +230,21 @@ End Class",
         }
 
         [Fact]
-        public void Basic_CA2207_Diagnostic_NoDuplicteDiagnostics()
+        public void CA2207_NoDuplicateDiagnostics()
         {
+            VerifyCSharp(@"
+public struct Struct1
+{
+    private readonly static int field, field2;
+    static Struct1() // Non static constructor
+    {
+        field = 0;
+        field2 = 0;
+    }
+}
+",
+    GetCA2207CSharpDefaultResultAt(5, 12, "Struct1"));
+
             VerifyBasic(@"
 Public Structure Struct1
 	Private Shared ReadOnly field As Integer, field2 As Integer
@@ -308,7 +258,19 @@ End Structure",
 
         }
 
+        #endregion
+
         #region Helpers
+
+        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        {
+            return new BasicInitializeStaticFieldsInlineAnalyzer();
+        }
+
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        {
+            return new CSharpInitializeStaticFieldsInlineAnalyzer();
+        }
 
         private static DiagnosticResult GetCA1810CSharpDefaultResultAt(int line, int column, string typeName)
         {

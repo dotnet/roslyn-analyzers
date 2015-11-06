@@ -2,13 +2,11 @@
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
-using Xunit;
 
 namespace System.Runtime.Analyzers.UnitTests
 {
-    public class InitializeValueTypeStaticFieldsInlineFixerTests : CodeFixTestBase
+    public class InitializeStaticFieldsInlineFixerTests : CodeFixTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {

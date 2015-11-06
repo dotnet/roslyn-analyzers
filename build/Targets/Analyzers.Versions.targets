@@ -14,6 +14,9 @@
 
     <SystemRuntimeAnalyzersSemanticVersion>1.0.2</SystemRuntimeAnalyzersSemanticVersion>
     <SystemRuntimeAnalyzersPreReleaseVersion>beta1</SystemRuntimeAnalyzersPreReleaseVersion>
+
+    <MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion>1.0.2</MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion>
+    <MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion>beta1</MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion>
     
     <SystemRuntimeInteropServicesAnalyzersSemanticVersion>1.0.2</SystemRuntimeInteropServicesAnalyzersSemanticVersion>
     <SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>beta1</SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>

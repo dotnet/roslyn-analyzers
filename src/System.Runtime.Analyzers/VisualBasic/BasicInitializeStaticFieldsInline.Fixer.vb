@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace System.Runtime.Analyzers     
+Namespace System.Runtime.Analyzers
     ''' <summary>
     ''' CA2207: Initialize value type static fields inline
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
-    Public NotInheritable Class BasicInitializeValueTypeStaticFieldsInlineFixer
-        Inherits InitializeValueTypeStaticFieldsInlineFixer 
+    Public NotInheritable Class BasicInitializeStaticFieldsInlineFixer
+        Inherits InitializeStaticFieldsInlineFixer(Of SyntaxKind)
 
     End Class
 End Namespace

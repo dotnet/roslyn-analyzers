@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="Settings">
@@ -122,8 +122,8 @@
     <Compile Include="RethrowToPreserveStackDetails.Fixer.cs" />
     <Compile Include="DoNotRaiseReservedExceptionTypes.cs" />
     <Compile Include="DoNotRaiseReservedExceptionTypes.Fixer.cs" />
-    <Compile Include="InitializeValueTypeStaticFieldsInline.cs" />
-    <Compile Include="InitializeValueTypeStaticFieldsInline.Fixer.cs" />
+    <Compile Include="InitializeStaticFieldsInline.cs" />
+    <Compile Include="InitializeStaticFieldsInline.Fixer.cs" />
     <Compile Include="DisposableFieldsShouldBeDisposed.cs" />
     <Compile Include="DisposableFieldsShouldBeDisposed.Fixer.cs" />
     <Compile Include="DoNotCallOverridableMethodsInConstructors.cs" />
@@ -147,12 +147,12 @@
     <Compile Include="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.cs" />
     <Compile Include="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.Fixer.cs" />
     <Compile Include="DiagnosticCategory.cs" />
-
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SystemRuntimeAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SystemRuntimeAnalyzersResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ImportGroup Label="Targets">

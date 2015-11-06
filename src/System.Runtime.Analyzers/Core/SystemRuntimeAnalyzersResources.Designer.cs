@@ -560,20 +560,38 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A reference type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor..
+        /// </summary>
+        internal static string InitializeReferenceTypeStaticFieldsInlineDescription {
+            get {
+                return ResourceManager.GetString("InitializeReferenceTypeStaticFieldsInlineDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Initialize reference type static fields inline.
+        /// </summary>
+        internal static string InitializeReferenceTypeStaticFieldsInlineTitle {
+            get {
+                return ResourceManager.GetString("InitializeReferenceTypeStaticFieldsInlineTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Initialize all static fields in &apos;{0}&apos; when those fields are declared and remove the explicit static constructor.
+        /// </summary>
+        internal static string InitializeStaticFieldsInlineMessage {
+            get {
+                return ResourceManager.GetString("InitializeStaticFieldsInlineMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A value type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor..
         /// </summary>
         internal static string InitializeValueTypeStaticFieldsInlineDescription {
             get {
                 return ResourceManager.GetString("InitializeValueTypeStaticFieldsInlineDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Initialize value type static fields inline.
-        /// </summary>
-        internal static string InitializeValueTypeStaticFieldsInlineMessage {
-            get {
-                return ResourceManager.GetString("InitializeValueTypeStaticFieldsInlineMessage", resourceCulture);
             }
         }
         

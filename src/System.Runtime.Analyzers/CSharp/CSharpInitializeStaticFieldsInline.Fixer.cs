@@ -13,7 +13,7 @@ namespace System.Runtime.Analyzers
     /// CA2207: Initialize value type static fields inline
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
-    public class CSharpInitializeValueTypeStaticFieldsInlineFixer : InitializeValueTypeStaticFieldsInlineFixer
+    public class CSharpInitializeStaticFieldsInlineFixer : InitializeStaticFieldsInlineFixer<SyntaxKind>
     { 
 
     }

@@ -45,13 +45,63 @@ class Int
         public void CSharp_CA1720_SomeDiagnostic2()
         {
             VerifyCSharp(@"
-struct Int
+struct Int32
 {
 }
 ",
-    GetCA1720CSharpResultAt(line: 2, column: 1, identifierName: "Int"));
+    GetCA1720CSharpResultAt(line: 2, column: 8, identifierName: "Int32"));
         }
 
+        [Fact]
+        public void CSharp_CA1720_SomeDiagnostic3()
+        {
+            VerifyCSharp(@"
+enum Int64
+{
+}
+",
+    GetCA1720CSharpResultAt(line: 2, column: 6, identifierName: "Int64"));
+        }
+
+         [Fact]
+        public void CSharp_CA1720_SomeDiagnostic4()
+        {
+            VerifyCSharp(@"
+class Foo
+{
+   void Int ()
+   {
+   }
+}
+",
+    GetCA1720CSharpResultAt(line: 4, column: 9, identifierName: "Int"));
+        }
+
+        [Fact]
+        public void CSharp_CA1720_SomeDiagnostic5()
+        {
+            VerifyCSharp(@"
+class Bar
+{
+   void BarMethod (int Int)
+   {
+   }
+}
+",
+    GetCA1720CSharpResultAt(line: 4, column: 24, identifierName: "Int"));
+        }
+
+        [Fact]
+        public void CSharp_CA1720_SomeDiagnostic6()
+        {
+            VerifyCSharp(@"
+class FooBar
+{
+   int Int;
+}
+",
+    GetCA1720CSharpResultAt(line: 4, column: 8, identifierName: "Int"));
+        }
 
         [Fact]
         public void Basic_CA1720_NoDiagnostic()
@@ -59,18 +109,6 @@ struct Int
             VerifyBasic(@"
 ");
         }
-
-        [Fact]
-        public void Basic_CA1720_SomeDiagnostic()
-        {
-            VerifyBasic(@"
-",
-    GetCA1720BasicResultAt(line: 0, column: 0, identifierName: ""),
-    GetCA1720BasicResultAt(line: 1, column: 1, identifierName: ""));
-        }
-
-
-
 
         #region Helpers
 

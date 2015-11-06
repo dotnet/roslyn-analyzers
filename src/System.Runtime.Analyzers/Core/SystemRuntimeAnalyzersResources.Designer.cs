@@ -440,7 +440,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This makes the original error difficult to detect and debug..
+        ///   Looks up a localized string similar to An exception type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type..
         /// </summary>
         internal static string DoNotRaiseReservedExceptionTypesDescription {
             get {
@@ -449,7 +449,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} creates an exception of type {1}, an exception type that is reserved by the runtime and should never be raised by managed code. If this exception instance might be thrown, use a different exception type..
+        ///   Looks up a localized string similar to An exception of type {0} is reserved by the runtime..
         /// </summary>
         internal static string DoNotRaiseReservedExceptionTypesMessageReserved {
             get {
@@ -458,7 +458,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} creates an exception of type {1}, an exception type that is not sufficiently specific and should never be raised by user code. If this exception instance might be thrown, use a different exception type..
+        ///   Looks up a localized string similar to An exception of type {0} is not sufficiently specific..
         /// </summary>
         internal static string DoNotRaiseReservedExceptionTypesMessageTooGeneric {
             get {

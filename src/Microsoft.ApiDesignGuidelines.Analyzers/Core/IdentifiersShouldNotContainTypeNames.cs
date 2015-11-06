@@ -82,57 +82,37 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            analysisContext.RegisterSymbolAction(AnalyzeNamedType, SymbolKind.NamedType);
-            analysisContext.RegisterSymbolAction(AnalyzeField, SymbolKind.Field);
-            analysisContext.RegisterSymbolAction(AnalyzeProperty, SymbolKind.Property);
-            analysisContext.RegisterSymbolAction(AnalyzeMethod, SymbolKind.Method);
+            // Analyze named types and fields.
+            analysisContext.RegisterSymbolAction(symbolContext =>
+            {
+                AnalyzeSymbol(symbolContext.Symbol, symbolContext);
+            }, SymbolKind.NamedType, SymbolKind.Field);
+
+            // Analyze properties and methods, and their parameters.
+            analysisContext.RegisterSymbolAction(symbolContext =>
+            {
+                AnalyzeSymbol(symbolContext.Symbol, symbolContext);
+
+                var parameters = symbolContext.Symbol.Kind == SymbolKind.Property ?
+                    ((IPropertySymbol)symbolContext.Symbol).Parameters :
+                    ((IMethodSymbol)symbolContext.Symbol).Parameters;
+
+                foreach (var param in parameters)
+                {
+                    AnalyzeSymbol(param, symbolContext);
+                }
+            }, SymbolKind.Property, SymbolKind.Method);
         }
 
         private static void AnalyzeSymbol(ISymbol symbol, SymbolAnalysisContext context)
         {
+            // Check if memeber contains type name 
             var identifier = symbol.Name;
-            //check if memeber contains type name 
             var isTypeName = s_types.Contains(identifier);
             if (isTypeName)
             {
                 var diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], identifier);
                 context.ReportDiagnostic(diagnostic);
-            }
-        }
-
-        /// <summary> 
-        /// Retrieve the name of the class/struct/enum and store it in 
-        /// a userdefinedtypes hashset to ensure no member or parameter uses that userdefined typename 
-        /// Also verify that these members are not violating the CA1720 rule 
-        /// </summary> 
-        /// <param name="context"></param> 
-        private static void AnalyzeNamedType(SymbolAnalysisContext context)
-        {
-            AnalyzeSymbol(context.Symbol, context);
-        }
-
-        private static void AnalyzeField(SymbolAnalysisContext context)
-        {
-            AnalyzeSymbol(context.Symbol, context);
-        }
-
-        private static void AnalyzeProperty(SymbolAnalysisContext context)
-        {
-            AnalyzeSymbol(context.Symbol, context);
-            var parameters = ((IPropertySymbol)context.Symbol).Parameters;
-            foreach (var param in parameters)
-            {
-                AnalyzeSymbol(param, context);
-            }
-        }
-
-        private static void AnalyzeMethod(SymbolAnalysisContext context)
-        {
-            AnalyzeSymbol(context.Symbol, context);
-            var parameters = ((IMethodSymbol)context.Symbol).Parameters;
-            foreach (var param in parameters)
-            {
-                AnalyzeSymbol(param, context);
             }
         }
     }

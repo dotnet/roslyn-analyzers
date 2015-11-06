@@ -221,6 +221,7 @@
     <Compile Include="CancellationTokenParametersMustComeLastTests.Fixer.cs" />
     <Compile Include="ConstructorMakeNoninheritableBaseClassInheritableTests.cs" />
     <Compile Include="ConstructorMakeNoninheritableBaseClassInheritableTests.Fixer.cs" />
+
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

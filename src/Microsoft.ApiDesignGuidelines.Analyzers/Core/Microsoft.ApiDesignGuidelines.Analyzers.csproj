@@ -176,12 +176,12 @@
     <Compile Include="ConstructorMakeNoninheritableBaseClassInheritable.cs" />
     <Compile Include="ConstructorMakeNoninheritableBaseClassInheritable.Fixer.cs" />
     <Compile Include="DiagnosticCategory.cs" />
+
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MicrosoftApiDesignGuidelinesAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MicrosoftApiDesignGuidelinesAnalyzersResources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ImportGroup Label="Targets">

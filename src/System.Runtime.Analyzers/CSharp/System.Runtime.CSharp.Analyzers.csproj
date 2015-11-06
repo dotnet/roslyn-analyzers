@@ -118,8 +118,8 @@
     <Compile Include="CSharpRethrowToPreserveStackDetails.cs" />
     <Compile Include="CSharpRethrowToPreserveStackDetails.Fixer.cs" />
     <Compile Include="CSharpDoNotRaiseReservedExceptionTypes.cs" />
-    <Compile Include="CSharpInitializeValueTypeStaticFieldsInline.cs" />
-    <Compile Include="CSharpInitializeValueTypeStaticFieldsInline.Fixer.cs" />
+    <Compile Include="CSharpInitializeStaticFieldsInline.cs" />
+    <Compile Include="CSharpInitializeStaticFieldsInline.Fixer.cs" />
     <Compile Include="CSharpDisposableFieldsShouldBeDisposed.cs" />
     <Compile Include="CSharpDisposableFieldsShouldBeDisposed.Fixer.cs" />
     <Compile Include="CSharpDoNotCallOverridableMethodsInConstructors.cs" />

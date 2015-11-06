@@ -121,8 +121,8 @@
     <Compile Include="RethrowToPreserveStackDetails.cs" />
     <Compile Include="RethrowToPreserveStackDetails.Fixer.cs" />
     <Compile Include="DoNotRaiseReservedExceptionTypes.cs" />
-    <Compile Include="InitializeValueTypeStaticFieldsInline.cs" />
-    <Compile Include="InitializeValueTypeStaticFieldsInline.Fixer.cs" />
+    <Compile Include="InitializeStaticFieldsInline.cs" />
+    <Compile Include="InitializeStaticFieldsInline.Fixer.cs" />
     <Compile Include="DisposableFieldsShouldBeDisposed.cs" />
     <Compile Include="DisposableFieldsShouldBeDisposed.Fixer.cs" />
     <Compile Include="DoNotCallOverridableMethodsInConstructors.cs" />

@@ -603,6 +603,34 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 
+        ///Names of parameters and members are better used to communicate their meaning than to describe their type, which is expected to be provided by development tools. For names of members, if a data type name must be used, use a language-independent name instead of a language-specific one..
+        /// </summary>
+        internal static string IdentifiersShouldNotContainTypeNamesDescription {
+            get {
+                return ResourceManager.GetString("IdentifiersShouldNotContainTypeNamesDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Identifier &apos;{0}&apos; contains type name.
+        /// </summary>
+        internal static string IdentifiersShouldNotContainTypeNamesMessage {
+            get {
+                return ResourceManager.GetString("IdentifiersShouldNotContainTypeNamesMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Identifier contains type name.
+        /// </summary>
+        internal static string IdentifiersShouldNotContainTypeNamesTitle {
+            get {
+                return ResourceManager.GetString("IdentifiersShouldNotContainTypeNamesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to #N/A.
         /// </summary>
         internal static string ImplementIEquatableWhenOverridingObjectEqualsDescription {

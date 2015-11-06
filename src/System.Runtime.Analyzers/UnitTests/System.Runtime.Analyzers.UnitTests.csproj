@@ -167,8 +167,8 @@
     <Compile Include="RethrowToPreserveStackDetailsTests.cs" />
     <Compile Include="RethrowToPreserveStackDetailsTests.Fixer.cs" />
     <Compile Include="DoNotRaiseReservedExceptionTypesTests.cs" />
-    <Compile Include="InitializeValueTypeStaticFieldsInlineTests.cs" />
-    <Compile Include="InitializeValueTypeStaticFieldsInlineTests.Fixer.cs" />
+    <Compile Include="InitializeStaticFieldsInlineTests.cs" />
+    <Compile Include="InitializeStaticFieldsInlineTests.Fixer.cs" />
     <Compile Include="DisposableFieldsShouldBeDisposedTests.cs" />
     <Compile Include="DisposableFieldsShouldBeDisposedTests.Fixer.cs" />
     <Compile Include="DoNotCallOverridableMethodsInConstructorsTests.cs" />

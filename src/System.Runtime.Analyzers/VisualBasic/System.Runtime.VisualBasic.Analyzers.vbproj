@@ -115,8 +115,8 @@
     <Compile Include="BasicRethrowToPreserveStackDetails.vb" />
     <Compile Include="BasicRethrowToPreserveStackDetails.Fixer.vb" />
     <Compile Include="BasicDoNotRaiseReservedExceptionTypes.vb" />
-    <Compile Include="BasicInitializeValueTypeStaticFieldsInline.vb" />
-    <Compile Include="BasicInitializeValueTypeStaticFieldsInline.Fixer.vb" />
+    <Compile Include="BasicInitializeStaticFieldsInline.vb" />
+    <Compile Include="BasicInitializeStaticFieldsInline.Fixer.vb" />
     <Compile Include="BasicDisposableFieldsShouldBeDisposed.vb" />
     <Compile Include="BasicDisposableFieldsShouldBeDisposed.Fixer.vb" />
     <Compile Include="BasicDoNotCallOverridableMethodsInConstructors.vb" />

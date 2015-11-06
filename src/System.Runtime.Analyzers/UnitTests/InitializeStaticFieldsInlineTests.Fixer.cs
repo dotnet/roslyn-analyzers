@@ -2,32 +2,30 @@
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
-using Xunit;
 
 namespace System.Runtime.Analyzers.UnitTests
 {
-    public class InitializeValueTypeStaticFieldsInlineFixerTests : CodeFixTestBase
+    public class InitializeStaticFieldsInlineFixerTests : CodeFixTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicInitializeValueTypeStaticFieldsInlineAnalyzer();
+            return new BasicInitializeStaticFieldsInlineAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpInitializeValueTypeStaticFieldsInlineAnalyzer();
+            return new CSharpInitializeStaticFieldsInlineAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
-            return new BasicInitializeValueTypeStaticFieldsInlineFixer();
+            return new BasicInitializeStaticFieldsInlineFixer();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new CSharpInitializeValueTypeStaticFieldsInlineFixer();
+            return new CSharpInitializeStaticFieldsInlineFixer();
         }
     }
 }

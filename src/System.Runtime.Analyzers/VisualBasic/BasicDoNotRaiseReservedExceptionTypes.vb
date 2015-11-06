@@ -20,7 +20,6 @@ Namespace System.Runtime.Analyzers
         End Property
 
         Public Overrides Function GetTypeSyntaxNode(node As ObjectCreationExpressionSyntax) As SyntaxNode
-            Debug.Assert(node IsNot Nothing)
             Return node.Type
         End Function
     End Class

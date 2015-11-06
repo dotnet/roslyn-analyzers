@@ -126,10 +126,13 @@ namespace System.Runtime.Analyzers
             var objectCreationNode = (TObjectCreationExpressionSyntax) context.Node;
             var targetType = GetTypeSyntaxNode(objectCreationNode);
 
-            // TODO: can this be null in error condition?
-            Debug.Assert(targetType != null);
+            var  typeSymbol = context.SemanticModel.GetSymbolInfo(targetType).Symbol as INamedTypeSymbol;
+            // GetSymbolInfo().Symbol might return an error type symbol 
+            if (typeSymbol == null)
+            {
+                return;
+            }
 
-            var  typeSymbol = (INamedTypeSymbol)context.SemanticModel.GetSymbolInfo(targetType).Symbol;
             if (tooGenericExceptionSymbols.Contains(typeSymbol))
             {
                 context.ReportDiagnostic(Diagnostic.Create(TooGenericRule, targetType.GetLocation(), "CALLER", typeSymbol.ToDisplayString(new SymbolDisplayFormat(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces))));

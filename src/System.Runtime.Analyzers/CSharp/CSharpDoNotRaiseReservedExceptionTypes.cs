@@ -16,10 +16,6 @@ namespace System.Runtime.Analyzers
     {
         public override SyntaxKind ObjectCreationExpressionKind => SyntaxKind.ObjectCreationExpression;
 
-        public override SyntaxNode GetTypeSyntaxNode(ObjectCreationExpressionSyntax node)
-        {
-            Debug.Assert(node != null);
-            return node.Type;
-        } 
+        public override SyntaxNode GetTypeSyntaxNode(ObjectCreationExpressionSyntax node) => node.Type;
     }
 }

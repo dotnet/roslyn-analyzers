@@ -28,7 +28,45 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainTypeNamesMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainTypeNamesDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
-        internal static HashSet<string> s_types = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        internal static ImmutableHashSet<string> s_types = ImmutableHashSet.CreateRange<string>(StringComparer.OrdinalIgnoreCase,
+            new []{
+                "char",
+                "wchar",
+                "int8",
+                "uint8",
+                "short",
+                "ushort",
+                "int",
+                "uint",
+                "integer",
+                "uinteger",
+                "long",
+                "ulong",
+                "unsigned",
+                "signed",
+                "float",
+                "float32",
+                "float64",
+                "int16",
+                "int32",
+                "int64",
+                "uint16",
+                "uint32",
+                "uint64",
+                "intptr",
+                "uintptr",
+                "ptr",
+                "uptr",
+                "pointer",
+                "upointer",
+                "single",
+                "double",
+                "decimal",
+                "guid",
+                "object",
+                "obj",
+                "string"
+            });
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -37,74 +75,27 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb531486.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        /// <summary> 
-        /// Initializes primitive types 
-        /// </summary> 
-        static IdentifiersShouldNotContainTypeNames()
-        {
-            s_types.Add("bool");
-            s_types.Add("boolean");
-            s_types.Add("byte");
-            s_types.Add("sbyte");
-            s_types.Add("ubyte");
-            s_types.Add("char");
-            s_types.Add("wchar");
-            s_types.Add("int8");
-            s_types.Add("uint8");
-            s_types.Add("short");
-            s_types.Add("ushort");
-            s_types.Add("int");
-            s_types.Add("uint");
-            s_types.Add("integer");
-            s_types.Add("uinteger");
-            s_types.Add("long");
-            s_types.Add("ulong");
-            s_types.Add("unsigned");
-            s_types.Add("signed");
-            s_types.Add("float");
-            s_types.Add("float32");
-            s_types.Add("float64");
-            s_types.Add("int16");
-            s_types.Add("int32");
-            s_types.Add("int64");
-            s_types.Add("uint16");
-            s_types.Add("uint32");
-            s_types.Add("uint64");
-            s_types.Add("intptr");
-            s_types.Add("uintptr");
-            s_types.Add("ptr");
-            s_types.Add("uptr");
-            s_types.Add("pointer");
-            s_types.Add("upointer");
-            s_types.Add("single");
-            s_types.Add("double");
-            s_types.Add("decimal");
-            s_types.Add("guid");
-            s_types.Add("object");
-            s_types.Add("obj");
-            s_types.Add("string");
-        }
-
         public override void Initialize(AnalysisContext analysisContext)
         {
             analysisContext.RegisterSymbolAction(AnalyzeNamedType, SymbolKind.NamedType);
+            analysisContext.RegisterSymbolAction(AnalyzeField, SymbolKind.Field);
             analysisContext.RegisterSymbolAction(AnalyzeProperty, SymbolKind.Property);
             analysisContext.RegisterSymbolAction(AnalyzeMethod, SymbolKind.Method);
         }
 
         private static void AnalyzeSymbol(ISymbol symbol, SymbolAnalysisContext context)
         {
-            var typeName = symbol.Name;
+            var identifier = symbol.Name;
             //check if memeber contains type name 
-            var isTypeName = IsViolatingIdentifierName(typeName);
+            var isTypeName = s_types.Contains(identifier);
             if (isTypeName)
             {
-                var diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], typeName);
+                var diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], identifier);
                 context.ReportDiagnostic(diagnostic);
             }
         }
@@ -116,6 +107,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         /// </summary> 
         /// <param name="context"></param> 
         private static void AnalyzeNamedType(SymbolAnalysisContext context)
+        {
+            AnalyzeSymbol(context.Symbol, context);
+        }
+
+        private static void AnalyzeField(SymbolAnalysisContext context)
         {
             AnalyzeSymbol(context.Symbol, context);
         }
@@ -139,14 +135,5 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 AnalyzeSymbol(param, context);
             }
         }
-        
-        private static bool IsViolatingIdentifierName(string identifier)
-        {
-            if (s_types.Contains(identifier))
-                return true;
-
-            return false;
-        }
-
     }
 }

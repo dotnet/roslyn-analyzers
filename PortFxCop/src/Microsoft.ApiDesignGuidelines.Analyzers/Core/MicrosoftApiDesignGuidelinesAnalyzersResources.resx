@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="AvoidAsyncVoidTitle" xml:space="preserve">
+    <value>Avoid Async Void</value>
+  </data>
+  <data name="AvoidAsyncVoidDescription" xml:space="preserve">
+    <value>#N/A</value>
+  </data>
+  <data name="AvoidAsyncVoidMessage" xml:space="preserve">
+    <value>Avoid Async Void</value>
+  </data>
+  <data name="AsyncMethodNamesShouldEndInAsyncTitle" xml:space="preserve">
+    <value>Async Method Names Should End in Async</value>
+  </data>
+  <data name="AsyncMethodNamesShouldEndInAsyncDescription" xml:space="preserve">
+    <value>#N/A</value>
+  </data>
+  <data name="AsyncMethodNamesShouldEndInAsyncMessage" xml:space="preserve">
+    <value>Async Method Names Should End in Async</value>
+  </data>
+  <data name="DonTPassAsyncLambdasAsVoidReturningDelegateTypesTitle" xml:space="preserve">
+    <value>Don't Pass Async Lambdas as Void Returning Delegate Types</value>
+  </data>
+  <data name="DonTPassAsyncLambdasAsVoidReturningDelegateTypesDescription" xml:space="preserve">
+    <value>#N/A</value>
+  </data>
+  <data name="DonTPassAsyncLambdasAsVoidReturningDelegateTypesMessage" xml:space="preserve">
+    <value>Don't Pass Async Lambdas as Void Returning Delegate Types</value>
+  </data>
+  <data name="DonTStoreAsyncLambdasAsVoidReturningDelegateTypesTitle" xml:space="preserve">
+    <value>Don't Store Async Lambdas as Void Returning Delegate Types</value>
+  </data>
+  <data name="DonTStoreAsyncLambdasAsVoidReturningDelegateTypesDescription" xml:space="preserve">
+    <value>#N/A</value>
+  </data>
+  <data name="DonTStoreAsyncLambdasAsVoidReturningDelegateTypesMessage" xml:space="preserve">
+    <value>Don't Store Async Lambdas as Void Returning Delegate Types</value>
+  </data>
+  <data name="PropagateCancellationTokensWhenPossibleTitle" xml:space="preserve">
+    <value>Propagate CancellationTokens When Possible</value>
+  </data>
+  <data name="PropagateCancellationTokensWhenPossibleDescription" xml:space="preserve">
+    <value>#N/A</value>
+  </data>
+  <data name="PropagateCancellationTokensWhenPossibleMessage" xml:space="preserve">
+    <value>Propagate CancellationTokens When Possible</value>
+  </data>
+  <data name="DonTMixBlockingAndAsyncTitle" xml:space="preserve">
+    <value>Don't Mix Blocking and Async</value>
+  </data>
+  <data name="DonTMixBlockingAndAsyncDescription" xml:space="preserve">
+    <value>#N/A</value>
+  </data>
+  <data name="DonTMixBlockingAndAsyncMessage" xml:space="preserve">
+    <value>Don't Mix Blocking and Async</value>
+  </data>
+  <data name="TypesThatOwnDisposableFieldsShouldBeDisposableTitle" xml:space="preserve">
+    <value>Types that own disposable fields should be disposable</value>
+  </data>
+  <data name="TypesThatOwnDisposableFieldsShouldBeDisposableDescription" xml:space="preserve">
+    <value>A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.</value>
+  </data>
+  <data name="TypesThatOwnDisposableFieldsShouldBeDisposableMessageDependsOnFix" xml:space="preserve">
+    <value>Implement IDisposable on {0} because it creates members of the following IDisposable types: {1}. If {0} has previously shipped, adding new members that implement IDisposable to this type is considered a breaking change to existing consumers.</value>
+  </data>
+  <data name="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking" xml:space="preserve">
+    <value>Implement IDisposable on {0} because it creates members of the following IDisposable types: {1}.</value>
+  </data>
+  <data name="UseGenericEventHandlerInstancesTitle" xml:space="preserve">
+    <value>Use generic event handler instances</value>
+  </data>
+  <data name="UseGenericEventHandlerInstancesDescription" xml:space="preserve">
+    <value>A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</value>
+  </data>
+  <data name="UseGenericEventHandlerInstancesMessageVB" xml:space="preserve">
+    <value>Visual Basic generates EventHandler delegates for events that use the following pattern: Event MyEvent(ByVal Sender As Object, ByVal e as MyEventArgs). Change the event that defines EventHandler {0} to use EventHandler&lt;T&gt; by defining the event type explicitly, e.g. Event MyEvent As EventHandler(Of MyEventArgs).</value>
+  </data>
+  <data name="UseGenericEventHandlerInstancesMessageDefault" xml:space="preserve">
+    <value>Remove {0} and replace its usage with EventHandler&lt;T&gt;</value>
+  </data>
+  <data name="EnumsShouldHaveZeroValueTitle" xml:space="preserve">
+    <value>Enums should have zero value</value>
+  </data>
+  <data name="EnumsShouldHaveZeroValueDescription" xml:space="preserve">
+    <value>The default value of an uninitialized enumeration, just as other value types, is zero. A nonflags-attributed enumeration should define a member by using the value of zero so that the default value is a valid value of the enumeration. If an enumeration that has the FlagsAttribute attribute applied defines a zero-valued member, its name should be ""None"" to indicate that no values have been set in the enumeration.</value>
+  </data>
+  <data name="EnumsShouldHaveZeroValueMessageFlagsRename" xml:space="preserve">
+    <value>In enum {0}, change the name of {1} to 'None'.</value>
+  </data>
+  <data name="EnumsShouldHaveZeroValueMessageFlagsMultipleZeros" xml:space="preserve">
+    <value>Remove all members that have the value zero from {0} except for one member that is named 'None'.</value>
+  </data>
+  <data name="EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue" xml:space="preserve">
+    <value>Add a member to {0} that has a value of zero with a suggested name of 'None'.</value>
+  </data>
+  <data name="AbstractTypesShouldNotHaveConstructorsTitle" xml:space="preserve">
+    <value>Abstract types should not have constructors</value>
+  </data>
+  <data name="AbstractTypesShouldNotHaveConstructorsDescription" xml:space="preserve">
+    <value>Constructors on abstract types can be called only by derived types. Because public constructors create instances of a type, and you cannot create instances of an abstract type, an abstract type that has a public constructor is incorrectly designed.</value>
+  </data>
+  <data name="AbstractTypesShouldNotHaveConstructorsMessage" xml:space="preserve">
+    <value>Abstract types should not have constructors</value>
+  </data>
+  <data name="MarkAssembliesWithClsCompliantTitle" xml:space="preserve">
+    <value>Mark assemblies with CLSCompliant</value>
+  </data>
+  <data name="MarkAssembliesWithClsCompliantDescription" xml:space="preserve">
+    <value>The Common Language Specification (CLS) defines naming restrictions, data types, and rules to which assemblies must conform if they will be used across programming languages. Good design dictates that all assemblies explicitly indicate CLS compliance by using CLSCompliantAttribute . If this attribute is not present on an assembly, the assembly is not compliant.</value>
+  </data>
+  <data name="MarkAssembliesWithClsCompliantMessage" xml:space="preserve">
+    <value>Mark assemblies with CLSCompliant</value>
+  </data>
+  <data name="MarkAssembliesWithAssemblyVersionTitle" xml:space="preserve">
+    <value>Mark assemblies with assembly version</value>
+  </data>
+  <data name="MarkAssembliesWithAssemblyVersionDescription" xml:space="preserve">
+    <value>The .NET Framework uses the version number to uniquely identify an assembly, and to bind to types in strongly named assemblies. The version number is used together with version and publisher policy. By default, applications run only with the assembly version with which they were built.</value>
+  </data>
+  <data name="MarkAssembliesWithAssemblyVersionMessage" xml:space="preserve">
+    <value>Mark assemblies with assembly version</value>
+  </data>
+  <data name="MarkAssembliesWithComVisibleTitle" xml:space="preserve">
+    <value>Mark assemblies with ComVisible</value>
+  </data>
+  <data name="MarkAssembliesWithComVisibleDescription" xml:space="preserve">
+    <value>ComVisibleAttribute determines how COM clients access managed code. Good design dictates that assemblies explicitly indicate COM visibility. COM visibility can be set for the whole assembly and then overridden for individual types and type members. If this attribute is not present, the contents of the assembly are visible to COM clients.</value>
+  </data>
+  <data name="MarkAssembliesWithComVisibleMessageNoAttribute" xml:space="preserve">
+    <value>Because {0} exposes externally visible types, mark it with ComVisible(false) at the assembly level and then mark all types within the assembly that should be exposed to COM clients with ComVisible(true).</value>
+  </data>
+  <data name="MarkAssembliesWithComVisibleMessageAttributeTrue" xml:space="preserve">
+    <value>Consider changing the ComVisible attribute on {0} to false, and opting in at the type level.</value>
+  </data>
+  <data name="MarkAttributesWithAttributeUsageTitle" xml:space="preserve">
+    <value>Mark attributes with AttributeUsageAttribute</value>
+  </data>
+  <data name="MarkAttributesWithAttributeUsageDescription" xml:space="preserve">
+    <value>When you define a custom attribute, mark it by using AttributeUsageAttribute to indicate where in the source code the custom attribute can be applied. The meaning and intended usage of an attribute will determine its valid locations in code.</value>
+  </data>
+  <data name="MarkAttributesWithAttributeUsageMessageDefault" xml:space="preserve">
+    <value>Specify AttributeUsage on {0}.</value>
+  </data>
+  <data name="MarkAttributesWithAttributeUsageMessageInherited" xml:space="preserve">
+    <value>Even though attribute {0} inherits AttributeUsage from its base type, you should consider explicitly specifying AttributeUsage on the type to improve code readability and documentation.</value>
+  </data>
+  <data name="DefineAccessorsForAttributeArgumentsTitle" xml:space="preserve">
+    <value>Define accessors for attribute arguments</value>
+  </data>
+  <data name="DefineAccessorsForAttributeArgumentsDescription" xml:space="preserve">
+    <value>Attributes can define mandatory arguments that must be specified when you apply the attribute to a target. These are also known as positional arguments because they are supplied to attribute constructors as positional parameters. For every mandatory argument, the attribute should also provide a corresponding read-only property so that the value of the argument can be retrieved at execution time. Attributes can also define optional arguments, which are also known as named arguments. These arguments are supplied to attribute constructors by name and should have a corresponding read/write property.</value>
+  </data>
+  <data name="DefineAccessorsForAttributeArgumentsMessageDefault" xml:space="preserve">
+    <value>Add a public read-only property accessor for positional argument {0} of Attribute {1}.</value>
+  </data>
+  <data name="DefineAccessorsForAttributeArgumentsMessageRemoveSetter" xml:space="preserve">
+    <value>Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}.</value>
+  </data>
+  <data name="DefineAccessorsForAttributeArgumentsMessageIncreaseVisibility" xml:space="preserve">
+    <value>If {0} is the property accessor for positional argument {1}, make it public.</value>
+  </data>
+  <data name="UsePropertiesWhereAppropriateTitle" xml:space="preserve">
+    <value>Use properties where appropriate</value>
+  </data>
+  <data name="UsePropertiesWhereAppropriateDescription" xml:space="preserve">
+    <value>A public or protected method has a name that starts with ""Get"", takes no parameters, and returns a value that is not an array. The method might be a good candidate to become a property.</value>
+  </data>
+  <data name="UsePropertiesWhereAppropriateMessage" xml:space="preserve">
+    <value>Use properties where appropriate</value>
+  </data>
+  <data name="MarkEnumsWithFlagsTitle" xml:space="preserve">
+    <value>Mark enums with FlagsAttribute</value>
+  </data>
+  <data name="MarkEnumsWithFlagsDescription" xml:space="preserve">
+    <value>An enumeration is a value type that defines a set of related named constants. Apply FlagsAttribute to an enumeration when its named constants can be meaningfully combined.</value>
+  </data>
+  <data name="MarkEnumsWithFlagsMessage" xml:space="preserve">
+    <value>Mark enums with FlagsAttribute</value>
+  </data>
+  <data name="InterfaceMethodsShouldBeCallableByChildTypesTitle" xml:space="preserve">
+    <value>Interface methods should be callable by child types</value>
+  </data>
+  <data name="InterfaceMethodsShouldBeCallableByChildTypesDescription" xml:space="preserve">
+    <value>An unsealed externally visible type provides an explicit method implementation of a public interface and does not provide an alternative externally visible method that has the same name.</value>
+  </data>
+  <data name="InterfaceMethodsShouldBeCallableByChildTypesMessage" xml:space="preserve">
+    <value>Interface methods should be callable by child types</value>
+  </data>
+  <data name="OverrideMethodsOnComparableTypesTitle" xml:space="preserve">
+    <value>Override methods on comparable types</value>
+  </data>
+  <data name="OverrideMethodsOnComparableTypesDescription" xml:space="preserve">
+    <value>A public or protected type implements the System.IComparable interface. It does not override Object.Equals nor does it overload the language-specific operator for equality, inequality, less than, or greater than.</value>
+  </data>
+  <data name="OverrideMethodsOnComparableTypesMessageEquals" xml:space="preserve">
+    <value>{0} should override Equals since it implements IComparable.</value>
+  </data>
+  <data name="OverrideMethodsOnComparableTypesMessageOperator" xml:space="preserve">
+    <value>{0} should define operator '{1}' since it implements IComparable.</value>
+  </data>
+  <data name="StaticHolderTypesShouldBeSealedTitle" xml:space="preserve">
+    <value>Static holder types should be sealed</value>
+  </data>
+  <data name="StaticHolderTypesShouldBeSealedDescription" xml:space="preserve">
+    <value>A public or protected type contains only static members and is not declared by using the sealed (C# Reference) (NotInheritable) modifier. A type that is not meant to be inherited should be marked by using the sealed modifier to prevent its use as a base type.</value>
+  </data>
+  <data name="StaticHolderTypesShouldBeSealedMessageDefault" xml:space="preserve">
+    <value>Because type {0} contains only 'static' ('Shared' in Visual Basic) members, mark it as 'sealed' ('NotInheritable' in Visual Basic) to prevent consumers from inheriting from it.</value>
+  </data>
+  <data name="StaticHolderTypesShouldBeSealedMessageCSharp20" xml:space="preserve">
+    <value>Because type {0} contains only 'static' members, mark it as 'static' to prevent consumers from inheriting from it.</value>
+  </data>
+  <data name="StaticHolderTypesShouldNotHaveConstructorsTitle" xml:space="preserve">
+    <value>Static holder types should not have constructors</value>
+  </data>
+  <data name="StaticHolderTypesShouldNotHaveConstructorsDescription" xml:space="preserve">
+    <value>A public or nested public type declares only static members and has a public or protected default constructor. The constructor is unnecessary because calling static members does not require an instance of the type. The string overload should call the uniform resource identifier (URI) overload by using the string argument for safety and security.</value>
+  </data>
+  <data name="StaticHolderTypesShouldNotHaveConstructorsMessageDefault" xml:space="preserve">
+    <value>Because type {0} contains only 'static' ('Shared' in Visual Basic) members, add a default private constructor to prevent the compiler from adding a default public constructor.</value>
+  </data>
+  <data name="StaticHolderTypesShouldNotHaveConstructorsMessageCSharp20" xml:space="preserve">
+    <value>Because type {0} contains only 'static' members, mark it as 'static' to prevent the compiler from adding a default public constructor.</value>
+  </data>
+  <data name="MovePInvokesToNativeMethodsClassTitle" xml:space="preserve">
+    <value>Move pinvokes to native methods class</value>
+  </data>
+  <data name="MovePInvokesToNativeMethodsClassDescription" xml:space="preserve">
+    <value>Platform Invocation methods, such as those that are marked by using the System.Runtime.InteropServices.DllImportAttribute attribute, or methods that are defined by using the Declare keyword in Visual Basic, access unmanaged code. These methods should be of the NativeMethods, SafeNativeMethods, or UnsafeNativeMethods class.</value>
+  </data>
+  <data name="MovePInvokesToNativeMethodsClassMessage" xml:space="preserve">
+    <value>Move pinvokes to native methods class</value>
+  </data>
+  <data name="IdentifiersShouldDifferByMoreThanCaseTitle" xml:space="preserve">
+    <value>Identifiers should differ by more than case</value>
+  </data>
+  <data name="IdentifiersShouldDifferByMoreThanCaseDescription" xml:space="preserve">
+    <value>Identifiers for namespaces, types, members, and parameters cannot differ only by case because languages that target the common language runtime are not required to be case-sensitive.</value>
+  </data>
+  <data name="IdentifiersShouldDifferByMoreThanCaseMessageMember" xml:space="preserve">
+    <value>Change member names {0} and '{1}' so that they differ by more than case.</value>
+  </data>
+  <data name="IdentifiersShouldDifferByMoreThanCaseMessageType" xml:space="preserve">
+    <value>Change type names {0} and '{1}' so that they differ by more than case.</value>
+  </data>
+  <data name="IdentifiersShouldDifferByMoreThanCaseMessageNamespace" xml:space="preserve">
+    <value>Change namespace names {0} and '{1}' so that they differ by more than case.</value>
+  </data>
+  <data name="IdentifiersShouldDifferByMoreThanCaseMessageParameter" xml:space="preserve">
+    <value>Change parameter names {0} and '{1}' so that they differ by more than case.</value>
+  </data>
+  <data name="IdentifiersShouldHaveCorrectPrefixTitle" xml:space="preserve">
+    <value>Identifiers should have correct prefix</value>
+  </data>
+  <data name="IdentifiersShouldHaveCorrectPrefixDescription" xml:space="preserve">
+    <value>The name of an externally visible interface does not start with an uppercase ""I"". The name of a generic type parameter on an externally visible type or method does not start with an uppercase ""T"".</value>
+  </data>
+  <data name="IdentifiersShouldHaveCorrectPrefixMessageInterface" xml:space="preserve">
+    <value>Prefix interface name {0} with 'I'.</value>
+  </data>
+  <data name="IdentifiersShouldHaveCorrectPrefixMessageTypeTypeParameter" xml:space="preserve">
+    <value>On type {0}, prefix generic type parameter name {1} with 'T'.</value>
+  </data>
+  <data name="IdentifiersShouldHaveCorrectPrefixMessageMethodTypeParameter" xml:space="preserve">
+    <value>On method {0}, prefix generic type parameter name {1} with 'T'.</value>
+  </data>
+  <data name="NonConstantFieldsShouldNotBeVisibleTitle" xml:space="preserve">
+    <value>Non-constant fields should not be visible</value>
+  </data>
+  <data name="NonConstantFieldsShouldNotBeVisibleDescription" xml:space="preserve">
+    <value>Static fields that are neither constants nor read-only are not thread-safe. Access to such a field must be carefully controlled and requires advanced programming techniques to synchronize access to the class object.</value>
+  </data>
+  <data name="NonConstantFieldsShouldNotBeVisibleMessage" xml:space="preserve">
+    <value>Non-constant fields should not be visible</value>
+  </data>
+  <data name="DoNotMarkEnumsWithFlagsTitle" xml:space="preserve">
+    <value>Do not mark enums with FlagsAttribute</value>
+  </data>
+  <data name="DoNotMarkEnumsWithFlagsDescription" xml:space="preserve">
+    <value>An externally visible enumeration is marked by using FlagsAttribute, and it has one or more values that are not powers of two or a combination of the other defined values on the enumeration.</value>
+  </data>
+  <data name="DoNotMarkEnumsWithFlagsMessage" xml:space="preserve">
+    <value>Do not mark enums with FlagsAttribute</value>
+  </data>
+  <data name="DoNotDecreaseInheritedMemberVisibilityTitle" xml:space="preserve">
+    <value>Do not decrease inherited member visibility</value>
+  </data>
+  <data name="DoNotDecreaseInheritedMemberVisibilityDescription" xml:space="preserve">
+    <value>You should not change the access modifier for inherited members. Changing an inherited member to private does not prevent callers from accessing the base class implementation of the method.</value>
+  </data>
+  <data name="DoNotDecreaseInheritedMemberVisibilityMessage" xml:space="preserve">
+    <value>Do not decrease inherited member visibility</value>
+  </data>
+  <data name="OperatorOverloadsHaveNamedAlternatesTitle" xml:space="preserve">
+    <value>Operator overloads have named alternates</value>
+  </data>
+  <data name="OperatorOverloadsHaveNamedAlternatesDescription" xml:space="preserve">
+    <value>An operator overload was detected, and the expected named alternative method was not found. The named alternative member provides access to the same functionality as the operator and is provided for developers who program in languages that do not support overloaded operators.</value>
+  </data>
+  <data name="OperatorOverloadsHaveNamedAlternatesMessageDefault" xml:space="preserve">
+    <value>Provide a method named '{0}' as a friendly alternate for operator {1}.</value>
+  </data>
+  <data name="OperatorOverloadsHaveNamedAlternatesMessageProperty" xml:space="preserve">
+    <value>Provide a property named '{0}' as a friendly alternate for operator {1}.</value>
+  </data>
+  <data name="OperatorOverloadsHaveNamedAlternatesMessageMultiple" xml:space="preserve">
+    <value>Provide a method named '{0}' or '{1}' as an alternate for operator {2}.</value>
+  </data>
+  <data name="OperatorOverloadsHaveNamedAlternatesMessageVisibility" xml:space="preserve">
+    <value>Mark {0} as public because it is a friendly alternate for operator {1}.</value>
+  </data>
+  <data name="OperatorsShouldHaveSymmetricalOverloadsTitle" xml:space="preserve">
+    <value>Operators should have symmetrical overloads</value>
+  </data>
+  <data name="OperatorsShouldHaveSymmetricalOverloadsDescription" xml:space="preserve">
+    <value>A type implements the equality or inequality operator and does not implement the opposite operator.</value>
+  </data>
+  <data name="OperatorsShouldHaveSymmetricalOverloadsMessage" xml:space="preserve">
+    <value>Operators should have symmetrical overloads</value>
+  </data>
+  <data name="CollectionPropertiesShouldBeReadOnlyTitle" xml:space="preserve">
+    <value>Collection properties should be read only</value>
+  </data>
+  <data name="CollectionPropertiesShouldBeReadOnlyDescription" xml:space="preserve">
+    <value>A writable collection property allows a user to replace the collection with a different collection. A read-only property stops the collection from being replaced but still allows the individual members to be set.</value>
+  </data>
+  <data name="CollectionPropertiesShouldBeReadOnlyMessage" xml:space="preserve">
+    <value>Collection properties should be read only</value>
+  </data>
+  <data name="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle" xml:space="preserve">
+    <value>Overload operator equals on overriding value type Equals</value>
+  </data>
+  <data name="OverloadOperatorEqualsOnOverridingValueTypeEqualsDescription" xml:space="preserve">
+    <value>In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals</value>
+  </data>
+  <data name="OverloadOperatorEqualsOnOverridingValueTypeEqualsMessage" xml:space="preserve">
+    <value>Overload operator equals on overriding value type Equals</value>
+  </data>
+  <data name="PassSystemUriObjectsInsteadOfStringsTitle" xml:space="preserve">
+    <value>Pass system uri objects instead of strings</value>
+  </data>
+  <data name="PassSystemUriObjectsInsteadOfStringsDescription" xml:space="preserve">
+    <value>A call is made to a method that has a string parameter whose name contains "uri", "URI", "urn", "URN", "url", or "URL". The declaring type of the method contains a corresponding method overload that has a System.Uri parameter.</value>
+  </data>
+  <data name="PassSystemUriObjectsInsteadOfStringsMessage" xml:space="preserve">
+    <value>Pass system uri objects instead of strings</value>
+  </data>
+  <data name="ImplementIEquatableWhenOverridingObjectEqualsTitle" xml:space="preserve">
+    <value>Implement IEquatable when overriding Object.Equals</value>
+  </data>
+  <data name="ImplementIEquatableWhenOverridingObjectEqualsDescription" xml:space="preserve">
+    <value>#N/A</value>
+  </data>
+  <data name="ImplementIEquatableWhenOverridingObjectEqualsMessage" xml:space="preserve">
+    <value>Implement IEquatable when overriding Object.Equals</value>
+  </data>
+  <data name="CancellationTokenParametersMustComeLastTitle" xml:space="preserve">
+    <value>CancellationToken parameters must come last</value>
+  </data>
+  <data name="CancellationTokenParametersMustComeLastDescription" xml:space="preserve">
+    <value>#N/A</value>
+  </data>
+  <data name="CancellationTokenParametersMustComeLastMessage" xml:space="preserve">
+    <value>CancellationToken parameters must come last</value>
+  </data>
+  <data name="ConstructorMakeNoninheritableBaseClassInheritableTitle" xml:space="preserve">
+    <value>Constructor make noninheritable base class inheritable</value>
+  </data>
+  <data name="ConstructorMakeNoninheritableBaseClassInheritableDescription" xml:space="preserve">
+    <value>When a base class is noninheritable because its constructor is internal, a derived class should not make it inheritable by having a public or protected constructor.</value>
+  </data>
+  <data name="ConstructorMakeNoninheritableBaseClassInheritableMessage" xml:space="preserve">
+    <value>Constructor make noninheritable base class inheritable</value>
+  </data>
+  <data name="IdentifiersShouldNotContainTypeNamesTitle" xml:space="preserve">
+    <value>Identifier contains type name</value>
+  </data>
+  <data name="IdentifiersShouldNotContainTypeNamesDescription" xml:space="preserve">
+    <value>
+Names of parameters and members are better used to communicate their meaning than to describe their type, which is expected to be provided by development tools. For names of members, if a data type name must be used, use a language-independent name instead of a language-specific one.</value>
+  </data>
+  <data name="IdentifiersShouldNotContainTypeNamesMessage" xml:space="preserve">
+    <value>Identifier '{0}' contains type name</value>
+  </data>
+  <data name="CategoryApiDesign" xml:space="preserve">
+    <value>ApiDesign</value>
+  </data>
+  <data name="CategoryDesign" xml:space="preserve">
+    <value>Design</value>
+  </data>
+  <data name="CategoryLibrary" xml:space="preserve">
+    <value>Library</value>
+  </data>
+  <data name="CategoryNaming" xml:space="preserve">
+    <value>Naming</value>
+  </data>
+  <data name="CategoryPerformance" xml:space="preserve">
+    <value>Performance</value>
+  </data>
+  <data name="CategoryUsage" xml:space="preserve">
+    <value>Usage</value>
+  </data>
+</root>

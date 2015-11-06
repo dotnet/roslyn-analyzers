@@ -73,6 +73,8 @@ namespace System.Runtime.Analyzers
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182338.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
+        private static readonly SymbolDisplayFormat _symbolDisplayFormat = new SymbolDisplayFormat(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(TooGenericRule, ReservedRule); 
 
         public abstract TLanguageKindEnum ObjectCreationExpressionKind { get; }
@@ -135,11 +137,11 @@ namespace System.Runtime.Analyzers
 
             if (tooGenericExceptionSymbols.Contains(typeSymbol))
             {
-                context.ReportDiagnostic(Diagnostic.Create(TooGenericRule, targetType.GetLocation(), typeSymbol.ToDisplayString(new SymbolDisplayFormat(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces))));
+                context.ReportDiagnostic(Diagnostic.Create(TooGenericRule, targetType.GetLocation(), typeSymbol.ToDisplayString(_symbolDisplayFormat)));
             }
             else if (reservedExceptionSymbols.Contains(typeSymbol))
             {
-                context.ReportDiagnostic(Diagnostic.Create(ReservedRule, targetType.GetLocation(), typeSymbol.ToDisplayString(new SymbolDisplayFormat(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces))));
+                context.ReportDiagnostic(Diagnostic.Create(ReservedRule, targetType.GetLocation(), typeSymbol.ToDisplayString(_symbolDisplayFormat)));
             }
         }
     }

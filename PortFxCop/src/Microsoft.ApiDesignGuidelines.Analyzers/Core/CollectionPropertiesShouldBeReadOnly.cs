@@ -44,13 +44,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                     helpLinkUri: "https://msdn.microsoft.com/library/ms182327.aspx",
                                                                     customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return ImmutableArray.Create(Rule);
-            }
-        }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -71,11 +65,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol iCollectionType, INamedTypeSymbol arrayType)
         {
-            var property = context.Symbol as IPropertySymbol;
-            if (property == null)
-            {
-                return;
-            }
+            var property = (IPropertySymbol)context.Symbol;
 
             // check whether it has a public setter
             var setter = property.SetMethod;

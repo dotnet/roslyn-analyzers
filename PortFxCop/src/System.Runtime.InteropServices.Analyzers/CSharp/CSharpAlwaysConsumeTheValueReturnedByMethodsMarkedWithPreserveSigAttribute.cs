@@ -1,19 +1,22 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace System.Runtime.InteropServices.Analyzers
-{                          
-    /// <summary>
-    /// RS0015: Always consume the value returned by methods marked with PreserveSigAttribute
-    /// </summary>
+namespace Roslyn.Diagnostics.Analyzers.CSharp
+{
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class CSharpAlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeAnalyzer : AlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeAnalyzer
+    public class CSharpConsumePreserveSigAnalyzer : ConsumePreserveSigAnalyzer<SyntaxKind>
     {
+        protected override SyntaxKind InvocationExpressionSyntaxKind
+        {
+            get { return SyntaxKind.InvocationExpression; }
+        }
 
+        protected override bool IsExpressionStatementSyntaxKind(int rawKind)
+        {
+            return (SyntaxKind)rawKind == SyntaxKind.ExpressionStatement;
+        }
     }
 }

@@ -21,6 +21,9 @@
     <SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>1.0.0</SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>
     <SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>beta1</SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>
 
+    <SharedLibrarySemanticVersion>1.0.0</SharedLibrarySemanticVersion>
+    <SharedLibraryPreReleaseVersion>beta1</SharedLibraryPreReleaseVersion>
+
     <SharedTestSemanticVersion>1.0.0</SharedTestSemanticVersion>
     <SharedTestPreReleaseVersion>beta1</SharedTestPreReleaseVersion>
 

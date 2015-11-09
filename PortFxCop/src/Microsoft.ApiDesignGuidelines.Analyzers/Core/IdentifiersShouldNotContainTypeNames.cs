@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Collections.Generic;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 

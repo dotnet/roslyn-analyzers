@@ -39,6 +39,7 @@
     <Compile Include="CommonAccessibilityUtilities.cs" />
     <Compile Include="DiagnosticCategory.cs" />
     <Compile Include="DiagnosticHelpers.cs" />
+    <Compile Include="DocumentChangeAction.cs" />
     <Compile Include="Extensions\DiagnosticExtensions.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Extensions\INamedTypeSymbolExtensions.cs" />

@@ -169,6 +169,9 @@
   <data name="ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate" xml:space="preserve">
     <value>Declare the serialization constructor of {0}, a sealed type, as private.</value>
   </data>
+  <data name="ImplementSerializationConstructorsCodeActionTitle" xml:space="preserve">
+    <value>Implement Serialization constructor</value>
+  </data>
   <data name="MarkWindowsFormsEntryPointsWithStaThreadTitle" xml:space="preserve">
     <value>Mark Windows Forms entry points with STAThread</value>
   </data>
@@ -185,7 +188,7 @@
     <value>An instance field of a type that is not serializable is declared in a type that is serializable.</value>
   </data>
   <data name="MarkAllNonSerializableFieldsMessage" xml:space="preserve">
-    <value>Mark all non-serializable fields</value>
+    <value>Field {0} is a member of type {1} which is serializable but is of type {2} which is not serializable</value>
   </data>
   <data name="CallBaseClassMethodsOnISerializableTypesTitle" xml:space="preserve">
     <value>Call base class methods on ISerializable types</value>
@@ -203,7 +206,13 @@
     <value>To be recognized by the common language runtime as serializable, types must be marked by using the SerializableAttribute attribute even when the type uses a custom serialization routine through implementation of the ISerializable interface.</value>
   </data>
   <data name="MarkISerializableTypesWithSerializableMessage" xml:space="preserve">
-    <value>Mark ISerializable types with serializable</value>
+    <value>Add [Serializable] to {0} as this type implements ISerializable</value>
+  </data>
+  <data name="AddSerializableAttributeCodeActionTitle" xml:space="preserve">
+    <value>Add Serializable attribute</value>
+  </data>
+  <data name="AddNonSerializedAttributeCodeActionTitle" xml:space="preserve">
+    <value>Add the 'NonSerialized' attribute to this field.</value>
   </data>
   <data name="ImplementSerializationMethodsCorrectlyTitle" xml:space="preserve">
     <value>Implement serialization methods correctly</value>

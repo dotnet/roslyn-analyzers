@@ -98,7 +98,6 @@
     <None Include="uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DocumentChangeAction.cs" />
     <Compile Include="PInvokeDiagnosticAnalyzer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SystemRuntimeInteropServicesAnalyzersResources.Designer.cs">
@@ -120,6 +119,12 @@
       <LastGenOutput>SystemRuntimeInteropServicesAnalyzersResources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
+      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
+      <Name>Analyzer.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

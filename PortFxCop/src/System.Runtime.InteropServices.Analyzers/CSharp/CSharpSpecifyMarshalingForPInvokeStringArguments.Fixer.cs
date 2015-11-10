@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace System.Runtime.InteropServices.Analyzers
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = PInvokeDiagnosticAnalyzer.CA2101), Shared]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = PInvokeDiagnosticAnalyzer.RuleCA2101Id), Shared]
     public class CSharpSpecifyMarshalingForPInvokeStringArgumentsFixer : SpecifyMarshalingForPInvokeStringArgumentsFixer
     {
         protected override bool IsAttribute(SyntaxNode node)

@@ -12,7 +12,7 @@ Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
 Namespace System.Runtime.InteropServices.Analyzers
-    <ExportCodeFixProvider(LanguageNames.CSharp, Name:=PInvokeDiagnosticAnalyzer.CA2101), [Shared]>
+    <ExportCodeFixProvider(LanguageNames.CSharp, Name:=PInvokeDiagnosticAnalyzer.RuleCA2101Id), [Shared]>
     Public Class BasicSpecifyMarshalingForPInvokeStringArgumentsFixer
         Inherits SpecifyMarshalingForPInvokeStringArgumentsFixer
 

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
+using Analyzer.Utilities;
 
 namespace System.Runtime.InteropServices.Analyzers
 {
@@ -19,7 +20,7 @@ namespace System.Runtime.InteropServices.Analyzers
         protected const string LPWStrText = "LPWStr";
         protected const string UnicodeText = "Unicode";
 
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PInvokeDiagnosticAnalyzer.CA2101);
+        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PInvokeDiagnosticAnalyzer.RuleCA2101Id);
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {

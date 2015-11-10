@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Microsoft.AnalyzerPowerPack.Utilities
+namespace Analyzer.Utilities
 {
     /// <summary>
     ///   Defines the word parsing and delimiting options for use with <see cref="WordParser.Parse(String,WordParserOptions)"/>.

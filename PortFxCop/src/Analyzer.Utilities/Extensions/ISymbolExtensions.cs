@@ -3,7 +3,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 
-namespace Microsoft.AnalyzerPowerPack.Utilities
+namespace Analyzer.Utilities
 {
     public static class ISymbolExtensions
     {

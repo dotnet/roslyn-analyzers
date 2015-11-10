@@ -51,8 +51,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
-                    var iCollectionType = context.Compilation.GetICollectionType();
-                    var arrayType = context.Compilation.GetArrayType();
+                    var iCollectionType = WellKnownTypes.ICollection(context.Compilation);
+                    var arrayType = WellKnownTypes.Array(context.Compilation);
 
                     if (iCollectionType == null || arrayType == null)
                     {

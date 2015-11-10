@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Microsoft.AnalyzerPowerPack.Utilities
+namespace Analyzer.Utilities
 {
     internal static class ObjectExtensions
     {

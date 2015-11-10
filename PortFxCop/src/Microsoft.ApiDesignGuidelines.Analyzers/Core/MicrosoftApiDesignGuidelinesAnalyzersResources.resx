@@ -117,7 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-
   <data name="AvoidAsyncVoidTitle" xml:space="preserve">
     <value>Avoid Async Void</value>
   </data>
@@ -499,23 +498,5 @@ Names of parameters and members are better used to communicate their meaning tha
   </data>
   <data name="IdentifiersShouldNotContainTypeNamesMessage" xml:space="preserve">
     <value>Identifier '{0}' contains type name</value>
-  </data>
-  <data name="CategoryApiDesign" xml:space="preserve">
-    <value>ApiDesign</value>
-  </data>
-  <data name="CategoryDesign" xml:space="preserve">
-    <value>Design</value>
-  </data>
-  <data name="CategoryLibrary" xml:space="preserve">
-    <value>Library</value>
-  </data>
-  <data name="CategoryNaming" xml:space="preserve">
-    <value>Naming</value>
-  </data>
-  <data name="CategoryPerformance" xml:space="preserve">
-    <value>Performance</value>
-  </data>
-  <data name="CategoryUsage" xml:space="preserve">
-    <value>Usage</value>
   </data>
 </root>

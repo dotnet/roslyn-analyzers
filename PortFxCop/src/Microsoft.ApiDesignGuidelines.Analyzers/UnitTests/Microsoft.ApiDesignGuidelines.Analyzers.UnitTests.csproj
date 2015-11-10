@@ -210,7 +210,6 @@
     <Compile Include="OperatorsShouldHaveSymmetricalOverloadsTests.cs" />
     <Compile Include="OperatorsShouldHaveSymmetricalOverloadsTests.Fixer.cs" />
     <Compile Include="CollectionPropertiesShouldBeReadOnlyTests.cs" />
-    <Compile Include="CollectionPropertiesShouldBeReadOnlyTests.Fixer.cs" />
     <Compile Include="OverloadOperatorEqualsOnOverridingValueTypeEqualsTests.cs" />
     <Compile Include="OverloadOperatorEqualsOnOverridingValueTypeEqualsTests.Fixer.cs" />
     <Compile Include="PassSystemUriObjectsInsteadOfStringsTests.cs" />
@@ -221,7 +220,6 @@
     <Compile Include="CancellationTokenParametersMustComeLastTests.Fixer.cs" />
     <Compile Include="ConstructorMakeNoninheritableBaseClassInheritableTests.cs" />
     <Compile Include="ConstructorMakeNoninheritableBaseClassInheritableTests.Fixer.cs" />
-
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

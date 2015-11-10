@@ -171,60 +171,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ApiDesign.
-        /// </summary>
-        internal static string CategoryApiDesign {
-            get {
-                return ResourceManager.GetString("CategoryApiDesign", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Design.
-        /// </summary>
-        internal static string CategoryDesign {
-            get {
-                return ResourceManager.GetString("CategoryDesign", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Library.
-        /// </summary>
-        internal static string CategoryLibrary {
-            get {
-                return ResourceManager.GetString("CategoryLibrary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Naming.
-        /// </summary>
-        internal static string CategoryNaming {
-            get {
-                return ResourceManager.GetString("CategoryNaming", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Performance.
-        /// </summary>
-        internal static string CategoryPerformance {
-            get {
-                return ResourceManager.GetString("CategoryPerformance", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Usage.
-        /// </summary>
-        internal static string CategoryUsage {
-            get {
-                return ResourceManager.GetString("CategoryUsage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to A writable collection property allows a user to replace the collection with a different collection. A read-only property stops the collection from being replaced but still allows the individual members to be set..
         /// </summary>
         internal static string CollectionPropertiesShouldBeReadOnlyDescription {

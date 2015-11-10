@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24627.0
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.ApiDesignGuidelines.Analyzers", "Microsoft.ApiDesignGuidelines.Analyzers", "{385D5936-8AB5-4E7B-9E88-0F725999CA5A}"
 EndProject
@@ -125,6 +125,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{80E410B3-D8D1-4C67-93FF-078530E20816}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiagnosticsTestUtilities", "Test\Utilities\DiagnosticsTestUtilities.csproj", "{0A0621F2-D1DC-47FF-B643-C6646557505E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analyzer.Utilities", "Analyzer.Utilities\Analyzer.Utilities.csproj", "{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -336,6 +340,10 @@ Global
 		{0A0621F2-D1DC-47FF-B643-C6646557505E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A0621F2-D1DC-47FF-B643-C6646557505E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A0621F2-D1DC-47FF-B643-C6646557505E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -392,5 +400,6 @@ Global
 		{896B533F-633C-4947-AFCA-558F9169325D} = {DD81E183-1AFE-4A17-A05D-C9D0A2451D21}
 		{8B0C003C-7869-4F98-9105-9E8DE0D037BC} = {DD81E183-1AFE-4A17-A05D-C9D0A2451D21}
 		{0A0621F2-D1DC-47FF-B643-C6646557505E} = {80E410B3-D8D1-4C67-93FF-078530E20816}
+		{F8502E24-5EB1-4CDC-8887-1A0CC8008D96} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
 	EndGlobalSection
 EndGlobal

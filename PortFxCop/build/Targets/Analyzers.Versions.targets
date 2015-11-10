@@ -30,6 +30,8 @@
       <SystemCollectionsImmutableAnalyzersSemanticVersion>1.0.0</SystemCollectionsImmutableAnalyzersSemanticVersion>
       <SystemCollectionsImmutableAnalyzersPreReleaseVersion>beta1</SystemCollectionsImmutableAnalyzersPreReleaseVersion>
 
+     <SharedLibrarySemanticVersion>1.0.0</SharedLibrarySemanticVersion>
+     <SharedLibraryPreReleaseVersion>beta1</SharedLibraryPreReleaseVersion>
 
       <SharedTestSemanticVersion>1.0.0</SharedTestSemanticVersion>
       <SharedTestPreReleaseVersion>beta1</SharedTestPreReleaseVersion>

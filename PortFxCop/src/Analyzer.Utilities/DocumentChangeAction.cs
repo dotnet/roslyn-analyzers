@@ -3,9 +3,10 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 
-namespace Microsoft.CodeAnalysis
+namespace Analyzer.Utilities
 {
     public class DocumentChangeAction : CodeAction
     {

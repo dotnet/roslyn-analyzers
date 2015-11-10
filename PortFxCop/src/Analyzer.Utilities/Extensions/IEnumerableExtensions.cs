@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace Microsoft.AnalyzerPowerPack.Utilities
+namespace Analyzer.Utilities
 {
     internal static class IEnumerableExtensions
     {

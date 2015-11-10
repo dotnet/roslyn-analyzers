@@ -4,9 +4,9 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.AnalyzerPowerPack.Utilities;
+using Analyzer.Utilities;
 
-namespace Microsoft.AnalyzerPowerPack.Usage
+namespace Desktop.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class SerializationRulesDiagnosticAnalyzer : DiagnosticAnalyzer
@@ -15,75 +15,75 @@ namespace Microsoft.AnalyzerPowerPack.Usage
         internal const string RuleCA2229Id = "CA2229";
 
         private static readonly LocalizableString s_localizableTitleCA2229 =
-            new LocalizableResourceString(nameof(AnalyzerPowerPackRulesResources.ImplementSerializationConstructor),
-                AnalyzerPowerPackRulesResources.ResourceManager, typeof(AnalyzerPowerPackRulesResources));
+            new LocalizableResourceString(nameof(DesktopAnalyzersResources.ImplementSerializationConstructorsTitle),
+                DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
 
         private static readonly LocalizableString s_localizableDescriptionCA2229 =
             new LocalizableResourceString(
-                nameof(AnalyzerPowerPackRulesResources.ImplementSerializationConstructorDescription),
-                AnalyzerPowerPackRulesResources.ResourceManager, typeof (AnalyzerPowerPackRulesResources));
-
+                nameof(DesktopAnalyzersResources.ImplementSerializationConstructorsDescription),
+                DesktopAnalyzersResources.ResourceManager, typeof (DesktopAnalyzersResources));
+                                      
         internal static DiagnosticDescriptor RuleCA2229 = new DiagnosticDescriptor(RuleCA2229Id,
                                                                         s_localizableTitleCA2229,
                                                                         "{0}",
-                                                                        AnalyzerPowerPackDiagnosticCategory.Usage,
+                                                                        DiagnosticCategory.Usage,
                                                                         DiagnosticSeverity.Warning,
                                                                         isEnabledByDefault: true,
                                                                         description: s_localizableDescriptionCA2229,
                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182343.aspx",
-                                                                        customTags: DiagnosticCustomTags.Microsoft);
+                                                                        customTags: WellKnownDiagnosticTags.Telemetry);
 
         // Mark ISerializable types with SerializableAttribute
         internal const string RuleCA2237Id = "CA2237";
 
         private static readonly LocalizableString s_localizableTitleCA2237 =
-            new LocalizableResourceString(nameof(AnalyzerPowerPackRulesResources.MarkISerializableTypesWithAttribute),
-                AnalyzerPowerPackRulesResources.ResourceManager, typeof (AnalyzerPowerPackRulesResources));
+            new LocalizableResourceString(nameof(DesktopAnalyzersResources.MarkISerializableTypesWithSerializableTitle),
+                DesktopAnalyzersResources.ResourceManager, typeof (DesktopAnalyzersResources));
 
         private static readonly LocalizableString s_localizableMessageCA2237 =
-            new LocalizableResourceString(nameof(AnalyzerPowerPackRulesResources.AddSerializableAttributeToType),
-                AnalyzerPowerPackRulesResources.ResourceManager, typeof (AnalyzerPowerPackRulesResources));
+            new LocalizableResourceString(nameof(DesktopAnalyzersResources.MarkISerializableTypesWithSerializableMessage),
+                DesktopAnalyzersResources.ResourceManager, typeof (DesktopAnalyzersResources));
 
         private static readonly LocalizableString s_localizableDescriptionCA2237 =
             new LocalizableResourceString(
-                nameof(AnalyzerPowerPackRulesResources.MarkISerializableTypesWithAttributeDescription),
-                AnalyzerPowerPackRulesResources.ResourceManager, typeof (AnalyzerPowerPackRulesResources));
+                nameof(DesktopAnalyzersResources.MarkISerializableTypesWithSerializableDescription),
+                DesktopAnalyzersResources.ResourceManager, typeof (DesktopAnalyzersResources));
 
         internal static DiagnosticDescriptor RuleCA2237 = new DiagnosticDescriptor(RuleCA2237Id,
                                                                         s_localizableTitleCA2237,
                                                                         s_localizableMessageCA2237,
-                                                                        AnalyzerPowerPackDiagnosticCategory.Usage,
+                                                                        DiagnosticCategory.Usage,
                                                                         DiagnosticSeverity.Warning,
                                                                         isEnabledByDefault: true,
                                                                         description: s_localizableDescriptionCA2237,
                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182350.aspx",
-                                                                        customTags: DiagnosticCustomTags.Microsoft);
+                                                                        customTags: WellKnownDiagnosticTags.Telemetry);
 
         // Mark all non-serializable fields
         internal const string RuleCA2235Id = "CA2235";
 
         private static readonly LocalizableString s_localizableTitleCA2235 =
-            new LocalizableResourceString(nameof(AnalyzerPowerPackRulesResources.MarkAllNonSerializableFields),
-                AnalyzerPowerPackRulesResources.ResourceManager, typeof (AnalyzerPowerPackRulesResources));
+            new LocalizableResourceString(nameof(DesktopAnalyzersResources.MarkAllNonSerializableFieldsTitle),
+                DesktopAnalyzersResources.ResourceManager, typeof (DesktopAnalyzersResources));
 
         private static readonly LocalizableString s_localizableMessageCA2235 =
-            new LocalizableResourceString(nameof(AnalyzerPowerPackRulesResources.FieldIsOfNonSerializableType),
-                AnalyzerPowerPackRulesResources.ResourceManager, typeof (AnalyzerPowerPackRulesResources));
+            new LocalizableResourceString(nameof(DesktopAnalyzersResources.MarkAllNonSerializableFieldsMessage),
+                DesktopAnalyzersResources.ResourceManager, typeof (DesktopAnalyzersResources));
 
         private static readonly LocalizableString s_localizableDescriptionCA2235 =
             new LocalizableResourceString(
-                nameof(AnalyzerPowerPackRulesResources.MarkAllNonSerializableFieldsDescription),
-                AnalyzerPowerPackRulesResources.ResourceManager, typeof (AnalyzerPowerPackRulesResources));
+                nameof(DesktopAnalyzersResources.MarkAllNonSerializableFieldsDescription),
+                DesktopAnalyzersResources.ResourceManager, typeof (DesktopAnalyzersResources));
 
         internal static DiagnosticDescriptor RuleCA2235 = new DiagnosticDescriptor(RuleCA2235Id,
                                                                         s_localizableTitleCA2235,
                                                                         s_localizableMessageCA2235,
-                                                                        AnalyzerPowerPackDiagnosticCategory.Usage,
+                                                                        DiagnosticCategory.Usage,
                                                                         DiagnosticSeverity.Warning,
                                                                         isEnabledByDefault: true,
                                                                         description: s_localizableDescriptionCA2235,
                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182349.aspx",
-                                                                        customTags: DiagnosticCustomTags.Microsoft);
+                                                                        customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleCA2229, RuleCA2235, RuleCA2237);
 
@@ -179,7 +179,7 @@ namespace Microsoft.AnalyzerPowerPack.Usage
                         if (serializationCtor == null)
                         {
                             context.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(RuleCA2229,
-                                string.Format(AnalyzerPowerPackRulesResources.SerializableTypeDoesntHaveCtor,
+                                string.Format(DesktopAnalyzersResources.ImplementSerializationConstructorsMessageCreateMagicConstructor,
                                     namedTypeSymbol.Name)));
                         }
                         else
@@ -191,7 +191,7 @@ namespace Microsoft.AnalyzerPowerPack.Usage
                             {
                                 context.ReportDiagnostic(serializationCtor.CreateDiagnostic(RuleCA2229,
                                     string.Format(
-                                        AnalyzerPowerPackRulesResources.SerializationCtorAccessibilityForSealedType,
+                                        DesktopAnalyzersResources.ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate,
                                         namedTypeSymbol.Name)));
                             }
 
@@ -200,7 +200,7 @@ namespace Microsoft.AnalyzerPowerPack.Usage
                             {
                                 context.ReportDiagnostic(serializationCtor.CreateDiagnostic(RuleCA2229,
                                     string.Format(
-                                        AnalyzerPowerPackRulesResources.SerializationCtorAccessibilityForUnSealedType,
+                                        DesktopAnalyzersResources.ImplementSerializationConstructorsMessageMakeUnsealedMagicConstructorFamily,
                                         namedTypeSymbol.Name)));
                             }
                         }

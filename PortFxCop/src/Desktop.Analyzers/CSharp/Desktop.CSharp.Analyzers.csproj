@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="Settings">
@@ -109,16 +109,11 @@
     <Compile Include="CSharpSetLocaleForDataTypes.Fixer.cs" />
     <Compile Include="CSharpDoNotMarkServicedComponentsWithWebMethod.cs" />
     <Compile Include="CSharpDoNotMarkServicedComponentsWithWebMethod.Fixer.cs" />
-    <Compile Include="CSharpImplementSerializationConstructors.cs" />
-    <Compile Include="CSharpImplementSerializationConstructors.Fixer.cs" />
     <Compile Include="CSharpMarkWindowsFormsEntryPointsWithStaThread.cs" />
     <Compile Include="CSharpMarkWindowsFormsEntryPointsWithStaThread.Fixer.cs" />
-    <Compile Include="CSharpMarkAllNonSerializableFields.cs" />
     <Compile Include="CSharpMarkAllNonSerializableFields.Fixer.cs" />
     <Compile Include="CSharpCallBaseClassMethodsOnISerializableTypes.cs" />
     <Compile Include="CSharpCallBaseClassMethodsOnISerializableTypes.Fixer.cs" />
-    <Compile Include="CSharpMarkISerializableTypesWithSerializable.cs" />
-    <Compile Include="CSharpMarkISerializableTypesWithSerializable.Fixer.cs" />
     <Compile Include="CSharpImplementSerializationMethodsCorrectly.cs" />
     <Compile Include="CSharpImplementSerializationMethodsCorrectly.Fixer.cs" />
     <Compile Include="CSharpProvideDeserializationMethodsForOptionalFields.cs" />
@@ -135,7 +130,6 @@
     <Compile Include="CSharpUseXmlReaderForDataTableReadXml.Fixer.cs" />
     <Compile Include="CSharpUseXmlReaderForDataTableReadXmlSchema.cs" />
     <Compile Include="CSharpUseXmlReaderForDataTableReadXmlSchema.Fixer.cs" />
-
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

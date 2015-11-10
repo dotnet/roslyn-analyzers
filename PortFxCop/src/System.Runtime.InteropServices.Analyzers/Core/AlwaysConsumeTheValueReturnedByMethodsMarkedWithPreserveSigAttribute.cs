@@ -4,20 +4,22 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Roslyn.Diagnostics.Analyzers
+namespace System.Runtime.InteropServices.Analyzers
 {
-    public abstract class ConsumePreserveSigAnalyzer<TSyntaxKind> : DiagnosticAnalyzer
+    public abstract class AlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeAnalyzer<TSyntaxKind> : DiagnosticAnalyzer
         where TSyntaxKind : struct
     {
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(RoslynDiagnosticsResources.ConsumePreserveSigTitle), RoslynDiagnosticsResources.ResourceManager, typeof(RoslynDiagnosticsResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(RoslynDiagnosticsResources.ConsumePreserveSigMessage), RoslynDiagnosticsResources.ResourceManager, typeof(RoslynDiagnosticsResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(RoslynDiagnosticsResources.ConsumePreserveSigDescription), RoslynDiagnosticsResources.ResourceManager, typeof(RoslynDiagnosticsResources));
+        internal const string RuleId = "RS0015";
+
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.AlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeTitle), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.AlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeMessage), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.AlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeDescription), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
 
         internal static readonly DiagnosticDescriptor ConsumePreserveSigAnalyzerDescriptor = new DiagnosticDescriptor(
-            RoslynDiagnosticIds.ConsumePreserveSigRuleId,
+            RuleId,
             s_localizableTitle,
             s_localizableMessage,
-            "Reliability",
+            DiagnosticCategory.Reliability,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: s_localizableDescription,

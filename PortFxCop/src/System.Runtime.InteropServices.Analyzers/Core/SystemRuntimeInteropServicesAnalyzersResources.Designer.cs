@@ -72,7 +72,7 @@ namespace System.Runtime.InteropServices.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Always consume the value returned by methods marked with PreserveSigAttribute.
+        ///   Looks up a localized string similar to Consume the hresult returned by method &apos;{0}&apos; and call Marshal.ThrowExceptionForHR..
         /// </summary>
         internal static string AlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeMessage {
             get {
@@ -180,7 +180,7 @@ namespace System.Runtime.InteropServices.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PInvokes should not be visible.
+        ///   Looks up a localized string similar to P/Invoke method &apos;{0}&apos; should not be visible.
         /// </summary>
         internal static string PInvokesShouldNotBeVisibleMessage {
             get {
@@ -189,7 +189,7 @@ namespace System.Runtime.InteropServices.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PInvokes should not be visible.
+        ///   Looks up a localized string similar to P/Invokes should not be visible.
         /// </summary>
         internal static string PInvokesShouldNotBeVisibleTitle {
             get {
@@ -243,7 +243,7 @@ namespace System.Runtime.InteropServices.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Specify marshaling for PInvoke string arguments.
+        ///   Looks up a localized string similar to Specify marshaling for P/Invoke string arguments.
         /// </summary>
         internal static string SpecifyMarshalingForPInvokeStringArgumentsTitle {
             get {

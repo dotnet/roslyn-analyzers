@@ -4,10 +4,10 @@ Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 
-Namespace Roslyn.Diagnostics.Analyzers.VisualBasic
+Namespace System.Runtime.InteropServices.Analyzers
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
-    Public Class BasicConsumePreserveSigAnalyzer
-        Inherits ConsumePreserveSigAnalyzer(Of SyntaxKind)
+    Public Class BasicAlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeAnalyzer
+        Inherits AlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeAnalyzer(Of SyntaxKind)
 
         Protected Overrides ReadOnly Property InvocationExpressionSyntaxKind As SyntaxKind
             Get

@@ -45,13 +45,13 @@ namespace System.Runtime.InteropServices.Analyzers
 
             if (IsAttribute(node))
             {
-                context.RegisterCodeFix(new MyCodeAction(SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArguments,
+                context.RegisterCodeFix(new MyCodeAction(SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle,
                                                          async ct => await FixAttributeArguments(context.Document, node, charSetType, dllImportType, marshalAsType, unmanagedType, ct).ConfigureAwait(false)),
                                         diagnostic);
             }
             else if (IsDeclareStatement(node))
             {
-                context.RegisterCodeFix(new MyCodeAction(SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArguments,
+                context.RegisterCodeFix(new MyCodeAction(SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle,
                                                          async ct => await FixDeclareStatement(context.Document, node, ct).ConfigureAwait(false)),
                                         diagnostic);
             }

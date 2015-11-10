@@ -11,8 +11,8 @@ namespace System.Runtime.InteropServices.Analyzers.UnitTests
     {
         #region Verifiers 
 
-        private const string CA1401RuleText = "P/Invoke method '{0}' should not be visible";
-        private const string CA1901RuleText = "Specify marshaling for P/Invoke string arguments";
+        private static readonly string CA1401RuleText = SystemRuntimeInteropServicesAnalyzersResources.PInvokesShouldNotBeVisibleMessage;
+        private static readonly string CA2101RuleText = SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle;
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
@@ -36,12 +36,12 @@ namespace System.Runtime.InteropServices.Analyzers.UnitTests
 
         private static DiagnosticResult CSharpResult2101(int line, int column)
         {
-            return GetCSharpResultAt(line, column, PInvokeDiagnosticAnalyzer.CA2101, CA1901RuleText);
+            return GetCSharpResultAt(line, column, PInvokeDiagnosticAnalyzer.CA2101, CA2101RuleText);
         }
 
         private static DiagnosticResult BasicResult2101(int line, int column)
         {
-            return GetBasicResultAt(line, column, PInvokeDiagnosticAnalyzer.CA2101, CA1901RuleText);
+            return GetBasicResultAt(line, column, PInvokeDiagnosticAnalyzer.CA2101, CA2101RuleText);
         }
 
         #endregion

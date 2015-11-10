@@ -4,10 +4,11 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Roslyn.Diagnostics.Analyzers.CSharp
+namespace System.Runtime.InteropServices.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CSharpConsumePreserveSigAnalyzer : ConsumePreserveSigAnalyzer<SyntaxKind>
+    public class CSharpAlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeAnalyzer 
+        : AlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeAnalyzer<SyntaxKind>
     {
         protected override SyntaxKind InvocationExpressionSyntaxKind
         {

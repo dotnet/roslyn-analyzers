@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
-namespace Microsoft.AnalyzerPowerPack.Utilities
+namespace Analyzer.Utilities
 {
     internal static class DiagnosticHelpers
     {

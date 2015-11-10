@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="Settings">
@@ -104,6 +104,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DesktopAnalyzersResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SerializationDiagnosticAnalyzer.cs" />
     <Compile Include="SpecifyMessageBoxOptions.cs" />
     <Compile Include="SpecifyMessageBoxOptions.Fixer.cs" />
     <Compile Include="AvoidDuplicateAccelerators.cs" />
@@ -112,15 +113,12 @@
     <Compile Include="SetLocaleForDataTypes.Fixer.cs" />
     <Compile Include="DoNotMarkServicedComponentsWithWebMethod.cs" />
     <Compile Include="DoNotMarkServicedComponentsWithWebMethod.Fixer.cs" />
-    <Compile Include="ImplementSerializationConstructors.cs" />
     <Compile Include="ImplementSerializationConstructors.Fixer.cs" />
     <Compile Include="MarkWindowsFormsEntryPointsWithStaThread.cs" />
     <Compile Include="MarkWindowsFormsEntryPointsWithStaThread.Fixer.cs" />
-    <Compile Include="MarkAllNonSerializableFields.cs" />
     <Compile Include="MarkAllNonSerializableFields.Fixer.cs" />
     <Compile Include="CallBaseClassMethodsOnISerializableTypes.cs" />
     <Compile Include="CallBaseClassMethodsOnISerializableTypes.Fixer.cs" />
-    <Compile Include="MarkISerializableTypesWithSerializable.cs" />
     <Compile Include="MarkISerializableTypesWithSerializable.Fixer.cs" />
     <Compile Include="ImplementSerializationMethodsCorrectly.cs" />
     <Compile Include="ImplementSerializationMethodsCorrectly.Fixer.cs" />
@@ -139,13 +137,19 @@
     <Compile Include="UseXmlReaderForDataTableReadXmlSchema.cs" />
     <Compile Include="UseXmlReaderForDataTableReadXmlSchema.Fixer.cs" />
     <Compile Include="DiagnosticCategory.cs" />
-
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DesktopAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DesktopAnalyzersResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
+      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
+      <Name>Analyzer.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

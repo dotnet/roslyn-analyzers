@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="Settings">
@@ -106,16 +106,11 @@
     <Compile Include="BasicSetLocaleForDataTypes.Fixer.vb" />
     <Compile Include="BasicDoNotMarkServicedComponentsWithWebMethod.vb" />
     <Compile Include="BasicDoNotMarkServicedComponentsWithWebMethod.Fixer.vb" />
-    <Compile Include="BasicImplementSerializationConstructors.vb" />
-    <Compile Include="BasicImplementSerializationConstructors.Fixer.vb" />
     <Compile Include="BasicMarkWindowsFormsEntryPointsWithStaThread.vb" />
     <Compile Include="BasicMarkWindowsFormsEntryPointsWithStaThread.Fixer.vb" />
-    <Compile Include="BasicMarkAllNonSerializableFields.vb" />
     <Compile Include="BasicMarkAllNonSerializableFields.Fixer.vb" />
     <Compile Include="BasicCallBaseClassMethodsOnISerializableTypes.vb" />
     <Compile Include="BasicCallBaseClassMethodsOnISerializableTypes.Fixer.vb" />
-    <Compile Include="BasicMarkISerializableTypesWithSerializable.vb" />
-    <Compile Include="BasicMarkISerializableTypesWithSerializable.Fixer.vb" />
     <Compile Include="BasicImplementSerializationMethodsCorrectly.vb" />
     <Compile Include="BasicImplementSerializationMethodsCorrectly.Fixer.vb" />
     <Compile Include="BasicProvideDeserializationMethodsForOptionalFields.vb" />
@@ -132,7 +127,6 @@
     <Compile Include="BasicUseXmlReaderForDataTableReadXml.Fixer.vb" />
     <Compile Include="BasicUseXmlReaderForDataTableReadXmlSchema.vb" />
     <Compile Include="BasicUseXmlReaderForDataTableReadXmlSchema.Fixer.vb" />
-
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

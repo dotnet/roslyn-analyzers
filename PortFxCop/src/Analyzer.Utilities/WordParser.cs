@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
 
-namespace Microsoft.AnalyzerPowerPack.Utilities
+namespace Analyzer.Utilities
 {
     /// <summary>
     ///     Provides <see langword="static"/> methods for parsing words from text.

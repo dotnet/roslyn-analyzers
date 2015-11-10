@@ -62,6 +62,24 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add the &apos;NonSerialized&apos; attribute to this field..
+        /// </summary>
+        internal static string AddNonSerializedAttributeCodeActionTitle {
+            get {
+                return ResourceManager.GetString("AddNonSerializedAttributeCodeActionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Serializable attribute.
+        /// </summary>
+        internal static string AddSerializableAttributeCodeActionTitle {
+            get {
+                return ResourceManager.GetString("AddSerializableAttributeCodeActionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An access key, also known as an accelerator, enables keyboard access to a control by using the ALT key. When multiple controls have duplicate access keys, the behavior of the access key is not well defined..
         /// </summary>
         internal static string AvoidDuplicateAcceleratorsDescription {
@@ -215,6 +233,15 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Implement Serialization constructor.
+        /// </summary>
+        internal static string ImplementSerializationConstructorsCodeActionTitle {
+            get {
+                return ResourceManager.GetString("ImplementSerializationConstructorsCodeActionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to To fix a violation of this rule, implement the serialization constructor. For a sealed class, make the constructor private; otherwise, make it protected..
         /// </summary>
         internal static string ImplementSerializationConstructorsDescription {
@@ -332,7 +359,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mark all non-serializable fields.
+        ///   Looks up a localized string similar to Field {0} is a member of type {1} which is serializable but is of type {2} which is not serializable.
         /// </summary>
         internal static string MarkAllNonSerializableFieldsMessage {
             get {
@@ -359,7 +386,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mark ISerializable types with serializable.
+        ///   Looks up a localized string similar to Add [Serializable] to {0} as this type implements ISerializable.
         /// </summary>
         internal static string MarkISerializableTypesWithSerializableMessage {
             get {

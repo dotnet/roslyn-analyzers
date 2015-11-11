@@ -10,23 +10,25 @@ namespace System.Runtime.InteropServices.Analyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class PInvokeDiagnosticAnalyzer : DiagnosticAnalyzer
     {
-        public const string CA1401 = "CA1401";
-        public const string CA2101 = "CA2101";
+        public const string RuleCA1401Id = "CA1401";
+        public const string RuleCA2101Id = "CA2101";
 
-        private static LocalizableString s_localizableTitleCA1401 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.PInvokesShouldNotBeVisible), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
-        private static LocalizableString s_localizableMessageCA1401 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.PInvokeMethodShouldNotBeVisible), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
-        internal static DiagnosticDescriptor RuleCA1401 = new DiagnosticDescriptor(CA1401,
+        private static LocalizableString s_localizableTitleCA1401 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.PInvokesShouldNotBeVisibleTitle), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
+        private static LocalizableString s_localizableMessageCA1401 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.PInvokesShouldNotBeVisibleMessage), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
+        private static LocalizableString s_localizableDescriptionCA1401 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.PInvokesShouldNotBeVisibleDescription), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
+        internal static DiagnosticDescriptor RuleCA1401 = new DiagnosticDescriptor(RuleCA1401Id,
                                                                          s_localizableTitleCA1401,
                                                                          s_localizableMessageCA1401,
                                                                          DiagnosticCategory.Interoperability,
                                                                          DiagnosticSeverity.Warning,
                                                                          isEnabledByDefault: true,
+                                                                         description: s_localizableDescriptionCA1401,
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182209.aspx",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
 
-        private static LocalizableString s_localizableMessageAndTitleCA2101 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArguments), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
+        private static LocalizableString s_localizableMessageAndTitleCA2101 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
         private static LocalizableString s_localizableDescriptionCA2101 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsDescription), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
-        internal static DiagnosticDescriptor RuleCA2101 = new DiagnosticDescriptor(CA2101,
+        internal static DiagnosticDescriptor RuleCA2101 = new DiagnosticDescriptor(RuleCA2101Id,
                                                                          s_localizableMessageAndTitleCA2101,
                                                                          s_localizableMessageAndTitleCA2101,
                                                                          DiagnosticCategory.Globalization,

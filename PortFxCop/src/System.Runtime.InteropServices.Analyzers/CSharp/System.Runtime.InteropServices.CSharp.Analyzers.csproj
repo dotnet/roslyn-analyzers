@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="Settings">
@@ -101,17 +101,12 @@
   <ItemGroup />
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CSharpPInvokesShouldNotBeVisible.cs" />
-    <Compile Include="CSharpPInvokesShouldNotBeVisible.Fixer.cs" />
     <Compile Include="CSharpPInvokeDeclarationsShouldBePortable.cs" />
     <Compile Include="CSharpPInvokeDeclarationsShouldBePortable.Fixer.cs" />
-    <Compile Include="CSharpSpecifyMarshalingForPInvokeStringArguments.cs" />
     <Compile Include="CSharpSpecifyMarshalingForPInvokeStringArguments.Fixer.cs" />
     <Compile Include="CSharpUseManagedEquivalentsOfWin32Api.cs" />
     <Compile Include="CSharpUseManagedEquivalentsOfWin32Api.Fixer.cs" />
     <Compile Include="CSharpAlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttribute.cs" />
-    <Compile Include="CSharpAlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttribute.Fixer.cs" />
-
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

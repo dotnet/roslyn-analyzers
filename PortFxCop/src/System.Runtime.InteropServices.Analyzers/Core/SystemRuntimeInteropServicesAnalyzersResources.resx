@@ -119,13 +119,13 @@
   </resheader>
 
   <data name="PInvokesShouldNotBeVisibleTitle" xml:space="preserve">
-    <value>PInvokes should not be visible</value>
+    <value>P/Invokes should not be visible</value>
   </data>
   <data name="PInvokesShouldNotBeVisibleDescription" xml:space="preserve">
     <value>A public or protected method in a public type has the System.Runtime.InteropServices.DllImportAttribute attribute (also implemented by the Declare keyword in Visual Basic). Such methods should not be exposed.</value>
   </data>
   <data name="PInvokesShouldNotBeVisibleMessage" xml:space="preserve">
-    <value>PInvokes should not be visible</value>
+    <value>P/Invoke method '{0}' should not be visible</value>
   </data>
   <data name="PInvokeDeclarationsShouldBePortableTitle" xml:space="preserve">
     <value>PInvoke declarations should be portable</value>
@@ -140,7 +140,7 @@
     <value>As it is declared in your code, the return type of P/Invoke {0} will be {1} bytes wide on {2} platforms. This is not correct, as the actual native declaration of this API indicates it should be {3} bytes wide on {2} platforms. Consult the MSDN Platform SDK documentation for help determining what data type should be used instead of {4}.</value>
   </data>
   <data name="SpecifyMarshalingForPInvokeStringArgumentsTitle" xml:space="preserve">
-    <value>Specify marshaling for PInvoke string arguments</value>
+    <value>Specify marshaling for P/Invoke string arguments</value>
   </data>
   <data name="SpecifyMarshalingForPInvokeStringArgumentsDescription" xml:space="preserve">
     <value>A platform invoke member allows partially trusted callers, has a string parameter, and does not explicitly marshal the string. This can cause a potential security vulnerability.</value>
@@ -173,7 +173,7 @@
     <value>PreserveSigAttribute indicates that a method will return an HRESULT, rather than throwing an exception. Therefore, it is important to consume the HRESULT returned by the method, so that errors can be detected. Generally, this is done by calling Marshal.ThrowExceptionForHR.</value>
   </data>
   <data name="AlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeMessage" xml:space="preserve">
-    <value>Always consume the value returned by methods marked with PreserveSigAttribute</value>
+    <value>Consume the hresult returned by method '{0}' and call Marshal.ThrowExceptionForHR.</value>
   </data>
   <data name="CategoryGlobalization" xml:space="preserve">
     <value>Globalization</value>

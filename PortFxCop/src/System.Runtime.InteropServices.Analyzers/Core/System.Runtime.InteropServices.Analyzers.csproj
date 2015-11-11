@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="Settings">
@@ -98,30 +98,33 @@
     <None Include="uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PInvokeDiagnosticAnalyzer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SystemRuntimeInteropServicesAnalyzersResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SystemRuntimeInteropServicesAnalyzersResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="PInvokesShouldNotBeVisible.cs" />
-    <Compile Include="PInvokesShouldNotBeVisible.Fixer.cs" />
     <Compile Include="PInvokeDeclarationsShouldBePortable.cs" />
     <Compile Include="PInvokeDeclarationsShouldBePortable.Fixer.cs" />
-    <Compile Include="SpecifyMarshalingForPInvokeStringArguments.cs" />
     <Compile Include="SpecifyMarshalingForPInvokeStringArguments.Fixer.cs" />
     <Compile Include="UseManagedEquivalentsOfWin32Api.cs" />
     <Compile Include="UseManagedEquivalentsOfWin32Api.Fixer.cs" />
     <Compile Include="AlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttribute.cs" />
-    <Compile Include="AlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttribute.Fixer.cs" />
     <Compile Include="DiagnosticCategory.cs" />
-
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SystemRuntimeInteropServicesAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SystemRuntimeInteropServicesAnalyzersResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
+      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
+      <Name>Analyzer.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

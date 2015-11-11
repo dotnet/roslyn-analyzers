@@ -2,7 +2,7 @@
 
 REM Parse Arguments.
 
-set AnalyzersRoot=%~dp0
+set AnalyzersRoot=%~dp0\PortFxCop
 set BuildConfiguration=Debug
 :ParseArguments
 if "%1" == "" goto :DoneParsing
@@ -14,7 +14,7 @@ call :Usage && exit /b 1
 
 call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\Tools\VsDevCmd.bat"
 
-msbuild /v:m /m BuildAndTest.proj /p:CIBuild=true /p:Configuration=%BuildConfiguration%
+msbuild /v:m /m %AnalyzersRoot%\BuildAndTest.proj /p:CIBuild=true /p:Configuration=%BuildConfiguration%
 if ERRORLEVEL 1 (
     taskkill /F /IM vbcscompiler.exe
     echo Build failed

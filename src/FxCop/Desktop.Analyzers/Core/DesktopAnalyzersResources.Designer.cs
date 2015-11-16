@@ -89,110 +89,46 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Do not use insecure cryptographic algorithm DES..
+        ///   Looks up a localized string similar to Do Not Use Broken Cryptographic Algorithms.
         /// </summary>
-        internal static string DoNotUseDES {
+        internal static string DoNotUseBrokenCryptographicAlgorithms {
             get {
-                return ResourceManager.GetString("DoNotUseDES", resourceCulture);
+                return ResourceManager.GetString("DoNotUseBrokenCryptographicAlgorithms", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This type implements DES, a cryptographically insecure encryption algorithm. Replace this usage with an AES encryption algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits..
+        ///   Looks up a localized string similar to WHAT: {0} uses a broken cryptographic algorithm {1} 
+        /// 
+        ///WHY: An attack making it computationally feasible to break {1} exists. This allows attackers to break the cryptographic guarantees {1} is designed to provide. Depending on the type and application of this cryptographic algorithm, this may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on {1}. 
+        /// 
+        ///HOW: Replace encryption [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DoNotUseDESDescription {
+        internal static string DoNotUseBrokenCryptographicAlgorithmsDescription {
             get {
-                return ResourceManager.GetString("DoNotUseDESDescription", resourceCulture);
+                return ResourceManager.GetString("DoNotUseBrokenCryptographicAlgorithmsDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Do not use insecure cryptographic algorithm DSA..
+        ///   Looks up a localized string similar to Do Not Use Weak Cryptographic Algorithms.
         /// </summary>
-        internal static string DoNotUseDSA {
+        internal static string DoNotUseWeakCryptographicAlgorithms {
             get {
-                return ResourceManager.GetString("DoNotUseDSA", resourceCulture);
+                return ResourceManager.GetString("DoNotUseWeakCryptographicAlgorithms", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This type implements DSA, a cryptographically insecure signature-creation mechanism. Replace this usage with RSA or Diffie-Hellman with a key length greater than or equal to 2048-bits, or ECDSA or ECDH with a key length greater than or equal 256 bits..
+        ///   Looks up a localized string similar to WHAT: {0} uses an weak cryptographic algorithm {1} 
+        /// 
+        ///WHY: Cryptographic algorithms degrade over time as attacks become for advances to attacker get access to more computation. Depending on the type and application of this cryptographic algorithm, further degradation of the cryptographic strength of {1}  may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on {1}. 
+        /// 
+        ///HOW: Re [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DoNotUseDSADescription {
+        internal static string DoNotUseWeakCryptographicAlgorithmsDescription {
             get {
-                return ResourceManager.GetString("DoNotUseDSADescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do not use insecure cryptographic algorithm MD5..
-        /// </summary>
-        internal static string DoNotUseMD5 {
-            get {
-                return ResourceManager.GetString("DoNotUseMD5", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This type implements MD5, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the MD5 and HMACMD5 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256)..
-        /// </summary>
-        internal static string DoNotUseMD5Description {
-            get {
-                return ResourceManager.GetString("DoNotUseMD5Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do not use insecure cryptographic algorithm RC2..
-        /// </summary>
-        internal static string DoNotUseRC2 {
-            get {
-                return ResourceManager.GetString("DoNotUseRC2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This type implements RC2, a cryptographically insecure encryption algorithm. Replace this usage with an AES encryption algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits..
-        /// </summary>
-        internal static string DoNotUseRC2Description {
-            get {
-                return ResourceManager.GetString("DoNotUseRC2Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do not use insecure cryptographic algorithm RIPEMD160..
-        /// </summary>
-        internal static string DoNotUseRIPEMD160 {
-            get {
-                return ResourceManager.GetString("DoNotUseRIPEMD160", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This type implements RIPEMD160, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the RIPEMD hash algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256)..
-        /// </summary>
-        internal static string DoNotUseRIPEMD160Description {
-            get {
-                return ResourceManager.GetString("DoNotUseRIPEMD160Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do not use insecure cryptographic algorithm TripleDES..
-        /// </summary>
-        internal static string DoNotUseTripleDES {
-            get {
-                return ResourceManager.GetString("DoNotUseTripleDES", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This type implements TripleDES, a cryptographically insecure encryption algorithm. Replace this usage with an AES encryption algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits..
-        /// </summary>
-        internal static string DoNotUseTripleDESDescription {
-            get {
-                return ResourceManager.GetString("DoNotUseTripleDESDescription", resourceCulture);
+                return ResourceManager.GetString("DoNotUseWeakCryptographicAlgorithmsDescription", resourceCulture);
             }
         }
     }

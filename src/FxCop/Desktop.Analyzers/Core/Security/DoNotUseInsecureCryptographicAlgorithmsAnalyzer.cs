@@ -16,6 +16,8 @@ namespace Desktop.Analyzers
     {
         internal const string DoNotUseWeakCryptographicRuleId = "CA5350";
         internal const string DoNotUseBrokenCryptographicRuleId = "CA5351";
+        internal const string CA5350HelpLink = "http://aka.ms/CA5350";
+        internal const string CA5351HelpLink = "http://aka.ms/CA5351";
 
         private static readonly LocalizableString s_localizableDoNotUseWeakAlgorithmsTitle = DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseWeakCryptographicAlgorithms));
         private static readonly LocalizableString s_localizableDoNotUseWeakAlgorithmsDescription = DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseWeakCryptographicAlgorithmsDescription));
@@ -60,7 +62,8 @@ namespace Desktop.Analyzers
                                 nameof(DesktopAnalyzersResources.DoNotUseWeakCryptographicAlgorithmsDescription),
                                 type,
                                 name
-                            )
+                            ),
+                        CA5350HelpLink
                         );
         }
 
@@ -73,7 +76,8 @@ namespace Desktop.Analyzers
                                 nameof(DesktopAnalyzersResources.DoNotUseBrokenCryptographicAlgorithmsDescription),
                                 type,
                                 name
-                            )
+                            ),
+                        CA5351HelpLink
                         );
         }
         

@@ -40,15 +40,14 @@ namespace Desktop.Analyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             => s_supportedDiagnostics;
 
-        private static DiagnosticDescriptor CreateDiagnosticDescriptor(string ruleId, LocalizableString title, LocalizableString description, string uri = null)
+        private static DiagnosticDescriptor CreateDiagnosticDescriptor(string ruleId, LocalizableString title, LocalizableString message, string uri = null)
         {
             return new DiagnosticDescriptor(ruleId,
                                             title,
-                                            title,
+                                            message,
                                             DiagnosticCategory.Security,
                                             DiagnosticSeverity.Warning,
                                             isEnabledByDefault: true,
-                                            description: description,
                                             helpLinkUri: uri,
                                             customTags: WellKnownDiagnosticTags.Telemetry);
         }

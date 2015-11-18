@@ -118,15 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DoNotCatchCorruptedStateExceptions" xml:space="preserve">
-    <value>Do not catch corrupted state exceptions in general handlers.</value>
+    <value>Do Not Catch Corrupted State Exceptions</value>
   </data>
   <data name="DoNotCatchCorruptedStateExceptionsDescription" xml:space="preserve">
     <value>Do not author general catch handlers in code that receives corrupted state exceptions. Code that receives and intends to handle corrupted state exceptions should author distinct handlers for each exception type.</value>
   </data>
   <data name="DoNotCatchCorruptedStateExceptionsMessage" xml:space="preserve">
-    <value>Modify {0} to catch and handle a more specific set of exception type(s) than {1} or rethrow the exception. </value>
+    <value>What: {0} is catching corrupted state exception.
+
+Why: This could mask errors (such as access violations), resulting in inconsistent state of execution or making it easier for attackers to compromise system.
+
+How: Modify {0} to catch and handle a more specific set of exception type(s) than {1} or re-throw the exception</value>
   </data>
-  <data name="DoNotUseBrokenCryptographicAlgorithmsDescription" xml:space="preserve">
+  <data name="DoNotUseBrokenCryptographicAlgorithmsMessage" xml:space="preserve">
     <value>WHAT: {0} uses a broken cryptographic algorithm {1} 
  
 WHY: An attack making it computationally feasible to break {1} exists. This allows attackers to break the cryptographic guarantees {1} is designed to provide. Depending on the type and application of this cryptographic algorithm, this may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on {1}. 
@@ -139,7 +143,7 @@ HOW: Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-12
   <data name="DoNotUseWeakCryptographicAlgorithms" xml:space="preserve">
     <value>Do Not Use Weak Cryptographic Algorithms</value>
   </data>
-  <data name="DoNotUseWeakCryptographicAlgorithmsDescription" xml:space="preserve">
+  <data name="DoNotUseWeakCryptographicAlgorithmsMessage" xml:space="preserve">
     <value>WHAT: {0} uses an weak cryptographic algorithm {1} 
  
 WHY: Cryptographic algorithms degrade over time as attacks become for advances to attacker get access to more computation. Depending on the type and application of this cryptographic algorithm, further degradation of the cryptographic strength of {1}  may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on {1}. 

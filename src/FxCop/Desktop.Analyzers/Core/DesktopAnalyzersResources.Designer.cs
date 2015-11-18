@@ -62,7 +62,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Do not catch corrupted state exceptions in general handlers..
+        ///   Looks up a localized string similar to Do Not Catch Corrupted State Exceptions.
         /// </summary>
         internal static string DoNotCatchCorruptedStateExceptions {
             get {
@@ -80,7 +80,11 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Modify {0} to catch and handle a more specific set of exception type(s) than {1} or rethrow the exception. .
+        ///   Looks up a localized string similar to What: {0} is catching corrupted state exception.
+        ///
+        ///Why: This could mask errors (such as access violations), resulting in inconsistent state of execution or making it easier for attackers to compromise system.
+        ///
+        ///How: Modify {0} to catch and handle a more specific set of exception type(s) than {1} or re-throw the exception.
         /// </summary>
         internal static string DoNotCatchCorruptedStateExceptionsMessage {
             get {
@@ -104,9 +108,9 @@ namespace Desktop.Analyzers {
         /// 
         ///HOW: Replace encryption [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DoNotUseBrokenCryptographicAlgorithmsDescription {
+        internal static string DoNotUseBrokenCryptographicAlgorithmsMessage {
             get {
-                return ResourceManager.GetString("DoNotUseBrokenCryptographicAlgorithmsDescription", resourceCulture);
+                return ResourceManager.GetString("DoNotUseBrokenCryptographicAlgorithmsMessage", resourceCulture);
             }
         }
         
@@ -126,9 +130,9 @@ namespace Desktop.Analyzers {
         /// 
         ///HOW: Re [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DoNotUseWeakCryptographicAlgorithmsDescription {
+        internal static string DoNotUseWeakCryptographicAlgorithmsMessage {
             get {
-                return ResourceManager.GetString("DoNotUseWeakCryptographicAlgorithmsDescription", resourceCulture);
+                return ResourceManager.GetString("DoNotUseWeakCryptographicAlgorithmsMessage", resourceCulture);
             }
         }
     }

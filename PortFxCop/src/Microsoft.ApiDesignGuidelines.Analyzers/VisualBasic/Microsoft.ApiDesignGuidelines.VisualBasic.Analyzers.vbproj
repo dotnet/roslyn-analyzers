@@ -127,7 +127,6 @@
     <Compile Include="BasicMarkAttributesWithAttributeUsage.vb" />
     <Compile Include="BasicMarkAttributesWithAttributeUsage.Fixer.vb" />
     <Compile Include="BasicDefineAccessorsForAttributeArguments.vb" />
-    <Compile Include="BasicDefineAccessorsForAttributeArguments.Fixer.vb" />
     <Compile Include="BasicUsePropertiesWhereAppropriate.vb" />
     <Compile Include="BasicUsePropertiesWhereAppropriate.Fixer.vb" />
     <Compile Include="BasicMarkEnumsWithFlags.vb" />

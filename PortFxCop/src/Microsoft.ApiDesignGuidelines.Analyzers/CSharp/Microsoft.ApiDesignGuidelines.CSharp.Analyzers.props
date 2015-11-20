@@ -9,7 +9,7 @@
    <PropertyGroup>
       <CodeAnalysisRuleSetOverrides>
          $(CodeAnalysisRuleSetOverrides);
-         <!--INSERTRULESETOVERRIDES-->
+          -Microsoft.Design#CA1019;
       </CodeAnalysisRuleSetOverrides>
    </PropertyGroup>
 </Project>

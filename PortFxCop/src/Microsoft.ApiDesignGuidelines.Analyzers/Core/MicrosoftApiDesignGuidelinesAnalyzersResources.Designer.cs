@@ -225,6 +225,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create a property accessor..
+        /// </summary>
+        internal static string CreatePropertyAccessorForParameter {
+            get {
+                return ResourceManager.GetString("CreatePropertyAccessorForParameter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Attributes can define mandatory arguments that must be specified when you apply the attribute to a target. These are also known as positional arguments because they are supplied to attribute constructors as positional parameters. For every mandatory argument, the attribute should also provide a corresponding read-only property so that the value of the argument can be retrieved at execution time. Attributes can also define optional arguments, which are also known as named arguments. These arguments are suppl [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DefineAccessorsForAttributeArgumentsDescription {
@@ -627,6 +636,24 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         internal static string InterfaceMethodsShouldBeCallableByChildTypesTitle {
             get {
                 return ResourceManager.GetString("InterfaceMethodsShouldBeCallableByChildTypesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make the getter of the property public.
+        /// </summary>
+        internal static string MakeGetterPublic {
+            get {
+                return ResourceManager.GetString("MakeGetterPublic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make the setter of the property non-public.
+        /// </summary>
+        internal static string MakeSetterNonPublic {
+            get {
+                return ResourceManager.GetString("MakeSetterNonPublic", resourceCulture);
             }
         }
         

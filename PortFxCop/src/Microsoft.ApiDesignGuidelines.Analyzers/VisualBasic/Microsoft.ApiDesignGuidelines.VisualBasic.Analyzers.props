@@ -8,8 +8,8 @@
   -->
    <PropertyGroup>
       <CodeAnalysisRuleSetOverrides>
-         $(CodeAnalysisRuleSetOverrides);
-         <!--INSERTRULESETOVERRIDES-->
+        $(CodeAnalysisRuleSetOverrides);
+        -Microsoft.Design#CA1019;
       </CodeAnalysisRuleSetOverrides>
    </PropertyGroup>
 </Project>

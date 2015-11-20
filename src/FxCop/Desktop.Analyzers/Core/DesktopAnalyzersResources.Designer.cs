@@ -102,11 +102,16 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WHAT: {0} uses a broken cryptographic algorithm {1} 
-        /// 
-        ///WHY: An attack making it computationally feasible to break {1} exists. This allows attackers to break the cryptographic guarantees {1} is designed to provide. Depending on the type and application of this cryptographic algorithm, this may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on {1}. 
-        /// 
-        ///HOW: Replace encryption [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to An attack making it computationally feasible to break this algorithm exists. This allows attackers to break the cryptographic guarantees it is designed to provide. Depending on the type and application of this cryptographic algorithm, this may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DoNotUseBrokenCryptographicAlgorithmsDescription {
+            get {
+                return ResourceManager.GetString("DoNotUseBrokenCryptographicAlgorithmsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} uses a broken cryptographic algorithm {1}.
         /// </summary>
         internal static string DoNotUseBrokenCryptographicAlgorithmsMessage {
             get {
@@ -124,11 +129,18 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WHAT: {0} uses an weak cryptographic algorithm {1} 
+        ///   Looks up a localized string similar to Cryptographic algorithms degrade over time as attacks become for advances to attacker get access to more computation. Depending on the type and application of this cryptographic algorithm, further degradation of the cryptographic strength of it may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. 
         /// 
-        ///WHY: Cryptographic algorithms degrade over time as attacks become for advances to attacker get access to more computation. Depending on the type and application of this cryptographic algorithm, further degradation of the cryptographic strength of {1}  may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on {1}. 
-        /// 
-        ///HOW: Re [rest of string was truncated]&quot;;.
+        ///HOW: Replace encryption uses with the AES algorithm (AES-25 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DoNotUseWeakCryptographicAlgorithmsDescription {
+            get {
+                return ResourceManager.GetString("DoNotUseWeakCryptographicAlgorithmsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} uses an weak cryptographic algorithm {1}.
         /// </summary>
         internal static string DoNotUseWeakCryptographicAlgorithmsMessage {
             get {

@@ -156,7 +156,6 @@
     <Compile Include="BasicOperatorOverloadsHaveNamedAlternates.Fixer.vb" />
     <Compile Include="BasicOperatorsShouldHaveSymmetricalOverloads.vb" />
     <Compile Include="BasicOperatorsShouldHaveSymmetricalOverloads.Fixer.vb" />
-    <Compile Include="BasicOverloadOperatorEqualsOnOverridingValueTypeEquals.vb" />
     <Compile Include="BasicOverloadOperatorEqualsOnOverridingValueTypeEquals.Fixer.vb" />
     <Compile Include="BasicPassSystemUriObjectsInsteadOfStrings.vb" />
     <Compile Include="BasicPassSystemUriObjectsInsteadOfStrings.Fixer.vb" />

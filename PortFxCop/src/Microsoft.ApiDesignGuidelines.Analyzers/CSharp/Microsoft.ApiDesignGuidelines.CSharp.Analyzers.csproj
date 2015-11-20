@@ -159,7 +159,6 @@
     <Compile Include="CSharpOperatorOverloadsHaveNamedAlternates.Fixer.cs" />
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.cs" />
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.Fixer.cs" />
-    <Compile Include="CSharpOverloadOperatorEqualsOnOverridingValueTypeEquals.cs" />
     <Compile Include="CSharpOverloadOperatorEqualsOnOverridingValueTypeEquals.Fixer.cs" />
     <Compile Include="CSharpPassSystemUriObjectsInsteadOfStrings.cs" />
     <Compile Include="CSharpPassSystemUriObjectsInsteadOfStrings.Fixer.cs" />

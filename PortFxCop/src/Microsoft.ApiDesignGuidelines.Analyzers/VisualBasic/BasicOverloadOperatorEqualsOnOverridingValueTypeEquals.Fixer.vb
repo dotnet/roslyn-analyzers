@@ -7,7 +7,7 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace System.Runtime.Analyzers
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public Class BasicOverloadOperatorEqualsOnOverridingValueTypeEqualsFixer
         Inherits OverloadOperatorEqualsOnOverridingValueTypeEqualsFixer

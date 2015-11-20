@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 
-namespace System.Runtime.Analyzers.UnitTests
+namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 {
     public partial class OverloadOperatorEqualsOnOverridingValueTypeEqualsTests : CodeFixTestBase
     {

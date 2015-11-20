@@ -1,15 +1,17 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 
-namespace System.Runtime.Analyzers
+namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
     /// <summary>
     /// CA2231: Overload operator equals on overriding ValueType.Equals
@@ -44,7 +46,7 @@ namespace System.Runtime.Analyzers
             // We cannot have multiple overlapping diagnostics of this id.
             var diagnostic = context.Diagnostics.Single();
 
-            context.RegisterCodeFix(new MyCodeAction(SystemRuntimeAnalyzersResources.OverloadOperatorEqualsOnOverridingValueTypeEquals,
+            context.RegisterCodeFix(new MyCodeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle,
                                                      async ct => await ImplementOperatorEquals(context.Document, declaration, typeSymbol, ct).ConfigureAwait(false)),
                                     diagnostic);
         }

@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace System.Runtime.Analyzers
+namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
     /// <summary>
     /// CA2231: Overload operator equals on overriding ValueType.Equals

@@ -71,7 +71,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Do not author general catch handlers in code that receives corrupted state exceptions. Code that receives and intends to handle corrupted state exceptions should author distinct handlers for each exception type..
+        ///   Looks up a localized string similar to Catching corrupted state exceptions could mask errors (such as access violations), resulting in inconsistent state of execution or making it easier for attackers to compromise system. Instead, catch and handle a more specific set of exception type(s) or re-throw the exception.
         /// </summary>
         internal static string DoNotCatchCorruptedStateExceptionsDescription {
             get {
@@ -80,11 +80,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to What: {0} is catching corrupted state exception.
-        ///
-        ///Why: This could mask errors (such as access violations), resulting in inconsistent state of execution or making it easier for attackers to compromise system.
-        ///
-        ///How: Modify {0} to catch and handle a more specific set of exception type(s) than {1} or re-throw the exception.
+        ///   Looks up a localized string similar to {0} is catching corrupted state exception..
         /// </summary>
         internal static string DoNotCatchCorruptedStateExceptionsMessage {
             get {

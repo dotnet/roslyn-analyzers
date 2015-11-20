@@ -132,7 +132,6 @@
     <Compile Include="MarkAssembliesWithComVisible.cs" />
     <Compile Include="MarkAssembliesWithComVisible.Fixer.cs" />
     <Compile Include="MarkAttributesWithAttributeUsage.cs" />
-    <Compile Include="MarkAttributesWithAttributeUsage.Fixer.cs" />
     <Compile Include="DefineAccessorsForAttributeArguments.cs" />
     <Compile Include="DefineAccessorsForAttributeArguments.Fixer.cs" />
     <Compile Include="UsePropertiesWhereAppropriate.cs" />

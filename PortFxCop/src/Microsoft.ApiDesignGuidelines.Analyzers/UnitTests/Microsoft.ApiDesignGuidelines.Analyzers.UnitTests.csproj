@@ -178,7 +178,6 @@
     <Compile Include="MarkAssembliesWithComVisibleTests.cs" />
     <Compile Include="MarkAssembliesWithComVisibleTests.Fixer.cs" />
     <Compile Include="MarkAttributesWithAttributeUsageTests.cs" />
-    <Compile Include="MarkAttributesWithAttributeUsageTests.Fixer.cs" />
     <Compile Include="DefineAccessorsForAttributeArgumentsTests.cs" />
     <Compile Include="DefineAccessorsForAttributeArgumentsTests.Fixer.cs" />
     <Compile Include="UsePropertiesWhereAppropriateTests.cs" />

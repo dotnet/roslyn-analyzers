@@ -125,8 +125,6 @@
     <Compile Include="CSharpMarkAssembliesWithClsCompliant.Fixer.cs" />
     <Compile Include="CSharpMarkAssembliesWithAssemblyVersion.cs" />
     <Compile Include="CSharpMarkAssembliesWithAssemblyVersion.Fixer.cs" />
-    <Compile Include="CSharpMarkAttributesWithAttributeUsage.cs" />
-    <Compile Include="CSharpMarkAttributesWithAttributeUsage.Fixer.cs" />
     <Compile Include="CSharpDefineAccessorsForAttributeArguments.cs" />
     <Compile Include="CSharpUsePropertiesWhereAppropriate.cs" />
     <Compile Include="CSharpUsePropertiesWhereAppropriate.Fixer.cs" />

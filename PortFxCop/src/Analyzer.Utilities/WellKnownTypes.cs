@@ -157,6 +157,11 @@ namespace Analyzer.Utilities
             return compilation.GetTypeByMetadataName("System.IComparable");
         }
 
+        public static INamedTypeSymbol GenericIComparable(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.IComparable`1");
+        }
+
         public static INamedTypeSymbol ComSourceInterfaceAttribute(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName("System.Runtime.InteropServices.ComSourceInterfacesAttribute");

@@ -514,4 +514,7 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="ChangeAssemblyLevelComVisibleToFalse" xml:space="preserve">
     <value>Consider changing the ComVisible attribute on {0} to false, and opting in at the type level.</value>
   </data>
+  <data name="ImplementComparable" xml:space="preserve">
+    <value>Implement Equality and Comparison methods and operators</value>
+  </data>
 </root>

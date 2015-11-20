@@ -129,7 +129,6 @@
     <Compile Include="BasicMarkEnumsWithFlags.Fixer.vb" />
     <Compile Include="BasicInterfaceMethodsShouldBeCallableByChildTypes.vb" />
     <Compile Include="BasicInterfaceMethodsShouldBeCallableByChildTypes.Fixer.vb" />
-    <Compile Include="BasicOverrideMethodsOnComparableTypes.vb" />
     <Compile Include="BasicOverrideMethodsOnComparableTypes.Fixer.vb" />
     <Compile Include="BasicStaticHolderTypesShouldBeSealed.vb" />
     <Compile Include="BasicStaticHolderTypesShouldBeSealed.Fixer.vb" />

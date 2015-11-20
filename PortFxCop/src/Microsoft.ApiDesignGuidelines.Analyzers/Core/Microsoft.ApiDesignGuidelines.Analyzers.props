@@ -10,8 +10,9 @@
       <CodeAnalysisRuleSetOverrides>
         $(CodeAnalysisRuleSetOverrides);
         -Microsoft.Design#CA1017;
-        -Microsoft.Design#CA1018;        
-        
+        -Microsoft.Design#CA1018;
+        -Microsoft.Design#CA1036;
+
         -Microsoft.Naming#CA1720;
 
         -Microsoft.Usage#CA2227;

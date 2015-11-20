@@ -132,7 +132,6 @@
     <Compile Include="CSharpMarkEnumsWithFlags.Fixer.cs" />
     <Compile Include="CSharpInterfaceMethodsShouldBeCallableByChildTypes.cs" />
     <Compile Include="CSharpInterfaceMethodsShouldBeCallableByChildTypes.Fixer.cs" />
-    <Compile Include="CSharpOverrideMethodsOnComparableTypes.cs" />
     <Compile Include="CSharpOverrideMethodsOnComparableTypes.Fixer.cs" />
     <Compile Include="CSharpStaticHolderTypesShouldBeSealed.cs" />
     <Compile Include="CSharpStaticHolderTypesShouldBeSealed.Fixer.cs" />

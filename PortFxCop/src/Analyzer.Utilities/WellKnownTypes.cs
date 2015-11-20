@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities
@@ -124,6 +125,11 @@ namespace Analyzer.Utilities
         public static INamedTypeSymbol NonSerializedAttribute(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName("System.NonSerializedAttribute");
+        }
+
+        public static INamedTypeSymbol Attribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Attribute");
         }
 
         public static INamedTypeSymbol AttributeUsageAttribute(Compilation compilation)

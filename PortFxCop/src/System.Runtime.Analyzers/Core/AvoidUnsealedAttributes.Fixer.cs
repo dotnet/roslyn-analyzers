@@ -1,7 +1,5 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
@@ -10,27 +8,49 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Analyzer.Utilities;
 
 namespace System.Runtime.Analyzers
-{                              
+{
     /// <summary>
     /// CA1813: Avoid unsealed attributes
     /// </summary>
-    public abstract class AvoidUnsealedAttributesFixer : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
+    public class AvoidUnsealedAttributesFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AvoidUnsealedAttributesAnalyzer.RuleId);
 
-        public sealed override FixAllProvider GetFixAllProvider()
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
-            return WellKnownFixAllProviders.BatchFixer;
+            DocumentEditor editor = await DocumentEditor.CreateAsync(context.Document, context.CancellationToken).ConfigureAwait(false);
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var node = root.FindNode(context.Span);
+            var declaration = editor.Generator.GetDeclaration(node);
+
+            if (declaration != null)
+            {
+                // We cannot have multiple overlapping diagnostics of this id.
+                var diagnostic = context.Diagnostics.Single();
+
+                context.RegisterCodeFix(new MyCodeAction(SystemRuntimeAnalyzersResources.AvoidUnsealedAttributesMessage,
+                    async ct => await MakeSealed(editor, declaration, ct).ConfigureAwait(false)),
+                    diagnostic);
+            }
         }
 
-        public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
-        {                              
-            // This is to get rid of warning CS1998, please remove when implementing this analyzer
-            await new Task(() => { });
-            throw new NotImplementedException();
+        private Task<Document> MakeSealed(DocumentEditor editor, SyntaxNode declaration, CancellationToken ct)
+        {
+            var modifiers = editor.Generator.GetModifiers(declaration);
+            editor.SetModifiers(declaration, modifiers + DeclarationModifiers.Sealed);
+            return Task.FromResult(editor.GetChangedDocument());
+        }
+
+        private class MyCodeAction : DocumentChangeAction
+        {
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
+                : base(title, createChangedDocument)
+            {
+            }
         }
     }
 }

@@ -30,6 +30,10 @@
     <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
+      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
+      <Name>Analyzer.Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\System.Runtime.Analyzers.csproj">
       <Project>{09AE77BE-D697-4F10-B496-29A9E794CA07}</Project>
       <Name>System.Runtime.Analyzers</Name>
@@ -107,8 +111,6 @@
     <Compile Include="CSharpDoNotUseTimersThatPreventPowerStateChanges.Fixer.cs" />
     <Compile Include="CSharpDoNotInitializeUnnecessarily.cs" />
     <Compile Include="CSharpDoNotInitializeUnnecessarily.Fixer.cs" />
-    <Compile Include="CSharpAvoidUnsealedAttributes.cs" />
-    <Compile Include="CSharpAvoidUnsealedAttributes.Fixer.cs" />
     <Compile Include="CSharpTestForEmptyStringsUsingStringLength.cs" />
     <Compile Include="CSharpTestForEmptyStringsUsingStringLength.Fixer.cs" />
     <Compile Include="CSharpDoNotLockOnObjectsWithWeakIdentity.cs" />
@@ -121,7 +123,6 @@
     <Compile Include="CSharpInitializeStaticFieldsInline.cs" />
     <Compile Include="CSharpInitializeStaticFieldsInline.Fixer.cs" />
     <Compile Include="CSharpDisposableFieldsShouldBeDisposed.cs" />
-    <Compile Include="CSharpDisposableFieldsShouldBeDisposed.Fixer.cs" />
     <Compile Include="CSharpDoNotCallOverridableMethodsInConstructors.cs" />
     <Compile Include="CSharpDoNotCallOverridableMethodsInConstructors.Fixer.cs" />
     <Compile Include="CSharpDisposeMethodsShouldCallBaseClassDispose.cs" />

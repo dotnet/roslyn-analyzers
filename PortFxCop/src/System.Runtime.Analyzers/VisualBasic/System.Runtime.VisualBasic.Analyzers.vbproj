@@ -29,6 +29,10 @@
     <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\vb\Microsoft.CodeAnalysis.VisualBasic.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
+      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
+      <Name>Analyzer.Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\System.Runtime.Analyzers.csproj">
       <Project>{09AE77BE-D697-4F10-B496-29A9E794CA07}</Project>
       <Name>System.Runtime.Analyzers</Name>
@@ -104,8 +108,6 @@
     <Compile Include="BasicDoNotUseTimersThatPreventPowerStateChanges.Fixer.vb" />
     <Compile Include="BasicDoNotInitializeUnnecessarily.vb" />
     <Compile Include="BasicDoNotInitializeUnnecessarily.Fixer.vb" />
-    <Compile Include="BasicAvoidUnsealedAttributes.vb" />
-    <Compile Include="BasicAvoidUnsealedAttributes.Fixer.vb" />
     <Compile Include="BasicTestForEmptyStringsUsingStringLength.vb" />
     <Compile Include="BasicTestForEmptyStringsUsingStringLength.Fixer.vb" />
     <Compile Include="BasicDoNotLockOnObjectsWithWeakIdentity.vb" />
@@ -118,7 +120,6 @@
     <Compile Include="BasicInitializeStaticFieldsInline.vb" />
     <Compile Include="BasicInitializeStaticFieldsInline.Fixer.vb" />
     <Compile Include="BasicDisposableFieldsShouldBeDisposed.vb" />
-    <Compile Include="BasicDisposableFieldsShouldBeDisposed.Fixer.vb" />
     <Compile Include="BasicDoNotCallOverridableMethodsInConstructors.vb" />
     <Compile Include="BasicDoNotCallOverridableMethodsInConstructors.Fixer.vb" />
     <Compile Include="BasicDisposeMethodsShouldCallBaseClassDispose.vb" />

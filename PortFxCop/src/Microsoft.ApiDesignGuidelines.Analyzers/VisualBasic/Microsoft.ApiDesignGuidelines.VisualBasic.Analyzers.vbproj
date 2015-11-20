@@ -122,8 +122,6 @@
     <Compile Include="BasicMarkAssembliesWithClsCompliant.Fixer.vb" />
     <Compile Include="BasicMarkAssembliesWithAssemblyVersion.vb" />
     <Compile Include="BasicMarkAssembliesWithAssemblyVersion.Fixer.vb" />
-    <Compile Include="BasicMarkAssembliesWithComVisible.vb" />
-    <Compile Include="BasicMarkAssembliesWithComVisible.Fixer.vb" />
     <Compile Include="BasicMarkAttributesWithAttributeUsage.vb" />
     <Compile Include="BasicMarkAttributesWithAttributeUsage.Fixer.vb" />
     <Compile Include="BasicDefineAccessorsForAttributeArguments.vb" />

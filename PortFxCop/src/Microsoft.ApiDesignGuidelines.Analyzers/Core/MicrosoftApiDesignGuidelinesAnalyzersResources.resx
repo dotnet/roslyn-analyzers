@@ -508,4 +508,10 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="MakeSetterNonPublic" xml:space="preserve">
     <value>Make the setter of the property non-public</value>
   </data>
+  <data name="AddAssemblyLevelComVisibleFalse" xml:space="preserve">
+    <value>Because {0} exposes externally visible types, mark it with ComVisible(false) at the assembly level and then mark all types within the assembly that should be exposed to COM clients with ComVisible(true).</value>
+  </data>
+  <data name="ChangeAssemblyLevelComVisibleToFalse" xml:space="preserve">
+    <value>Consider changing the ComVisible attribute on {0} to false, and opting in at the type level.</value>
+  </data>
 </root>

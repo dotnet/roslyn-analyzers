@@ -16,7 +16,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// CA1017: Mark assemblies with ComVisible
     /// </summary>
-    public abstract class MarkAssembliesWithComVisibleFixer : CodeFixProvider
+    public sealed class MarkAssembliesWithComVisibleFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(MarkAssembliesWithComVisibleAnalyzer.RuleId);
 

@@ -90,6 +90,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Because {0} exposes externally visible types, mark it with ComVisible(false) at the assembly level and then mark all types within the assembly that should be exposed to COM clients with ComVisible(true)..
+        /// </summary>
+        internal static string AddAssemblyLevelComVisibleFalse {
+            get {
+                return ResourceManager.GetString("AddAssemblyLevelComVisibleFalse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to #N/A.
         /// </summary>
         internal static string AsyncMethodNamesShouldEndInAsyncDescription {
@@ -167,6 +176,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         internal static string CancellationTokenParametersMustComeLastTitle {
             get {
                 return ResourceManager.GetString("CancellationTokenParametersMustComeLastTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Consider changing the ComVisible attribute on {0} to false, and opting in at the type level..
+        /// </summary>
+        internal static string ChangeAssemblyLevelComVisibleToFalse {
+            get {
+                return ResourceManager.GetString("ChangeAssemblyLevelComVisibleToFalse", resourceCulture);
             }
         }
         

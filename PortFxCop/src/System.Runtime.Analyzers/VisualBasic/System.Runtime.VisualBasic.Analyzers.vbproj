@@ -104,8 +104,6 @@
     <Compile Include="BasicDoNotUseTimersThatPreventPowerStateChanges.Fixer.vb" />
     <Compile Include="BasicDoNotInitializeUnnecessarily.vb" />
     <Compile Include="BasicDoNotInitializeUnnecessarily.Fixer.vb" />
-    <Compile Include="BasicAvoidUnsealedAttributes.vb" />
-    <Compile Include="BasicAvoidUnsealedAttributes.Fixer.vb" />
     <Compile Include="BasicTestForEmptyStringsUsingStringLength.vb" />
     <Compile Include="BasicTestForEmptyStringsUsingStringLength.Fixer.vb" />
     <Compile Include="BasicDoNotLockOnObjectsWithWeakIdentity.vb" />

@@ -107,8 +107,6 @@
     <Compile Include="CSharpDoNotUseTimersThatPreventPowerStateChanges.Fixer.cs" />
     <Compile Include="CSharpDoNotInitializeUnnecessarily.cs" />
     <Compile Include="CSharpDoNotInitializeUnnecessarily.Fixer.cs" />
-    <Compile Include="CSharpAvoidUnsealedAttributes.cs" />
-    <Compile Include="CSharpAvoidUnsealedAttributes.Fixer.cs" />
     <Compile Include="CSharpTestForEmptyStringsUsingStringLength.cs" />
     <Compile Include="CSharpTestForEmptyStringsUsingStringLength.Fixer.cs" />
     <Compile Include="CSharpDoNotLockOnObjectsWithWeakIdentity.cs" />

@@ -61,6 +61,15 @@ namespace FileIssues {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delaying {0} msec between issues....
+        /// </summary>
+        internal static string DebugDelaying {
+            get {
+                return ResourceManager.GetString("DebugDelaying", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error: {0}.
         /// </summary>
         internal static string ErrorFormat {

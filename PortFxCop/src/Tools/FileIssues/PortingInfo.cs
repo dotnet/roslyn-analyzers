@@ -10,6 +10,8 @@
 
         public string Description { get; set; }
 
+        public string ProposedAnalyzer { get; set; }
+
         public string Notes { get; set; }
 
         public Disposition Disposition { get; set; }

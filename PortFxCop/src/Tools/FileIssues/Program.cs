@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CommandLine;
 using CsvHelper;
@@ -72,7 +73,7 @@ namespace FileIssues
             IIssuesClient client = GitHub.GetIssuesClient(_options.Token);
             var existingIssues = await client.GetAllForRepository(_options.RepoOwner, _options.RepoName);
 
-            foreach (var ruleToPort in rulesToPort)
+            foreach (var ruleToPort in rulesToPort.Take(3))
             {
                 string title = MakeIssueTitle(ruleToPort);
                 var matchingIssues = existingIssues.Where(issue => issue.Title == title);
@@ -88,6 +89,12 @@ namespace FileIssues
                     Issue issue = await client.Create(_options.RepoOwner, _options.RepoName, newIssue);
 
                     _log.InfoFormat(Resources.InfoIssueCreated, issue.Number);
+
+                    if (_options.Delay > 0)
+                    {
+                        _log.DebugFormat(Resources.DebugDelaying, _options.Delay);
+                        Thread.Sleep(_options.Delay);
+                    }
                 }
             }
         }
@@ -96,7 +103,7 @@ namespace FileIssues
         {
             // Don't localize this. Otherwise people with different locales would file issues
             // with different titles, and you would get duplicates.
-            const string FxCopPortTitlePrefix = "Port FxCop rule";
+            const string FxCopPortTitlePrefix = "2 Port FxCop rule";
 
             return $"{FxCopPortTitlePrefix} {ruleToPort.Id}: {ruleToPort.Name}";
         }
@@ -125,6 +132,7 @@ namespace FileIssues
             return
                 $"**Title:** {ruleToPort.Title}\n\n" +
                 $"**Description:**\n\n{ruleToPort.Description}\n\n" +
+                $"**Proposed analyzer:** {ruleToPort.ProposedAnalyzer}\n\n" +
                 $"**Notes:**\n\n{ruleToPort.Notes}";
         }
     }

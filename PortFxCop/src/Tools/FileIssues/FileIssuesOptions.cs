@@ -31,5 +31,14 @@ namespace FileIssues
             Required = true,
             HelpText = "Your GitHub personal access token")]
         public string Token { get; set; }
+
+        [Option(
+            'd',
+            "delay",
+            HelpText = "Delay after each issue creation (msec)",
+            Default = 120000)]
+        // This prevents GitHub from failing multiple rapid issue creation requests
+        // because it considers them "abuse".
+        public int Delay { get; set; }
     }
 }

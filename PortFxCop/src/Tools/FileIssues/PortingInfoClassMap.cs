@@ -15,6 +15,7 @@ namespace FileIssues
             Map(pi => pi.Title).Name("Title");
             Map(pi => pi.Description).Name("Description");
             Map(pi => pi.Notes).Name("Notes");
+            Map(pi => pi.ProposedAnalyzer).Name("Proposed Analyzer");
             Map(pi => pi.Disposition).Name("Port?").TypeConverter<DispositionConverter>();
         }
     }

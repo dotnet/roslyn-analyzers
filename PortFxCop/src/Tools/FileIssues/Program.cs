@@ -31,7 +31,6 @@ namespace FileIssues
         private Program(FileIssuesOptions options)
         {
             _options = options;
-
         }
 
         private async Task<int> Run()
@@ -127,7 +126,6 @@ namespace FileIssues
                 $"**Title:** {ruleToPort.Title}\n\n" +
                 $"**Description:**\n\n{ruleToPort.Description}\n\n" +
                 $"**Notes:**\n\n{ruleToPort.Notes}";
-                
         }
     }
 }

@@ -885,7 +885,7 @@ End Enum");
         }
 
         internal static string CA1036Name = "CA1036";
-        internal static string CA1036Message = "Overload operator Equals and comparison operators when implementing System.IComparable";
+        internal static string CA1036Message = MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals;
 
         private static DiagnosticResult GetCA1036CSharpResultAt(int line, int column)
         {

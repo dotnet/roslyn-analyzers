@@ -233,7 +233,7 @@ End Structure
         }
 
         internal static string CA2231Name = "CA2231";
-        internal static string CA2231Message = "Overload operator equals on overriding ValueType.Equals";
+        internal static string CA2231Message = MicrosoftApiDesignGuidelinesAnalyzersResources.OverloadOperatorEqualsOnOverridingValueTypeEqualsMessage;
 
         private static DiagnosticResult GetCA2231CSharpResultAt(int line, int column)
         {

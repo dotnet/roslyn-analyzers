@@ -73,7 +73,7 @@ namespace FileIssues
             IIssuesClient client = GitHub.GetIssuesClient(_options.Token);
             var existingIssues = await client.GetAllForRepository(_options.RepoOwner, _options.RepoName);
 
-            foreach (var ruleToPort in rulesToPort.Take(3))
+            foreach (var ruleToPort in rulesToPort)
             {
                 string title = MakeIssueTitle(ruleToPort);
                 var matchingIssues = existingIssues.Where(issue => issue.Title == title);
@@ -103,15 +103,15 @@ namespace FileIssues
         {
             // Don't localize this. Otherwise people with different locales would file issues
             // with different titles, and you would get duplicates.
-            const string FxCopPortTitlePrefix = "2 Port FxCop rule";
+            const string FxCopPortTitlePrefix = "Port FxCop rule";
 
             return $"{FxCopPortTitlePrefix} {ruleToPort.Id}: {ruleToPort.Name}";
         }
 
         private NewIssue CreateIssue(PortingInfo ruleToPort, string title)
         {
-            const string FxCopPortLabel = "fxcop port";
-            const string NeedsReviewLabel = "needs review";
+            const string FxCopPortLabel = "FxCop Port";
+            const string NeedsReviewLabel = "Needs Review";
 
             var newIssue = new NewIssue(title);
             newIssue.Labels.Add(FxCopPortLabel);

@@ -42,6 +42,17 @@
     <NuGetPreReleaseVersion>$(NuGetReleaseVersion)-$(PreReleaseVersion)</NuGetPreReleaseVersion>
     <NuGetPerBuildPreReleaseVersion Condition="'$(BuildNumberSuffix)' != ''">$(NuGetPreReleaseVersion)-$(BuildNumberPart1.Trim())-$(BuildNumberPart2.Trim())</NuGetPerBuildPreReleaseVersion>
   </PropertyGroup>
+
+  <!-- Version range for package dependencies -->
+  <PropertyGroup Condition="'$(DependencyMinimumSemanticVersion)' != '' AND '$(DependencyNextSemanticVersion)' != ''">
+    <DependencyMinimumNuGetReleaseVersion>$(DependencyMinimumSemanticVersion)</DependencyMinimumNuGetReleaseVersion>
+    <DependencyMinimumNuGetPreReleaseVersion>$(DependencyMinimumNuGetReleaseVersion)-$(PreReleaseVersion)</DependencyMinimumNuGetPreReleaseVersion>
+    <DependencyMinimumNuGetPerBuildPreReleaseVersion Condition="'$(BuildNumberSuffix)' != ''">$(DependencyMinimumNuGetPreReleaseVersion)-$(BuildNumberPart1.Trim())-$(BuildNumberPart2.Trim())</DependencyMinimumNuGetPerBuildPreReleaseVersion>
+
+    <DependencyNextNuGetReleaseVersion>$(DependencyNextSemanticVersion)</DependencyNextNuGetReleaseVersion>
+    <DependencyNextNuGetPreReleaseVersion>$(DependencyNextNuGetReleaseVersion)-$(PreReleaseVersion)</DependencyNextNuGetPreReleaseVersion>
+    <DependencyNextNuGetPerBuildPreReleaseVersion Condition="'$(BuildNumberSuffix)' != ''">$(DependencyNextNuGetPreReleaseVersion)-$(BuildNumberPart1.Trim())-$(BuildNumberPart2.Trim())</DependencyNextNuGetPerBuildPreReleaseVersion>
+  </PropertyGroup>
   
   <!-- Returns the current build version. Used in .vsixmanifests to substitute our build version into them -->
   <Target Name="GetBuildVersion" Outputs="$(BuildVersion)" />

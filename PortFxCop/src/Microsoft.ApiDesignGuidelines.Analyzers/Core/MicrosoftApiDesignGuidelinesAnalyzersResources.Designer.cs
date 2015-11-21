@@ -1189,7 +1189,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Implement IDisposable on {0} because it creates members of the following IDisposable types: {1}..
+        ///   Looks up a localized string similar to Type &apos;{0}&apos; owns disposable fields but is not disposable.
         /// </summary>
         internal static string TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking {
             get {

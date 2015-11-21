@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -60,7 +59,7 @@ namespace FileIssues
             while (csv.Read())
             {
                 var portingInfo = csv.GetRecord<PortingInfo>();
-                if (portingInfo.ShouldPort)
+                if (portingInfo.Disposition != Disposition.Unknown)
                 {
                     rulesToPort.Add(portingInfo);
                 }
@@ -74,7 +73,7 @@ namespace FileIssues
             IIssuesClient client = GitHub.GetIssuesClient(_options.Token);
             var existingIssues = await client.GetAllForRepository(_options.RepoOwner, _options.RepoName);
 
-            foreach (var ruleToPort in rulesToPort.Take(5))
+            foreach (var ruleToPort in rulesToPort)
             {
                 string title = MakeIssueTitle(ruleToPort);
                 var matchingIssues = existingIssues.Where(issue => issue.Title == title);
@@ -106,11 +105,29 @@ namespace FileIssues
         private NewIssue CreateIssue(PortingInfo ruleToPort, string title)
         {
             const string FxCopPortLabel = "fxcop port";
+            const string NeedsReviewLabel = "needs review";
 
             var newIssue = new NewIssue(title);
             newIssue.Labels.Add(FxCopPortLabel);
 
+            if (ruleToPort.Disposition == Disposition.NeedsReview)
+            {
+                newIssue.Labels.Add(NeedsReviewLabel);
+            }
+
+            newIssue.Body = FormatIssueBody(ruleToPort);
+
             return newIssue;
+        }
+
+        private string FormatIssueBody(PortingInfo ruleToPort)
+        {
+            // Don't localize this. We want all the issues in English.
+            return
+                $"**Title:** {ruleToPort.Title}\n\n" +
+                $"**Description:**\n\n{ruleToPort.Description}\n\n" +
+                $"**Notes:**\n\n{ruleToPort.Notes}";
+                
         }
     }
 }

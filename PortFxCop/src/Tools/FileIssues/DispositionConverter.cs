@@ -5,9 +5,9 @@ namespace FileIssues
 {
     /// <summary>
     /// Class that converts the string value of the "Port?" column in the CSV file
-    /// into a Boolean value for the <see cref="PortingInfo.ShouldPort"/> property.
+    /// into a value for the <see cref="PortingInfo.Disposition"/> property.
     /// </summary>
-    internal class ShouldPortConverter : ITypeConverter
+    internal class DispositionConverter : ITypeConverter
     {
         public bool CanConvertFrom(Type type)
         {
@@ -16,12 +16,23 @@ namespace FileIssues
 
         public bool CanConvertTo(Type type)
         {
-            return type == typeof(bool);
+            return type == typeof(Disposition);
         }
 
         public object ConvertFromString(TypeConverterOptions options, string text)
         {
-            return string.Compare(text, "yes", StringComparison.InvariantCultureIgnoreCase) == 0;
+            Disposition disposition = Disposition.Unknown;
+
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                disposition = Disposition.NeedsReview;
+            }
+            else if (string.Compare(text, "yes", StringComparison.InvariantCultureIgnoreCase) == 0)
+            {
+                disposition = Disposition.Port;
+            }
+
+            return disposition;
         }
 
         public string ConvertToString(TypeConverterOptions options, object value)

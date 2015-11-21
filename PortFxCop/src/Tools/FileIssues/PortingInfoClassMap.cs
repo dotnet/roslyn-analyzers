@@ -12,7 +12,10 @@ namespace FileIssues
         {
             Map(pi => pi.Id).Name("Id");
             Map(pi => pi.Name).Name("Name");
-            Map(pi => pi.ShouldPort).Name("Port?").TypeConverter<ShouldPortConverter>();
+            Map(pi => pi.Title).Name("Title");
+            Map(pi => pi.Description).Name("Description");
+            Map(pi => pi.Notes).Name("Notes");
+            Map(pi => pi.Disposition).Name("Port?").TypeConverter<DispositionConverter>();
         }
     }
 }

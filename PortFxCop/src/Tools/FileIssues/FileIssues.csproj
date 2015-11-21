@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Disposition.cs" />
     <Compile Include="FileIssuesOptions.cs" />
     <Compile Include="GitHub.cs" />
     <Compile Include="LogHelper.cs" />
@@ -71,7 +72,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ShouldPortConverter.cs" />
+    <Compile Include="DispositionConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

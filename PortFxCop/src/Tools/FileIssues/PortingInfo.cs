@@ -6,11 +6,19 @@
 
         public string Name { get; set; }
 
-        public bool ShouldPort { get; set; }
+        public string Title { get; set; }
+
+        public string Description { get; set; }
+
+        public string Notes { get; set; }
+
+        public Disposition Disposition { get; set; }
+
+        public bool NeedsReview { get; set; }
 
         public override string ToString()
         {
-            return $"{{Id: {Id}, Name: {Name}, ShouldPort: {ShouldPort}}}";
+            return $"{{Id: {Id}, Name: {Name}, ShouldPort: {Disposition}}}";
         }
     }
 }

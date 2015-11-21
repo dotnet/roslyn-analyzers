@@ -114,7 +114,6 @@
     <Compile Include="CSharpDonTMixBlockingAndAsync.cs" />
     <Compile Include="CSharpDonTMixBlockingAndAsync.Fixer.cs" />
     <Compile Include="CSharpTypesThatOwnDisposableFieldsShouldBeDisposable.cs" />
-    <Compile Include="CSharpTypesThatOwnDisposableFieldsShouldBeDisposable.Fixer.cs" />
     <Compile Include="CSharpUseGenericEventHandlerInstances.cs" />
     <Compile Include="CSharpUseGenericEventHandlerInstances.Fixer.cs" />
     <Compile Include="CSharpEnumsShouldHaveZeroValue.cs" />
@@ -125,19 +124,13 @@
     <Compile Include="CSharpMarkAssembliesWithClsCompliant.Fixer.cs" />
     <Compile Include="CSharpMarkAssembliesWithAssemblyVersion.cs" />
     <Compile Include="CSharpMarkAssembliesWithAssemblyVersion.Fixer.cs" />
-    <Compile Include="CSharpMarkAssembliesWithComVisible.cs" />
-    <Compile Include="CSharpMarkAssembliesWithComVisible.Fixer.cs" />
-    <Compile Include="CSharpMarkAttributesWithAttributeUsage.cs" />
-    <Compile Include="CSharpMarkAttributesWithAttributeUsage.Fixer.cs" />
     <Compile Include="CSharpDefineAccessorsForAttributeArguments.cs" />
-    <Compile Include="CSharpDefineAccessorsForAttributeArguments.Fixer.cs" />
     <Compile Include="CSharpUsePropertiesWhereAppropriate.cs" />
     <Compile Include="CSharpUsePropertiesWhereAppropriate.Fixer.cs" />
     <Compile Include="CSharpMarkEnumsWithFlags.cs" />
     <Compile Include="CSharpMarkEnumsWithFlags.Fixer.cs" />
     <Compile Include="CSharpInterfaceMethodsShouldBeCallableByChildTypes.cs" />
     <Compile Include="CSharpInterfaceMethodsShouldBeCallableByChildTypes.Fixer.cs" />
-    <Compile Include="CSharpOverrideMethodsOnComparableTypes.cs" />
     <Compile Include="CSharpOverrideMethodsOnComparableTypes.Fixer.cs" />
     <Compile Include="CSharpStaticHolderTypesShouldBeSealed.cs" />
     <Compile Include="CSharpStaticHolderTypesShouldBeSealed.Fixer.cs" />
@@ -159,7 +152,6 @@
     <Compile Include="CSharpOperatorOverloadsHaveNamedAlternates.Fixer.cs" />
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.cs" />
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.Fixer.cs" />
-    <Compile Include="CSharpOverloadOperatorEqualsOnOverridingValueTypeEquals.cs" />
     <Compile Include="CSharpOverloadOperatorEqualsOnOverridingValueTypeEquals.Fixer.cs" />
     <Compile Include="CSharpPassSystemUriObjectsInsteadOfStrings.cs" />
     <Compile Include="CSharpPassSystemUriObjectsInsteadOfStrings.Fixer.cs" />

@@ -111,7 +111,6 @@
     <Compile Include="BasicDonTMixBlockingAndAsync.vb" />
     <Compile Include="BasicDonTMixBlockingAndAsync.Fixer.vb" />
     <Compile Include="BasicTypesThatOwnDisposableFieldsShouldBeDisposable.vb" />
-    <Compile Include="BasicTypesThatOwnDisposableFieldsShouldBeDisposable.Fixer.vb" />
     <Compile Include="BasicUseGenericEventHandlerInstances.vb" />
     <Compile Include="BasicUseGenericEventHandlerInstances.Fixer.vb" />
     <Compile Include="BasicEnumsShouldHaveZeroValue.vb" />
@@ -122,19 +121,13 @@
     <Compile Include="BasicMarkAssembliesWithClsCompliant.Fixer.vb" />
     <Compile Include="BasicMarkAssembliesWithAssemblyVersion.vb" />
     <Compile Include="BasicMarkAssembliesWithAssemblyVersion.Fixer.vb" />
-    <Compile Include="BasicMarkAssembliesWithComVisible.vb" />
-    <Compile Include="BasicMarkAssembliesWithComVisible.Fixer.vb" />
-    <Compile Include="BasicMarkAttributesWithAttributeUsage.vb" />
-    <Compile Include="BasicMarkAttributesWithAttributeUsage.Fixer.vb" />
     <Compile Include="BasicDefineAccessorsForAttributeArguments.vb" />
-    <Compile Include="BasicDefineAccessorsForAttributeArguments.Fixer.vb" />
     <Compile Include="BasicUsePropertiesWhereAppropriate.vb" />
     <Compile Include="BasicUsePropertiesWhereAppropriate.Fixer.vb" />
     <Compile Include="BasicMarkEnumsWithFlags.vb" />
     <Compile Include="BasicMarkEnumsWithFlags.Fixer.vb" />
     <Compile Include="BasicInterfaceMethodsShouldBeCallableByChildTypes.vb" />
     <Compile Include="BasicInterfaceMethodsShouldBeCallableByChildTypes.Fixer.vb" />
-    <Compile Include="BasicOverrideMethodsOnComparableTypes.vb" />
     <Compile Include="BasicOverrideMethodsOnComparableTypes.Fixer.vb" />
     <Compile Include="BasicStaticHolderTypesShouldBeSealed.vb" />
     <Compile Include="BasicStaticHolderTypesShouldBeSealed.Fixer.vb" />
@@ -156,7 +149,6 @@
     <Compile Include="BasicOperatorOverloadsHaveNamedAlternates.Fixer.vb" />
     <Compile Include="BasicOperatorsShouldHaveSymmetricalOverloads.vb" />
     <Compile Include="BasicOperatorsShouldHaveSymmetricalOverloads.Fixer.vb" />
-    <Compile Include="BasicOverloadOperatorEqualsOnOverridingValueTypeEquals.vb" />
     <Compile Include="BasicOverloadOperatorEqualsOnOverridingValueTypeEquals.Fixer.vb" />
     <Compile Include="BasicPassSystemUriObjectsInsteadOfStrings.vb" />
     <Compile Include="BasicPassSystemUriObjectsInsteadOfStrings.Fixer.vb" />

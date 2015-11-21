@@ -90,6 +90,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Because {0} exposes externally visible types, mark it with ComVisible(false) at the assembly level and then mark all types within the assembly that should be exposed to COM clients with ComVisible(true)..
+        /// </summary>
+        internal static string AddAssemblyLevelComVisibleFalse {
+            get {
+                return ResourceManager.GetString("AddAssemblyLevelComVisibleFalse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to #N/A.
         /// </summary>
         internal static string AsyncMethodNamesShouldEndInAsyncDescription {
@@ -171,6 +180,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Consider changing the ComVisible attribute on {0} to false, and opting in at the type level..
+        /// </summary>
+        internal static string ChangeAssemblyLevelComVisibleToFalse {
+            get {
+                return ResourceManager.GetString("ChangeAssemblyLevelComVisibleToFalse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A writable collection property allows a user to replace the collection with a different collection. A read-only property stops the collection from being replaced but still allows the individual members to be set..
         /// </summary>
         internal static string CollectionPropertiesShouldBeReadOnlyDescription {
@@ -221,6 +239,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         internal static string ConstructorMakeNoninheritableBaseClassInheritableTitle {
             get {
                 return ResourceManager.GetString("ConstructorMakeNoninheritableBaseClassInheritableTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create a property accessor..
+        /// </summary>
+        internal static string CreatePropertyAccessorForParameter {
+            get {
+                return ResourceManager.GetString("CreatePropertyAccessorForParameter", resourceCulture);
             }
         }
         
@@ -577,6 +604,24 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Implement Equality and Comparison methods and operators.
+        /// </summary>
+        internal static string ImplementComparable {
+            get {
+                return ResourceManager.GetString("ImplementComparable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Implement IDisposable Interface.
+        /// </summary>
+        internal static string ImplementIDisposableInterface {
+            get {
+                return ResourceManager.GetString("ImplementIDisposableInterface", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to #N/A.
         /// </summary>
         internal static string ImplementIEquatableWhenOverridingObjectEqualsDescription {
@@ -627,6 +672,24 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         internal static string InterfaceMethodsShouldBeCallableByChildTypesTitle {
             get {
                 return ResourceManager.GetString("InterfaceMethodsShouldBeCallableByChildTypesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make the getter of the property public.
+        /// </summary>
+        internal static string MakeGetterPublic {
+            get {
+                return ResourceManager.GetString("MakeGetterPublic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make the setter of the property non-public.
+        /// </summary>
+        internal static string MakeSetterNonPublic {
+            get {
+                return ResourceManager.GetString("MakeSetterNonPublic", resourceCulture);
             }
         }
         

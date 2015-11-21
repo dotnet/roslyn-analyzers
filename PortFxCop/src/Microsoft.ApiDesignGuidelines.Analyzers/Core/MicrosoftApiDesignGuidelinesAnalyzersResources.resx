@@ -499,4 +499,25 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="IdentifiersShouldNotContainTypeNamesMessage" xml:space="preserve">
     <value>Identifier '{0}' contains type name</value>
   </data>
+  <data name="CreatePropertyAccessorForParameter" xml:space="preserve">
+    <value>Create a property accessor.</value>
+  </data>
+  <data name="MakeGetterPublic" xml:space="preserve">
+    <value>Make the getter of the property public</value>
+  </data>
+  <data name="MakeSetterNonPublic" xml:space="preserve">
+    <value>Make the setter of the property non-public</value>
+  </data>
+  <data name="AddAssemblyLevelComVisibleFalse" xml:space="preserve">
+    <value>Because {0} exposes externally visible types, mark it with ComVisible(false) at the assembly level and then mark all types within the assembly that should be exposed to COM clients with ComVisible(true).</value>
+  </data>
+  <data name="ChangeAssemblyLevelComVisibleToFalse" xml:space="preserve">
+    <value>Consider changing the ComVisible attribute on {0} to false, and opting in at the type level.</value>
+  </data>
+  <data name="ImplementComparable" xml:space="preserve">
+    <value>Implement Equality and Comparison methods and operators</value>
+  </data>
+  <data name="ImplementIDisposableInterface" xml:space="preserve">
+    <value>Implement IDisposable Interface</value>
+  </data>
 </root>

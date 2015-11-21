@@ -111,7 +111,6 @@
     <Compile Include="BasicDonTMixBlockingAndAsync.vb" />
     <Compile Include="BasicDonTMixBlockingAndAsync.Fixer.vb" />
     <Compile Include="BasicTypesThatOwnDisposableFieldsShouldBeDisposable.vb" />
-    <Compile Include="BasicTypesThatOwnDisposableFieldsShouldBeDisposable.Fixer.vb" />
     <Compile Include="BasicUseGenericEventHandlerInstances.vb" />
     <Compile Include="BasicUseGenericEventHandlerInstances.Fixer.vb" />
     <Compile Include="BasicEnumsShouldHaveZeroValue.vb" />

@@ -97,6 +97,11 @@ namespace Analyzer.Utilities
             return compilation.GetTypeByMetadataName("System.Windows.Forms.Control");
         }
 
+        public static INamedTypeSymbol NotImplementedException(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.NotImplementedException");
+        }
+
         public static INamedTypeSymbol IDisposable(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName("System.IDisposable");

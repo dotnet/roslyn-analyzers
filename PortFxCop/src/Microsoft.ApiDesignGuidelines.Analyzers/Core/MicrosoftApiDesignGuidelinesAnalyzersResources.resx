@@ -517,4 +517,7 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="ImplementComparable" xml:space="preserve">
     <value>Implement Equality and Comparison methods and operators</value>
   </data>
+  <data name="ImplementIDisposableInterface" xml:space="preserve">
+    <value>Implement IDisposable Interface</value>
+  </data>
 </root>

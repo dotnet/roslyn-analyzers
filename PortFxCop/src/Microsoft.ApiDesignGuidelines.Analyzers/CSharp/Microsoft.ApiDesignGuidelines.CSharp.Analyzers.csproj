@@ -114,7 +114,6 @@
     <Compile Include="CSharpDonTMixBlockingAndAsync.cs" />
     <Compile Include="CSharpDonTMixBlockingAndAsync.Fixer.cs" />
     <Compile Include="CSharpTypesThatOwnDisposableFieldsShouldBeDisposable.cs" />
-    <Compile Include="CSharpTypesThatOwnDisposableFieldsShouldBeDisposable.Fixer.cs" />
     <Compile Include="CSharpUseGenericEventHandlerInstances.cs" />
     <Compile Include="CSharpUseGenericEventHandlerInstances.Fixer.cs" />
     <Compile Include="CSharpEnumsShouldHaveZeroValue.cs" />

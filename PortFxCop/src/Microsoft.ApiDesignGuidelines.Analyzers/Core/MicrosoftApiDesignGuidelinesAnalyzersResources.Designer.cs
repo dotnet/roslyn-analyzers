@@ -613,6 +613,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Implement IDisposable Interface.
+        /// </summary>
+        internal static string ImplementIDisposableInterface {
+            get {
+                return ResourceManager.GetString("ImplementIDisposableInterface", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to #N/A.
         /// </summary>
         internal static string ImplementIEquatableWhenOverridingObjectEqualsDescription {

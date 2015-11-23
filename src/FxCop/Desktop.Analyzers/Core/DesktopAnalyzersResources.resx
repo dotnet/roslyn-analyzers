@@ -139,11 +139,9 @@
     <value>Do Not Use Weak Cryptographic Algorithms</value>
   </data>
   <data name="DoNotUseWeakCryptographicAlgorithmsDescription" xml:space="preserve">
-    <value>Cryptographic algorithms degrade over time as attacks become for advances to attacker get access to more computation. Depending on the type and application of this cryptographic algorithm, further degradation of the cryptographic strength of it may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. 
- 
-HOW: Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA-2 512, SHA-2 384, or SHA-2 256.</value>
+    <value>Cryptographic algorithms degrade over time as attacks become for advances to attacker get access to more computation. Depending on the type and application of this cryptographic algorithm, further degradation of the cryptographic strength of it may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA-2 512, SHA-2 384, or SHA-2 256.</value>
   </data>
   <data name="DoNotUseWeakCryptographicAlgorithmsMessage" xml:space="preserve">
-    <value>{0} uses an weak cryptographic algorithm {1}</value>
+    <value>{0} uses a weak cryptographic algorithm {1}</value>
   </data>
 </root>

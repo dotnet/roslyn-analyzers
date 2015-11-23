@@ -125,9 +125,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cryptographic algorithms degrade over time as attacks become for advances to attacker get access to more computation. Depending on the type and application of this cryptographic algorithm, further degradation of the cryptographic strength of it may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. 
-        /// 
-        ///HOW: Replace encryption uses with the AES algorithm (AES-25 [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to Cryptographic algorithms degrade over time as attacks become for advances to attacker get access to more computation. Depending on the type and application of this cryptographic algorithm, further degradation of the cryptographic strength of it may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DoNotUseWeakCryptographicAlgorithmsDescription {
             get {
@@ -136,7 +134,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} uses an weak cryptographic algorithm {1}.
+        ///   Looks up a localized string similar to {0} uses a weak cryptographic algorithm {1}.
         /// </summary>
         internal static string DoNotUseWeakCryptographicAlgorithmsMessage {
             get {

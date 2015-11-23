@@ -26,44 +26,19 @@ namespace Desktop.Analyzers
         private static readonly LocalizableString s_localizableDoNotUseBrokenAlgorithmsMessage = DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseBrokenCryptographicAlgorithmsMessage));
         private static readonly LocalizableString s_localizableDoNotUseBrokenAlgorithmsDescription = DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseBrokenCryptographicAlgorithmsDescription));
 
-        internal static DiagnosticDescriptor DoNotUseMD5SpecificRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographicRuleId,
+        internal static DiagnosticDescriptor DoNotUseBrokenCryptographicRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographicRuleId,
                                                                                           s_localizableDoNotUseBrokenAlgorithmsTitle,
                                                                                           s_localizableDoNotUseBrokenAlgorithmsMessage,
                                                                                           s_localizableDoNotUseBrokenAlgorithmsDescription);
 
-        internal static DiagnosticDescriptor DoNotUseDESSpecificRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographicRuleId,
-                                                                                          s_localizableDoNotUseBrokenAlgorithmsTitle,
-                                                                                          s_localizableDoNotUseBrokenAlgorithmsMessage,
-                                                                                          s_localizableDoNotUseBrokenAlgorithmsDescription);
-
-        internal static DiagnosticDescriptor DoNotUseRC2SpecificRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographicRuleId,
-                                                                                          s_localizableDoNotUseBrokenAlgorithmsTitle,
-                                                                                          s_localizableDoNotUseBrokenAlgorithmsMessage,
-                                                                                          s_localizableDoNotUseBrokenAlgorithmsDescription);
-
-        internal static DiagnosticDescriptor DoNotUseTripleDESSpecificRule = CreateDiagnosticDescriptor(DoNotUseWeakCryptographicRuleId,
+        internal static DiagnosticDescriptor DoNotUseWeakCryptographicRule = CreateDiagnosticDescriptor(DoNotUseWeakCryptographicRuleId,
                                                                                           s_localizableDoNotUseWeakAlgorithmsTitle,
                                                                                           s_localizableDoNotUseWeakAlgorithmsMessage,
                                                                                           s_localizableDoNotUseWeakAlgorithmsDescription);
-
-        internal static DiagnosticDescriptor DoNotUseRIPEMD160SpecificRule = CreateDiagnosticDescriptor(DoNotUseWeakCryptographicRuleId,
-                                                                                          s_localizableDoNotUseWeakAlgorithmsTitle,
-                                                                                          s_localizableDoNotUseWeakAlgorithmsMessage,
-                                                                                          s_localizableDoNotUseWeakAlgorithmsDescription);
-
-        internal static DiagnosticDescriptor DoNotUseDSASpecificRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographicRuleId,
-                                                                                          s_localizableDoNotUseBrokenAlgorithmsTitle,
-                                                                                          s_localizableDoNotUseBrokenAlgorithmsMessage,
-                                                                                          s_localizableDoNotUseBrokenAlgorithmsDescription);
-
         protected abstract Analyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes cryptTypes);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics = ImmutableArray.Create(DoNotUseMD5SpecificRule,
-                                                                                                                    DoNotUseDESSpecificRule,
-                                                                                                                    DoNotUseRC2SpecificRule,
-                                                                                                                    DoNotUseTripleDESSpecificRule,
-                                                                                                                    DoNotUseRIPEMD160SpecificRule,
-                                                                                                                    DoNotUseDSASpecificRule);
+        private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics = ImmutableArray.Create(DoNotUseWeakCryptographicRule,
+                                                                                                                    DoNotUseBrokenCryptographicRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             => s_supportedDiagnostics;
@@ -157,39 +132,39 @@ namespace Desktop.Analyzers
 
                 if (type.IsDerivedFrom(this._cryptTypes.DES, baseTypesOnly: true))
                 {
-                    rule = DoNotUseDESSpecificRule;                    
+                    rule = DoNotUseBrokenCryptographicRule;                    
                     messageArgs[1] = _cryptTypes.DES.Name;
                 }
                 else if (method.MatchMethodDerived(_cryptTypes.DSA, SecurityMemberNames.CreateSignature) ||
                          (type == _cryptTypes.DSASignatureFormatter &&
                           method.MatchMethodDerived(_cryptTypes.DSASignatureFormatter, WellKnownMemberNames.InstanceConstructorName)))
                 {
-                    rule = DoNotUseDSASpecificRule;
+                    rule = DoNotUseBrokenCryptographicRule;
                     messageArgs[1] = _cryptTypes.DSA.Name;
                 }
                 else if (type.IsDerivedFrom(_cryptTypes.HMACMD5, baseTypesOnly: true))
                 {
-                    rule = DoNotUseMD5SpecificRule;
+                    rule = DoNotUseBrokenCryptographicRule;
                     messageArgs[1] = _cryptTypes.HMACMD5.Name;
                 }
                 else if (type.IsDerivedFrom(_cryptTypes.RC2, baseTypesOnly: true))
                 {
-                    rule = DoNotUseRC2SpecificRule;
+                    rule = DoNotUseBrokenCryptographicRule;
                     messageArgs[1] = _cryptTypes.RC2.Name;
                 }
                 else if (type.IsDerivedFrom(_cryptTypes.TripleDES, baseTypesOnly: true))
                 {
-                    rule = DoNotUseTripleDESSpecificRule;
+                    rule = DoNotUseWeakCryptographicRule;
                     messageArgs[1] = _cryptTypes.TripleDES.Name;
                 }
                 else if (type.IsDerivedFrom(_cryptTypes.RIPEMD160, baseTypesOnly: true))
                 {
-                    rule = DoNotUseRIPEMD160SpecificRule;
+                    rule = DoNotUseWeakCryptographicRule;
                     messageArgs[1] = _cryptTypes.RIPEMD160.Name;
                 }
                 else if (type.IsDerivedFrom(_cryptTypes.HMACRIPEMD160, baseTypesOnly: true))
                 {
-                    rule = DoNotUseRIPEMD160SpecificRule;
+                    rule = DoNotUseWeakCryptographicRule;
                     messageArgs[1] = _cryptTypes.HMACRIPEMD160.Name;
                 }
 

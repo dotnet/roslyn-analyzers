@@ -1,15 +1,15 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <MetaCompilationSemanticVersion>1.0.0</MetaCompilationSemanticVersion>
+    <MetaCompilationSemanticVersion>1.1.0</MetaCompilationSemanticVersion>
     <MetaCompilationPreReleaseVersion>beta1</MetaCompilationPreReleaseVersion>
 
-    <AsyncPackageSemanticVersion>1.0.0</AsyncPackageSemanticVersion>
+    <AsyncPackageSemanticVersion>1.1.0</AsyncPackageSemanticVersion>
     <AsyncPackagePreReleaseVersion>beta1</AsyncPackagePreReleaseVersion>
 
-    <MicrosoftCodeAnalysisAnalyzersSemanticVersion>1.0.1</MicrosoftCodeAnalysisAnalyzersSemanticVersion>
+    <MicrosoftCodeAnalysisAnalyzersSemanticVersion>1.1.0</MicrosoftCodeAnalysisAnalyzersSemanticVersion>
     <MicrosoftCodeAnalysisAnalyzersPreReleaseVersion>beta1</MicrosoftCodeAnalysisAnalyzersPreReleaseVersion>
 
-    <SharedTestSemanticVersion>1.0.0</SharedTestSemanticVersion>
+    <SharedTestSemanticVersion>1.1.0</SharedTestSemanticVersion>
     <SharedTestPreReleaseVersion>beta1</SharedTestPreReleaseVersion>
 
     <RoslynDiagnosticsAnalyzersSemanticVersion>1.1.1</RoslynDiagnosticsAnalyzersSemanticVersion>
@@ -22,7 +22,7 @@
   <!-- Version info for FxCop analyzer packages -->
   <PropertyGroup>
     <!-- Master FxCop analyzer package, which is just a collection of individual analyzer packages below. -->
-    <FxCopAnalyzersSemanticVersion>1.0.2</FxCopAnalyzersSemanticVersion>
+    <FxCopAnalyzersSemanticVersion>1.1.0</FxCopAnalyzersSemanticVersion>
     <FxCopAnalyzersPreReleaseVersion>beta1</FxCopAnalyzersPreReleaseVersion>
 
     <!-- Dependency version range for packages included in the master FxCop analyzer package: "[$(FxCopAnalyzersDependencyMinimumSemanticVersion) - $(FxCopAnalyzersDependencyNextSemanticVersion))" -->
@@ -32,19 +32,19 @@
     <FxCopAnalyzersDependencyNextSemanticVersion>1.2.0</FxCopAnalyzersDependencyNextSemanticVersion>
     
     <!-- All the versions below must be >= FxCopAnalyzersDependencyMinimumSemanticVersion && < FxCopAnalyzersDependencyNextSemanticVersion -->
-    <DesktopAnalyzersSemanticVersion>1.0.0</DesktopAnalyzersSemanticVersion>
+    <DesktopAnalyzersSemanticVersion>1.1.0</DesktopAnalyzersSemanticVersion>
     <DesktopAnalyzersPreReleaseVersion>beta1</DesktopAnalyzersPreReleaseVersion>
 
-    <SystemRuntimeAnalyzersSemanticVersion>1.0.2</SystemRuntimeAnalyzersSemanticVersion>
+    <SystemRuntimeAnalyzersSemanticVersion>1.1.0</SystemRuntimeAnalyzersSemanticVersion>
     <SystemRuntimeAnalyzersPreReleaseVersion>beta1</SystemRuntimeAnalyzersPreReleaseVersion>
 
-    <SystemRuntimeInteropServicesAnalyzersSemanticVersion>1.0.2</SystemRuntimeInteropServicesAnalyzersSemanticVersion>
+    <SystemRuntimeInteropServicesAnalyzersSemanticVersion>1.1.0</SystemRuntimeInteropServicesAnalyzersSemanticVersion>
     <SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>beta1</SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>
 
-    <SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>1.0.0</SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>
+    <SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>1.1.0</SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>
     <SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>beta1</SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>
 
-    <AnalyzerPowerPackSemanticVersion>1.0.2</AnalyzerPowerPackSemanticVersion>
+    <AnalyzerPowerPackSemanticVersion>1.1.0</AnalyzerPowerPackSemanticVersion>
     <AnalyzerPowerPackPreReleaseVersion>beta1</AnalyzerPowerPackPreReleaseVersion>
   </PropertyGroup>
 </Project>

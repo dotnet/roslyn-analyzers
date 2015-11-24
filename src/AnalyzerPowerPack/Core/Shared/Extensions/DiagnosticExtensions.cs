@@ -124,11 +124,15 @@ namespace Microsoft.AnalyzerPowerPack.Utilities
             DiagnosticDescriptor rule,
             params object[] args)
         {
-            var location = locations.First(l => l.IsInSource);
-            var additionalLocations = locations.Where(l => l.IsInSource).Skip(1);
+            var inSource = locations.Where(l => l.IsInSource);
+            if (!inSource.Any())
+            {
+                return Diagnostic.Create(rule, null, args);
+            }
+
             return Diagnostic.Create(rule,
-                     location: location,
-                     additionalLocations: additionalLocations,
+                     location: inSource.First(),
+                     additionalLocations: inSource.Skip(1),
                      messageArgs: args);
         }
     }

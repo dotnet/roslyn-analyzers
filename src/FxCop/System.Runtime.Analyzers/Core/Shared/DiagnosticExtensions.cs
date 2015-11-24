@@ -114,12 +114,7 @@ namespace System.Runtime.Analyzers
             DiagnosticDescriptor rule,
             params object[] args)
         {
-            var location = locations.First(l => l.IsInSource);
-            var additionalLocations = locations.Where(l => l.IsInSource).Skip(1);
-            return Diagnostic.Create(rule,
-                     location: location,
-                     additionalLocations: additionalLocations,
-                     messageArgs: args);
+            return locations.CreateDiagnostic(rule, null, args);
         }
 
         public static Diagnostic CreateDiagnostic(
@@ -128,11 +123,15 @@ namespace System.Runtime.Analyzers
             ImmutableDictionary<string, string> properties,
             params object[] args)
         {
-            var location = locations.First(l => l.IsInSource);
-            var additionalLocations = locations.Where(l => l.IsInSource).Skip(1);
+            var inSource = locations.Where(l => l.IsInSource);
+            if (!inSource.Any())
+            {
+                return Diagnostic.Create(rule, null, args);
+            }
+
             return Diagnostic.Create(rule,
-                     location: location,
-                     additionalLocations: additionalLocations,
+                     location: inSource.First(),
+                     additionalLocations: inSource.Skip(1),
                      properties: properties,
                      messageArgs: args);
         }

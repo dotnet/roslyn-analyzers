@@ -28,7 +28,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.CSharp.Analyzers" />
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.VisualBasic.Analyzers" />
-    <InternalsVisibleToTest Include="Roslyn.CodeAnalysis.Analyzers.UnitTests" />
+    <InternalsVisibleToTest Include="Microsoft.CodeAnalysis.Analyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Diagnostic.nuspec" />
@@ -50,12 +50,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CodeAnalysisDiagnosticsResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="DiagnosticCategory.cs" />
+    <Compile Include="AnalyzerDiagnosticCategory.cs" />
     <Compile Include="DiagnosticIds.cs" />
     <Compile Include="FixAnalyzers\FixerWithFixAllAnalyzer.cs" />
-    <Compile Include="Helpers\AttributeHelpers.cs" />
-    <Compile Include="Helpers\DocumentChangedAction.cs" />
-    <Compile Include="Helpers\ITypeSymbolExtensions.cs" />
     <Compile Include="InternalImplementationOnlyAnalyzer.cs" />
     <Compile Include="MetaAnalyzers\DiagnosticAnalyzerCorrectnessAnalyzer.SyntaxNodeWithinAnalyzerTypeCompilationAnalyzer.cs" />
     <Compile Include="MetaAnalyzers\DiagnosticAnalyzerFieldsAnalyzer.cs" />
@@ -138,6 +135,12 @@
       <HintPath>..\..\..\packages\System.Reflection.Metadata.1.0.21\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
       <Private>True</Private>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
+      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
+      <Name>Analyzer.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

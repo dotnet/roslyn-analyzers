@@ -83,6 +83,45 @@ namespace Analyzer.Utilities
             }
         }
 
+        public static IEnumerable<ITypeSymbol> GetBaseTypesAndThis(this ITypeSymbol type)
+        {
+            var current = type;
+            while (current != null)
+            {
+                yield return current;
+                current = current.BaseType;
+            }
+        }
+
+        public static bool DerivesFrom(this INamedTypeSymbol symbol, INamedTypeSymbol candidateBaseType)
+        {
+            while (symbol != null)
+            {
+                if (symbol.Equals(candidateBaseType))
+                {
+                    return true;
+                }
+
+                symbol = symbol.BaseType;
+            }
+
+            return false;
+        }
+
+        public static IEnumerable<AttributeData> GetApplicableAttributes(this INamedTypeSymbol type)
+        {
+            var attributes = new List<AttributeData>();
+
+            while (type != null)
+            {
+                attributes.AddRange(type.GetAttributes());
+
+                type = type.BaseType;
+            }
+
+            return attributes;
+        }
+
         public static bool IsAttribute(this ITypeSymbol symbol)
         {
             for (INamedTypeSymbol b = symbol.BaseType; b != null; b = b.BaseType)

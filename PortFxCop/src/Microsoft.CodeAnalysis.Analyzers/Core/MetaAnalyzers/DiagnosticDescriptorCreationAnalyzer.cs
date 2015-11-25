@@ -20,7 +20,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             DiagnosticIds.UseLocalizableStringsInDescriptorRuleId,
             s_localizableTitle,
             s_localizableMessage,
-            DiagnosticCategory.AnalyzerLocalization,
+            AnalyzerDiagnosticCategory.AnalyzerLocalization,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: false,
             description: s_localizableDescription,

@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Analyzer.Utilities;
 
 namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 {
@@ -18,7 +19,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             DiagnosticIds.MissingDiagnosticAnalyzerAttributeRuleId,
             s_localizableTitleMissingAttribute,
             s_localizableMessageMissingAttribute,
-            DiagnosticCategory.AnalyzerCorrectness,
+            AnalyzerDiagnosticCategory.AnalyzerCorrectness,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: s_localizableDescriptionMissingAttribute,
@@ -32,7 +33,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             DiagnosticIds.AddLanguageSupportToAnalyzerRuleId,
             s_localizableTitleAddLanguageSupportToAnalyzer,
             s_localizableMessageAddLanguageSupportToAnalyzer,
-            DiagnosticCategory.AnalyzerCorrectness,
+            AnalyzerDiagnosticCategory.AnalyzerCorrectness,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: s_localizableDescriptionAddLanguageSupportToAnalyzer,
@@ -78,10 +79,10 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 bool supportsCSharp = false;
                 bool supportsVB = false;
 
-                var namedTypeAttributes = AttributeHelpers.GetApplicableAttributes(namedType);
+                var namedTypeAttributes = namedType.GetApplicableAttributes();
                 foreach (var attribute in namedTypeAttributes)
                 {
-                    if (AttributeHelpers.DerivesFrom(attribute.AttributeClass, DiagnosticAnalyzerAttribute))
+                    if (attribute.AttributeClass.DerivesFrom(DiagnosticAnalyzerAttribute))
                     {
                         hasAttribute = true;
 

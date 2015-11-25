@@ -11,7 +11,7 @@
     <ProjectGuid>{0C2925AD-CD97-46FA-A686-E2C1AD19DAD8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Microsoft.CodeAnalysis.UnitTests</RootNamespace>
-    <AssemblyName>Roslyn.CodeAnalysis.Analyzers.UnitTests</AssemblyName>
+    <AssemblyName>Microsoft.CodeAnalysis.Analyzers.UnitTests</AssemblyName>
     <Nonshipping>true</Nonshipping>
     <SolutionDir Condition="'$(SolutionDir)' == '' OR '$(SolutionDir)' == '*Undefined*'">..\..\..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
@@ -164,6 +164,9 @@
     <Compile Include="MetaAnalyzers\AddLanguageSupportToAnalyzerRuleTests.cs" />
     <Compile Include="MetaAnalyzers\MissingDiagnosticAnalyzerAttributeRuleTests.cs" />
     <Compile Include="UseReturnValueFromImmutableObjectMethodTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

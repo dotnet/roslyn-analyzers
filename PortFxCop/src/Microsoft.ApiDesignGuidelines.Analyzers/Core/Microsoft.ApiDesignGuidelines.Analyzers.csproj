@@ -98,6 +98,9 @@
     <None Include="uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EnumWithFlagsAttribute.cs" />
+    <Compile Include="EnumWithFlagsAttribute.Fixer.cs" />
+    <Compile Include="Helpers\EnumHelpers.cs" />
     <Compile Include="IdentifiersShouldNotContainTypeNames.cs" />
     <Compile Include="MarkAssembliesWithAttributesDiagnosticAnalyzer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -135,8 +138,6 @@
     <Compile Include="DefineAccessorsForAttributeArguments.Fixer.cs" />
     <Compile Include="UsePropertiesWhereAppropriate.cs" />
     <Compile Include="UsePropertiesWhereAppropriate.Fixer.cs" />
-    <Compile Include="MarkEnumsWithFlags.cs" />
-    <Compile Include="MarkEnumsWithFlags.Fixer.cs" />
     <Compile Include="InterfaceMethodsShouldBeCallableByChildTypes.cs" />
     <Compile Include="InterfaceMethodsShouldBeCallableByChildTypes.Fixer.cs" />
     <Compile Include="OverrideMethodsOnComparableTypes.cs" />
@@ -153,8 +154,6 @@
     <Compile Include="IdentifiersShouldHaveCorrectPrefix.Fixer.cs" />
     <Compile Include="NonConstantFieldsShouldNotBeVisible.cs" />
     <Compile Include="NonConstantFieldsShouldNotBeVisible.Fixer.cs" />
-    <Compile Include="DoNotMarkEnumsWithFlags.cs" />
-    <Compile Include="DoNotMarkEnumsWithFlags.Fixer.cs" />
     <Compile Include="DoNotDecreaseInheritedMemberVisibility.cs" />
     <Compile Include="DoNotDecreaseInheritedMemberVisibility.Fixer.cs" />
     <Compile Include="OperatorOverloadsHaveNamedAlternates.cs" />

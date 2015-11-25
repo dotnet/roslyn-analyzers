@@ -10,7 +10,11 @@
       <CodeAnalysisRuleSetOverrides>
         $(CodeAnalysisRuleSetOverrides);
         -Microsoft.Design#CA1001;
+        -Microsoft.Design#CA1003;
+        -Microsoft.Design#CA1009;
         -Microsoft.Design#CA1019;
+        
+        -Microsoft.Reliability#CA2002;
 
         -Microsoft.Globalization#CA1309;
       </CodeAnalysisRuleSetOverrides>

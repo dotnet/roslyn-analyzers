@@ -122,8 +122,6 @@
     <Compile Include="BasicDefineAccessorsForAttributeArguments.vb" />
     <Compile Include="BasicUsePropertiesWhereAppropriate.vb" />
     <Compile Include="BasicUsePropertiesWhereAppropriate.Fixer.vb" />
-    <Compile Include="BasicMarkEnumsWithFlags.vb" />
-    <Compile Include="BasicMarkEnumsWithFlags.Fixer.vb" />
     <Compile Include="BasicInterfaceMethodsShouldBeCallableByChildTypes.vb" />
     <Compile Include="BasicInterfaceMethodsShouldBeCallableByChildTypes.Fixer.vb" />
     <Compile Include="BasicOverrideMethodsOnComparableTypes.Fixer.vb" />
@@ -139,8 +137,6 @@
     <Compile Include="BasicIdentifiersShouldHaveCorrectPrefix.Fixer.vb" />
     <Compile Include="BasicNonConstantFieldsShouldNotBeVisible.vb" />
     <Compile Include="BasicNonConstantFieldsShouldNotBeVisible.Fixer.vb" />
-    <Compile Include="BasicDoNotMarkEnumsWithFlags.vb" />
-    <Compile Include="BasicDoNotMarkEnumsWithFlags.Fixer.vb" />
     <Compile Include="BasicDoNotDecreaseInheritedMemberVisibility.vb" />
     <Compile Include="BasicDoNotDecreaseInheritedMemberVisibility.Fixer.vb" />
     <Compile Include="BasicOperatorOverloadsHaveNamedAlternates.vb" />

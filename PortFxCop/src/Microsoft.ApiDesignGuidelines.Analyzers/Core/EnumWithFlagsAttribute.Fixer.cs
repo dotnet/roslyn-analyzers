@@ -1,11 +1,13 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
@@ -13,14 +15,14 @@ using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
 
-namespace System.Runtime.Analyzers
+namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
     /// <summary>
     /// CA1027: Mark enums with FlagsAttribute
     /// CA2217: Do not mark enums with FlagsAttribute
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
-    public class EnumWithFlagsAttributeFixer : CodeFixProvider
+    public sealed class EnumWithFlagsAttributeFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(EnumWithFlagsAttributeAnalyzer.RuleIdMarkEnumsWithFlags,
                                                                                    EnumWithFlagsAttributeAnalyzer.RuleIdDoNotMarkEnumsWithFlags);
@@ -38,8 +40,8 @@ namespace System.Runtime.Analyzers
             // We cannot have multiple overlapping diagnostics of this id.
             var diagnostic = context.Diagnostics.Single();
             var fixTitle = diagnostic.Id == EnumWithFlagsAttributeAnalyzer.RuleIdMarkEnumsWithFlags ?
-                                                    SystemRuntimeAnalyzersResources.MarkEnumsWithFlagsCodeFix :
-                                                    SystemRuntimeAnalyzersResources.DoNotMarkEnumsWithFlagsCodeFix;
+                                                    MicrosoftApiDesignGuidelinesAnalyzersResources.MarkEnumsWithFlagsCodeFix :
+                                                    MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsCodeFix;
             context.RegisterCodeFix(new MyCodeAction(fixTitle,
                                          async ct => await AddOrRemoveFlagsAttribute(context.Document, context.Span, diagnostic.Id, flagsAttributeType, ct).ConfigureAwait(false)),
                         diagnostic);

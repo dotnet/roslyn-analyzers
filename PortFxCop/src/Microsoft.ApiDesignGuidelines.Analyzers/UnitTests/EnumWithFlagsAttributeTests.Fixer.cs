@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.UnitTests;
 using Roslyn.Test.Utilities;
 using Xunit;
 
-namespace System.Runtime.Analyzers.UnitTests
+namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 {
     public class EnumWithFlagsAttributeFixerTests : CodeFixTestBase
     {

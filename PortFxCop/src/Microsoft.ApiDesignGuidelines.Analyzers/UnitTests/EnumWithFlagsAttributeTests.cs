@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.UnitTests;
 using Roslyn.Test.Utilities;
 using Xunit;
 
-namespace System.Runtime.Analyzers.UnitTests
+namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 {
     public class EnumWithFlagsAttributeTests : DiagnosticAnalyzerTestBase
     {
@@ -482,22 +482,22 @@ End Enum
 
         private static DiagnosticResult GetCA1027CSharpResultAt(int line, int column, string enumTypeName)
         {
-            return GetCSharpResultAt(line, column, EnumWithFlagsAttributeAnalyzer.RuleIdMarkEnumsWithFlags, string.Format(SystemRuntimeAnalyzersResources.MarkEnumsWithFlagsMessage, enumTypeName));
+            return GetCSharpResultAt(line, column, EnumWithFlagsAttributeAnalyzer.RuleIdMarkEnumsWithFlags, string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkEnumsWithFlagsMessage, enumTypeName));
         }
 
         private static DiagnosticResult GetCA1027BasicResultAt(int line, int column, string enumTypeName)
         {
-            return GetBasicResultAt(line, column, EnumWithFlagsAttributeAnalyzer.RuleIdMarkEnumsWithFlags, string.Format(SystemRuntimeAnalyzersResources.MarkEnumsWithFlagsMessage, enumTypeName));
+            return GetBasicResultAt(line, column, EnumWithFlagsAttributeAnalyzer.RuleIdMarkEnumsWithFlags, string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkEnumsWithFlagsMessage, enumTypeName));
         }
 
         private static DiagnosticResult GetCA2217CSharpResultAt(int line, int column, string enumTypeName, string missingValuesString)
         {
-            return GetCSharpResultAt(line, column, EnumWithFlagsAttributeAnalyzer.RuleIdDoNotMarkEnumsWithFlags, string.Format(SystemRuntimeAnalyzersResources.DoNotMarkEnumsWithFlagsMessage, enumTypeName, missingValuesString));
+            return GetCSharpResultAt(line, column, EnumWithFlagsAttributeAnalyzer.RuleIdDoNotMarkEnumsWithFlags, string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsMessage, enumTypeName, missingValuesString));
         }
 
         private static DiagnosticResult GetCA2217BasicResultAt(int line, int column, string enumTypeName, string missingValuesString)
         {
-            return GetBasicResultAt(line, column, EnumWithFlagsAttributeAnalyzer.RuleIdDoNotMarkEnumsWithFlags, string.Format(SystemRuntimeAnalyzersResources.DoNotMarkEnumsWithFlagsMessage, enumTypeName, missingValuesString));
+            return GetBasicResultAt(line, column, EnumWithFlagsAttributeAnalyzer.RuleIdDoNotMarkEnumsWithFlags, string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsMessage, enumTypeName, missingValuesString));
         }
     }
 }

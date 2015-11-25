@@ -111,7 +111,6 @@
     <Compile Include="BasicTestForEmptyStringsUsingStringLength.vb" />
     <Compile Include="BasicTestForEmptyStringsUsingStringLength.Fixer.vb" />
     <Compile Include="BasicDoNotLockOnObjectsWithWeakIdentity.vb" />
-    <Compile Include="BasicDoNotLockOnObjectsWithWeakIdentity.Fixer.vb" />
     <Compile Include="BasicDoNotCatchCorruptedStateExceptionsInGeneralHandlers.vb" />
     <Compile Include="BasicDoNotCatchCorruptedStateExceptionsInGeneralHandlers.Fixer.vb" />
     <Compile Include="BasicRethrowToPreserveStackDetails.vb" />

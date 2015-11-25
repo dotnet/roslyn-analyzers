@@ -520,4 +520,10 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="ImplementIDisposableInterface" xml:space="preserve">
     <value>Implement IDisposable Interface</value>
   </data>
+  <data name="DoNotMarkEnumsWithFlagsCodeFix" xml:space="preserve">
+    <value>Remove FlagsAttribute from enum.</value>
+  </data>
+  <data name="MarkEnumsWithFlagsCodeFix" xml:space="preserve">
+    <value>Apply FlagsAttribute to enum.</value>
+  </data>
 </root>

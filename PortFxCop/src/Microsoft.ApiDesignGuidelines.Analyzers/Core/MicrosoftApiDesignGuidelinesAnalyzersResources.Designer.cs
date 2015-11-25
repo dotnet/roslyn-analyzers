@@ -324,6 +324,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove FlagsAttribute from enum..
+        /// </summary>
+        internal static string DoNotMarkEnumsWithFlagsCodeFix {
+            get {
+                return ResourceManager.GetString("DoNotMarkEnumsWithFlagsCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An externally visible enumeration is marked by using FlagsAttribute, and it has one or more values that are not powers of two or a combination of the other defined values on the enumeration..
         /// </summary>
         internal static string DoNotMarkEnumsWithFlagsDescription {
@@ -816,6 +825,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         internal static string MarkAttributesWithAttributeUsageTitle {
             get {
                 return ResourceManager.GetString("MarkAttributesWithAttributeUsageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apply FlagsAttribute to enum..
+        /// </summary>
+        internal static string MarkEnumsWithFlagsCodeFix {
+            get {
+                return ResourceManager.GetString("MarkEnumsWithFlagsCodeFix", resourceCulture);
             }
         }
         

@@ -161,7 +161,6 @@
     <Compile Include="TestForEmptyStringsUsingStringLengthTests.cs" />
     <Compile Include="TestForEmptyStringsUsingStringLengthTests.Fixer.cs" />
     <Compile Include="DoNotLockOnObjectsWithWeakIdentityTests.cs" />
-    <Compile Include="DoNotLockOnObjectsWithWeakIdentityTests.Fixer.cs" />
     <Compile Include="DoNotCatchCorruptedStateExceptionsInGeneralHandlersTests.cs" />
     <Compile Include="DoNotCatchCorruptedStateExceptionsInGeneralHandlersTests.Fixer.cs" />
     <Compile Include="RethrowToPreserveStackDetailsTests.cs" />

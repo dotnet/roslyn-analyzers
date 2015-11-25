@@ -114,7 +114,6 @@
     <Compile Include="CSharpTestForEmptyStringsUsingStringLength.cs" />
     <Compile Include="CSharpTestForEmptyStringsUsingStringLength.Fixer.cs" />
     <Compile Include="CSharpDoNotLockOnObjectsWithWeakIdentity.cs" />
-    <Compile Include="CSharpDoNotLockOnObjectsWithWeakIdentity.Fixer.cs" />
     <Compile Include="CSharpDoNotCatchCorruptedStateExceptionsInGeneralHandlers.cs" />
     <Compile Include="CSharpDoNotCatchCorruptedStateExceptionsInGeneralHandlers.Fixer.cs" />
     <Compile Include="CSharpRethrowToPreserveStackDetails.cs" />

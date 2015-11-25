@@ -13,6 +13,7 @@
         -Microsoft.Design#CA1018;
         -Microsoft.Design#CA1036;
         -Microsoft.Design#CA1027;
+        -Microsoft.Design#CA1060;
 
         -Microsoft.Naming#CA1720;
 

@@ -668,20 +668,11 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Replace the call to {0} in {1} with a check for non-null and &apos;String.Length == 0&apos;..
+        ///   Looks up a localized string similar to Test for empty strings using &apos;string.Length&apos; property or &apos;string.IsNullOrEmpty&apos; method instead of an Equality check..
         /// </summary>
-        internal static string TestForEmptyStringsUsingStringLengthMessageDefault {
+        internal static string TestForEmptyStringsUsingStringLengthMessage {
             get {
-                return ResourceManager.GetString("TestForEmptyStringsUsingStringLengthMessageDefault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Replace the call to {0} in {1} with a call to &apos;String.IsNullOrEmpty&apos;..
-        /// </summary>
-        internal static string TestForEmptyStringsUsingStringLengthMessageIsNullOrEmpty {
-            get {
-                return ResourceManager.GetString("TestForEmptyStringsUsingStringLengthMessageIsNullOrEmpty", resourceCulture);
+                return ResourceManager.GetString("TestForEmptyStringsUsingStringLengthMessage", resourceCulture);
             }
         }
         

@@ -12,12 +12,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicMarkAssembliesWithAssemblyVersionAnalyzer();
+            return new MarkAssembliesWithAttributesDiagnosticAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpMarkAssembliesWithAssemblyVersionAnalyzer();
+            return new MarkAssembliesWithAttributesDiagnosticAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

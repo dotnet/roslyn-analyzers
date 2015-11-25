@@ -18,7 +18,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// </summary>
     public abstract class MarkAssembliesWithAssemblyVersionFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(MarkAssembliesWithAssemblyVersionAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(MarkAssembliesWithAttributesDiagnosticAnalyzer.CA1016RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

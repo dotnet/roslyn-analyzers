@@ -120,9 +120,7 @@
     <Compile Include="CSharpEnumsShouldHaveZeroValue.Fixer.cs" />
     <Compile Include="CSharpAbstractTypesShouldNotHaveConstructors.cs" />
     <Compile Include="CSharpAbstractTypesShouldNotHaveConstructors.Fixer.cs" />
-    <Compile Include="CSharpMarkAssembliesWithClsCompliant.cs" />
     <Compile Include="CSharpMarkAssembliesWithClsCompliant.Fixer.cs" />
-    <Compile Include="CSharpMarkAssembliesWithAssemblyVersion.cs" />
     <Compile Include="CSharpMarkAssembliesWithAssemblyVersion.Fixer.cs" />
     <Compile Include="CSharpDefineAccessorsForAttributeArguments.cs" />
     <Compile Include="CSharpUsePropertiesWhereAppropriate.cs" />

@@ -6,11 +6,12 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Roslyn.Utilities;
 
-namespace System.Runtime.Analyzers
+namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
     /// <summary>
     /// Implements CA1027 and CA2217
@@ -29,15 +30,15 @@ namespace System.Runtime.Analyzers
     /// a combination of the other defined values on the enumeration.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public class EnumWithFlagsAttributeAnalyzer : DiagnosticAnalyzer
+    public sealed class EnumWithFlagsAttributeAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleIdMarkEnumsWithFlags = "CA1027";
         internal const string RuleIdDoNotMarkEnumsWithFlags = "CA2217";
         internal const string RuleNameForExportAttribute = "EnumWithFlagsAttributeRules";
 
-        private static readonly LocalizableString s_localizableTitleCA1027 = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.MarkEnumsWithFlags), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA1027 = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.MarkEnumsWithFlagsMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA1027 = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.MarkEnumsWithFlagsDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitleCA1027 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkEnumsWithFlagsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageCA1027 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkEnumsWithFlagsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionCA1027 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkEnumsWithFlagsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         internal static DiagnosticDescriptor Rule1027 = new DiagnosticDescriptor(RuleIdMarkEnumsWithFlags,
                                                                              s_localizableTitleCA1027,
                                                                              s_localizableMessageCA1027,
@@ -48,9 +49,9 @@ namespace System.Runtime.Analyzers
                                                                              helpLinkUri: "http://msdn.microsoft.com/library/ms182159.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
-        private static readonly LocalizableString s_localizableTitleCA2217 = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotMarkEnumsWithFlags), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA2217 = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotMarkEnumsWithFlagsMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA2217 = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotMarkEnumsWithFlagsDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitleCA2217 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageCA2217 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionCA2217 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         internal static DiagnosticDescriptor Rule2217 = new DiagnosticDescriptor(RuleIdDoNotMarkEnumsWithFlags,
                                                                              s_localizableTitleCA2217,
                                                                              s_localizableMessageCA2217,
@@ -84,7 +85,7 @@ namespace System.Runtime.Analyzers
                 }
 
                 IList<ulong> memberValues;
-                if (DiagnosticHelpers.TryGetEnumMemberValues(symbol, out memberValues))
+                if (EnumHelpers.TryGetEnumMemberValues(symbol, out memberValues))
                 {
                     bool hasFlagsAttribute = symbol.GetAttributes().Any(a => a.AttributeClass == flagsAttributeType);
                     if (hasFlagsAttribute)

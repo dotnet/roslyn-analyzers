@@ -5,9 +5,9 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
-namespace System.Runtime.Analyzers
+namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
-    internal static class DiagnosticHelpers
+    internal static class EnumHelpers
     {
         internal static bool TryConvertToUInt64(object value, SpecialType specialType, out ulong convertedValue)
         {

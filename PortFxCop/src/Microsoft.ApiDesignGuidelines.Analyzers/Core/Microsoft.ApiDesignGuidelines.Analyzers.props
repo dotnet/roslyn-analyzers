@@ -12,11 +12,13 @@
         -Microsoft.Design#CA1017;
         -Microsoft.Design#CA1018;
         -Microsoft.Design#CA1036;
+        -Microsoft.Design#CA1027;
 
         -Microsoft.Naming#CA1720;
 
         -Microsoft.Usage#CA2227;
         -Microsoft.Usage#CA2231;
+        -Microsoft.Usage#CA2217;
       </CodeAnalysisRuleSetOverrides>
    </PropertyGroup>
 </Project>

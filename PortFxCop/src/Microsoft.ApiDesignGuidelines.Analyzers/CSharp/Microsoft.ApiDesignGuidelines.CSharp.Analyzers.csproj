@@ -132,7 +132,6 @@
     <Compile Include="CSharpStaticHolderTypesShouldBeSealed.Fixer.cs" />
     <Compile Include="CSharpStaticHolderTypesShouldNotHaveConstructors.cs" />
     <Compile Include="CSharpStaticHolderTypesShouldNotHaveConstructors.Fixer.cs" />
-    <Compile Include="CSharpMovePInvokesToNativeMethodsClass.cs" />
     <Compile Include="CSharpMovePInvokesToNativeMethodsClass.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldDifferByMoreThanCase.cs" />
     <Compile Include="CSharpIdentifiersShouldDifferByMoreThanCase.Fixer.cs" />

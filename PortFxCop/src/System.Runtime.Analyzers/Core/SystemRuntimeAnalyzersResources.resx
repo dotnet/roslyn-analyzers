@@ -117,7 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-
   <data name="UseOrdinalStringComparisonTitle" xml:space="preserve">
     <value>Use ordinal stringcomparison</value>
   </data>
@@ -163,11 +162,8 @@
   <data name="TestForEmptyStringsUsingStringLengthDescription" xml:space="preserve">
     <value>Comparing strings by using the String.Length property or the String.IsNullOrEmpty method is significantly faster than using Equals.</value>
   </data>
-  <data name="TestForEmptyStringsUsingStringLengthMessageDefault" xml:space="preserve">
-    <value>Replace the call to {0} in {1} with a check for non-null and 'String.Length == 0'.</value>
-  </data>
-  <data name="TestForEmptyStringsUsingStringLengthMessageIsNullOrEmpty" xml:space="preserve">
-    <value>Replace the call to {0} in {1} with a call to 'String.IsNullOrEmpty'.</value>
+  <data name="TestForEmptyStringsUsingStringLengthMessage" xml:space="preserve">
+    <value>Test for empty strings using 'string.Length' property or 'string.IsNullOrEmpty' method instead of an Equality check.</value>
   </data>
   <data name="DoNotLockOnObjectsWithWeakIdentityTitle" xml:space="preserve">
     <value>Do not lock on objects with weak identity</value>

@@ -6,6 +6,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.Analyzers;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Analyzer.Utilities;
 
 namespace Microsoft.CodeAnalysis.CSharp.Analyzers
 {
@@ -21,7 +22,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers
             DiagnosticIds.DoNotIgnoreReturnValueOnImmutableObjectMethodInvocation,
             s_localizableTitle,
             s_localizableMessage,
-            DiagnosticCategory.AnalyzerCorrectness,
+            AnalyzerDiagnosticCategory.AnalyzerCorrectness,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: s_localizableDescription,

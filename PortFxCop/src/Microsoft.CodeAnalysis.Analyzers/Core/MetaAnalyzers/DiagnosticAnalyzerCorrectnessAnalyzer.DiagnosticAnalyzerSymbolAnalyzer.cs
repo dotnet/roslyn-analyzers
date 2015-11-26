@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Linq;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -40,9 +41,9 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
             protected bool HasDiagnosticAnalyzerAttribute(INamedTypeSymbol namedType)
             {
-                foreach (var attribute in AttributeHelpers.GetApplicableAttributes(namedType))
+                foreach (var attribute in namedType.GetApplicableAttributes())
                 {
-                    if (AttributeHelpers.DerivesFrom(attribute.AttributeClass, DiagnosticAnalyzerAttribute))
+                    if (attribute.AttributeClass.DerivesFrom(DiagnosticAnalyzerAttribute))
                     {
                         return true;
                     }

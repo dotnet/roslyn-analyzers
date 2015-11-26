@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Analyzer.Utilities;
 
 namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 {
@@ -25,7 +26,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             DiagnosticIds.DoNotStorePerCompilationDataOntoFieldsRuleId,
             s_localizableTitle,
             s_localizableMessage,
-            DiagnosticCategory.AnalyzerPerformance,
+            AnalyzerDiagnosticCategory.AnalyzerPerformance,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: s_localizableDescription,

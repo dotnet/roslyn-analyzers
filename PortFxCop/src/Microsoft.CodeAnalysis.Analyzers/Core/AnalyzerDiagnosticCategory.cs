@@ -2,7 +2,7 @@
 
 namespace Microsoft.CodeAnalysis.Analyzers
 {
-    internal static class DiagnosticCategory
+    internal static class AnalyzerDiagnosticCategory
     {
         public const string AnalyzerCorrectness = "AnalyzerCorrectness";
         public const string AnalyzerLocalization = "AnalyzerLocalization";

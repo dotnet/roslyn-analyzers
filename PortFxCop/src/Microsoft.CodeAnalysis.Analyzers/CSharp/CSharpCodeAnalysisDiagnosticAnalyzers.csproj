@@ -27,6 +27,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
+      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
+      <Name>Analyzer.Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\CodeAnalysisDiagnosticAnalyzers.csproj">
       <Project>{d8762a0a-3832-47be-bcf6-8b1060be6b28}</Project>
       <Name>CodeAnalysisDiagnosticAnalyzers</Name>

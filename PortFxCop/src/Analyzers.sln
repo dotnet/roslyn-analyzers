@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.ApiDesignGuidelines.Analyzers", "Microsoft.ApiDesignGuidelines.Analyzers", "{385D5936-8AB5-4E7B-9E88-0F725999CA5A}"
 EndProject
@@ -129,6 +129,18 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analyzer.Utilities", "Analyzer.Utilities\Analyzer.Utilities.csproj", "{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.CodeAnalysis.Analyzers", "Microsoft.CodeAnalysis.Analyzers", "{041E93F2-E703-4AB1-B6DF-13EC899D1C6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeAnalysisDiagnosticAnalyzers", "Microsoft.CodeAnalysis.Analyzers\Core\CodeAnalysisDiagnosticAnalyzers.csproj", "{D8762A0A-3832-47BE-BCF6-8B1060BE6B28}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpCodeAnalysisDiagnosticAnalyzers", "Microsoft.CodeAnalysis.Analyzers\CSharp\CSharpCodeAnalysisDiagnosticAnalyzers.csproj", "{921B412A-5551-4853-82B4-46AD5A05A03E}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "BasicCodeAnalysisDiagnosticAnalyzers", "Microsoft.CodeAnalysis.Analyzers\VisualBasic\BasicCodeAnalysisDiagnosticAnalyzers.vbproj", "{B1A6A74B-E484-48FB-8745-7A30A06DB631}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeAnalysisDiagnosticAnalyzersTest", "Microsoft.CodeAnalysis.Analyzers\Test\CodeAnalysisDiagnosticAnalyzersTest.csproj", "{0C2925AD-CD97-46FA-A686-E2C1AD19DAD8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeAnalysisDiagnosticsSetup", "Microsoft.CodeAnalysis.Analyzers\Setup\CodeAnalysisDiagnosticsSetup.csproj", "{54F6AE18-B0CD-4799-9DF0-9B1AAD6A78AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -344,6 +356,26 @@ Global
 		{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8762A0A-3832-47BE-BCF6-8B1060BE6B28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8762A0A-3832-47BE-BCF6-8B1060BE6B28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8762A0A-3832-47BE-BCF6-8B1060BE6B28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8762A0A-3832-47BE-BCF6-8B1060BE6B28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{921B412A-5551-4853-82B4-46AD5A05A03E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{921B412A-5551-4853-82B4-46AD5A05A03E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{921B412A-5551-4853-82B4-46AD5A05A03E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{921B412A-5551-4853-82B4-46AD5A05A03E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1A6A74B-E484-48FB-8745-7A30A06DB631}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1A6A74B-E484-48FB-8745-7A30A06DB631}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1A6A74B-E484-48FB-8745-7A30A06DB631}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1A6A74B-E484-48FB-8745-7A30A06DB631}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C2925AD-CD97-46FA-A686-E2C1AD19DAD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C2925AD-CD97-46FA-A686-E2C1AD19DAD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C2925AD-CD97-46FA-A686-E2C1AD19DAD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C2925AD-CD97-46FA-A686-E2C1AD19DAD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54F6AE18-B0CD-4799-9DF0-9B1AAD6A78AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54F6AE18-B0CD-4799-9DF0-9B1AAD6A78AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54F6AE18-B0CD-4799-9DF0-9B1AAD6A78AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54F6AE18-B0CD-4799-9DF0-9B1AAD6A78AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -401,5 +433,10 @@ Global
 		{8B0C003C-7869-4F98-9105-9E8DE0D037BC} = {DD81E183-1AFE-4A17-A05D-C9D0A2451D21}
 		{0A0621F2-D1DC-47FF-B643-C6646557505E} = {80E410B3-D8D1-4C67-93FF-078530E20816}
 		{F8502E24-5EB1-4CDC-8887-1A0CC8008D96} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
+		{D8762A0A-3832-47BE-BCF6-8B1060BE6B28} = {041E93F2-E703-4AB1-B6DF-13EC899D1C6E}
+		{921B412A-5551-4853-82B4-46AD5A05A03E} = {041E93F2-E703-4AB1-B6DF-13EC899D1C6E}
+		{B1A6A74B-E484-48FB-8745-7A30A06DB631} = {041E93F2-E703-4AB1-B6DF-13EC899D1C6E}
+		{0C2925AD-CD97-46FA-A686-E2C1AD19DAD8} = {041E93F2-E703-4AB1-B6DF-13EC899D1C6E}
+		{54F6AE18-B0CD-4799-9DF0-9B1AAD6A78AF} = {041E93F2-E703-4AB1-B6DF-13EC899D1C6E}
 	EndGlobalSection
 EndGlobal

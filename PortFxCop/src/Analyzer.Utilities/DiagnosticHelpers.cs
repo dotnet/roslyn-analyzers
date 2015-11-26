@@ -7,9 +7,9 @@ using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities
 {
-    internal static class DiagnosticHelpers
+    public static class DiagnosticHelpers
     {
-        internal static bool TryConvertToUInt64(object value, SpecialType specialType, out ulong convertedValue)
+        public static bool TryConvertToUInt64(object value, SpecialType specialType, out ulong convertedValue)
         {
             bool success = false;
             convertedValue = 0;

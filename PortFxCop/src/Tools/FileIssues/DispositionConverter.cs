@@ -27,9 +27,13 @@ namespace FileIssues
             {
                 disposition = Disposition.NeedsReview;
             }
-            else if (string.Compare(text, "yes", StringComparison.InvariantCultureIgnoreCase) == 0)
+            else if (text.StartsWith("yes", StringComparison.InvariantCultureIgnoreCase))
             {
                 disposition = Disposition.Port;
+            }
+            else if (text.StartsWith("no", StringComparison.InvariantCultureIgnoreCase))
+            {
+                disposition = Disposition.Cut;
             }
 
             return disposition;

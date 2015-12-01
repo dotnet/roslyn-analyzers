@@ -4,8 +4,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-using Desktop.Analyzers.Common;
-
 namespace Desktop.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]

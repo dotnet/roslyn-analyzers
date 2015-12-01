@@ -46,6 +46,7 @@
     <Compile Include="Extensions\ISymbolExtensions.cs" />
     <Compile Include="Extensions\ITypeSymbolExtensions.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
+    <Compile Include="Extensions\SyntaxNodeExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WellKnownTypes.cs" />
     <Compile Include="WordParser.cs" />

@@ -98,6 +98,10 @@
     <None Include="uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DoNotCatchCorruptedStateExceptions.cs" />
+    <Compile Include="DoNotUseInsecureCryptographicAlgorithms.cs" />
+    <Compile Include="Helpers\CompilationSecurityTypes.cs" />
+    <Compile Include="Helpers\SecurityTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DesktopAnalyzersResources.Designer.cs">
       <AutoGen>True</AutoGen>

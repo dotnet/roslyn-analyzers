@@ -3,5 +3,10 @@
 namespace Desktop.Analyzers
 {
     internal static class DiagnosticCategory
-    {        public static readonly string Globalization = DesktopAnalyzersResources.CategoryGlobalization;        public static readonly string NoCetegory = DesktopAnalyzersResources.CategoryNoCetegory;        public static readonly string Usage = DesktopAnalyzersResources.CategoryUsage;}
+    {
+        public static readonly string Globalization = "Globalization";
+        public static readonly string Usage = "Usage";
+        public static readonly string Security = "Security";
+        public static readonly string NoCetegory = "NoCategory";
+    }
 }

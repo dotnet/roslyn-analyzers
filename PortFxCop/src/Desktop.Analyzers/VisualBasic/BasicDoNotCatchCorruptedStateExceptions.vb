@@ -8,6 +8,7 @@ Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
 Imports Desktop.Analyzers.Common
+Imports Analyzer.Utilities
 
 Namespace Desktop.Analyzers
 
@@ -48,7 +49,7 @@ Namespace Desktop.Analyzers
                 If catchDeclaration Is Nothing Then
                     exceptionTypeSym = TypesOfInterest.SystemObject
                 Else
-                    exceptionTypeSym = SyntaxNodeHelper.GetSymbol(catchDeclaration.Type, model)
+                    exceptionTypeSym = catchDeclaration.Type.GetDeclaredOrReferencedSymbol(model)
                 End If
                 Return exceptionTypeSym
             End Function

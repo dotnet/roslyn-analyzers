@@ -1,14 +1,9 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-
-using Desktop.Analyzers.Common;
-
 
 namespace Desktop.Analyzers
 {
@@ -19,12 +14,12 @@ namespace Desktop.Analyzers
         internal const string CA5350HelpLink = "http://aka.ms/CA5350";
         internal const string CA5351HelpLink = "http://aka.ms/CA5351";
 
-        private static readonly LocalizableString s_localizableDoNotUseWeakAlgorithmsTitle = DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseWeakCryptographicAlgorithms));
-        private static readonly LocalizableString s_localizableDoNotUseWeakAlgorithmsMessage = DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseWeakCryptographicAlgorithmsMessage));
-        private static readonly LocalizableString s_localizableDoNotUseWeakAlgorithmsDescription = DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseWeakCryptographicAlgorithmsDescription));
-        private static readonly LocalizableString s_localizableDoNotUseBrokenAlgorithmsTitle = DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseBrokenCryptographicAlgorithms));
-        private static readonly LocalizableString s_localizableDoNotUseBrokenAlgorithmsMessage = DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseBrokenCryptographicAlgorithmsMessage));
-        private static readonly LocalizableString s_localizableDoNotUseBrokenAlgorithmsDescription = DiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseBrokenCryptographicAlgorithmsDescription));
+        private static readonly LocalizableString s_localizableDoNotUseWeakAlgorithmsTitle = new LocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseWeakCryptographicAlgorithms), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
+        private static readonly LocalizableString s_localizableDoNotUseWeakAlgorithmsMessage = new LocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseWeakCryptographicAlgorithmsMessage), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
+        private static readonly LocalizableString s_localizableDoNotUseWeakAlgorithmsDescription = new LocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseWeakCryptographicAlgorithmsDescription), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
+        private static readonly LocalizableString s_localizableDoNotUseBrokenAlgorithmsTitle = new LocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseBrokenCryptographicAlgorithms), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
+        private static readonly LocalizableString s_localizableDoNotUseBrokenAlgorithmsMessage = new LocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseBrokenCryptographicAlgorithmsMessage), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
+        private static readonly LocalizableString s_localizableDoNotUseBrokenAlgorithmsDescription = new LocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseBrokenCryptographicAlgorithmsDescription), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
 
         internal static DiagnosticDescriptor DoNotUseBrokenCryptographicRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographicRuleId,
                                                                                           s_localizableDoNotUseBrokenAlgorithmsTitle,
@@ -94,7 +89,7 @@ namespace Desktop.Analyzers
             {
                 SyntaxNode node = context.Node;
                 SemanticModel model = context.SemanticModel;
-                ISymbol symbol = SyntaxNodeHelper.GetSymbol(node, model);
+                ISymbol symbol = node.GetDeclaredOrReferencedSymbol(model);
                 IMethodSymbol method = symbol as IMethodSymbol;
 
                 if (method == null)
@@ -111,7 +106,7 @@ namespace Desktop.Analyzers
                 while(cur.Parent != null)
                 {
                     var pNode = cur.Parent;
-                    ISymbol sym = SyntaxNodeHelper.GetSymbol(pNode, model);
+                    ISymbol sym = pNode.GetDeclaredOrReferencedSymbol(model);
 
                     if(sym != null &&
                         !string.IsNullOrEmpty(sym.Name)
@@ -129,40 +124,40 @@ namespace Desktop.Analyzers
                 }
 
                 messageArgs[0] = owningParentName;
-
-                if (type.IsDerivedFrom(this._cryptTypes.DES, baseTypesOnly: true))
+                
+                if (type.DerivesFrom(_cryptTypes.DES))
                 {
                     rule = DoNotUseBrokenCryptographicRule;                    
                     messageArgs[1] = _cryptTypes.DES.Name;
                 }
-                else if (method.MatchMethodDerived(_cryptTypes.DSA, SecurityMemberNames.CreateSignature) ||
+                else if ((method.ContainingType.DerivesFrom(_cryptTypes.DSA) && method.MetadataName == SecurityMemberNames.CreateSignature) ||
                          (type == _cryptTypes.DSASignatureFormatter &&
-                          method.MatchMethodDerived(_cryptTypes.DSASignatureFormatter, WellKnownMemberNames.InstanceConstructorName)))
+                          method.ContainingType.DerivesFrom(_cryptTypes.DSASignatureFormatter) && method.MetadataName == WellKnownMemberNames.InstanceConstructorName))
                 {
                     rule = DoNotUseBrokenCryptographicRule;
                     messageArgs[1] = _cryptTypes.DSA.Name;
                 }
-                else if (type.IsDerivedFrom(_cryptTypes.HMACMD5, baseTypesOnly: true))
+                else if (type.DerivesFrom(_cryptTypes.HMACMD5))
                 {
                     rule = DoNotUseBrokenCryptographicRule;
                     messageArgs[1] = _cryptTypes.HMACMD5.Name;
                 }
-                else if (type.IsDerivedFrom(_cryptTypes.RC2, baseTypesOnly: true))
+                else if (type.DerivesFrom(_cryptTypes.RC2))
                 {
                     rule = DoNotUseBrokenCryptographicRule;
                     messageArgs[1] = _cryptTypes.RC2.Name;
                 }
-                else if (type.IsDerivedFrom(_cryptTypes.TripleDES, baseTypesOnly: true))
+                else if (type.DerivesFrom(_cryptTypes.TripleDES))
                 {
                     rule = DoNotUseWeakCryptographicRule;
                     messageArgs[1] = _cryptTypes.TripleDES.Name;
                 }
-                else if (type.IsDerivedFrom(_cryptTypes.RIPEMD160, baseTypesOnly: true))
+                else if (type.DerivesFrom(_cryptTypes.RIPEMD160))
                 {
                     rule = DoNotUseWeakCryptographicRule;
                     messageArgs[1] = _cryptTypes.RIPEMD160.Name;
                 }
-                else if (type.IsDerivedFrom(_cryptTypes.HMACRIPEMD160, baseTypesOnly: true))
+                else if (type.DerivesFrom(_cryptTypes.HMACRIPEMD160))
                 {
                     rule = DoNotUseWeakCryptographicRule;
                     messageArgs[1] = _cryptTypes.HMACRIPEMD160.Name;
@@ -172,7 +167,7 @@ namespace Desktop.Analyzers
                 {
                     context.ReportDiagnostic(Diagnostic.Create(rule, node.GetLocation(), messageArgs));
                 }
-            } 
+            }
         }
     }
 }

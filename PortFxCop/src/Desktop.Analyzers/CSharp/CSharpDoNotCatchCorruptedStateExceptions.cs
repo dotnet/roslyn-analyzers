@@ -1,13 +1,11 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Diagnostics;
-
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-
-using Desktop.Analyzers.Common;
 
 namespace Desktop.Analyzers
 {
@@ -46,7 +44,7 @@ namespace Desktop.Analyzers
             {
                 Debug.Assert(catchNode != null);
                 var typeDeclNode = catchNode.Declaration;
-                return typeDeclNode == null ? TypesOfInterest.SystemObject : SyntaxNodeHelper.GetSymbol(typeDeclNode.Type, model);
+                return typeDeclNode == null ? TypesOfInterest.SystemObject : typeDeclNode.Type.GetDeclaredOrReferencedSymbol(model);
             }
 
             protected override bool IsThrowStatementWithNoArgument(ThrowStatementSyntax throwNode)

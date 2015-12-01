@@ -116,7 +116,6 @@
     <Compile Include="CSharpTypesThatOwnDisposableFieldsShouldBeDisposable.cs" />
     <Compile Include="CSharpUseGenericEventHandlerInstances.cs" />
     <Compile Include="CSharpUseGenericEventHandlerInstances.Fixer.cs" />
-    <Compile Include="CSharpEnumsShouldHaveZeroValue.cs" />
     <Compile Include="CSharpEnumsShouldHaveZeroValue.Fixer.cs" />
     <Compile Include="CSharpAbstractTypesShouldNotHaveConstructors.cs" />
     <Compile Include="CSharpAbstractTypesShouldNotHaveConstructors.Fixer.cs" />

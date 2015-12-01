@@ -526,4 +526,13 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="MarkEnumsWithFlagsCodeFix" xml:space="preserve">
     <value>Apply FlagsAttribute to enum.</value>
   </data>
+  <data name="EnumsShouldZeroValueFlagsMultipleZeroCodeFix" xml:space="preserve">
+    <value>Remove all members that have the value zero except for one member that is named 'None'.</value>
+  </data>
+  <data name="EnumsShouldZeroValueFlagsRenameCodeFix" xml:space="preserve">
+    <value>Rename zero-valued enum field to 'None'.</value>
+  </data>
+  <data name="EnumsShouldZeroValueNotFlagsNoZeroValueCodeFix" xml:space="preserve">
+    <value>Add a zero-valued member 'None' to enum.</value>
+  </data>
 </root>

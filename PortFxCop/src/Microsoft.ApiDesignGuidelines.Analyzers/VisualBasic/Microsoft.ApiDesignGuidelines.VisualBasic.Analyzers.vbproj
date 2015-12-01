@@ -113,7 +113,6 @@
     <Compile Include="BasicTypesThatOwnDisposableFieldsShouldBeDisposable.vb" />
     <Compile Include="BasicUseGenericEventHandlerInstances.vb" />
     <Compile Include="BasicUseGenericEventHandlerInstances.Fixer.vb" />
-    <Compile Include="BasicEnumsShouldHaveZeroValue.vb" />
     <Compile Include="BasicEnumsShouldHaveZeroValue.Fixer.vb" />
     <Compile Include="BasicAbstractTypesShouldNotHaveConstructors.vb" />
     <Compile Include="BasicAbstractTypesShouldNotHaveConstructors.Fixer.vb" />

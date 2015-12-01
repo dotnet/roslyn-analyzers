@@ -486,6 +486,33 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove all members that have the value zero except for one member that is named &apos;None&apos;..
+        /// </summary>
+        internal static string EnumsShouldZeroValueFlagsMultipleZeroCodeFix {
+            get {
+                return ResourceManager.GetString("EnumsShouldZeroValueFlagsMultipleZeroCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename zero-valued enum field to &apos;None&apos;..
+        /// </summary>
+        internal static string EnumsShouldZeroValueFlagsRenameCodeFix {
+            get {
+                return ResourceManager.GetString("EnumsShouldZeroValueFlagsRenameCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add a zero-valued member &apos;None&apos; to enum..
+        /// </summary>
+        internal static string EnumsShouldZeroValueNotFlagsNoZeroValueCodeFix {
+            get {
+                return ResourceManager.GetString("EnumsShouldZeroValueNotFlagsNoZeroValueCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Identifiers for namespaces, types, members, and parameters cannot differ only by case because languages that target the common language runtime are not required to be case-sensitive..
         /// </summary>
         internal static string IdentifiersShouldDifferByMoreThanCaseDescription {

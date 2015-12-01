@@ -104,3 +104,8 @@ Prior to submitting a pull request, ensure the build and all tests pass using Bu
 ```
 msbuild BuildAndTest.proj
 ```
+
+Versioning Scheme for Analyzer Packages
+=======================================
+
+See [VERSIONING.md](.//VERSIONING.md) for the versioning scheme for all analyzer packages built out of this repo.

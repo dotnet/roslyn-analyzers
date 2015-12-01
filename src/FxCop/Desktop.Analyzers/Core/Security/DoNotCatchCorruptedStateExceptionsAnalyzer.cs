@@ -28,7 +28,7 @@ namespace Desktop.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,
+                                                                             helpLinkUri: "http://aka.ms/CA2153",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         protected abstract Analyzer GetAnalyzer(CompilationSecurityTypes compilationTypes, ISymbol owningSymbol, SyntaxNode codeBlock);

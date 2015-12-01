@@ -1,0 +1,31 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.CodeAnalysis.FxCopAnalyzers</id>
+    <summary>Microsoft FxCop Analyzers</summary>
+    <description>
+      Microsoft FxCop rules implemented as analyzers using the .NET Compiler Platform ("Roslyn").
+    </description>
+    <dependencies>
+      <dependency id="Desktop.Analyzers" version="[$dependencyMinVersion$,$dependencyNextVersion$)" />
+      <dependency id="Microsoft.AnalyzerPowerPack" version="[$dependencyMinVersion$,$dependencyNextVersion$)" />
+      <dependency id="System.Runtime.Analyzers" version="[$dependencyMinVersion$,$dependencyNextVersion$)" />
+      <dependency id="System.Runtime.InteropServices.Analyzers" version="[$dependencyMinVersion$,$dependencyNextVersion$)" />
+      <dependency id="System.Security.Cryptography.Hashing.Algorithms.Analyzers" version="[$dependencyMinVersion$,$dependencyNextVersion$)" />
+    </dependencies>
+    <language>en-US</language>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <version>$currentVersion$</version>
+    <authors>$authors$</authors>
+    <licenseUrl>$licenseUrl$</licenseUrl>
+    <projectUrl>$projectUrl$</projectUrl>
+    <releaseNotes>$releaseNotes$</releaseNotes>
+    <tags>$tags$ analyzers</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System" targetFramework="" />
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+    <file src="ThirdPartyNotices.rtf" target="" />
+  </files>
+</package>

@@ -124,6 +124,15 @@ namespace FileIssues {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to --dry-run option specified; labels were not actually updated..
+        /// </summary>
+        internal static string InfoDryRunLabelsNotUpdated {
+            get {
+                return ResourceManager.GetString("InfoDryRunLabelsNotUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Filing new issue for rule {0}....
         /// </summary>
         internal static string InfoFilingNewIssue {

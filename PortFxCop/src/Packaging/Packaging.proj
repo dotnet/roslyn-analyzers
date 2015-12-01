@@ -14,6 +14,8 @@
     <Project Include = "..\Microsoft.Composition.Analyzers\NuGet\Microsoft.Composition.Analyzers.NuGet.proj" />
     <Project Include = "..\XmlDocumentationComments.Analyzers\NuGet\XmlDocumentationComments.Analyzers.NuGet.proj" />
     <Project Include = "..\System.Collections.Immutable.Analyzers\NuGet\System.Collections.Immutable.Analyzers.NuGet.proj" />
+    <Project Include = "..\Microsoft.CodeAnalysis.Analyzers\NuGet\CodeAnalysisDiagnosticAnalyzers.NuGet.proj" />
+    <Project Include = "..\FxCop\NuGet\FxCopAnalyzers.NuGet.proj" />
 
   </ItemGroup>
   <ImportGroup Label="Imports">

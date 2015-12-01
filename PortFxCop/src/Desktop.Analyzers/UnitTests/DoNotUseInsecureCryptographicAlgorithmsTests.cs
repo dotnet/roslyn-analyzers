@@ -10,7 +10,7 @@ namespace Desktop.Analyzers.UnitTests
     public class DoNotUseInsecureCryptographicAlgorithmsTests : DiagnosticAnalyzerTestBase
     {
         [Fact]
-		public void CA5350UseHMACMD5CreateInMethodDeclaration()
+        public void CA5350UseHMACMD5CreateInMethodDeclaration()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -41,7 +41,7 @@ End Namespace",
         }        
         
         [Fact]
-		public void CA5350CreateObjectFromHMACMD5DerivedClass()
+        public void CA5350CreateObjectFromHMACMD5DerivedClass()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography;
@@ -2145,7 +2145,7 @@ End Namespace" }
                                                 new DiagnosticDescriptor(CA5350RuleName,
                                                     CA5350RuleTitle,
                                                     CA5350RuleMessage,
-                                                    Common.DiagnosticCategory.Security,
+                                                    DiagnosticCategory.Security,
                                                     DiagnosticSeverity.Warning,
                                                     true
                                                 );
@@ -2154,7 +2154,7 @@ End Namespace" }
                                                     new DiagnosticDescriptor(CA5351RuleName,
                                                     CA5351RuleTitle,
                                                     CA5351RuleMessage,
-                                                    Common.DiagnosticCategory.Security,
+                                                    DiagnosticCategory.Security,
                                                     DiagnosticSeverity.Warning,
                                                     true
                                                 );

@@ -161,6 +161,33 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do Not Catch Corrupted State Exceptions.
+        /// </summary>
+        internal static string DoNotCatchCorruptedStateExceptions {
+            get {
+                return ResourceManager.GetString("DoNotCatchCorruptedStateExceptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Catching corrupted state exceptions could mask errors (such as access violations), resulting in inconsistent state of execution or making it easier for attackers to compromise system. Instead, catch and handle a more specific set of exception type(s) or re-throw the exception.
+        /// </summary>
+        internal static string DoNotCatchCorruptedStateExceptionsDescription {
+            get {
+                return ResourceManager.GetString("DoNotCatchCorruptedStateExceptionsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is catching corrupted state exception..
+        /// </summary>
+        internal static string DoNotCatchCorruptedStateExceptionsMessage {
+            get {
+                return ResourceManager.GetString("DoNotCatchCorruptedStateExceptionsMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A method in a type that inherits from System.EnterpriseServices.ServicedComponent is marked by using System.Web.Services.WebMethodAttribute. Because WebMethodAttribute and a ServicedComponent method have conflicting behavior and requirements for context and transaction flow, the behavior of the method will be incorrect in some scenarios..
         /// </summary>
         internal static string DoNotMarkServicedComponentsWithWebMethodDescription {
@@ -184,6 +211,60 @@ namespace Desktop.Analyzers {
         internal static string DoNotMarkServicedComponentsWithWebMethodTitle {
             get {
                 return ResourceManager.GetString("DoNotMarkServicedComponentsWithWebMethodTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do Not Use Broken Cryptographic Algorithms.
+        /// </summary>
+        internal static string DoNotUseBrokenCryptographicAlgorithms {
+            get {
+                return ResourceManager.GetString("DoNotUseBrokenCryptographicAlgorithms", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An attack making it computationally feasible to break this algorithm exists. This allows attackers to break the cryptographic guarantees it is designed to provide. Depending on the type and application of this cryptographic algorithm, this may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DoNotUseBrokenCryptographicAlgorithmsDescription {
+            get {
+                return ResourceManager.GetString("DoNotUseBrokenCryptographicAlgorithmsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} uses a broken cryptographic algorithm {1}.
+        /// </summary>
+        internal static string DoNotUseBrokenCryptographicAlgorithmsMessage {
+            get {
+                return ResourceManager.GetString("DoNotUseBrokenCryptographicAlgorithmsMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do Not Use Weak Cryptographic Algorithms.
+        /// </summary>
+        internal static string DoNotUseWeakCryptographicAlgorithms {
+            get {
+                return ResourceManager.GetString("DoNotUseWeakCryptographicAlgorithms", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cryptographic algorithms degrade over time as attacks become for advances to attacker get access to more computation. Depending on the type and application of this cryptographic algorithm, further degradation of the cryptographic strength of it may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DoNotUseWeakCryptographicAlgorithmsDescription {
+            get {
+                return ResourceManager.GetString("DoNotUseWeakCryptographicAlgorithmsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} uses a weak cryptographic algorithm {1}.
+        /// </summary>
+        internal static string DoNotUseWeakCryptographicAlgorithmsMessage {
+            get {
+                return ResourceManager.GetString("DoNotUseWeakCryptographicAlgorithmsMessage", resourceCulture);
             }
         }
         

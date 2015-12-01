@@ -1,13 +1,11 @@
 ﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-Imports System.Diagnostics
 
+Imports Analyzer.Utilities
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
-
-Imports Desktop.Analyzers.Common
 
 Namespace Desktop.Analyzers
 
@@ -48,7 +46,7 @@ Namespace Desktop.Analyzers
                 If catchDeclaration Is Nothing Then
                     exceptionTypeSym = TypesOfInterest.SystemObject
                 Else
-                    exceptionTypeSym = SyntaxNodeHelper.GetSymbol(catchDeclaration.Type, model)
+                    exceptionTypeSym = catchDeclaration.Type.GetDeclaredOrReferencedSymbol(model)
                 End If
                 Return exceptionTypeSym
             End Function

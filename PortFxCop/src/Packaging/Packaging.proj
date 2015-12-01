@@ -16,6 +16,7 @@
     <Project Include = "..\System.Collections.Immutable.Analyzers\NuGet\System.Collections.Immutable.Analyzers.NuGet.proj" />
     <Project Include = "..\Microsoft.CodeAnalysis.Analyzers\NuGet\CodeAnalysisDiagnosticAnalyzers.NuGet.proj" />
     <Project Include = "..\FxCop\NuGet\FxCopAnalyzers.NuGet.proj" />
+    <Project Include = "..\MetaCompilation\MetaCompilation\MetaCompilation.NuGet\MetaCompilation.NuGet.proj" />
 
   </ItemGroup>
   <ImportGroup Label="Imports">

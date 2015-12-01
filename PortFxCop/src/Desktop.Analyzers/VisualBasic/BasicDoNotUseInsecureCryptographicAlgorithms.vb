@@ -4,8 +4,6 @@ Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 
-Imports Desktop.Analyzers.Common
-
 Namespace Desktop.Analyzers
 
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>

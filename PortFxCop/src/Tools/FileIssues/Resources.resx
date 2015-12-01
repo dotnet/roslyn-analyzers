@@ -138,6 +138,9 @@
   <data name="InfoDryRunIssueNotUpdated" xml:space="preserve">
     <value>--dry-run option specified; issue was not actually updated.</value>
   </data>
+  <data name="InfoDryRunLabelsNotUpdated" xml:space="preserve">
+    <value>--dry-run option specified; labels were not actually updated.</value>
+  </data>
   <data name="InfoFilingNewIssue" xml:space="preserve">
     <value>Filing new issue for rule {0}...</value>
   </data>

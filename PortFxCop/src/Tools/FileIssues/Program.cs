@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -101,15 +100,7 @@ namespace FileIssues
                 {
                     _log.InfoFormat(Resources.InfoFilingNewIssue, ruleToPort.Id);
 
-                    if (_options.DryRun)
-                    {
-                        _log.Info(Resources.InfoDryRunIssueNotCreated);
-                    }
-                    else
-                    {
-                        await FileIssueAsync(ruleToPort, title);
-                    }
-
+                    await FileIssueAsync(ruleToPort, title);
                 }
                 else if (numMatchingIssues == 1)
                 {
@@ -118,14 +109,7 @@ namespace FileIssues
 
                     _log.InfoFormat(Resources.InfoUpdatingExistingIssue, issueNumber, ruleToPort.Id);
 
-                    if (_options.DryRun)
-                    {
-                        _log.Info(Resources.InfoDryRunIssueNotUpdated);
-                    }
-                    else
-                    {
-                        await UpdateIssueAsync(ruleToPort, existingIssue);
-                    }
+                    await UpdateIssueAsync(ruleToPort, existingIssue);
                 }
                 else if (numMatchingIssues > 1)
                 {
@@ -146,8 +130,15 @@ namespace FileIssues
         private async Task FileIssueAsync(PortingInfo ruleToPort, string title)
         {
             NewIssue newIssue = CreateNewIssue(ruleToPort, title);
-            Issue issue = await _issuesClient.Create(_options.RepoOwner, _options.RepoName, newIssue);
-            _log.InfoFormat(Resources.InfoIssueCreated, issue.Number);
+            if (_options.DryRun)
+            {
+                _log.Info(Resources.InfoDryRunIssueNotCreated);
+            }
+            else
+            {
+                Issue issue = await _issuesClient.Create(_options.RepoOwner, _options.RepoName, newIssue);
+                _log.InfoFormat(Resources.InfoIssueCreated, issue.Number);
+            }
         }
 
         private async Task UpdateIssueAsync(PortingInfo ruleToPort, Issue existingIssue)
@@ -155,13 +146,19 @@ namespace FileIssues
             int issueNumber = existingIssue.Number;
 
             IssueUpdate issueUpdate = CreateIssueUpdate(ruleToPort, existingIssue);
-            await _issuesClient.Update(_options.RepoOwner, _options.RepoName, issueNumber, issueUpdate);
+            if (_options.DryRun)
+            {
+                _log.Info(Resources.InfoDryRunIssueNotUpdated);
+            }
+            else
+            {
+                await _issuesClient.Update(_options.RepoOwner, _options.RepoName, issueNumber, issueUpdate);
+                _log.InfoFormat(Resources.InfoIssueUpdated, issueNumber);
+            }
 
             // The GitHub Issues API doesn't let you add or remove individual labels in the course of
             // an Update operation. Use the IssuesLabels API to do that.
             await UpdateIssueLabelsAsync(ruleToPort, existingIssue);
-
-            _log.InfoFormat(Resources.InfoIssueUpdated, issueNumber);
         }
 
         private string MakeIssueTitle(PortingInfo ruleToPort)
@@ -176,16 +173,16 @@ namespace FileIssues
         private NewIssue CreateNewIssue(PortingInfo ruleToPort, string title)
         {
             var newIssue = new NewIssue(title);
-            AddLabel(newIssue.Labels, FxCopPortLabel);
+            AddLabel(FxCopPortLabel, newIssue.Labels);
 
             switch (ruleToPort.Disposition)
             {
                 case Disposition.NeedsReview:
-                    AddLabel(newIssue.Labels, NeedsReviewLabel);
+                    AddLabel(NeedsReviewLabel, newIssue.Labels);
                     break;
 
                 case Disposition.Cut:
-                    AddLabel(newIssue.Labels, CutLabel);
+                    AddLabel(CutLabel, newIssue.Labels);
                     break;
             }
 
@@ -216,63 +213,70 @@ namespace FileIssues
 
         private async Task UpdateIssueLabelsAsync(PortingInfo ruleToPort, Issue existingIssue)
         {
-            var existingLabelNames = existingIssue.Labels.Select(label => label.Name);
+            var existingLabelNames = new Collection<string>(existingIssue.Labels.Select(label => label.Name).ToList());
 
             var labelNamesToAdd = new Collection<string>();
             var labelNamesToRemove = new Collection<string>();
 
-            AddLabel(labelNamesToAdd, FxCopPortLabel);
+            AddLabel(FxCopPortLabel, labelNamesToAdd, existingLabelNames);
 
             switch (ruleToPort.Disposition)
             {
                 case Disposition.NeedsReview:
-                    AddLabel(labelNamesToAdd, NeedsReviewLabel);
-                    RemoveLabel(labelNamesToRemove, CutLabel);
+                    AddLabel(NeedsReviewLabel, labelNamesToAdd, existingLabelNames);
+                    RemoveLabel(CutLabel, labelNamesToRemove, existingLabelNames);
                     break;
 
                 case Disposition.Port:
-                    RemoveLabel(labelNamesToAdd, NeedsReviewLabel);
-                    RemoveLabel(labelNamesToRemove, CutLabel);
+                    RemoveLabel(NeedsReviewLabel, labelNamesToAdd, existingLabelNames);
+                    RemoveLabel(CutLabel, labelNamesToRemove, existingLabelNames);
                     break;
 
                 case Disposition.Cut:
-                    AddLabel(labelNamesToAdd, CutLabel);
-                    RemoveLabel(labelNamesToAdd, NeedsReviewLabel);
+                    AddLabel(CutLabel, labelNamesToAdd, existingLabelNames);
+                    RemoveLabel(NeedsReviewLabel, labelNamesToRemove, existingLabelNames);
                     break;
             }
 
-            if (labelNamesToAdd.Any())
+            if (_options.DryRun)
             {
-                await _issuesLabelsClient.AddToIssue(
-                    _options.RepoOwner,
-                    _options.RepoName,
-                    existingIssue.Number,
-                    labelNamesToAdd.ToArray());
+                _log.Info(Resources.InfoDryRunLabelsNotUpdated);
             }
-
-            // For some reason the "Remove" API doesn't take an array.
-            foreach (string labelName in labelNamesToRemove)
+            else
             {
-                await _issuesLabelsClient.RemoveFromIssue(
-                    _options.RepoOwner,
-                    _options.RepoName,
-                    existingIssue.Number,
-                    labelName);
+                if (labelNamesToAdd.Any())
+                {
+                    await _issuesLabelsClient.AddToIssue(
+                        _options.RepoOwner,
+                        _options.RepoName,
+                        existingIssue.Number,
+                        labelNamesToAdd.ToArray());
+                }
+
+                // For some reason the "Remove" API doesn't take an array.
+                foreach (string labelName in labelNamesToRemove)
+                {
+                    await _issuesLabelsClient.RemoveFromIssue(
+                        _options.RepoOwner,
+                        _options.RepoName,
+                        existingIssue.Number,
+                        labelName);
+                }
             }
         }
 
-        private void AddLabel(Collection<string> labels, string label)
+        private void AddLabel(string label, Collection<string> labels, Collection<string> existingLabels = null)
         {
-            if (!labels.Contains(label))
+            if (existingLabels == null || !existingLabels.Contains(label))
             {
                 labels.Add(label);
                 _log.InfoFormat(Resources.InfoAddingLabel, label);
             }
         }
 
-        private void RemoveLabel(Collection<string> labels, string label)
+        private void RemoveLabel(string label, Collection<string> labels, Collection<string> existingLabels = null)
         {
-            if (labels.Contains(label))
+            if (existingLabels == null || existingLabels.Contains(label))
             {
                 labels.Add(label);
                 _log.InfoFormat(Resources.InfoRemovingLabel, label);

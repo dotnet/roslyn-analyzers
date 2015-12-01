@@ -122,6 +122,11 @@ namespace Desktop.Analyzers.Common
             return new LocalizableResourceString(resourceName, DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         }
 
+        public static LocalizableResourceString GetLocalizableResourceString(string resourceName, params string[] formatArguments)
+        {
+            return new LocalizableResourceString(resourceName, DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources), formatArguments);
+        }
+
         private static bool IsInvisibleOutsideAssemblyAtSymbolLevel(ISymbol symbol)
         {
             return SymbolIsPrivateOrInternal(symbol)

@@ -1,39 +1,53 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <MetaCompilationSemanticVersion>1.0.0</MetaCompilationSemanticVersion>
+    <MetaCompilationSemanticVersion>1.1.0</MetaCompilationSemanticVersion>
     <MetaCompilationPreReleaseVersion>beta1</MetaCompilationPreReleaseVersion>
 
-    <AsyncPackageSemanticVersion>1.0.0</AsyncPackageSemanticVersion>
+    <AsyncPackageSemanticVersion>1.1.0</AsyncPackageSemanticVersion>
     <AsyncPackagePreReleaseVersion>beta1</AsyncPackagePreReleaseVersion>
 
-    <MicrosoftCodeAnalysisAnalyzersSemanticVersion>1.0.1</MicrosoftCodeAnalysisAnalyzersSemanticVersion>
+    <MicrosoftCodeAnalysisAnalyzersSemanticVersion>1.1.0</MicrosoftCodeAnalysisAnalyzersSemanticVersion>
     <MicrosoftCodeAnalysisAnalyzersPreReleaseVersion>beta1</MicrosoftCodeAnalysisAnalyzersPreReleaseVersion>
 
-    <DesktopAnalyzersSemanticVersion>1.0.0</DesktopAnalyzersSemanticVersion>
-    <DesktopAnalyzersPreReleaseVersion>beta1</DesktopAnalyzersPreReleaseVersion>
-
-    <SystemRuntimeAnalyzersSemanticVersion>1.0.2</SystemRuntimeAnalyzersSemanticVersion>
-    <SystemRuntimeAnalyzersPreReleaseVersion>beta1</SystemRuntimeAnalyzersPreReleaseVersion>
-    
-    <SystemRuntimeInteropServicesAnalyzersSemanticVersion>1.0.2</SystemRuntimeInteropServicesAnalyzersSemanticVersion>
-    <SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>beta1</SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>
-    
-    <SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>1.0.0</SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>
-    <SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>beta1</SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>
-
-    <SharedLibrarySemanticVersion>1.0.0</SharedLibrarySemanticVersion>
+    <SharedLibrarySemanticVersion>1.1.0</SharedLibrarySemanticVersion>
     <SharedLibraryPreReleaseVersion>beta1</SharedLibraryPreReleaseVersion>
 
-    <SharedTestSemanticVersion>1.0.0</SharedTestSemanticVersion>
+    <SharedTestSemanticVersion>1.1.0</SharedTestSemanticVersion>
     <SharedTestPreReleaseVersion>beta1</SharedTestPreReleaseVersion>
 
-    <AnalyzerPowerPackSemanticVersion>1.0.2</AnalyzerPowerPackSemanticVersion>
-    <AnalyzerPowerPackPreReleaseVersion>beta1</AnalyzerPowerPackPreReleaseVersion>
-    
     <RoslynDiagnosticsAnalyzersSemanticVersion>1.1.1</RoslynDiagnosticsAnalyzersSemanticVersion>
     <RoslynDiagnosticsAnalyzersPreReleaseVersion>beta1</RoslynDiagnosticsAnalyzersPreReleaseVersion>
 
     <ToolsSemanticVersion>0.0.0</ToolsSemanticVersion>
     <ToolsPreReleaseVersion>beta1</ToolsPreReleaseVersion>
+  </PropertyGroup>
+
+  <!-- Version info for FxCop analyzer packages -->
+  <PropertyGroup>
+    <!-- Master FxCop analyzer package, which is just a collection of individual analyzer packages below. -->
+    <FxCopAnalyzersSemanticVersion>1.1.0</FxCopAnalyzersSemanticVersion>
+    <FxCopAnalyzersPreReleaseVersion>beta1</FxCopAnalyzersPreReleaseVersion>
+
+    <!-- Dependency version range for packages included in the master FxCop analyzer package: "[$(FxCopAnalyzersDependencyMinimumSemanticVersion) - $(FxCopAnalyzersDependencyNextSemanticVersion))" -->
+    <!-- Allow any version of dependent packages between minimum (inclusive) and next (exclusive) semantic versions. -->
+    <!-- For example, values of minimum = '1.0.0' and next = '1.2.0' will have a dependency range ">= 1.0.0 && < 1.2.0" -->
+    <FxCopAnalyzersDependencyMinimumSemanticVersion>1.0.0</FxCopAnalyzersDependencyMinimumSemanticVersion>
+    <FxCopAnalyzersDependencyNextSemanticVersion>1.2.0</FxCopAnalyzersDependencyNextSemanticVersion>
+    
+    <!-- All the versions below must be >= FxCopAnalyzersDependencyMinimumSemanticVersion && < FxCopAnalyzersDependencyNextSemanticVersion -->
+    <DesktopAnalyzersSemanticVersion>1.1.0</DesktopAnalyzersSemanticVersion>
+    <DesktopAnalyzersPreReleaseVersion>beta1</DesktopAnalyzersPreReleaseVersion>
+
+    <SystemRuntimeAnalyzersSemanticVersion>1.1.0</SystemRuntimeAnalyzersSemanticVersion>
+    <SystemRuntimeAnalyzersPreReleaseVersion>beta1</SystemRuntimeAnalyzersPreReleaseVersion>
+    
+    <SystemRuntimeInteropServicesAnalyzersSemanticVersion>1.1.0</SystemRuntimeInteropServicesAnalyzersSemanticVersion>
+    <SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>beta1</SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>
+    
+    <SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>1.1.0</SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>
+    <SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>beta1</SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>
+
+    <AnalyzerPowerPackSemanticVersion>1.1.0</AnalyzerPowerPackSemanticVersion>
+    <AnalyzerPowerPackPreReleaseVersion>beta1</AnalyzerPowerPackPreReleaseVersion>
   </PropertyGroup>
 </Project>

@@ -118,48 +118,30 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DoNotCatchCorruptedStateExceptions" xml:space="preserve">
-    <value>Do not catch corrupted state exceptions in general handlers.</value>
+    <value>Do Not Catch Corrupted State Exceptions</value>
   </data>
   <data name="DoNotCatchCorruptedStateExceptionsDescription" xml:space="preserve">
-    <value>Do not author general catch handlers in code that receives corrupted state exceptions. Code that receives and intends to handle corrupted state exceptions should author distinct handlers for each exception type.</value>
+    <value>Catching corrupted state exceptions could mask errors (such as access violations), resulting in inconsistent state of execution or making it easier for attackers to compromise system. Instead, catch and handle a more specific set of exception type(s) or re-throw the exception</value>
   </data>
   <data name="DoNotCatchCorruptedStateExceptionsMessage" xml:space="preserve">
-    <value>Modify {0} to catch and handle a more specific set of exception type(s) than {1} or rethrow the exception. </value>
+    <value>{0} is catching corrupted state exception.</value>
   </data>
-  <data name="DoNotUseDES" xml:space="preserve">
-    <value>Do not use insecure cryptographic algorithm DES.</value>
+  <data name="DoNotUseBrokenCryptographicAlgorithmsMessage" xml:space="preserve">
+    <value>{0} uses a broken cryptographic algorithm {1}</value>
   </data>
-  <data name="DoNotUseDESDescription" xml:space="preserve">
-    <value>This type implements DES, a cryptographically insecure encryption algorithm. Replace this usage with an AES encryption algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits.</value>
+  <data name="DoNotUseBrokenCryptographicAlgorithms" xml:space="preserve">
+    <value>Do Not Use Broken Cryptographic Algorithms</value>
   </data>
-  <data name="DoNotUseMD5" xml:space="preserve">
-    <value>Do not use insecure cryptographic algorithm MD5.</value>
+  <data name="DoNotUseBrokenCryptographicAlgorithmsDescription" xml:space="preserve">
+    <value>An attack making it computationally feasible to break this algorithm exists. This allows attackers to break the cryptographic guarantees it is designed to provide. Depending on the type and application of this cryptographic algorithm, this may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA512, SHA384, or SHA256. Replace digital signature uses with RSA with a key length greater than or equal to 2048-bits, or ECDSA with a key length greater than or equal to 256 bits.</value>
   </data>
-  <data name="DoNotUseMD5Description" xml:space="preserve">
-    <value>This type implements MD5, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the MD5 and HMACMD5 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</value>
+  <data name="DoNotUseWeakCryptographicAlgorithms" xml:space="preserve">
+    <value>Do Not Use Weak Cryptographic Algorithms</value>
   </data>
-  <data name="DoNotUseRC2" xml:space="preserve">
-    <value>Do not use insecure cryptographic algorithm RC2.</value>
+  <data name="DoNotUseWeakCryptographicAlgorithmsDescription" xml:space="preserve">
+    <value>Cryptographic algorithms degrade over time as attacks become for advances to attacker get access to more computation. Depending on the type and application of this cryptographic algorithm, further degradation of the cryptographic strength of it may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA-2 512, SHA-2 384, or SHA-2 256.</value>
   </data>
-  <data name="DoNotUseRC2Description" xml:space="preserve">
-    <value>This type implements RC2, a cryptographically insecure encryption algorithm. Replace this usage with an AES encryption algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits.</value>
-  </data>
-  <data name="DoNotUseRIPEMD160" xml:space="preserve">
-    <value>Do not use insecure cryptographic algorithm RIPEMD160.</value>
-  </data>
-  <data name="DoNotUseRIPEMD160Description" xml:space="preserve">
-    <value>This type implements RIPEMD160, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the RIPEMD hash algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</value>
-  </data>
-  <data name="DoNotUseDSA" xml:space="preserve">
-    <value>Do not use insecure cryptographic algorithm DSA.</value>
-  </data>
-  <data name="DoNotUseDSADescription" xml:space="preserve">
-    <value>This type implements DSA, a cryptographically insecure signature-creation mechanism. Replace this usage with RSA or Diffie-Hellman with a key length greater than or equal to 2048-bits, or ECDSA or ECDH with a key length greater than or equal 256 bits.</value>
-  </data>
-  <data name="DoNotUseTripleDES" xml:space="preserve">
-    <value>Do not use insecure cryptographic algorithm TripleDES.</value>
-  </data>
-  <data name="DoNotUseTripleDESDescription" xml:space="preserve">
-    <value>This type implements TripleDES, a cryptographically insecure encryption algorithm. Replace this usage with an AES encryption algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits.</value>
+  <data name="DoNotUseWeakCryptographicAlgorithmsMessage" xml:space="preserve">
+    <value>{0} uses a weak cryptographic algorithm {1}</value>
   </data>
 </root>

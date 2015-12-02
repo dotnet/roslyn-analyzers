@@ -3,7 +3,7 @@
       <MetaCompilationSemanticVersion>1.1.0</MetaCompilationSemanticVersion>
       <MetaCompilationPreReleaseVersion>beta1</MetaCompilationPreReleaseVersion>
 
-      <MicrosoftCodeAnalysisAnalyzersSemanticVersion>1.0.1</MicrosoftCodeAnalysisAnalyzersSemanticVersion>
+      <MicrosoftCodeAnalysisAnalyzersSemanticVersion>1.1.0</MicrosoftCodeAnalysisAnalyzersSemanticVersion>
       <MicrosoftCodeAnalysisAnalyzersPreReleaseVersion>beta1</MicrosoftCodeAnalysisAnalyzersPreReleaseVersion>
 
       <SharedLibrarySemanticVersion>1.1.0</SharedLibrarySemanticVersion>

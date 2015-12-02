@@ -19,8 +19,8 @@ namespace FileIssues
         private const int Succeeded = 0;
         private const int Failed = 1;
 
-        private const string FxCopPortLabel = "FxCop Port";
-        private const string NeedsReviewLabel = "Needs Review";
+        private const string FxCopPortLabel = "FxCop-Port";
+        private const string NeedsReviewLabel = "Needs-Review";
         private const string CutLabel = "Resolution-Won't Fix";
         private const string PortedLabel = "Resolution-Fixed";
         private const string UrgencySoonLabel = "Urgency-Soon";

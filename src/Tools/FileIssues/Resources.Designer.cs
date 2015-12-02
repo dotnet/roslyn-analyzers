@@ -88,11 +88,56 @@ namespace FileIssues {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Filing issue for rule {0}....
+        ///   Looks up a localized string similar to Adding label &quot;{0}&quot;....
         /// </summary>
-        internal static string InfoFilingIssue {
+        internal static string InfoAddingLabel {
             get {
-                return ResourceManager.GetString("InfoFilingIssue", resourceCulture);
+                return ResourceManager.GetString("InfoAddingLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Closing issue #{0}....
+        /// </summary>
+        internal static string InfoClosingIssue {
+            get {
+                return ResourceManager.GetString("InfoClosingIssue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to --dry-run option specified; issue was not actually created..
+        /// </summary>
+        internal static string InfoDryRunIssueNotCreated {
+            get {
+                return ResourceManager.GetString("InfoDryRunIssueNotCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to --dry-run option specified; issue was not actually updated..
+        /// </summary>
+        internal static string InfoDryRunIssueNotUpdated {
+            get {
+                return ResourceManager.GetString("InfoDryRunIssueNotUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to --dry-run option specified; labels were not actually updated..
+        /// </summary>
+        internal static string InfoDryRunLabelsNotUpdated {
+            get {
+                return ResourceManager.GetString("InfoDryRunLabelsNotUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filing new issue for rule {0}....
+        /// </summary>
+        internal static string InfoFilingNewIssue {
+            get {
+                return ResourceManager.GetString("InfoFilingNewIssue", resourceCulture);
             }
         }
         
@@ -106,11 +151,47 @@ namespace FileIssues {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An issue already exists for rule {0}..
+        ///   Looks up a localized string similar to Issue #{0} updated..
         /// </summary>
-        internal static string WarningIssueExists {
+        internal static string InfoIssueUpdated {
             get {
-                return ResourceManager.GetString("WarningIssueExists", resourceCulture);
+                return ResourceManager.GetString("InfoIssueUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Removing label &quot;{0}&quot;....
+        /// </summary>
+        internal static string InfoRemovingLabel {
+            get {
+                return ResourceManager.GetString("InfoRemovingLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reopening issue #{0}....
+        /// </summary>
+        internal static string InfoReopeningIssue {
+            get {
+                return ResourceManager.GetString("InfoReopeningIssue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updating issue #{0} for rule {1}....
+        /// </summary>
+        internal static string InfoUpdatingExistingIssue {
+            get {
+                return ResourceManager.GetString("InfoUpdatingExistingIssue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multiple issues exists for rule {0}: {1}.
+        /// </summary>
+        internal static string WarningMultipleIssuesExist {
+            get {
+                return ResourceManager.GetString("WarningMultipleIssuesExist", resourceCulture);
             }
         }
     }

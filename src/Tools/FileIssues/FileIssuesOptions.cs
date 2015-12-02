@@ -40,5 +40,12 @@ namespace FileIssues
         // This prevents GitHub from failing multiple rapid issue creation requests
         // because it considers them "abuse".
         public int Delay { get; set; }
+
+        [Option(
+            'n',
+            "dry-run",
+            HelpText = "Don't actually do anything; just show what would be done.",
+            Default = false)]
+        public bool DryRun { get; set; }
     }
 }

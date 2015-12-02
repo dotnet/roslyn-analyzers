@@ -8,10 +8,12 @@
     </description>
     <dependencies>
       <dependency id="Desktop.Analyzers" version="[$dependencyMinVersion$,$dependencyNextVersion$)" />
-      <dependency id="Microsoft.AnalyzerPowerPack" version="[$dependencyMinVersion$,$dependencyNextVersion$)" />
+      <dependency id="System.Collections.Immutable.Analyzers" version="[$dependencyMinVersion$,$dependencyNextVersion$)" />
       <dependency id="System.Runtime.Analyzers" version="[$dependencyMinVersion$,$dependencyNextVersion$)" />
       <dependency id="System.Runtime.InteropServices.Analyzers" version="[$dependencyMinVersion$,$dependencyNextVersion$)" />
+      <dependency id="System.Threading.Tasks.Analyzers" version="[$dependencyMinVersion$,$dependencyNextVersion$)" />
       <dependency id="System.Security.Cryptography.Hashing.Algorithms.Analyzers" version="[$dependencyMinVersion$,$dependencyNextVersion$)" />
+      <dependency id="Microsoft.ApiDesignGuidelines.Analyzers" version="[$dependencyMinVersion$,$dependencyNextVersion$)" />
     </dependencies>
     <language>en-US</language>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>

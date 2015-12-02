@@ -21,6 +21,7 @@
     <PreReleaseVersion>$(SharedTestPreReleaseVersion)</PreReleaseVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
   </PropertyGroup>

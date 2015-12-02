@@ -14,10 +14,10 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
         internal const string DoNotUseWeakCryptographicRuleId = "CA5350";
         internal const string DoNotUseBrokenCryptographicRuleId = "CA5351";
 
-        private static readonly LocalizableString s_localizableDoNotUseMD5Title = new LocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseMD5), SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.ResourceManager, typeof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources));
-        private static readonly LocalizableString s_localizableDoNotUseMD5Description = new LocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseMD5Description), SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.ResourceManager, typeof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources));
-        private static readonly LocalizableString s_localizableDoNotUseSHA1Title = new LocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseSHA1), SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.ResourceManager, typeof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources));
-        private static readonly LocalizableString s_localizableDoNotUseSHA1Description = new LocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseSHA1Description), SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.ResourceManager, typeof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources));
+        private static readonly LocalizableString s_localizableDoNotUseMD5Title = new LocalizableResourceString(nameof(Resources.DoNotUseMD5), Resources.ResourceManager, typeof(Resources));
+        private static readonly LocalizableString s_localizableDoNotUseMD5Description = new LocalizableResourceString(nameof(Resources.DoNotUseMD5Description), Resources.ResourceManager, typeof(Resources));
+        private static readonly LocalizableString s_localizableDoNotUseSHA1Title = new LocalizableResourceString(nameof(Resources.DoNotUseSHA1), Resources.ResourceManager, typeof(Resources));
+        private static readonly LocalizableString s_localizableDoNotUseSHA1Description = new LocalizableResourceString(nameof(Resources.DoNotUseSHA1Description), Resources.ResourceManager, typeof(Resources));
 
 
         internal static DiagnosticDescriptor DoNotUseMD5SpecificRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographicRuleId,

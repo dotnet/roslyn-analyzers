@@ -92,16 +92,16 @@
     <Compile Include="Helpers\CompilationSecurityTypes.cs" />
     <Compile Include="Helpers\SecurityTypes.cs" />
     <Compile Include="DiagnosticCategory.cs" />
-    <Compile Include="SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.Designer.cs">
+    <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.resx</DependentUpon>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.resx">
+    <EmbeddedResource Include="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.Designer.cs</LastGenOutput>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

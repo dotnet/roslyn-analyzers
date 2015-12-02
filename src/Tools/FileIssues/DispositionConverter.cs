@@ -35,6 +35,10 @@ namespace FileIssues
             {
                 disposition = Disposition.Cut;
             }
+            else if (text.StartsWith("ported", StringComparison.InvariantCultureIgnoreCase))
+            {
+                disposition = Disposition.Ported;
+            }
 
             return disposition;
         }

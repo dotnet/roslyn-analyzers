@@ -17,9 +17,9 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
     <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
-    <RestorePackages>true</RestorePackages>
-    <SemanticVersion>$(DesktopAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(DesktopAnalyzersPreReleaseVersion)</PreReleaseVersion>
+    <RestorePackages>true</RestorePackages> 
+    <SemanticVersion>$(DesktopAnalyzersSemanticVersion)</SemanticVersion>  
+    <PreReleaseVersion>$(DesktopAnalyzersPreReleaseVersion)</PreReleaseVersion>  
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
   </PropertyGroup>
@@ -93,6 +93,11 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Security\CA3075DiagnosticAnalyzer.cs" />
+    <Compile Include="Security\CA3076DiagnosticAnalyzer.cs" />
+    <Compile Include="Security\CA3077DiagnosticAnalyzer.cs" />
+    <Compile Include="Security\SecurityDiagnosticHelpers.cs" />
+    <Compile Include="Security\SecurityMemberNames.cs" />
     <Compile Include="Security\DoNotUseInsecureCryptographicAlgorithmsAnalyzer.cs" />
     <Compile Include="Security\SecurityTypes.cs" />
     <Compile Include="Security\CompilationSecurityTypes.cs" />

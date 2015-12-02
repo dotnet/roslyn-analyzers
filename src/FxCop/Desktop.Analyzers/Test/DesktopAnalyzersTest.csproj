@@ -151,6 +151,32 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Security\CA3075DiagnosticAnalyzerDoNotUseLoadXmlTests.cs" />
+    <Compile Include="Security\CA3075DiagnosticAnalyzerDoNotUseSetInnerXmlTests.cs" />
+    <Compile Include="Security\CA3075DiagnosticAnalyzerReviewDataViewCollectionStringTests.cs" />
+    <Compile Include="Security\CA3075DiagnosticAnalyzerUseXmlReaderForDataSetReadXmlSchemaTests.cs" />
+    <Compile Include="Security\CA3075DiagnosticAnalyzerUseXmlReaderForDataSetReadXmlTests.cs" />
+    <Compile Include="Security\CA3075DiagnosticAnalyzerUseXmlReaderForDataTableReadXmlSchemaTests.cs" />
+    <Compile Include="Security\CA3075DiagnosticAnalyzerUseXmlReaderForDataTableReadXmlTests.cs" />
+    <Compile Include="Security\CA3075DiagnosticAnalyzerUseXmlReaderForDeserializeTests.cs" />
+    <Compile Include="Security\CA3075DiagnosticAnalyzerUseXmlReaderForLoadTests.cs" />
+    <Compile Include="Security\CA3075DiagnosticAnalyzerUseXmlReaderForSchemaReadTests.cs" />
+    <Compile Include="Security\CA3075DiagnosticAnalyzerUseXmlReaderForXPathDocumentTests.cs" />
+    <Compile Include="Security\CA3075DiagnosticAnalyzerXmlDocumentConstructedWithNoSecureResolverTests.cs" />
+    <Compile Include="Security\CA3075DiagnosticAnalyzerXmlDocumentSetInsecureResolverTests.cs" />
+    <Compile Include="Security\CA3075DiagnosticAnalyzerXmlReaderCreateUsingInsecureConstructedXmlReaderSettingsTests.cs" />
+    <Compile Include="Security\CA3075DiagnosticAnalyzerXmlReaderCreateWrongOverloadTests.cs" />
+    <Compile Include="Security\CA3075DiagnosticAnalyzerXmlTextReaderConstructedWithNoSecureResolutionTests.cs" />
+    <Compile Include="Security\CA3075DiagnosticAnalyzerXmlTextReaderSetInsecureResolutionTests.cs" />
+    <Compile Include="Security\CA3075XmlReaderCreateUsingInsecureInputXmlReaderSettingsTests.cs" />
+    <Compile Include="Security\CA3076XslCompiledTransformLoadInsecureConstructedSettingsTests.cs" />
+    <Compile Include="Security\CA3076XslCompiledTransformLoadInsecureInputSettingsTests.cs" />
+    <Compile Include="Security\CA3077XmlDocumentDerivedClassDesignConstructorNoSecureXmlResolverTests.cs" />
+    <Compile Include="Security\CA3077XmlDocumentDerivedClassDesignNoConstructorTests.cs" />
+    <Compile Include="Security\CA3077XmlDocumentDerivedClassDesignSetInsecureXmlResolverInMethodTests.cs" />
+    <Compile Include="Security\CA3077XmlTextReaderDerivedClassDesignConstructorNoSecureSettingsTests.cs" />
+    <Compile Include="Security\CA3077XmlTextReaderDerivedClassDesignNoConstructorTests.cs" />
+    <Compile Include="Security\CA3077XmlTextReaderDerivedClassDesignSetInsecureSettingsInMethodTests.cs" />
     <Compile Include="Security\DoNotCatchCorruptedStateExceptionsTests.cs" />
     <Compile Include="Security\DoNotUseInsecureCryptographicAlgorithmsTests.cs" />
   </ItemGroup>

@@ -1,5 +1,4 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
-
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 
@@ -16,6 +15,8 @@ namespace Desktop.Analyzers.Common
             AnyCall = Invocation | ObjectCreation,
         };
 
+        public abstract IMethodSymbol GetCallerMethodSymbol(SyntaxNode node, SemanticModel semanticModel);
+        public abstract ITypeSymbol GetEnclosingTypeSymbol(SyntaxNode node, SemanticModel semanticModel);
         public abstract ITypeSymbol GetClassDeclarationTypeSymbol(SyntaxNode node, SemanticModel semanticModel);
         public abstract SyntaxNode GetAssignmentLeftNode(SyntaxNode node);
         public abstract SyntaxNode GetAssignmentRightNode(SyntaxNode node);
@@ -28,6 +29,32 @@ namespace Desktop.Analyzers.Common
         // This will return true iff the SyntaxNode is either InvocationExpression or ObjectCreationExpression (in C# or VB)
         public abstract bool IsMethodInvocationNode(SyntaxNode node);
         protected abstract IEnumerable<SyntaxNode> GetCallArgumentExpressionNodes(SyntaxNode node, CallKind callKind);
+        public abstract IEnumerable<SyntaxNode> GetDescendantAssignmentExpressionNodes(SyntaxNode node);
+        public abstract IEnumerable<SyntaxNode> GetDescendantMemberAccessExpressionNodes(SyntaxNode node);
+
+        // returns true if node is an ObjectCreationExpression and is under a FieldDeclaration node
+        public abstract bool IsObjectCreationExpressionUnderFieldDeclaration(SyntaxNode node);
+        // returns the ancestor VariableDeclarator node for an ObjectCreationExpression if 
+        // IsObjectCreationExpressionUnderFieldDeclaration(node) returns true, return null otherwise.
+        public abstract SyntaxNode GetVariableDeclaratorOfAFieldDeclarationNode(SyntaxNode objectCreationExpression);
+
+
+        public ISymbol GetEnclosingConstructSymbol(SyntaxNode node, SemanticModel semanticModel)
+        {
+            if (node == null)
+            {
+                return null;
+            }
+
+            ISymbol symbol = GetCallerMethodSymbol(node, semanticModel);
+
+            if (symbol == null)
+            {
+                symbol = GetEnclosingTypeSymbol(node, semanticModel);
+            }
+
+            return symbol;
+        }
 
         public IEnumerable<SyntaxNode> GetCallArgumentExpressionNodes(SyntaxNode node)
         {
@@ -44,17 +71,8 @@ namespace Desktop.Analyzers.Common
             return GetCallArgumentExpressionNodes(node, CallKind.ObjectCreation);
         }
 
-        public static IMethodSymbol GetCalleeMethodSymbol(SyntaxNode node, SemanticModel semanticModel)
-        {
-            ISymbol symbol = GetReferencedSymbol(node, semanticModel);
-            if (symbol != null && symbol.Kind == SymbolKind.Method)
-            {
-                return (IMethodSymbol)symbol;
-            }
-
-            return null;
-        }
-
+        public abstract IMethodSymbol GetCalleeMethodSymbol(SyntaxNode node, SemanticModel semanticModel);
+        
         public static IEnumerable<IMethodSymbol> GetCandidateCalleeMethodSymbols(SyntaxNode node, SemanticModel semanticModel)
         {
             foreach (ISymbol symbol in GetCandidateReferencedSymbols(node, semanticModel))
@@ -66,7 +84,7 @@ namespace Desktop.Analyzers.Common
             }
         }
 
-        public static IEnumerable<IMethodSymbol> GetCalleeMethodSymbols(SyntaxNode node, SemanticModel semanticModel)
+        public IEnumerable<IMethodSymbol> GetCalleeMethodSymbols(SyntaxNode node, SemanticModel semanticModel)
         {
             IMethodSymbol symbol = GetCalleeMethodSymbol(node, semanticModel); 
             if (symbol != null)

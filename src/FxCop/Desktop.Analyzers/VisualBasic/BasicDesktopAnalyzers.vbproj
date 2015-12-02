@@ -92,6 +92,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Security\BasicCA3075DiagnosticAnalyzers.vb" />
+    <Compile Include="Security\BasicCA3076DiagnosticAnalyzers.vb" />
+    <Compile Include="Security\BasicCA3077DiagnosticAnalyzers.vb" />
     <Compile Include="Security\DoNotCatchCorruptedStateExceptionsAnalyzer.vb" />
     <Compile Include="Security\DoNotUseInsecureCryptographicAlgorithmsAnalyzer.vb" />
     <Compile Include="Shared\SyntaxNodeHelper.vb" />

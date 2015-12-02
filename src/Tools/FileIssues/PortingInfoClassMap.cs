@@ -17,6 +17,8 @@ namespace FileIssues
             Map(pi => pi.Notes).Name("Notes");
             Map(pi => pi.ProposedAnalyzer).Name("Proposed Analyzer");
             Map(pi => pi.Disposition).Name("Port?").TypeConverter<DispositionConverter>();
+            Map(pi => pi.RevisedPriority).Name("Revised Priority").TypeConverter<PriorityConverter>();
+            Map(pi => pi.OriginalPriority).Name("Original Priority").TypeConverter<PriorityConverter>();
         }
     }
 }

@@ -23,6 +23,7 @@ namespace FileIssues
         private const string NeedsReviewLabel = "Needs Review";
         private const string CutLabel = "Resolution-Won't Fix";
         private const string PortedLabel = "Resolution-Fixed";
+        private const string UrgencySoonLabel = "Urgency-Soon";
 
         private readonly ILog _log = LogHelper.GetLogger();
         private readonly FileIssuesOptions _options;
@@ -246,6 +247,11 @@ namespace FileIssues
                     break;
             }
 
+            if (ruleToPort.Soon)
+            {
+                AddLabel(UrgencySoonLabel, newIssue.Labels);
+            }
+
             newIssue.Body = FormatIssueBody(ruleToPort);
 
             return newIssue;
@@ -279,6 +285,11 @@ namespace FileIssues
             var labelNamesToRemove = new Collection<string>();
 
             AddLabel(FxCopPortLabel, labelNamesToAdd, existingLabelNames);
+
+            if (ruleToPort.Soon)
+            {
+                AddLabel(UrgencySoonLabel, labelNamesToAdd, existingLabelNames);
+            }
 
             switch (ruleToPort.Disposition)
             {

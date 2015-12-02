@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="UseOrdinalStringComparisonTitle" xml:space="preserve">
+    <value>Use ordinal stringcomparison</value>
+  </data>
+  <data name="UseOrdinalStringComparisonDescription" xml:space="preserve">
+    <value>A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.</value>
+  </data>
+  <data name="UseOrdinalStringComparisonMessageStringComparison" xml:space="preserve">
+    <value>{0} passes '{1}' as the 'StringComparison' parameter to {2}. To perform a non-linguistic comparison, specify 'StringComparison.Ordinal' or 'StringComparison.OrdinalIgnoreCase' instead.</value>
+  </data>
+  <data name="UseOrdinalStringComparisonMessageStringComparer" xml:space="preserve">
+    <value>{0} passes '{1}' as the 'StringComparer' parameter to {2}. To perform a non-linguistic comparison, specify 'StringComparer.Ordinal' or 'StringComparer.OrdinalIgnoreCase' instead.</value>
+  </data>
+  <data name="DoNotUseTimersThatPreventPowerStateChangesTitle" xml:space="preserve">
+    <value>Do not use timers that prevent power state changes</value>
+  </data>
+  <data name="DoNotUseTimersThatPreventPowerStateChangesDescription" xml:space="preserve">
+    <value>Higher-frequency periodic activity will keep the CPU busy and interfere with power-saving idle timers that turn off the display and hard disks.</value>
+  </data>
+  <data name="DoNotUseTimersThatPreventPowerStateChangesMessage" xml:space="preserve">
+    <value>Do not use timers that prevent power state changes</value>
+  </data>
+  <data name="DoNotInitializeUnnecessarilyTitle" xml:space="preserve">
+    <value>Do not initialize unnecessarily</value>
+  </data>
+  <data name="DoNotInitializeUnnecessarilyDescription" xml:space="preserve">
+    <value>The common language runtime initializes all fields to their default values before running the constructor. In most cases, initializing a field to its default value in a constructor is redundant, which degrades performance and adds to maintenance costs. One case where it is not redundant occurs when the constructor calls another constructor of the same class or a base class constructor and that constructor initializes the field to a non-default value. In this case, changing the value of the field back to its default value can be appropriate.</value>
+  </data>
+  <data name="DoNotInitializeUnnecessarilyMessage" xml:space="preserve">
+    <value>Do not initialize unnecessarily</value>
+  </data>
+  <data name="AvoidUnsealedAttributesTitle" xml:space="preserve">
+    <value>Avoid unsealed attributes</value>
+  </data>
+  <data name="AvoidUnsealedAttributesDescription" xml:space="preserve">
+    <value>The .NET Framework class library provides methods for retrieving custom attributes. By default, these methods search the attribute inheritance hierarchy. Sealing the attribute eliminates the search through the inheritance hierarchy and can improve performance.</value>
+  </data>
+  <data name="AvoidUnsealedAttributesMessage" xml:space="preserve">
+    <value>Avoid unsealed attributes</value>
+  </data>
+  <data name="TestForEmptyStringsUsingStringLengthTitle" xml:space="preserve">
+    <value>Test for empty strings using string length</value>
+  </data>
+  <data name="TestForEmptyStringsUsingStringLengthDescription" xml:space="preserve">
+    <value>Comparing strings by using the String.Length property or the String.IsNullOrEmpty method is significantly faster than using Equals.</value>
+  </data>
+  <data name="TestForEmptyStringsUsingStringLengthMessage" xml:space="preserve">
+    <value>Test for empty strings using 'string.Length' property or 'string.IsNullOrEmpty' method instead of an Equality check.</value>
+  </data>
+  <data name="DoNotLockOnObjectsWithWeakIdentityTitle" xml:space="preserve">
+    <value>Do not lock on objects with weak identity</value>
+  </data>
+  <data name="DoNotLockOnObjectsWithWeakIdentityDescription" xml:space="preserve">
+    <value>An object is said to have a weak identity when it can be directly accessed across application domain boundaries. A thread that tries to acquire a lock on an object that has a weak identity can be blocked by a second thread in a different application domain that has a lock on the same object.</value>
+  </data>
+  <data name="DoNotLockOnObjectsWithWeakIdentityMessage" xml:space="preserve">
+    <value>Do not lock on objects with weak identity</value>
+  </data>
+  <data name="DoNotCatchCorruptedStateExceptionsInGeneralHandlersTitle" xml:space="preserve">
+    <value>Do not catch corrupted state exceptions in general handlers.</value>
+  </data>
+  <data name="DoNotCatchCorruptedStateExceptionsInGeneralHandlersDescription" xml:space="preserve">
+    <value>Do not author general catch handlers in code that receives corrupted state exceptions.</value>
+  </data>
+  <data name="DoNotCatchCorruptedStateExceptionsInGeneralHandlersMessage" xml:space="preserve">
+    <value>Do not catch corrupted state exceptions in general handlers.</value>
+  </data>
+  <data name="RethrowToPreserveStackDetailsTitle" xml:space="preserve">
+    <value>Rethrow to preserve stack details</value>
+  </data>
+  <data name="RethrowToPreserveStackDetailsDescription" xml:space="preserve">
+    <value>An exception is rethrown and the exception is explicitly specified in the throw statement. If an exception is rethrown by specifying the exception in the throw statement, the list of method calls between the original method that threw the exception and the current method is lost.</value>
+  </data>
+  <data name="RethrowToPreserveStackDetailsMessage" xml:space="preserve">
+    <value>Rethrow to preserve stack details</value>
+  </data>
+  <data name="DoNotRaiseReservedExceptionTypesTitle" xml:space="preserve">
+    <value>Do not raise reserved exception types</value>
+  </data>
+  <data name="DoNotRaiseReservedExceptionTypesDescription" xml:space="preserve">
+    <value>An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type.</value>
+  </data>
+  <data name="DoNotRaiseReservedExceptionTypesMessageTooGeneric" xml:space="preserve">
+    <value>Exception type {0} is not sufficiently specific.</value>
+  </data>
+  <data name="DoNotRaiseReservedExceptionTypesMessageReserved" xml:space="preserve">
+    <value>Exception type {0} is reserved by the runtime.</value>
+  </data>
+  <data name="InitializeValueTypeStaticFieldsInlineTitle" xml:space="preserve">
+    <value>Initialize value type static fields inline</value>
+  </data>
+  <data name="InitializeReferenceTypeStaticFieldsInlineTitle" xml:space="preserve">
+    <value>Initialize reference type static fields inline</value>
+  </data>
+  <data name="InitializeValueTypeStaticFieldsInlineDescription" xml:space="preserve">
+    <value>A value type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.</value>
+  </data>
+  <data name="InitializeReferenceTypeStaticFieldsInlineDescription" xml:space="preserve">
+    <value>A reference type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.</value>
+  </data>
+  <data name="InitializeStaticFieldsInlineMessage" xml:space="preserve">
+    <value>Initialize all static fields in '{0}' when those fields are declared and remove the explicit static constructor</value>
+  </data>
+  <data name="DisposableFieldsShouldBeDisposedTitle" xml:space="preserve">
+    <value>Disposable fields should be disposed</value>
+  </data>
+  <data name="DisposableFieldsShouldBeDisposedDescription" xml:space="preserve">
+    <value>A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type.</value>
+  </data>
+  <data name="DisposableFieldsShouldBeDisposedMessage" xml:space="preserve">
+    <value>Disposable fields should be disposed</value>
+  </data>
+  <data name="DoNotCallOverridableMethodsInConstructorsTitle" xml:space="preserve">
+    <value>Do not call overridable methods in constructors</value>
+  </data>
+  <data name="DoNotCallOverridableMethodsInConstructorsDescription" xml:space="preserve">
+    <value>When a constructor calls a virtual method, the constructor for the instance that invokes the method may not have executed.</value>
+  </data>
+  <data name="DoNotCallOverridableMethodsInConstructorsMessage" xml:space="preserve">
+    <value>Do not call overridable methods in constructors</value>
+  </data>
+  <data name="DisposeMethodsShouldCallBaseClassDisposeTitle" xml:space="preserve">
+    <value>Dispose Methods Should Call Base Class Dispose</value>
+  </data>
+  <data name="DisposeMethodsShouldCallBaseClassDisposeDescription" xml:space="preserve">
+    <value>If a type inherits from a disposable type, it must call the Dispose method of the base type from its own Dispose method.</value>
+  </data>
+  <data name="DisposeMethodsShouldCallBaseClassDisposeMessage" xml:space="preserve">
+    <value>Dispose Methods Should Call Base Class Dispose</value>
+  </data>
+  <data name="DisposableTypesShouldDeclareFinalizerTitle" xml:space="preserve">
+    <value>Disposable types should declare finalizer</value>
+  </data>
+  <data name="DisposableTypesShouldDeclareFinalizerDescription" xml:space="preserve">
+    <value>A type that implements System.IDisposable and has fields that suggest the use of unmanaged resources does not implement a finalizer, as described by Object.Finalize.</value>
+  </data>
+  <data name="DisposableTypesShouldDeclareFinalizerMessage" xml:space="preserve">
+    <value>Disposable types should declare finalizer</value>
+  </data>
+  <data name="DoNotRaiseExceptionsInExceptionClausesTitle" xml:space="preserve">
+    <value>Do not raise exceptions in exception clauses</value>
+  </data>
+  <data name="DoNotRaiseExceptionsInExceptionClausesDescription" xml:space="preserve">
+    <value>When an exception is raised in a finally or fault clause, the new exception hides the active exception. When an exception is raised in a filter clause, the run time silently catches the exception. This makes the original error difficult to detect and debug.</value>
+  </data>
+  <data name="DoNotRaiseExceptionsInExceptionClausesMessageFinally" xml:space="preserve">
+    <value>Modify member {0} so that it does not raise an exception from within a finally clause. When an exception is raised from within a finally clause, the new exception hides the active exception, if present, making the original error hard to detect and debug.</value>
+  </data>
+  <data name="DoNotRaiseExceptionsInExceptionClausesMessageFilter" xml:space="preserve">
+    <value>Modify member {0} so that it does not raise an exception from within a filter clause. When an exception is raised from within a filter clause, the runtime silently catches the exception, causing the filter to evaluate to false. This makes it hard to detect and debug errors in the filter's logic.</value>
+  </data>
+  <data name="DoNotRaiseExceptionsInExceptionClausesMessageFault" xml:space="preserve">
+    <value>Modify member {0} so that it does not raise an exception from within a fault clause. When an exception is raised from within a fault clause, the new exception hides the active exception, making the original error hard to detect and debug.</value>
+  </data>
+  <data name="FinalizersShouldCallBaseClassFinalizerTitle" xml:space="preserve">
+    <value>Finalizers should call base class finalizer</value>
+  </data>
+  <data name="FinalizersShouldCallBaseClassFinalizerDescription" xml:space="preserve">
+    <value>Finalization must be propagated through the inheritance hierarchy. To guarantee this, types must call their base class Finalize method in their own Finalize method.</value>
+  </data>
+  <data name="FinalizersShouldCallBaseClassFinalizerMessage" xml:space="preserve">
+    <value>Finalizers should call base class finalizer</value>
+  </data>
+  <data name="ProvideCorrectArgumentsToFormattingMethodsTitle" xml:space="preserve">
+    <value>Provide correct arguments to formatting methods</value>
+  </data>
+  <data name="ProvideCorrectArgumentsToFormattingMethodsDescription" xml:space="preserve">
+    <value>The format argument that is passed to System.String.Format does not contain a format item that corresponds to each object argument, or vice versa.</value>
+  </data>
+  <data name="ProvideCorrectArgumentsToFormattingMethodsMessage" xml:space="preserve">
+    <value>Provide correct arguments to formatting methods</value>
+  </data>
+  <data name="TestForNaNCorrectlyTitle" xml:space="preserve">
+    <value>Test for NaN correctly</value>
+  </data>
+  <data name="TestForNaNCorrectlyDescription" xml:space="preserve">
+    <value>This expression tests a value against Single.Nan or Double.Nan. Use Single.IsNan(Single) or Double.IsNan(Double) to test the value.</value>
+  </data>
+  <data name="TestForNaNCorrectlyMessage" xml:space="preserve">
+    <value>Test for NaN correctly</value>
+  </data>
+  <data name="AttributeStringLiteralsShouldParseCorrectlyTitle" xml:space="preserve">
+    <value>Attribute string literals should parse correctly</value>
+  </data>
+  <data name="AttributeStringLiteralsShouldParseCorrectlyDescription" xml:space="preserve">
+    <value>The string literal parameter of an attribute does not parse correctly for a URL, a GUID, or a version.</value>
+  </data>
+  <data name="AttributeStringLiteralsShouldParseCorrectlyMessageDefault" xml:space="preserve">
+    <value>In the constructor of {0}, change the value of argument {1}, which is currently "{2}", to something that can be correctly parsed as {3}.</value>
+  </data>
+  <data name="AttributeStringLiteralsShouldParseCorrectlyMessageEmpty" xml:space="preserve">
+    <value>In the constructor of {0}, change the value of argument {1}, which is currently an empty string (""), to something that can be correctly parsed as {2}.</value>
+  </data>
+  <data name="AvoidZeroLengthArrayAllocationsTitle" xml:space="preserve">
+    <value>Avoid zero-length array allocations.</value>
+  </data>
+  <data name="AvoidZeroLengthArrayAllocationsDescription" xml:space="preserve">
+    <value>#N/A</value>
+  </data>
+  <data name="AvoidZeroLengthArrayAllocationsMessage" xml:space="preserve">
+    <value>Avoid zero-length array allocations.</value>
+  </data>
+  <data name="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyTitle" xml:space="preserve">
+    <value>Do not use Enumerable methods on indexable collections. Instead use the collection directly</value>
+  </data>
+  <data name="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyDescription" xml:space="preserve">
+    <value>This collection is directly indexable. Going through LINQ here causes unnecessary allocations and CPU work.</value>
+  </data>
+  <data name="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyMessage" xml:space="preserve">
+    <value>Do not use Enumerable methods on indexable collections. Instead use the collection directly</value>
+  </data>
+  <data name="CategoryGlobalization" xml:space="preserve">
+    <value>Globalization</value>
+  </data>
+  <data name="CategoryMobility" xml:space="preserve">
+    <value>Mobility</value>
+  </data>
+  <data name="CategoryPerformance" xml:space="preserve">
+    <value>Performance</value>
+  </data>
+  <data name="CategoryReliability" xml:space="preserve">
+    <value>Reliability</value>
+  </data>
+  <data name="CategorySecurity" xml:space="preserve">
+    <value>Security</value>
+  </data>
+  <data name="CategoryUsage" xml:space="preserve">
+    <value>Usage</value>
+  </data>
+</root>

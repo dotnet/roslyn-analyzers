@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\..\packages\xunit.core.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.props" Condition="Exists('..\..\..\packages\xunit.core.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.props')" />
+  <ImportGroup Label="Settings">
+    <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
+  </ImportGroup>
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
+    <ProjectGuid>{0BD8984E-4742-4892-A4A2-484D14B4D893}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Microsoft.ApiDesignGuidelines.Analyzers.UnitTests</RootNamespace>
+    <AssemblyName>Microsoft.ApiDesignGuidelines.Analyzers.UnitTests</AssemblyName>
+    <Nonshipping>true</Nonshipping>
+    <SolutionDir Condition="'$(SolutionDir)' == '' OR '$(SolutionDir)' == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <SemanticVersion>$(MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion)</SemanticVersion>
+    <PreReleaseVersion>$(MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion)</PreReleaseVersion>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Label="Start settings">
+    <StartAction>Program</StartAction>
+    <StartProgram>$(MSBuildThisFileDirectory)..\..\..\packages\xunit.runner.console.2.0.0\tools\xunit.console.x86.exe</StartProgram>
+    <StartArguments>$(AssemblyName).dll -noshadow -wait</StartArguments>
+    <StartWorkingDirectory>$(OutDir)</StartWorkingDirectory>
+  </PropertyGroup>
+  <ItemGroup Label="Project References">
+    <ProjectReference Include="..\..\Test\Utilities\DiagnosticsTestUtilities.csproj">
+      <Project>{0A0621F2-D1DC-47FF-B643-C6646557505E}</Project>
+      <Name>DiagnosticsTestUtilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Core\Microsoft.ApiDesignGuidelines.Analyzers.csproj">
+      <Project>{9B5FFB24-D965-4CF1-8BB2-02C282193F4F}</Project>
+      <Name>Microsoft.ApiDesignGuidelines.Analyzers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CSharp\Microsoft.ApiDesignGuidelines.CSharp.Analyzers.csproj">
+      <Project>{9CB337FD-D2C2-47A3-855E-0D27C00D96B8}</Project>
+      <Name>Microsoft.ApiDesignGuidelines.CSharp.Analyzers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VisualBasic\Microsoft.ApiDesignGuidelines.VisualBasic.Analyzers.vbproj">
+      <Project>{7888C419-EF81-4588-B844-5C1277CABF5A}</Project>
+      <Name>Microsoft.ApiDesignGuidelines.VisualBasic.Analyzers</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
+  <ItemGroup>
+    <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
+    <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CodeAnalysis, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Common.1.0.0\lib\net45\Microsoft.CodeAnalysis.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.1.0.0\lib\net45\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.1.0.0\lib\net45\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.VisualBasic, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.VisualBasic.1.0.0\lib\net45\Microsoft.CodeAnalysis.VisualBasic.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.VisualBasic.Workspaces.1.0.0\lib\net45\Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.0.0\lib\net45\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.Workspaces.Desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.0.0\lib\net45\Microsoft.CodeAnalysis.Workspaces.Desktop.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.1.36.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\System.Collections.Immutable.1.1.36\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Composition.AttributedModel, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.AttributedModel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Composition.Convention, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Convention.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Composition.Hosting, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Hosting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Composition.Runtime, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Composition.TypedParts, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Reflection.Metadata, Version=1.0.21.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\System.Reflection.Metadata.1.0.21\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\xunit.abstractions.2.0.0\lib\net35\xunit.abstractions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="xunit.assert, Version=2.0.0.2929, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\xunit.assert.2.0.0\lib\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.assert.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="xunit.core, Version=2.0.0.2929, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\xunit.extensibility.core.2.0.0\lib\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="EnumWithFlagsAttributeTests.cs" />
+    <Compile Include="EnumWithFlagsAttributeTests.Fixer.cs" />
+    <Compile Include="IdentifiersShouldNotContainTypeNamesTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="AvoidAsyncVoidTests.cs" />
+    <Compile Include="AvoidAsyncVoidTests.Fixer.cs" />
+    <Compile Include="AsyncMethodNamesShouldEndInAsyncTests.cs" />
+    <Compile Include="AsyncMethodNamesShouldEndInAsyncTests.Fixer.cs" />
+    <Compile Include="DonTPassAsyncLambdasAsVoidReturningDelegateTypesTests.cs" />
+    <Compile Include="DonTPassAsyncLambdasAsVoidReturningDelegateTypesTests.Fixer.cs" />
+    <Compile Include="DonTStoreAsyncLambdasAsVoidReturningDelegateTypesTests.cs" />
+    <Compile Include="DonTStoreAsyncLambdasAsVoidReturningDelegateTypesTests.Fixer.cs" />
+    <Compile Include="PropagateCancellationTokensWhenPossibleTests.cs" />
+    <Compile Include="PropagateCancellationTokensWhenPossibleTests.Fixer.cs" />
+    <Compile Include="DonTMixBlockingAndAsyncTests.cs" />
+    <Compile Include="DonTMixBlockingAndAsyncTests.Fixer.cs" />
+    <Compile Include="TypesThatOwnDisposableFieldsShouldBeDisposableTests.cs" />
+    <Compile Include="TypesThatOwnDisposableFieldsShouldBeDisposableTests.Fixer.cs" />
+    <Compile Include="UseGenericEventHandlerInstancesTests.cs" />
+    <Compile Include="UseGenericEventHandlerInstancesTests.Fixer.cs" />
+    <Compile Include="EnumsShouldHaveZeroValueTests.cs" />
+    <Compile Include="EnumsShouldHaveZeroValueTests.Fixer.cs" />
+    <Compile Include="AbstractTypesShouldNotHaveConstructorsTests.cs" />
+    <Compile Include="AbstractTypesShouldNotHaveConstructorsTests.Fixer.cs" />
+    <Compile Include="MarkAssembliesWithClsCompliantTests.cs" />
+    <Compile Include="MarkAssembliesWithClsCompliantTests.Fixer.cs" />
+    <Compile Include="MarkAssembliesWithAssemblyVersionTests.cs" />
+    <Compile Include="MarkAssembliesWithAssemblyVersionTests.Fixer.cs" />
+    <Compile Include="MarkAssembliesWithComVisibleTests.cs" />
+    <Compile Include="MarkAssembliesWithComVisibleTests.Fixer.cs" />
+    <Compile Include="MarkAttributesWithAttributeUsageTests.cs" />
+    <Compile Include="DefineAccessorsForAttributeArgumentsTests.cs" />
+    <Compile Include="DefineAccessorsForAttributeArgumentsTests.Fixer.cs" />
+    <Compile Include="UsePropertiesWhereAppropriateTests.cs" />
+    <Compile Include="UsePropertiesWhereAppropriateTests.Fixer.cs" />
+    <Compile Include="InterfaceMethodsShouldBeCallableByChildTypesTests.cs" />
+    <Compile Include="InterfaceMethodsShouldBeCallableByChildTypesTests.Fixer.cs" />
+    <Compile Include="OverrideMethodsOnComparableTypesTests.cs" />
+    <Compile Include="OverrideMethodsOnComparableTypesTests.Fixer.cs" />
+    <Compile Include="StaticHolderTypesShouldBeSealedTests.cs" />
+    <Compile Include="StaticHolderTypesShouldBeSealedTests.Fixer.cs" />
+    <Compile Include="StaticHolderTypesShouldNotHaveConstructorsTests.cs" />
+    <Compile Include="StaticHolderTypesShouldNotHaveConstructorsTests.Fixer.cs" />
+    <Compile Include="MovePInvokesToNativeMethodsClassTests.cs" />
+    <Compile Include="MovePInvokesToNativeMethodsClassTests.Fixer.cs" />
+    <Compile Include="IdentifiersShouldDifferByMoreThanCaseTests.cs" />
+    <Compile Include="IdentifiersShouldDifferByMoreThanCaseTests.Fixer.cs" />
+    <Compile Include="IdentifiersShouldHaveCorrectPrefixTests.cs" />
+    <Compile Include="IdentifiersShouldHaveCorrectPrefixTests.Fixer.cs" />
+    <Compile Include="NonConstantFieldsShouldNotBeVisibleTests.cs" />
+    <Compile Include="NonConstantFieldsShouldNotBeVisibleTests.Fixer.cs" />
+    <Compile Include="DoNotDecreaseInheritedMemberVisibilityTests.cs" />
+    <Compile Include="DoNotDecreaseInheritedMemberVisibilityTests.Fixer.cs" />
+    <Compile Include="OperatorOverloadsHaveNamedAlternatesTests.cs" />
+    <Compile Include="OperatorOverloadsHaveNamedAlternatesTests.Fixer.cs" />
+    <Compile Include="OperatorsShouldHaveSymmetricalOverloadsTests.cs" />
+    <Compile Include="OperatorsShouldHaveSymmetricalOverloadsTests.Fixer.cs" />
+    <Compile Include="CollectionPropertiesShouldBeReadOnlyTests.cs" />
+    <Compile Include="OverloadOperatorEqualsOnOverridingValueTypeEqualsTests.cs" />
+    <Compile Include="OverloadOperatorEqualsOnOverridingValueTypeEqualsTests.Fixer.cs" />
+    <Compile Include="PassSystemUriObjectsInsteadOfStringsTests.cs" />
+    <Compile Include="PassSystemUriObjectsInsteadOfStringsTests.Fixer.cs" />
+    <Compile Include="ImplementIEquatableWhenOverridingObjectEqualsTests.cs" />
+    <Compile Include="ImplementIEquatableWhenOverridingObjectEqualsTests.Fixer.cs" />
+    <Compile Include="CancellationTokenParametersMustComeLastTests.cs" />
+    <Compile Include="CancellationTokenParametersMustComeLastTests.Fixer.cs" />
+    <Compile Include="ConstructorMakeNoninheritableBaseClassInheritableTests.cs" />
+    <Compile Include="ConstructorMakeNoninheritableBaseClassInheritableTests.Fixer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ImportGroup Label="Targets">
+    <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\..\packages\xunit.core.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\xunit.core.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.props'))" />
+  </Target>
+</Project>

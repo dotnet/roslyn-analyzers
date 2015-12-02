@@ -192,7 +192,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
             return new DiagnosticDescription(_code, _isWarningAsError, _squiggledText, _arguments, _startPosition, syntaxPredicate, _argumentOrderDoesNotMatter, _errorCodeType);
         }
 
-        public object Code => _code;
+        public object Code;// => _code;
 
         public override bool Equals(object obj)
         {

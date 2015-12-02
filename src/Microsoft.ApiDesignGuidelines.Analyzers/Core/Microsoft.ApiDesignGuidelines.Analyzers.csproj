@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="Settings">
+    <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
+  </ImportGroup>
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9B5FFB24-D965-4CF1-8BB2-02C282193F4F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AnalyzerProject>true</AnalyzerProject>
+    <RootNamespace>Microsoft.ApiDesignGuidelines.Analyzers</RootNamespace>
+    <AssemblyName>Microsoft.ApiDesignGuidelines.Analyzers</AssemblyName>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
+    <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
+    <RestorePackages>true</RestorePackages>
+    <SemanticVersion>$(MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion)</SemanticVersion>
+    <PreReleaseVersion>$(MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion)</PreReleaseVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
+  <ItemGroup>
+    <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
+    <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CodeAnalysis, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Common.1.0.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp">
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.1.0.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.0.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Collections.Immutable, Version=1.1.36.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\System.Collections.Immutable.1.1.36\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Composition.AttributedModel, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.AttributedModel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Composition.Convention, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Convention.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Composition.Hosting, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Hosting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Composition.Runtime, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Composition.TypedParts, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Reflection.Metadata, Version=1.0.21.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\System.Reflection.Metadata.1.0.21\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Microsoft.ApiDesignGuidelines.CSharp.Analyzers" />
+    <InternalsVisibleTo Include="Microsoft.ApiDesignGuidelines.VisualBasic.Analyzers" />
+    <InternalsVisibleToTest Include="Microsoft.ApiDesignGuidelines.Analyzers.UnitTests" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="install.ps1" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Microsoft.ApiDesignGuidelines.Analyzers.nuspec" />
+    <None Include="ThirdPartyNotices.rtf" />
+    <Content Include="Microsoft.ApiDesignGuidelines.Analyzers.props">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="uninstall.ps1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="EnumWithFlagsAttribute.cs" />
+    <Compile Include="EnumWithFlagsAttribute.Fixer.cs" />
+    <Compile Include="Helpers\EnumHelpers.cs" />
+    <Compile Include="IdentifiersShouldNotContainTypeNames.cs" />
+    <Compile Include="MarkAssembliesWithAttributesDiagnosticAnalyzer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="MicrosoftApiDesignGuidelinesAnalyzersResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MicrosoftApiDesignGuidelinesAnalyzersResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="AvoidAsyncVoid.cs" />
+    <Compile Include="AvoidAsyncVoid.Fixer.cs" />
+    <Compile Include="AsyncMethodNamesShouldEndInAsync.cs" />
+    <Compile Include="AsyncMethodNamesShouldEndInAsync.Fixer.cs" />
+    <Compile Include="DonTPassAsyncLambdasAsVoidReturningDelegateTypes.cs" />
+    <Compile Include="DonTPassAsyncLambdasAsVoidReturningDelegateTypes.Fixer.cs" />
+    <Compile Include="DonTStoreAsyncLambdasAsVoidReturningDelegateTypes.cs" />
+    <Compile Include="DonTStoreAsyncLambdasAsVoidReturningDelegateTypes.Fixer.cs" />
+    <Compile Include="PropagateCancellationTokensWhenPossible.cs" />
+    <Compile Include="PropagateCancellationTokensWhenPossible.Fixer.cs" />
+    <Compile Include="DonTMixBlockingAndAsync.cs" />
+    <Compile Include="DonTMixBlockingAndAsync.Fixer.cs" />
+    <Compile Include="TypesThatOwnDisposableFieldsShouldBeDisposable.cs" />
+    <Compile Include="TypesThatOwnDisposableFieldsShouldBeDisposable.Fixer.cs" />
+    <Compile Include="UseGenericEventHandlerInstances.cs" />
+    <Compile Include="UseGenericEventHandlerInstances.Fixer.cs" />
+    <Compile Include="EnumsShouldHaveZeroValue.cs" />
+    <Compile Include="EnumsShouldHaveZeroValue.Fixer.cs" />
+    <Compile Include="AbstractTypesShouldNotHaveConstructors.cs" />
+    <Compile Include="AbstractTypesShouldNotHaveConstructors.Fixer.cs" />
+    <Compile Include="MarkAssembliesWithClsCompliant.Fixer.cs" />
+    <Compile Include="MarkAssembliesWithAssemblyVersion.Fixer.cs" />
+    <Compile Include="MarkAssembliesWithComVisible.cs" />
+    <Compile Include="MarkAssembliesWithComVisible.Fixer.cs" />
+    <Compile Include="MarkAttributesWithAttributeUsage.cs" />
+    <Compile Include="DefineAccessorsForAttributeArguments.cs" />
+    <Compile Include="DefineAccessorsForAttributeArguments.Fixer.cs" />
+    <Compile Include="UsePropertiesWhereAppropriate.cs" />
+    <Compile Include="UsePropertiesWhereAppropriate.Fixer.cs" />
+    <Compile Include="InterfaceMethodsShouldBeCallableByChildTypes.cs" />
+    <Compile Include="InterfaceMethodsShouldBeCallableByChildTypes.Fixer.cs" />
+    <Compile Include="OverrideMethodsOnComparableTypes.cs" />
+    <Compile Include="OverrideMethodsOnComparableTypes.Fixer.cs" />
+    <Compile Include="StaticHolderTypesShouldBeSealed.cs" />
+    <Compile Include="StaticHolderTypesShouldBeSealed.Fixer.cs" />
+    <Compile Include="StaticHolderTypesShouldNotHaveConstructors.cs" />
+    <Compile Include="StaticHolderTypesShouldNotHaveConstructors.Fixer.cs" />
+    <Compile Include="MovePInvokesToNativeMethodsClass.cs" />
+    <Compile Include="MovePInvokesToNativeMethodsClass.Fixer.cs" />
+    <Compile Include="IdentifiersShouldDifferByMoreThanCase.cs" />
+    <Compile Include="IdentifiersShouldDifferByMoreThanCase.Fixer.cs" />
+    <Compile Include="IdentifiersShouldHaveCorrectPrefix.cs" />
+    <Compile Include="IdentifiersShouldHaveCorrectPrefix.Fixer.cs" />
+    <Compile Include="NonConstantFieldsShouldNotBeVisible.cs" />
+    <Compile Include="NonConstantFieldsShouldNotBeVisible.Fixer.cs" />
+    <Compile Include="DoNotDecreaseInheritedMemberVisibility.cs" />
+    <Compile Include="DoNotDecreaseInheritedMemberVisibility.Fixer.cs" />
+    <Compile Include="OperatorOverloadsHaveNamedAlternates.cs" />
+    <Compile Include="OperatorOverloadsHaveNamedAlternates.Fixer.cs" />
+    <Compile Include="OperatorsShouldHaveSymmetricalOverloads.cs" />
+    <Compile Include="OperatorsShouldHaveSymmetricalOverloads.Fixer.cs" />
+    <Compile Include="CollectionPropertiesShouldBeReadOnly.cs" />
+    <Compile Include="OverloadOperatorEqualsOnOverridingValueTypeEquals.cs" />
+    <Compile Include="OverloadOperatorEqualsOnOverridingValueTypeEquals.Fixer.cs" />
+    <Compile Include="PassSystemUriObjectsInsteadOfStrings.cs" />
+    <Compile Include="PassSystemUriObjectsInsteadOfStrings.Fixer.cs" />
+    <Compile Include="ImplementIEquatableWhenOverridingObjectEquals.cs" />
+    <Compile Include="ImplementIEquatableWhenOverridingObjectEquals.Fixer.cs" />
+    <Compile Include="CancellationTokenParametersMustComeLast.cs" />
+    <Compile Include="CancellationTokenParametersMustComeLast.Fixer.cs" />
+    <Compile Include="ConstructorMakeNoninheritableBaseClassInheritable.cs" />
+    <Compile Include="ConstructorMakeNoninheritableBaseClassInheritable.Fixer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MicrosoftApiDesignGuidelinesAnalyzersResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MicrosoftApiDesignGuidelinesAnalyzersResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
+      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
+      <Name>Analyzer.Utilities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ImportGroup Label="Targets">
+    <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />
+  </ImportGroup>
+</Project>

@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="Settings">
+    <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
+  </ImportGroup>
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7888C419-EF81-4588-B844-5C1277CABF5A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AnalyzerProject>true</AnalyzerProject>
+    <AssemblyName>Microsoft.ApiDesignGuidelines.VisualBasic.Analyzers</AssemblyName>
+    <ProjectTypeGuids>{14182A97-F7F0-4C62-8B27-98AA8AE2109A};{F184B08F-C81C-45F6-A57F-5ABD9991F28F}</ProjectTypeGuids>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
+    <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
+    <RestorePackages>true</RestorePackages>
+    <SemanticVersion>$(MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion)</SemanticVersion>
+    <PreReleaseVersion>$(MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion)</PreReleaseVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
+  <ItemGroup>
+    <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\vb\Microsoft.CodeAnalysis.Analyzers.dll" />
+    <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\vb\Microsoft.CodeAnalysis.VisualBasic.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Microsoft.ApiDesignGuidelines.Analyzers.csproj">
+      <Project>{9B5FFB24-D965-4CF1-8BB2-02C282193F4F}</Project>
+      <Name>Microsoft.ApiDesignGuidelines.Analyzers</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CodeAnalysis, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Common.1.0.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.0.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.VisualBasic, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.VisualBasic.1.0.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.VisualBasic.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.VisualBasic.Workspaces.1.0.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Collections.Immutable, Version=1.1.36.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\System.Collections.Immutable.1.1.36\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Composition.AttributedModel, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.AttributedModel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Composition.Convention, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Convention.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Composition.Hosting, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Hosting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Composition.Runtime, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Composition.TypedParts, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Reflection.Metadata, Version=1.0.21.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\System.Reflection.Metadata.1.0.21\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Microsoft.ApiDesignGuidelines.VisualBasic.Analyzers.props">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BasicAvoidAsyncVoid.vb" />
+    <Compile Include="BasicAvoidAsyncVoid.Fixer.vb" />
+    <Compile Include="BasicAsyncMethodNamesShouldEndInAsync.vb" />
+    <Compile Include="BasicAsyncMethodNamesShouldEndInAsync.Fixer.vb" />
+    <Compile Include="BasicDonTPassAsyncLambdasAsVoidReturningDelegateTypes.vb" />
+    <Compile Include="BasicDonTPassAsyncLambdasAsVoidReturningDelegateTypes.Fixer.vb" />
+    <Compile Include="BasicDonTStoreAsyncLambdasAsVoidReturningDelegateTypes.vb" />
+    <Compile Include="BasicDonTStoreAsyncLambdasAsVoidReturningDelegateTypes.Fixer.vb" />
+    <Compile Include="BasicPropagateCancellationTokensWhenPossible.vb" />
+    <Compile Include="BasicPropagateCancellationTokensWhenPossible.Fixer.vb" />
+    <Compile Include="BasicDonTMixBlockingAndAsync.vb" />
+    <Compile Include="BasicDonTMixBlockingAndAsync.Fixer.vb" />
+    <Compile Include="BasicTypesThatOwnDisposableFieldsShouldBeDisposable.vb" />
+    <Compile Include="BasicUseGenericEventHandlerInstances.vb" />
+    <Compile Include="BasicUseGenericEventHandlerInstances.Fixer.vb" />
+    <Compile Include="BasicEnumsShouldHaveZeroValue.Fixer.vb" />
+    <Compile Include="BasicAbstractTypesShouldNotHaveConstructors.vb" />
+    <Compile Include="BasicAbstractTypesShouldNotHaveConstructors.Fixer.vb" />
+    <Compile Include="BasicMarkAssembliesWithClsCompliant.Fixer.vb" />
+    <Compile Include="BasicMarkAssembliesWithAssemblyVersion.Fixer.vb" />
+    <Compile Include="BasicDefineAccessorsForAttributeArguments.vb" />
+    <Compile Include="BasicUsePropertiesWhereAppropriate.vb" />
+    <Compile Include="BasicUsePropertiesWhereAppropriate.Fixer.vb" />
+    <Compile Include="BasicInterfaceMethodsShouldBeCallableByChildTypes.vb" />
+    <Compile Include="BasicInterfaceMethodsShouldBeCallableByChildTypes.Fixer.vb" />
+    <Compile Include="BasicOverrideMethodsOnComparableTypes.Fixer.vb" />
+    <Compile Include="BasicStaticHolderTypesShouldBeSealed.vb" />
+    <Compile Include="BasicStaticHolderTypesShouldBeSealed.Fixer.vb" />
+    <Compile Include="BasicStaticHolderTypesShouldNotHaveConstructors.vb" />
+    <Compile Include="BasicStaticHolderTypesShouldNotHaveConstructors.Fixer.vb" />
+    <Compile Include="BasicMovePInvokesToNativeMethodsClass.Fixer.vb" />
+    <Compile Include="BasicIdentifiersShouldDifferByMoreThanCase.vb" />
+    <Compile Include="BasicIdentifiersShouldDifferByMoreThanCase.Fixer.vb" />
+    <Compile Include="BasicIdentifiersShouldHaveCorrectPrefix.vb" />
+    <Compile Include="BasicIdentifiersShouldHaveCorrectPrefix.Fixer.vb" />
+    <Compile Include="BasicNonConstantFieldsShouldNotBeVisible.vb" />
+    <Compile Include="BasicNonConstantFieldsShouldNotBeVisible.Fixer.vb" />
+    <Compile Include="BasicDoNotDecreaseInheritedMemberVisibility.vb" />
+    <Compile Include="BasicDoNotDecreaseInheritedMemberVisibility.Fixer.vb" />
+    <Compile Include="BasicOperatorOverloadsHaveNamedAlternates.vb" />
+    <Compile Include="BasicOperatorOverloadsHaveNamedAlternates.Fixer.vb" />
+    <Compile Include="BasicOperatorsShouldHaveSymmetricalOverloads.vb" />
+    <Compile Include="BasicOperatorsShouldHaveSymmetricalOverloads.Fixer.vb" />
+    <Compile Include="BasicOverloadOperatorEqualsOnOverridingValueTypeEquals.Fixer.vb" />
+    <Compile Include="BasicPassSystemUriObjectsInsteadOfStrings.vb" />
+    <Compile Include="BasicPassSystemUriObjectsInsteadOfStrings.Fixer.vb" />
+    <Compile Include="BasicImplementIEquatableWhenOverridingObjectEquals.vb" />
+    <Compile Include="BasicImplementIEquatableWhenOverridingObjectEquals.Fixer.vb" />
+    <Compile Include="BasicCancellationTokenParametersMustComeLast.vb" />
+    <Compile Include="BasicCancellationTokenParametersMustComeLast.Fixer.vb" />
+    <Compile Include="BasicConstructorMakeNoninheritableBaseClassInheritable.vb" />
+    <Compile Include="BasicConstructorMakeNoninheritableBaseClassInheritable.Fixer.vb" />
+  </ItemGroup>
+  <ImportGroup Label="Targets">
+    <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />
+  </ImportGroup>
+</Project>

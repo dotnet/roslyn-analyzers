@@ -4,8 +4,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-using System.Security.Cryptography.Hashing.Algorithms.Analyzers.Common;
-
 namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]

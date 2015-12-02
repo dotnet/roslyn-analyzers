@@ -2,7 +2,7 @@
 
 using Microsoft.CodeAnalysis;
 
-namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers.Common
+namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
 {
     public class CompilationSecurityTypes
     { 

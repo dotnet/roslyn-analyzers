@@ -1,14 +1,10 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-
-using System.Security.Cryptography.Hashing.Algorithms.Analyzers.Common;
-
 
 namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
 {
@@ -18,11 +14,11 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
         internal const string DoNotUseWeakCryptographicRuleId = "CA5350";
         internal const string DoNotUseBrokenCryptographicRuleId = "CA5351";
 
-        private static readonly LocalizableString s_localizableDoNotUseMD5Title = DiagnosticHelpers.GetLocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseMD5));
-        private static readonly LocalizableString s_localizableDoNotUseMD5Description = DiagnosticHelpers.GetLocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseMD5Description));
-        private static readonly LocalizableString s_localizableDoNotUseSHA1Title = DiagnosticHelpers.GetLocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseSHA1));
-        private static readonly LocalizableString s_localizableDoNotUseSHA1Description = DiagnosticHelpers.GetLocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseSHA1Description));
-        
+        private static readonly LocalizableString s_localizableDoNotUseMD5Title = new LocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseMD5), SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.ResourceManager, typeof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources));
+        private static readonly LocalizableString s_localizableDoNotUseMD5Description = new LocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseMD5Description), SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.ResourceManager, typeof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources));
+        private static readonly LocalizableString s_localizableDoNotUseSHA1Title = new LocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseSHA1), SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.ResourceManager, typeof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources));
+        private static readonly LocalizableString s_localizableDoNotUseSHA1Description = new LocalizableResourceString(nameof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.DoNotUseSHA1Description), SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources.ResourceManager, typeof(SystemSecurityCryptographyHashingAlgorithmsAnalyzersResources));
+
 
         internal static DiagnosticDescriptor DoNotUseMD5SpecificRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographicRuleId,
                                                                                           s_localizableDoNotUseMD5Title,
@@ -87,7 +83,7 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
                 SyntaxNode node = context.Node;
                 SemanticModel model = context.SemanticModel;
 
-                ISymbol symbol = SyntaxNodeHelper.GetSymbol(node, model);
+                ISymbol symbol = node.GetDeclaredOrReferencedSymbol(model);
                 IMethodSymbol method = symbol as IMethodSymbol;
                 if (method == null)
                 {
@@ -97,12 +93,12 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
                 INamedTypeSymbol type = method.ContainingType;
                 DiagnosticDescriptor rule = null;
 
-                if (type.IsDerivedFrom(_cryptTypes.MD5, baseTypesOnly: true))
+                if (type.DerivesFrom(_cryptTypes.MD5))
                 {
                     rule = DoNotUseMD5SpecificRule;
                 } 
-                else if (type.IsDerivedFrom(_cryptTypes.SHA1, baseTypesOnly: true) ||
-                         type.IsDerivedFrom(_cryptTypes.HMACSHA1, baseTypesOnly: true))
+                else if (type.DerivesFrom(_cryptTypes.SHA1) ||
+                         type.DerivesFrom(_cryptTypes.HMACSHA1))
                 {
                     rule = DoNotUseSHA1SpecificRule;
                 }

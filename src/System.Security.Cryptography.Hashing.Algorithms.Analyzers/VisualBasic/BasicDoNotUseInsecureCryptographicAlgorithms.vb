@@ -4,8 +4,6 @@ Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 
-Imports System.Security.Cryptography.Hashing.Algorithms.Analyzers.Common
-
 Namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
 
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>

@@ -154,6 +154,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaCompilation.Test", "Met
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaCompilation.Vsix", "MetaCompilation\MetaCompilation\MetaCompilation.Vsix\MetaCompilation.Vsix.csproj", "{AEDFBCB1-8D38-4148-B9D5-E31FB6087E14}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "System.Security.Cryptography.Hashing.Algorithms.Analyzers", "System.Security.Cryptography.Hashing.Algorithms.Analyzers", "{FB4EA164-223A-418C-932B-026FE0234089}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Security.Cryptography.Hashing.Algorithms.Analyzers", "System.Security.Cryptography.Hashing.Algorithms.Analyzers\Core\System.Security.Cryptography.Hashing.Algorithms.Analyzers.csproj", "{DAA5B1A4-9C03-4F0E-AC61-AAD0F96457F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Security.Cryptography.Hashing.CSharp.Algorithms", "System.Security.Cryptography.Hashing.Algorithms.Analyzers\CSharp\System.Security.Cryptography.Hashing.CSharp.Algorithms.csproj", "{9C86C9DB-6A03-487A-8A38-9D09DB7DFDFB}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "System.Security.Cryptography.Hashing.Algorithms.VisualBasic.Analyzers", "System.Security.Cryptography.Hashing.Algorithms.Analyzers\VisualBasic\System.Security.Cryptography.Hashing.Algorithms.VisualBasic.Analyzers.vbproj", "{857233D3-88FC-4CE5-9913-0456929A1B6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Security.Cryptography.Hashing.Algorithms.Analyzers.UnitTests", "System.Security.Cryptography.Hashing.Algorithms.Analyzers\UnitTests\System.Security.Cryptography.Hashing.Algorithms.Analyzers.UnitTests.csproj", "{811DBEC8-EC7E-43E9-ACAD-A59FF524B79E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -404,6 +414,22 @@ Global
 		{AEDFBCB1-8D38-4148-B9D5-E31FB6087E14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AEDFBCB1-8D38-4148-B9D5-E31FB6087E14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AEDFBCB1-8D38-4148-B9D5-E31FB6087E14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAA5B1A4-9C03-4F0E-AC61-AAD0F96457F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAA5B1A4-9C03-4F0E-AC61-AAD0F96457F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAA5B1A4-9C03-4F0E-AC61-AAD0F96457F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAA5B1A4-9C03-4F0E-AC61-AAD0F96457F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C86C9DB-6A03-487A-8A38-9D09DB7DFDFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C86C9DB-6A03-487A-8A38-9D09DB7DFDFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C86C9DB-6A03-487A-8A38-9D09DB7DFDFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C86C9DB-6A03-487A-8A38-9D09DB7DFDFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{857233D3-88FC-4CE5-9913-0456929A1B6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{857233D3-88FC-4CE5-9913-0456929A1B6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{857233D3-88FC-4CE5-9913-0456929A1B6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{857233D3-88FC-4CE5-9913-0456929A1B6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{811DBEC8-EC7E-43E9-ACAD-A59FF524B79E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{811DBEC8-EC7E-43E9-ACAD-A59FF524B79E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{811DBEC8-EC7E-43E9-ACAD-A59FF524B79E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{811DBEC8-EC7E-43E9-ACAD-A59FF524B79E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -470,5 +496,9 @@ Global
 		{6CD505A6-60D7-4C35-AE53-694AFDEB3A64} = {602C97EB-B947-4532-9DBC-EB735E3BCD8A}
 		{45D60761-2694-4084-9B23-B8D1660B6712} = {602C97EB-B947-4532-9DBC-EB735E3BCD8A}
 		{AEDFBCB1-8D38-4148-B9D5-E31FB6087E14} = {602C97EB-B947-4532-9DBC-EB735E3BCD8A}
+		{DAA5B1A4-9C03-4F0E-AC61-AAD0F96457F8} = {FB4EA164-223A-418C-932B-026FE0234089}
+		{9C86C9DB-6A03-487A-8A38-9D09DB7DFDFB} = {FB4EA164-223A-418C-932B-026FE0234089}
+		{857233D3-88FC-4CE5-9913-0456929A1B6E} = {FB4EA164-223A-418C-932B-026FE0234089}
+		{811DBEC8-EC7E-43E9-ACAD-A59FF524B79E} = {FB4EA164-223A-418C-932B-026FE0234089}
 	EndGlobalSection
 EndGlobal

@@ -25,7 +25,6 @@
     <file src="$binaries$System.Security.Cryptography.Hashing.Algorithms.CSharp.Analyzers.dll" target="analyzers\dotnet\cs" />
     <file src="$binaries$System.Security.Cryptography.Hashing.Algorithms.Analyzers.dll" target="analyzers\dotnet\vb" />
     <file src="$binaries$System.Security.Cryptography.Hashing.Algorithms.VisualBasic.Analyzers.dll" target="analyzers\dotnet\vb" />
-    <file src="$binaries$System.Security.Cryptography.Hashing.Algorithms.Analyzers.Common.props" target="build" /> 
     <file src="Install.ps1" target="tools" />
     <file src="Uninstall.ps1" target="tools" />
     <file src="ThirdPartyNotices.rtf" target="" />

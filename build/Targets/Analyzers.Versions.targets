@@ -58,5 +58,8 @@
 
       <SystemCollectionsImmutableAnalyzersSemanticVersion>1.1.0</SystemCollectionsImmutableAnalyzersSemanticVersion>
       <SystemCollectionsImmutableAnalyzersPreReleaseVersion>beta1</SystemCollectionsImmutableAnalyzersPreReleaseVersion>
+      
+      <SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>1.1.0</SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>
+      <SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>beta1</SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>
    </PropertyGroup>
 </Project>

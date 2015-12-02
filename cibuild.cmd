@@ -2,7 +2,7 @@
 
 REM Parse Arguments.
 
-set AnalyzersRoot=%~dp0\PortFxCop
+set AnalyzersRoot=%~dp0
 set BuildConfiguration=Debug
 :ParseArguments
 if "%1" == "" goto :DoneParsing

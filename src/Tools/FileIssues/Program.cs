@@ -290,6 +290,10 @@ namespace FileIssues
             {
                 AddLabel(UrgencySoonLabel, labelNamesToAdd, existingLabelNames);
             }
+            else
+            {
+                RemoveLabel(UrgencySoonLabel, labelNamesToRemove, existingLabelNames);
+            }
 
             switch (ruleToPort.Disposition)
             {

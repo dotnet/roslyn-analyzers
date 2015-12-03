@@ -15,5 +15,18 @@
         public string Notes { get; set; }
 
         public Disposition Disposition { get; set; }
+
+        public Priority OriginalPriority { get; set; }
+
+        public Priority RevisedPriority { get; set; }
+
+        public bool Soon
+        {
+            get
+            {
+                return RevisedPriority == Priority.High
+                    || (RevisedPriority == Priority.None && OriginalPriority == Priority.High); 
+            }
+        }
     }
 }

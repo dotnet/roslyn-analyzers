@@ -59,12 +59,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Priority.cs" />
     <Compile Include="Disposition.cs" />
     <Compile Include="FileIssuesOptions.cs" />
     <Compile Include="GitHub.cs" />
     <Compile Include="LogHelper.cs" />
     <Compile Include="PortingInfo.cs" />
     <Compile Include="PortingInfoClassMap.cs" />
+    <Compile Include="PriorityConverter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">

@@ -13,23 +13,74 @@ Debug | Release
 Projects
 ========
 
-AsyncPackage
------------
-
-*Created by summer 2014 interns Chardai Page, [Kendra Havens](https://github.com/kendrahavens), and Vivian Morgowicz*
-
-The AsyncPackage analyzer enforces good practices when writing code that makes use of C#'s `async` and `await` language features.
-
-[More info](src/AsyncPackage/AsyncPackage.md)
-
-
 Desktop.Analyzers
 -----------------
 
+*Latest stable version:* [1.1.0](https://www.nuget.org/packages/Desktop.Analyzers/)
+
 Analyzers for APIs specific to the desktop .NET Framework.
 
-[More info](src/FxCop/Desktop.Analyzers/Desktop.Analyzers.md)
+[More info](src/Desktop.Analyzers/Desktop.Analyzers.md)
 
+Microsoft.ApiDesignGuidelines.Analyzers
+--------------------------------
+
+Provides analyzers which implement the .NET design guidelines for API authors.
+
+[More info](src/Microsoft.ApiDesignGuidelines.Analyzers/Microsoft.ApiDesignGuidelines.Analyzers.md)
+
+
+Microsoft.CodeAnalysis.Analyzers
+--------------------------------
+
+*Latest stable version:* [1.1.0](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers/)
+
+Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
+
+[More info](src/CodeAnalysis/Microsoft.CodeAnalysis.Analyzers.md)
+
+
+Roslyn.Diagnostics.Analyzers
+-------------------------------
+
+Contains analyzers specific to the .NET Compiler Platform ("Roslyn") project.
+
+[More info](src/Roslyn.Diagnostics.Analyzers/Roslyn.Diagnostics.Analyzers.md)
+
+System.Collections.Immutable.Analyzers
+------------------------
+
+Provides guidelines for using APIs in the System.Collections.Immutable contract.
+
+[More info](src/System.Collections.Immutable.Analyzers/System.Collections.Immutable.Analyzers.md)
+
+System.Runtime.Analyzers
+------------------------
+
+*Latest stable version:* [1.1.0](https://www.nuget.org/packages/System.Runtime.Analyzers/)
+
+Provides guidelines for using APIs in the System.Runtime contract.
+
+[More info](src/System.Runtime.Analyzers/System.Runtime.Analyzers.md)
+
+
+System.Runtime.InteropServices.Analyzers
+----------------------------------------
+
+*Latest stable version:* [1.1.0](https://www.nuget.org/packages/System.Runtime.InteropServices.Analyzers/)
+
+Provides guidelines for using APIs in the System.Runtime.InteropServices contract.
+
+[More info](src/System.Runtime.InteropServices.Analyzers/System.Runtime.InteropServices.Analyzers.md)
+
+System.Security.Cryptography.Hashing.Algorithms.Analyzers
+------------------------
+
+*Latest stable version:* [1.1.0](https://www.nuget.org/packages/System.Security.Cryptography.Hashing.Algorithms.Analyzers/)
+
+Provides guidelines for using APIs in the System.Cryptography.Hashing.Algorithms contract.
+
+[More info](src/System.Security.Cryptography.Hashing.Algorithms.Analyzers/System.Security.Cryptography.Hashing.Algorithms.Analyzers.md)
 
 MetaCompilation
 ---------------
@@ -39,54 +90,6 @@ MetaCompilation
 The MetaCompilation Analyzer is an analyzer that functions as a tutorial to teach users how to write an analyzer. It uses diagnostics and code fixes to guide the user through the various steps required to create a simple analyzer. It is designed for a novice analyzer programmer with some previous programming experience.
 
 For instructions on using this tutorial, see [Instructions](src/MetaCompilation/MetaCompilation/MetaCompilation/ReadMe.md#instructions).
-
-
-Microsoft.AnalyzerPowerPack
----------------------------
-
-*Latest stable version:* [1.0.1](https://www.nuget.org/packages/Microsoft.AnalyzerPowerPack/)
-
-General language rules implemented as analyzers using the .NET Compiler Platform ("Roslyn").
-
-[More info](src/AnalyzerPowerPack/AnalyzerPowerPack.md)
-
-
-Microsoft.CodeAnalysis.Analyzers
---------------------------------
-
-*Latest stable version:* [1.0.0](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers/)
-
-Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
-
-[More info](src/CodeAnalysis/Microsoft.CodeAnalysis.Analyzers.md)
-
-
-Microsoft.Net.RoslynDiagnostics
--------------------------------
-
-Contains analyzers specific to the .NET Compiler Platform ("Roslyn") project.
-
-[More info](src/Roslyn/Microsoft.Net.RoslynDiagnostics.md)
-
-
-System.Runtime.Analyzers
-------------------------
-
-*Latest stable version:* [1.0.1](https://www.nuget.org/packages/System.Runtime.Analyzers/)
-
-Provides guidelines for using APIs in the System.Runtime namespace.
-
-[More info](src/FxCop/System.Runtime.Analyzers/System.Runtime.Analyzers.md)
-
-
-System.Runtime.InteropServices.Analyzers
-----------------------------------------
-
-*Latest stable version:* [1.0.1](https://www.nuget.org/packages/System.Runtime.InteropServices.Analyzers/)
-
-Provides guidelines for using APIs in the System.Runtime.InteropServices namespace.
-
-[More info](src/FxCop/System.Runtime.InteropServices.Analyzers/System.Runtime.InteropServices.Analyzers.md)
 
 
 Getting Started

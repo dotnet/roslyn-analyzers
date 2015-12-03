@@ -18,6 +18,7 @@ namespace a2md
             var outputMarkdown = args
                 .Select(arg => new AnalyzerFileReference(arg, loader))
                 .SelectMany(analyzerReference => analyzerReference.GetAnalyzersForAllLanguages())
+                .Where(HasImplementation)
                 .SelectMany(analyzer => analyzer.SupportedDiagnostics)
                 .Distinct(comparer)
                 .OrderBy(descriptor => descriptor.Id)
@@ -25,6 +26,24 @@ namespace a2md
                 .Join(Environment.NewLine + Environment.NewLine);
 
             Console.Write(outputMarkdown);
+        }
+
+        /// <summary>
+        /// Check the method body of the Initialize method of an analyzer and if that's empty,
+        /// then the analyzer hasn't been implemented yet.
+        /// </summary>
+        private static bool HasImplementation(DiagnosticAnalyzer analyzer)
+        {
+            var method = analyzer.GetType().GetMethod("Initialize");
+            if (method != null)
+            {
+                var body = method.GetMethodBody();
+                var ilInstructionCount = body?.GetILAsByteArray()?.Count();
+                // An empty method has two IL instructions - nop and ret.
+                return ilInstructionCount != 2;
+            }
+
+            return true;
         }
 
         private static string GenerateDescriptorText(DiagnosticDescriptor descriptor)

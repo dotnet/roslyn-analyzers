@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -18,9 +19,11 @@ namespace FileIssues
         private const int Succeeded = 0;
         private const int Failed = 1;
 
-        private const string FxCopPortLabel = "FxCop Port";
-        private const string NeedsReviewLabel = "Needs Review";
+        private const string FxCopPortLabel = "FxCop-Port";
+        private const string NeedsReviewLabel = "Needs-Review";
         private const string CutLabel = "Resolution-Won't Fix";
+        private const string PortedLabel = "Resolution-Fixed";
+        private const string UrgencySoonLabel = "Urgency-Soon";
 
         private readonly ILog _log = LogHelper.GetLogger();
         private readonly FileIssuesOptions _options;
@@ -100,7 +103,14 @@ namespace FileIssues
                 {
                     _log.InfoFormat(Resources.InfoFilingNewIssue, ruleToPort.Id);
 
-                    await FileIssueAsync(ruleToPort, title);
+                    Issue issue = FileIssueAsync(ruleToPort, title).Result;
+
+                    // If the issue we just filed has already been dealt with, one way
+                    // or another, then immediately close it. UpdateIssueAsync will do that.
+                    if (ruleToPort.Disposition == Disposition.Cut || ruleToPort.Disposition == Disposition.Ported)
+                    {
+                        await UpdateIssueAsync(ruleToPort, issue);
+                    }
                 }
                 else if (numMatchingIssues == 1)
                 {
@@ -127,18 +137,65 @@ namespace FileIssues
             }
         }
 
-        private async Task FileIssueAsync(PortingInfo ruleToPort, string title)
+        private async Task<Issue> FileIssueAsync(PortingInfo ruleToPort, string title)
         {
+            Issue issue = null;
+
             NewIssue newIssue = CreateNewIssue(ruleToPort, title);
             if (_options.DryRun)
             {
                 _log.Info(Resources.InfoDryRunIssueNotCreated);
+                issue = MakeFakeIssue(newIssue);
             }
             else
             {
-                Issue issue = await _issuesClient.Create(_options.RepoOwner, _options.RepoName, newIssue);
+                issue = await _issuesClient.Create(_options.RepoOwner, _options.RepoName, newIssue);
                 _log.InfoFormat(Resources.InfoIssueCreated, issue.Number);
             }
+
+            return issue;
+        }
+
+        /// <summary>
+        /// Synthesize an Issue object from the NewIssue object representing
+        /// the issue we sent to GitHub to be filed.
+        /// </summary>
+        /// <param name="newIssue">
+        /// Object representing the issue we sent to GitHub.
+        /// </param>
+        /// <returns>
+        /// An Issue object, partially filled out with information from <paramref name="newIssue"/>.
+        /// </returns>
+        /// <remarks>
+        /// In a dry run, we don't actually send the NewIssue object to GitHub, so we
+        /// don't get a real Issue object back. If we then want to update the Issue object,
+        /// as we do in the case where we want to immediately close it, we must
+        /// synthesize an issue object so that the dry run correctly reports what
+        /// would have happened in the course of the update.
+        /// </remarks>
+        private Issue MakeFakeIssue(NewIssue newIssue)
+        {
+            return new Issue(
+                null,               // url
+                null,               // htmlUrl
+                null,               // commentsUrl
+                9999,               // issue number
+                ItemState.Open,     // state
+                newIssue.Title,     // title
+                newIssue.Body,      // body
+                null,               // user
+                newIssue.Labels     // labels (with conversion from label names to Label objects
+                    .Select(labelName => new Label(null, labelName, "no color"))
+                    .ToList().
+                    AsReadOnly(),
+                null,               // assignee
+                null,               // milestone
+                0,                  // number of comments
+                null,               // pull request
+                null,               // closed date
+                DateTimeOffset.Now, // created date
+                null                // updated date
+                );
         }
 
         private async Task UpdateIssueAsync(PortingInfo ruleToPort, Issue existingIssue)
@@ -184,6 +241,15 @@ namespace FileIssues
                 case Disposition.Cut:
                     AddLabel(CutLabel, newIssue.Labels);
                     break;
+
+                case Disposition.Ported:
+                    AddLabel(PortedLabel, newIssue.Labels);
+                    break;
+            }
+
+            if (ruleToPort.Soon)
+            {
+                AddLabel(UrgencySoonLabel, newIssue.Labels);
             }
 
             newIssue.Body = FormatIssueBody(ruleToPort);
@@ -196,13 +262,13 @@ namespace FileIssues
             IssueUpdate issueUpdate = existingIssue.ToUpdate();
             issueUpdate.Body = FormatIssueBody(ruleToPort);
 
-            if (existingIssue.State == ItemState.Open && ruleToPort.Disposition == Disposition.Cut)
+            if (existingIssue.State == ItemState.Open && (ruleToPort.Disposition == Disposition.Cut || ruleToPort.Disposition == Disposition.Ported))
             {
                 _log.InfoFormat(Resources.InfoClosingIssue, existingIssue.Number);
                 issueUpdate.State = ItemState.Closed;
             }
 
-            if (existingIssue.State == ItemState.Closed && ruleToPort.Disposition != Disposition.Cut)
+            if (existingIssue.State == ItemState.Closed && (ruleToPort.Disposition != Disposition.Cut && ruleToPort.Disposition != Disposition.Ported))
             {
                 _log.InfoFormat(Resources.InfoReopeningIssue, existingIssue.Number);
                 issueUpdate.State = ItemState.Open;
@@ -220,20 +286,38 @@ namespace FileIssues
 
             AddLabel(FxCopPortLabel, labelNamesToAdd, existingLabelNames);
 
+            if (ruleToPort.Soon)
+            {
+                AddLabel(UrgencySoonLabel, labelNamesToAdd, existingLabelNames);
+            }
+            else
+            {
+                RemoveLabel(UrgencySoonLabel, labelNamesToRemove, existingLabelNames);
+            }
+
             switch (ruleToPort.Disposition)
             {
                 case Disposition.NeedsReview:
                     AddLabel(NeedsReviewLabel, labelNamesToAdd, existingLabelNames);
                     RemoveLabel(CutLabel, labelNamesToRemove, existingLabelNames);
+                    RemoveLabel(PortedLabel, labelNamesToRemove, existingLabelNames);
                     break;
 
                 case Disposition.Port:
-                    RemoveLabel(NeedsReviewLabel, labelNamesToAdd, existingLabelNames);
+                    RemoveLabel(NeedsReviewLabel, labelNamesToRemove, existingLabelNames);
                     RemoveLabel(CutLabel, labelNamesToRemove, existingLabelNames);
+                    RemoveLabel(PortedLabel, labelNamesToRemove, existingLabelNames);
                     break;
 
                 case Disposition.Cut:
                     AddLabel(CutLabel, labelNamesToAdd, existingLabelNames);
+                    RemoveLabel(NeedsReviewLabel, labelNamesToRemove, existingLabelNames);
+                    RemoveLabel(PortedLabel, labelNamesToRemove, existingLabelNames);
+                    break;
+
+                case Disposition.Ported:
+                    AddLabel(PortedLabel, labelNamesToAdd, existingLabelNames);
+                    RemoveLabel(CutLabel, labelNamesToRemove, existingLabelNames);
                     RemoveLabel(NeedsReviewLabel, labelNamesToRemove, existingLabelNames);
                     break;
             }

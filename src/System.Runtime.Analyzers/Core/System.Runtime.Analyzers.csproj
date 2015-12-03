@@ -81,7 +81,6 @@
     <InternalsVisibleToTest Include="System.Runtime.Analyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="install.ps1" />
     <None Include="packages.config">
       <SubType>Designer</SubType>

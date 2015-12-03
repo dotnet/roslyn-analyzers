@@ -96,7 +96,6 @@
     <Content Include="Microsoft.ApiDesignGuidelines.CSharp.Analyzers.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

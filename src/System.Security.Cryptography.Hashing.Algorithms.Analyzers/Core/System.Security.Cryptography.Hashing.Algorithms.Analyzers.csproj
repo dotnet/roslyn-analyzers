@@ -82,7 +82,6 @@
     <InternalsVisibleToTest Include="System.Security.Cryptography.Hashing.Algorithms.Analyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="install.ps1" />
     <None Include="uninstall.ps1" />

@@ -93,7 +93,7 @@ namespace FileIssues
                     State = ItemState.All       // Get issues whether they're open or closed.
                 });
 
-            foreach (var ruleToPort in rulesToPort)
+            foreach (var ruleToPort in rulesToPort.Take(40))
             {
                 string title = MakeIssueTitle(ruleToPort);
                 var matchingIssues = existingIssues.Where(issue => issue.Title == title);
@@ -232,6 +232,12 @@ namespace FileIssues
             var newIssue = new NewIssue(title);
             AddLabel(FxCopPortLabel, newIssue.Labels);
 
+            string areaLabel = GetAreaLabel(ruleToPort.ProposedAnalyzer);
+            if (areaLabel != null)
+            {
+                AddLabel(areaLabel, newIssue.Labels);
+            }
+
             switch (ruleToPort.Disposition)
             {
                 case Disposition.NeedsReview:
@@ -255,6 +261,50 @@ namespace FileIssues
             newIssue.Body = FormatIssueBody(ruleToPort);
 
             return newIssue;
+        }
+
+        private static readonly Dictionary<string, string> s_analyzerNameToLabelNameDictionary = new Dictionary<string, string>
+        {
+            { "ApiReview", "Area-ApiReview.Analyzers" },
+
+            // TODO: Rename area to "Area-Desktop.Analyzers".
+            { "Desktop", "Area-DesktopAnalyzers" },
+
+            // Diagnostics applied to the Roslyn codebase itself.
+            // TODO: Rename area to "Area-Roslyn.Diagnostics.Analyzers".
+            { "Roslyn.Diagnostics", "Area-RoslynAnalyzers" },
+
+            { "Microsoft.ApiDesignGuidelines", "Area-Microsoft.ApiDesignGuidelines.Analyzers" },
+
+            // Diagnostics for usage of the Roslyn API (e.g., by analyzer authors).
+            // TODO: Rename area to "Area-Microsoft.CodeAnalysis.Analyzers".
+            { "Microsoft.CodeAnalysis", "Area-CodeAnalysisDiagnosticAnalyzers" },
+
+            { "Microsoft.Composition", "Area-Microsoft.Composition.Analyzers" },
+            { "Microsoft.Maintainability", "Area-Microsoft.Maintainability.Analyzers" },
+            { "Microsoft.QualityGuidelines", "Area-Microsoft.QualityGuidelines.Analyzers" },
+            { "System.Diagnostics", "Area-System.Diagnostics.Analyzers" },
+            { "System.Resources", "Area-System.Resources.Analyzers" },
+
+            // TODO: Rename area to "Area-System.Runtime.Analyzers".
+            { "System.Runtime", "Area-SystemRuntimeAnalyzers" },
+
+            { "System.Runtime.InteropServices", "Area-System.Runtime.InteropServices.Analyzers" },
+            { "System.Security.Cryptography.Algorithms", "Area-System.Security.Cryptography.Algorithms.Analyzers" },
+            { "System.Threading.Tasks", "Area-System.Threading.Tasks.Analyzers" },
+            { "Text", "Area-Text.Analyzers" },
+            { "XmlDocumentationComments", "Area-XmlDocumentationComments.Analyzers" }
+        };
+
+        private string GetAreaLabel(string proposedAnalyzer)
+        {
+            string areaLabel;
+            if (!s_analyzerNameToLabelNameDictionary.TryGetValue(proposedAnalyzer, out areaLabel))
+            {
+                areaLabel = null;
+            }
+
+            return areaLabel;
         }
 
         private IssueUpdate CreateIssueUpdate(PortingInfo ruleToPort, Issue existingIssue)
@@ -373,7 +423,6 @@ namespace FileIssues
             return
                 $"**Title:** {ruleToPort.Title}\n\n" +
                 $"**Description:**\n\n{ruleToPort.Description}\n\n" +
-                $"**Proposed analyzer:** {ruleToPort.ProposedAnalyzer}\n\n" +
                 $"**Dependency:** {ruleToPort.Dependency}\n\n" +
                 $"**Notes:**\n\n{ruleToPort.Notes}";
         }

@@ -314,6 +314,8 @@ namespace AnalyzerCodeGenerator
 
         private static Dictionary<string, CheckData> GetExisingChecksFromCoreProjectFile(string projFile, Dictionary<string, CheckData> allChecksByName)
         {
+            var analyzerProject = projFile.Remove(projFile.IndexOf(".Analyzers.csproj"));
+
             XDocument xmlFile = XDocument.Load(projFile);
             Debug.Assert(xmlFile.Root.Name.LocalName == "Project");
 
@@ -328,6 +330,13 @@ namespace AnalyzerCodeGenerator
                 var checkName = Path.GetFileNameWithoutExtension(file);
                 if (!allChecksByName.ContainsKey(checkName))
                 {
+                    continue;
+                }
+
+                // if a check is moved to a different project, we need to regen it)
+                if (allChecksByName[checkName].AnalyzerProject != analyzerProject) 
+                {
+                    Console.WriteLine($"Please manually delete\t {checkName} from {analyzerProject}");
                     continue;
                 }
 

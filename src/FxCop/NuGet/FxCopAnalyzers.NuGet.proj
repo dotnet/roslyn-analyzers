@@ -7,8 +7,6 @@
   <PropertyGroup>
     <SemanticVersion>$(FxCopAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(FxCopAnalyzersPreReleaseVersion)</PreReleaseVersion>
-    <DependencyMinimumSemanticVersion>$(FxCopAnalyzersDependencyMinimumSemanticVersion)</DependencyMinimumSemanticVersion>
-    <DependencyNextSemanticVersion>$(FxCopAnalyzersDependencyNextSemanticVersion)</DependencyNextSemanticVersion>
     <NuGetLicenseURL>$(NuGetLicenseURLRedist)</NuGetLicenseURL>  
 </PropertyGroup>
   <ItemGroup>

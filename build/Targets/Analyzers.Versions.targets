@@ -1,18 +1,18 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <PropertyGroup>
-      <MetaCompilationSemanticVersion>1.1.0</MetaCompilationSemanticVersion>
+      <MetaCompilationSemanticVersion>1.2.0</MetaCompilationSemanticVersion>
       <MetaCompilationPreReleaseVersion>beta1</MetaCompilationPreReleaseVersion>
 
-      <MicrosoftCodeAnalysisAnalyzersSemanticVersion>1.1.0</MicrosoftCodeAnalysisAnalyzersSemanticVersion>
+      <MicrosoftCodeAnalysisAnalyzersSemanticVersion>1.2.0</MicrosoftCodeAnalysisAnalyzersSemanticVersion>
       <MicrosoftCodeAnalysisAnalyzersPreReleaseVersion>beta1</MicrosoftCodeAnalysisAnalyzersPreReleaseVersion>
 
-      <SharedLibrarySemanticVersion>1.1.0</SharedLibrarySemanticVersion>
+      <SharedLibrarySemanticVersion>1.2.0</SharedLibrarySemanticVersion>
       <SharedLibraryPreReleaseVersion>beta1</SharedLibraryPreReleaseVersion>
 
-      <SharedTestSemanticVersion>1.1.0</SharedTestSemanticVersion>
+      <SharedTestSemanticVersion>1.2.0</SharedTestSemanticVersion>
       <SharedTestPreReleaseVersion>beta1</SharedTestPreReleaseVersion>
 
-      <RoslynDiagnosticsAnalyzersSemanticVersion>1.1.1</RoslynDiagnosticsAnalyzersSemanticVersion>
+      <RoslynDiagnosticsAnalyzersSemanticVersion>1.2.0</RoslynDiagnosticsAnalyzersSemanticVersion>
       <RoslynDiagnosticsAnalyzersPreReleaseVersion>beta1</RoslynDiagnosticsAnalyzersPreReleaseVersion>
       
       <ToolsSemanticVersion>0.0.0</ToolsSemanticVersion>
@@ -22,44 +22,37 @@
   <!-- Version info for FxCop analyzer packages -->
   <PropertyGroup>
       <!-- Master FxCop analyzer package, which is just a collection of individual analyzer packages below. -->
-      <FxCopAnalyzersSemanticVersion>1.1.0</FxCopAnalyzersSemanticVersion>
+      <FxCopAnalyzersSemanticVersion>1.2.0</FxCopAnalyzersSemanticVersion>
       <FxCopAnalyzersPreReleaseVersion>beta1</FxCopAnalyzersPreReleaseVersion>
 
-      <!-- Dependency version range for packages included in the master FxCop analyzer package: "[$(FxCopAnalyzersDependencyMinimumSemanticVersion) - $(FxCopAnalyzersDependencyNextSemanticVersion))" -->
-      <!-- Allow any version of dependent packages between minimum (inclusive) and next (exclusive) semantic versions. -->
-      <!-- For example, values of minimum = '1.0.0' and next = '1.2.0' will have a dependency range ">= 1.0.0 && < 1.2.0" -->
-      <FxCopAnalyzersDependencyMinimumSemanticVersion>1.0.0</FxCopAnalyzersDependencyMinimumSemanticVersion>
-      <FxCopAnalyzersDependencyNextSemanticVersion>1.2.0</FxCopAnalyzersDependencyNextSemanticVersion>
-    
-      <!-- All the versions below must be >= FxCopAnalyzersDependencyMinimumSemanticVersion && < FxCopAnalyzersDependencyNextSemanticVersion -->
-      <MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion>1.1.0</MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion>
+      <MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion>1.2.0</MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion>
       <MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion>beta1</MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion>
 
-      <DesktopAnalyzersSemanticVersion>1.1.0</DesktopAnalyzersSemanticVersion>
+      <DesktopAnalyzersSemanticVersion>1.2.0</DesktopAnalyzersSemanticVersion>
       <DesktopAnalyzersPreReleaseVersion>beta1</DesktopAnalyzersPreReleaseVersion>
 
-      <SystemRuntimeAnalyzersSemanticVersion>1.1.0</SystemRuntimeAnalyzersSemanticVersion>
+      <SystemRuntimeAnalyzersSemanticVersion>1.2.0</SystemRuntimeAnalyzersSemanticVersion>
       <SystemRuntimeAnalyzersPreReleaseVersion>beta1</SystemRuntimeAnalyzersPreReleaseVersion>
 
-      <SystemRuntimeInteropServicesAnalyzersSemanticVersion>1.1.0</SystemRuntimeInteropServicesAnalyzersSemanticVersion>
+      <SystemRuntimeInteropServicesAnalyzersSemanticVersion>1.2.0</SystemRuntimeInteropServicesAnalyzersSemanticVersion>
       <SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>beta1</SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>
 
-      <ApiReviewAnalyzersSemanticVersion>1.1.0</ApiReviewAnalyzersSemanticVersion>
+      <ApiReviewAnalyzersSemanticVersion>1.2.0</ApiReviewAnalyzersSemanticVersion>
       <ApiReviewAnalyzersPreReleaseVersion>beta1</ApiReviewAnalyzersPreReleaseVersion>
 
-      <SystemThreadingTasksAnalyzersSemanticVersion>1.1.0</SystemThreadingTasksAnalyzersSemanticVersion>
+      <SystemThreadingTasksAnalyzersSemanticVersion>1.2.0</SystemThreadingTasksAnalyzersSemanticVersion>
       <SystemThreadingTasksAnalyzersPreReleaseVersion>beta1</SystemThreadingTasksAnalyzersPreReleaseVersion>
 
-      <MicrosoftCompositionAnalyzersSemanticVersion>1.1.0</MicrosoftCompositionAnalyzersSemanticVersion>
+      <MicrosoftCompositionAnalyzersSemanticVersion>1.2.0</MicrosoftCompositionAnalyzersSemanticVersion>
       <MicrosoftCompositionAnalyzersPreReleaseVersion>beta1</MicrosoftCompositionAnalyzersPreReleaseVersion>
 
-      <XmlDocumentationCommentsAnalyzersSemanticVersion>1.1.0</XmlDocumentationCommentsAnalyzersSemanticVersion>
+      <XmlDocumentationCommentsAnalyzersSemanticVersion>1.2.0</XmlDocumentationCommentsAnalyzersSemanticVersion>
       <XmlDocumentationCommentsAnalyzersPreReleaseVersion>beta1</XmlDocumentationCommentsAnalyzersPreReleaseVersion>
 
-      <SystemCollectionsImmutableAnalyzersSemanticVersion>1.1.0</SystemCollectionsImmutableAnalyzersSemanticVersion>
+      <SystemCollectionsImmutableAnalyzersSemanticVersion>1.2.0</SystemCollectionsImmutableAnalyzersSemanticVersion>
       <SystemCollectionsImmutableAnalyzersPreReleaseVersion>beta1</SystemCollectionsImmutableAnalyzersPreReleaseVersion>
       
-      <SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>1.1.0</SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>
+      <SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>1.2.0</SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>
       <SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>beta1</SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>
    </PropertyGroup>
 </Project>

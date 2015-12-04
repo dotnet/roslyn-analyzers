@@ -167,11 +167,76 @@
     <Compile Include="CancellationTokenParametersMustComeLast.Fixer.cs" />
     <Compile Include="ConstructorMakeNoninheritableBaseClassInheritable.cs" />
     <Compile Include="ConstructorMakeNoninheritableBaseClassInheritable.Fixer.cs" />
+    <Compile Include="DoNotDeclareStaticMembersOnGenericTypes.cs" />
+    <Compile Include="DoNotDeclareStaticMembersOnGenericTypes.Fixer.cs" />
+    <Compile Include="CollectionsShouldImplementGenericInterface.cs" />
+    <Compile Include="CollectionsShouldImplementGenericInterface.Fixer.cs" />
+    <Compile Include="EnumStorageShouldBeInt32.cs" />
+    <Compile Include="EnumStorageShouldBeInt32.Fixer.cs" />
+    <Compile Include="UseEventsWhereAppropriate.cs" />
+    <Compile Include="UseEventsWhereAppropriate.Fixer.cs" />
+    <Compile Include="ImplementStandardExceptionConstructors.cs" />
+    <Compile Include="ImplementStandardExceptionConstructors.Fixer.cs" />
+    <Compile Include="NestedTypesShouldNotBeVisible.cs" />
+    <Compile Include="NestedTypesShouldNotBeVisible.Fixer.cs" />
+    <Compile Include="AvoidEmptyInterfaces.cs" />
+    <Compile Include="AvoidEmptyInterfaces.Fixer.cs" />
+    <Compile Include="ProvideObsoleteAttributeMessage.cs" />
+    <Compile Include="ProvideObsoleteAttributeMessage.Fixer.cs" />
+    <Compile Include="PropertiesShouldNotBeWriteOnly.cs" />
+    <Compile Include="PropertiesShouldNotBeWriteOnly.Fixer.cs" />
+    <Compile Include="DeclareTypesInNamespaces.cs" />
+    <Compile Include="DeclareTypesInNamespaces.Fixer.cs" />
+    <Compile Include="DoNotDeclareVisibleInstanceFields.cs" />
+    <Compile Include="DoNotDeclareVisibleInstanceFields.Fixer.cs" />
+    <Compile Include="UriParametersShouldNotBeStrings.cs" />
+    <Compile Include="UriParametersShouldNotBeStrings.Fixer.cs" />
+    <Compile Include="UriReturnValuesShouldNotBeStrings.cs" />
+    <Compile Include="UriReturnValuesShouldNotBeStrings.Fixer.cs" />
+    <Compile Include="UriPropertiesShouldNotBeStrings.cs" />
+    <Compile Include="UriPropertiesShouldNotBeStrings.Fixer.cs" />
+    <Compile Include="ImplementIDisposableCorrectly.cs" />
+    <Compile Include="ImplementIDisposableCorrectly.Fixer.cs" />
+    <Compile Include="ExceptionsShouldBePublic.cs" />
+    <Compile Include="ExceptionsShouldBePublic.Fixer.cs" />
+    <Compile Include="DoNotRaiseExceptionsInUnexpectedLocations.cs" />
+    <Compile Include="DoNotRaiseExceptionsInUnexpectedLocations.Fixer.cs" />
+    <Compile Include="IdentifiersShouldNotContainUnderscores.cs" />
+    <Compile Include="IdentifiersShouldNotContainUnderscores.Fixer.cs" />
+    <Compile Include="IdentifiersShouldHaveCorrectSuffix.cs" />
+    <Compile Include="IdentifiersShouldHaveCorrectSuffix.Fixer.cs" />
+    <Compile Include="IdentifiersShouldNotHaveIncorrectSuffix.cs" />
+    <Compile Include="IdentifiersShouldNotHaveIncorrectSuffix.Fixer.cs" />
+    <Compile Include="FlagsEnumsShouldHavePluralNames.cs" />
+    <Compile Include="FlagsEnumsShouldHavePluralNames.Fixer.cs" />
+    <Compile Include="IdentifiersShouldNotMatchKeywords.cs" />
+    <Compile Include="IdentifiersShouldNotMatchKeywords.Fixer.cs" />
+    <Compile Include="OnlyFlagsEnumsShouldHavePluralNames.cs" />
+    <Compile Include="OnlyFlagsEnumsShouldHavePluralNames.Fixer.cs" />
+    <Compile Include="PropertyNamesShouldNotMatchGetMethods.cs" />
+    <Compile Include="PropertyNamesShouldNotMatchGetMethods.Fixer.cs" />
+    <Compile Include="TypeNamesShouldNotMatchNamespaces.cs" />
+    <Compile Include="TypeNamesShouldNotMatchNamespaces.Fixer.cs" />
+    <Compile Include="ParameterNamesShouldMatchBaseDeclaration.cs" />
+    <Compile Include="ParameterNamesShouldMatchBaseDeclaration.Fixer.cs" />
+    <Compile Include="UsePreferredTerms.cs" />
+    <Compile Include="UsePreferredTerms.Fixer.cs" />
+    <Compile Include="OverrideEqualsAndOperatorEqualsOnValueTypes.cs" />
+    <Compile Include="OverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.cs" />
+    <Compile Include="PropertiesShouldNotReturnArrays.cs" />
+    <Compile Include="PropertiesShouldNotReturnArrays.Fixer.cs" />
+    <Compile Include="AssembliesShouldHaveValidStrongNames.cs" />
+    <Compile Include="AssembliesShouldHaveValidStrongNames.Fixer.cs" />
+    <Compile Include="OverrideGetHashCodeOnOverridingEquals.cs" />
+    <Compile Include="OverrideGetHashCodeOnOverridingEquals.Fixer.cs" />
+    <Compile Include="OverrideEqualsOnOverloadingOperatorEquals.cs" />
+    <Compile Include="OverrideEqualsOnOverloadingOperatorEquals.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MicrosoftApiDesignGuidelinesAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MicrosoftApiDesignGuidelinesAnalyzersResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

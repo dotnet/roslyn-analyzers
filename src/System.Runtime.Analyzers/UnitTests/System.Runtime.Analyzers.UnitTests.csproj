@@ -18,8 +18,7 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <SemanticVersion>$(SystemRuntimeAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(SystemRuntimeAnalyzersPreReleaseVersion)</PreReleaseVersion>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <NuGetPackageImportStamp></NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Label="Start settings">
     <StartAction>Program</StartAction>
@@ -45,10 +44,8 @@
       <Name>System.Runtime.VisualBasic.Analyzers</Name>
     </ProjectReference>
   </ItemGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "></PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "></PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -185,6 +182,18 @@
     <Compile Include="AvoidZeroLengthArrayAllocationsTests.Fixer.cs" />
     <Compile Include="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyTests.cs" />
     <Compile Include="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyTests.Fixer.cs" />
+    <Compile Include="SpecifyCultureInfoTests.cs" />
+    <Compile Include="SpecifyCultureInfoTests.Fixer.cs" />
+    <Compile Include="SpecifyIFormatProviderTests.cs" />
+    <Compile Include="SpecifyIFormatProviderTests.Fixer.cs" />
+    <Compile Include="SpecifyStringComparisonTests.cs" />
+    <Compile Include="SpecifyStringComparisonTests.Fixer.cs" />
+    <Compile Include="NormalizeStringsToUppercaseTests.cs" />
+    <Compile Include="NormalizeStringsToUppercaseTests.Fixer.cs" />
+    <Compile Include="CallGCSuppressFinalizeCorrectlyTests.cs" />
+    <Compile Include="CallGCSuppressFinalizeCorrectlyTests.Fixer.cs" />
+    <Compile Include="InstantiateArgumentExceptionsCorrectlyTests.cs" />
+    <Compile Include="InstantiateArgumentExceptionsCorrectlyTests.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />

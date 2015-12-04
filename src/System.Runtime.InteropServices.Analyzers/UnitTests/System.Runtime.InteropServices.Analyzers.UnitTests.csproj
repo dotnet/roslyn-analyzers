@@ -18,8 +18,7 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <SemanticVersion>$(SystemRuntimeInteropServicesAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(SystemRuntimeInteropServicesAnalyzersPreReleaseVersion)</PreReleaseVersion>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <NuGetPackageImportStamp></NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Label="Start settings">
     <StartAction>Program</StartAction>
@@ -45,10 +44,8 @@
       <Name>System.Runtime.InteropServices.VisualBasic.Analyzers</Name>
     </ProjectReference>
   </ItemGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "></PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "></PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -152,6 +149,8 @@
     <Compile Include="UseManagedEquivalentsOfWin32ApiTests.cs" />
     <Compile Include="UseManagedEquivalentsOfWin32ApiTests.Fixer.cs" />
     <Compile Include="AlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeTests.cs" />
+    <Compile Include="MarkBooleanPInvokeArgumentsWithMarshalAsTests.cs" />
+    <Compile Include="MarkBooleanPInvokeArgumentsWithMarshalAsTests.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

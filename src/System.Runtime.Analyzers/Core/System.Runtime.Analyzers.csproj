@@ -141,7 +141,18 @@
     <Compile Include="AvoidZeroLengthArrayAllocations.Fixer.cs" />
     <Compile Include="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.cs" />
     <Compile Include="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.Fixer.cs" />
-    <Compile Include="DiagnosticCategory.cs" />
+    <Compile Include="SpecifyCultureInfo.cs" />
+    <Compile Include="SpecifyCultureInfo.Fixer.cs" />
+    <Compile Include="SpecifyIFormatProvider.cs" />
+    <Compile Include="SpecifyIFormatProvider.Fixer.cs" />
+    <Compile Include="SpecifyStringComparison.cs" />
+    <Compile Include="SpecifyStringComparison.Fixer.cs" />
+    <Compile Include="NormalizeStringsToUppercase.cs" />
+    <Compile Include="NormalizeStringsToUppercase.Fixer.cs" />
+    <Compile Include="CallGCSuppressFinalizeCorrectly.cs" />
+    <Compile Include="CallGCSuppressFinalizeCorrectly.Fixer.cs" />
+    <Compile Include="InstantiateArgumentExceptionsCorrectly.cs" />
+    <Compile Include="InstantiateArgumentExceptionsCorrectly.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SystemRuntimeAnalyzersResources.resx">

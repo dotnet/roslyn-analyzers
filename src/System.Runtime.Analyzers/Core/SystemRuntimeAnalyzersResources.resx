@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -327,22 +327,85 @@
   <data name="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyMessage" xml:space="preserve">
     <value>Do not use Enumerable methods on indexable collections. Instead use the collection directly</value>
   </data>
-  <data name="CategoryGlobalization" xml:space="preserve">
-    <value>Globalization</value>
+  <data name="SpecifyCultureInfoTitle" xml:space="preserve">
+    <value>Specify CultureInfo</value>
   </data>
-  <data name="CategoryMobility" xml:space="preserve">
-    <value>Mobility</value>
+  <data name="SpecifyCultureInfoDescription" xml:space="preserve">
+    <value>A method or constructor calls a member that has an overload that accepts a System.Globalization.CultureInfo parameter, and the method or constructor does not call the overload that takes the CultureInfo parameter. When a CultureInfo or System.IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales.</value>
   </data>
-  <data name="CategoryPerformance" xml:space="preserve">
-    <value>Performance</value>
+  <data name="SpecifyCultureInfoMessage" xml:space="preserve">
+    <value>Specify CultureInfo</value>
   </data>
-  <data name="CategoryReliability" xml:space="preserve">
-    <value>Reliability</value>
+  <data name="SpecifyIFormatProviderTitle" xml:space="preserve">
+    <value>Specify IFormatProvider</value>
   </data>
-  <data name="CategorySecurity" xml:space="preserve">
-    <value>Security</value>
+  <data name="SpecifyIFormatProviderDescription" xml:space="preserve">
+    <value>A method or constructor calls one or more members that have overloads that accept a System.IFormatProvider parameter, and the method or constructor does not call the overload that takes the IFormatProvider parameter. When a System.Globalization.CultureInfo or IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales.</value>
   </data>
-  <data name="CategoryUsage" xml:space="preserve">
-    <value>Usage</value>
+  <data name="SpecifyIFormatProviderMessageIFormatProviderAlternateString" xml:space="preserve">
+    <value>Because the behavior of {0} could vary based on the current user's locale settings, replace this call in {1} with a call to {2}. If the result of {2} will be displayed to the user, specify {3} as the 'IFormatProvider' parameter. Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk or to a database, specify {4}.</value>
+  </data>
+  <data name="SpecifyIFormatProviderMessageIFormatProviderAlternate" xml:space="preserve">
+    <value>Because the behavior of {0} could vary based on the current user's locale settings, replace this call in {1} with a call to {2}. If the result of {2} will be based on input from the user, specify {3} as the 'IFormatProvider' parameter. Otherwise, if the result will based on input stored and accessed by software, such as when it is loaded from disk or from a database, specify {4}.</value>
+  </data>
+  <data name="SpecifyIFormatProviderMessageUICultureString" xml:space="preserve">
+    <value>{0} passes {1} as the 'IFormatProvider' parameter to {2}. This property returns a culture that is inappropriate for formatting methods. If the result of {2} will be displayed to the user, specify {3} as the 'IFormatProvider' parameter. Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk or to a database, specify {4}.</value>
+  </data>
+  <data name="SpecifyIFormatProviderMessageUICulture" xml:space="preserve">
+    <value>{0} passes {1} as the 'IFormatProvider' parameter to {2}. This property returns a culture that is inappropriate for formatting methods. If the result of {2} will be based on input from the user, specify {3} as the 'IFormatProvider' parameter. Otherwise, if the result will based on input stored and accessed by software, such as when it is loaded from disk or from a database, specify {4}.</value>
+  </data>
+  <data name="SpecifyStringComparisonTitle" xml:space="preserve">
+    <value>Specify StringComparison</value>
+  </data>
+  <data name="SpecifyStringComparisonDescription" xml:space="preserve">
+    <value>A string comparison operation uses a method overload that does not set a StringComparison parameter.</value>
+  </data>
+  <data name="SpecifyStringComparisonMessage" xml:space="preserve">
+    <value>Specify StringComparison</value>
+  </data>
+  <data name="NormalizeStringsToUppercaseTitle" xml:space="preserve">
+    <value>Normalize strings to uppercase</value>
+  </data>
+  <data name="NormalizeStringsToUppercaseDescription" xml:space="preserve">
+    <value>Strings should be normalized to uppercase. A small group of characters cannot make a round trip when they are converted to lowercase.</value>
+  </data>
+  <data name="NormalizeStringsToUppercaseMessageToUpperInvariant" xml:space="preserve">
+    <value>In method {0}, replace the call to {1} with String.ToUpperInvariant().</value>
+  </data>
+  <data name="NormalizeStringsToUppercaseMessageToUpper" xml:space="preserve">
+    <value>In method {0}, replace the call to String.ToLower(CultureInfo.InvariantCulture) with String.ToUpper(CultureInfo.InvariantCulture).</value>
+  </data>
+  <data name="CallGCSuppressFinalizeCorrectlyTitle" xml:space="preserve">
+    <value>Dispose methods should call SuppressFinalize</value>
+  </data>
+  <data name="CallGCSuppressFinalizeCorrectlyDescription" xml:space="preserve">
+    <value>A method that is an implementation of Dispose does not call GC.SuppressFinalize; or a method that is not an implementation of Dispose calls GC.SuppressFinalize; or a method calls GC.SuppressFinalize and passes something other than this (Me in Visual?Basic).</value>
+  </data>
+  <data name="CallGCSuppressFinalizeCorrectlyMessageNotCalledWithFinalizer" xml:space="preserve">
+    <value>Change {0} to call {1}. This will prevent unnecessary finalization of the object once it has been disposed and it has fallen out of scope.</value>
+  </data>
+  <data name="CallGCSuppressFinalizeCorrectlyMessageNotCalled" xml:space="preserve">
+    <value>Change {0} to call {1}. This will prevent derived types that introduce a finalizer from needing to re-implement 'IDisposable' to call it.</value>
+  </data>
+  <data name="CallGCSuppressFinalizeCorrectlyMessageNotPassedThis" xml:space="preserve">
+    <value>{0} calls {1} on something other than itself. Change the call site to pass 'this' ('Me' in Visual Basic) instead.</value>
+  </data>
+  <data name="CallGCSuppressFinalizeCorrectlyMessageOutsideDispose" xml:space="preserve">
+    <value>{0} calls {1}, a method that is typically only called within an implementation of 'IDisposable.Dispose'. Refer to the IDisposable pattern for more information.</value>
+  </data>
+  <data name="InstantiateArgumentExceptionsCorrectlyTitle" xml:space="preserve">
+    <value>Instantiate argument exceptions correctly</value>
+  </data>
+  <data name="InstantiateArgumentExceptionsCorrectlyDescription" xml:space="preserve">
+    <value>A call is made to the default (parameterless) constructor of an exception type that is or derives from ArgumentException, or an incorrect string argument is passed to a parameterized constructor of an exception type that is or derives from ArgumentException.</value>
+  </data>
+  <data name="InstantiateArgumentExceptionsCorrectlyMessageNoArguments" xml:space="preserve">
+    <value>Call the {0} constructor that contains a message and/or paramName parameter.</value>
+  </data>
+  <data name="InstantiateArgumentExceptionsCorrectlyMessageIncorrectMessage" xml:space="preserve">
+    <value>Method {0} passes parameter name '{1}' as the {2} argument to a {3} constructor. Replace this argument with a descriptive message and pass the parameter name in the correct position.</value>
+  </data>
+  <data name="InstantiateArgumentExceptionsCorrectlyMessageIncorrectParameterName" xml:space="preserve">
+    <value>Method {0} passes '{1}' as the {2} argument to a {3} constructor. Replace this argument with one of the method's parameter names. Note that the provided parameter name should have the exact casing as declared on the method.</value>
   </data>
 </root>

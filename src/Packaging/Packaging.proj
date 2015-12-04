@@ -15,6 +15,10 @@
     <Project Include = "..\XmlDocumentationComments.Analyzers\NuGet\XmlDocumentationComments.Analyzers.NuGet.proj" />
     <Project Include = "..\System.Collections.Immutable.Analyzers\NuGet\System.Collections.Immutable.Analyzers.NuGet.proj" />
     <Project Include = "..\System.Security.Cryptography.Hashing.Algorithms.Analyzers\NuGet\SystemSecurityCryptographyHashingAlgorithmsAnalyzers.NuGet.proj" />
+    <Project Include = "..\Microsoft.Maintainability.Analyzers\NuGet\Microsoft.Maintainability.Analyzers.NuGet.proj" />
+    <Project Include = "..\Text.Analyzers\NuGet\Text.Analyzers.NuGet.proj" />
+    <Project Include = "..\Microsoft.QualityGuidelines.Analyzers\NuGet\Microsoft.QualityGuidelines.Analyzers.NuGet.proj" />
+    <Project Include = "..\System.Resources.Analyzers\NuGet\System.Resources.Analyzers.NuGet.proj" />
 
     <Project Include = "..\Microsoft.CodeAnalysis.Analyzers\NuGet\CodeAnalysisDiagnosticAnalyzers.NuGet.proj" />
     <Project Include = "..\FxCop\NuGet\FxCopAnalyzers.NuGet.proj" />

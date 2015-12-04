@@ -314,7 +314,7 @@ namespace AnalyzerCodeGenerator
 
         private static Dictionary<string, CheckData> GetExisingChecksFromCoreProjectFile(string projFile, Dictionary<string, CheckData> allChecksByName)
         {
-            var analyzerProject = projFile.Remove(projFile.IndexOf(".Analyzers.csproj"));
+            var analyzerProject = Path.GetFileName(projFile.Remove(projFile.IndexOf(".Analyzers.csproj")));
 
             XDocument xmlFile = XDocument.Load(projFile);
             Debug.Assert(xmlFile.Root.Name.LocalName == "Project");

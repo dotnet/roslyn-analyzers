@@ -203,5 +203,14 @@ namespace FileIssues {
                 return ResourceManager.GetString("WarningMultipleIssuesExist", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No area label matches the proposed analyzer &quot;{0}&quot; for rule {1}..
+        /// </summary>
+        internal static string WarningNoAreaAssigned {
+            get {
+                return ResourceManager.GetString("WarningNoAreaAssigned", resourceCulture);
+            }
+        }
     }
 }

@@ -93,7 +93,7 @@ namespace FileIssues
                     State = ItemState.All       // Get issues whether they're open or closed.
                 });
 
-            foreach (var ruleToPort in rulesToPort.Take(40))
+            foreach (var ruleToPort in rulesToPort)
             {
                 string title = MakeIssueTitle(ruleToPort);
                 var matchingIssues = existingIssues.Where(issue => issue.Title == title);
@@ -232,11 +232,7 @@ namespace FileIssues
             var newIssue = new NewIssue(title);
             AddLabel(FxCopPortLabel, newIssue.Labels);
 
-            string areaLabel = GetAreaLabel(ruleToPort.ProposedAnalyzer);
-            if (areaLabel != null)
-            {
-                AddLabel(areaLabel, newIssue.Labels);
-            }
+            AddAreaLabel(ruleToPort, newIssue.Labels);
 
             switch (ruleToPort.Disposition)
             {
@@ -296,15 +292,17 @@ namespace FileIssues
             { "XmlDocumentationComments", "Area-XmlDocumentationComments.Analyzers" }
         };
 
-        private string GetAreaLabel(string proposedAnalyzer)
+        private void AddAreaLabel(PortingInfo ruleToPort, Collection<string> labels)
         {
             string areaLabel;
-            if (!s_analyzerNameToLabelNameDictionary.TryGetValue(proposedAnalyzer, out areaLabel))
+            if (!s_analyzerNameToLabelNameDictionary.TryGetValue(ruleToPort.ProposedAnalyzer, out areaLabel))
             {
-                areaLabel = null;
+                _log.WarnFormat(Resources.WarningNoAreaAssigned, ruleToPort.ProposedAnalyzer, ruleToPort.Id);
             }
-
-            return areaLabel;
+            else
+            {
+                AddLabel(areaLabel, labels);
+            }
         }
 
         private IssueUpdate CreateIssueUpdate(PortingInfo ruleToPort, Issue existingIssue)
@@ -372,6 +370,9 @@ namespace FileIssues
                     break;
             }
 
+            RemoveAreaLabels(existingLabelNames, labelNamesToRemove);
+            AddAreaLabel(ruleToPort, labelNamesToAdd);
+
             if (_options.DryRun)
             {
                 _log.Info(Resources.InfoDryRunLabelsNotUpdated);
@@ -396,6 +397,14 @@ namespace FileIssues
                         existingIssue.Number,
                         labelName);
                 }
+            }
+        }
+
+        private void RemoveAreaLabels(Collection<string> existingLabelNames, Collection<string> labelNamesToRemove)
+        {
+            foreach (string label in existingLabelNames.Where(l => l.StartsWith("Area-") && l.EndsWith("Analyzers")))
+            {
+                RemoveLabel(label, labelNamesToRemove, existingLabelNames);
             }
         }
 

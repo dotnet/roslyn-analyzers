@@ -165,4 +165,7 @@
   <data name="WarningMultipleIssuesExist" xml:space="preserve">
     <value>Multiple issues exists for rule {0}: {1}</value>
   </data>
+  <data name="WarningNoAreaAssigned" xml:space="preserve">
+    <value>No area label matches the proposed analyzer "{0}" for rule {1}.</value>
+  </data>
 </root>

@@ -388,8 +388,10 @@ namespace FileIssues
                         labelNamesToAdd.ToArray());
                 }
 
+                // Take care not to remove any labels we've just added.
+                //
                 // For some reason the "Remove" API doesn't take an array.
-                foreach (string labelName in labelNamesToRemove)
+                foreach (string labelName in labelNamesToRemove.Except(labelNamesToAdd))
                 {
                     await _issuesLabelsClient.RemoveFromIssue(
                         _options.RepoOwner,

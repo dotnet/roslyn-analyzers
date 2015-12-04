@@ -292,7 +292,7 @@ Public Class Class1
 
 	' 10) Method with invocation expressions
 	Public Function GetSomethingWithInvocation() As Integer
-		System.Console.WriteLine(Me);
+		System.Console.WriteLine(Me)
 		Return 0
 	End Function
 
@@ -309,6 +309,34 @@ Public Class Class1
     ' 13) Friend method
 	Friend Function GetSomethingInternal() As String
 		Return fileName
+	End Function
+End Class
+");
+        }
+
+        [Fact]
+        public void CSharp_CA1024NoDiagnosticOnUnboundMethodCaller()
+        {
+            VerifyCSharp(@"
+public class class1
+{
+    public int GetSomethingWithUnboundInvocation()
+    {
+        Console.WriteLine(this);
+        return 0;
+    }
+}
+");
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7222")]
+        public void VisualBasic_CA1024NoDiagnosticOnUnboundMethodCaller()
+        {
+            VerifyBasic(@"
+Public Class class1
+	Public Function GetSomethingWithUnboundInvocation() As Integer
+		Console.WriteLine(Me)
+		Return 0
 	End Function
 End Class
 ");

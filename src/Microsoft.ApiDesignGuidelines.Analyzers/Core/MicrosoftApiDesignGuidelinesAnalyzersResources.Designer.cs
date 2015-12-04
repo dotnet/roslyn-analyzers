@@ -72,7 +72,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Abstract types should not have constructors.
+        ///   Looks up a localized string similar to Abstract type {0} should not have constructors.
         /// </summary>
         internal static string AbstractTypesShouldNotHaveConstructorsMessage {
             get {
@@ -86,6 +86,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         internal static string AbstractTypesShouldNotHaveConstructorsTitle {
             get {
                 return ResourceManager.GetString("AbstractTypesShouldNotHaveConstructorsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the accessibility of public constructors to protected..
+        /// </summary>
+        internal static string AbstractTypesShouldNotHavePublicConstructorsCodeFix {
+            get {
+                return ResourceManager.GetString("AbstractTypesShouldNotHavePublicConstructorsCodeFix", resourceCulture);
             }
         }
         

@@ -112,8 +112,6 @@
     <Compile Include="CSharpUseGenericEventHandlerInstances.cs" />
     <Compile Include="CSharpUseGenericEventHandlerInstances.Fixer.cs" />
     <Compile Include="CSharpEnumsShouldHaveZeroValue.Fixer.cs" />
-    <Compile Include="CSharpAbstractTypesShouldNotHaveConstructors.cs" />
-    <Compile Include="CSharpAbstractTypesShouldNotHaveConstructors.Fixer.cs" />
     <Compile Include="CSharpMarkAssembliesWithClsCompliant.Fixer.cs" />
     <Compile Include="CSharpMarkAssembliesWithAssemblyVersion.Fixer.cs" />
     <Compile Include="CSharpDefineAccessorsForAttributeArguments.cs" />

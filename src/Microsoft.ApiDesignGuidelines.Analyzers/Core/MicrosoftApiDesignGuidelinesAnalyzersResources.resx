@@ -217,7 +217,7 @@
     <value>Constructors on abstract types can be called only by derived types. Because public constructors create instances of a type, and you cannot create instances of an abstract type, an abstract type that has a public constructor is incorrectly designed.</value>
   </data>
   <data name="AbstractTypesShouldNotHaveConstructorsMessage" xml:space="preserve">
-    <value>Abstract types should not have constructors</value>
+    <value>Abstract type {0} should not have constructors</value>
   </data>
   <data name="MarkAssembliesWithClsCompliantTitle" xml:space="preserve">
     <value>Mark assemblies with CLSCompliant</value>
@@ -534,5 +534,8 @@ Names of parameters and members are better used to communicate their meaning tha
   </data>
   <data name="EnumsShouldZeroValueNotFlagsNoZeroValueCodeFix" xml:space="preserve">
     <value>Add a zero-valued member 'None' to enum.</value>
+  </data>
+  <data name="AbstractTypesShouldNotHavePublicConstructorsCodeFix" xml:space="preserve">
+    <value>Change the accessibility of public constructors to protected.</value>
   </data>
 </root>

@@ -14,6 +14,10 @@
       <dependency id="System.Threading.Tasks.Analyzers" version="$currentVersion$" />
       <dependency id="System.Security.Cryptography.Hashing.Algorithms.Analyzers" version="$currentVersion$" />
       <dependency id="Microsoft.ApiDesignGuidelines.Analyzers" version="$currentVersion$" />
+      <dependency id="Microsoft.Maintainability.Analyzers" version="$currentVersion$" />
+      <dependency id="Text.Analyzers" version="$currentVersion$" />
+      <dependency id="Microsoft.QualityGuidelines.Analyzers" version="$currentVersion$" />
+      <dependency id="System.Resources.Analyzers" version="$currentVersion$" />
     </dependencies>
     <language>en-US</language>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>

@@ -7,13 +7,13 @@
       Microsoft FxCop rules implemented as analyzers using the .NET Compiler Platform ("Roslyn").
     </description>
     <dependencies>
-      <dependency id="Desktop.Analyzers" version="[$dependencyMinVersion$,$dependencyNextVersion$)" />
-      <dependency id="System.Collections.Immutable.Analyzers" version="[$dependencyMinVersion$,$dependencyNextVersion$)" />
-      <dependency id="System.Runtime.Analyzers" version="[$dependencyMinVersion$,$dependencyNextVersion$)" />
-      <dependency id="System.Runtime.InteropServices.Analyzers" version="[$dependencyMinVersion$,$dependencyNextVersion$)" />
-      <dependency id="System.Threading.Tasks.Analyzers" version="[$dependencyMinVersion$,$dependencyNextVersion$)" />
-      <dependency id="System.Security.Cryptography.Hashing.Algorithms.Analyzers" version="[$dependencyMinVersion$,$dependencyNextVersion$)" />
-      <dependency id="Microsoft.ApiDesignGuidelines.Analyzers" version="[$dependencyMinVersion$,$dependencyNextVersion$)" />
+      <dependency id="Desktop.Analyzers" version="$currentVersion$" />
+      <dependency id="System.Collections.Immutable.Analyzers" version="$currentVersion$" />
+      <dependency id="System.Runtime.Analyzers" version="$currentVersion$" />
+      <dependency id="System.Runtime.InteropServices.Analyzers" version="$currentVersion$" />
+      <dependency id="System.Threading.Tasks.Analyzers" version="$currentVersion$" />
+      <dependency id="System.Security.Cryptography.Hashing.Algorithms.Analyzers" version="$currentVersion$" />
+      <dependency id="Microsoft.ApiDesignGuidelines.Analyzers" version="$currentVersion$" />
     </dependencies>
     <language>en-US</language>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>

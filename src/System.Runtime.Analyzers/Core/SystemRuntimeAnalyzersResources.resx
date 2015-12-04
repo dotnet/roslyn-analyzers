@@ -138,15 +138,6 @@
   <data name="DoNotUseTimersThatPreventPowerStateChangesMessage" xml:space="preserve">
     <value>Do not use timers that prevent power state changes</value>
   </data>
-  <data name="DoNotInitializeUnnecessarilyTitle" xml:space="preserve">
-    <value>Do not initialize unnecessarily</value>
-  </data>
-  <data name="DoNotInitializeUnnecessarilyDescription" xml:space="preserve">
-    <value>The common language runtime initializes all fields to their default values before running the constructor. In most cases, initializing a field to its default value in a constructor is redundant, which degrades performance and adds to maintenance costs. One case where it is not redundant occurs when the constructor calls another constructor of the same class or a base class constructor and that constructor initializes the field to a non-default value. In this case, changing the value of the field back to its default value can be appropriate.</value>
-  </data>
-  <data name="DoNotInitializeUnnecessarilyMessage" xml:space="preserve">
-    <value>Do not initialize unnecessarily</value>
-  </data>
   <data name="AvoidUnsealedAttributesTitle" xml:space="preserve">
     <value>Avoid unsealed attributes</value>
   </data>

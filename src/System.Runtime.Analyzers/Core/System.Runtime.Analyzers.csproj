@@ -104,8 +104,6 @@
     <Compile Include="UseOrdinalStringComparison.Fixer.cs" />
     <Compile Include="DoNotUseTimersThatPreventPowerStateChanges.cs" />
     <Compile Include="DoNotUseTimersThatPreventPowerStateChanges.Fixer.cs" />
-    <Compile Include="DoNotInitializeUnnecessarily.cs" />
-    <Compile Include="DoNotInitializeUnnecessarily.Fixer.cs" />
     <Compile Include="AvoidUnsealedAttributes.cs" />
     <Compile Include="AvoidUnsealedAttributes.Fixer.cs" />
     <Compile Include="TestForEmptyStringsUsingStringLength.cs" />

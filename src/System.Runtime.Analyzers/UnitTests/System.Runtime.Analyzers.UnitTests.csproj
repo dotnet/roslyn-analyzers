@@ -18,7 +18,8 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <SemanticVersion>$(SystemRuntimeAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(SystemRuntimeAnalyzersPreReleaseVersion)</PreReleaseVersion>
-    <NuGetPackageImportStamp></NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Label="Start settings">
     <StartAction>Program</StartAction>
@@ -44,8 +45,10 @@
       <Name>System.Runtime.VisualBasic.Analyzers</Name>
     </ProjectReference>
   </ItemGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "></PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "></PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -146,8 +149,6 @@
     <Compile Include="UseOrdinalStringComparisonTests.Fixer.cs" />
     <Compile Include="DoNotUseTimersThatPreventPowerStateChangesTests.cs" />
     <Compile Include="DoNotUseTimersThatPreventPowerStateChangesTests.Fixer.cs" />
-    <Compile Include="DoNotInitializeUnnecessarilyTests.cs" />
-    <Compile Include="DoNotInitializeUnnecessarilyTests.Fixer.cs" />
     <Compile Include="AvoidUnsealedAttributesTests.cs" />
     <Compile Include="AvoidUnsealedAttributesTests.Fixer.cs" />
     <Compile Include="TestForEmptyStringsUsingStringLengthTests.cs" />

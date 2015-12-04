@@ -341,33 +341,6 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The common language runtime initializes all fields to their default values before running the constructor. In most cases, initializing a field to its default value in a constructor is redundant, which degrades performance and adds to maintenance costs. One case where it is not redundant occurs when the constructor calls another constructor of the same class or a base class constructor and that constructor initializes the field to a non-default value. In this case, changing the value of the field back to its [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string DoNotInitializeUnnecessarilyDescription {
-            get {
-                return ResourceManager.GetString("DoNotInitializeUnnecessarilyDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do not initialize unnecessarily.
-        /// </summary>
-        internal static string DoNotInitializeUnnecessarilyMessage {
-            get {
-                return ResourceManager.GetString("DoNotInitializeUnnecessarilyMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do not initialize unnecessarily.
-        /// </summary>
-        internal static string DoNotInitializeUnnecessarilyTitle {
-            get {
-                return ResourceManager.GetString("DoNotInitializeUnnecessarilyTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An object is said to have a weak identity when it can be directly accessed across application domain boundaries. A thread that tries to acquire a lock on an object that has a weak identity can be blocked by a second thread in a different application domain that has a lock on the same object..
         /// </summary>
         internal static string DoNotLockOnObjectsWithWeakIdentityDescription {

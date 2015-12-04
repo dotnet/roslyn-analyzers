@@ -70,6 +70,15 @@ namespace FileIssues {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        internal static string DependencyNone {
+            get {
+                return ResourceManager.GetString("DependencyNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error: {0}.
         /// </summary>
         internal static string ErrorFormat {

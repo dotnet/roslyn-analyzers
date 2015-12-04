@@ -120,6 +120,9 @@
   <data name="DebugDelaying" xml:space="preserve">
     <value>Delaying {0} msec between issues...</value>
   </data>
+  <data name="DependencyNone" xml:space="preserve">
+    <value>None</value>
+  </data>
   <data name="ErrorFormat" xml:space="preserve">
     <value>Error: {0}</value>
   </data>

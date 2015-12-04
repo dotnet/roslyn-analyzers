@@ -374,6 +374,7 @@ namespace FileIssues
                 $"**Title:** {ruleToPort.Title}\n\n" +
                 $"**Description:**\n\n{ruleToPort.Description}\n\n" +
                 $"**Proposed analyzer:** {ruleToPort.ProposedAnalyzer}\n\n" +
+                $"**Dependency:** {ruleToPort.Dependency}\n\n" +
                 $"**Notes:**\n\n{ruleToPort.Notes}";
         }
     }

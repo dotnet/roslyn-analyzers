@@ -20,6 +20,8 @@
 
         public Priority RevisedPriority { get; set; }
 
+        public string Dependency { get; set; }
+
         public bool Soon
         {
             get

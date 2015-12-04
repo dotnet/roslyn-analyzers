@@ -25,13 +25,6 @@
       <FxCopAnalyzersSemanticVersion>1.2.0</FxCopAnalyzersSemanticVersion>
       <FxCopAnalyzersPreReleaseVersion>beta1</FxCopAnalyzersPreReleaseVersion>
 
-      <!-- Dependency version range for packages included in the master FxCop analyzer package: "[$(FxCopAnalyzersDependencyMinimumSemanticVersion) - $(FxCopAnalyzersDependencyNextSemanticVersion))" -->
-      <!-- Allow any version of dependent packages between minimum (inclusive) and next (exclusive) semantic versions. -->
-      <!-- For example, values of minimum = '1.0.0' and next = '1.2.0' will have a dependency range ">= 1.0.0 && < 1.2.0" -->
-      <FxCopAnalyzersDependencyMinimumSemanticVersion>1.0.0</FxCopAnalyzersDependencyMinimumSemanticVersion>
-      <FxCopAnalyzersDependencyNextSemanticVersion>1.3.0</FxCopAnalyzersDependencyNextSemanticVersion>
-    
-      <!-- All the versions below must be >= FxCopAnalyzersDependencyMinimumSemanticVersion && < FxCopAnalyzersDependencyNextSemanticVersion -->
       <MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion>1.2.0</MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion>
       <MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion>beta1</MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion>
 

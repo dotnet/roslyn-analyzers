@@ -149,8 +149,6 @@
     <Compile Include="UseOrdinalStringComparisonTests.Fixer.cs" />
     <Compile Include="DoNotUseTimersThatPreventPowerStateChangesTests.cs" />
     <Compile Include="DoNotUseTimersThatPreventPowerStateChangesTests.Fixer.cs" />
-    <Compile Include="DoNotInitializeUnnecessarilyTests.cs" />
-    <Compile Include="DoNotInitializeUnnecessarilyTests.Fixer.cs" />
     <Compile Include="AvoidUnsealedAttributesTests.cs" />
     <Compile Include="AvoidUnsealedAttributesTests.Fixer.cs" />
     <Compile Include="TestForEmptyStringsUsingStringLengthTests.cs" />
@@ -185,6 +183,18 @@
     <Compile Include="AvoidZeroLengthArrayAllocationsTests.Fixer.cs" />
     <Compile Include="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyTests.cs" />
     <Compile Include="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyTests.Fixer.cs" />
+    <Compile Include="SpecifyCultureInfoTests.cs" />
+    <Compile Include="SpecifyCultureInfoTests.Fixer.cs" />
+    <Compile Include="SpecifyIFormatProviderTests.cs" />
+    <Compile Include="SpecifyIFormatProviderTests.Fixer.cs" />
+    <Compile Include="SpecifyStringComparisonTests.cs" />
+    <Compile Include="SpecifyStringComparisonTests.Fixer.cs" />
+    <Compile Include="NormalizeStringsToUppercaseTests.cs" />
+    <Compile Include="NormalizeStringsToUppercaseTests.Fixer.cs" />
+    <Compile Include="CallGCSuppressFinalizeCorrectlyTests.cs" />
+    <Compile Include="CallGCSuppressFinalizeCorrectlyTests.Fixer.cs" />
+    <Compile Include="InstantiateArgumentExceptionsCorrectlyTests.cs" />
+    <Compile Include="InstantiateArgumentExceptionsCorrectlyTests.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />

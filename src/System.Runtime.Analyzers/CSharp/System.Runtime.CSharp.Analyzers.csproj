@@ -104,8 +104,6 @@
     <Compile Include="CSharpUseOrdinalStringComparison.Fixer.cs" />
     <Compile Include="CSharpDoNotUseTimersThatPreventPowerStateChanges.cs" />
     <Compile Include="CSharpDoNotUseTimersThatPreventPowerStateChanges.Fixer.cs" />
-    <Compile Include="CSharpDoNotInitializeUnnecessarily.cs" />
-    <Compile Include="CSharpDoNotInitializeUnnecessarily.Fixer.cs" />
     <Compile Include="CSharpTestForEmptyStringsUsingStringLength.cs" />
     <Compile Include="CSharpTestForEmptyStringsUsingStringLength.Fixer.cs" />
     <Compile Include="CSharpDoNotLockOnObjectsWithWeakIdentity.cs" />
@@ -137,6 +135,18 @@
     <Compile Include="CSharpAvoidZeroLengthArrayAllocations.Fixer.cs" />
     <Compile Include="CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.cs" />
     <Compile Include="CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.Fixer.cs" />
+    <Compile Include="CSharpSpecifyCultureInfo.cs" />
+    <Compile Include="CSharpSpecifyCultureInfo.Fixer.cs" />
+    <Compile Include="CSharpSpecifyIFormatProvider.cs" />
+    <Compile Include="CSharpSpecifyIFormatProvider.Fixer.cs" />
+    <Compile Include="CSharpSpecifyStringComparison.cs" />
+    <Compile Include="CSharpSpecifyStringComparison.Fixer.cs" />
+    <Compile Include="CSharpNormalizeStringsToUppercase.cs" />
+    <Compile Include="CSharpNormalizeStringsToUppercase.Fixer.cs" />
+    <Compile Include="CSharpCallGCSuppressFinalizeCorrectly.cs" />
+    <Compile Include="CSharpCallGCSuppressFinalizeCorrectly.Fixer.cs" />
+    <Compile Include="CSharpInstantiateArgumentExceptionsCorrectly.cs" />
+    <Compile Include="CSharpInstantiateArgumentExceptionsCorrectly.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />

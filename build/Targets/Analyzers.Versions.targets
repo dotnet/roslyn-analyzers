@@ -54,5 +54,20 @@
       
       <SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>1.2.0</SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>
       <SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>beta1</SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>
+      
+      <TextAnalyzersSemanticVersion>1.2.0</TextAnalyzersSemanticVersion>
+      <TextAnalyzersPreReleaseVersion>beta1</TextAnalyzersPreReleaseVersion>
+      
+      <ApiReviewAnalyzersSemanticVersion>1.2.0</ApiReviewAnalyzersSemanticVersion>
+      <ApiReviewAnalyzersPreReleaseVersion>beta1</ApiReviewAnalyzersPreReleaseVersion>
+      
+      <MicrosoftQualityGuidelinesAnalyzersSemanticVersion>1.2.0</MicrosoftQualityGuidelinesAnalyzersSemanticVersion>
+      <MicrosoftQualityGuidelinesAnalyzersPreReleaseVersion>beta1</MicrosoftQualityGuidelinesAnalyzersPreReleaseVersion>
+      
+      <MicrosoftMaintainabilityAnalyzersSemanticVersion>1.2.0</MicrosoftMaintainabilityAnalyzersSemanticVersion>
+      <MicrosoftMaintainabilityAnalyzersPreReleaseVersion>beta1</MicrosoftMaintainabilityAnalyzersPreReleaseVersion>
+      
+      <SystemResourcesAnalyzersSemanticVersion>1.2.0</SystemResourcesAnalyzersSemanticVersion>
+      <SystemResourcesAnalyzersPreReleaseVersion>beta1</SystemResourcesAnalyzersPreReleaseVersion>
    </PropertyGroup>
 </Project>

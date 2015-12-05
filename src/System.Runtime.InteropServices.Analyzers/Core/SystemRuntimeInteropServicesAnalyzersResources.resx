@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,7 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-
   <data name="PInvokesShouldNotBeVisibleTitle" xml:space="preserve">
     <value>P/Invokes should not be visible</value>
   </data>
@@ -189,5 +188,17 @@
   </data>
   <data name="CategoryUsage" xml:space="preserve">
     <value>Usage</value>
+  </data>
+  <data name="MarkBooleanPInvokeArgumentsWithMarshalAsTitle" xml:space="preserve">
+    <value>Mark boolean PInvoke arguments with MarshalAs</value>
+  </data>
+  <data name="MarkBooleanPInvokeArgumentsWithMarshalAsDescription" xml:space="preserve">
+    <value>The Boolean data type has multiple representations in unmanaged code.</value>
+  </data>
+  <data name="MarkBooleanPInvokeArgumentsWithMarshalAsMessageDefault" xml:space="preserve">
+    <value>Add the MarshalAsAttribute to parameter {0} of P/Invoke {1}. If the corresponding unmanaged parameter is a 4-byte Win32 'BOOL', use [MarshalAs(UnmanagedType.Bool)]. For a 1-byte C++ 'bool', use MarshalAs(UnmanagedType.U1).</value>
+  </data>
+  <data name="MarkBooleanPInvokeArgumentsWithMarshalAsMessageReturn" xml:space="preserve">
+    <value>Add the MarshalAsAttribute to the return type of P/Invoke {0}. If the corresponding unmanaged return type is a 4-byte Win32 'BOOL', use MarshalAs(UnmanagedType.Bool). For a 1-byte C++ 'bool', use MarshalAs(UnmanagedType.U1).</value>
   </data>
 </root>

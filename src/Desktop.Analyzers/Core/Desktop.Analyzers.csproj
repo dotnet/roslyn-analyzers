@@ -136,7 +136,8 @@
     <Compile Include="UseXmlReaderForDataTableReadXml.Fixer.cs" />
     <Compile Include="UseXmlReaderForDataTableReadXmlSchema.cs" />
     <Compile Include="UseXmlReaderForDataTableReadXmlSchema.Fixer.cs" />
-    <Compile Include="DiagnosticCategory.cs" />
+    <Compile Include="TypesShouldNotExtendCertainBaseTypes.cs" />
+    <Compile Include="TypesShouldNotExtendCertainBaseTypes.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DesktopAnalyzersResources.resx">

@@ -102,8 +102,6 @@
     <Compile Include="BasicUseOrdinalStringComparison.Fixer.vb" />
     <Compile Include="BasicDoNotUseTimersThatPreventPowerStateChanges.vb" />
     <Compile Include="BasicDoNotUseTimersThatPreventPowerStateChanges.Fixer.vb" />
-    <Compile Include="BasicDoNotInitializeUnnecessarily.vb" />
-    <Compile Include="BasicDoNotInitializeUnnecessarily.Fixer.vb" />
     <Compile Include="BasicTestForEmptyStringsUsingStringLength.vb" />
     <Compile Include="BasicTestForEmptyStringsUsingStringLength.Fixer.vb" />
     <Compile Include="BasicDoNotLockOnObjectsWithWeakIdentity.vb" />
@@ -135,6 +133,18 @@
     <Compile Include="BasicAvoidZeroLengthArrayAllocations.Fixer.vb" />
     <Compile Include="BasicDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.vb" />
     <Compile Include="BasicDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.Fixer.vb" />
+    <Compile Include="BasicSpecifyCultureInfo.vb" />
+    <Compile Include="BasicSpecifyCultureInfo.Fixer.vb" />
+    <Compile Include="BasicSpecifyIFormatProvider.vb" />
+    <Compile Include="BasicSpecifyIFormatProvider.Fixer.vb" />
+    <Compile Include="BasicSpecifyStringComparison.vb" />
+    <Compile Include="BasicSpecifyStringComparison.Fixer.vb" />
+    <Compile Include="BasicNormalizeStringsToUppercase.vb" />
+    <Compile Include="BasicNormalizeStringsToUppercase.Fixer.vb" />
+    <Compile Include="BasicCallGCSuppressFinalizeCorrectly.vb" />
+    <Compile Include="BasicCallGCSuppressFinalizeCorrectly.Fixer.vb" />
+    <Compile Include="BasicInstantiateArgumentExceptionsCorrectly.vb" />
+    <Compile Include="BasicInstantiateArgumentExceptionsCorrectly.Fixer.vb" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\vb\Microsoft.CodeAnalysis.Analyzers.dll" />

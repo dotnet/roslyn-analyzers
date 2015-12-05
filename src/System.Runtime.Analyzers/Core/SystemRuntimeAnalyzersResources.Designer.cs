@@ -152,56 +152,56 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Globalization.
+        ///   Looks up a localized string similar to A method that is an implementation of Dispose does not call GC.SuppressFinalize; or a method that is not an implementation of Dispose calls GC.SuppressFinalize; or a method calls GC.SuppressFinalize and passes something other than this (Me in Visual?Basic)..
         /// </summary>
-        internal static string CategoryGlobalization {
+        internal static string CallGCSuppressFinalizeCorrectlyDescription {
             get {
-                return ResourceManager.GetString("CategoryGlobalization", resourceCulture);
+                return ResourceManager.GetString("CallGCSuppressFinalizeCorrectlyDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mobility.
+        ///   Looks up a localized string similar to Change {0} to call {1}. This will prevent derived types that introduce a finalizer from needing to re-implement &apos;IDisposable&apos; to call it..
         /// </summary>
-        internal static string CategoryMobility {
+        internal static string CallGCSuppressFinalizeCorrectlyMessageNotCalled {
             get {
-                return ResourceManager.GetString("CategoryMobility", resourceCulture);
+                return ResourceManager.GetString("CallGCSuppressFinalizeCorrectlyMessageNotCalled", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Performance.
+        ///   Looks up a localized string similar to Change {0} to call {1}. This will prevent unnecessary finalization of the object once it has been disposed and it has fallen out of scope..
         /// </summary>
-        internal static string CategoryPerformance {
+        internal static string CallGCSuppressFinalizeCorrectlyMessageNotCalledWithFinalizer {
             get {
-                return ResourceManager.GetString("CategoryPerformance", resourceCulture);
+                return ResourceManager.GetString("CallGCSuppressFinalizeCorrectlyMessageNotCalledWithFinalizer", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reliability.
+        ///   Looks up a localized string similar to {0} calls {1} on something other than itself. Change the call site to pass &apos;this&apos; (&apos;Me&apos; in Visual Basic) instead..
         /// </summary>
-        internal static string CategoryReliability {
+        internal static string CallGCSuppressFinalizeCorrectlyMessageNotPassedThis {
             get {
-                return ResourceManager.GetString("CategoryReliability", resourceCulture);
+                return ResourceManager.GetString("CallGCSuppressFinalizeCorrectlyMessageNotPassedThis", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Security.
+        ///   Looks up a localized string similar to {0} calls {1}, a method that is typically only called within an implementation of &apos;IDisposable.Dispose&apos;. Refer to the IDisposable pattern for more information..
         /// </summary>
-        internal static string CategorySecurity {
+        internal static string CallGCSuppressFinalizeCorrectlyMessageOutsideDispose {
             get {
-                return ResourceManager.GetString("CategorySecurity", resourceCulture);
+                return ResourceManager.GetString("CallGCSuppressFinalizeCorrectlyMessageOutsideDispose", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Usage.
+        ///   Looks up a localized string similar to Dispose methods should call SuppressFinalize.
         /// </summary>
-        internal static string CategoryUsage {
+        internal static string CallGCSuppressFinalizeCorrectlyTitle {
             get {
-                return ResourceManager.GetString("CategoryUsage", resourceCulture);
+                return ResourceManager.GetString("CallGCSuppressFinalizeCorrectlyTitle", resourceCulture);
             }
         }
         
@@ -337,33 +337,6 @@ namespace System.Runtime.Analyzers {
         internal static string DoNotCatchCorruptedStateExceptionsInGeneralHandlersTitle {
             get {
                 return ResourceManager.GetString("DoNotCatchCorruptedStateExceptionsInGeneralHandlersTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The common language runtime initializes all fields to their default values before running the constructor. In most cases, initializing a field to its default value in a constructor is redundant, which degrades performance and adds to maintenance costs. One case where it is not redundant occurs when the constructor calls another constructor of the same class or a base class constructor and that constructor initializes the field to a non-default value. In this case, changing the value of the field back to its [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string DoNotInitializeUnnecessarilyDescription {
-            get {
-                return ResourceManager.GetString("DoNotInitializeUnnecessarilyDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do not initialize unnecessarily.
-        /// </summary>
-        internal static string DoNotInitializeUnnecessarilyMessage {
-            get {
-                return ResourceManager.GetString("DoNotInitializeUnnecessarilyMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do not initialize unnecessarily.
-        /// </summary>
-        internal static string DoNotInitializeUnnecessarilyTitle {
-            get {
-                return ResourceManager.GetString("DoNotInitializeUnnecessarilyTitle", resourceCulture);
             }
         }
         
@@ -605,6 +578,87 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A call is made to the default (parameterless) constructor of an exception type that is or derives from ArgumentException, or an incorrect string argument is passed to a parameterized constructor of an exception type that is or derives from ArgumentException..
+        /// </summary>
+        internal static string InstantiateArgumentExceptionsCorrectlyDescription {
+            get {
+                return ResourceManager.GetString("InstantiateArgumentExceptionsCorrectlyDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Method {0} passes parameter name &apos;{1}&apos; as the {2} argument to a {3} constructor. Replace this argument with a descriptive message and pass the parameter name in the correct position..
+        /// </summary>
+        internal static string InstantiateArgumentExceptionsCorrectlyMessageIncorrectMessage {
+            get {
+                return ResourceManager.GetString("InstantiateArgumentExceptionsCorrectlyMessageIncorrectMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Method {0} passes &apos;{1}&apos; as the {2} argument to a {3} constructor. Replace this argument with one of the method&apos;s parameter names. Note that the provided parameter name should have the exact casing as declared on the method..
+        /// </summary>
+        internal static string InstantiateArgumentExceptionsCorrectlyMessageIncorrectParameterName {
+            get {
+                return ResourceManager.GetString("InstantiateArgumentExceptionsCorrectlyMessageIncorrectParameterName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Call the {0} constructor that contains a message and/or paramName parameter..
+        /// </summary>
+        internal static string InstantiateArgumentExceptionsCorrectlyMessageNoArguments {
+            get {
+                return ResourceManager.GetString("InstantiateArgumentExceptionsCorrectlyMessageNoArguments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Instantiate argument exceptions correctly.
+        /// </summary>
+        internal static string InstantiateArgumentExceptionsCorrectlyTitle {
+            get {
+                return ResourceManager.GetString("InstantiateArgumentExceptionsCorrectlyTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Strings should be normalized to uppercase. A small group of characters cannot make a round trip when they are converted to lowercase..
+        /// </summary>
+        internal static string NormalizeStringsToUppercaseDescription {
+            get {
+                return ResourceManager.GetString("NormalizeStringsToUppercaseDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to In method {0}, replace the call to String.ToLower(CultureInfo.InvariantCulture) with String.ToUpper(CultureInfo.InvariantCulture)..
+        /// </summary>
+        internal static string NormalizeStringsToUppercaseMessageToUpper {
+            get {
+                return ResourceManager.GetString("NormalizeStringsToUppercaseMessageToUpper", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to In method {0}, replace the call to {1} with String.ToUpperInvariant()..
+        /// </summary>
+        internal static string NormalizeStringsToUppercaseMessageToUpperInvariant {
+            get {
+                return ResourceManager.GetString("NormalizeStringsToUppercaseMessageToUpperInvariant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Normalize strings to uppercase.
+        /// </summary>
+        internal static string NormalizeStringsToUppercaseTitle {
+            get {
+                return ResourceManager.GetString("NormalizeStringsToUppercaseTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The format argument that is passed to System.String.Format does not contain a format item that corresponds to each object argument, or vice versa..
         /// </summary>
         internal static string ProvideCorrectArgumentsToFormattingMethodsDescription {
@@ -655,6 +709,114 @@ namespace System.Runtime.Analyzers {
         internal static string RethrowToPreserveStackDetailsTitle {
             get {
                 return ResourceManager.GetString("RethrowToPreserveStackDetailsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A method or constructor calls a member that has an overload that accepts a System.Globalization.CultureInfo parameter, and the method or constructor does not call the overload that takes the CultureInfo parameter. When a CultureInfo or System.IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales..
+        /// </summary>
+        internal static string SpecifyCultureInfoDescription {
+            get {
+                return ResourceManager.GetString("SpecifyCultureInfoDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specify CultureInfo.
+        /// </summary>
+        internal static string SpecifyCultureInfoMessage {
+            get {
+                return ResourceManager.GetString("SpecifyCultureInfoMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specify CultureInfo.
+        /// </summary>
+        internal static string SpecifyCultureInfoTitle {
+            get {
+                return ResourceManager.GetString("SpecifyCultureInfoTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A method or constructor calls one or more members that have overloads that accept a System.IFormatProvider parameter, and the method or constructor does not call the overload that takes the IFormatProvider parameter. When a System.Globalization.CultureInfo or IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales..
+        /// </summary>
+        internal static string SpecifyIFormatProviderDescription {
+            get {
+                return ResourceManager.GetString("SpecifyIFormatProviderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Because the behavior of {0} could vary based on the current user&apos;s locale settings, replace this call in {1} with a call to {2}. If the result of {2} will be based on input from the user, specify {3} as the &apos;IFormatProvider&apos; parameter. Otherwise, if the result will based on input stored and accessed by software, such as when it is loaded from disk or from a database, specify {4}..
+        /// </summary>
+        internal static string SpecifyIFormatProviderMessageIFormatProviderAlternate {
+            get {
+                return ResourceManager.GetString("SpecifyIFormatProviderMessageIFormatProviderAlternate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Because the behavior of {0} could vary based on the current user&apos;s locale settings, replace this call in {1} with a call to {2}. If the result of {2} will be displayed to the user, specify {3} as the &apos;IFormatProvider&apos; parameter. Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk or to a database, specify {4}..
+        /// </summary>
+        internal static string SpecifyIFormatProviderMessageIFormatProviderAlternateString {
+            get {
+                return ResourceManager.GetString("SpecifyIFormatProviderMessageIFormatProviderAlternateString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} passes {1} as the &apos;IFormatProvider&apos; parameter to {2}. This property returns a culture that is inappropriate for formatting methods. If the result of {2} will be based on input from the user, specify {3} as the &apos;IFormatProvider&apos; parameter. Otherwise, if the result will based on input stored and accessed by software, such as when it is loaded from disk or from a database, specify {4}..
+        /// </summary>
+        internal static string SpecifyIFormatProviderMessageUICulture {
+            get {
+                return ResourceManager.GetString("SpecifyIFormatProviderMessageUICulture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} passes {1} as the &apos;IFormatProvider&apos; parameter to {2}. This property returns a culture that is inappropriate for formatting methods. If the result of {2} will be displayed to the user, specify {3} as the &apos;IFormatProvider&apos; parameter. Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk or to a database, specify {4}..
+        /// </summary>
+        internal static string SpecifyIFormatProviderMessageUICultureString {
+            get {
+                return ResourceManager.GetString("SpecifyIFormatProviderMessageUICultureString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specify IFormatProvider.
+        /// </summary>
+        internal static string SpecifyIFormatProviderTitle {
+            get {
+                return ResourceManager.GetString("SpecifyIFormatProviderTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A string comparison operation uses a method overload that does not set a StringComparison parameter..
+        /// </summary>
+        internal static string SpecifyStringComparisonDescription {
+            get {
+                return ResourceManager.GetString("SpecifyStringComparisonDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specify StringComparison.
+        /// </summary>
+        internal static string SpecifyStringComparisonMessage {
+            get {
+                return ResourceManager.GetString("SpecifyStringComparisonMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specify StringComparison.
+        /// </summary>
+        internal static string SpecifyStringComparisonTitle {
+            get {
+                return ResourceManager.GetString("SpecifyStringComparisonTitle", resourceCulture);
             }
         }
         

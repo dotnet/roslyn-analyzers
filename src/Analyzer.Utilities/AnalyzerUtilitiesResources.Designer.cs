@@ -107,6 +107,15 @@ namespace Analyzer.Utilities {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mobility.
+        /// </summary>
+        internal static string CategoryMobility {
+            get {
+                return ResourceManager.GetString("CategoryMobility", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Naming.
         /// </summary>
         internal static string CategoryNaming {
@@ -130,6 +139,15 @@ namespace Analyzer.Utilities {
         internal static string CategoryReliability {
             get {
                 return ResourceManager.GetString("CategoryReliability", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Security.
+        /// </summary>
+        internal static string CategorySecurity {
+            get {
+                return ResourceManager.GetString("CategorySecurity", resourceCulture);
             }
         }
         

@@ -2,7 +2,10 @@
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
+using Analyzer.Utilities;
+using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Desktop.Analyzers.UnitTests

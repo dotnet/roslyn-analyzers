@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Analyzer.Utilities;
 
 namespace System.Runtime.Analyzers
 {

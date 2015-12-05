@@ -21,10 +21,8 @@
     <SemanticVersion>$(SystemRuntimeInteropServicesAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(SystemRuntimeInteropServicesAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "></PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "></PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -108,6 +106,8 @@
     <Compile Include="UseManagedEquivalentsOfWin32Api.Fixer.cs" />
     <Compile Include="AlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttribute.cs" />
     <Compile Include="DiagnosticCategory.cs" />
+    <Compile Include="MarkBooleanPInvokeArgumentsWithMarshalAs.cs" />
+    <Compile Include="MarkBooleanPInvokeArgumentsWithMarshalAs.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SystemRuntimeInteropServicesAnalyzersResources.resx">

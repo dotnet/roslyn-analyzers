@@ -134,33 +134,6 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Globalization.
-        /// </summary>
-        internal static string CategoryGlobalization {
-            get {
-                return ResourceManager.GetString("CategoryGlobalization", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to NoCetegory.
-        /// </summary>
-        internal static string CategoryNoCetegory {
-            get {
-                return ResourceManager.GetString("CategoryNoCetegory", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Usage.
-        /// </summary>
-        internal static string CategoryUsage {
-            get {
-                return ResourceManager.GetString("CategoryUsage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Do Not Catch Corrupted State Exceptions.
         /// </summary>
         internal static string DoNotCatchCorruptedStateExceptions {
@@ -625,6 +598,97 @@ namespace Desktop.Analyzers {
         internal static string SpecifyMessageBoxOptionsTitle {
             get {
                 return ResourceManager.GetString("SpecifyMessageBoxOptionsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An externally visible type extends certain base types. Use one of the alternatives..
+        /// </summary>
+        internal static string TypesShouldNotExtendCertainBaseTypesDescription {
+            get {
+                return ResourceManager.GetString("TypesShouldNotExtendCertainBaseTypesDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the base type of {0} so that it no longer extends {1}. This base exception type does not provide any additional value for framework classes. Extend &apos;System.Exception&apos; or an existing unsealed exception type instead. Do not create a new exception base type unless there is specific value in enabling the creation of a catch handler for an entire class of exceptions..
+        /// </summary>
+        internal static string TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException {
+            get {
+                return ResourceManager.GetString("TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the base type of {0} from {1} to its generic equivalent &apos;System.Collections.ObjectModel.Collection&apos;..
+        /// </summary>
+        internal static string TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase {
+            get {
+                return ResourceManager.GetString("TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the base type of {0} from {1} to its generic equivalent &apos;System.Collections.ObjectModel.KeyedCollection&apos;..
+        /// </summary>
+        internal static string TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsDictionaryBase {
+            get {
+                return ResourceManager.GetString("TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsDictionaryBase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the base type of {0} from {1} to its generic equivalent &apos;System.Collections.Generic.Queue&apos;..
+        /// </summary>
+        internal static string TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsQueue {
+            get {
+                return ResourceManager.GetString("TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsQueue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the base type of {0} from {1} to its generic equivalent &apos;System.Collections.ObjectModel.ReadOnlyCollection&apos;..
+        /// </summary>
+        internal static string TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsReadOnlyCollectionBase {
+            get {
+                return ResourceManager.GetString("TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsReadOnlyCollectionBas" +
+                        "e", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the base type of {0} from {1} to its generic equivalent &apos;System.Collections.Generic.SortedList&apos;..
+        /// </summary>
+        internal static string TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsSortedList {
+            get {
+                return ResourceManager.GetString("TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsSortedList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the base type of {0} from {1} to its generic equivalent &apos;System.Collections.Generic.Stack&apos;..
+        /// </summary>
+        internal static string TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsStack {
+            get {
+                return ResourceManager.GetString("TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsStack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the base type of {0} so that it no longer extends {1}. The preferred design is to decouple the underlying XmlDocument representation from the type&apos;s interface by using containment instead of inheritance..
+        /// </summary>
+        internal static string TypesShouldNotExtendCertainBaseTypesMessageSystemXmlXmlDocument {
+            get {
+                return ResourceManager.GetString("TypesShouldNotExtendCertainBaseTypesMessageSystemXmlXmlDocument", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Types should not extend certain base types.
+        /// </summary>
+        internal static string TypesShouldNotExtendCertainBaseTypesTitle {
+            get {
+                return ResourceManager.GetString("TypesShouldNotExtendCertainBaseTypesTitle", resourceCulture);
             }
         }
         

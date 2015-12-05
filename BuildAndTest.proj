@@ -65,6 +65,10 @@
       <TestAssemblies Include="Binaries\$(Configuration)\System.Collections.Immutable.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\System.Security.Cryptography.Hashing.Algorithms.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\Microsoft.CodeAnalysis.Analyzers.UnitTests.dll" />
+      <TestAssemblies Include="Binaries\$(Configuration)\Microsoft.Maintainability.Analyzers.UnitTests.dll" />
+      <TestAssemblies Include="Binaries\$(Configuration)\Text.Analyzers.UnitTests.dll" />
+      <TestAssemblies Include="Binaries\$(Configuration)\Microsoft.QualityGuidelines.Analyzers.UnitTests.dll" />
+      <TestAssemblies Include="Binaries\$(Configuration)\System.Resources.Analyzers.UnitTests.dll" />
 
       <TestAssemblies Include="Binaries\$(Configuration)\MetaCompilation.Test.dll" />
     </ItemGroup>

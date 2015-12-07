@@ -12,12 +12,12 @@ namespace System.Runtime.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicInstantiateArgumentExceptionsCorrectlyAnalyzer();
+            return new InstantiateArgumentExceptionsCorrectlyAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpInstantiateArgumentExceptionsCorrectlyAnalyzer();
+            return new InstantiateArgumentExceptionsCorrectlyAnalyzer();
         }
     }
 }

@@ -185,39 +185,6 @@ public class Class
         }
 
         [Fact]
-        public void CSharp_CA1024DiagnosticCasesWithScope()
-        {
-            VerifyCSharp(@"
-public class Class
-{
-    private string fileName = """";
-
-    public string GetFileName()
-    {
-        return fileName;
-    }
-
-    [|public string Get_FileName2()
-    {
-        return fileName;
-    }
-
-    public string Get123()
-    {
-        return fileName;
-    }|]
-
-    protected string GetFileNameProtected()
-    {
-        return fileName;
-    }
-}
-",
-            GetCA1024CSharpResultAt(11, 19, "Get_FileName2"),
-            GetCA1024CSharpResultAt(16, 19, "Get123"));
-        }
-
-        [Fact]
         public void VisualBasic_CA1024NoDiagnosticCases()
         {
             VerifyBasic(@"
@@ -301,12 +268,12 @@ Public Class Class1
 		Return fileName
 	End Function
 
-    ' 12) Private method
+	' 12) Private method
 	Private Function GetSomethingPrivate() As String
 		Return fileName
 	End Function
 
-    ' 13) Friend method
+	' 13) Friend method
 	Friend Function GetSomethingInternal() As String
 		Return fileName
 	End Function
@@ -370,34 +337,6 @@ End Class
             GetCA1024BasicResultAt(9, 18, "Get_FileName2"),
             GetCA1024BasicResultAt(13, 18, "Get123"),
             GetCA1024BasicResultAt(17, 24, "GetFileNameProtected"));
-        }
-
-        [Fact]
-        public void VisualBasic_CA1024DiagnosticCaseswithScope()
-        {
-            VerifyBasic(@"
-Public Class Class1
-	Private fileName As String
-
-	Public Function GetFileName() As String
-		Return filename
-	End Function
-
-	[|Public Function Get_FileName2() As String
-		Return filename
-	End Function
-
-	Public Function Get123() As String
-		Return filename
-	End Function|]
-
-    Protected Function GetFileNameProtected() As String
-		Return filename
-	End Function
-End Class
-",
-            GetCA1024BasicResultAt(9, 18, "Get_FileName2"),
-            GetCA1024BasicResultAt(13, 18, "Get123"));
         }
 
         internal static string CA1024Name = "CA1024";

@@ -4,6 +4,8 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
+using System;
+using System.Linq;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {                   
@@ -33,7 +35,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            
+            analysisContext.RegisterSymbolAction(AnalyzeInterface, SymbolKind.NamedType);
+        }
+
+        private void AnalyzeInterface(SymbolAnalysisContext context)
+        {
+            var symbol = (INamedTypeSymbol)context.Symbol;
+            if (symbol.TypeKind == TypeKind.Interface && !symbol.GetMembers().Any())
+            {
+                var declaration = symbol.DeclaringSyntaxReferences.First();
+                context.ReportDiagnostic(symbol.CreateDiagnostic(Rule));
+            }
         }
     }
 }

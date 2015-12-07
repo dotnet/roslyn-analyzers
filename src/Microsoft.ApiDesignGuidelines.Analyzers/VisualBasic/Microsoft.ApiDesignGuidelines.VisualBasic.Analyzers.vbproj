@@ -108,12 +108,9 @@
     <Compile Include="BasicUseGenericEventHandlerInstances.vb" />
     <Compile Include="BasicUseGenericEventHandlerInstances.Fixer.vb" />
     <Compile Include="BasicEnumsShouldHaveZeroValue.Fixer.vb" />
-    <Compile Include="BasicAbstractTypesShouldNotHaveConstructors.vb" />
-    <Compile Include="BasicAbstractTypesShouldNotHaveConstructors.Fixer.vb" />
     <Compile Include="BasicMarkAssembliesWithClsCompliant.Fixer.vb" />
     <Compile Include="BasicMarkAssembliesWithAssemblyVersion.Fixer.vb" />
     <Compile Include="BasicDefineAccessorsForAttributeArguments.vb" />
-    <Compile Include="BasicUsePropertiesWhereAppropriate.vb" />
     <Compile Include="BasicUsePropertiesWhereAppropriate.Fixer.vb" />
     <Compile Include="BasicInterfaceMethodsShouldBeCallableByChildTypes.vb" />
     <Compile Include="BasicInterfaceMethodsShouldBeCallableByChildTypes.Fixer.vb" />

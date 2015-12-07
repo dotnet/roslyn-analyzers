@@ -12,12 +12,12 @@ namespace Microsoft.Maintainability.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicAvoidUnusedPrivateFieldsAnalyzer();
+            return new AvoidUnusedPrivateFieldsAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpAvoidUnusedPrivateFieldsAnalyzer();
+            return new AvoidUnusedPrivateFieldsAnalyzer();
         }
     }
 }

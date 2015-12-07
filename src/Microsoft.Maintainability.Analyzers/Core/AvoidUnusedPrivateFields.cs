@@ -9,7 +9,8 @@ namespace Microsoft.Maintainability.Analyzers
     /// <summary>
     /// CA1823: Avoid unused private fields
     /// </summary>
-    public abstract class AvoidUnusedPrivateFieldsAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class AvoidUnusedPrivateFieldsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1823";
 
@@ -23,7 +24,7 @@ namespace Microsoft.Maintainability.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,     // TODO: add MSDN url
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);

@@ -229,7 +229,6 @@
     <Compile Include="AssembliesShouldHaveValidStrongNames.Fixer.cs" />
     <Compile Include="OverrideGetHashCodeOnOverridingEquals.cs" />
     <Compile Include="OverrideGetHashCodeOnOverridingEquals.Fixer.cs" />
-    <Compile Include="OverrideEqualsOnOverloadingOperatorEquals.cs" />
     <Compile Include="OverrideEqualsOnOverloadingOperatorEquals.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>

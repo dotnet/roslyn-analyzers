@@ -1,17 +1,67 @@
 ' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+Imports System.Collections.Immutable
+Imports Analyzer.Utilities
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers   
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA2224: Override Equals on overloading operator equals
     ''' </summary>
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
     Public NotInheritable Class BasicOverrideEqualsOnOverloadingOperatorEqualsAnalyzer
-        Inherits OverrideEqualsOnOverloadingOperatorEqualsAnalyzer
+        Inherits DiagnosticAnalyzer
 
+        Friend Const RuleId As String = "CA2224"
+
+        Private Shared ReadOnly s_localizableTitle As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsOnOverloadingOperatorEqualsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, GetType(MicrosoftApiDesignGuidelinesAnalyzersResources))
+
+        Private Shared ReadOnly s_localizableMessage As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsOnOverloadingOperatorEqualsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, GetType(MicrosoftApiDesignGuidelinesAnalyzersResources))
+        Private Shared ReadOnly s_localizableDescription As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsOnOverloadingOperatorEqualsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, GetType(MicrosoftApiDesignGuidelinesAnalyzersResources))
+
+        Friend Shared Rule As DiagnosticDescriptor = New DiagnosticDescriptor(
+            RuleId,
+            s_localizableTitle,
+            s_localizableMessage,
+            DiagnosticCategory.Usage,
+            DiagnosticSeverity.Warning,
+            True,
+            s_localizableDescription,
+            "https://msdn.microsoft.com/en-us/library/ms182357.aspx",
+            WellKnownDiagnosticTags.Telemetry)
+
+        Public Overrides ReadOnly Property SupportedDiagnostics As ImmutableArray(Of DiagnosticDescriptor) = ImmutableArray.Create(Rule)
+
+        Public Overrides Sub Initialize(analysisContext As AnalysisContext)
+            analysisContext.RegisterSymbolAction(
+                Sub(symbolContext)
+                    Dim method = DirectCast(symbolContext.Symbol, IMethodSymbol)
+                    Debug.Assert(method.IsDefinition)
+
+                    Dim type = method.ContainingType
+                    If type.TypeKind = TypeKind.Interface OrElse type.IsImplicitClass OrElse type.SpecialType = SpecialType.System_Object Then
+                        ' Don't apply this rule to interfaces, the implicit class (i.e. error case), or System.Object.
+                        Return
+                    End If
+
+                    ' If there's a = operator...
+                    If method.MethodKind <> MethodKind.UserDefinedOperator OrElse
+                        Not CaseInsensitiveComparison.Equals(method.Name, WellKnownMemberNames.EqualityOperatorName) Then
+
+                        Return
+                    End If
+
+                    ' ...search for a corresponding Equals override.
+                    If type.DoesOverrideEquals() Then
+                        Return
+                    End If
+
+                    symbolContext.ReportDiagnostic(type.CreateDiagnostic(Rule))
+                End Sub,
+                SymbolKind.Method)
+        End Sub
     End Class
 End Namespace

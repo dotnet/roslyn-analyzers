@@ -17,7 +17,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpOverrideEqualsOnOverloadingOperatorEqualsAnalyzer();
+            return null;
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

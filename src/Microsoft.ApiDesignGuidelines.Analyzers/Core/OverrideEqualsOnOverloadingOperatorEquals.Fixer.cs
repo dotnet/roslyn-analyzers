@@ -18,8 +18,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// </summary>
     public abstract class OverrideEqualsOnOverloadingOperatorEqualsFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(OverrideEqualsOnOverloadingOperatorEqualsAnalyzer.RuleId);
-
         public sealed override FixAllProvider GetFixAllProvider()
         {
             // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers

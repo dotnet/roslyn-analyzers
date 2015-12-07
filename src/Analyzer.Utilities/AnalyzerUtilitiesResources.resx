@@ -144,4 +144,10 @@
   <data name="CategoryUsage" xml:space="preserve">
     <value>Usage</value>
   </data>
+  <data name="CategoryMobility" xml:space="preserve">
+    <value>Mobility</value>
+  </data>
+  <data name="CategorySecurity" xml:space="preserve">
+    <value>Security</value>
+  </data>
 </root>

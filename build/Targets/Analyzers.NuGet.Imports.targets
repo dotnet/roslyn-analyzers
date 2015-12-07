@@ -7,7 +7,6 @@
     <PropertyGroup>
       <NuGetOutDir>$(OutDir)NuGet\PerBuildPreRelease</NuGetOutDir>
       <NuGetArguments>$(SharedNuGetArguments) -prop currentVersion="$(NuGetPerBuildPreReleaseVersion.Trim())"</NuGetArguments>
-      <NuGetArguments Condition="'$(DependencyMinimumNuGetPerBuildPreReleaseVersion)' != '' AND '$(DependencyNextNuGetPerBuildPreReleaseVersion)' != ''">$(NuGetArguments) -prop dependencyMinVersion="$(DependencyMinimumNuGetPerBuildPreReleaseVersion.Trim())" -prop dependencyNextVersion="$(DependencyNextNuGetPerBuildPreReleaseVersion.Trim())"</NuGetArguments>
     </PropertyGroup>
     <!-- clean our output directory -->
     <MakeDir Directories="$(NuGetOutDir)" Condition="!Exists('$(NuGetOutDir)')" />
@@ -18,8 +17,7 @@
   <Target Name="_BuildPreRelease" Inputs="$(MSBuildProjectFile);@(NuSpec)" Outputs="@(NuSpec-&gt;NuGet\PreRelease\%(Filename).$(NuGetPreReleaseVersion).nupkg">
     <PropertyGroup>
       <NuGetOutDir>$(OutDir)NuGet\PreRelease</NuGetOutDir>
-      <NuGetArguments>$(SharedNuGetArguments) -prop currentVersion="$(NuGetPreReleaseVersion.Trim())"</NuGetArguments>
-      <NuGetArguments Condition="'$(DependencyMinimumNuGetPreReleaseVersion)' != '' AND '$(DependencyNextNuGetPreReleaseVersion)' != ''">$(NuGetArguments) -prop dependencyMinVersion="$(DependencyMinimumNuGetPreReleaseVersion.Trim())" -prop dependencyNextVersion="$(DependencyNextNuGetPreReleaseVersion.Trim())"</NuGetArguments>      
+      <NuGetArguments>$(SharedNuGetArguments) -prop currentVersion="$(NuGetPreReleaseVersion.Trim())"</NuGetArguments>      
     </PropertyGroup>
     <!-- clean our output directory -->
     <MakeDir Directories="$(NuGetOutDir)" Condition="!Exists('$(NuGetOutDir)')" />
@@ -31,7 +29,6 @@
     <PropertyGroup>
       <NuGetOutDir>$(OutDir)NuGet\Release</NuGetOutDir>
       <NuGetArguments>$(SharedNuGetArguments) -prop currentVersion="$(NuGetReleaseVersion.Trim())"</NuGetArguments>
-      <NuGetArguments Condition="'$(DependencyMinimumNuGetReleaseVersion)' != '' AND '$(DependencyNextNuGetReleaseVersion)' != ''">$(NuGetArguments) -prop dependencyMinVersion="$(DependencyMinimumNuGetReleaseVersion.Trim())" -prop dependencyNextVersion="$(DependencyNextNuGetReleaseVersion.Trim())"</NuGetArguments>
     </PropertyGroup>
     <!-- clean our output directory -->
     <MakeDir Directories="$(NuGetOutDir)" Condition="!Exists('$(NuGetOutDir)')" />

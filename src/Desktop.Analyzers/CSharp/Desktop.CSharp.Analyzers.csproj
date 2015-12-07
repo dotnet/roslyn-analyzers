@@ -21,10 +21,8 @@
     <SemanticVersion>$(DesktopAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(DesktopAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "></PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "></PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
       <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
@@ -131,6 +129,8 @@
     <Compile Include="CSharpUseXmlReaderForDataTableReadXml.Fixer.cs" />
     <Compile Include="CSharpUseXmlReaderForDataTableReadXmlSchema.cs" />
     <Compile Include="CSharpUseXmlReaderForDataTableReadXmlSchema.Fixer.cs" />
+    <Compile Include="CSharpTypesShouldNotExtendCertainBaseTypes.cs" />
+    <Compile Include="CSharpTypesShouldNotExtendCertainBaseTypes.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />

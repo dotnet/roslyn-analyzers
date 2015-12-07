@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -306,15 +306,6 @@
   <data name="UseXmlReaderForDataTableReadXmlSchemaMessage" xml:space="preserve">
     <value>Use XmlReader for DataTable ReadXmlSchema</value>
   </data>
-  <data name="CategoryGlobalization" xml:space="preserve">
-    <value>Globalization</value>
-  </data>
-  <data name="CategoryNoCetegory" xml:space="preserve">
-    <value>NoCetegory</value>
-  </data>
-  <data name="CategoryUsage" xml:space="preserve">
-    <value>Usage</value>
-  </data>
   <data name="DoNotCatchCorruptedStateExceptions" xml:space="preserve">
     <value>Do Not Catch Corrupted State Exceptions</value>
   </data>
@@ -341,5 +332,35 @@
   </data>
   <data name="DoNotUseWeakCryptographicAlgorithmsMessage" xml:space="preserve">
     <value>{0} uses a weak cryptographic algorithm {1}</value>
+  </data>
+  <data name="TypesShouldNotExtendCertainBaseTypesTitle" xml:space="preserve">
+    <value>Types should not extend certain base types</value>
+  </data>
+  <data name="TypesShouldNotExtendCertainBaseTypesDescription" xml:space="preserve">
+    <value>An externally visible type extends certain base types. Use one of the alternatives.</value>
+  </data>
+  <data name="TypesShouldNotExtendCertainBaseTypesMessageSystemXmlXmlDocument" xml:space="preserve">
+    <value>Change the base type of {0} so that it no longer extends {1}. The preferred design is to decouple the underlying XmlDocument representation from the type's interface by using containment instead of inheritance.</value>
+  </data>
+  <data name="TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException" xml:space="preserve">
+    <value>Change the base type of {0} so that it no longer extends {1}. This base exception type does not provide any additional value for framework classes. Extend 'System.Exception' or an existing unsealed exception type instead. Do not create a new exception base type unless there is specific value in enabling the creation of a catch handler for an entire class of exceptions.</value>
+  </data>
+  <data name="TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase" xml:space="preserve">
+    <value>Change the base type of {0} from {1} to its generic equivalent 'System.Collections.ObjectModel.Collection'.</value>
+  </data>
+  <data name="TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsDictionaryBase" xml:space="preserve">
+    <value>Change the base type of {0} from {1} to its generic equivalent 'System.Collections.ObjectModel.KeyedCollection'.</value>
+  </data>
+  <data name="TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsQueue" xml:space="preserve">
+    <value>Change the base type of {0} from {1} to its generic equivalent 'System.Collections.Generic.Queue'.</value>
+  </data>
+  <data name="TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsReadOnlyCollectionBase" xml:space="preserve">
+    <value>Change the base type of {0} from {1} to its generic equivalent 'System.Collections.ObjectModel.ReadOnlyCollection'.</value>
+  </data>
+  <data name="TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsSortedList" xml:space="preserve">
+    <value>Change the base type of {0} from {1} to its generic equivalent 'System.Collections.Generic.SortedList'.</value>
+  </data>
+  <data name="TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsStack" xml:space="preserve">
+    <value>Change the base type of {0} from {1} to its generic equivalent 'System.Collections.Generic.Stack'.</value>
   </data>
 </root>

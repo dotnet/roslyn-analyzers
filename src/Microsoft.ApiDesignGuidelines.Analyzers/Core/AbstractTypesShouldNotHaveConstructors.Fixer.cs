@@ -1,36 +1,51 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Editing;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Analyzer.Utilities;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.Editing;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
-{                              
+{
     /// <summary>
-    /// CA1012: Abstract types should not have constructors
+    /// CA1012: Abstract classes should not have public constructors
     /// </summary>
-    public abstract class AbstractTypesShouldNotHaveConstructorsFixer : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
+    public sealed class AbstractTypesShouldNotHaveConstructorsFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AbstractTypesShouldNotHaveConstructorsAnalyzer.RuleId);
 
-        public sealed override FixAllProvider GetFixAllProvider()
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
-            return WellKnownFixAllProviders.BatchFixer;
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var node = root.FindNode(context.Span);
+
+            // We cannot have multiple overlapping diagnostics of this id.
+            var diagnostic = context.Diagnostics.Single();
+
+            context.RegisterCodeFix(new DocumentChangeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.AbstractTypesShouldNotHavePublicConstructorsCodeFix,
+                                        async ct => await ChangeAccessibilityCodeFix(context.Document, root, node, ct).ConfigureAwait(false)),
+                                    diagnostic);
         }
 
-        public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
-        {                              
-            // This is to get rid of warning CS1998, please remove when implementing this analyzer
-            await new Task(() => { });
-            throw new NotImplementedException();
+        private static SyntaxNode GetDeclaration(ISymbol symbol)
+        {
+            return (symbol.DeclaringSyntaxReferences.Length > 0) ? symbol.DeclaringSyntaxReferences[0].GetSyntax() : null;
+        }
+
+        private async Task<Document> ChangeAccessibilityCodeFix(Document document, SyntaxNode root, SyntaxNode nodeToFix, CancellationToken cancellationToken)
+        {
+            var model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            var classSymbol = (INamedTypeSymbol)model.GetDeclaredSymbol(nodeToFix, cancellationToken);
+            var instanceConstructors = classSymbol.InstanceConstructors.Where(t => t.DeclaredAccessibility == Accessibility.Public).Select(t => GetDeclaration(t)).Where(d => d != null).ToList();
+            var generator = SyntaxGenerator.GetGenerator(document);
+            var newRoot = root.ReplaceNodes(instanceConstructors, (original, rewritten) => generator.WithAccessibility(original, Accessibility.Protected));
+            return document.WithSyntaxRoot(newRoot);
         }
     }
 }

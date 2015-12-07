@@ -19,5 +19,51 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         {
             return new CSharpExceptionsShouldBePublicAnalyzer();
         }
+
+        [Fact]
+        public void TestNonPublicException()
+        {
+            VerifyCSharp(@"
+using System;
+class InternalException : Exception
+{
+}", 
+            GetCA1064CSharpResultAt(3, 7));
+        }
+
+        [Fact]
+        public void TestNonPublicException2()
+        {
+            VerifyCSharp(@"
+using System;
+private class PrivateException : SystemException
+{
+}",
+            GetCA1064CSharpResultAt(3, 15));
+        }
+
+        [Fact]
+        public void TestPublicException()
+        {
+            VerifyCSharp(@"
+using System;
+public class BasicException : Exception
+{
+}");
+        }
+
+        [Fact]
+        public void TestNonExceptionType()
+        {
+            VerifyCSharp(@"
+using System.IO;
+public class NonException : StringWriter
+{
+}");
+        }
+
+        private DiagnosticResult GetCA1064CSharpResultAt(int line, int column) =>
+            GetCSharpResultAt(line, column, ExceptionsShouldBePublicAnalyzer.RuleId, 
+                MicrosoftApiDesignGuidelinesAnalyzersResources.ExceptionsShouldBePublicMessage);                
     }
 }

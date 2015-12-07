@@ -21,10 +21,8 @@
     <SemanticVersion>$(MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "></PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "></PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Microsoft.ApiDesignGuidelines.Analyzers.csproj">
       <Project>{9B5FFB24-D965-4CF1-8BB2-02C282193F4F}</Project>
@@ -147,6 +145,70 @@
     <Compile Include="CSharpCancellationTokenParametersMustComeLast.Fixer.cs" />
     <Compile Include="CSharpConstructorMakeNoninheritableBaseClassInheritable.cs" />
     <Compile Include="CSharpConstructorMakeNoninheritableBaseClassInheritable.Fixer.cs" />
+    <Compile Include="CSharpDoNotDeclareStaticMembersOnGenericTypes.cs" />
+    <Compile Include="CSharpDoNotDeclareStaticMembersOnGenericTypes.Fixer.cs" />
+    <Compile Include="CSharpCollectionsShouldImplementGenericInterface.cs" />
+    <Compile Include="CSharpCollectionsShouldImplementGenericInterface.Fixer.cs" />
+    <Compile Include="CSharpEnumStorageShouldBeInt32.cs" />
+    <Compile Include="CSharpEnumStorageShouldBeInt32.Fixer.cs" />
+    <Compile Include="CSharpUseEventsWhereAppropriate.cs" />
+    <Compile Include="CSharpUseEventsWhereAppropriate.Fixer.cs" />
+    <Compile Include="CSharpImplementStandardExceptionConstructors.cs" />
+    <Compile Include="CSharpImplementStandardExceptionConstructors.Fixer.cs" />
+    <Compile Include="CSharpNestedTypesShouldNotBeVisible.cs" />
+    <Compile Include="CSharpNestedTypesShouldNotBeVisible.Fixer.cs" />
+    <Compile Include="CSharpAvoidEmptyInterfaces.cs" />
+    <Compile Include="CSharpAvoidEmptyInterfaces.Fixer.cs" />
+    <Compile Include="CSharpProvideObsoleteAttributeMessage.cs" />
+    <Compile Include="CSharpProvideObsoleteAttributeMessage.Fixer.cs" />
+    <Compile Include="CSharpPropertiesShouldNotBeWriteOnly.cs" />
+    <Compile Include="CSharpPropertiesShouldNotBeWriteOnly.Fixer.cs" />
+    <Compile Include="CSharpDeclareTypesInNamespaces.cs" />
+    <Compile Include="CSharpDeclareTypesInNamespaces.Fixer.cs" />
+    <Compile Include="CSharpDoNotDeclareVisibleInstanceFields.cs" />
+    <Compile Include="CSharpDoNotDeclareVisibleInstanceFields.Fixer.cs" />
+    <Compile Include="CSharpUriParametersShouldNotBeStrings.cs" />
+    <Compile Include="CSharpUriParametersShouldNotBeStrings.Fixer.cs" />
+    <Compile Include="CSharpUriReturnValuesShouldNotBeStrings.cs" />
+    <Compile Include="CSharpUriReturnValuesShouldNotBeStrings.Fixer.cs" />
+    <Compile Include="CSharpUriPropertiesShouldNotBeStrings.cs" />
+    <Compile Include="CSharpUriPropertiesShouldNotBeStrings.Fixer.cs" />
+    <Compile Include="CSharpImplementIDisposableCorrectly.cs" />
+    <Compile Include="CSharpImplementIDisposableCorrectly.Fixer.cs" />
+    <Compile Include="CSharpExceptionsShouldBePublic.cs" />
+    <Compile Include="CSharpExceptionsShouldBePublic.Fixer.cs" />
+    <Compile Include="CSharpDoNotRaiseExceptionsInUnexpectedLocations.cs" />
+    <Compile Include="CSharpDoNotRaiseExceptionsInUnexpectedLocations.Fixer.cs" />
+    <Compile Include="CSharpIdentifiersShouldNotContainUnderscores.cs" />
+    <Compile Include="CSharpIdentifiersShouldNotContainUnderscores.Fixer.cs" />
+    <Compile Include="CSharpIdentifiersShouldHaveCorrectSuffix.cs" />
+    <Compile Include="CSharpIdentifiersShouldHaveCorrectSuffix.Fixer.cs" />
+    <Compile Include="CSharpIdentifiersShouldNotHaveIncorrectSuffix.cs" />
+    <Compile Include="CSharpIdentifiersShouldNotHaveIncorrectSuffix.Fixer.cs" />
+    <Compile Include="CSharpFlagsEnumsShouldHavePluralNames.cs" />
+    <Compile Include="CSharpFlagsEnumsShouldHavePluralNames.Fixer.cs" />
+    <Compile Include="CSharpIdentifiersShouldNotMatchKeywords.cs" />
+    <Compile Include="CSharpIdentifiersShouldNotMatchKeywords.Fixer.cs" />
+    <Compile Include="CSharpOnlyFlagsEnumsShouldHavePluralNames.cs" />
+    <Compile Include="CSharpOnlyFlagsEnumsShouldHavePluralNames.Fixer.cs" />
+    <Compile Include="CSharpPropertyNamesShouldNotMatchGetMethods.cs" />
+    <Compile Include="CSharpPropertyNamesShouldNotMatchGetMethods.Fixer.cs" />
+    <Compile Include="CSharpTypeNamesShouldNotMatchNamespaces.cs" />
+    <Compile Include="CSharpTypeNamesShouldNotMatchNamespaces.Fixer.cs" />
+    <Compile Include="CSharpParameterNamesShouldMatchBaseDeclaration.cs" />
+    <Compile Include="CSharpParameterNamesShouldMatchBaseDeclaration.Fixer.cs" />
+    <Compile Include="CSharpUsePreferredTerms.cs" />
+    <Compile Include="CSharpUsePreferredTerms.Fixer.cs" />
+    <Compile Include="CSharpOverrideEqualsAndOperatorEqualsOnValueTypes.cs" />
+    <Compile Include="CSharpOverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.cs" />
+    <Compile Include="CSharpPropertiesShouldNotReturnArrays.cs" />
+    <Compile Include="CSharpPropertiesShouldNotReturnArrays.Fixer.cs" />
+    <Compile Include="CSharpAssembliesShouldHaveValidStrongNames.cs" />
+    <Compile Include="CSharpAssembliesShouldHaveValidStrongNames.Fixer.cs" />
+    <Compile Include="CSharpOverrideGetHashCodeOnOverridingEquals.cs" />
+    <Compile Include="CSharpOverrideGetHashCodeOnOverridingEquals.Fixer.cs" />
+    <Compile Include="CSharpOverrideEqualsOnOverloadingOperatorEquals.cs" />
+    <Compile Include="CSharpOverrideEqualsOnOverloadingOperatorEquals.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />

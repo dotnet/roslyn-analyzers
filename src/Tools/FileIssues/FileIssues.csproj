@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DependencyConverter.cs" />
     <Compile Include="Priority.cs" />
     <Compile Include="Disposition.cs" />
     <Compile Include="FileIssuesOptions.cs" />

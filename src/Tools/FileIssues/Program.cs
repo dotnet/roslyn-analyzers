@@ -232,6 +232,8 @@ namespace FileIssues
             var newIssue = new NewIssue(title);
             AddLabel(FxCopPortLabel, newIssue.Labels);
 
+            AddAreaLabel(ruleToPort, newIssue.Labels);
+
             switch (ruleToPort.Disposition)
             {
                 case Disposition.NeedsReview:
@@ -255,6 +257,52 @@ namespace FileIssues
             newIssue.Body = FormatIssueBody(ruleToPort);
 
             return newIssue;
+        }
+
+        private static readonly Dictionary<string, string> s_analyzerNameToLabelNameDictionary = new Dictionary<string, string>
+        {
+            { "ApiReview", "Area-ApiReview.Analyzers" },
+
+            // TODO: Rename area to "Area-Desktop.Analyzers".
+            { "Desktop", "Area-DesktopAnalyzers" },
+
+            // Diagnostics applied to the Roslyn codebase itself.
+            // TODO: Rename area to "Area-Roslyn.Diagnostics.Analyzers".
+            { "Roslyn.Diagnostics", "Area-RoslynAnalyzers" },
+
+            { "Microsoft.ApiDesignGuidelines", "Area-Microsoft.ApiDesignGuidelines.Analyzers" },
+
+            // Diagnostics for usage of the Roslyn API (e.g., by analyzer authors).
+            // TODO: Rename area to "Area-Microsoft.CodeAnalysis.Analyzers".
+            { "Microsoft.CodeAnalysis", "Area-CodeAnalysisDiagnosticAnalyzers" },
+
+            { "Microsoft.Composition", "Area-Microsoft.Composition.Analyzers" },
+            { "Microsoft.Maintainability", "Area-Microsoft.Maintainability.Analyzers" },
+            { "Microsoft.QualityGuidelines", "Area-Microsoft.QualityGuidelines.Analyzers" },
+            { "System.Diagnostics", "Area-System.Diagnostics.Analyzers" },
+            { "System.Resources", "Area-System.Resources.Analyzers" },
+
+            // TODO: Rename area to "Area-System.Runtime.Analyzers".
+            { "System.Runtime", "Area-SystemRuntimeAnalyzers" },
+
+            { "System.Runtime.InteropServices", "Area-System.Runtime.InteropServices.Analyzers" },
+            { "System.Security.Cryptography.Algorithms", "Area-System.Security.Cryptography.Algorithms.Analyzers" },
+            { "System.Threading.Tasks", "Area-System.Threading.Tasks.Analyzers" },
+            { "Text", "Area-Text.Analyzers" },
+            { "XmlDocumentationComments", "Area-XmlDocumentationComments.Analyzers" }
+        };
+
+        private void AddAreaLabel(PortingInfo ruleToPort, Collection<string> labels)
+        {
+            string areaLabel;
+            if (!s_analyzerNameToLabelNameDictionary.TryGetValue(ruleToPort.ProposedAnalyzer, out areaLabel))
+            {
+                _log.WarnFormat(Resources.WarningNoAreaAssigned, ruleToPort.ProposedAnalyzer, ruleToPort.Id);
+            }
+            else
+            {
+                AddLabel(areaLabel, labels);
+            }
         }
 
         private IssueUpdate CreateIssueUpdate(PortingInfo ruleToPort, Issue existingIssue)
@@ -322,6 +370,9 @@ namespace FileIssues
                     break;
             }
 
+            RemoveAreaLabels(existingLabelNames, labelNamesToRemove);
+            AddAreaLabel(ruleToPort, labelNamesToAdd);
+
             if (_options.DryRun)
             {
                 _log.Info(Resources.InfoDryRunLabelsNotUpdated);
@@ -337,8 +388,10 @@ namespace FileIssues
                         labelNamesToAdd.ToArray());
                 }
 
+                // Take care not to remove any labels we've just added.
+                //
                 // For some reason the "Remove" API doesn't take an array.
-                foreach (string labelName in labelNamesToRemove)
+                foreach (string labelName in labelNamesToRemove.Except(labelNamesToAdd))
                 {
                     await _issuesLabelsClient.RemoveFromIssue(
                         _options.RepoOwner,
@@ -346,6 +399,14 @@ namespace FileIssues
                         existingIssue.Number,
                         labelName);
                 }
+            }
+        }
+
+        private void RemoveAreaLabels(Collection<string> existingLabelNames, Collection<string> labelNamesToRemove)
+        {
+            foreach (string label in existingLabelNames.Where(l => l.StartsWith("Area-") && l.EndsWith("Analyzers")))
+            {
+                RemoveLabel(label, labelNamesToRemove, existingLabelNames);
             }
         }
 
@@ -373,7 +434,7 @@ namespace FileIssues
             return
                 $"**Title:** {ruleToPort.Title}\n\n" +
                 $"**Description:**\n\n{ruleToPort.Description}\n\n" +
-                $"**Proposed analyzer:** {ruleToPort.ProposedAnalyzer}\n\n" +
+                $"**Dependency:** {ruleToPort.Dependency}\n\n" +
                 $"**Notes:**\n\n{ruleToPort.Notes}";
         }
     }

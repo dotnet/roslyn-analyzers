@@ -70,6 +70,15 @@ namespace FileIssues {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        internal static string DependencyNone {
+            get {
+                return ResourceManager.GetString("DependencyNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error: {0}.
         /// </summary>
         internal static string ErrorFormat {
@@ -192,6 +201,15 @@ namespace FileIssues {
         internal static string WarningMultipleIssuesExist {
             get {
                 return ResourceManager.GetString("WarningMultipleIssuesExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No area label matches the proposed analyzer &quot;{0}&quot; for rule {1}..
+        /// </summary>
+        internal static string WarningNoAreaAssigned {
+            get {
+                return ResourceManager.GetString("WarningNoAreaAssigned", resourceCulture);
             }
         }
     }

@@ -28,6 +28,10 @@
     <StartWorkingDirectory>$(OutDir)</StartWorkingDirectory>
   </PropertyGroup>
   <ItemGroup Label="Project References">
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
+      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
+      <Name>Analyzer.Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Test\Utilities\DiagnosticsTestUtilities.csproj">
       <Project>{0A0621F2-D1DC-47FF-B643-C6646557505E}</Project>
       <Name>DiagnosticsTestUtilities</Name>
@@ -181,6 +185,8 @@
     <Compile Include="UseXmlReaderForDataTableReadXmlTests.Fixer.cs" />
     <Compile Include="UseXmlReaderForDataTableReadXmlSchemaTests.cs" />
     <Compile Include="UseXmlReaderForDataTableReadXmlSchemaTests.Fixer.cs" />
+    <Compile Include="TypesShouldNotExtendCertainBaseTypesTests.cs" />
+    <Compile Include="TypesShouldNotExtendCertainBaseTypesTests.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

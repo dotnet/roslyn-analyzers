@@ -135,6 +135,42 @@ namespace System.Runtime.InteropServices.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Boolean data type has multiple representations in unmanaged code..
+        /// </summary>
+        internal static string MarkBooleanPInvokeArgumentsWithMarshalAsDescription {
+            get {
+                return ResourceManager.GetString("MarkBooleanPInvokeArgumentsWithMarshalAsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add the MarshalAsAttribute to parameter {0} of P/Invoke {1}. If the corresponding unmanaged parameter is a 4-byte Win32 &apos;BOOL&apos;, use [MarshalAs(UnmanagedType.Bool)]. For a 1-byte C++ &apos;bool&apos;, use MarshalAs(UnmanagedType.U1)..
+        /// </summary>
+        internal static string MarkBooleanPInvokeArgumentsWithMarshalAsMessageDefault {
+            get {
+                return ResourceManager.GetString("MarkBooleanPInvokeArgumentsWithMarshalAsMessageDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add the MarshalAsAttribute to the return type of P/Invoke {0}. If the corresponding unmanaged return type is a 4-byte Win32 &apos;BOOL&apos;, use MarshalAs(UnmanagedType.Bool). For a 1-byte C++ &apos;bool&apos;, use MarshalAs(UnmanagedType.U1)..
+        /// </summary>
+        internal static string MarkBooleanPInvokeArgumentsWithMarshalAsMessageReturn {
+            get {
+                return ResourceManager.GetString("MarkBooleanPInvokeArgumentsWithMarshalAsMessageReturn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mark boolean PInvoke arguments with MarshalAs.
+        /// </summary>
+        internal static string MarkBooleanPInvokeArgumentsWithMarshalAsTitle {
+            get {
+                return ResourceManager.GetString("MarkBooleanPInvokeArgumentsWithMarshalAsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This rule evaluates the size of each parameter and the return value of a P/Invoke, and verifies that the size of the parameter is correct when marshaled to unmanaged code on 32-bit and 64-bit operating systems..
         /// </summary>
         internal static string PInvokeDeclarationsShouldBePortableDescription {

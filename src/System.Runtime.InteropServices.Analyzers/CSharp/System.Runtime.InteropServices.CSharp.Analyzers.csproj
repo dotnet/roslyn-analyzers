@@ -21,10 +21,8 @@
     <SemanticVersion>$(SystemRuntimeInteropServicesAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(SystemRuntimeInteropServicesAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "></PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "></PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\System.Runtime.InteropServices.Analyzers.csproj">
       <Project>{B806A3D0-BF66-491B-8845-A4E02050FD1E}</Project>
@@ -102,6 +100,8 @@
     <Compile Include="CSharpUseManagedEquivalentsOfWin32Api.cs" />
     <Compile Include="CSharpUseManagedEquivalentsOfWin32Api.Fixer.cs" />
     <Compile Include="CSharpAlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttribute.cs" />
+    <Compile Include="CSharpMarkBooleanPInvokeArgumentsWithMarshalAs.cs" />
+    <Compile Include="CSharpMarkBooleanPInvokeArgumentsWithMarshalAs.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />

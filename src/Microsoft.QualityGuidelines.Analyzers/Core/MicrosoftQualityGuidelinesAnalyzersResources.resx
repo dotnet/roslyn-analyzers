@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="UseLiteralsWhereAppropriateTitle" xml:space="preserve">
+    <value>Use literals where appropriate</value>
+  </data>
+  <data name="UseLiteralsWhereAppropriateDescription" xml:space="preserve">
+    <value>A field is declared static and read-only (Shared and ReadOnly in Visual Basic), and is initialized by using a value that is computable at compile time. Because the value that is assigned to the targeted field is computable at compile time, change the declaration to a const (Const in Visual Basic) field so that the value is computed at compile time instead of at run?time.</value>
+  </data>
+  <data name="UseLiteralsWhereAppropriateMessageDefault" xml:space="preserve">
+    <value>Field {0} is declared as 'static readonly' but is initialized with a constant value '{1}'. Mark this field as 'const' instead.</value>
+  </data>
+  <data name="UseLiteralsWhereAppropriateMessageEmptyString" xml:space="preserve">
+    <value>Field {0} is declared as 'static readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</value>
+  </data>
+  <data name="DoNotInitializeUnnecessarilyTitle" xml:space="preserve">
+    <value>Do not initialize unnecessarily</value>
+  </data>
+  <data name="DoNotInitializeUnnecessarilyDescription" xml:space="preserve">
+    <value>The common language runtime initializes all fields to their default values before running the constructor. In most cases, initializing a field to its default value in a constructor is redundant, which degrades performance and adds to maintenance costs. One case where it is not redundant occurs when the constructor calls another constructor of the same class or a base class constructor and that constructor initializes the field to a non-default value. In this case, changing the value of the field back to its default value can be appropriate.</value>
+  </data>
+  <data name="DoNotInitializeUnnecessarilyMessage" xml:space="preserve">
+    <value>Do not initialize unnecessarily</value>
+  </data>
+  <data name="PreferJaggedArraysOverMultidimensionalTitle" xml:space="preserve">
+    <value>Prefer jagged arrays over multidimensional</value>
+  </data>
+  <data name="PreferJaggedArraysOverMultidimensionalDescription" xml:space="preserve">
+    <value>A jagged array is an array whose elements are arrays. The arrays that make up the elements can be of different sizes, leading to less wasted space for some sets of data.</value>
+  </data>
+  <data name="PreferJaggedArraysOverMultidimensionalMessageDefault" xml:space="preserve">
+    <value>{0} is a multidimensional array. Replace it with a jagged array if possible.</value>
+  </data>
+  <data name="PreferJaggedArraysOverMultidimensionalMessageReturn" xml:space="preserve">
+    <value>{0} returns a multidimensional array of {1}. Replace it with a jagged array if possible.</value>
+  </data>
+  <data name="PreferJaggedArraysOverMultidimensionalMessageBody" xml:space="preserve">
+    <value>{0} uses a multidimensional array of {1}. Replace it with a jagged array if possible.</value>
+  </data>
+  <data name="MarkMembersAsStaticTitle" xml:space="preserve">
+    <value>Mark members as static</value>
+  </data>
+  <data name="MarkMembersAsStaticDescription" xml:space="preserve">
+    <value>Members that do not access instance data or call instance methods can be marked as static (Shared in Visual Basic). After you mark the methods as static, the compiler will emit nonvirtual call sites to these members. This can give you a measurable performance gain for performance-sensitive code.</value>
+  </data>
+  <data name="MarkMembersAsStaticMessage" xml:space="preserve">
+    <value>Mark members as static</value>
+  </data>
+  <data name="DisposeObjectsBeforeLosingScopeTitle" xml:space="preserve">
+    <value>Dispose Objects Before Losing Scope</value>
+  </data>
+  <data name="DisposeObjectsBeforeLosingScopeDescription" xml:space="preserve">
+    <value>Because an exceptional event might occur that will prevent the finalizer of an object from running, the object should be explicitly disposed before all references to it are out of scope.</value>
+  </data>
+  <data name="DisposeObjectsBeforeLosingScopeMessage" xml:space="preserve">
+    <value>Dispose Objects Before Losing Scope</value>
+  </data>
+  <data name="ReviewVisibleEventHandlersTitle" xml:space="preserve">
+    <value>Review visible event handlers</value>
+  </data>
+  <data name="ReviewVisibleEventHandlersDescription" xml:space="preserve">
+    <value>A public or protected event-handling method was detected. Event-handling methods should not be exposed unless absolutely necessary.</value>
+  </data>
+  <data name="ReviewVisibleEventHandlersMessageSecurity" xml:space="preserve">
+    <value>Consider making {0} not externally visible or ensure that it is benign code.</value>
+  </data>
+  <data name="ReviewVisibleEventHandlersMessageDefault" xml:space="preserve">
+    <value>Consider making {0} not externally visible.</value>
+  </data>
+  <data name="SealMethodsThatSatisfyPrivateInterfacesTitle" xml:space="preserve">
+    <value>Seal methods that satisfy private interfaces</value>
+  </data>
+  <data name="SealMethodsThatSatisfyPrivateInterfacesDescription" xml:space="preserve">
+    <value>An inheritable public type provides an overridable method implementation of an internal (Friend in Visual Basic) interface. To fix a violation of this rule, prevent the method from being overridden outside the assembly.</value>
+  </data>
+  <data name="SealMethodsThatSatisfyPrivateInterfacesMessage" xml:space="preserve">
+    <value>Seal methods that satisfy private interfaces</value>
+  </data>
+  <data name="CategoryPerformance" xml:space="preserve">
+    <value>Performance</value>
+  </data>
+  <data name="CategoryReliability" xml:space="preserve">
+    <value>Reliability</value>
+  </data>
+  <data name="CategorySecurity" xml:space="preserve">
+    <value>Security</value>
+  </data>
+</root>

@@ -18,6 +18,7 @@ namespace System.Runtime.Analyzers
     public sealed class InstantiateArgumentExceptionsCorrectlyAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2208";
+        private const string HelpUri = "https://msdn.microsoft.com/en-us/library/ms182347.aspx";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.InstantiateArgumentExceptionsCorrectlyTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
 
@@ -26,37 +27,16 @@ namespace System.Runtime.Analyzers
         private static readonly LocalizableString s_localizableMessageIncorrectParameterName = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.InstantiateArgumentExceptionsCorrectlyMessageIncorrectParameterName), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.InstantiateArgumentExceptionsCorrectlyDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
 
-        private const string s_helpUri = "https://msdn.microsoft.com/en-us/library/ms182347.aspx";
-
-        internal static DiagnosticDescriptor NoArgumentsRule = new DiagnosticDescriptor(RuleId,
+        internal static DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
-                                                                             s_localizableMessageNoArguments,
+                                                                             "{0}",
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: s_helpUri,
+                                                                             helpLinkUri: HelpUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
-        internal static DiagnosticDescriptor IncorrectMessageRule = new DiagnosticDescriptor(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageIncorrectMessage,
-                                                                             DiagnosticCategory.Usage,
-                                                                             DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: true,
-                                                                             description: s_localizableDescription,
-                                                                             helpLinkUri: s_helpUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
-        internal static DiagnosticDescriptor IncorrectParameterNameRule = new DiagnosticDescriptor(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageIncorrectParameterName,
-                                                                             DiagnosticCategory.Usage,
-                                                                             DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: true,
-                                                                             description: s_localizableDescription,
-                                                                             helpLinkUri: s_helpUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(NoArgumentsRule, IncorrectMessageRule, IncorrectParameterNameRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Descriptor);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -67,7 +47,9 @@ namespace System.Runtime.Analyzers
                     ITypeSymbol argumentExceptionType = compilation.GetTypeByMetadataName("System.ArgumentException");
 
                     if (argumentExceptionType == null)
+                    {
                         return;
+                    }
 
                     compilationContext.RegisterOperationBlockStartAction(
                         operationBlockStartContext =>
@@ -89,15 +71,16 @@ namespace System.Runtime.Analyzers
         {
             var creation = (IObjectCreationExpression)context.Operation;
             if (!creation.ResultType.Inherits(argumentExceptionType))
+            {
                 return;
+            }
           
             if (creation.ConstructorArguments.Length == 0)
             {
                 if (HasMessageOrParameterNameConstructor(creation.ResultType))
                 {
                     // Call the {0} constructor that contains a message and/ or paramName parameter
-                    context.ReportDiagnostic(
-                        creation.Syntax.CreateDiagnostic(NoArgumentsRule, creation.ResultType));
+                    ReportDiagnostic(context, s_localizableMessageNoArguments, creation.ResultType);
                 }
             }
             else
@@ -105,47 +88,51 @@ namespace System.Runtime.Analyzers
                 foreach (var argument in creation.ConstructorArguments)
                 {
                     if (argument.Parameter.Type.SpecialType != SpecialType.System_String)
+                    {
                         continue;
+                    }
                  
                     string value = argument.Value.ConstantValue as string;
                     if (value == null)
+                    {
                         continue;
+                    }
 
                     CheckArgument(owningSymbol, creation.ResultType, argument.Parameter, value, context);
                 }
             }
         }
-
         private void CheckArgument(
             ISymbol targetSymbol,
-            ITypeSymbol constructorType, 
-            IParameterSymbol parameter, 
-            string stringArgument, 
+            ITypeSymbol exceptionType,
+            IParameterSymbol parameter,
+            string stringArgument,
             OperationAnalysisContext context)
         {
             bool matchesParameter = MatchesParameter(targetSymbol, stringArgument);
-            DiagnosticDescriptor descriptor = null;
+            LocalizableString format = null;
 
             if (IsMessage(parameter) && matchesParameter)
             {
-                descriptor = IncorrectMessageRule;
+                format = s_localizableMessageIncorrectMessage;
             }
             else if (IsParameterName(parameter) && !matchesParameter)
             {
-                descriptor = IncorrectParameterNameRule;
+                format = s_localizableMessageIncorrectParameterName;
             }
 
-            if (descriptor != null)
+            if (format != null)
             {
-                // Method {0} passes parameter name '{1}' as the '{2}' argument to a {3} constructor. [...]
-                context.ReportDiagnostic(
-                    context.Operation.Syntax.CreateDiagnostic(
-                        descriptor,
-                        targetSymbol,
-                        stringArgument,
-                        parameter.Name,
-                        constructorType));
+                ReportDiagnostic(context, format, targetSymbol, stringArgument, parameter.Name, exceptionType);
             }
+        }
+
+        private static void ReportDiagnostic(OperationAnalysisContext context, LocalizableString format, params object[] args)
+        {
+            context.ReportDiagnostic(
+                context.Operation.Syntax.CreateDiagnostic(
+                    Descriptor,
+                    string.Format(format.ToString(), args)));
         }
 
         private static bool IsMessage(IParameterSymbol parameter)
@@ -155,9 +142,7 @@ namespace System.Runtime.Analyzers
 
         private static bool IsParameterName(IParameterSymbol parameter)
         {
-            return parameter.Name == "paramName"
-                || parameter.Name == "parameterName"
-                || parameter.Name == "argumentName";
+            return parameter.Name == "paramName" || parameter.Name == "parameterName";
         }
 
         private static bool HasMessageOrParameterNameConstructor(ITypeSymbol type)
@@ -165,7 +150,9 @@ namespace System.Runtime.Analyzers
             foreach (var member in type.GetMembers())
             {
                 if (!member.IsConstructor())
+                {
                     continue;
+                }
 
                 foreach (var parameter in member.GetParameters())
                 {
@@ -183,8 +170,12 @@ namespace System.Runtime.Analyzers
         private static bool MatchesParameter(ISymbol symbol, string stringArgumentValue)
         {
             foreach (var parameter in symbol.GetParameters())
+            {
                 if (parameter.Name == stringArgumentValue)
+                {
                     return true;
+                }
+            }
 
             return false;
         }

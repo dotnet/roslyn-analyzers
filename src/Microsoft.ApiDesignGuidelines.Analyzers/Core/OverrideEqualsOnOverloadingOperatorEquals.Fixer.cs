@@ -26,9 +26,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            var typeDecl = root.FindNode(context.Span);
-            typeDecl = SyntaxGenerator.GetGenerator(context.Document).GetDeclaration(typeDecl);
-            if (typeDecl == null)
+            var typeDeclaration = root.FindNode(context.Span);
+            typeDeclaration = SyntaxGenerator.GetGenerator(context.Document).GetDeclaration(typeDeclaration);
+            if (typeDeclaration == null)
             {
                 return;
             }
@@ -41,26 +41,26 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             context.RegisterCodeFix(
                 new MyCodeAction(
                     MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsOnOverloadingOperatorEqualsCodeActionTitle,
-                    cancellationToken => OverrideObjectEquals(context.Document, typeDecl, cancellationToken)),
+                    cancellationToken => OverrideObjectEquals(context.Document, typeDeclaration, cancellationToken)),
                 diagnostic);
         }
 
-        private async Task<Document> OverrideObjectEquals(Document document, SyntaxNode typeDecl, CancellationToken cancellationToken)
+        private async Task<Document> OverrideObjectEquals(Document document, SyntaxNode typeDeclaration, CancellationToken cancellationToken)
         {
-            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
 
-            var parameterDecl = generator.ParameterDeclaration("obj", generator.TypeExpression(SpecialType.System_Object));
+            var parameterDeclaration = generator.ParameterDeclaration("obj", generator.TypeExpression(SpecialType.System_Object));
             var throwStatement = generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException")));
-            var methodDecl = generator.MethodDeclaration(
+            var methodDeclaration = generator.MethodDeclaration(
                 WellKnownMemberNames.ObjectEquals,
-                parameters: new[] { parameterDecl },
+                parameters: new[] { parameterDeclaration },
                 returnType: generator.TypeExpression(SpecialType.System_Boolean),
                 accessibility: Accessibility.Public,
                 modifiers: DeclarationModifiers.Override,
                 statements: new[] { throwStatement });
 
-            editor.AddMember(typeDecl, methodDecl);
+            editor.AddMember(typeDeclaration, methodDeclaration);
             return editor.GetChangedDocument();
         }
 

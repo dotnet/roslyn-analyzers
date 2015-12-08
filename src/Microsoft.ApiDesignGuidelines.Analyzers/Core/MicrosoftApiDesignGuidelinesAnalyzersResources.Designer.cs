@@ -1837,7 +1837,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Override object.GetEquals.
+        ///   Looks up a localized string similar to Override object.Equals.
         /// </summary>
         internal static string OverrideEqualsOnOverloadingOperatorEqualsCodeActionTitle {
             get {

@@ -4,13 +4,14 @@ Imports System.Collections.Immutable
 Imports Analyzer.Utilities
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
-Imports Microsoft.CodeAnalysis.VisualBasic
-Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
 Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA2224: Override Equals on overloading operator equals
     ''' </summary>
+    ''' <remarks>
+    ''' CA2224 is not applied to C# since it already reports CS0660.
+    ''' </remarks>
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
     Public NotInheritable Class BasicOverrideEqualsOnOverloadingOperatorEqualsAnalyzer
         Inherits DiagnosticAnalyzer

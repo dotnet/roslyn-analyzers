@@ -1873,6 +1873,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Override object.GetHashCode.
+        /// </summary>
+        internal static string OverrideGetHashCodeOnOverridingEqualsCodeActionTitle {
+            get {
+                return ResourceManager.GetString("OverrideGetHashCodeOnOverridingEqualsCodeActionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to GetHashCode returns a value, based on the current instance, that is suited for hashing algorithms and data structures such as a hash table. Two objects that are the same type and are equal must return the same hash code..
         /// </summary>
         internal static string OverrideGetHashCodeOnOverridingEqualsDescription {

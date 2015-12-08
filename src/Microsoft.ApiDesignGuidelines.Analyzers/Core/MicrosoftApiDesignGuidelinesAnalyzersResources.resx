@@ -970,4 +970,7 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="OverrideEqualsOnOverloadingOperatorEqualsCodeActionTitle" xml:space="preserve">
     <value>Override object.Equals</value>
   </data>
+  <data name="OverrideGetHashCodeOnOverridingEqualsCodeActionTitle" xml:space="preserve">
+    <value>Override object.GetHashCode</value>
+  </data>
 </root>

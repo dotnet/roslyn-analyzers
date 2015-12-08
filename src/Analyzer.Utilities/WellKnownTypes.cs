@@ -191,5 +191,15 @@ namespace Analyzer.Utilities
         {
             return compilation.GetTypeByMetadataName("System.Runtime.InteropServices.ComVisibleAttribute");
         }
+
+        public static INamedTypeSymbol Console(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Console");
+        }
+
+        public static INamedTypeSymbol String(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.String");
+        }
     }
 }

@@ -56,6 +56,55 @@ Interface I
 End Interface");
         }
 
+        [Fact]
+        public void TestCSharpEmptyInterfaceWithNoInheritedMembers()
+        {
+            VerifyCSharp(@"
+interface I : IBase
+{
+}
+
+interface IBase { }", CreateCSharpResult(2, 11), CreateCSharpResult(6, 11));
+        }
+
+        [Fact]
+        public void TestBasicEmptyInterfaceWithNoInheritedMembers()
+        {
+            VerifyBasic(@"
+Interface I
+    Inherits IBase
+End Interface
+
+Interface IBase
+End Interface", CreateBasicResult(2, 11), CreateBasicResult(6, 11));
+        }
+
+        [Fact]
+        public void TestCSharpEmptyInterfaceWithInheritedMembers()
+        {
+            VerifyCSharp(@"
+interface I : IBase
+{
+}
+
+interface IBase 
+{
+    void DoStuff(); 
+}");
+        }
+
+        [Fact]
+        public void TestBasicEmptyInterfaceWithInheritedMembers()
+        {
+            VerifyBasic(@"
+Interface I
+    Inherits IBase
+End Interface
+
+Interface IBase
+    Sub DoStuff()
+End Interface");
+        }
 
         private static DiagnosticResult CreateCSharpResult(int line, int col)
         {

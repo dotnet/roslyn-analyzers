@@ -26,9 +26,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182128.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
@@ -41,9 +41,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private void AnalyzeInterface(SymbolAnalysisContext context)
         {
             var symbol = (INamedTypeSymbol)context.Symbol;
-            if (symbol.TypeKind == TypeKind.Interface && !symbol.GetMembers().Any())
+            if (symbol.TypeKind == TypeKind.Interface && !symbol.GetMembers().Any() && !symbol.AllInterfaces.SelectMany(s => s.GetMembers()).Any())
             {
-                var declaration = symbol.DeclaringSyntaxReferences.First();
                 context.ReportDiagnostic(symbol.CreateDiagnostic(Rule));
             }
         }

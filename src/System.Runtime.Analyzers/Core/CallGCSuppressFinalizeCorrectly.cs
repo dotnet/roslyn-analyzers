@@ -1,9 +1,11 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Linq;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Analyzer.Utilities;
+using Microsoft.CodeAnalysis.Semantics;
 
 namespace System.Runtime.Analyzers
 {
@@ -27,42 +29,239 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableMessageNotCalledWithFinalizer,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-US/library/ms182269.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor NotCalledRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageNotCalled,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-US/library/ms182269.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor NotPassedThisRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageNotPassedThis,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-US/library/ms182269.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor OutsideDisposeRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageOutsideDispose,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-US/library/ms182269.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(NotCalledWithFinalizerRule, NotCalledRule, NotPassedThisRule, OutsideDisposeRule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.RegisterCompilationStartAction(compilationContext =>
+            {
+                compilationContext.RegisterOperationBlockStartAction(operationBlockContext =>
+                {
+                    if (operationBlockContext.OwningSymbol.Kind != SymbolKind.Method)
+                    {
+                        return;
+                    }
+
+                    var method = (IMethodSymbol)operationBlockContext.OwningSymbol;
+                    if (method.IsExtern || method.IsAbstract)
+                    {
+                        return;
+                    }
+
+                    var analyzer = new SuppressFinalizeAnalyzer(method, compilationContext.Compilation);
+
+                    operationBlockContext.RegisterOperationAction(analyzer.Analyze, OperationKind.InvocationExpression);
+
+                    operationBlockContext.RegisterOperationBlockEndAction(analyzer.OperationBlockEndAction);
+                });
+            });
+
+        }
+
+
+
+        private class SuppressFinalizeAnalyzer
+        {
+            private enum SuppressFinalizeUsage
+            {
+                CanCall,
+                MustCall,
+                MustNotCall
+            }
+
+            private bool _suppressFinalizeCalled = false;
+
+            private readonly Compilation _compilation;
+            private readonly IMethodSymbol _containingMethodSymbol;
+            private SemanticModel _semanticModel;
+            private IInvocationExpression _invocationExpression;
+            private IMethodSymbol _gcSuppressFinalizeMethodSymbol;
+            private bool _failFast;
+
+            public SuppressFinalizeAnalyzer(IMethodSymbol methodSymbol, Compilation compilation)
+            {
+                this._compilation = compilation;
+                this._containingMethodSymbol = methodSymbol;
+            }
+
+            public void Analyze(OperationAnalysisContext analysisContext)
+            {
+                _invocationExpression = (IInvocationExpression)analysisContext.Operation;
+                _gcSuppressFinalizeMethodSymbol = _compilation.GetTypeByMetadataName("System.GC").GetMembers("SuppressFinalize").OfType<IMethodSymbol>().SingleOrDefault();
+                if (_gcSuppressFinalizeMethodSymbol == null)
+                {
+                    _failFast = true;
+                    return;
+                }
+
+                if (_invocationExpression.TargetMethod.OriginalDefinition.Equals(_gcSuppressFinalizeMethodSymbol))
+                {
+                    _suppressFinalizeCalled = true;
+                    _semanticModel = analysisContext.Compilation.GetSemanticModel(analysisContext.Operation.Syntax.SyntaxTree);
+                }
+            }
+
+            public void OperationBlockEndAction(OperationBlockAnalysisContext context)
+            {
+                if (_failFast)
+                {
+                    return;
+                }
+
+                var expectedUsage = GetAllowedSuppressFinalizeUsage(_containingMethodSymbol);
+
+                // Check for absence of GC.SuppressFinalize
+                if (!_suppressFinalizeCalled && expectedUsage == SuppressFinalizeUsage.MustCall)
+                {
+                    var descriptor = HasFinalizer(_containingMethodSymbol.ContainingType) ? NotCalledWithFinalizerRule : NotCalledRule;
+                    context.ReportDiagnostic(_containingMethodSymbol.CreateDiagnostic(
+                        descriptor,
+                        _containingMethodSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                        _gcSuppressFinalizeMethodSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
+
+                    return;
+                }
+
+                if (_suppressFinalizeCalled)
+                {
+                    // this means the _invocationExpression is the GC.SuppressFinalize call.
+                    // Check for GC.SuppressFinalize outside of IDisposable.Dispose()
+                    if (expectedUsage == SuppressFinalizeUsage.MustNotCall)
+                    {
+                        context.ReportDiagnostic(_invocationExpression.Syntax.CreateDiagnostic(
+                            OutsideDisposeRule,
+                            _containingMethodSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                            _gcSuppressFinalizeMethodSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
+                    }
+
+                    // Checks for GC.SuppressFinalize(this)
+                    if (_invocationExpression.ArgumentsInSourceOrder.Count() != 1)
+                    {
+                        return;
+                    }
+
+                    var parameterSymbol = _semanticModel.GetSymbolInfo(_invocationExpression.ArgumentsInSourceOrder.Single().Syntax).Symbol as IParameterSymbol;
+                    if (parameterSymbol == null || !parameterSymbol.IsThis)
+                    {
+                        context.ReportDiagnostic(_invocationExpression.Syntax.CreateDiagnostic(
+                            NotPassedThisRule,
+                            _containingMethodSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                            _gcSuppressFinalizeMethodSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
+                    }
+                }
+
+            }
+
+            private SuppressFinalizeUsage GetAllowedSuppressFinalizeUsage(IMethodSymbol method)
+            {
+                // We allow constructors in sealed types to call GC.SuppressFinalize.
+                // This allows types that derive from Component (such SqlConnection)
+                // to prevent the finalizer they inherit from Component from ever 
+                // being called.
+                if (method.ContainingType.IsSealed && method.IsConstructor() && !method.IsStatic)
+                {
+                    return SuppressFinalizeUsage.CanCall;
+                }
+
+                if (!IsDisposeMethod(method))
+                {
+                    return SuppressFinalizeUsage.MustNotCall;
+                }
+
+                // If the Dispose method is declared in a sealed type, we do
+                // not require that the method calls GC.SuppressFinalize
+                var hasFinalizer = HasFinalizer(method.ContainingType);
+                if (method.ContainingType.IsSealed && !hasFinalizer)
+                {
+                    return SuppressFinalizeUsage.CanCall;
+                }
+
+                // We don't require that non-public types call GC.SuppressFinalize 
+                // if they don't have a finalizer as the owner of the assembly can 
+                // control whether any finalizable types derive from them.
+                if (method.ContainingType.DeclaredAccessibility != Accessibility.Public && !hasFinalizer)
+                {
+                    return SuppressFinalizeUsage.CanCall;
+                }
+
+                // Even if the Dispose method is declared on a type without a
+                // finalizer, we still require it to call GC.SuppressFinalize to
+                // prevent derived finalizable types from having to reimplement
+                // IDisposable.Dispose just to call it.
+                return SuppressFinalizeUsage.MustCall;
+            }
+
+            private bool IsDisposeMethod(IMethodSymbol method)
+            {
+                var disposableType = WellKnownTypes.IDisposable(_compilation);
+
+                if (method.Parameters.Length != 0 ||
+                    !method.ReturnsVoid ||
+                    !method.ContainingType.AllInterfaces.Any(i => i.OriginalDefinition.Equals(disposableType)))
+                {
+                    return false;
+                }
+
+                if (method.IsPublic() && method.Name.Equals("Dispose"))
+                {
+                    return true;
+                }
+
+                if (disposableType == null)
+                {
+                    var disposeMethod = disposableType.GetMembers("Dispose").OfType<IMethodSymbol>().SingleOrDefault();
+                    return method.Equals(method.ContainingType.FindImplementationForInterfaceMember(disposeMethod));
+                }
+
+                return false;
+            }
+
+            private bool HasFinalizer(INamedTypeSymbol type)
+            {
+                return type.GetMembers("Finalize").OfType<IMethodSymbol>().Any(IsFinalizer);
+            }
+
+            private bool IsFinalizer(IMethodSymbol m)
+            {
+                // validate the signature
+                return !m.IsStatic &&
+                       !m.IsAbstract &&
+                       m.ReturnsVoid &&
+                       m.Parameters.Count() == 0 &&
+                       m.MethodKind == MethodKind.Destructor;
+            }
         }
     }
 }

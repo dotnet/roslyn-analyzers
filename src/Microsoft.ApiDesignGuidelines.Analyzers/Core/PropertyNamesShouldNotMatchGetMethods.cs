@@ -6,11 +6,12 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
-{                   
+{
     /// <summary>
     /// CA1721: Property names should not match get methods
     /// </summary>
-    public abstract class PropertyNamesShouldNotMatchGetMethodsAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class PropertyNamesShouldNotMatchGetMethodsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1721";
 
@@ -46,24 +47,58 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            // Analyze properties and methods.
+            // Analyze properties, methods 
             analysisContext.RegisterSymbolAction(symbolContext =>
             {
                 AnalyzeSymbol(symbolContext.Symbol, symbolContext);
 
-            }, SymbolKind.Property);
+            }, SymbolKind.Property, SymbolKind.Method);
         }
 
         private static void AnalyzeSymbol(ISymbol symbol, SymbolAnalysisContext context)
         {
-            var identifier = s_get + symbol.Name;
+            string identifier;
 
+            if (symbol.Kind == SymbolKind.Property)
+            {
+                //if property then target search is to find methods that start with Get and have the property name
+                identifier = s_get + symbol.Name;
+            }
+            else if (symbol.Kind == SymbolKind.Method && symbol.Name.StartsWith(s_get))
+            {
+                //if method starts with Get then target search is to find properties that have the method name sans Get
+                identifier = symbol.Name.Substring(3);
+            }
+            else
+            {
+                //if method name doesn't start with Get exit
+                return;
+            }
+
+            //boolean variable used to exit out of the inner and outer for loops
+            var matchFound = false;
+
+            //get the collection of the containing type plus all the derived types
             var types = symbol.ContainingType.GetBaseTypesAndThis();
+
+
             foreach (var type in types)
             {
-                var methodsFound = type.GetMembers(identifier);
-                if (methodsFound != null && methodsFound.Length > 0)
+                var membersFound = type.GetMembers(identifier);
+                if (membersFound != null && membersFound.Length > 0)
                 {
+                    foreach (var member in membersFound)
+                    {
+                        if ((symbol.Kind == SymbolKind.Property && member.Kind == SymbolKind.Method) ||
+                            (symbol.Kind == SymbolKind.Method && member.Kind == SymbolKind.Property && symbol.ContainingType != type))
+                        {
+                            matchFound = true;
+                            break;
+                        }
+                    }
+                    if (!matchFound)
+                        continue;
+
                     Diagnostic diagnostic;
                     if (symbol.ContainingType != type)
                     {
@@ -77,7 +112,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     break;
                 }
             }
-            // ToDo: Check whether method name in declaring class is same as property name from base types - This is not something the current FXCop rule supports yet. Will add later. 
         }
     }
 }

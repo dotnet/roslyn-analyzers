@@ -12,12 +12,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicPropertyNamesShouldNotMatchGetMethodsAnalyzer();
+            return new PropertyNamesShouldNotMatchGetMethodsAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpPropertyNamesShouldNotMatchGetMethodsAnalyzer();
+            return new PropertyNamesShouldNotMatchGetMethodsAnalyzer();
         }
 
         [Fact]
@@ -83,6 +83,32 @@ public class Foo
             GetCA1721CSharpBaseTypeResultAt(line: 13, column: 25, identifierName: "Date", typeName: "Ray"));
         }
 
+
+        [Fact]
+        public void CSharp_CA1721_SomeDiagnostic3()
+        {
+            VerifyCSharp(@"
+public class Foo
+{
+    public class Ray
+    {
+        public DateTime Date
+        {
+            get { return DateTime.Today; }
+        }         
+    }
+    public class Bar : Ray
+    {
+        public string GetDate()
+        {
+            return DateTime.Today.ToString();
+        }
+    }
+}
+",
+            GetCA1721CSharpBaseTypeResultAt(line: 13, column: 23, identifierName: "GetDate", typeName: "Ray"));
+        }
+
         [Fact]
         public void Basic_CA1721_NoDiagnostic()
         {
@@ -142,6 +168,29 @@ End Class
             GetCA1721BasicBaseTypeResultAt(line: 10, column: 34, identifierName: "Date", typeName: "Ray"));
         }
 
+
+        [Fact]
+        public void Basic_CA1721_SomeDiagnostic3()
+        {
+            VerifyBasic(@"
+Public Class Foo
+    Public Class Ray
+        Public ReadOnly Property [Date]() As DateTime
+            Get
+                Return DateTime.Today
+            End Get
+        End Property
+    End Class
+    Public Class Bar 
+        Inherits Ray
+        Public Function GetDate() As String
+            Return DateTime.Today.ToString()
+        End Function
+    End Class
+End Class
+",
+            GetCA1721BasicBaseTypeResultAt(line: 12, column: 25, identifierName: "GetDate", typeName: "Ray"));
+        }
         #region Helpers
 
         private static DiagnosticResult GetCA1721CSharpDeclaringTypeResultAt(int line, int column, string identifierName, string typeName)

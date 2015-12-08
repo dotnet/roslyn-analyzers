@@ -833,10 +833,10 @@ Names of parameters and members are better used to communicate their meaning tha
     <value>The name of a public or protected member starts with ""Get"" and otherwise matches the name of a public or protected property. ""Get"" methods and properties should have names that clearly distinguish their function.</value>
   </data>
   <data name="PropertyNamesShouldNotMatchGetMethodsMessageSameType" xml:space="preserve">
-    <value>The property name {0} is confusing given the existence of method {1}. Rename or remove one of these members.</value>
+    <value>The property name '{0}' is confusing given the existence of method '{1}'. Rename or remove one of these members.</value>
   </data>
   <data name="PropertyNamesShouldNotMatchGetMethodsMessageBaseType" xml:space="preserve">
-    <value>The property name {0} is confusing given the existence of inherited method {1}. Rename or remove this property.</value>
+    <value>The property name '{0}' is confusing given the existence of inherited method '{1}'. Rename or remove this property.</value>
   </data>
   <data name="TypeNamesShouldNotMatchNamespacesTitle" xml:space="preserve">
     <value>Type names should not match namespaces</value>

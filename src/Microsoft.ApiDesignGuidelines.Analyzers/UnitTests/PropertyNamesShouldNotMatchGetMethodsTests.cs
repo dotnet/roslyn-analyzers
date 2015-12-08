@@ -19,5 +19,156 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         {
             return new CSharpPropertyNamesShouldNotMatchGetMethodsAnalyzer();
         }
+
+        [Fact]
+        public void CSharp_CA1721_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public class Test
+{
+    public DateTime Today
+    {
+        get { return DateTime.Today; }
+    }
+    public string GetDate()
+    {
+        return this.Today.ToString();
+    }
+}
+");
+        }
+
+        [Fact]
+        public void CSharp_CA1721_SomeDiagnostic1()
+        {
+            VerifyCSharp(@"
+public class Test
+{
+    public DateTime Date
+    {
+        get { return DateTime.Today; }
+    }         
+    public string GetDate()
+    {
+        return this.Date.ToString();
+    }
+}
+",
+            GetCA1721CSharpDeclaringTypeResultAt(line: 4, column: 21, identifierName: "Date", typeName: "Test"));
+        }
+
+
+        [Fact]
+        public void CSharp_CA1721_SomeDiagnostic2()
+        {
+            VerifyCSharp(@"
+public class Foo
+{
+    public class Ray
+    {
+        public string GetDate()
+        {
+            return DateTime.Today.ToString();
+        }
+    }
+    public class Bar : Ray
+    {
+        public DateTime Date
+        {
+            get { return DateTime.Today; }
+        }         
+    }
+}
+",
+            GetCA1721CSharpBaseTypeResultAt(line: 13, column: 25, identifierName: "Date", typeName: "Ray"));
+        }
+
+        [Fact]
+        public void Basic_CA1721_NoDiagnostic()
+        {
+            VerifyBasic(@"
+Public Class Test
+    Public ReadOnly Property [Date]() As DateTime
+        Get
+            Return DateTime.Today
+        End Get
+    End Property
+    Public Function GetTime() As String
+        Return Me.Date.ToString()
+    End Function 
+End Class
+");
+        }
+
+        [Fact]
+        public void Basic_CA1721_SomeDiagnostic1()
+        {
+            VerifyBasic(@"
+Public Class Test
+    Public ReadOnly Property [Date]() As DateTime
+        Get
+            Return DateTime.Today
+        End Get
+    End Property
+    Public Function GetDate() As String
+        Return Me.Date.ToString()
+    End Function 
+End Class
+",
+            GetCA1721BasicDeclaringTypeResultAt(line: 3, column: 30, identifierName: "Date", typeName: "Test"));
+        }
+
+
+        [Fact]
+        public void Basic_CA1721_SomeDiagnostic2()
+        {
+            VerifyBasic(@"
+Public Class Foo
+    Public Class Ray
+        Public Function GetDate() As String
+            Return DateTime.Today.ToString()
+        End Function
+    End Class
+    Public Class Bar 
+        Inherits Ray
+        Public ReadOnly Property [Date]() As DateTime
+            Get
+                Return DateTime.Today
+            End Get
+        End Property
+    End Class
+End Class
+",
+            GetCA1721BasicBaseTypeResultAt(line: 10, column: 34, identifierName: "Date", typeName: "Ray"));
+        }
+
+        #region Helpers
+
+        private static DiagnosticResult GetCA1721CSharpDeclaringTypeResultAt(int line, int column, string identifierName, string typeName)
+        {
+            // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
+            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessageSameType, identifierName, typeName);
+            return GetCSharpResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
+        }
+        private static DiagnosticResult GetCA1721CSharpBaseTypeResultAt(int line, int column, string identifierName, string typeName)
+        {
+            // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
+            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessageBaseType, identifierName, typeName);
+            return GetCSharpResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetCA1721BasicDeclaringTypeResultAt(int line, int column, string identifierName, string typeName)
+        {
+            // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
+            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessageSameType, identifierName, typeName);
+            return GetBasicResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
+        }
+        private static DiagnosticResult GetCA1721BasicBaseTypeResultAt(int line, int column, string identifierName, string typeName)
+        {
+            // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
+            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessageBaseType, identifierName, typeName);
+            return GetBasicResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
+        }
+        #endregion
     }
 }

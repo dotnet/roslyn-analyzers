@@ -2071,7 +2071,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The property name {0} is confusing given the existence of inherited method {1}. Rename or remove this property..
+        ///   Looks up a localized string similar to The property name &apos;{0}&apos; is confusing given the existence of inherited method &apos;{1}&apos;. Rename or remove this property..
         /// </summary>
         internal static string PropertyNamesShouldNotMatchGetMethodsMessageBaseType {
             get {
@@ -2080,7 +2080,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The property name {0} is confusing given the existence of method {1}. Rename or remove one of these members..
+        ///   Looks up a localized string similar to The property name &apos;{0}&apos; is confusing given the existence of method &apos;{1}&apos;. Rename or remove one of these members..
         /// </summary>
         internal static string PropertyNamesShouldNotMatchGetMethodsMessageSameType {
             get {

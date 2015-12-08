@@ -24,7 +24,6 @@ namespace System.Runtime.Analyzers.UnitTests
         }
 
         [Fact]
-
         public void ArgumentException_NoArguments_Warns()
         {
             VerifyCSharp(@"
@@ -90,6 +89,7 @@ namespace System.Runtime.Analyzers.UnitTests
                 GetBasicExpectedResult(4, 31, s_incorrectParameterName, "Public Sub Test(first As String)", " ", "paramName", "System.ArgumentNullException"));
         }
 
+        [Fact]
         public void ArgumentNullException_NameofNonParameter_Warns()
         {
             VerifyCSharp(@"
@@ -101,7 +101,7 @@ namespace System.Runtime.Analyzers.UnitTests
                         throw new System.ArgumentNullException(nameof(foo));
                     }
                 }",
-                GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Class.Test(string)", " ", "paramName", "System.ArgumentNullException"));
+                GetCSharpExpectedResult(7, 31, s_incorrectParameterName, "Class.Test(string)", "foo", "paramName", "System.ArgumentNullException"));
 
             VerifyBasic(@"
                 Public Class MyClass
@@ -110,7 +110,7 @@ namespace System.Runtime.Analyzers.UnitTests
                         Throw New System.ArgumentNullException(NameOf(foo))
                     End Sub
                 End Class",
-                GetBasicExpectedResult(4, 31, s_incorrectParameterName, "Public Sub Test(first As String)", " ", "paramName", "System.ArgumentNullException"));
+                GetBasicExpectedResult(5, 31, s_incorrectParameterName, "Public Sub Test(first As String)", "foo", "paramName", "System.ArgumentNullException"));
         }
 
         [Fact]

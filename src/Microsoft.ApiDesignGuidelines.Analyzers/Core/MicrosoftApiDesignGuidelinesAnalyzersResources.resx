@@ -964,4 +964,7 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="OverrideEqualsOnOverloadingOperatorEqualsMessage" xml:space="preserve">
     <value>Override Equals on overloading operator equals</value>
   </data>
+  <data name="MakeExceptionPublic" xml:space="preserve">
+    <value>Make exception public</value>
+  </data>
 </root>

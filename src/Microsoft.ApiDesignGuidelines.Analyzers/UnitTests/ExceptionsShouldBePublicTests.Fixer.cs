@@ -29,5 +29,45 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         {
             return new CSharpExceptionsShouldBePublicFixer();
         }
+
+        [Fact]
+        public void TestNonPublicException()
+        {
+            var original = @"
+using System;
+
+class InternalException : Exception
+{
+}";
+
+            var expected = @"
+using System;
+
+public class InternalException : Exception
+{
+}";
+
+            VerifyCSharpFix(original, expected);
+        }
+
+        [Fact]
+        public void TestNonPublicException2()
+        {
+            var original = @"
+using System;
+
+private class PrivateException : SystemException
+{
+}";
+
+            var expected = @"
+using System;
+
+public class PrivateException : SystemException
+{
+}";
+
+            VerifyCSharpFix(original, expected);
+        }
     }
 }

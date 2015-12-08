@@ -142,6 +142,7 @@ namespace System.Runtime.Analyzers
                     context.Operation.Syntax.CreateDiagnostic(
                         descriptor,
                         targetSymbol,
+                        stringArgument,
                         parameter.Name,
                         constructorType));
             }

@@ -21,8 +21,10 @@
     <SemanticVersion>$(MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "></PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "></PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Microsoft.ApiDesignGuidelines.Analyzers.csproj">
       <Project>{9B5FFB24-D965-4CF1-8BB2-02C282193F4F}</Project>
@@ -192,7 +194,6 @@
     <Compile Include="CSharpIdentifiersShouldNotMatchKeywords.Fixer.cs" />
     <Compile Include="CSharpOnlyFlagsEnumsShouldHavePluralNames.cs" />
     <Compile Include="CSharpOnlyFlagsEnumsShouldHavePluralNames.Fixer.cs" />
-    <Compile Include="CSharpPropertyNamesShouldNotMatchGetMethods.cs" />
     <Compile Include="CSharpPropertyNamesShouldNotMatchGetMethods.Fixer.cs" />
     <Compile Include="CSharpTypeNamesShouldNotMatchNamespaces.cs" />
     <Compile Include="CSharpTypeNamesShouldNotMatchNamespaces.Fixer.cs" />

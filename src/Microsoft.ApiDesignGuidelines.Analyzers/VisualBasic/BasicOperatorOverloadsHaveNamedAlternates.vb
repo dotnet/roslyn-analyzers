@@ -2,16 +2,13 @@
 
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
-Imports Microsoft.CodeAnalysis.VisualBasic
-Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers   
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA2225: Operator overloads have named alternates
     ''' </summary>
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
     Public NotInheritable Class BasicOperatorOverloadsHaveNamedAlternatesAnalyzer
         Inherits OperatorOverloadsHaveNamedAlternatesAnalyzer
-
     End Class
 End Namespace

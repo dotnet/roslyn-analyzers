@@ -31,7 +31,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void TestNonPublicException()
+        public void TestCSharpNonPublicException()
         {
             var original = @"
 using System;
@@ -51,7 +51,7 @@ public class InternalException : Exception
         }
 
         [Fact]
-        public void TestNonPublicException2()
+        public void TestCSharpNonPublicException2()
         {
             var original = @"
 using System;
@@ -68,6 +68,42 @@ public class PrivateException : SystemException
 }";
 
             VerifyCSharpFix(original, expected);
+        }
+
+        [Fact]
+        public void TestVBasicNonPublicException()
+        {
+            var original = @"
+Imports System
+
+Class InternalException Inherits Exception
+End Class";
+
+            var expected = @"
+Imports System
+
+Public Class InternalException Inherits Exception
+End Class";
+
+            VerifyBasicFix(original, expected);
+        }
+
+        [Fact]
+        public void TestVBasicNonPublicException2()
+        {
+            var original = @"
+Imports System
+
+Private Class PrivateException Inherits SystemException
+End Class";
+
+            var expected = @"
+Imports System
+
+Public Class PrivateException Inherits SystemException
+End Class";
+
+            VerifyBasicFix(original, expected);
         }
     }
 }

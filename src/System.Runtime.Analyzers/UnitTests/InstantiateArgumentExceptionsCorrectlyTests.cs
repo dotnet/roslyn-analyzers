@@ -25,6 +25,8 @@ namespace System.Runtime.Analyzers.UnitTests
             return new InstantiateArgumentExceptionsCorrectlyAnalyzer();
         }
 
+
+
         [Fact]
 
         public void ArgumentException_NoArguments_Warns()
@@ -87,6 +89,29 @@ namespace System.Runtime.Analyzers.UnitTests
                 Public Class MyClass
                     Public Sub Test(Dim first As String)
                         Throw New System.ArgumentNullException("" "")
+                    End Sub
+                End Class",
+                GetBasicExpectedResult(4, 31, s_incorrectParameterName, "Public Sub Test(first As String)", " ", "paramName", "System.ArgumentNullException"));
+        }
+
+        public void ArgumentNullException_NameofNonParameter_Warns()
+        {
+            VerifyCSharp(@"
+                public class Class
+                {
+                    public void Test(string first)
+                    {
+                        var foo = new object();
+                        throw new System.ArgumentNullException(nameof(foo));
+                    }
+                }",
+                GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Class.Test(string)", " ", "paramName", "System.ArgumentNullException"));
+
+            VerifyBasic(@"
+                Public Class MyClass
+                    Public Sub Test(Dim first As String)
+                        Dim foo As New Object()
+                        Throw New System.ArgumentNullException(NameOf(foo))
                     End Sub
                 End Class",
                 GetBasicExpectedResult(4, 31, s_incorrectParameterName, "Public Sub Test(first As String)", " ", "paramName", "System.ArgumentNullException"));
@@ -393,6 +418,28 @@ namespace System.Runtime.Analyzers.UnitTests
                        Throw New System.ArgumentNullException(""first"")
                    End Sub
                End Class");
+        }
+
+
+        [Fact]
+
+        public void ArgumentNullException_NameofParameter_DoesNotWarn()
+        {
+            VerifyCSharp(@"
+                public class Class
+                {
+                    public void Test(string first)
+                    {
+                        throw new System.ArgumentNullException(nameof(first));
+                    }
+                }");
+
+            VerifyBasic(@"
+                Public Class MyClass
+                    Public Sub Test(Dim first As String)
+                        Throw New System.ArgumentNullException(NameOf(first))
+                    End Sub
+                End Class");
         }
 
         [Fact]

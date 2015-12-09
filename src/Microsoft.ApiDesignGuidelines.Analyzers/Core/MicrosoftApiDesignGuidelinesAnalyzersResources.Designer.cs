@@ -72,7 +72,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Abstract types should not have constructors.
+        ///   Looks up a localized string similar to Abstract type {0} should not have constructors.
         /// </summary>
         internal static string AbstractTypesShouldNotHaveConstructorsMessage {
             get {
@@ -86,6 +86,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         internal static string AbstractTypesShouldNotHaveConstructorsTitle {
             get {
                 return ResourceManager.GetString("AbstractTypesShouldNotHaveConstructorsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the accessibility of public constructors to protected..
+        /// </summary>
+        internal static string AbstractTypesShouldNotHavePublicConstructorsCodeFix {
+            get {
+                return ResourceManager.GetString("AbstractTypesShouldNotHavePublicConstructorsCodeFix", resourceCulture);
             }
         }
         
@@ -1837,6 +1846,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Override object.Equals.
+        /// </summary>
+        internal static string OverrideEqualsOnOverloadingOperatorEqualsCodeActionTitle {
+            get {
+                return ResourceManager.GetString("OverrideEqualsOnOverloadingOperatorEqualsCodeActionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A public type implements the equality operator but does not override Object.Equals..
         /// </summary>
         internal static string OverrideEqualsOnOverloadingOperatorEqualsDescription {
@@ -1860,6 +1878,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         internal static string OverrideEqualsOnOverloadingOperatorEqualsTitle {
             get {
                 return ResourceManager.GetString("OverrideEqualsOnOverloadingOperatorEqualsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Override object.GetHashCode.
+        /// </summary>
+        internal static string OverrideGetHashCodeOnOverridingEqualsCodeActionTitle {
+            get {
+                return ResourceManager.GetString("OverrideGetHashCodeOnOverridingEqualsCodeActionTitle", resourceCulture);
             }
         }
         
@@ -2080,20 +2107,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The property name {0} is confusing given the existence of inherited method {1}. Rename or remove this property..
+        ///   Looks up a localized string similar to The property name &apos;{0}&apos; is confusing given the existence of method &apos;{1}&apos;. Rename or remove one of these members..
         /// </summary>
-        internal static string PropertyNamesShouldNotMatchGetMethodsMessageBaseType {
+        internal static string PropertyNamesShouldNotMatchGetMethodsMessage {
             get {
-                return ResourceManager.GetString("PropertyNamesShouldNotMatchGetMethodsMessageBaseType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The property name {0} is confusing given the existence of method {1}. Rename or remove one of these members..
-        /// </summary>
-        internal static string PropertyNamesShouldNotMatchGetMethodsMessageSameType {
-            get {
-                return ResourceManager.GetString("PropertyNamesShouldNotMatchGetMethodsMessageSameType", resourceCulture);
+                return ResourceManager.GetString("PropertyNamesShouldNotMatchGetMethodsMessage", resourceCulture);
             }
         }
         

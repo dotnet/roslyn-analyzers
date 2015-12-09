@@ -112,12 +112,9 @@
     <Compile Include="CSharpUseGenericEventHandlerInstances.cs" />
     <Compile Include="CSharpUseGenericEventHandlerInstances.Fixer.cs" />
     <Compile Include="CSharpEnumsShouldHaveZeroValue.Fixer.cs" />
-    <Compile Include="CSharpAbstractTypesShouldNotHaveConstructors.cs" />
-    <Compile Include="CSharpAbstractTypesShouldNotHaveConstructors.Fixer.cs" />
     <Compile Include="CSharpMarkAssembliesWithClsCompliant.Fixer.cs" />
     <Compile Include="CSharpMarkAssembliesWithAssemblyVersion.Fixer.cs" />
     <Compile Include="CSharpDefineAccessorsForAttributeArguments.cs" />
-    <Compile Include="CSharpUsePropertiesWhereAppropriate.cs" />
     <Compile Include="CSharpUsePropertiesWhereAppropriate.Fixer.cs" />
     <Compile Include="CSharpInterfaceMethodsShouldBeCallableByChildTypes.cs" />
     <Compile Include="CSharpInterfaceMethodsShouldBeCallableByChildTypes.Fixer.cs" />
@@ -192,7 +189,6 @@
     <Compile Include="CSharpIdentifiersShouldNotMatchKeywords.Fixer.cs" />
     <Compile Include="CSharpOnlyFlagsEnumsShouldHavePluralNames.cs" />
     <Compile Include="CSharpOnlyFlagsEnumsShouldHavePluralNames.Fixer.cs" />
-    <Compile Include="CSharpPropertyNamesShouldNotMatchGetMethods.cs" />
     <Compile Include="CSharpPropertyNamesShouldNotMatchGetMethods.Fixer.cs" />
     <Compile Include="CSharpTypeNamesShouldNotMatchNamespaces.cs" />
     <Compile Include="CSharpTypeNamesShouldNotMatchNamespaces.Fixer.cs" />
@@ -206,9 +202,7 @@
     <Compile Include="CSharpPropertiesShouldNotReturnArrays.Fixer.cs" />
     <Compile Include="CSharpAssembliesShouldHaveValidStrongNames.cs" />
     <Compile Include="CSharpAssembliesShouldHaveValidStrongNames.Fixer.cs" />
-    <Compile Include="CSharpOverrideGetHashCodeOnOverridingEquals.cs" />
     <Compile Include="CSharpOverrideGetHashCodeOnOverridingEquals.Fixer.cs" />
-    <Compile Include="CSharpOverrideEqualsOnOverloadingOperatorEquals.cs" />
     <Compile Include="CSharpOverrideEqualsOnOverloadingOperatorEquals.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>

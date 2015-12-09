@@ -21,8 +21,10 @@
     <SemanticVersion>$(MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "></PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "></PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Microsoft.ApiDesignGuidelines.Analyzers.csproj">
       <Project>{9B5FFB24-D965-4CF1-8BB2-02C282193F4F}</Project>
@@ -176,8 +178,6 @@
     <Compile Include="CSharpUriPropertiesShouldNotBeStrings.Fixer.cs" />
     <Compile Include="CSharpImplementIDisposableCorrectly.cs" />
     <Compile Include="CSharpImplementIDisposableCorrectly.Fixer.cs" />
-    <Compile Include="CSharpExceptionsShouldBePublic.cs" />
-    <Compile Include="CSharpExceptionsShouldBePublic.Fixer.cs" />
     <Compile Include="CSharpDoNotRaiseExceptionsInUnexpectedLocations.cs" />
     <Compile Include="CSharpDoNotRaiseExceptionsInUnexpectedLocations.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldNotContainUnderscores.cs" />

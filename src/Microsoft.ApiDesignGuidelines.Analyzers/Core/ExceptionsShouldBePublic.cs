@@ -7,11 +7,12 @@ using Analyzer.Utilities;
 using System.Collections.Generic;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
-{                   
+{
     /// <summary>
     /// CA1064: Exceptions should be public
     /// </summary>
-    public abstract class ExceptionsShouldBePublicAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class ExceptionsShouldBePublicAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1064";
 

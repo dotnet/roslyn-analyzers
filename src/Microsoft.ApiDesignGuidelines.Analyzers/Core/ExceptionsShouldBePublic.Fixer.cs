@@ -17,7 +17,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// CA1064: Exceptions should be public
     /// </summary>
-    public abstract class ExceptionsShouldBePublicFixer : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
+    public sealed class ExceptionsShouldBePublicFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(ExceptionsShouldBePublicAnalyzer.RuleId);
 

@@ -5,6 +5,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
@@ -33,43 +35,41 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
+        private static readonly List<string> s_exceptionTypeNames = new List<string>()
+        {
+            "System.Exception",
+            "System.SystemException",
+            "System.ApplicationException"
+        };
+
         public override void Initialize(AnalysisContext analysisContext)
         {
-            analysisContext.RegisterSymbolAction(AnalyzeException, SymbolKind.NamedType);
+            analysisContext.RegisterCompilationStartAction(AnalyzeCompilationStart);
         }
 
-        private void AnalyzeException(SymbolAnalysisContext context)
-        {            
-            var symbol = (INamedTypeSymbol)context.Symbol;
-
-            // skip public symbols
-            if (symbol.IsPublic()) return;
-
-            // only report if base type matches 
-            var baseType = symbol.BaseType;
-            if (IsExceptionType(context, baseType))
-            {                
-                context.ReportDiagnostic(symbol.CreateDiagnostic(Rule));
-            }
-        }
-
-        private bool IsExceptionType(SymbolAnalysisContext context, INamedTypeSymbol baseType)
+        private void AnalyzeCompilationStart(CompilationStartAnalysisContext csContext)
         {
-            return GetExceptionTypes(context).Contains(baseType);
-        }
+            // Get named type symbols for targetted exception types
+            var exceptionTypes = s_exceptionTypeNames
+                .Select(name => csContext.Compilation.GetTypeByMetadataName(name))
+                .Where(t => t != null)
+                .ToImmutableHashSet();
 
-        private HashSet<INamedTypeSymbol> exceptionTypes;
-        private HashSet<INamedTypeSymbol> GetExceptionTypes(SymbolAnalysisContext context)
-        {
-            if (exceptionTypes == null)
+            // register symbol action for named types
+            csContext.RegisterSymbolAction(saContext => 
             {
-                exceptionTypes = new HashSet<INamedTypeSymbol>() {
-                    context.Compilation.GetTypeByMetadataName("System.Exception"),
-                    context.Compilation.GetTypeByMetadataName("System.SystemException"),
-                    context.Compilation.GetTypeByMetadataName("System.ApplicationException")
-                };
-            }
-            return exceptionTypes;
+                var symbol = (INamedTypeSymbol)saContext.Symbol;
+
+                // skip public symbols
+                if (symbol.IsPublic()) return;
+
+                // only report if base type matches 
+                if (exceptionTypes.Contains(symbol.BaseType))
+                {
+                    saContext.ReportDiagnostic(symbol.CreateDiagnostic(Rule));
+                }
+            }, 
+            SymbolKind.NamedType);
         }
     }
 }

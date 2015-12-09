@@ -12,12 +12,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicExceptionsShouldBePublicAnalyzer();
+            return new ExceptionsShouldBePublicAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpExceptionsShouldBePublicAnalyzer();
+            return new ExceptionsShouldBePublicAnalyzer();
         }
 
         [Fact]

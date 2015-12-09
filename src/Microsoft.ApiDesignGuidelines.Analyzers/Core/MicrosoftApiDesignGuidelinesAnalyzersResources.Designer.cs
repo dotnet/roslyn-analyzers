@@ -1837,6 +1837,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Override object.Equals.
+        /// </summary>
+        internal static string OverrideEqualsOnOverloadingOperatorEqualsCodeActionTitle {
+            get {
+                return ResourceManager.GetString("OverrideEqualsOnOverloadingOperatorEqualsCodeActionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A public type implements the equality operator but does not override Object.Equals..
         /// </summary>
         internal static string OverrideEqualsOnOverloadingOperatorEqualsDescription {
@@ -1860,6 +1869,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         internal static string OverrideEqualsOnOverloadingOperatorEqualsTitle {
             get {
                 return ResourceManager.GetString("OverrideEqualsOnOverloadingOperatorEqualsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Override object.GetHashCode.
+        /// </summary>
+        internal static string OverrideGetHashCodeOnOverridingEqualsCodeActionTitle {
+            get {
+                return ResourceManager.GetString("OverrideGetHashCodeOnOverridingEqualsCodeActionTitle", resourceCulture);
             }
         }
         

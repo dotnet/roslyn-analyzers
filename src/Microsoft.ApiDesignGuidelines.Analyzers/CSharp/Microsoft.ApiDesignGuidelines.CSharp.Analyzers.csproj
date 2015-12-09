@@ -204,9 +204,7 @@
     <Compile Include="CSharpPropertiesShouldNotReturnArrays.Fixer.cs" />
     <Compile Include="CSharpAssembliesShouldHaveValidStrongNames.cs" />
     <Compile Include="CSharpAssembliesShouldHaveValidStrongNames.Fixer.cs" />
-    <Compile Include="CSharpOverrideGetHashCodeOnOverridingEquals.cs" />
     <Compile Include="CSharpOverrideGetHashCodeOnOverridingEquals.Fixer.cs" />
-    <Compile Include="CSharpOverrideEqualsOnOverloadingOperatorEquals.cs" />
     <Compile Include="CSharpOverrideEqualsOnOverloadingOperatorEquals.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>

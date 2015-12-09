@@ -1,8 +1,10 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Semantics;
 
 namespace Microsoft.Maintainability.Analyzers
 {                   
@@ -33,7 +35,44 @@ namespace Microsoft.Maintainability.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            
+            analysisContext.RegisterCompilationStartAction(
+                (compilationContext) =>
+                {
+                    HashSet<IFieldSymbol> unreferencedPrivateFields = new HashSet<IFieldSymbol>();
+                    HashSet<IFieldSymbol> referencedPrivateFields = new HashSet<IFieldSymbol>();
+
+                    compilationContext.RegisterSymbolAction(
+                        (symbolContext) =>
+                        {
+                            IFieldSymbol field = (IFieldSymbol)symbolContext.Symbol;
+                            if (field.DeclaredAccessibility == Accessibility.Private && !referencedPrivateFields.Contains(field))
+                            {
+                                unreferencedPrivateFields.Add(field);
+                            }
+                        },
+                        SymbolKind.Field);
+
+                    compilationContext.RegisterOperationAction(
+                        (operationContext) =>
+                        {
+                            IFieldSymbol field = ((IFieldReferenceExpression)operationContext.Operation).Field;
+                            if (field.DeclaredAccessibility == Accessibility.Private)
+                            {
+                                referencedPrivateFields.Add(field);
+                                unreferencedPrivateFields.Remove(field);
+                            }
+                        },
+                        OperationKind.FieldReferenceExpression);
+
+                    compilationContext.RegisterCompilationEndAction(
+                        (compilationEndContext) =>
+                        {
+                            foreach (IFieldSymbol unreferencedPrivateField in unreferencedPrivateFields)
+                            {
+                                compilationEndContext.ReportDiagnostic(Diagnostic.Create(Rule, unreferencedPrivateField.Locations[0]));
+                            }
+                        });
+                });
         }
     }
 }

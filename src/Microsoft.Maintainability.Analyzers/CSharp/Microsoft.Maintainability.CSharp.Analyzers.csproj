@@ -111,7 +111,6 @@
     <Compile Include="CSharpDoNotIgnoreMethodResults.Fixer.cs" />
     <Compile Include="CSharpAvoidUninstantiatedInternalClasses.cs" />
     <Compile Include="CSharpAvoidUninstantiatedInternalClasses.Fixer.cs" />
-    <Compile Include="CSharpAvoidUnusedPrivateFields.Fixer.cs" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

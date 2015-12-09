@@ -108,7 +108,6 @@
     <Compile Include="BasicDoNotIgnoreMethodResults.Fixer.vb" />
     <Compile Include="BasicAvoidUninstantiatedInternalClasses.vb" />
     <Compile Include="BasicAvoidUninstantiatedInternalClasses.Fixer.vb" />
-    <Compile Include="BasicAvoidUnusedPrivateFields.Fixer.vb" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

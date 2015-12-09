@@ -196,26 +196,26 @@ End Class
         private static DiagnosticResult GetCA1721CSharpDeclaringTypeResultAt(int line, int column, string identifierName, string typeName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessageSameType, identifierName, typeName);
+            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, typeName);
             return GetCSharpResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
         }
         private static DiagnosticResult GetCA1721CSharpBaseTypeResultAt(int line, int column, string identifierName, string typeName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessageBaseType, identifierName, typeName);
+            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, typeName);
             return GetCSharpResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1721BasicDeclaringTypeResultAt(int line, int column, string identifierName, string typeName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessageSameType, identifierName, typeName);
+            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, typeName);
             return GetBasicResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
         }
         private static DiagnosticResult GetCA1721BasicBaseTypeResultAt(int line, int column, string identifierName, string typeName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessageBaseType, identifierName, typeName);
+            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, typeName);
             return GetBasicResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
         }
         #endregion

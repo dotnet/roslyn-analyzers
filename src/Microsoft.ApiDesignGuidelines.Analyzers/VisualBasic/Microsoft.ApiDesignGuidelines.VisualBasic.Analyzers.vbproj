@@ -20,9 +20,15 @@
     <SemanticVersion>$(MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "></PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "></PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
+      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
+      <Name>Analyzer.Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\Microsoft.ApiDesignGuidelines.Analyzers.csproj">
       <Project>{9B5FFB24-D965-4CF1-8BB2-02C282193F4F}</Project>
       <Name>Microsoft.ApiDesignGuidelines.Analyzers</Name>
@@ -187,7 +193,6 @@
     <Compile Include="BasicIdentifiersShouldNotMatchKeywords.Fixer.vb" />
     <Compile Include="BasicOnlyFlagsEnumsShouldHavePluralNames.vb" />
     <Compile Include="BasicOnlyFlagsEnumsShouldHavePluralNames.Fixer.vb" />
-    <Compile Include="BasicPropertyNamesShouldNotMatchGetMethods.vb" />
     <Compile Include="BasicPropertyNamesShouldNotMatchGetMethods.Fixer.vb" />
     <Compile Include="BasicTypeNamesShouldNotMatchNamespaces.vb" />
     <Compile Include="BasicTypeNamesShouldNotMatchNamespaces.Fixer.vb" />
@@ -205,6 +210,9 @@
     <Compile Include="BasicOverrideGetHashCodeOnOverridingEquals.Fixer.vb" />
     <Compile Include="BasicOverrideEqualsOnOverloadingOperatorEquals.vb" />
     <Compile Include="BasicOverrideEqualsOnOverloadingOperatorEquals.Fixer.vb" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleToTest Include="Microsoft.ApiDesignGuidelines.Analyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\vb\Microsoft.CodeAnalysis.Analyzers.dll" />

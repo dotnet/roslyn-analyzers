@@ -141,7 +141,6 @@
     <Compile Include="BasicNormalizeStringsToUppercase.Fixer.vb" />
     <Compile Include="BasicCallGCSuppressFinalizeCorrectly.vb" />
     <Compile Include="BasicCallGCSuppressFinalizeCorrectly.Fixer.vb" />
-    <Compile Include="BasicInstantiateArgumentExceptionsCorrectly.vb" />
     <Compile Include="BasicInstantiateArgumentExceptionsCorrectly.Fixer.vb" />
   </ItemGroup>
   <ItemGroup>

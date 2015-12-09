@@ -21,8 +21,10 @@
     <SemanticVersion>$(SystemRuntimeInteropServicesAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(SystemRuntimeInteropServicesAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "></PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "></PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -99,8 +101,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SystemRuntimeInteropServicesAnalyzersResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="PInvokeDeclarationsShouldBePortable.cs" />
-    <Compile Include="PInvokeDeclarationsShouldBePortable.Fixer.cs" />
     <Compile Include="SpecifyMarshalingForPInvokeStringArguments.Fixer.cs" />
     <Compile Include="UseManagedEquivalentsOfWin32Api.cs" />
     <Compile Include="UseManagedEquivalentsOfWin32Api.Fixer.cs" />

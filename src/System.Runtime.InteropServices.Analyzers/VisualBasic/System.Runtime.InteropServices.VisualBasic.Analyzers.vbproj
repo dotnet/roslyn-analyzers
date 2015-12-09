@@ -20,8 +20,10 @@
     <SemanticVersion>$(SystemRuntimeInteropServicesAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(SystemRuntimeInteropServicesAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "></PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "></PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\System.Runtime.InteropServices.Analyzers.csproj">
       <Project>{B806A3D0-BF66-491B-8845-A4E02050FD1E}</Project>
@@ -92,8 +94,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicPInvokeDeclarationsShouldBePortable.vb" />
-    <Compile Include="BasicPInvokeDeclarationsShouldBePortable.Fixer.vb" />
     <Compile Include="BasicSpecifyMarshalingForPInvokeStringArguments.Fixer.vb" />
     <Compile Include="BasicUseManagedEquivalentsOfWin32Api.vb" />
     <Compile Include="BasicUseManagedEquivalentsOfWin32Api.Fixer.vb" />

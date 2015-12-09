@@ -107,8 +107,6 @@
     <Compile Include="CSharpReviewUnusedParameters.Fixer.cs" />
     <Compile Include="CSharpRemoveUnusedLocals.cs" />
     <Compile Include="CSharpRemoveUnusedLocals.Fixer.cs" />
-    <Compile Include="CSharpDoNotIgnoreMethodResults.cs" />
-    <Compile Include="CSharpDoNotIgnoreMethodResults.Fixer.cs" />
     <Compile Include="CSharpAvoidUninstantiatedInternalClasses.cs" />
     <Compile Include="CSharpAvoidUninstantiatedInternalClasses.Fixer.cs" />
   </ItemGroup>

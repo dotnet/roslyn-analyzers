@@ -111,7 +111,6 @@
     <Compile Include="RemoveUnusedLocals.cs" />
     <Compile Include="RemoveUnusedLocals.Fixer.cs" />
     <Compile Include="DoNotIgnoreMethodResults.cs" />
-    <Compile Include="DoNotIgnoreMethodResults.Fixer.cs" />
     <Compile Include="AvoidUninstantiatedInternalClasses.cs" />
     <Compile Include="AvoidUninstantiatedInternalClasses.Fixer.cs" />
     <Compile Include="AvoidUnusedPrivateFields.cs" />

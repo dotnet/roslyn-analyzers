@@ -18,83 +18,11 @@ namespace Desktop.Analyzers
         internal const string RuleId = "CA1058";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesTitle), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
-
-        private static readonly LocalizableString s_localizableMessageSystemXmlXmlDocument = new LocalizableResourceString(nameof(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemXmlXmlDocument), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageSystemApplicationException = new LocalizableResourceString(nameof(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageSystemCollectionsCollectionBase = new LocalizableResourceString(nameof(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageSystemCollectionsDictionaryBase = new LocalizableResourceString(nameof(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsDictionaryBase), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageSystemCollectionsQueue = new LocalizableResourceString(nameof(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsQueue), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageSystemCollectionsReadOnlyCollectionBase = new LocalizableResourceString(nameof(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsReadOnlyCollectionBase), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageSystemCollectionsSortedList = new LocalizableResourceString(nameof(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsSortedList), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageSystemCollectionsStack = new LocalizableResourceString(nameof(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsStack), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesDescription), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
-        
-        internal static DiagnosticDescriptor SystemXmlXmlDocumentRule = new DiagnosticDescriptor(RuleId,
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
-                                                                             s_localizableMessageSystemXmlXmlDocument,
-                                                                             DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: true,
-                                                                             description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182171.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
-        internal static DiagnosticDescriptor SystemApplicationExceptionRule = new DiagnosticDescriptor(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageSystemApplicationException,
-                                                                             DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: true,
-                                                                             description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182171.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
-        internal static DiagnosticDescriptor SystemCollectionsCollectionBaseRule = new DiagnosticDescriptor(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageSystemCollectionsCollectionBase,
-                                                                             DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: true,
-                                                                             description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182171.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
-        internal static DiagnosticDescriptor SystemCollectionsDictionaryBaseRule = new DiagnosticDescriptor(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageSystemCollectionsDictionaryBase,
-                                                                             DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: true,
-                                                                             description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182171.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
-        internal static DiagnosticDescriptor SystemCollectionsQueueRule = new DiagnosticDescriptor(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageSystemCollectionsQueue,
-                                                                             DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: true,
-                                                                             description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182171.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
-        internal static DiagnosticDescriptor SystemCollectionsReadOnlyCollectionBaseRule = new DiagnosticDescriptor(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageSystemCollectionsReadOnlyCollectionBase,
-                                                                             DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: true,
-                                                                             description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182171.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
-        internal static DiagnosticDescriptor SystemCollectionsSortedListRule = new DiagnosticDescriptor(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageSystemCollectionsSortedList,
-                                                                             DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: true,
-                                                                             description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182171.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
-        internal static DiagnosticDescriptor SystemCollectionsStackRule = new DiagnosticDescriptor(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageSystemCollectionsStack,
+                                                                             "{0}",
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
@@ -102,18 +30,18 @@ namespace Desktop.Analyzers
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182171.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(SystemXmlXmlDocumentRule, SystemApplicationExceptionRule, SystemCollectionsCollectionBaseRule, SystemCollectionsDictionaryBaseRule, SystemCollectionsQueueRule, SystemCollectionsReadOnlyCollectionBaseRule, SystemCollectionsSortedListRule, SystemCollectionsStackRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        private static readonly Dictionary<string, DiagnosticDescriptor> s_badBaseTypesToDescriptor = new Dictionary<string, DiagnosticDescriptor>
+        private static readonly Dictionary<string, string> s_badBaseTypesToMessage = new Dictionary<string, string>
                                                     {
-                                                        {"System.ApplicationException", SystemApplicationExceptionRule},
-                                                        {"System.Xml.XmlDocument", SystemXmlXmlDocumentRule},
-                                                        {"System.Collections.CollectionBase", SystemCollectionsCollectionBaseRule},
-                                                        {"System.Collections.DictionaryBase", SystemCollectionsDictionaryBaseRule},
-                                                        {"System.Collections.Queue", SystemCollectionsQueueRule},
-                                                        {"System.Collections.ReadOnlyCollectionBase", SystemCollectionsReadOnlyCollectionBaseRule},
-                                                        {"System.Collections.SortedList", SystemCollectionsSortedListRule},
-                                                        {"System.Collections.Stack", SystemCollectionsStackRule},
+                                                        {"System.ApplicationException", DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException},
+                                                        {"System.Xml.XmlDocument", DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemXmlXmlDocument},
+                                                        {"System.Collections.CollectionBase", DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase},
+                                                        {"System.Collections.DictionaryBase", DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsDictionaryBase},
+                                                        {"System.Collections.Queue", DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsQueue},
+                                                        {"System.Collections.ReadOnlyCollectionBase", DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsReadOnlyCollectionBase},
+                                                        {"System.Collections.SortedList", DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsSortedList},
+                                                        {"System.Collections.Stack", DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsStack},
                                                     };
 
         public override void Initialize(AnalysisContext analysisContext)
@@ -123,29 +51,30 @@ namespace Desktop.Analyzers
 
         private void AnalyzeCompilationStart(CompilationStartAnalysisContext context)
         {
-            var badBaseTypes = s_badBaseTypesToDescriptor.Keys
+            var badBaseTypes = s_badBaseTypesToMessage.Keys
                                 .Select(bt => context.Compilation.GetTypeByMetadataName(bt))
                                 .Where(bt => bt != null)
-                                .ToList();
+                                .ToImmutableHashSet();
 
-            context.RegisterSymbolAction((saContext) =>
-                {
-                    var namedTypeSymbol = saContext.Symbol as INamedTypeSymbol;
-                    if (!namedTypeSymbol.Locations.Any(l => l.IsInSource))
+            if (badBaseTypes.Count > 0)
+            {
+                context.RegisterSymbolAction((saContext) =>
                     {
-                        return;
+                        var namedTypeSymbol = saContext.Symbol as INamedTypeSymbol;
+
+                        var containedBadBaseType = badBaseTypes.Where(bbt => bbt.Equals(namedTypeSymbol.BaseType)).FirstOrDefault();
+
+                        if (containedBadBaseType != null)
+                        {
+                            var baseTypeName = namedTypeSymbol.BaseType.ToDisplayString();
+                            Debug.Assert(s_badBaseTypesToMessage.ContainsKey(baseTypeName));
+                            var message = string.Format(s_badBaseTypesToMessage[baseTypeName], namedTypeSymbol.ToDisplayString(), baseTypeName);
+                            var diagnostic = Diagnostic.Create(Rule, namedTypeSymbol.Locations.First(l => l.IsInSource), message);
+                            saContext.ReportDiagnostic(diagnostic);
+                        }
                     }
-
-                    var containedBadBaseTypes = badBaseTypes.Where(bbt => bbt.Equals(namedTypeSymbol.BaseType));
-
-                    if (containedBadBaseTypes.Any())
-                    {
-                        Debug.Assert(s_badBaseTypesToDescriptor.ContainsKey(namedTypeSymbol.BaseType.ToDisplayString()));
-                        saContext.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(s_badBaseTypesToDescriptor[namedTypeSymbol.BaseType.ToDisplayString()], namedTypeSymbol.ToDisplayString(), containedBadBaseTypes.First().ToDisplayString()));
-                    }
-                }
-                , SymbolKind.NamedType);
-
+                    , SymbolKind.NamedType);
+            }
         }
     }
 }

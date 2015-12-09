@@ -76,13 +76,15 @@ public class PrivateException : SystemException
             var original = @"
 Imports System
 
-Class InternalException Inherits Exception
+Class InternalException
+   Inherits Exception
 End Class";
 
             var expected = @"
 Imports System
 
-Public Class InternalException Inherits Exception
+Public Class InternalException
+   Inherits Exception
 End Class";
 
             VerifyBasicFix(original, expected);
@@ -94,13 +96,15 @@ End Class";
             var original = @"
 Imports System
 
-Private Class PrivateException Inherits SystemException
+Private Class PrivateException
+   Inherits SystemException
 End Class";
 
             var expected = @"
 Imports System
 
-Public Class PrivateException Inherits SystemException
+Public Class PrivateException
+   Inherits SystemException
 End Class";
 
             VerifyBasicFix(original, expected);

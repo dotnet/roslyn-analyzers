@@ -67,7 +67,8 @@ public class NonException : StringWriter
         {
             VerifyBasic(@"
 Imports System
-Class InternalException Inherits Exception
+Class InternalException
+   Inherits Exception
 End Class",
             GetCA1064VBasicResultAt(3, 7));
         }
@@ -77,7 +78,8 @@ End Class",
         {
             VerifyBasic(@"
 Imports System
-Private Class PrivateException Inherits SystemException
+Private Class PrivateException
+   Inherits SystemException
 End Class",
             GetCA1064VBasicResultAt(3, 15));
         }
@@ -87,7 +89,8 @@ End Class",
         {
             VerifyBasic(@"
 Imports System
-Public Class BasicException Inherits Exception
+Public Class BasicException
+   Inherits Exception
 End Class");
         }
 
@@ -96,7 +99,8 @@ End Class");
         {
             VerifyBasic(@"
 Imports System
-Public Class NonException Inherits StringWriter
+Public Class NonException
+   Inherits StringWriter
 End Class");
         }
 

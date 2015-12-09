@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Semantics;
+using System.Linq;
 
 namespace System.Runtime.Analyzers
 {
@@ -60,8 +61,21 @@ namespace System.Runtime.Analyzers
 
                     var stringFormat = (string)formatStringArgument.Value.ConstantValue;
                     var expectedStringFormatArgumentCount = GetFormattingArguments(stringFormat);
+
+                    // explict parameter case
                     if (info.ExpectedStringFormatArgumentCount >= 0)
                     {
+                        // TODO: due to a bug - https://github.com/dotnet/roslyn/issues/7346
+                        //       vararg case is disabled.
+                        //       we might check this only for C# since __arglist is not supported in VB
+                        //
+                        //       we need to implement proper support for __arglist once the bug is fixed.
+                        if (invocation.TargetMethod.IsVararg)
+                        {
+                            // can't deal with this for now.
+                            return;
+                        }
+
                         if (info.ExpectedStringFormatArgumentCount != expectedStringFormatArgumentCount)
                         {
                             operationContext.ReportDiagnostic(operationContext.Operation.Syntax.CreateDiagnostic(Rule));
@@ -70,7 +84,50 @@ namespace System.Runtime.Analyzers
                         return;
                     }
 
-                    var actualArgumentCount = GetFormatStringArgumentsCount(invocation.ArgumentsInParameterOrder.Length, info.FormatStringIndex);
+                    // params case
+                    var paramsArgument = invocation.ArgumentsInParameterOrder[info.FormatStringIndex + 1];
+                    if (paramsArgument.Kind != ArgumentKind.ParamArray)
+                    {
+                        // wrong format
+                        return;
+                    }
+
+                    var arrayCreation = paramsArgument.Value as IArrayCreationExpression;
+                    if (arrayCreation == null ||
+                        !object.Equals(arrayCreation.ElementType, formatInfo.Object) ||
+                        arrayCreation.DimensionSizes.Length != 1)
+                    {
+                        // wrong format
+                        return;
+                    }
+
+                    // explictly giving object array case.
+                    // this should go away once the bug is fixed
+                    if (invocation.Syntax.Language == LanguageNames.CSharp &&
+                        invocation.ArgumentsInParameterOrder.Count(a => a.Kind == ArgumentKind.ParamArray) ==
+                        invocation.ArgumentsInSourceOrder.Count(a => a.Kind == ArgumentKind.ParamArray))
+                    {
+                        // TODO: due to a bug - https://github.com/dotnet/roslyn/issues/7342
+                        //       currently this (explictly giving object array case) is not supported.
+                        //
+                        //       this check is only for CSharp, since VB correctly normalize explicit
+                        //       and implicit params array to one format. but VB has different issue where one can't
+                        //       distinguish explicit and implicit params argument since it is already normalized in one
+                        //       format in both ArgumentsInParameterOrder and ArgumentsInSourceOrder.
+                        //
+                        return;
+                    }
+
+                    // compiler generating object array for params case
+                    var dimensionInitializer = arrayCreation.ElementValues as IDimensionArrayInitializer;
+                    if (dimensionInitializer == null)
+                    {
+                        // unsupported format
+                        return;
+                    }
+
+                    // REVIEW: "ElementValues" is a bit confusing where I need to double dot those to get number of elements
+                    var actualArgumentCount = dimensionInitializer.ElementValues.Length;
                     if (actualArgumentCount != expectedStringFormatArgumentCount)
                     {
                         operationContext.ReportDiagnostic(operationContext.Operation.Syntax.CreateDiagnostic(Rule));
@@ -268,12 +325,6 @@ namespace System.Runtime.Analyzers
             return count;
         }
 
-        private static int GetFormatStringArgumentsCount(int length, int formatIndex)
-        {
-            // number of arguments for format string
-            return length - formatIndex - 1;
-        }
-
         private class StringFormatInfo
         {
             private const string Format = "format";
@@ -294,9 +345,11 @@ namespace System.Runtime.Analyzers
                 _map = builder.ToImmutable();
 
                 String = @string;
+                Object = WellKnownTypes.Object(compilation);
             }
 
             public INamedTypeSymbol String { get; }
+            public INamedTypeSymbol Object { get; }
 
             public Info TryGet(IMethodSymbol method)
             {
@@ -322,7 +375,7 @@ namespace System.Runtime.Analyzers
                     if (formatIndex < 0 || formatIndex == method.Parameters.Length - 1)
                     {
                         // no valid format string
-                        return;
+                        continue;
                     }
 
                     var expectedArguments = GetExpectedNumberOfArguments(method.Parameters, formatIndex);
@@ -339,7 +392,7 @@ namespace System.Runtime.Analyzers
                     return -1;
                 }
 
-                return GetFormatStringArgumentsCount(parameters.Length, formatIndex);
+                return parameters.Length - formatIndex - 1;
             }
 
             private int FindParameterIndexOfName(ImmutableArray<IParameterSymbol> parameters, string name)

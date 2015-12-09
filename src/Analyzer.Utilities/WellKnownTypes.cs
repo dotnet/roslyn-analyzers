@@ -199,7 +199,12 @@ namespace Analyzer.Utilities
 
         public static INamedTypeSymbol String(Compilation compilation)
         {
-            return compilation.GetTypeByMetadataName("System.String");
+            return compilation.GetSpecialType(SpecialType.System_String);
+        }
+
+        public static INamedTypeSymbol Object(Compilation compilation)
+        {
+            return compilation.GetSpecialType(SpecialType.System_Object);
         }
     }
 }

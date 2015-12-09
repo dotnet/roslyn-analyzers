@@ -2080,20 +2080,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The property name {0} is confusing given the existence of inherited method {1}. Rename or remove this property..
+        ///   Looks up a localized string similar to The property name &apos;{0}&apos; is confusing given the existence of method &apos;{1}&apos;. Rename or remove one of these members..
         /// </summary>
-        internal static string PropertyNamesShouldNotMatchGetMethodsMessageBaseType {
+        internal static string PropertyNamesShouldNotMatchGetMethodsMessage {
             get {
-                return ResourceManager.GetString("PropertyNamesShouldNotMatchGetMethodsMessageBaseType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The property name {0} is confusing given the existence of method {1}. Rename or remove one of these members..
-        /// </summary>
-        internal static string PropertyNamesShouldNotMatchGetMethodsMessageSameType {
-            get {
-                return ResourceManager.GetString("PropertyNamesShouldNotMatchGetMethodsMessageSameType", resourceCulture);
+                return ResourceManager.GetString("PropertyNamesShouldNotMatchGetMethodsMessage", resourceCulture);
             }
         }
         

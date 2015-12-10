@@ -35,8 +35,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             var diagnostic = context.Diagnostics.Single();
 
-            var action = CodeAction.Create(MicrosoftApiDesignGuidelinesAnalyzersResources.MakeExceptionPublic, 
-                c => MakePublic(context.Document, node, context.CancellationToken));
+            // create one equivalence key value for all actions produced by this fixer 
+            // i.e. Fix All fixes every occurrence of this diagnostic
+            var equivalenceKey = nameof(ExceptionsShouldBePublicFixer);
+
+            var action = CodeAction.Create(
+                MicrosoftApiDesignGuidelinesAnalyzersResources.MakeExceptionPublic, 
+                c => MakePublic(context.Document, node, context.CancellationToken),
+                equivalenceKey);
 
             context.RegisterCodeFix(action, diagnostic);
         }

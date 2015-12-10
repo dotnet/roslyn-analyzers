@@ -139,6 +139,8 @@ namespace System.Runtime.Analyzers
         private int GetFormattingArguments(string format)
         {
             // code is from mscorlib
+            // https://github.com/dotnet/coreclr/blob/bc146608854d1db9cdbcc0b08029a87754e12b49/src/mscorlib/src/System/Text/StringBuilder.cs#L1312
+
             // return count of this format - {index[,alignment][:formatString]}
             var count = 0;
 

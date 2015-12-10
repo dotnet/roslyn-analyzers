@@ -1396,6 +1396,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Make exception public.
+        /// </summary>
+        internal static string MakeExceptionPublic {
+            get {
+                return ResourceManager.GetString("MakeExceptionPublic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Make the getter of the property public.
         /// </summary>
         internal static string MakeGetterPublic {

@@ -145,7 +145,6 @@
     <Compile Include="MovePInvokesToNativeMethodsClass.cs" />
     <Compile Include="MovePInvokesToNativeMethodsClass.Fixer.cs" />
     <Compile Include="IdentifiersShouldDifferByMoreThanCase.cs" />
-    <Compile Include="IdentifiersShouldDifferByMoreThanCase.Fixer.cs" />
     <Compile Include="IdentifiersShouldHaveCorrectPrefix.cs" />
     <Compile Include="IdentifiersShouldHaveCorrectPrefix.Fixer.cs" />
     <Compile Include="NonConstantFieldsShouldNotBeVisible.cs" />

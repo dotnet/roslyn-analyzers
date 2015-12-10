@@ -18,7 +18,8 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <SemanticVersion>$(MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion)</PreReleaseVersion>
-    <NuGetPackageImportStamp></NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Label="Start settings">
     <StartAction>Program</StartAction>
@@ -44,8 +45,10 @@
       <Name>Microsoft.ApiDesignGuidelines.VisualBasic.Analyzers</Name>
     </ProjectReference>
   </ItemGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "></PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "></PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -187,7 +190,6 @@
     <Compile Include="MovePInvokesToNativeMethodsClassTests.cs" />
     <Compile Include="MovePInvokesToNativeMethodsClassTests.Fixer.cs" />
     <Compile Include="IdentifiersShouldDifferByMoreThanCaseTests.cs" />
-    <Compile Include="IdentifiersShouldDifferByMoreThanCaseTests.Fixer.cs" />
     <Compile Include="IdentifiersShouldHaveCorrectPrefixTests.cs" />
     <Compile Include="IdentifiersShouldHaveCorrectPrefixTests.Fixer.cs" />
     <Compile Include="NonConstantFieldsShouldNotBeVisibleTests.cs" />

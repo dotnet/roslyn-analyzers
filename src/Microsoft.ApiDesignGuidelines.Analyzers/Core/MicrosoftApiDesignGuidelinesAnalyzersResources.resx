@@ -354,17 +354,8 @@
   <data name="IdentifiersShouldDifferByMoreThanCaseDescription" xml:space="preserve">
     <value>Identifiers for namespaces, types, members, and parameters cannot differ only by case because languages that target the common language runtime are not required to be case-sensitive.</value>
   </data>
-  <data name="IdentifiersShouldDifferByMoreThanCaseMessageMember" xml:space="preserve">
-    <value>Change member names {0} and '{1}' so that they differ by more than case.</value>
-  </data>
-  <data name="IdentifiersShouldDifferByMoreThanCaseMessageType" xml:space="preserve">
-    <value>Change type names {0} and '{1}' so that they differ by more than case.</value>
-  </data>
-  <data name="IdentifiersShouldDifferByMoreThanCaseMessageNamespace" xml:space="preserve">
-    <value>Change namespace names {0} and '{1}' so that they differ by more than case.</value>
-  </data>
-  <data name="IdentifiersShouldDifferByMoreThanCaseMessageParameter" xml:space="preserve">
-    <value>Change parameter names {0} and '{1}' so that they differ by more than case.</value>
+  <data name="IdentifiersShouldDifferByMoreThanCaseMessage" xml:space="preserve">
+    <value>Names of '{0}' and '{1}' should differ by more than case.</value>
   </data>
   <data name="IdentifiersShouldHaveCorrectPrefixTitle" xml:space="preserve">
     <value>Identifiers should have correct prefix</value>

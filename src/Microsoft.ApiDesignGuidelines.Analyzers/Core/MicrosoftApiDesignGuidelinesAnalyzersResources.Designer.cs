@@ -837,38 +837,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change member names {0} and &apos;{1}&apos; so that they differ by more than case..
+        ///   Looks up a localized string similar to Names of &apos;{0}&apos; and &apos;{1}&apos; should differ by more than case..
         /// </summary>
-        internal static string IdentifiersShouldDifferByMoreThanCaseMessageMember {
+        internal static string IdentifiersShouldDifferByMoreThanCaseMessage {
             get {
-                return ResourceManager.GetString("IdentifiersShouldDifferByMoreThanCaseMessageMember", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change namespace names {0} and &apos;{1}&apos; so that they differ by more than case..
-        /// </summary>
-        internal static string IdentifiersShouldDifferByMoreThanCaseMessageNamespace {
-            get {
-                return ResourceManager.GetString("IdentifiersShouldDifferByMoreThanCaseMessageNamespace", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change parameter names {0} and &apos;{1}&apos; so that they differ by more than case..
-        /// </summary>
-        internal static string IdentifiersShouldDifferByMoreThanCaseMessageParameter {
-            get {
-                return ResourceManager.GetString("IdentifiersShouldDifferByMoreThanCaseMessageParameter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change type names {0} and &apos;{1}&apos; so that they differ by more than case..
-        /// </summary>
-        internal static string IdentifiersShouldDifferByMoreThanCaseMessageType {
-            get {
-                return ResourceManager.GetString("IdentifiersShouldDifferByMoreThanCaseMessageType", resourceCulture);
+                return ResourceManager.GetString("IdentifiersShouldDifferByMoreThanCaseMessage", resourceCulture);
             }
         }
         

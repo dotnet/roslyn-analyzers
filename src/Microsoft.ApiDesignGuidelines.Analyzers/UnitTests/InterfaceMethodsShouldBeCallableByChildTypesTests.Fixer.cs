@@ -12,12 +12,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicInterfaceMethodsShouldBeCallableByChildTypesAnalyzer();
+            return new InterfaceMethodsShouldBeCallableByChildTypesAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpInterfaceMethodsShouldBeCallableByChildTypesAnalyzer();
+            return new InterfaceMethodsShouldBeCallableByChildTypesAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

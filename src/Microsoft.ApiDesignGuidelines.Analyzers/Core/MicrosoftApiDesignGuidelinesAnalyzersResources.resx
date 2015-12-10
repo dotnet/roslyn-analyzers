@@ -366,11 +366,8 @@
   <data name="IdentifiersShouldHaveCorrectPrefixMessageInterface" xml:space="preserve">
     <value>Prefix interface name {0} with 'I'.</value>
   </data>
-  <data name="IdentifiersShouldHaveCorrectPrefixMessageTypeTypeParameter" xml:space="preserve">
-    <value>On type {0}, prefix generic type parameter name {1} with 'T'.</value>
-  </data>
-  <data name="IdentifiersShouldHaveCorrectPrefixMessageMethodTypeParameter" xml:space="preserve">
-    <value>On method {0}, prefix generic type parameter name {1} with 'T'.</value>
+  <data name="IdentifiersShouldHaveCorrectPrefixMessageTypeParameter" xml:space="preserve">
+    <value>Prefix generic type parameter name {0} with 'T'.</value>
   </data>
   <data name="NonConstantFieldsShouldNotBeVisibleTitle" xml:space="preserve">
     <value>Non-constant fields should not be visible</value>

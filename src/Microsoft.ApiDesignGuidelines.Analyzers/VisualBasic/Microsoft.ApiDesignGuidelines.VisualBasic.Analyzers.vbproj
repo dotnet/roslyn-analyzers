@@ -126,7 +126,6 @@
     <Compile Include="BasicStaticHolderTypesShouldNotHaveConstructors.vb" />
     <Compile Include="BasicStaticHolderTypesShouldNotHaveConstructors.Fixer.vb" />
     <Compile Include="BasicMovePInvokesToNativeMethodsClass.Fixer.vb" />
-    <Compile Include="BasicIdentifiersShouldHaveCorrectPrefix.vb" />
     <Compile Include="BasicIdentifiersShouldHaveCorrectPrefix.Fixer.vb" />
     <Compile Include="BasicNonConstantFieldsShouldNotBeVisible.vb" />
     <Compile Include="BasicNonConstantFieldsShouldNotBeVisible.Fixer.vb" />

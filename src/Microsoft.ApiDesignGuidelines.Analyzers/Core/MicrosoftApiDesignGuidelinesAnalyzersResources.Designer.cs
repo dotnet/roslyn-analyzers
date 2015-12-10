@@ -873,20 +873,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to On method {0}, prefix generic type parameter name {1} with &apos;T&apos;..
+        ///   Looks up a localized string similar to Prefix generic type parameter name {0} with &apos;T&apos;..
         /// </summary>
-        internal static string IdentifiersShouldHaveCorrectPrefixMessageMethodTypeParameter {
+        internal static string IdentifiersShouldHaveCorrectPrefixMessageTypeParameter {
             get {
-                return ResourceManager.GetString("IdentifiersShouldHaveCorrectPrefixMessageMethodTypeParameter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to On type {0}, prefix generic type parameter name {1} with &apos;T&apos;..
-        /// </summary>
-        internal static string IdentifiersShouldHaveCorrectPrefixMessageTypeTypeParameter {
-            get {
-                return ResourceManager.GetString("IdentifiersShouldHaveCorrectPrefixMessageTypeTypeParameter", resourceCulture);
+                return ResourceManager.GetString("IdentifiersShouldHaveCorrectPrefixMessageTypeParameter", resourceCulture);
             }
         }
         

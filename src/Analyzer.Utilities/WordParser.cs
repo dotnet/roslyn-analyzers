@@ -71,7 +71,7 @@ namespace Analyzer.Utilities
         /// <exception cref="ArgumentException">
         ///     <paramref name="options"/> is not one or more of the <see cref="WordParserOptions"/> values.
         /// </exception>
-        internal WordParser(string text, WordParserOptions options) : this(text, options, NullChar)
+        public WordParser(string text, WordParserOptions options) : this(text, options, NullChar)
         {
         }
 
@@ -94,7 +94,7 @@ namespace Analyzer.Utilities
         /// <exception cref="ArgumentException">
         ///     <paramref name="options"/> is not one or more of the <see cref="WordParserOptions"/> values.
         /// </exception>
-        internal WordParser(string text, WordParserOptions options, char prefix)
+        public WordParser(string text, WordParserOptions options, char prefix)
         {
             if (text == null)
             {

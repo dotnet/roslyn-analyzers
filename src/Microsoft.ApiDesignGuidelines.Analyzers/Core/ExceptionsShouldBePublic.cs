@@ -55,21 +55,24 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 .Where(t => t != null)
                 .ToImmutableHashSet();
 
-            // register symbol action for named types
-            csContext.RegisterSymbolAction(saContext => 
+            if (!exceptionTypes.IsEmpty)
             {
-                var symbol = (INamedTypeSymbol)saContext.Symbol;
-
-                // skip public symbols
-                if (symbol.IsPublic()) return;
-
-                // only report if base type matches 
-                if (exceptionTypes.Contains(symbol.BaseType))
+                // register symbol action for named types
+                csContext.RegisterSymbolAction(saContext =>
                 {
-                    saContext.ReportDiagnostic(symbol.CreateDiagnostic(Rule));
-                }
-            }, 
-            SymbolKind.NamedType);
+                    var symbol = (INamedTypeSymbol)saContext.Symbol;
+
+                    // skip public symbols
+                    if (symbol.IsPublic()) return;
+
+                    // only report if base type matches 
+                    if (exceptionTypes.Contains(symbol.BaseType))
+                    {
+                        saContext.ReportDiagnostic(symbol.CreateDiagnostic(Rule));
+                    }
+                },
+                SymbolKind.NamedType);
+            }
         }
     }
 }

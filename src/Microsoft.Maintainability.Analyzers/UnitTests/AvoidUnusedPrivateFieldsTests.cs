@@ -22,7 +22,7 @@ namespace Microsoft.Maintainability.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CSharp_CA1823DiagnosticCases()
+        public void CA1823_CSharp_DiagnosticCases()
         {
             VerifyCSharp(@"
 public class Class
@@ -47,7 +47,7 @@ public class Class
         }
 
         [Fact]
-        public void VisualBasic_CA1823DiagnosticCases()
+        public void CA1823_VisualBasic_DiagnosticCases()
         {
             VerifyBasic(@"
 Public Class Class1
@@ -58,29 +58,29 @@ Public Class Class1
     Private Unused2 As Integer
     Public Unused3 As Integer
 
-	Public Function MyFileName() As String
-		Return filename
-	End Function
+    Public Function MyFileName() As String
+        Return filename
+    End Function
 
-	Public Function MyValue() As Integer
-		Return Used1 + Used2
-	End Function
+    Public Property MyValue As Integer
+        Get
+            Return Used1 + Used2
+        End Get
+    End Function
 End Class
 ",
             GetCA1823BasicResultAt(6, 13, "Unused1"),
             GetCA1823BasicResultAt(7, 13, "Unused2"));
         }
 
-        internal static string CA1823Name = "CA1823";
-
         private static DiagnosticResult GetCA1823CSharpResultAt(int line, int column, string fieldName)
         {
-            return GetCSharpResultAt(line, column, CA1823Name, string.Format(MicrosoftMaintainabilityAnalyzersResources.AvoidUnusedPrivateFieldsMessage, fieldName));
+            return GetCSharpResultAt(line, column, AvoidUnusedPrivateFieldsAnalyzer.RuleId, string.Format(MicrosoftMaintainabilityAnalyzersResources.AvoidUnusedPrivateFieldsMessage, fieldName));
         }
 
         private static DiagnosticResult GetCA1823BasicResultAt(int line, int column, string fieldName)
         {
-            return GetBasicResultAt(line, column, CA1823Name, string.Format(MicrosoftMaintainabilityAnalyzersResources.AvoidUnusedPrivateFieldsMessage, fieldName));
+            return GetBasicResultAt(line, column, AvoidUnusedPrivateFieldsAnalyzer.RuleId, string.Format(MicrosoftMaintainabilityAnalyzersResources.AvoidUnusedPrivateFieldsMessage, fieldName));
         }
     }
 }

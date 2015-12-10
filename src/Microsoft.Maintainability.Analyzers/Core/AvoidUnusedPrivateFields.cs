@@ -21,15 +21,15 @@ namespace Microsoft.Maintainability.Analyzers
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidUnusedPrivateFieldsMessage), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidUnusedPrivateFieldsDescription), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
         
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
-                                                                             DiagnosticCategory.Performance,
-                                                                             DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: true,
-                                                                             description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+        internal static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
+                                                                                      s_localizableTitle,
+                                                                                      s_localizableMessage,
+                                                                                      DiagnosticCategory.Performance,
+                                                                                      DiagnosticSeverity.Warning,
+                                                                                      isEnabledByDefault: true,
+                                                                                      description: s_localizableDescription,
+                                                                                      helpLinkUri: "http://msdn.microsoft.com/library/ms245042.aspx",
+                                                                                      customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 

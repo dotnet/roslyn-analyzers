@@ -45,10 +45,11 @@ class C
     private int a;
     private int b;
     private int c;
+    private int d, e, f;
 
     public int Foo()
     {
-        return x + z + a + c;
+        return x + z + a + c + d + f;
     }
 }  
  ",
@@ -60,10 +61,11 @@ class C
     public int z;
     private int a;
     private int c;
+    private int d, f;
 
     public int Foo()
     {
-        return x + z + a + c;
+        return x + z + a + c + d + f;
     }
 }  
  ");
@@ -81,9 +83,10 @@ Class C
     Private a As Integer
     Private b As Integer
     Private c As Integer
+    Private d, e, f As Integer
 
     Public Function Foo() As Integer
-        Return x + z + a + c
+        Return x + z + a + c + d + f
     End Function
 End Class
  ",
@@ -94,9 +97,10 @@ Class C
     Public z As Integer
     Private a As Integer
     Private c As Integer
+    Private d, f As Integer
 
     Public Function Foo() As Integer
-        Return x + z + a + c
+        Return x + z + a + c + d + f
     End Function
 End Class
  ");

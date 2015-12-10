@@ -174,8 +174,6 @@
     <Compile Include="BasicUriPropertiesShouldNotBeStrings.Fixer.vb" />
     <Compile Include="BasicImplementIDisposableCorrectly.vb" />
     <Compile Include="BasicImplementIDisposableCorrectly.Fixer.vb" />
-    <Compile Include="BasicExceptionsShouldBePublic.vb" />
-    <Compile Include="BasicExceptionsShouldBePublic.Fixer.vb" />
     <Compile Include="BasicDoNotRaiseExceptionsInUnexpectedLocations.vb" />
     <Compile Include="BasicDoNotRaiseExceptionsInUnexpectedLocations.Fixer.vb" />
     <Compile Include="BasicIdentifiersShouldNotContainUnderscores.vb" />

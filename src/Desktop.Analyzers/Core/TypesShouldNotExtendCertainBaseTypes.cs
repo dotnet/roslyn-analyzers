@@ -13,7 +13,8 @@ namespace Desktop.Analyzers
     /// <summary>
     /// CA1058: Types should not extend certain base types
     /// </summary>
-    public abstract class TypesShouldNotExtendCertainBaseTypesAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class TypesShouldNotExtendCertainBaseTypesAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1058";
 

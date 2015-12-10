@@ -20,8 +20,10 @@
     <SemanticVersion>$(DesktopAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(DesktopAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "></PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "></PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
       <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
@@ -127,7 +129,6 @@
     <Compile Include="BasicUseXmlReaderForDataTableReadXml.Fixer.vb" />
     <Compile Include="BasicUseXmlReaderForDataTableReadXmlSchema.vb" />
     <Compile Include="BasicUseXmlReaderForDataTableReadXmlSchema.Fixer.vb" />
-    <Compile Include="BasicTypesShouldNotExtendCertainBaseTypes.vb" />
     <Compile Include="BasicTypesShouldNotExtendCertainBaseTypes.Fixer.vb" />
   </ItemGroup>
   <ItemGroup>

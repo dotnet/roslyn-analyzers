@@ -62,14 +62,12 @@ namespace Desktop.Analyzers
                     {
                         var namedTypeSymbol = saContext.Symbol as INamedTypeSymbol;
 
-                        var containedBadBaseType = badBaseTypes.Where(bbt => bbt.Equals(namedTypeSymbol.BaseType)).FirstOrDefault();
-
-                        if (containedBadBaseType != null)
+                        if (badBaseTypes.Contains(namedTypeSymbol.BaseType))
                         {
                             var baseTypeName = namedTypeSymbol.BaseType.ToDisplayString();
                             Debug.Assert(s_badBaseTypesToMessage.ContainsKey(baseTypeName));
                             var message = string.Format(s_badBaseTypesToMessage[baseTypeName], namedTypeSymbol.ToDisplayString(), baseTypeName);
-                            var diagnostic = Diagnostic.Create(Rule, namedTypeSymbol.Locations.First(l => l.IsInSource), message);
+                            var diagnostic = Diagnostic.Create(Rule, namedTypeSymbol.Locations.First(), namedTypeSymbol.Locations.Skip(1), message);
                             saContext.ReportDiagnostic(diagnostic);
                         }
                     }

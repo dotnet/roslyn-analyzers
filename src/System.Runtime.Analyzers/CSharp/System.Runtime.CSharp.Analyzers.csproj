@@ -125,8 +125,6 @@
     <Compile Include="CSharpDoNotRaiseExceptionsInExceptionClauses.Fixer.cs" />
     <Compile Include="CSharpFinalizersShouldCallBaseClassFinalizer.cs" />
     <Compile Include="CSharpFinalizersShouldCallBaseClassFinalizer.Fixer.cs" />
-    <Compile Include="CSharpProvideCorrectArgumentsToFormattingMethods.cs" />
-    <Compile Include="CSharpProvideCorrectArgumentsToFormattingMethods.Fixer.cs" />
     <Compile Include="CSharpTestForNaNCorrectly.cs" />
     <Compile Include="CSharpTestForNaNCorrectly.Fixer.cs" />
     <Compile Include="CSharpAttributeStringLiteralsShouldParseCorrectly.cs" />

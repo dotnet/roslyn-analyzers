@@ -1,26 +1,24 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Linq;
-using Microsoft.AnalyzerPowerPack.CSharp.Usage;
-using Microsoft.AnalyzerPowerPack.VisualBasic.Usage;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
+using Microsoft.QualityGuidelines.Analyzers;
 using Xunit;
 
-namespace Microsoft.AnalyzerPowerPack.UnitTests
+namespace Microsoft.QualityGuidelines.UnitTests
 {
     public partial class CA2214Tests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicCA2214DiagnosticAnalyzer();
+            return new DoNotCallOverridableMethodsInConstructorsAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpCA2214DiagnosticAnalyzer();
+            return new DoNotCallOverridableMethodsInConstructorsAnalyzer();
         }
 
         [Fact]
@@ -361,8 +359,8 @@ End Class
 ");
         }
 
-        internal static string CA2214Name = "CA2214";
-        internal static string CA2214Message = "Do not call overridable methods in constructors";
+        internal static string CA2214Name = DoNotCallOverridableMethodsInConstructorsAnalyzer.RuleId;
+        internal static string CA2214Message = MicrosoftQualityGuidelinesAnalyzersResources.DoNotCallOverridableMethodsInConstructors;
 
         private static DiagnosticResult GetCA2214CSharpResultAt(int line, int column)
         {

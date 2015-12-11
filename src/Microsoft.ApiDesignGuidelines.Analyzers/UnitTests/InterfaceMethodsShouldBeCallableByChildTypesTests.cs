@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.UnitTests
 {
-    public class CA1033Tests : DiagnosticAnalyzerTestBase
+    public class InterfaceMethodsShouldBeCallableByChildTypesTests : DiagnosticAnalyzerTestBase
     {
         #region Verifiers
 

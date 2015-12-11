@@ -42,8 +42,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public sealed override void Initialize(AnalysisContext analysisContext) =>
-            analysisContext.RegisterOperationBlockAction(AnalyzeOperationBlock);
+        public sealed override void Initialize(AnalysisContext analysisContext)
+        {
+            analysisContext.RegisterCompilationStartAction(compilationContext =>
+            {
+                var iDisposableTypeSymbol = WellKnownTypes.IDisposable(compilationContext.Compilation);
+                compilationContext.RegisterOperationBlockAction(operationBlockContext => AnalyzeOperationBlock(operationBlockContext, iDisposableTypeSymbol));
+            });
+        }
 
         private bool ShouldExcludeOperationBlock(ImmutableArray<IOperation> operationBlocks)
         {
@@ -68,7 +74,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return false;
         }
 
-        private void AnalyzeOperationBlock(OperationBlockAnalysisContext context)
+        private void AnalyzeOperationBlock(OperationBlockAnalysisContext context, INamedTypeSymbol iDisposableTypeSymbol)
         {
             if (context.OwningSymbol.Kind != SymbolKind.Method)
             {
@@ -96,7 +102,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             foreach (var interfaceMethod in method.ExplicitInterfaceImplementations)
             {
                 // If any one of the explicitly implemented interface methods has a visible alternate, then effectively, they all do.
-                if (HasVisibleAlternate(method.ContainingType, interfaceMethod))
+                if (HasVisibleAlternate(method.ContainingType, interfaceMethod, iDisposableTypeSymbol))
                 {
                     return;
                 }
@@ -112,7 +118,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
         }
 
-        private static bool HasVisibleAlternate(INamedTypeSymbol namedType, IMethodSymbol interfaceMethod)
+        private static bool HasVisibleAlternate(INamedTypeSymbol namedType, IMethodSymbol interfaceMethod, INamedTypeSymbol iDisposableTypeSymbol)
         {
             foreach (var type in namedType.GetBaseTypesAndThis())
             {
@@ -126,8 +132,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
 
             // This rule does not report a violation for an explicit implementation of IDisposable.Dispose when an externally visible Close() or System.IDisposable.Dispose(Boolean) method is provided.
-            return interfaceMethod.Name.Equals("Dispose") &&
-                interfaceMethod.ContainingType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat).Equals("System.IDisposable") &&
+            return interfaceMethod.Equals("Dispose") &&
+                interfaceMethod.ContainingType.Equals(iDisposableTypeSymbol) &&
                 namedType.GetBaseTypesAndThis().Any(t =>
                     t.GetMembers("Close").OfType<IMethodSymbol>().Any(m =>
                         m.GetResultantVisibility() == SymbolVisibility.Public));

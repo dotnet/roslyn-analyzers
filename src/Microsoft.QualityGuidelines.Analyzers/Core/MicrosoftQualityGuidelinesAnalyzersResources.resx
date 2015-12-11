@@ -117,7 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-
   <data name="UseLiteralsWhereAppropriateTitle" xml:space="preserve">
     <value>Use literals where appropriate</value>
   </data>
@@ -201,5 +200,11 @@
   </data>
   <data name="CategorySecurity" xml:space="preserve">
     <value>Security</value>
+  </data>
+  <data name="RemoveEmptyFinalizers" xml:space="preserve">
+    <value>Remove empty Finalizers</value>
+  </data>
+  <data name="RemoveEmptyFinalizersDescription" xml:space="preserve">
+    <value>Finalizers should be avoided where possible, to avoid the additional performance overhead involved in tracking object lifetime.</value>
   </data>
 </root>

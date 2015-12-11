@@ -216,6 +216,24 @@ namespace Microsoft.QualityGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove empty Finalizers.
+        /// </summary>
+        internal static string RemoveEmptyFinalizers {
+            get {
+                return ResourceManager.GetString("RemoveEmptyFinalizers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Finalizers should be avoided where possible, to avoid the additional performance overhead involved in tracking object lifetime..
+        /// </summary>
+        internal static string RemoveEmptyFinalizersDescription {
+            get {
+                return ResourceManager.GetString("RemoveEmptyFinalizersDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A public or protected event-handling method was detected. Event-handling methods should not be exposed unless absolutely necessary..
         /// </summary>
         internal static string ReviewVisibleEventHandlersDescription {

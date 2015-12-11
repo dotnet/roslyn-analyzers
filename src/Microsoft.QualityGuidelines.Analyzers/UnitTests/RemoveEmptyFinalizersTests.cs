@@ -1,29 +1,28 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.AnalyzerPowerPack.CSharp.Performance;
-using Microsoft.AnalyzerPowerPack.VisualBasic.Performance;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
+using Microsoft.QualityGuidelines.Analyzers;
 using Roslyn.Diagnostics.Test.Utilities;
 using Roslyn.Test.Utilities;
 using Xunit;
 
-namespace Microsoft.AnalyzerPowerPack.UnitTests
+namespace Microsoft.QualityGuidelines.UnitTests
 {
     public partial class RemoveEmptyFinalizersTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicRemoveEmptyFinalizers();
+            return new RemoveEmptyFinalizersAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpRemoveEmptyFinalizers();
+            return new RemoveEmptyFinalizersAnalyzer();
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
         public void CA1821CSharpTestNoWarning()
         {
             VerifyCSharp(@"
@@ -195,7 +194,7 @@ public class Class1
 ");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
         public void CA1821CSharpTestRemoveEmptyFinalizersWithDebugFailAndDirectiveAroundStatements()
         {
             VerifyCSharp(@"
@@ -228,7 +227,7 @@ public class Class2
         }
 
         [WorkItem(820941, "DevDiv")]
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
         public void CA1821CSharpTestRemoveEmptyFinalizersWithNonInvocationBody()
         {
             VerifyCSharp(@"
@@ -293,7 +292,7 @@ End Class
 ");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
         public void CA1821BasicTestRemoveEmptyFinalizers()
         {
             VerifyBasic(@"
@@ -355,7 +354,7 @@ End Class
                 GetCA1821BasicResultAt(13, 29));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
         public void CA1821BasicTestRemoveEmptyFinalizersWithDebugFail()
         {
             VerifyBasic(@"
@@ -379,8 +378,8 @@ End Class
                 GetCA1821BasicResultAt(6, 29));
         }
 
-        internal static string CA1821Name = "CA1821";
-        internal static string CA1821Message = "Remove empty finalizers";
+        internal static string CA1821Name = RemoveEmptyFinalizersAnalyzer.RuleId;
+        internal static string CA1821Message = MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers;
 
         private static DiagnosticResult GetCA1821CSharpResultAt(int line, int column)
         {

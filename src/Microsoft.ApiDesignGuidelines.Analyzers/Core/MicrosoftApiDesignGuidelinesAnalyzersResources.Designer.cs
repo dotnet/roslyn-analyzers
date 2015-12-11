@@ -837,38 +837,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change member names {0} and &apos;{1}&apos; so that they differ by more than case..
+        ///   Looks up a localized string similar to Names of &apos;{0}&apos; and &apos;{1}&apos; should differ by more than case..
         /// </summary>
-        internal static string IdentifiersShouldDifferByMoreThanCaseMessageMember {
+        internal static string IdentifiersShouldDifferByMoreThanCaseMessage {
             get {
-                return ResourceManager.GetString("IdentifiersShouldDifferByMoreThanCaseMessageMember", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change namespace names {0} and &apos;{1}&apos; so that they differ by more than case..
-        /// </summary>
-        internal static string IdentifiersShouldDifferByMoreThanCaseMessageNamespace {
-            get {
-                return ResourceManager.GetString("IdentifiersShouldDifferByMoreThanCaseMessageNamespace", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change parameter names {0} and &apos;{1}&apos; so that they differ by more than case..
-        /// </summary>
-        internal static string IdentifiersShouldDifferByMoreThanCaseMessageParameter {
-            get {
-                return ResourceManager.GetString("IdentifiersShouldDifferByMoreThanCaseMessageParameter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change type names {0} and &apos;{1}&apos; so that they differ by more than case..
-        /// </summary>
-        internal static string IdentifiersShouldDifferByMoreThanCaseMessageType {
-            get {
-                return ResourceManager.GetString("IdentifiersShouldDifferByMoreThanCaseMessageType", resourceCulture);
+                return ResourceManager.GetString("IdentifiersShouldDifferByMoreThanCaseMessage", resourceCulture);
             }
         }
         
@@ -900,20 +873,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to On method {0}, prefix generic type parameter name {1} with &apos;T&apos;..
+        ///   Looks up a localized string similar to Prefix generic type parameter name {0} with &apos;T&apos;..
         /// </summary>
-        internal static string IdentifiersShouldHaveCorrectPrefixMessageMethodTypeParameter {
+        internal static string IdentifiersShouldHaveCorrectPrefixMessageTypeParameter {
             get {
-                return ResourceManager.GetString("IdentifiersShouldHaveCorrectPrefixMessageMethodTypeParameter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to On type {0}, prefix generic type parameter name {1} with &apos;T&apos;..
-        /// </summary>
-        internal static string IdentifiersShouldHaveCorrectPrefixMessageTypeTypeParameter {
-            get {
-                return ResourceManager.GetString("IdentifiersShouldHaveCorrectPrefixMessageTypeTypeParameter", resourceCulture);
+                return ResourceManager.GetString("IdentifiersShouldHaveCorrectPrefixMessageTypeParameter", resourceCulture);
             }
         }
         
@@ -1392,6 +1356,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         internal static string InterfaceMethodsShouldBeCallableByChildTypesTitle {
             get {
                 return ResourceManager.GetString("InterfaceMethodsShouldBeCallableByChildTypesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make exception public.
+        /// </summary>
+        internal static string MakeExceptionPublic {
+            get {
+                return ResourceManager.GetString("MakeExceptionPublic", resourceCulture);
             }
         }
         

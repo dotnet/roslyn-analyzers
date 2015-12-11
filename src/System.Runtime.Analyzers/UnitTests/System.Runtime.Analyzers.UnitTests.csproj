@@ -174,7 +174,6 @@
     <Compile Include="FinalizersShouldCallBaseClassFinalizerTests.cs" />
     <Compile Include="FinalizersShouldCallBaseClassFinalizerTests.Fixer.cs" />
     <Compile Include="ProvideCorrectArgumentsToFormattingMethodsTests.cs" />
-    <Compile Include="ProvideCorrectArgumentsToFormattingMethodsTests.Fixer.cs" />
     <Compile Include="TestForNaNCorrectlyTests.cs" />
     <Compile Include="TestForNaNCorrectlyTests.Fixer.cs" />
     <Compile Include="AttributeStringLiteralsShouldParseCorrectlyTests.cs" />

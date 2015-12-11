@@ -12,12 +12,12 @@ namespace Desktop.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicTypesShouldNotExtendCertainBaseTypesAnalyzer();
+            return new TypesShouldNotExtendCertainBaseTypesAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpTypesShouldNotExtendCertainBaseTypesAnalyzer();
+            return new TypesShouldNotExtendCertainBaseTypesAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

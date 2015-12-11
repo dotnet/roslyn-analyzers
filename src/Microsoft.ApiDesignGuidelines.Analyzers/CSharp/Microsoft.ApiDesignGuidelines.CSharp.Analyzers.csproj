@@ -116,7 +116,6 @@
     <Compile Include="CSharpMarkAssembliesWithAssemblyVersion.Fixer.cs" />
     <Compile Include="CSharpDefineAccessorsForAttributeArguments.cs" />
     <Compile Include="CSharpUsePropertiesWhereAppropriate.Fixer.cs" />
-    <Compile Include="CSharpInterfaceMethodsShouldBeCallableByChildTypes.Fixer.cs" />
     <Compile Include="CSharpOverrideMethodsOnComparableTypes.Fixer.cs" />
     <Compile Include="CSharpMovePInvokesToNativeMethodsClass.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldHaveCorrectPrefix.Fixer.cs" />

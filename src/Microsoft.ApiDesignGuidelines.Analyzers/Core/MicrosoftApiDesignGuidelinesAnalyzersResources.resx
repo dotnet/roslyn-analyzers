@@ -937,6 +937,15 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="MakeExceptionPublic" xml:space="preserve">
     <value>Make exception public</value>
   </data>
+  <data name="InterfaceMethodsShouldBeCallableByChildTypesFix1" xml:space="preserve">
+    <value>Make '{0}' protected.</value>
+  </data>
+  <data name="InterfaceMethodsShouldBeCallableByChildTypesFix2" xml:space="preserve">
+    <value>Change '{0}' to a public interface implementation.</value>
+  </data>
+  <data name="InterfaceMethodsShouldBeCallableByChildTypesFix3" xml:space="preserve">
+    <value>Make the containing type '{0}' sealed.</value>
+  </data>
   <data name="StaticHolderTypeIsNotStatic" xml:space="preserve">
     <value>Type '{0}' is a static holder type but is neither static nor NotInheritable</value>
   </data>

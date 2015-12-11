@@ -118,7 +118,6 @@
     <Compile Include="BasicMarkAssembliesWithAssemblyVersion.Fixer.vb" />
     <Compile Include="BasicDefineAccessorsForAttributeArguments.vb" />
     <Compile Include="BasicUsePropertiesWhereAppropriate.Fixer.vb" />
-    <Compile Include="BasicInterfaceMethodsShouldBeCallableByChildTypes.Fixer.vb" />
     <Compile Include="BasicOverrideMethodsOnComparableTypes.Fixer.vb" />
     <Compile Include="BasicMovePInvokesToNativeMethodsClass.Fixer.vb" />
     <Compile Include="BasicIdentifiersShouldHaveCorrectPrefix.Fixer.vb" />

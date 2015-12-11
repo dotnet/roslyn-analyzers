@@ -138,10 +138,8 @@
     <Compile Include="InterfaceMethodsShouldBeCallableByChildTypes.Fixer.cs" />
     <Compile Include="OverrideMethodsOnComparableTypes.cs" />
     <Compile Include="OverrideMethodsOnComparableTypes.Fixer.cs" />
-    <Compile Include="StaticHolderTypesShouldBeSealed.cs" />
-    <Compile Include="StaticHolderTypesShouldBeSealed.Fixer.cs" />
-    <Compile Include="StaticHolderTypesShouldNotHaveConstructors.cs" />
-    <Compile Include="StaticHolderTypesShouldNotHaveConstructors.Fixer.cs" />
+    <Compile Include="StaticHolderTypes.cs" />
+    <Compile Include="StaticHolderTypes.Fixer.cs" />
     <Compile Include="MovePInvokesToNativeMethodsClass.cs" />
     <Compile Include="MovePInvokesToNativeMethodsClass.Fixer.cs" />
     <Compile Include="IdentifiersShouldDifferByMoreThanCase.cs" />

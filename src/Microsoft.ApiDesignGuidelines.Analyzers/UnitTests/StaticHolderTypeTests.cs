@@ -1,12 +1,11 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.AnalyzerPowerPack.Design;
+using Microsoft.ApiDesignGuidelines.Analyzers;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 
-namespace Microsoft.AnalyzerPowerPack.UnitTests
+namespace Microsoft.ApiDesignGuidelines.UnitTests
 {
     public class CA1052Tests : DiagnosticAnalyzerTestBase
     {
@@ -14,22 +13,22 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CA1052DiagnosticAnalyzer();
+            return new StaticHolderTypesAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new CA1052DiagnosticAnalyzer();
+            return new StaticHolderTypesAnalyzer();
         }
 
         private static DiagnosticResult CSharpResult(int line, int column, string objectName)
         {
-            return GetCSharpResultAt(line, column, CA1052DiagnosticAnalyzer.DiagnosticId, string.Format(AnalyzerPowerPackRulesResources.StaticHolderTypeIsNotStatic, objectName));
+            return GetCSharpResultAt(line, column, StaticHolderTypesAnalyzer.RuleId, string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.StaticHolderTypeIsNotStatic, objectName));
         }
 
         private static DiagnosticResult BasicResult(int line, int column, string objectName)
         {
-            return GetBasicResultAt(line, column, CA1052DiagnosticAnalyzer.DiagnosticId, string.Format(AnalyzerPowerPackRulesResources.StaticHolderTypeIsNotStatic, objectName));
+            return GetBasicResultAt(line, column, StaticHolderTypesAnalyzer.RuleId, string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.StaticHolderTypeIsNotStatic, objectName));
         }
 
         #endregion

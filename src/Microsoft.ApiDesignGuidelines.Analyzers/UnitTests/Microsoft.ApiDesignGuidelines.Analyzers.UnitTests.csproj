@@ -160,6 +160,7 @@
     <Compile Include="PropagateCancellationTokensWhenPossibleTests.Fixer.cs" />
     <Compile Include="DonTMixBlockingAndAsyncTests.cs" />
     <Compile Include="DonTMixBlockingAndAsyncTests.Fixer.cs" />
+    <Compile Include="StaticHolderTypeTests.cs" />
     <Compile Include="TypesThatOwnDisposableFieldsShouldBeDisposableTests.cs" />
     <Compile Include="TypesThatOwnDisposableFieldsShouldBeDisposableTests.Fixer.cs" />
     <Compile Include="UseGenericEventHandlerInstancesTests.cs" />
@@ -183,10 +184,6 @@
     <Compile Include="InterfaceMethodsShouldBeCallableByChildTypesTests.Fixer.cs" />
     <Compile Include="OverrideMethodsOnComparableTypesTests.cs" />
     <Compile Include="OverrideMethodsOnComparableTypesTests.Fixer.cs" />
-    <Compile Include="StaticHolderTypesShouldBeSealedTests.cs" />
-    <Compile Include="StaticHolderTypesShouldBeSealedTests.Fixer.cs" />
-    <Compile Include="StaticHolderTypesShouldNotHaveConstructorsTests.cs" />
-    <Compile Include="StaticHolderTypesShouldNotHaveConstructorsTests.Fixer.cs" />
     <Compile Include="MovePInvokesToNativeMethodsClassTests.cs" />
     <Compile Include="MovePInvokesToNativeMethodsClassTests.Fixer.cs" />
     <Compile Include="IdentifiersShouldDifferByMoreThanCaseTests.cs" />

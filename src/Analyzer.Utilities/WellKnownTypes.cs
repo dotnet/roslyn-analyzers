@@ -11,6 +11,7 @@ namespace Analyzer.Utilities
         {
             return compilation.GetTypeByMetadataName("System.Collections.ICollection");
         }
+
         public static INamedTypeSymbol GenericICollection(Compilation compilation)
         {
            
@@ -26,6 +27,7 @@ namespace Analyzer.Utilities
         {
             return compilation.GetTypeByMetadataName("System.Collections.Generic.IEnumerable`1");
         }
+
         public static INamedTypeSymbol IList(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName("System.Collections.IList");

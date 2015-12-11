@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Linq;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Analyzer.Utilities;
-using System.Linq;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
@@ -16,20 +16,35 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     {
         internal const string RuleId = "CA1010";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = 
+            new LocalizableResourceString(
+                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceTitle), 
+                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, 
+                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = 
+            new LocalizableResourceString(
+                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceMessage), 
+                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, 
+                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
-                                                                             DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: true,
-                                                                             description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182132.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+        private static readonly LocalizableString s_localizableDescription = 
+            new LocalizableResourceString(
+                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceDescription), 
+                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, 
+                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+
+        internal static DiagnosticDescriptor Rule = 
+            new DiagnosticDescriptor(
+                RuleId,
+                s_localizableTitle,
+                s_localizableMessage,
+                DiagnosticCategory.Design,
+                DiagnosticSeverity.Warning,
+                isEnabledByDefault: true,
+                description: s_localizableDescription,
+                helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182132.aspx",
+                customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -38,21 +53,25 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             analysisContext.RegisterCompilationStartAction(
                (context) =>
                {
-                   var collectionType = WellKnownTypes.ICollection(context.Compilation);
-                   var genericCollectionType = WellKnownTypes.GenericICollection(context.Compilation);
-                   var enumerableType = WellKnownTypes.IEnumerable(context.Compilation);
-                   var genericEnumerableType = WellKnownTypes.GenericIEnumerable(context.Compilation);
-                   var listType = WellKnownTypes.IList(context.Compilation);
-                   var genericListType = WellKnownTypes.GenericIList(context.Compilation);
+                   var iCollectionType = WellKnownTypes.ICollection(context.Compilation);
+                   var genericICollectionType = WellKnownTypes.GenericICollection(context.Compilation);
+                   var iEnumerableType = WellKnownTypes.IEnumerable(context.Compilation);
+                   var genericIEnumerableType = WellKnownTypes.GenericIEnumerable(context.Compilation);
+                   var iListType = WellKnownTypes.IList(context.Compilation);
+                   var genericIListType = WellKnownTypes.GenericIList(context.Compilation);
 
-                   if (collectionType == null && genericCollectionType ==null &&
-                       enumerableType == null && genericEnumerableType == null &&
-                       listType == null && genericListType == null )
+                   if (iCollectionType == null && genericICollectionType == null &&
+                       iEnumerableType == null && genericIEnumerableType == null &&
+                       iListType == null && genericIListType == null )
                    {
                        return;
                    }
 
-                   context.RegisterSymbolAction(c => AnalyzeSymbol(c, collectionType, genericCollectionType, enumerableType, genericEnumerableType, listType, genericListType), SymbolKind.NamedType);
+                   context.RegisterSymbolAction(c => AnalyzeSymbol(c, 
+                                                iCollectionType, genericICollectionType,
+                                                iEnumerableType, genericIEnumerableType,
+                                                iListType, genericIListType), 
+                                                SymbolKind.NamedType);
                });
         }
 

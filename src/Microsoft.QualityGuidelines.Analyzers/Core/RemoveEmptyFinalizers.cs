@@ -108,13 +108,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                     {
                         return true;
                     }
-
-                    // The compiler generates just labels in some cases. This is bug https://github.com/dotnet/roslyn/issues/7397
-                    if (statement.Kind == OperationKind.LabelStatement)
-                    {
-                        return true;
-                    }
-
+                    
                     if (statement.Kind == OperationKind.ExpressionStatement && 
                         ((IExpressionStatement)statement).Expression.Kind ==  OperationKind.InvocationExpression)
                     {

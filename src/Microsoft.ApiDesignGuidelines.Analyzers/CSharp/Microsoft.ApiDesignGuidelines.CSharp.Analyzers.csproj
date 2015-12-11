@@ -116,7 +116,6 @@
     <Compile Include="CSharpMarkAssembliesWithAssemblyVersion.Fixer.cs" />
     <Compile Include="CSharpDefineAccessorsForAttributeArguments.cs" />
     <Compile Include="CSharpUsePropertiesWhereAppropriate.Fixer.cs" />
-    <Compile Include="CSharpInterfaceMethodsShouldBeCallableByChildTypes.cs" />
     <Compile Include="CSharpInterfaceMethodsShouldBeCallableByChildTypes.Fixer.cs" />
     <Compile Include="CSharpOverrideMethodsOnComparableTypes.Fixer.cs" />
     <Compile Include="CSharpStaticHolderTypesShouldBeSealed.cs" />
@@ -144,7 +143,6 @@
     <Compile Include="CSharpConstructorMakeNoninheritableBaseClassInheritable.Fixer.cs" />
     <Compile Include="CSharpDoNotDeclareStaticMembersOnGenericTypes.cs" />
     <Compile Include="CSharpDoNotDeclareStaticMembersOnGenericTypes.Fixer.cs" />
-    <Compile Include="CSharpCollectionsShouldImplementGenericInterface.cs" />
     <Compile Include="CSharpCollectionsShouldImplementGenericInterface.Fixer.cs" />
     <Compile Include="CSharpEnumStorageShouldBeInt32.cs" />
     <Compile Include="CSharpEnumStorageShouldBeInt32.Fixer.cs" />

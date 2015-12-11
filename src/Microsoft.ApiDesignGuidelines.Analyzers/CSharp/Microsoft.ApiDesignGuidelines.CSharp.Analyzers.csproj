@@ -144,7 +144,6 @@
     <Compile Include="CSharpConstructorMakeNoninheritableBaseClassInheritable.Fixer.cs" />
     <Compile Include="CSharpDoNotDeclareStaticMembersOnGenericTypes.cs" />
     <Compile Include="CSharpDoNotDeclareStaticMembersOnGenericTypes.Fixer.cs" />
-    <Compile Include="CSharpCollectionsShouldImplementGenericInterface.cs" />
     <Compile Include="CSharpCollectionsShouldImplementGenericInterface.Fixer.cs" />
     <Compile Include="CSharpEnumStorageShouldBeInt32.cs" />
     <Compile Include="CSharpEnumStorageShouldBeInt32.Fixer.cs" />

@@ -11,6 +11,30 @@ namespace Analyzer.Utilities
         {
             return compilation.GetTypeByMetadataName("System.Collections.ICollection");
         }
+        public static INamedTypeSymbol GenericICollection(Compilation compilation)
+        {
+           
+            return compilation.GetTypeByMetadataName("System.Collections.Generic.ICollection`1");
+        }
+
+        public static INamedTypeSymbol IEnumerable(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Collections.IEnumerable");
+        }
+
+        public static INamedTypeSymbol GenericIEnumerable(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Collections.Generic.IEnumerable`1");
+        }
+        public static INamedTypeSymbol IList(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Collections.IList");
+        }
+
+        public static INamedTypeSymbol GenericIList(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Collections.Generic.IList`1");
+        }
 
         public static INamedTypeSymbol Array(Compilation compilation)
         {

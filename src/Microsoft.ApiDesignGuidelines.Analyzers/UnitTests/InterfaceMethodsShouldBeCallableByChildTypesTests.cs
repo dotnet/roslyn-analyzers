@@ -352,7 +352,7 @@ public class NestedExplicitInterfaceImplementation
 
         #region VisualBasic
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7397")]
         public void CA1033SimpleDiagnosticCasesBasic()
         {
             VerifyBasic(@"
@@ -462,7 +462,7 @@ End Class
             BasicResult(74, 9, "ImplementsGeneralThree", "get_IGeneral_Name"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7397")]
         public void CA1033NestedDiagnosticCasesBasic()
         {
             VerifyBasic(@"
@@ -531,7 +531,7 @@ End Class
             BasicResult(50, 13, "ImplementsNestedGeneral", "remove_TheEvent"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7397")]
         public void CA1033NoDiagnosticCasesBasic()
         {
             VerifyBasic(@"

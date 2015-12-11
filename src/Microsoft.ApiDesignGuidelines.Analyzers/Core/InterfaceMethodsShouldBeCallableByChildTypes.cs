@@ -47,10 +47,18 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private bool ShouldExcludeOperationBlock(ImmutableArray<IOperation> operationBlocks)
         {
-            if (operationBlocks != null)
+            if (operationBlocks != null && operationBlocks.Length == 1)
             {
-                if (operationBlocks.Length == 0 ||
-                    (operationBlocks.Length == 1 && operationBlocks[0].Kind == OperationKind.ThrowStatement))
+                IBlockStatement block = operationBlocks[0] as IBlockStatement;
+
+                // An operation block that's not even a block - don't analyze the error cases.
+                if (block == null)
+                {
+                    return true;
+                }
+
+                if (block.Statements.Length == 0 ||
+                    (block.Statements.Length == 1 && block.Statements[0].Kind == OperationKind.ThrowStatement))
                 {
                     // Empty body OR body that just throws.
                     return true;

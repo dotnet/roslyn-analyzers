@@ -11,7 +11,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// CA1010: Collections should implement generic interface
     /// </summary>
-    public abstract class CollectionsShouldImplementGenericInterfaceAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class CollectionsShouldImplementGenericInterfaceAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1010";
 
@@ -44,9 +45,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                    var listType = WellKnownTypes.IList(context.Compilation);
                    var genericListType = WellKnownTypes.GenericIList(context.Compilation);
 
-                   if (collectionType == null || genericCollectionType ==null ||
-                       enumerableType == null || genericEnumerableType == null ||
-                       listType == null || genericListType == null )
+                   if (collectionType == null && genericCollectionType ==null &&
+                       enumerableType == null && genericEnumerableType == null &&
+                       listType == null && genericListType == null )
                    {
                        return;
                    }

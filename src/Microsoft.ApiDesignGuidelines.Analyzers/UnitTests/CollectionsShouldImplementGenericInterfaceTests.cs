@@ -12,12 +12,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicCollectionsShouldImplementGenericInterfaceAnalyzer();
+            return new CollectionsShouldImplementGenericInterfaceAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpCollectionsShouldImplementGenericInterfaceAnalyzer();
+            return new CollectionsShouldImplementGenericInterfaceAnalyzer();
         }
 
         [Fact]

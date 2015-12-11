@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Microsoft.QualityGuidelines.UnitTests
 {
-    public partial class CA2214Tests : DiagnosticAnalyzerTestBase
+    public partial class DoNotCallOverridableMethodsInConstructorsTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {

@@ -1,25 +1,22 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.AnalyzerPowerPack;
-using Microsoft.AnalyzerPowerPack.CSharp.Usage;
-using Microsoft.AnalyzerPowerPack.VisualBasic.Usage;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
+using Microsoft.QualityGuidelines.Analyzers;
 using Xunit;
 
-namespace Microsoft.AnalyzerPowerPack.UnitTests
+namespace Microsoft.QualityGuidelines.UnitTests
 {
-    public partial class CA2200Tests : DiagnosticAnalyzerTestBase
+    public partial class RethrowToPreserveStackDetailsTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicCA2200DiagnosticAnalyzer();
+            return new BasicRethrowToPreserveStackDetailsAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpCA2200DiagnosticAnalyzer();
+            return new CSharpRethrowToPreserveStackDetailsAnalyzer();
         }
 
         [Fact]
@@ -367,7 +364,7 @@ End Class",
         }
 
         internal static string CA2200Name = "CA2200";
-        internal static string CA2200Message = AnalyzerPowerPackRulesResources.RethrowException;
+        internal static string CA2200Message = MicrosoftQualityGuidelinesAnalyzersResources.RethrowToPreserveStackDetailsMessage;
 
         private static DiagnosticResult GetCA2200BasicResultAt(int line, int column)
         {

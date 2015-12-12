@@ -204,4 +204,10 @@
   <data name="DoNotCallOverridableMethodsInConstructorsDescription" xml:space="preserve">
     <value>Virtual methods defined on the class should not be called from constructors. If a derived class has overridden the method, the derived class version will be called (before the derived class constructor is called).</value>
   </data>
+  <data name="RethrowToPreserveStackDetailsMessage" xml:space="preserve">
+    <value>Re-throwing caught exception changes stack information.</value>
+  </data>
+  <data name="RethrowToPreserveStackDetailsTitle" xml:space="preserve">
+    <value>Rethrow to preserve stack details.</value>
+  </data>
 </root>

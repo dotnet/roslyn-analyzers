@@ -1,17 +1,14 @@
 ﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-Imports System.Collections.Immutable
-Imports System.Threading
 Imports Microsoft.CodeAnalysis.Diagnostics
-Imports Microsoft.AnalyzerPowerPack.Usage
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.VisualBasic
 
-Namespace Usage
+Namespace Microsoft.QualityGuidelines.Analyzers
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
-    Public Class BasicCA2200DiagnosticAnalyzer
-        Inherits CA2200DiagnosticAnalyzer
+    Public Class BasicRethrowToPreserveStackDetailsAnalyzer
+        Inherits RethrowToPreserveStackDetailsAnalyzer
 
         Public Overrides Sub Initialize(analysisContext As AnalysisContext)
             analysisContext.RegisterSyntaxNodeAction(AddressOf AnalyzeNode, SyntaxKind.ThrowStatement)

@@ -107,6 +107,7 @@
     </Compile>
     <Compile Include="RemoveEmptyFinalizers.cs" />
     <Compile Include="RemoveEmptyFinalizers.Fixer.cs" />
+    <Compile Include="RethrowToPreserveStackDetails.cs" />
     <Compile Include="UseLiteralsWhereAppropriate.cs" />
     <Compile Include="UseLiteralsWhereAppropriate.Fixer.cs" />
     <Compile Include="DoNotInitializeUnnecessarily.cs" />

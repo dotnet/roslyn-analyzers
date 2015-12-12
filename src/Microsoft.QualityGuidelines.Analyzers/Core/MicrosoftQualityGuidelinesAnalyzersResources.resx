@@ -192,19 +192,16 @@
   <data name="SealMethodsThatSatisfyPrivateInterfacesMessage" xml:space="preserve">
     <value>Seal methods that satisfy private interfaces</value>
   </data>
-  <data name="CategoryPerformance" xml:space="preserve">
-    <value>Performance</value>
-  </data>
-  <data name="CategoryReliability" xml:space="preserve">
-    <value>Reliability</value>
-  </data>
-  <data name="CategorySecurity" xml:space="preserve">
-    <value>Security</value>
-  </data>
   <data name="RemoveEmptyFinalizers" xml:space="preserve">
     <value>Remove empty Finalizers</value>
   </data>
   <data name="RemoveEmptyFinalizersDescription" xml:space="preserve">
     <value>Finalizers should be avoided where possible, to avoid the additional performance overhead involved in tracking object lifetime.</value>
+  </data>
+  <data name="DoNotCallOverridableMethodsInConstructors" xml:space="preserve">
+    <value>Do not call overridable methods in constructors</value>
+  </data>
+  <data name="DoNotCallOverridableMethodsInConstructorsDescription" xml:space="preserve">
+    <value>Virtual methods defined on the class should not be called from constructors. If a derived class has overridden the method, the derived class version will be called (before the derived class constructor is called).</value>
   </data>
 </root>

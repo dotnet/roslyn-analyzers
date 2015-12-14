@@ -154,17 +154,11 @@
     <Compile Include="TestForEmptyStringsUsingStringLengthTests.cs" />
     <Compile Include="TestForEmptyStringsUsingStringLengthTests.Fixer.cs" />
     <Compile Include="DoNotLockOnObjectsWithWeakIdentityTests.cs" />
-    <Compile Include="DoNotCatchCorruptedStateExceptionsInGeneralHandlersTests.cs" />
-    <Compile Include="DoNotCatchCorruptedStateExceptionsInGeneralHandlersTests.Fixer.cs" />
-    <Compile Include="RethrowToPreserveStackDetailsTests.cs" />
-    <Compile Include="RethrowToPreserveStackDetailsTests.Fixer.cs" />
     <Compile Include="DoNotRaiseReservedExceptionTypesTests.cs" />
     <Compile Include="InitializeStaticFieldsInlineTests.cs" />
     <Compile Include="InitializeStaticFieldsInlineTests.Fixer.cs" />
     <Compile Include="DisposableFieldsShouldBeDisposedTests.cs" />
     <Compile Include="DisposableFieldsShouldBeDisposedTests.Fixer.cs" />
-    <Compile Include="DoNotCallOverridableMethodsInConstructorsTests.cs" />
-    <Compile Include="DoNotCallOverridableMethodsInConstructorsTests.Fixer.cs" />
     <Compile Include="DisposeMethodsShouldCallBaseClassDisposeTests.cs" />
     <Compile Include="DisposeMethodsShouldCallBaseClassDisposeTests.Fixer.cs" />
     <Compile Include="DisposableTypesShouldDeclareFinalizerTests.cs" />

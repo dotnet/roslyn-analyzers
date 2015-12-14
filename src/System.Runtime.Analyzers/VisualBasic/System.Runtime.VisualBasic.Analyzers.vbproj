@@ -105,16 +105,10 @@
     <Compile Include="BasicTestForEmptyStringsUsingStringLength.vb" />
     <Compile Include="BasicTestForEmptyStringsUsingStringLength.Fixer.vb" />
     <Compile Include="BasicDoNotLockOnObjectsWithWeakIdentity.vb" />
-    <Compile Include="BasicDoNotCatchCorruptedStateExceptionsInGeneralHandlers.vb" />
-    <Compile Include="BasicDoNotCatchCorruptedStateExceptionsInGeneralHandlers.Fixer.vb" />
-    <Compile Include="BasicRethrowToPreserveStackDetails.vb" />
-    <Compile Include="BasicRethrowToPreserveStackDetails.Fixer.vb" />
     <Compile Include="BasicDoNotRaiseReservedExceptionTypes.vb" />
     <Compile Include="BasicInitializeStaticFieldsInline.vb" />
     <Compile Include="BasicInitializeStaticFieldsInline.Fixer.vb" />
     <Compile Include="BasicDisposableFieldsShouldBeDisposed.vb" />
-    <Compile Include="BasicDoNotCallOverridableMethodsInConstructors.vb" />
-    <Compile Include="BasicDoNotCallOverridableMethodsInConstructors.Fixer.vb" />
     <Compile Include="BasicDisposeMethodsShouldCallBaseClassDispose.vb" />
     <Compile Include="BasicDisposeMethodsShouldCallBaseClassDispose.Fixer.vb" />
     <Compile Include="BasicDisposableTypesShouldDeclareFinalizer.vb" />

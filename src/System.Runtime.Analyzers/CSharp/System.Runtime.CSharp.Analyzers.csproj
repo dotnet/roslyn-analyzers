@@ -107,16 +107,10 @@
     <Compile Include="CSharpTestForEmptyStringsUsingStringLength.cs" />
     <Compile Include="CSharpTestForEmptyStringsUsingStringLength.Fixer.cs" />
     <Compile Include="CSharpDoNotLockOnObjectsWithWeakIdentity.cs" />
-    <Compile Include="CSharpDoNotCatchCorruptedStateExceptionsInGeneralHandlers.cs" />
-    <Compile Include="CSharpDoNotCatchCorruptedStateExceptionsInGeneralHandlers.Fixer.cs" />
-    <Compile Include="CSharpRethrowToPreserveStackDetails.cs" />
-    <Compile Include="CSharpRethrowToPreserveStackDetails.Fixer.cs" />
     <Compile Include="CSharpDoNotRaiseReservedExceptionTypes.cs" />
     <Compile Include="CSharpInitializeStaticFieldsInline.cs" />
     <Compile Include="CSharpInitializeStaticFieldsInline.Fixer.cs" />
     <Compile Include="CSharpDisposableFieldsShouldBeDisposed.cs" />
-    <Compile Include="CSharpDoNotCallOverridableMethodsInConstructors.cs" />
-    <Compile Include="CSharpDoNotCallOverridableMethodsInConstructors.Fixer.cs" />
     <Compile Include="CSharpDisposeMethodsShouldCallBaseClassDispose.cs" />
     <Compile Include="CSharpDisposeMethodsShouldCallBaseClassDispose.Fixer.cs" />
     <Compile Include="CSharpDisposableTypesShouldDeclareFinalizer.cs" />

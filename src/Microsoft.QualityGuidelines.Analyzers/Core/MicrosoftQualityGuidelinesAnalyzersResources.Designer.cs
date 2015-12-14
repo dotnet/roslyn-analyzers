@@ -225,6 +225,24 @@ namespace Microsoft.QualityGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Re-throwing caught exception changes stack information..
+        /// </summary>
+        internal static string RethrowToPreserveStackDetailsMessage {
+            get {
+                return ResourceManager.GetString("RethrowToPreserveStackDetailsMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rethrow to preserve stack details..
+        /// </summary>
+        internal static string RethrowToPreserveStackDetailsTitle {
+            get {
+                return ResourceManager.GetString("RethrowToPreserveStackDetailsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A public or protected event-handling method was detected. Event-handling methods should not be exposed unless absolutely necessary..
         /// </summary>
         internal static string ReviewVisibleEventHandlersDescription {

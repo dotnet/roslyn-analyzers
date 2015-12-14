@@ -315,30 +315,6 @@
   <data name="OverrideMethodsOnComparableTypesMessageOperator" xml:space="preserve">
     <value>{0} should define operator '{1}' since it implements IComparable.</value>
   </data>
-  <data name="StaticHolderTypesShouldBeSealedTitle" xml:space="preserve">
-    <value>Static holder types should be sealed</value>
-  </data>
-  <data name="StaticHolderTypesShouldBeSealedDescription" xml:space="preserve">
-    <value>A public or protected type contains only static members and is not declared by using the sealed (C# Reference) (NotInheritable) modifier. A type that is not meant to be inherited should be marked by using the sealed modifier to prevent its use as a base type.</value>
-  </data>
-  <data name="StaticHolderTypesShouldBeSealedMessageDefault" xml:space="preserve">
-    <value>Because type {0} contains only 'static' ('Shared' in Visual Basic) members, mark it as 'sealed' ('NotInheritable' in Visual Basic) to prevent consumers from inheriting from it.</value>
-  </data>
-  <data name="StaticHolderTypesShouldBeSealedMessageCSharp20" xml:space="preserve">
-    <value>Because type {0} contains only 'static' members, mark it as 'static' to prevent consumers from inheriting from it.</value>
-  </data>
-  <data name="StaticHolderTypesShouldNotHaveConstructorsTitle" xml:space="preserve">
-    <value>Static holder types should not have constructors</value>
-  </data>
-  <data name="StaticHolderTypesShouldNotHaveConstructorsDescription" xml:space="preserve">
-    <value>A public or nested public type declares only static members and has a public or protected default constructor. The constructor is unnecessary because calling static members does not require an instance of the type. The string overload should call the uniform resource identifier (URI) overload by using the string argument for safety and security.</value>
-  </data>
-  <data name="StaticHolderTypesShouldNotHaveConstructorsMessageDefault" xml:space="preserve">
-    <value>Because type {0} contains only 'static' ('Shared' in Visual Basic) members, add a default private constructor to prevent the compiler from adding a default public constructor.</value>
-  </data>
-  <data name="StaticHolderTypesShouldNotHaveConstructorsMessageCSharp20" xml:space="preserve">
-    <value>Because type {0} contains only 'static' members, mark it as 'static' to prevent the compiler from adding a default public constructor.</value>
-  </data>
   <data name="MovePInvokesToNativeMethodsClassTitle" xml:space="preserve">
     <value>Move pinvokes to native methods class</value>
   </data>
@@ -960,5 +936,20 @@ Names of parameters and members are better used to communicate their meaning tha
   </data>
   <data name="MakeExceptionPublic" xml:space="preserve">
     <value>Make exception public</value>
+  </data>
+  <data name="InterfaceMethodsShouldBeCallableByChildTypesFix1" xml:space="preserve">
+    <value>Make '{0}' protected.</value>
+  </data>
+  <data name="InterfaceMethodsShouldBeCallableByChildTypesFix2" xml:space="preserve">
+    <value>Change '{0}' to a public interface implementation.</value>
+  </data>
+  <data name="InterfaceMethodsShouldBeCallableByChildTypesFix3" xml:space="preserve">
+    <value>Make the containing type '{0}' sealed.</value>
+  </data>
+  <data name="StaticHolderTypeIsNotStatic" xml:space="preserve">
+    <value>Type '{0}' is a static holder type but is neither static nor NotInheritable</value>
+  </data>
+  <data name="StaticHolderTypesShouldBeStaticOrNotInheritable" xml:space="preserve">
+    <value>Static holder types should be Static or NotInheritable</value>
   </data>
 </root>

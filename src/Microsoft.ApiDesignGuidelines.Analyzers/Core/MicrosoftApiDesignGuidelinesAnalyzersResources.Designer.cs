@@ -1342,6 +1342,33 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Make &apos;{0}&apos; protected..
+        /// </summary>
+        internal static string InterfaceMethodsShouldBeCallableByChildTypesFix1 {
+            get {
+                return ResourceManager.GetString("InterfaceMethodsShouldBeCallableByChildTypesFix1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change &apos;{0}&apos; to a public interface implementation..
+        /// </summary>
+        internal static string InterfaceMethodsShouldBeCallableByChildTypesFix2 {
+            get {
+                return ResourceManager.GetString("InterfaceMethodsShouldBeCallableByChildTypesFix2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make the containing type &apos;{0}&apos; sealed..
+        /// </summary>
+        internal static string InterfaceMethodsShouldBeCallableByChildTypesFix3 {
+            get {
+                return ResourceManager.GetString("InterfaceMethodsShouldBeCallableByChildTypesFix3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Interface methods should be callable by child types.
         /// </summary>
         internal static string InterfaceMethodsShouldBeCallableByChildTypesMessage {
@@ -2116,74 +2143,20 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A public or protected type contains only static members and is not declared by using the sealed (C# Reference) (NotInheritable) modifier. A type that is not meant to be inherited should be marked by using the sealed modifier to prevent its use as a base type..
+        ///   Looks up a localized string similar to Type &apos;{0}&apos; is a static holder type but is neither static nor NotInheritable.
         /// </summary>
-        internal static string StaticHolderTypesShouldBeSealedDescription {
+        internal static string StaticHolderTypeIsNotStatic {
             get {
-                return ResourceManager.GetString("StaticHolderTypesShouldBeSealedDescription", resourceCulture);
+                return ResourceManager.GetString("StaticHolderTypeIsNotStatic", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Because type {0} contains only &apos;static&apos; members, mark it as &apos;static&apos; to prevent consumers from inheriting from it..
+        ///   Looks up a localized string similar to Static holder types should be Static or NotInheritable.
         /// </summary>
-        internal static string StaticHolderTypesShouldBeSealedMessageCSharp20 {
+        internal static string StaticHolderTypesShouldBeStaticOrNotInheritable {
             get {
-                return ResourceManager.GetString("StaticHolderTypesShouldBeSealedMessageCSharp20", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Because type {0} contains only &apos;static&apos; (&apos;Shared&apos; in Visual Basic) members, mark it as &apos;sealed&apos; (&apos;NotInheritable&apos; in Visual Basic) to prevent consumers from inheriting from it..
-        /// </summary>
-        internal static string StaticHolderTypesShouldBeSealedMessageDefault {
-            get {
-                return ResourceManager.GetString("StaticHolderTypesShouldBeSealedMessageDefault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Static holder types should be sealed.
-        /// </summary>
-        internal static string StaticHolderTypesShouldBeSealedTitle {
-            get {
-                return ResourceManager.GetString("StaticHolderTypesShouldBeSealedTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A public or nested public type declares only static members and has a public or protected default constructor. The constructor is unnecessary because calling static members does not require an instance of the type. The string overload should call the uniform resource identifier (URI) overload by using the string argument for safety and security..
-        /// </summary>
-        internal static string StaticHolderTypesShouldNotHaveConstructorsDescription {
-            get {
-                return ResourceManager.GetString("StaticHolderTypesShouldNotHaveConstructorsDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Because type {0} contains only &apos;static&apos; members, mark it as &apos;static&apos; to prevent the compiler from adding a default public constructor..
-        /// </summary>
-        internal static string StaticHolderTypesShouldNotHaveConstructorsMessageCSharp20 {
-            get {
-                return ResourceManager.GetString("StaticHolderTypesShouldNotHaveConstructorsMessageCSharp20", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Because type {0} contains only &apos;static&apos; (&apos;Shared&apos; in Visual Basic) members, add a default private constructor to prevent the compiler from adding a default public constructor..
-        /// </summary>
-        internal static string StaticHolderTypesShouldNotHaveConstructorsMessageDefault {
-            get {
-                return ResourceManager.GetString("StaticHolderTypesShouldNotHaveConstructorsMessageDefault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Static holder types should not have constructors.
-        /// </summary>
-        internal static string StaticHolderTypesShouldNotHaveConstructorsTitle {
-            get {
-                return ResourceManager.GetString("StaticHolderTypesShouldNotHaveConstructorsTitle", resourceCulture);
+                return ResourceManager.GetString("StaticHolderTypesShouldBeStaticOrNotInheritable", resourceCulture);
             }
         }
         

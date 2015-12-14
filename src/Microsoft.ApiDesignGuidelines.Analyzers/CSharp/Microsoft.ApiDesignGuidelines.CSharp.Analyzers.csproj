@@ -116,12 +116,7 @@
     <Compile Include="CSharpMarkAssembliesWithAssemblyVersion.Fixer.cs" />
     <Compile Include="CSharpDefineAccessorsForAttributeArguments.cs" />
     <Compile Include="CSharpUsePropertiesWhereAppropriate.Fixer.cs" />
-    <Compile Include="CSharpInterfaceMethodsShouldBeCallableByChildTypes.Fixer.cs" />
     <Compile Include="CSharpOverrideMethodsOnComparableTypes.Fixer.cs" />
-    <Compile Include="CSharpStaticHolderTypesShouldBeSealed.cs" />
-    <Compile Include="CSharpStaticHolderTypesShouldBeSealed.Fixer.cs" />
-    <Compile Include="CSharpStaticHolderTypesShouldNotHaveConstructors.cs" />
-    <Compile Include="CSharpStaticHolderTypesShouldNotHaveConstructors.Fixer.cs" />
     <Compile Include="CSharpMovePInvokesToNativeMethodsClass.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldHaveCorrectPrefix.Fixer.cs" />
     <Compile Include="CSharpNonConstantFieldsShouldNotBeVisible.cs" />

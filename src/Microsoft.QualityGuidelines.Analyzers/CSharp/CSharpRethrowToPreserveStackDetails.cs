@@ -1,15 +1,14 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.AnalyzerPowerPack.Usage;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.AnalyzerPowerPack.CSharp.Usage
+namespace Microsoft.QualityGuidelines.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CSharpCA2200DiagnosticAnalyzer : CA2200DiagnosticAnalyzer
+    public class CSharpRethrowToPreserveStackDetailsAnalyzer : RethrowToPreserveStackDetailsAnalyzer
     {
         public override void Initialize(AnalysisContext analysisContext)
         {

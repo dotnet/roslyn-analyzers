@@ -14,11 +14,11 @@ using System.Threading.Tasks;
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {                              
     /// <summary>
-    /// CA1052: Static holder types should be sealed
+    /// CA1053: Static holder types should not have constructors
     /// </summary>
-    public abstract class StaticHolderTypesShouldBeSealedFixer : CodeFixProvider
+    public abstract class StaticHolderTypesShouldNotHaveConstructorsFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(StaticHolderTypesShouldBeSealedAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(StaticHolderTypesAnalyzer.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

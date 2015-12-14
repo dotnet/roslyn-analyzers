@@ -139,7 +139,6 @@
     <Compile Include="OverrideMethodsOnComparableTypes.cs" />
     <Compile Include="OverrideMethodsOnComparableTypes.Fixer.cs" />
     <Compile Include="StaticHolderTypes.cs" />
-    <Compile Include="StaticHolderTypes.Fixer.cs" />
     <Compile Include="MovePInvokesToNativeMethodsClass.cs" />
     <Compile Include="MovePInvokesToNativeMethodsClass.Fixer.cs" />
     <Compile Include="IdentifiersShouldDifferByMoreThanCase.cs" />

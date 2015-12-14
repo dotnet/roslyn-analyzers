@@ -1,15 +1,13 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using Microsoft.ApiDesignGuidelines.Analyzers;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
-using Microsoft.AnalyzerPowerPack.Design;
-using Microsoft.AnalyzerPowerPack.CSharp.Design;
 using Xunit;
 
-namespace Microsoft.AnalyzerPowerPack.UnitTests.Design.CodeFixes
+namespace Microsoft.ApiDesignGuidelines.UnitTests
 {
     public class CA1052FixerTests : CodeFixTestBase
     {
@@ -20,17 +18,17 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests.Design.CodeFixes
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new CA1052DiagnosticAnalyzer();
+            return new StaticHolderTypesAnalyzer();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new CA1052CSharpCodeFixProvider();
+            return new CSharpStaticHolderTypesFixer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CA1052DiagnosticAnalyzer();
+            return new StaticHolderTypesAnalyzer();
         }
 
         [Fact]

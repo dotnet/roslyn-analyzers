@@ -1387,6 +1387,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Make Class Static.
+        /// </summary>
+        internal static string MakeClassStatic {
+            get {
+                return ResourceManager.GetString("MakeClassStatic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Make exception public.
         /// </summary>
         internal static string MakeExceptionPublic {

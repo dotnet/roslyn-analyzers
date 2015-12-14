@@ -110,6 +110,7 @@
     <Compile Include="BasicPropagateCancellationTokensWhenPossible.Fixer.vb" />
     <Compile Include="BasicDonTMixBlockingAndAsync.vb" />
     <Compile Include="BasicDonTMixBlockingAndAsync.Fixer.vb" />
+    <Compile Include="BasicStaticHolderTypes.Fixer.vb" />
     <Compile Include="BasicTypesThatOwnDisposableFieldsShouldBeDisposable.vb" />
     <Compile Include="BasicUseGenericEventHandlerInstances.vb" />
     <Compile Include="BasicUseGenericEventHandlerInstances.Fixer.vb" />

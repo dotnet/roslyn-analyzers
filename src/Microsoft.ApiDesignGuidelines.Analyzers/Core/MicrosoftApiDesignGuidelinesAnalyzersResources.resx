@@ -952,4 +952,7 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="StaticHolderTypesShouldBeStaticOrNotInheritable" xml:space="preserve">
     <value>Static holder types should be Static or NotInheritable</value>
   </data>
+  <data name="MakeClassStatic" xml:space="preserve">
+    <value>Make Class Static</value>
+  </data>
 </root>

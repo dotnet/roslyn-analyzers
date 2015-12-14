@@ -3,20 +3,18 @@
 Imports System.Collections.Immutable
 Imports System.Composition
 Imports System.Threading
-Imports Microsoft.CodeAnalysis.CodeActions
+Imports System.Threading.Tasks
+Imports Analyzer.Utilities
+Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.Formatting
-Imports Microsoft.AnalyzerPowerPack
-Imports Microsoft.AnalyzerPowerPack.Design
-Imports Microsoft.CodeAnalysis.Shared.Extensions
-Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
-Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.VisualBasic
+Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Design
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
 
-    <ExportCodeFixProvider(LanguageNames.VisualBasic, Name:=CA1052DiagnosticAnalyzer.DiagnosticId), [Shared]>
-    Public Class CA1052BasicCodeFixProvider
+    <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
+    Public Class BasicStaticHolderTypesFixer
         Inherits CodeFixProvider
 
         Public NotOverridable Overrides ReadOnly Property FixableDiagnosticIds As ImmutableArray(Of String)
@@ -45,8 +43,8 @@ Namespace Design
             Dim root = Await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(False)
             Dim classStatement = root.FindToken(span.Start).Parent?.FirstAncestorOrSelf(Of ClassStatementSyntax)
             If classStatement IsNot Nothing Then
-                Dim title As String = String.Format(AnalyzerPowerPackRulesResources.StaticHolderTypeIsNotStatic, classStatement.Identifier.Text)
-                Dim fix = New MyCodeAction(title, Function(ct) AddNotInheritableKeyword(document, root, classStatement))
+                Dim title As String = String.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.MakeClassStatic, classStatement.Identifier.Text)
+                Dim fix = New MyCodeAction(title, Async Function(ct) Await AddNotInheritableKeyword(document, root, classStatement).ConfigureAwait(False))
                 context.RegisterCodeFix(fix, context.Diagnostics)
             End If
         End Function
@@ -60,6 +58,12 @@ Namespace Design
 
         Private Class MyCodeAction
             Inherits DocumentChangeAction
+
+            Public Overrides ReadOnly Property EquivalenceKey As String
+                Get
+                    Return NameOf(BasicStaticHolderTypesFixer)
+                End Get
+            End Property
 
             Public Sub New(title As String, createChangedDocument As Func(Of CancellationToken, Task(Of Document)))
                 MyBase.New(title, createChangedDocument)

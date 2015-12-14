@@ -161,6 +161,7 @@
     <Compile Include="DonTMixBlockingAndAsyncTests.cs" />
     <Compile Include="DonTMixBlockingAndAsyncTests.Fixer.cs" />
     <Compile Include="StaticHolderTypeTests.cs" />
+    <Compile Include="StaticHolderTypeTests.Fixer.cs" />
     <Compile Include="TypesThatOwnDisposableFieldsShouldBeDisposableTests.cs" />
     <Compile Include="TypesThatOwnDisposableFieldsShouldBeDisposableTests.Fixer.cs" />
     <Compile Include="UseGenericEventHandlerInstancesTests.cs" />

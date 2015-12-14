@@ -5,22 +5,21 @@ using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AnalyzerPowerPack.Design;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Formatting;
 using System.Linq;
 using Microsoft.CodeAnalysis.Editing;
+using Analyzer.Utilities;
 
-namespace Microsoft.AnalyzerPowerPack.CSharp.Design
+namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = CA1052DiagnosticAnalyzer.DiagnosticId), Shared]
-    public class CA1052CSharpCodeFixProvider : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
+    public class CSharpStaticHolderTypesFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds =>
-            ImmutableArray.Create(CA1052DiagnosticAnalyzer.DiagnosticId);
+            ImmutableArray.Create(StaticHolderTypesAnalyzer.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider() =>
             WellKnownFixAllProviders.BatchFixer;
@@ -36,8 +35,8 @@ namespace Microsoft.AnalyzerPowerPack.CSharp.Design
             var classDeclaration = root.FindToken(span.Start).Parent?.FirstAncestorOrSelf<ClassDeclarationSyntax>();
             if (classDeclaration != null)
             {
-                var title = string.Format(AnalyzerPowerPackRulesResources.StaticHolderTypeIsNotStatic, classDeclaration.Identifier.Text);
-                var codeAction = new MyCodeAction(title, ct => MakeClassStatic(document, root, classDeclaration, ct));
+                var codeAction = new MyCodeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.MakeClassStatic, 
+                                                  async ct => await MakeClassStatic(document, root, classDeclaration, ct).ConfigureAwait(false));
                 context.RegisterCodeFix(codeAction, context.Diagnostics);
             }
         }
@@ -60,6 +59,8 @@ namespace Microsoft.AnalyzerPowerPack.CSharp.Design
 
         private class MyCodeAction : DocumentChangeAction
         {
+            public override string EquivalenceKey => nameof(CSharpStaticHolderTypesFixer);
+
             public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument) :
                 base(title, createChangedDocument)
             {

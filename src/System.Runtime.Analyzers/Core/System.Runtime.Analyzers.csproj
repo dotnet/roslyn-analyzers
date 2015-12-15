@@ -110,17 +110,9 @@
     <Compile Include="TestForEmptyStringsUsingStringLength.Fixer.cs" />
     <Compile Include="DoNotLockOnObjectsWithWeakIdentity.cs" />
     <Compile Include="DoNotLockOnObjectsWithWeakIdentity.Fixer.cs" />
-    <Compile Include="DoNotCatchCorruptedStateExceptionsInGeneralHandlers.cs" />
-    <Compile Include="DoNotCatchCorruptedStateExceptionsInGeneralHandlers.Fixer.cs" />
-    <Compile Include="RethrowToPreserveStackDetails.cs" />
-    <Compile Include="RethrowToPreserveStackDetails.Fixer.cs" />
     <Compile Include="DoNotRaiseReservedExceptionTypes.cs" />
     <Compile Include="InitializeStaticFieldsInline.cs" />
     <Compile Include="InitializeStaticFieldsInline.Fixer.cs" />
-    <Compile Include="DisposableFieldsShouldBeDisposed.cs" />
-    <Compile Include="DisposableFieldsShouldBeDisposed.Fixer.cs" />
-    <Compile Include="DoNotCallOverridableMethodsInConstructors.cs" />
-    <Compile Include="DoNotCallOverridableMethodsInConstructors.Fixer.cs" />
     <Compile Include="DisposeMethodsShouldCallBaseClassDispose.cs" />
     <Compile Include="DisposeMethodsShouldCallBaseClassDispose.Fixer.cs" />
     <Compile Include="DisposableTypesShouldDeclareFinalizer.cs" />

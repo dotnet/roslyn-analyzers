@@ -119,16 +119,6 @@
     <Compile Include="BasicProvideDeserializationMethodsForOptionalFields.Fixer.vb" />
     <Compile Include="BasicImplementISerializableCorrectly.vb" />
     <Compile Include="BasicImplementISerializableCorrectly.Fixer.vb" />
-    <Compile Include="BasicUseXmlReaderForDataSetReadXml.vb" />
-    <Compile Include="BasicUseXmlReaderForDataSetReadXml.Fixer.vb" />
-    <Compile Include="BasicUseXmlReaderForDataSetReadXmlSchema.vb" />
-    <Compile Include="BasicUseXmlReaderForDataSetReadXmlSchema.Fixer.vb" />
-    <Compile Include="BasicReviewDataViewCollectionString.vb" />
-    <Compile Include="BasicReviewDataViewCollectionString.Fixer.vb" />
-    <Compile Include="BasicUseXmlReaderForDataTableReadXml.vb" />
-    <Compile Include="BasicUseXmlReaderForDataTableReadXml.Fixer.vb" />
-    <Compile Include="BasicUseXmlReaderForDataTableReadXmlSchema.vb" />
-    <Compile Include="BasicUseXmlReaderForDataTableReadXmlSchema.Fixer.vb" />
     <Compile Include="BasicTypesShouldNotExtendCertainBaseTypes.Fixer.vb" />
   </ItemGroup>
   <ItemGroup>

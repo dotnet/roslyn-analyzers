@@ -175,16 +175,6 @@
     <Compile Include="ProvideDeserializationMethodsForOptionalFieldsTests.Fixer.cs" />
     <Compile Include="ImplementISerializableCorrectlyTests.cs" />
     <Compile Include="ImplementISerializableCorrectlyTests.Fixer.cs" />
-    <Compile Include="UseXmlReaderForDataSetReadXmlTests.cs" />
-    <Compile Include="UseXmlReaderForDataSetReadXmlTests.Fixer.cs" />
-    <Compile Include="UseXmlReaderForDataSetReadXmlSchemaTests.cs" />
-    <Compile Include="UseXmlReaderForDataSetReadXmlSchemaTests.Fixer.cs" />
-    <Compile Include="ReviewDataViewCollectionStringTests.cs" />
-    <Compile Include="ReviewDataViewCollectionStringTests.Fixer.cs" />
-    <Compile Include="UseXmlReaderForDataTableReadXmlTests.cs" />
-    <Compile Include="UseXmlReaderForDataTableReadXmlTests.Fixer.cs" />
-    <Compile Include="UseXmlReaderForDataTableReadXmlSchemaTests.cs" />
-    <Compile Include="UseXmlReaderForDataTableReadXmlSchemaTests.Fixer.cs" />
     <Compile Include="TypesShouldNotExtendCertainBaseTypesTests.cs" />
     <Compile Include="TypesShouldNotExtendCertainBaseTypesTests.Fixer.cs" />
   </ItemGroup>

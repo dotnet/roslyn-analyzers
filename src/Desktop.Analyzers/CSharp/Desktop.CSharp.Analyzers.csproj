@@ -121,16 +121,6 @@
     <Compile Include="CSharpProvideDeserializationMethodsForOptionalFields.Fixer.cs" />
     <Compile Include="CSharpImplementISerializableCorrectly.cs" />
     <Compile Include="CSharpImplementISerializableCorrectly.Fixer.cs" />
-    <Compile Include="CSharpUseXmlReaderForDataSetReadXml.cs" />
-    <Compile Include="CSharpUseXmlReaderForDataSetReadXml.Fixer.cs" />
-    <Compile Include="CSharpUseXmlReaderForDataSetReadXmlSchema.cs" />
-    <Compile Include="CSharpUseXmlReaderForDataSetReadXmlSchema.Fixer.cs" />
-    <Compile Include="CSharpReviewDataViewCollectionString.cs" />
-    <Compile Include="CSharpReviewDataViewCollectionString.Fixer.cs" />
-    <Compile Include="CSharpUseXmlReaderForDataTableReadXml.cs" />
-    <Compile Include="CSharpUseXmlReaderForDataTableReadXml.Fixer.cs" />
-    <Compile Include="CSharpUseXmlReaderForDataTableReadXmlSchema.cs" />
-    <Compile Include="CSharpUseXmlReaderForDataTableReadXmlSchema.Fixer.cs" />
     <Compile Include="CSharpTypesShouldNotExtendCertainBaseTypes.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>

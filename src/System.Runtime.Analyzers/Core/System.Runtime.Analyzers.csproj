@@ -113,8 +113,6 @@
     <Compile Include="DoNotRaiseReservedExceptionTypes.cs" />
     <Compile Include="InitializeStaticFieldsInline.cs" />
     <Compile Include="InitializeStaticFieldsInline.Fixer.cs" />
-    <Compile Include="DisposableFieldsShouldBeDisposed.cs" />
-    <Compile Include="DisposableFieldsShouldBeDisposed.Fixer.cs" />
     <Compile Include="DisposeMethodsShouldCallBaseClassDispose.cs" />
     <Compile Include="DisposeMethodsShouldCallBaseClassDispose.Fixer.cs" />
     <Compile Include="DisposableTypesShouldDeclareFinalizer.cs" />

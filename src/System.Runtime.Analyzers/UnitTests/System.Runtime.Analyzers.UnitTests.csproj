@@ -157,8 +157,6 @@
     <Compile Include="DoNotRaiseReservedExceptionTypesTests.cs" />
     <Compile Include="InitializeStaticFieldsInlineTests.cs" />
     <Compile Include="InitializeStaticFieldsInlineTests.Fixer.cs" />
-    <Compile Include="DisposableFieldsShouldBeDisposedTests.cs" />
-    <Compile Include="DisposableFieldsShouldBeDisposedTests.Fixer.cs" />
     <Compile Include="DisposeMethodsShouldCallBaseClassDisposeTests.cs" />
     <Compile Include="DisposeMethodsShouldCallBaseClassDisposeTests.Fixer.cs" />
     <Compile Include="DisposableTypesShouldDeclareFinalizerTests.cs" />

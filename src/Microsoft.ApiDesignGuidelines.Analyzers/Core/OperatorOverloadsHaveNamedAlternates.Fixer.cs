@@ -1,27 +1,24 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Editing;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
-using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.Editing;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
     /// <summary>
     /// CA2225: Operator overloads have named alternates
     /// </summary>
-    public abstract class OperatorOverloadsHaveNamedAlternatesFixer<TOperatorDeclarationSyntax, TConversionOperatorSyntax, TClassDeclarationSyntax, TMethodSyntaxKind, IPropertySyntaxKind> : CodeFixProvider
-        where TOperatorDeclarationSyntax : SyntaxNode
-        where TConversionOperatorSyntax : SyntaxNode
-        where TClassDeclarationSyntax : SyntaxNode
-        where TMethodSyntaxKind : SyntaxNode
-        where IPropertySyntaxKind : SyntaxNode
+    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
+    public sealed class OperatorOverloadsHaveNamedAlternatesFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(OperatorOverloadsHaveNamedAlternatesAnalyzer.RuleId);
 
@@ -31,74 +28,68 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var node = root.FindNode(context.Span);
+            return Task.Run(() => context.RegisterCodeFix(new MyCodeAction(ct => Fix(context, ct)), context.Diagnostics.First()));
+        }
+
+        private static async Task<Document> Fix(CodeFixContext context, CancellationToken cancellationToken)
+        {
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            var generator = context.Document.Project?.LanguageServices?.GetService<SyntaxGenerator>();
+            var root = await context.Document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var node = root.FindNode(context.Span);
+
             var diagnostic = context.Diagnostics.First();
             switch (diagnostic.Properties[OperatorOverloadsHaveNamedAlternatesAnalyzer.DiagnosticKindText])
             {
                 case OperatorOverloadsHaveNamedAlternatesAnalyzer.AddAlternateText:
-                    AddFriendlyAlternate(context, root, node, semanticModel, diagnostic);
-                    break;
+                    var methodDeclaration = generator.GetDeclaration(node, DeclarationKind.Operator) ?? generator.GetDeclaration(node, DeclarationKind.ConversionOperator);
+                    var operatorOverloadSymbol = (IMethodSymbol)semanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken);
+                    var typeSymbol = (ITypeSymbol)operatorOverloadSymbol.ContainingSymbol;
+                    var typeDeclarationSyntax = typeSymbol.DeclaringSyntaxReferences.First().GetSyntax(context.CancellationToken);
+                    var typeDeclaration = generator.GetDeclaration(typeDeclarationSyntax, DeclarationKind.Class);
+
+                    SyntaxNode addedMember;
+                    var bodyStatements = ImmutableArray.Create(
+                        generator.ThrowStatement(generator.ObjectCreationExpression(semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException"))));
+                    if (OperatorOverloadsHaveNamedAlternatesAnalyzer.IsPropertyExpected(operatorOverloadSymbol.Name))
+                    {
+                        // add a property
+                        addedMember = generator.PropertyDeclaration(
+                            name: OperatorOverloadsHaveNamedAlternatesAnalyzer.IsTrueText,
+                            type: generator.TypeExpression(SpecialType.System_Boolean),
+                            accessibility: Accessibility.Public,
+                            modifiers: DeclarationModifiers.ReadOnly,
+                            getAccessorStatements: bodyStatements);
+                    }
+                    else
+                    {
+                        // add a method
+                        var expectedSignature = GetExpectedMethodSignature(operatorOverloadSymbol, semanticModel.Compilation);
+                        addedMember = generator.MethodDeclaration(
+                            name: expectedSignature.Name,
+                            parameters: expectedSignature.Parameters.Select(p => generator.ParameterDeclaration(p.Item1, generator.TypeExpression(p.Item2))),
+                            returnType: generator.TypeExpression(expectedSignature.ReturnType),
+                            accessibility: Accessibility.Public,
+                            modifiers: expectedSignature.IsStatic ? DeclarationModifiers.Static : DeclarationModifiers.None,
+                            statements: bodyStatements);
+                    }
+
+                    var newTypeDeclaration = generator.AddMembers(typeDeclaration, addedMember);
+                    return context.Document.WithSyntaxRoot(root.ReplaceNode(typeDeclaration, newTypeDeclaration));
                 case OperatorOverloadsHaveNamedAlternatesAnalyzer.FixVisibilityText:
-                    await FixFriendlyVisibility(context, node, semanticModel, diagnostic);
-                    break;
+                    var badVisibilityNode = generator.GetDeclaration(node, DeclarationKind.Method) ?? generator.GetDeclaration(node, DeclarationKind.Property);
+                    var badVisibilitySymbol = semanticModel.GetDeclaredSymbol(badVisibilityNode, context.CancellationToken);
+                    var symbolEditor = SymbolEditor.Create(context.Document);
+                    var newSymbol = await symbolEditor.EditOneDeclarationAsync(badVisibilitySymbol,
+                        (documentEditor, syntaxNode, ct) => Task.Run(() => documentEditor.SetAccessibility(badVisibilityNode, Accessibility.Public))).ConfigureAwait(false);
+                    var newDocument = symbolEditor.GetChangedDocuments().Single();
+                    var newRoot = await newDocument.GetSyntaxRootAsync(context.CancellationToken);
+                    return context.Document.WithSyntaxRoot(newRoot);
+                default:
+                    return context.Document;
             }
-        }
-
-        private static void AddFriendlyAlternate(CodeFixContext context, SyntaxNode root, SyntaxNode node, SemanticModel semanticModel, Diagnostic diagnostic)
-        {
-            var operatorOverload = (SyntaxNode)node.FirstAncestorOrSelf<TOperatorDeclarationSyntax>() ?? node.FirstAncestorOrSelf<TConversionOperatorSyntax>();
-            var operatorOverloadSymbol = (IMethodSymbol)semanticModel.GetDeclaredSymbol(operatorOverload, context.CancellationToken);
-            var typeSymbol = (ITypeSymbol)operatorOverloadSymbol.ContainingSymbol;
-            var typeDeclaration = typeSymbol.DeclaringSyntaxReferences.First().GetSyntax(context.CancellationToken).FirstAncestorOrSelf<TClassDeclarationSyntax>();
-            var generator = context.Document?.Project?.LanguageServices?.GetService<SyntaxGenerator>();
-            if (generator != null)
-            {
-                SyntaxNode addedMember;
-                var bodyStatements = ImmutableArray.Create(
-                    generator.ThrowStatement(generator.ObjectCreationExpression(semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException"))));
-                if (OperatorOverloadsHaveNamedAlternatesAnalyzer.IsPropertyExpected(operatorOverloadSymbol.Name))
-                {
-                    // add a property
-                    addedMember = generator.PropertyDeclaration(
-                        name: OperatorOverloadsHaveNamedAlternatesAnalyzer.IsTrueText,
-                        type: generator.TypeExpression(SpecialType.System_Boolean),
-                        accessibility: Accessibility.Public,
-                        modifiers: DeclarationModifiers.ReadOnly,
-                        getAccessorStatements: bodyStatements);
-                }
-                else
-                {
-                    // add a method
-                    var expectedSignature = GetExpectedMethodSignature(operatorOverloadSymbol, semanticModel.Compilation);
-                    addedMember = generator.MethodDeclaration(
-                        name: expectedSignature.Name,
-                        parameters: expectedSignature.Parameters.Select(p => generator.ParameterDeclaration(p.Item1, generator.TypeExpression(p.Item2))),
-                        returnType: generator.TypeExpression(expectedSignature.ReturnType),
-                        accessibility: Accessibility.Public,
-                        modifiers: expectedSignature.IsStatic ? DeclarationModifiers.Static : DeclarationModifiers.None,
-                        statements: bodyStatements);
-                }
-
-                var newTypeDeclaration = generator.AddMembers(typeDeclaration, addedMember);
-                context.RegisterCodeFix(new MyCodeAction(ct => Task.FromResult(context.Document.WithSyntaxRoot(root.ReplaceNode(typeDeclaration, newTypeDeclaration)))),
-                    diagnostic);
-            }
-        }
-
-        private static async Task FixFriendlyVisibility(CodeFixContext context, SyntaxNode node, SemanticModel semanticModel, Diagnostic diagnostic)
-        {
-            var badVisibilityNode = (SyntaxNode)node.FirstAncestorOrSelf<TMethodSyntaxKind>() ?? node.FirstAncestorOrSelf<IPropertySyntaxKind>();
-            var badVisibilitySymbol = semanticModel.GetDeclaredSymbol(badVisibilityNode, context.CancellationToken);
-            var symbolEditor = SymbolEditor.Create(context.Document);
-            var newSymbol = await symbolEditor.EditOneDeclarationAsync(badVisibilitySymbol,
-                (documentEditor, syntaxNode, ct) => Task.Run(() => documentEditor.SetAccessibility(badVisibilityNode, Accessibility.Public))).ConfigureAwait(false);
-            var newDocument = symbolEditor.GetChangedDocuments().Single();
-            var newRoot = await newDocument.GetSyntaxRootAsync(context.CancellationToken);
-            context.RegisterCodeFix(new MyCodeAction(ct => Task.FromResult(context.Document.WithSyntaxRoot(newRoot))), diagnostic);
         }
 
         private static ExpectedMethodSignature GetExpectedMethodSignature(IMethodSymbol operatorOverloadSymbol, Compilation compilation)
@@ -148,6 +139,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private class MyCodeAction : DocumentChangeAction
         {
+            public override string EquivalenceKey => MicrosoftApiDesignGuidelinesAnalyzersResources.OperatorOverloadsHaveNamedAlternatesTitle;
+
             public MyCodeAction(Func<CancellationToken, Task<Document>> createChangedDocument)
                 : base(MicrosoftApiDesignGuidelinesAnalyzersResources.OperatorOverloadsHaveNamedAlternatesTitle, createChangedDocument)
             {

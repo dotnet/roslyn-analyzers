@@ -13,22 +13,22 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicOperatorOverloadsHaveNamedAlternatesAnalyzer();
+            return new OperatorOverloadsHaveNamedAlternatesAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpOperatorOverloadsHaveNamedAlternatesAnalyzer();
+            return new OperatorOverloadsHaveNamedAlternatesAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
-            return new BasicOperatorOverloadsHaveNamedAlternatesFixer();
+            return new OperatorOverloadsHaveNamedAlternatesFixer();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new CSharpOperatorOverloadsHaveNamedAlternatesFixer();
+            return new OperatorOverloadsHaveNamedAlternatesFixer();
         }
 
         #endregion

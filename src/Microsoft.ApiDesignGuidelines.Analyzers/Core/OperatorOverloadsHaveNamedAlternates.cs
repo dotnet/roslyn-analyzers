@@ -13,7 +13,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// CA2225: Operator overloads have named alternates
     /// </summary>
-    public abstract class OperatorOverloadsHaveNamedAlternatesAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class OperatorOverloadsHaveNamedAlternatesAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2225";
         internal const string DiagnosticKindText = "DiagnosticKind";

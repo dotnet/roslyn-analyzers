@@ -12,12 +12,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicOperatorOverloadsHaveNamedAlternatesAnalyzer();
+            return new OperatorOverloadsHaveNamedAlternatesAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpOperatorOverloadsHaveNamedAlternatesAnalyzer();
+            return new OperatorOverloadsHaveNamedAlternatesAnalyzer();
         }
 
         private static DiagnosticResult GetCA2225CSharpDefaultResultAt(int line, int column, string alternateName, string operatorName)

@@ -101,23 +101,6 @@ namespace System.Runtime.Analyzers
                         return;
                     }
 
-                    // explictly giving object array case.
-                    // this should go away once the bug is fixed
-                    if (invocation.Syntax.Language == LanguageNames.CSharp &&
-                        invocation.ArgumentsInParameterOrder.Count(a => a.Kind == ArgumentKind.ParamArray) ==
-                        invocation.ArgumentsInSourceOrder.Count(a => a.Kind == ArgumentKind.ParamArray))
-                    {
-                        // TODO: due to a bug - https://github.com/dotnet/roslyn/issues/7342
-                        //       currently this (explictly giving object array case) is not supported.
-                        //
-                        //       this check is only for CSharp, since VB correctly normalize explicit
-                        //       and implicit params array to one format. but VB has different issue where one can't
-                        //       distinguish explicit and implicit params argument since it is already normalized in one
-                        //       format in both ArgumentsInParameterOrder and ArgumentsInSourceOrder.
-                        //
-                        return;
-                    }
-
                     // compiler generating object array for params case
                     var dimensionInitializer = arrayCreation.ElementValues as IDimensionArrayInitializer;
                     if (dimensionInitializer == null)

@@ -53,13 +53,13 @@ namespace System.Runtime.Analyzers
 
                     var formatStringArgument = invocation.ArgumentsInParameterOrder[info.FormatStringIndex];
                     if (!object.Equals(formatStringArgument?.Value?.ResultType, formatInfo.String) ||
-                        !(formatStringArgument?.Value?.ConstantValue is string))
+                        !(formatStringArgument?.Value?.ConstantValue.Value is string))
                     {
                         // wrong argument
                         return;
                     }
 
-                    var stringFormat = (string)formatStringArgument.Value.ConstantValue;
+                    var stringFormat = (string)formatStringArgument.Value.ConstantValue.Value;
                     var expectedStringFormatArgumentCount = GetFormattingArguments(stringFormat);
 
                     // explict parameter case

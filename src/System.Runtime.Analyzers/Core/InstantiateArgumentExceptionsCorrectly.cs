@@ -91,8 +91,8 @@ namespace System.Runtime.Analyzers
                     {
                         continue;
                     }
-                 
-                    string value = argument.Value.ConstantValue as string;
+
+                    string value = argument.Value.ConstantValue.HasValue ? argument.Value.ConstantValue.Value as string : null;
                     if (value == null)
                     {
                         continue;

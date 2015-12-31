@@ -53,13 +53,13 @@ namespace System.Runtime.Analyzers
 
                     var formatStringArgument = invocation.ArgumentsInParameterOrder[info.FormatStringIndex];
                     if (!object.Equals(formatStringArgument?.Value?.ResultType, formatInfo.String) ||
-                        !(formatStringArgument?.Value?.ConstantValue is string))
+                        !(formatStringArgument?.Value?.ConstantValue.Value is string))
                     {
                         // wrong argument
                         return;
                     }
 
-                    var stringFormat = (string)formatStringArgument.Value.ConstantValue;
+                    var stringFormat = (string)formatStringArgument.Value.ConstantValue.Value;
                     var expectedStringFormatArgumentCount = GetFormattingArguments(stringFormat);
 
                     // explict parameter case
@@ -98,23 +98,6 @@ namespace System.Runtime.Analyzers
                         arrayCreation.DimensionSizes.Length != 1)
                     {
                         // wrong format
-                        return;
-                    }
-
-                    // explictly giving object array case.
-                    // this should go away once the bug is fixed
-                    if (invocation.Syntax.Language == LanguageNames.CSharp &&
-                        invocation.ArgumentsInParameterOrder.Count(a => a.Kind == ArgumentKind.ParamArray) ==
-                        invocation.ArgumentsInSourceOrder.Count(a => a.Kind == ArgumentKind.ParamArray))
-                    {
-                        // TODO: due to a bug - https://github.com/dotnet/roslyn/issues/7342
-                        //       currently this (explictly giving object array case) is not supported.
-                        //
-                        //       this check is only for CSharp, since VB correctly normalize explicit
-                        //       and implicit params array to one format. but VB has different issue where one can't
-                        //       distinguish explicit and implicit params argument since it is already normalized in one
-                        //       format in both ArgumentsInParameterOrder and ArgumentsInSourceOrder.
-                        //
                         return;
                     }
 

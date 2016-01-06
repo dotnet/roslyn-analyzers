@@ -66,12 +66,22 @@ Severity: Warning
 
 Help: [https://msdn.microsoft.com/en-us/library/ms182346.aspx](https://msdn.microsoft.com/en-us/library/ms182346.aspx)
 
-### CA2213: Disposable fields should be disposed ###
+### CA2208: Instantiate argument exceptions correctly ###
 
-A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type.
+A call is made to the default (parameterless) constructor of an exception type that is or derives from ArgumentException, or an incorrect string argument is passed to a parameterized constructor of an exception type that is or derives from ArgumentException.
 
 Category: Usage
 
 Severity: Warning
 
-Help: [http://msdn.microsoft.com/library/ms182328.aspx](http://msdn.microsoft.com/library/ms182328.aspx)
+Help: [https://msdn.microsoft.com/en-us/library/ms182347.aspx](https://msdn.microsoft.com/en-us/library/ms182347.aspx)
+
+### CA2241: Provide correct arguments to formatting methods ###
+
+The format argument that is passed to System.String.Format does not contain a format item that corresponds to each object argument, or vice versa.
+
+Category: Usage
+
+Severity: Warning
+
+Help: [https://msdn.microsoft.com/en-us/library/ms182361.aspx](https://msdn.microsoft.com/en-us/library/ms182361.aspx)

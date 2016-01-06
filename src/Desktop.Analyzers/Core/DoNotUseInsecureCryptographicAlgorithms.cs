@@ -24,12 +24,14 @@ namespace Desktop.Analyzers
         internal static DiagnosticDescriptor DoNotUseBrokenCryptographicRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographicRuleId,
                                                                                           s_localizableDoNotUseBrokenAlgorithmsTitle,
                                                                                           s_localizableDoNotUseBrokenAlgorithmsMessage,
-                                                                                          s_localizableDoNotUseBrokenAlgorithmsDescription);
+                                                                                          s_localizableDoNotUseBrokenAlgorithmsDescription,
+                                                                                          CA5351HelpLink);
 
         internal static DiagnosticDescriptor DoNotUseWeakCryptographicRule = CreateDiagnosticDescriptor(DoNotUseWeakCryptographicRuleId,
                                                                                           s_localizableDoNotUseWeakAlgorithmsTitle,
                                                                                           s_localizableDoNotUseWeakAlgorithmsMessage,
-                                                                                          s_localizableDoNotUseWeakAlgorithmsDescription);
+                                                                                          s_localizableDoNotUseWeakAlgorithmsDescription,
+                                                                                          CA5350HelpLink);
         protected abstract Analyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes cryptTypes);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics = ImmutableArray.Create(DoNotUseWeakCryptographicRule,

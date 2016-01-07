@@ -15,7 +15,7 @@ However, we do not envision the new Roslyn-based managed analysis rules as a str
 
 For these reasons, we stopped thinking about these rules as "FxCop analyzers". Instead, we looked at the inventory of all the rules that exist today, and factored them according to the APIs they relate to and the purposes they serve. As part of this exercise, we identified the rules that provided the highest value. We chose to implement only those rules as analyzers, and not to re-implement low-value rules. In addition, we are adding new rules to fill the gaps that have appeared in the last 10 years, for example, rules related to `async` or `ImmutableCollections`.
 
-In the remained of this document, we explain the principles we used to decide how to factor the new Roslyn-based analyzers, enumerate the specific NuGet packages into which the analyzers will be factored, and describe in a little more detail how we decided which FxCop rules to port.
+In the remainder of this document, we explain the principles we used to decide how to factor the new Roslyn-based analyzers, enumerate the specific NuGet packages into which the analyzers will be factored, and describe in a little more detail how we decided which FxCop rules to port.
 
 ## Factoring principles
 
@@ -25,11 +25,11 @@ In the remained of this document, we explain the principles we used to decide ho
 
     The rationale for this choice is that developers using .NET Core, which is delivered as a set of NuGet packages, will automatically get exactly the API-specific analyzers they need. Developers using .NET Framework will still need to manually download the API-specific analyzers. For those developers, we might consider creating a consolidated NuGet package containing the analyzers for all types in the .NET framework. By doing these two things, we minimize the number of times developers have to search for and download API-specific analyzer packages. 
 
-* For rules that do not relate to the usage of specific APIs, but relate instead to more general coding guidelines, we should organize the rules according to the intended purpose of those guidelines. For example, some rules might help API authors produce consistent public APIs, but those rules might not make sense for test assemblies. (We will package those analyzers in Microsoft.ApiDesignGuidelines.Analyzers.dll, which by the way is essentially the original purpose of FxCop.) As another example, there might be some rules that restrict the expressiveness of the language (by discouraging the use of certain language features) in order to gain a performance advantage. Such rules would only apply in a specific context where that tradeoff is acceptable, and hence it would be useful to place them in a separate NuGet package.
+* Rules that do not relate to the usage of specific APIs, but relate instead to more general coding guidelines, should be organized according to the intended purpose of those guidelines. For example, some rules might help API authors produce consistent public APIs, but those rules might not make sense for test assemblies. (We will package those analyzers in Microsoft.ApiDesignGuidelines.Analyzers.dll, which by the way is essentially the original purpose of FxCop.) As another example, there might be some rules that restrict the expressiveness of the language (by discouraging the use of certain language features) in order to gain a performance advantage. Such rules would only apply in a specific context where that tradeoff is acceptable, and hence it would be useful to place them in a separate NuGet package.
 
 ## Analyzer packages
 
-The list of all the rules that ship in VS, along with certain other FxCop/Roslyn rules that we know of, is captured in the file [RulesInventory.csv](https://github.com/dotnet/roslyn-analyzers/blob/master/RulesInventory.csv) file (which, thanks to GitHub, is searchable). That file also has contains our proposed factoring of the analyzers (in the "Proposed Analyzer" column, which perhaps might have been better named "Proposed Analyzer Package"). 
+The list of all the rules that ship in VS, along with certain other FxCop/Roslyn rules that we know of, is captured in the file [RulesInventory.csv](https://github.com/dotnet/roslyn-analyzers/blob/master/RulesInventory.csv) file (which, thanks to GitHub, is searchable). That file also contains our proposed factoring of the analyzers (in the "Proposed Analyzer" column, which perhaps might have been better named "Proposed Analyzer Package").
 
 ### API analyzer packages
 
@@ -43,11 +43,11 @@ There are rules about types in the following contract assemblies:
  
 * **System.Xml** - Contains analyzers for types dealing with XML across  the System.Xml.* contracts. This is a new package.
 
-* **Desktop.Analyzers** - These are analyzers about APIs that are present in the desktop .NET Framework but not in the new .NET Core set. Since the .NET framework isn't available in a piecemeal fashion, there's not much value in breaking this down further.
+* **Desktop.Analyzers** - Contains analyzers for APIs that are present in the desktop .NET Framework but not in the new .NET Core API set. Since the .NET framework isn't available in a piecemeal fashion, there's not much value in breaking this down further.
 
 * **Microsoft.CodeAnalysis.Analyzers** - Contains rules about using the Roslyn APIs correctly. This package already exists.
 
-### Theme based analyzer packages
+### Theme-based analyzer packages
 
 * **Microsoft.ApiDesignGuidelines** - Contains guidelines for authoring libraries which contain public APIs. The advantage of factoring it out this way is that one could simply install this analyzer for projects that expose real public APIs, and not for executables and test projects, reducing noise significantly.
  
@@ -59,7 +59,7 @@ There are rules about types in the following contract assemblies:
 
 ## What to port?
 
-Aside from the factoring, the .csv file also has some information about telemetry that has been reported through VS about the number of violations and suppressions for many of the rules. We used that as one data point in identifying whether a rule is high value. Of course some of those numbers could have been reported long ago and so a subjective evaluation of the usefulness of a rule was needed. We have populated the "Port?" column of the spreadsheet with our decisions. (NOTE: To see that column, you'll need to scroll to the bottom of the page and scroll horizontally.)
+Aside from the factoring, the .csv file also has some information about telemetry that has been reported through VS about the number of violations and suppressions for many of the rules. We used that as one data point in identifying whether a rule was high value. Of course some of those numbers might have been reported long ago, so a subjective evaluation of the usefulness of a rule was needed. We have populated the "Port?" column of the spreadsheet with our decisions. (NOTE: To see that column, you'll need to scroll to the bottom of the page and scroll horizontally.)
 
 ## Feedback
 

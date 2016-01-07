@@ -2,16 +2,15 @@
 
 using System.Collections.Immutable;
 using System.Threading;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
-using Roslyn.Diagnostics.Analyzers;
-using Roslyn.Diagnostics.Analyzers.ApiDesign;
-using Roslyn.Diagnostics.Analyzers.CSharp.ApiDesign;
+using Microsoft.CodeAnalysis.UnitTests;
 using Roslyn.Diagnostics.Test.Utilities;
 using Xunit;
 
-namespace Microsoft.CodeAnalysis.UnitTests.ApiDesign
+namespace Roslyn.Diagnostics.Analyzers.UnitTests
 {
     public class DeclarePublicAPIAnalyzerTests : CodeFixTestBase
     {

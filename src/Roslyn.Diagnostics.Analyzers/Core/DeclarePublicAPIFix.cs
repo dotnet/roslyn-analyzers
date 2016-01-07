@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Roslyn.Diagnostics.Analyzers.ApiDesign
+namespace Roslyn.Diagnostics.Analyzers
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic, Name = "DeclarePublicAPIFix"), Shared]
     public class DeclarePublicAPIFix : CodeFixProvider
@@ -124,6 +124,8 @@ namespace Roslyn.Diagnostics.Analyzers.ApiDesign
             }
 
             public override string Title { get; }
+
+            public override string EquivalenceKey => Title;
 
             protected override Task<Solution> GetChangedSolutionAsync(CancellationToken cancellationToken)
             {

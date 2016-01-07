@@ -140,10 +140,10 @@ namespace Microsoft.CodeAnalysis.UnitTests
                         }
                         else
                         {
-                            Assert.True(location.IsInSource,
+                            Assert.False(location.IsInMetadata,
                                 string.Format("Test base does not currently handle diagnostics in metadata locations. Diagnostic in metadata:\r\n", diagnostics[i]));
 
-                            string resultMethodName = diagnostics[i].Location.SourceTree.FilePath.EndsWith(".cs", StringComparison.OrdinalIgnoreCase) ? "GetCSharpResultAt" : "GetBasicResultAt";
+                            string resultMethodName = GetResultMethodName(diagnostics[i]);
                             var linePosition = diagnostics[i].Location.GetLineSpan().StartLinePosition;
 
                             builder.AppendFormat("{0}({1}, {2}, {3}.{4})",
@@ -166,6 +166,16 @@ namespace Microsoft.CodeAnalysis.UnitTests
             }
 
             return builder.ToString();
+        }
+
+        private static string GetResultMethodName(Diagnostic diagnostic)
+        {  
+            if (diagnostic.Location.IsInSource)  
+            {  
+                return diagnostic.Location.SourceTree.FilePath.EndsWith(".cs", StringComparison.OrdinalIgnoreCase) ? "GetCSharpResultAt" : "GetBasicResultAt";  
+            }  
+        
+            return "GetResultAt";  
         }
 
         private static string FormatDiagnostics(DiagnosticAnalyzer analyzer, IEnumerable<Diagnostic> diagnostics)

@@ -208,8 +208,6 @@
     <Compile Include="ImplementIEquatableWhenOverridingObjectEqualsTests.Fixer.cs" />
     <Compile Include="CancellationTokenParametersMustComeLastTests.cs" />
     <Compile Include="CancellationTokenParametersMustComeLastTests.Fixer.cs" />
-    <Compile Include="ConstructorMakeNoninheritableBaseClassInheritableTests.cs" />
-    <Compile Include="ConstructorMakeNoninheritableBaseClassInheritableTests.Fixer.cs" />
     <Compile Include="DoNotDeclareStaticMembersOnGenericTypesTests.cs" />
     <Compile Include="DoNotDeclareStaticMembersOnGenericTypesTests.Fixer.cs" />
     <Compile Include="CollectionsShouldImplementGenericInterfaceTests.cs" />

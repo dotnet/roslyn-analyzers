@@ -140,8 +140,6 @@
     <Compile Include="CSharpImplementIEquatableWhenOverridingObjectEquals.Fixer.cs" />
     <Compile Include="CSharpCancellationTokenParametersMustComeLast.cs" />
     <Compile Include="CSharpCancellationTokenParametersMustComeLast.Fixer.cs" />
-    <Compile Include="CSharpConstructorMakeNoninheritableBaseClassInheritable.cs" />
-    <Compile Include="CSharpConstructorMakeNoninheritableBaseClassInheritable.Fixer.cs" />
     <Compile Include="CSharpDoNotDeclareStaticMembersOnGenericTypes.cs" />
     <Compile Include="CSharpDoNotDeclareStaticMembersOnGenericTypes.Fixer.cs" />
     <Compile Include="CSharpCollectionsShouldImplementGenericInterface.Fixer.cs" />

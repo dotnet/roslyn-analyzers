@@ -37,21 +37,23 @@ There are rules about types in the following contract assemblies:
 
 * **System.Runtime.Analyzers** - This package already exists
 
-* **System.Runtime.InteropServices.Analyzers** - Analyzers about interop and marshalling. This package already exists.
+* **System.Runtime.InteropServices.Analyzers** - Contains analyzers related to interop and marshalling. This package already exists.
 
-* **System.Security.Cryptography.Algorithms** - Analyzers with guidelines for crypto algorithms usage. This is a new package.
+* **System.Security.Cryptography.Algorithms.Analyzers** - Contains analyzers with guidelines for crypto algorithm usage. This is a new package.
  
-* **System.Xml** - Contains analyzers for types dealing with XML across  the System.Xml.* contracts. This is a new package.
+* **System.Xml.Analyzers** - Contains analyzers for types dealing with XML across  the System.Xml.* contracts. This is a new package.
 
 * **Desktop.Analyzers** - Contains analyzers for APIs that are present in the desktop .NET Framework but not in the new .NET Core API set. Since the .NET framework isn't available in a piecemeal fashion, there's not much value in breaking this down further.
 
-* **Microsoft.CodeAnalysis.Analyzers** - Contains rules about using the Roslyn APIs correctly. This package already exists.
+* **Microsoft.CodeAnalysis.Analyzers** - Contains analyzers related to using the Roslyn APIs correctly. Analyzer authors would use these rules; we refer to them informally as "analyzer analyzers." This package already exists.
 
 ### Theme-based analyzer packages
 
-* **Microsoft.ApiDesignGuidelines** - Contains guidelines for authoring libraries which contain public APIs. The advantage of factoring it out this way is that one could simply install this analyzer for projects that expose real public APIs, and not for executables and test projects, reducing noise significantly.
- 
-* **Microsoft.Maintainability** - Contains rules that contains metrics-based and heuristics-based rules to assess complexity, maintainability, and readability.
+* **Microsoft.ApiDesignGuidelines.Analyzers** - Contains guidelines for authoring libraries which contain public APIs. The advantage of factoring it out this way is that one could simply install this analyzer for projects that expose real public APIs, and not for executables and test projects, reducing noise significantly.
+
+* **Microsoft.Maintainability.Analyzers** - Contains rules that contains metrics-based and heuristics-based rules to assess complexity, maintainability, and readability.
+
+* **Microsoft.QualityGuidelines.Analyzers** - Contains miscellaneous rules related to code quality, which do not fall into any of the other packages.
  
 * **Text.Analyzers** - Contains rules that analyze code as text for spelling violations. 
 

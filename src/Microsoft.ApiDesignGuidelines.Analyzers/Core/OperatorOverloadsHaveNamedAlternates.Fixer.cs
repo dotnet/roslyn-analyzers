@@ -36,9 +36,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static async Task<Document> Fix(CodeFixContext context, CancellationToken cancellationToken)
         {
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            var generator = context.Document.Project?.LanguageServices?.GetService<SyntaxGenerator>();
             var root = await context.Document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var node = root.FindNode(context.Span);
+            var generator = context.Document.Project?.LanguageServices?.GetService<SyntaxGenerator>();
+            if (generator == null)
+            {
+                return context.Document;
+            }
 
             var diagnostic = context.Diagnostics.First();
             switch (diagnostic.Properties[OperatorOverloadsHaveNamedAlternatesAnalyzer.DiagnosticKindText])
@@ -47,6 +51,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     var methodDeclaration = generator.GetDeclaration(node, DeclarationKind.Operator) ?? generator.GetDeclaration(node, DeclarationKind.ConversionOperator);
                     var operatorOverloadSymbol = (IMethodSymbol)semanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken);
                     var typeSymbol = (ITypeSymbol)operatorOverloadSymbol.ContainingSymbol;
+
+                    // For C# the following `typeDeclarationSyntax` and `typeDeclaration` nodes are identical, but for VB they're different so in
+                    // an effort to keep this as language-agnostic as possible, the heavy-handed approach is used.
                     var typeDeclarationSyntax = typeSymbol.DeclaringSyntaxReferences.First().GetSyntax(context.CancellationToken);
                     var typeDeclaration = generator.GetDeclaration(typeDeclarationSyntax, DeclarationKind.Class);
 
@@ -110,14 +117,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 case "op_Increment":
                 case "op_UnaryNegation":
                 case "op_UnaryPlus":
-                    // e.g., public MyClass Decrement(MyClass item)
-                    return new ExpectedMethodSignature(expectedName, returnType, ImmutableArray.Create(Tuple.Create("item", containingType)));
+                    // e.g., public static MyClass Decrement(MyClass item)
+                    return new ExpectedMethodSignature(expectedName, returnType, ImmutableArray.Create(Tuple.Create("item", containingType)), isStatic: true);
                 case "op_Implicit":
                     // e.g., public int ToInt32()
                     return new ExpectedMethodSignature(expectedName, returnType, ImmutableArray.Create<Tuple<string, ITypeSymbol>>(), isStatic: false);
                 default:
                     // e.g., public static MyClass Add(MyClass left, MyClass right)
-                    return new ExpectedMethodSignature(expectedName, returnType, ImmutableArray.Create(Tuple.Create("left", containingType), Tuple.Create("right", containingType)));
+                    return new ExpectedMethodSignature(expectedName, returnType, ImmutableArray.Create(Tuple.Create("left", containingType), Tuple.Create("right", containingType)), isStatic: true);
             }
         }
 
@@ -128,7 +135,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             public IEnumerable<Tuple<string, ITypeSymbol>> Parameters { get; }
             public bool IsStatic { get; }
 
-            public ExpectedMethodSignature(string name, ITypeSymbol returnType, IEnumerable<Tuple<string, ITypeSymbol>> parameters, bool isStatic = true)
+            public ExpectedMethodSignature(string name, ITypeSymbol returnType, IEnumerable<Tuple<string, ITypeSymbol>> parameters, bool isStatic)
             {
                 Name = name;
                 ReturnType = returnType;

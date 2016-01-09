@@ -21,6 +21,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         internal const string AddAlternateText = "AddAlternate";
         internal const string FixVisibilityText = "FixVisibility";
         internal const string IsTrueText = "IsTrue";
+        private const string OpTrueText = "op_True";
         private const string OpFalseText = "op_False";
         private const string MsdnUrl = "https://msdn.microsoft.com/en-us/library/ms182355.aspx";
 
@@ -79,11 +80,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static void DoAnalysis(SymbolAnalysisContext symbolContext)
         {
             var methodSymbol = (IMethodSymbol)symbolContext.Symbol;
-            var location = methodSymbol.OriginalDefinition.Locations.First();
             var typeSymbol = methodSymbol.ContainingSymbol as ITypeSymbol;
-            var operatorName = methodSymbol.Name;
             if (typeSymbol != null && (methodSymbol.MethodKind == MethodKind.UserDefinedOperator || methodSymbol.MethodKind == MethodKind.Conversion))
             {
+                var operatorName = methodSymbol.Name;
                 if (IsPropertyExpected(operatorName) && operatorName != OpFalseText)
                 {
                     // don't report a diagnostic on the `op_False` method because then the user would see two diagnostics for what is really one error
@@ -92,11 +92,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     var property = typeSymbol.GetMembers(IsTrueText).OfType<IPropertySymbol>().SingleOrDefault();
                     if (property == null || property.Type.SpecialType != SpecialType.System_Boolean)
                     {
-                        symbolContext.ReportDiagnostic(CreateDiagnostic(PropertyRule, location, AddAlternateText, IsTrueText, operatorName));
+                        symbolContext.ReportDiagnostic(CreateDiagnostic(PropertyRule, GetSymbolLocation(methodSymbol), AddAlternateText, IsTrueText, operatorName));
                     }
                     else if (!property.IsPublic())
                     {
-                        symbolContext.ReportDiagnostic(CreateDiagnostic(VisibilityRule, property.OriginalDefinition.Locations.First(), FixVisibilityText, IsTrueText, operatorName));
+                        symbolContext.ReportDiagnostic(CreateDiagnostic(VisibilityRule, GetSymbolLocation(property), FixVisibilityText, IsTrueText, operatorName));
                     }
                 }
                 else
@@ -137,7 +137,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         if (notPublicMethod != null)
                         {
                             // report error for improper visibility directly on the method itself
-                            symbolContext.ReportDiagnostic(CreateDiagnostic(VisibilityRule, notPublicMethod.OriginalDefinition.Locations.First(), FixVisibilityText, notPublicMethod.Name, operatorName));
+                            symbolContext.ReportDiagnostic(CreateDiagnostic(VisibilityRule, GetSymbolLocation(notPublicMethod), FixVisibilityText, notPublicMethod.Name, operatorName));
                         }
                         else
                         {
@@ -145,17 +145,22 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                             if (expectedGroup.AlternateMethod2 == null)
                             {
                                 // only one alternate expected
-                                symbolContext.ReportDiagnostic(CreateDiagnostic(DefaultRule, location, AddAlternateText, expectedGroup.AlternateMethod1, operatorName));
+                                symbolContext.ReportDiagnostic(CreateDiagnostic(DefaultRule, GetSymbolLocation(methodSymbol), AddAlternateText, expectedGroup.AlternateMethod1, operatorName));
                             }
                             else
                             {
                                 // one of two alternates expected
-                                symbolContext.ReportDiagnostic(CreateDiagnostic(MultipleRule, location, AddAlternateText, expectedGroup.AlternateMethod1, expectedGroup.AlternateMethod2, operatorName));
+                                symbolContext.ReportDiagnostic(CreateDiagnostic(MultipleRule, GetSymbolLocation(methodSymbol), AddAlternateText, expectedGroup.AlternateMethod1, expectedGroup.AlternateMethod2, operatorName));
                             }
                         }
                     }
                 }
             }
+        }
+
+        private static Location GetSymbolLocation(ISymbol symbol)
+        {
+            return symbol.OriginalDefinition.Locations.First();
         }
 
         private static Diagnostic CreateDiagnostic(DiagnosticDescriptor descriptor, Location location, string kind, params string[] messageArgs)
@@ -167,8 +172,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             switch (operatorName)
             {
-                case "op_True":
-                case "op_False":
+                case OpTrueText:
+                case OpFalseText:
                     return true;
                 default:
                     return false;

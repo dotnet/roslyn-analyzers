@@ -171,6 +171,18 @@ class C
             GetCA2225CSharpVisibilityResultAt(6, 18, "IsTrue", "op_True"));
         }
 
+        [Fact]
+        public void StructHasAlternateMethod_CSharp()
+        {
+            VerifyCSharp(@"
+struct C
+{
+    public static C operator +(C left, C right) { return new C(); }
+    public static C Add(C left, C right) { return new C(); }
+}
+");
+        }
+
         #endregion
 
         //
@@ -205,6 +217,21 @@ Class C
 End Class
 ",
             GetCA2225BasicDefaultResultAt(3, 28, "Add", "op_Addition"));
+        }
+
+        [Fact]
+        public void StructHasAlternateMethod_VisualBasic()
+        {
+            VerifyBasic(@"
+Structure C
+    Public Shared Operator +(left As C, right As C) As C
+        Return New C()
+    End Operator
+    Public Shared Function Add(left As C, right As C) As C
+        Return New C()
+    End Function
+End Structure
+");
         }
 
         #endregion

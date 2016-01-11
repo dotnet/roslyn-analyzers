@@ -129,8 +129,6 @@
     <Compile Include="BasicNonConstantFieldsShouldNotBeVisible.Fixer.vb" />
     <Compile Include="BasicDoNotDecreaseInheritedMemberVisibility.vb" />
     <Compile Include="BasicDoNotDecreaseInheritedMemberVisibility.Fixer.vb" />
-    <Compile Include="BasicOperatorOverloadsHaveNamedAlternates.vb" />
-    <Compile Include="BasicOperatorOverloadsHaveNamedAlternates.Fixer.vb" />
     <Compile Include="BasicOperatorsShouldHaveSymmetricalOverloads.vb" />
     <Compile Include="BasicOperatorsShouldHaveSymmetricalOverloads.Fixer.vb" />
     <Compile Include="BasicOverloadOperatorEqualsOnOverridingValueTypeEquals.Fixer.vb" />

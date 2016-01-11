@@ -129,8 +129,6 @@
     <Compile Include="CSharpNonConstantFieldsShouldNotBeVisible.Fixer.cs" />
     <Compile Include="CSharpDoNotDecreaseInheritedMemberVisibility.cs" />
     <Compile Include="CSharpDoNotDecreaseInheritedMemberVisibility.Fixer.cs" />
-    <Compile Include="CSharpOperatorOverloadsHaveNamedAlternates.cs" />
-    <Compile Include="CSharpOperatorOverloadsHaveNamedAlternates.Fixer.cs" />
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.cs" />
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.Fixer.cs" />
     <Compile Include="CSharpOverloadOperatorEqualsOnOverridingValueTypeEquals.Fixer.cs" />

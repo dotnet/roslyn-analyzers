@@ -134,8 +134,6 @@
     <Compile Include="BasicOverloadOperatorEqualsOnOverridingValueTypeEquals.Fixer.vb" />
     <Compile Include="BasicPassSystemUriObjectsInsteadOfStrings.vb" />
     <Compile Include="BasicPassSystemUriObjectsInsteadOfStrings.Fixer.vb" />
-    <Compile Include="BasicImplementIEquatableWhenOverridingObjectEquals.vb" />
-    <Compile Include="BasicImplementIEquatableWhenOverridingObjectEquals.Fixer.vb" />
     <Compile Include="BasicCancellationTokenParametersMustComeLast.vb" />
     <Compile Include="BasicCancellationTokenParametersMustComeLast.Fixer.vb" />
     <Compile Include="BasicDoNotDeclareStaticMembersOnGenericTypes.vb" />

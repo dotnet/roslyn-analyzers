@@ -1,10 +1,11 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using Microsoft.ApiDesignGuidelines.Analyzers;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Roslyn.Diagnostics.Analyzers;
+using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 
-namespace Microsoft.CodeAnalysis.UnitTests.Performance
+namespace Microsoft.ApiDesignGuidelines.UnitTests
 {
     public class EquatableAnalyzerTests : DiagnosticAnalyzerTestBase
     {
@@ -42,9 +43,9 @@ struct S
     }
 }
 ";
-            string expectedMessage = string.Format(RoslynDiagnosticsResources.ImplementIEquatableMessage, "S");
+            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "S");
             VerifyCSharp(code,
-                GetCSharpResultAt(4, 26, RoslynDiagnosticIds.ImplementIEquatableRuleId, expectedMessage));
+                GetCSharpResultAt(4, 26, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage));
         }
 
         [Fact]
@@ -76,9 +77,9 @@ struct S : IEquatable<S>
     }
 }
 ";
-            string expectedMessage = string.Format(RoslynDiagnosticsResources.OverrideObjectEqualsMessage, "S");
+            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "S");
             VerifyCSharp(code,
-                GetCSharpResultAt(4, 8, RoslynDiagnosticIds.OverrideObjectEqualsRuleId, expectedMessage));
+                GetCSharpResultAt(4, 8, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
         [Fact]
@@ -95,9 +96,9 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(RoslynDiagnosticsResources.OverrideObjectEqualsMessage, "C");
+            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
             VerifyCSharp(code,
-                GetCSharpResultAt(4, 7, RoslynDiagnosticIds.OverrideObjectEqualsRuleId, expectedMessage));
+                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
         [Fact]
@@ -114,9 +115,9 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(RoslynDiagnosticsResources.OverrideObjectEqualsMessage, "C");
+            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
             VerifyCSharp(code,
-                GetCSharpResultAt(4, 7, RoslynDiagnosticIds.OverrideObjectEqualsRuleId, expectedMessage));
+                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
         [Fact]
@@ -133,9 +134,9 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(RoslynDiagnosticsResources.OverrideObjectEqualsMessage, "C");
+            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
             VerifyCSharp(code,
-                GetCSharpResultAt(4, 7, RoslynDiagnosticIds.OverrideObjectEqualsRuleId, expectedMessage));
+                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
         [Fact]
@@ -152,9 +153,9 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(RoslynDiagnosticsResources.OverrideObjectEqualsMessage, "C");
+            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
             VerifyCSharp(code,
-                GetCSharpResultAt(4, 7, RoslynDiagnosticIds.OverrideObjectEqualsRuleId, expectedMessage));
+                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
         [Fact]
@@ -171,9 +172,9 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(RoslynDiagnosticsResources.OverrideObjectEqualsMessage, "C");
+            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
             VerifyCSharp(code,
-                GetCSharpResultAt(4, 7, RoslynDiagnosticIds.OverrideObjectEqualsRuleId, expectedMessage));
+                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
         [Fact]
@@ -190,9 +191,9 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(RoslynDiagnosticsResources.OverrideObjectEqualsMessage, "C");
+            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
             VerifyCSharp(code,
-                GetCSharpResultAt(4, 7, RoslynDiagnosticIds.OverrideObjectEqualsRuleId, expectedMessage));
+                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
         [Fact]
@@ -209,9 +210,9 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(RoslynDiagnosticsResources.OverrideObjectEqualsMessage, "C");
+            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
             VerifyCSharp(code,
-                GetCSharpResultAt(4, 7, RoslynDiagnosticIds.OverrideObjectEqualsRuleId, expectedMessage));
+                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
         [Fact]
@@ -225,9 +226,9 @@ class C : IEquatable<C>
     public bool Equals(C other)
 }
 ";
-            string expectedMessage = string.Format(RoslynDiagnosticsResources.OverrideObjectEqualsMessage, "C");
+            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
             VerifyCSharp(code,
-                GetCSharpResultAt(4, 7, RoslynDiagnosticIds.OverrideObjectEqualsRuleId, expectedMessage));
+                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
         [Fact]
@@ -244,9 +245,9 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(RoslynDiagnosticsResources.OverrideObjectEqualsMessage, "C");
+            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
             VerifyCSharp(code,
-                GetCSharpResultAt(4, 7, RoslynDiagnosticIds.OverrideObjectEqualsRuleId, expectedMessage));
+                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
         [Fact]
@@ -280,9 +281,9 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(RoslynDiagnosticsResources.OverrideObjectEqualsMessage, "C");
+            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
             VerifyCSharp(code,
-                GetCSharpResultAt(4, 7, RoslynDiagnosticIds.OverrideObjectEqualsRuleId, expectedMessage));
+                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
         [Fact]
@@ -307,11 +308,11 @@ struct C : B
     }
 }
 ";
-            string expectedMessage1 = string.Format(RoslynDiagnosticsResources.ImplementIEquatableMessage, "B");
-            string expectedMessage2 = string.Format(RoslynDiagnosticsResources.ImplementIEquatableMessage, "C");
+            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "B");
+            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "C");
             VerifyCSharp(code,
-                GetCSharpResultAt( 6, 26, RoslynDiagnosticIds.ImplementIEquatableRuleId, expectedMessage1),
-                GetCSharpResultAt(14, 26, RoslynDiagnosticIds.ImplementIEquatableRuleId, expectedMessage2));
+                GetCSharpResultAt( 6, 26, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage1),
+                GetCSharpResultAt(14, 26, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage2));
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

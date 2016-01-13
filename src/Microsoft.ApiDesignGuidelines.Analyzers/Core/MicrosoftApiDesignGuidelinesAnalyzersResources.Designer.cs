@@ -1270,15 +1270,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #N/A.
-        /// </summary>
-        internal static string ImplementIEquatableWhenOverridingObjectEqualsDescription {
-            get {
-                return ResourceManager.GetString("ImplementIEquatableWhenOverridingObjectEqualsDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Implement IEquatable when overriding Object.Equals.
         /// </summary>
         internal static string ImplementIEquatableWhenOverridingObjectEqualsMessage {
@@ -1288,7 +1279,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Implement IEquatable when overriding Object.Equals.
+        ///   Looks up a localized string similar to Type {0} should implement IEquatable&lt;T&gt; because it overrides Equals.
         /// </summary>
         internal static string ImplementIEquatableWhenOverridingObjectEqualsTitle {
             get {
@@ -1950,6 +1941,24 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         internal static string OverrideMethodsOnComparableTypesTitle {
             get {
                 return ResourceManager.GetString("OverrideMethodsOnComparableTypesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type {0} should override Equals because it implements IEquatable&lt;T&gt;.
+        /// </summary>
+        internal static string OverrideObjectEqualsMessage {
+            get {
+                return ResourceManager.GetString("OverrideObjectEqualsMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Override Object.Equals(object) when implementing IEquatable&lt;T&gt;.
+        /// </summary>
+        internal static string OverrideObjectEqualsTitle {
+            get {
+                return ResourceManager.GetString("OverrideObjectEqualsTitle", resourceCulture);
             }
         }
         

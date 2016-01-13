@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Roslyn.Diagnostics.Analyzers.ApiDesign
+namespace Roslyn.Diagnostics.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed partial class DeclarePublicAPIAnalyzer : DiagnosticAnalyzer
@@ -24,38 +24,37 @@ namespace Roslyn.Diagnostics.Analyzers.ApiDesign
 
         internal static readonly DiagnosticDescriptor DeclareNewApiRule = new DiagnosticDescriptor(
             id: RoslynDiagnosticIds.DeclarePublicApiRuleId,
-            title: RoslynDiagnosticsResources.DeclarePublicApiTitle,
-            messageFormat: RoslynDiagnosticsResources.DeclarePublicApiMessage,
+            title: RoslynDiagnosticsAnalyzersResources.DeclarePublicApiTitle,
+            messageFormat: RoslynDiagnosticsAnalyzersResources.DeclarePublicApiMessage,
             category: "ApiDesign",
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: RoslynDiagnosticsResources.DeclarePublicApiDescription,
+            description: RoslynDiagnosticsAnalyzersResources.DeclarePublicApiDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         internal static readonly DiagnosticDescriptor RemoveDeletedApiRule = new DiagnosticDescriptor(
             id: RoslynDiagnosticIds.RemoveDeletedApiRuleId,
-            title: RoslynDiagnosticsResources.RemoveDeletedApiTitle,
-            messageFormat: RoslynDiagnosticsResources.RemoveDeletedApiMessage,
+            title: RoslynDiagnosticsAnalyzersResources.RemoveDeletedApiTitle,
+            messageFormat: RoslynDiagnosticsAnalyzersResources.RemoveDeletedApiMessage,
             category: "ApiDesign",
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: RoslynDiagnosticsResources.RemoveDeletedApiDescription,
+            description: RoslynDiagnosticsAnalyzersResources.RemoveDeletedApiDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         internal static readonly DiagnosticDescriptor ExposedNoninstantiableType = new DiagnosticDescriptor(
             id: RoslynDiagnosticIds.ExposedNoninstantiableTypeRuleId,
-            title: RoslynDiagnosticsResources.ExposedNoninstantiableTypeTitle,
-            messageFormat: RoslynDiagnosticsResources.ExposedNoninstantiableTypeMessage,
+            title: RoslynDiagnosticsAnalyzersResources.ExposedNoninstantiableTypeTitle,
+            messageFormat: RoslynDiagnosticsAnalyzersResources.ExposedNoninstantiableTypeMessage,
             category: "ApiDesign",
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: RoslynDiagnosticsResources.ExposedNoninstantiableTypeDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         internal static readonly DiagnosticDescriptor PublicApiFilesInvalid = new DiagnosticDescriptor(
             id: RoslynDiagnosticIds.PublicApiFilesInvalid,
-            title: RoslynDiagnosticsResources.PublicApiFilesInvalidTitle,
-            messageFormat: RoslynDiagnosticsResources.PublicApiFilesInvalidMessage,
+            title: RoslynDiagnosticsAnalyzersResources.PublicApiFilesInvalidTitle,
+            messageFormat: RoslynDiagnosticsAnalyzersResources.PublicApiFilesInvalidMessage,
             category: "ApiDesign",
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -63,8 +62,8 @@ namespace Roslyn.Diagnostics.Analyzers.ApiDesign
 
         internal static readonly DiagnosticDescriptor DuplicateSymbolInApiFiles = new DiagnosticDescriptor(
             id: RoslynDiagnosticIds.DuplicatedSymbolInPublicApiFiles,
-            title: RoslynDiagnosticsResources.DuplicateSymbolsInPublicApiFilesTitle,
-            messageFormat: RoslynDiagnosticsResources.DuplicateSymbolsInPublicApiFilesMessage,
+            title: RoslynDiagnosticsAnalyzersResources.DuplicateSymbolsInPublicApiFilesTitle,
+            messageFormat: RoslynDiagnosticsAnalyzersResources.DuplicateSymbolsInPublicApiFilesMessage,
             category: "ApiDesign",
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,

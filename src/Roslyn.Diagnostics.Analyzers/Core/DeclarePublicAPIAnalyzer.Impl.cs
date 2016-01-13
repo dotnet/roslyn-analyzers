@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Roslyn.Diagnostics.Analyzers.ApiDesign
+namespace Roslyn.Diagnostics.Analyzers
 {
     public partial class DeclarePublicAPIAnalyzer : DiagnosticAnalyzer
     {

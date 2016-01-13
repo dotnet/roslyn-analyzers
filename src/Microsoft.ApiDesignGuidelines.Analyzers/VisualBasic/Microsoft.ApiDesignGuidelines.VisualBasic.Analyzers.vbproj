@@ -138,8 +138,6 @@
     <Compile Include="BasicImplementIEquatableWhenOverridingObjectEquals.Fixer.vb" />
     <Compile Include="BasicCancellationTokenParametersMustComeLast.vb" />
     <Compile Include="BasicCancellationTokenParametersMustComeLast.Fixer.vb" />
-    <Compile Include="BasicConstructorMakeNoninheritableBaseClassInheritable.vb" />
-    <Compile Include="BasicConstructorMakeNoninheritableBaseClassInheritable.Fixer.vb" />
     <Compile Include="BasicDoNotDeclareStaticMembersOnGenericTypes.vb" />
     <Compile Include="BasicDoNotDeclareStaticMembersOnGenericTypes.Fixer.vb" />
     <Compile Include="BasicCollectionsShouldImplementGenericInterface.Fixer.vb" />

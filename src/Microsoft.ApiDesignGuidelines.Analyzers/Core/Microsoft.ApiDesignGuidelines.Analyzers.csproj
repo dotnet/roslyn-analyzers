@@ -162,8 +162,6 @@
     <Compile Include="ImplementIEquatableWhenOverridingObjectEquals.Fixer.cs" />
     <Compile Include="CancellationTokenParametersMustComeLast.cs" />
     <Compile Include="CancellationTokenParametersMustComeLast.Fixer.cs" />
-    <Compile Include="ConstructorMakeNoninheritableBaseClassInheritable.cs" />
-    <Compile Include="ConstructorMakeNoninheritableBaseClassInheritable.Fixer.cs" />
     <Compile Include="DoNotDeclareStaticMembersOnGenericTypes.cs" />
     <Compile Include="DoNotDeclareStaticMembersOnGenericTypes.Fixer.cs" />
     <Compile Include="CollectionsShouldImplementGenericInterface.cs" />

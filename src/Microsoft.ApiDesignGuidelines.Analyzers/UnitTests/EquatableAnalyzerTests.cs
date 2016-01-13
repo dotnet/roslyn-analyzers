@@ -45,7 +45,7 @@ struct S
 ";
             string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "S");
             VerifyCSharp(code,
-                GetCSharpResultAt(4, 26, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage));
+                GetCSharpResultAt(2, 8, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage));
         }
 
         [Fact]
@@ -311,8 +311,8 @@ struct C : B
             string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "B");
             string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "C");
             VerifyCSharp(code,
-                GetCSharpResultAt( 6, 26, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage1),
-                GetCSharpResultAt(14, 26, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage2));
+                GetCSharpResultAt( 4, 8, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage1),
+                GetCSharpResultAt(12, 8, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage2));
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

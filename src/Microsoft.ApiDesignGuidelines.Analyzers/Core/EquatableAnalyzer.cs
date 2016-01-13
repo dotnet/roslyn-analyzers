@@ -69,12 +69,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
-            var methodSymbol = namedType
-                .GetMembers("Equals")
-                .OfType<IMethodSymbol>()
-                .Where(m => IsObjectEqualsOverride(m, objectType))
-                .FirstOrDefault();
-            var overridesObjectEquals = methodSymbol != null;
+            var overridesObjectEquals = namedType.DoesOverrideEquals();
 
             var constructedEquatable = equatableType.Construct(namedType);
             var implementation = namedType
@@ -85,46 +80,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             if (overridesObjectEquals && !implementsEquatable && namedType.TypeKind == TypeKind.Struct)
             {
-                context.ReportDiagnostic(Diagnostic.Create(s_implementIEquatableDescriptor, methodSymbol.Locations[0], namedType));
+                context.ReportDiagnostic(namedType.CreateDiagnostic(s_implementIEquatableDescriptor, namedType));
             }
 
             if (!overridesObjectEquals && implementsEquatable)
             {
-                context.ReportDiagnostic(Diagnostic.Create(s_overridesObjectEqualsDescriptor, namedType.Locations[0], namedType));
+                context.ReportDiagnostic(namedType.CreateDiagnostic(s_overridesObjectEqualsDescriptor, namedType));
             }
-        }
-
-        private bool IsObjectEqualsOverride(IMethodSymbol methodSymbol, INamedTypeSymbol objectType)
-        {
-            Debug.Assert(methodSymbol != null);
-            if (methodSymbol == null)
-            {
-                return false;
-            }
-
-            if (!methodSymbol.IsOverride)
-            {
-                return false;
-            }
-
-            if (methodSymbol.Parameters.Length != 1 ||
-                methodSymbol.Parameters[0]?.Type?.Equals(objectType) != true)
-            {
-                return false;
-            }
-
-            if (methodSymbol.ReturnType?.SpecialType != SpecialType.System_Boolean)
-            {
-                return false;
-            }
-
-            do
-            {
-                methodSymbol = methodSymbol.OverriddenMethod;
-            }
-            while (methodSymbol?.IsOverride == true);
-
-            return methodSymbol.ContainingType?.Equals(objectType) == true;
         }
     }
 }

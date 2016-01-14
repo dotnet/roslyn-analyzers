@@ -12,7 +12,9 @@ using Microsoft.CodeAnalysis.Editing;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
-
+    /// <summary>
+    /// CA2007: Do not directly await a Task in libraries. Append ConfigureAwait(false) to the task.
+    /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class DoNotDirectlyAwaitATaskFixer : CodeFixProvider
     {
@@ -41,7 +43,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             // This is especially important for VB, as the end-of-line may be in the trivia
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
-            var memberAccess = generator.MemberAccessExpression(expression, "ConfigureAwait");
+            var memberAccess = generator.MemberAccessExpression(expression.WithoutTrailingTrivia(), "ConfigureAwait");
             var falseLiteral = generator.FalseLiteralExpression();
             var invocation = generator.InvocationExpression(memberAccess, falseLiteral);
             invocation = invocation.WithLeadingTrivia(expression.GetLeadingTrivia()).WithTrailingTrivia(expression.GetTrailingTrivia());
@@ -61,6 +63,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 base(title, createChangedDocument)
             {
             }
+
+            public override string EquivalenceKey => Title;
         }
     }
 }

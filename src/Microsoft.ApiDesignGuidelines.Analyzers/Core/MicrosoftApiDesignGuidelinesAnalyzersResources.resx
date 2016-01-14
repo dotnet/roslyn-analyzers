@@ -962,7 +962,7 @@ Names of parameters and members are better used to communicate their meaning tha
     <value>While authoring a library where the consumer is not known and when there is no need for a SynchronizationContext,  consider using ConfigureAwait(false). Otherwise, the consumers of the library may face deadlocks by consuming the asynchronous methods in a blocking fashion.</value>
   </data>
   <data name="DoNotDirectlyAwaitATaskMessage" xml:space="preserve">
-    <value>o not directly await a Task without calling ConfigureAwait</value>
+    <value>Do not directly await a Task without calling ConfigureAwait</value>
   </data>
   <data name="DoNotDirectlyAwaitATaskTitle" xml:space="preserve">
     <value>Do not directly await a Task</value>

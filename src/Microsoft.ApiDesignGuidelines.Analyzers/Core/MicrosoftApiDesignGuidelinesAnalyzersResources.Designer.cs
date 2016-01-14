@@ -522,7 +522,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to o not directly await a Task without calling ConfigureAwait.
+        ///   Looks up a localized string similar to Do not directly await a Task without calling ConfigureAwait.
         /// </summary>
         internal static string DoNotDirectlyAwaitATaskMessage {
             get {

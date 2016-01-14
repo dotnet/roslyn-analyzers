@@ -136,8 +136,6 @@
     <Compile Include="CSharpPassSystemUriObjectsInsteadOfStrings.Fixer.cs" />
     <Compile Include="CSharpImplementIEquatableWhenOverridingObjectEquals.cs" />
     <Compile Include="CSharpImplementIEquatableWhenOverridingObjectEquals.Fixer.cs" />
-    <Compile Include="CSharpCancellationTokenParametersMustComeLast.cs" />
-    <Compile Include="CSharpCancellationTokenParametersMustComeLast.Fixer.cs" />
     <Compile Include="CSharpDoNotDeclareStaticMembersOnGenericTypes.cs" />
     <Compile Include="CSharpDoNotDeclareStaticMembersOnGenericTypes.Fixer.cs" />
     <Compile Include="CSharpCollectionsShouldImplementGenericInterface.Fixer.cs" />

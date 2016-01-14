@@ -438,11 +438,8 @@
   <data name="CancellationTokenParametersMustComeLastTitle" xml:space="preserve">
     <value>CancellationToken parameters must come last</value>
   </data>
-  <data name="CancellationTokenParametersMustComeLastDescription" xml:space="preserve">
-    <value>#N/A</value>
-  </data>
   <data name="CancellationTokenParametersMustComeLastMessage" xml:space="preserve">
-    <value>CancellationToken parameters must come last</value>
+    <value>Method '{0}' should take CancellationToken as the last parameter</value>
   </data>
   <data name="ConstructorMakeNoninheritableBaseClassInheritableTitle" xml:space="preserve">
     <value>Constructor make noninheritable base class inheritable</value>

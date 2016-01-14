@@ -24,13 +24,13 @@ namespace Analyzer.Utilities
             return symbol.GetMembers(op).OfType<IMethodSymbol>().Where(m => m.MethodKind == MethodKind.UserDefinedOperator).Any();
         }
 
-        public static bool DoesOverrideEquals(this INamedTypeSymbol symbol)
+        public static bool OverridesEquals(this INamedTypeSymbol symbol)
         {
             // Does the symbol override Object.Equals?
             return symbol.GetMembers(WellKnownMemberNames.ObjectEquals).OfType<IMethodSymbol>().Where(m => IsEqualsOverride(m)).Any();
         }
 
-        public static bool DoesOverrideGetHashCode(this INamedTypeSymbol symbol)
+        public static bool OverridesGetHashCode(this INamedTypeSymbol symbol)
         {
             // Does the symbol override Object.GetHashCode?
             return symbol.GetMembers(WellKnownMemberNames.ObjectGetHashCode).OfType<IMethodSymbol>().Where(m => IsGetHashCodeOverride(m)).Any();

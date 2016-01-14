@@ -69,7 +69,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
-            var overridesObjectEquals = namedType.DoesOverrideEquals();
+            var overridesObjectEquals = namedType.OverridesEquals();
 
             var constructedEquatable = equatableType.Construct(namedType);
             var implementation = namedType

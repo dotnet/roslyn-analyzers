@@ -38,7 +38,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             analysisContext.RegisterCompilationStartAction(context =>
             {
                 var taskTypes = GetTaskTypes(context.Compilation);
-                if (taskTypes.All(t => t == null))
+                if (taskTypes.Any(t => t == null))
                 {
                     return;
                 }

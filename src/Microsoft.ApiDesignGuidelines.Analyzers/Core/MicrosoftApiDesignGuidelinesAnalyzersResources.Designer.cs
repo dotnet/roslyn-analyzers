@@ -108,6 +108,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Append .ConfigureAwait(false).
+        /// </summary>
+        internal static string AppendConfigureAwaitFalse {
+            get {
+                return ResourceManager.GetString("AppendConfigureAwaitFalse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The strong name protects clients from unknowingly loading an assembly that has been tampered with. Assemblies without strong names should not be deployed outside very limited scenarios. If you share or distribute assemblies that are not correctly signed, the assembly can be tampered with, the common language runtime might not load the assembly, or the user might have to disable verification on his or her computer..
         /// </summary>
         internal static string AssembliesShouldHaveValidStrongNamesDescription {
@@ -500,6 +509,33 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         internal static string DoNotDecreaseInheritedMemberVisibilityTitle {
             get {
                 return ResourceManager.GetString("DoNotDecreaseInheritedMemberVisibilityTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to While authoring a library where the consumer is not known and when there is no need for a SynchronizationContext,  consider using ConfigureAwait(false). Otherwise, the consumers of the library may face deadlocks by consuming the asynchronous methods in a blocking fashion..
+        /// </summary>
+        internal static string DoNotDirectlyAwaitATaskDescription {
+            get {
+                return ResourceManager.GetString("DoNotDirectlyAwaitATaskDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to o not directly await a Task without calling ConfigureAwait.
+        /// </summary>
+        internal static string DoNotDirectlyAwaitATaskMessage {
+            get {
+                return ResourceManager.GetString("DoNotDirectlyAwaitATaskMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not directly await a Task.
+        /// </summary>
+        internal static string DoNotDirectlyAwaitATaskTitle {
+            get {
+                return ResourceManager.GetString("DoNotDirectlyAwaitATaskTitle", resourceCulture);
             }
         }
         

@@ -95,6 +95,8 @@
     <None Include="uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DoNotDirectlyAwaitATask.cs" />
+    <Compile Include="DoNotDirectlyAwaitATask.Fixer.cs" />
     <Compile Include="EnumWithFlagsAttribute.cs" />
     <Compile Include="EnumWithFlagsAttribute.Fixer.cs" />
     <Compile Include="EquatableAnalyzer.cs" />

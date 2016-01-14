@@ -6,28 +6,28 @@ using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 
-namespace System.Threading.Tasks.Analyzers.UnitTests
+namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 {
     public class DoNotDirectlyAwaitATaskFixerTests : CodeFixTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicDoNotDirectlyAwaitATaskAnalyzer();
+            return new DoNotDirectlyAwaitATaskAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpDoNotDirectlyAwaitATaskAnalyzer();
+            return new DoNotDirectlyAwaitATaskAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
-            return new BasicDoNotDirectlyAwaitATaskFixer();
+            return new DoNotDirectlyAwaitATaskFixer();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new CSharpDoNotDirectlyAwaitATaskFixer();
+            return new DoNotDirectlyAwaitATaskFixer();
         }
     }
 }

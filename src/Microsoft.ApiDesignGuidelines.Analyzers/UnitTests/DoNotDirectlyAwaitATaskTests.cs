@@ -6,18 +6,18 @@ using Microsoft.CodeAnalysis.UnitTests;
 using Roslyn.Test.Utilities;
 using Xunit;
 
-namespace System.Threading.Tasks.Analyzers.UnitTests
+namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 {
     public class DoNotDirectlyAwaitATaskTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicDoNotDirectlyAwaitATaskAnalyzer();
+            return new DoNotDirectlyAwaitATaskAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpDoNotDirectlyAwaitATaskAnalyzer();
+            return new DoNotDirectlyAwaitATaskAnalyzer();
         }
     }
 }

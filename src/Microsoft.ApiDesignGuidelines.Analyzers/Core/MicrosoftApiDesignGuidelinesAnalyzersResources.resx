@@ -958,4 +958,16 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="OverrideObjectEqualsTitle" xml:space="preserve">
     <value>Override Object.Equals(object) when implementing IEquatable&lt;T&gt;</value>
   </data>
+  <data name="DoNotDirectlyAwaitATaskDescription" xml:space="preserve">
+    <value>While authoring a library where the consumer is not known and when there is no need for a SynchronizationContext,  consider using ConfigureAwait(false). Otherwise, the consumers of the library may face deadlocks by consuming the asynchronous methods in a blocking fashion.</value>
+  </data>
+  <data name="DoNotDirectlyAwaitATaskMessage" xml:space="preserve">
+    <value>o not directly await a Task without calling ConfigureAwait</value>
+  </data>
+  <data name="DoNotDirectlyAwaitATaskTitle" xml:space="preserve">
+    <value>Do not directly await a Task</value>
+  </data>
+  <data name="AppendConfigureAwaitFalse" xml:space="preserve">
+    <value>Append .ConfigureAwait(false)</value>
+  </data>
 </root>

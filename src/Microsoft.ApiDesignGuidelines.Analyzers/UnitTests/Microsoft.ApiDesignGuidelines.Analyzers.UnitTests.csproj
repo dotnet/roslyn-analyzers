@@ -147,6 +147,7 @@
   <ItemGroup>
     <Compile Include="EnumWithFlagsAttributeTests.cs" />
     <Compile Include="EnumWithFlagsAttributeTests.Fixer.cs" />
+    <Compile Include="EquatableAnalyzerTests.cs" />
     <Compile Include="IdentifiersShouldNotContainTypeNamesTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AvoidAsyncVoidTests.cs" />
@@ -204,8 +205,6 @@
     <Compile Include="OverloadOperatorEqualsOnOverridingValueTypeEqualsTests.Fixer.cs" />
     <Compile Include="PassSystemUriObjectsInsteadOfStringsTests.cs" />
     <Compile Include="PassSystemUriObjectsInsteadOfStringsTests.Fixer.cs" />
-    <Compile Include="ImplementIEquatableWhenOverridingObjectEqualsTests.cs" />
-    <Compile Include="ImplementIEquatableWhenOverridingObjectEqualsTests.Fixer.cs" />
     <Compile Include="CancellationTokenParametersMustComeLastTests.cs" />
     <Compile Include="DoNotDeclareStaticMembersOnGenericTypesTests.cs" />
     <Compile Include="DoNotDeclareStaticMembersOnGenericTypesTests.Fixer.cs" />

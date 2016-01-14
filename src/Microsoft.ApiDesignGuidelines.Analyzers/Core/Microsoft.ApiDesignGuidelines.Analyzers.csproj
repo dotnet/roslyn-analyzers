@@ -97,6 +97,7 @@
   <ItemGroup>
     <Compile Include="EnumWithFlagsAttribute.cs" />
     <Compile Include="EnumWithFlagsAttribute.Fixer.cs" />
+    <Compile Include="EquatableAnalyzer.cs" />
     <Compile Include="Helpers\EnumHelpers.cs" />
     <Compile Include="IdentifiersShouldNotContainTypeNames.cs" />
     <Compile Include="MarkAssembliesWithAttributesDiagnosticAnalyzer.cs" />
@@ -158,8 +159,6 @@
     <Compile Include="OverloadOperatorEqualsOnOverridingValueTypeEquals.Fixer.cs" />
     <Compile Include="PassSystemUriObjectsInsteadOfStrings.cs" />
     <Compile Include="PassSystemUriObjectsInsteadOfStrings.Fixer.cs" />
-    <Compile Include="ImplementIEquatableWhenOverridingObjectEquals.cs" />
-    <Compile Include="ImplementIEquatableWhenOverridingObjectEquals.Fixer.cs" />
     <Compile Include="CancellationTokenParametersMustComeLast.cs" />
     <Compile Include="DoNotDeclareStaticMembersOnGenericTypes.cs" />
     <Compile Include="DoNotDeclareStaticMembersOnGenericTypes.Fixer.cs" />

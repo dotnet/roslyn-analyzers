@@ -47,7 +47,7 @@ Namespace Microsoft.ApiDesignGuidelines.Analyzers
                         Return
                     End If
 
-                    If type.DoesOverrideEquals() AndAlso Not type.DoesOverrideGetHashCode() Then
+                    If type.OverridesEquals() AndAlso Not type.OverridesGetHashCode() Then
                         symbolContext.ReportDiagnostic(type.CreateDiagnostic(Rule))
                     End If
                 End Sub,

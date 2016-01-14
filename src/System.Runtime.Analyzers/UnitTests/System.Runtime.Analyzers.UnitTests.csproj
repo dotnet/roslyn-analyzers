@@ -172,7 +172,6 @@
     <Compile Include="AttributeStringLiteralsShouldParseCorrectlyTests.cs" />
     <Compile Include="AttributeStringLiteralsShouldParseCorrectlyTests.Fixer.cs" />
     <Compile Include="AvoidZeroLengthArrayAllocationsTests.cs" />
-    <Compile Include="AvoidZeroLengthArrayAllocationsTests.Fixer.cs" />
     <Compile Include="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyTests.cs" />
     <Compile Include="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyTests.Fixer.cs" />
     <Compile Include="SpecifyCultureInfoTests.cs" />

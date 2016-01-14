@@ -13,5 +13,8 @@ Namespace System.Runtime.Analyzers
     Public NotInheritable Class BasicAvoidZeroLengthArrayAllocationsAnalyzer
         Inherits AvoidZeroLengthArrayAllocationsAnalyzer
 
+        Protected Overrides Function IsAttributeSyntax(node As SyntaxNode) As Boolean
+            Return TypeOf node Is AttributeSyntax
+        End Function
     End Class
 End Namespace

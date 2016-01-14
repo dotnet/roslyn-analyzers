@@ -43,7 +43,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private static void AnalyzeSymbol(INamedTypeSymbol namedTypeSymbol, Action<Diagnostic> addDiagnostic)
         {
-            if (namedTypeSymbol.IsValueType && namedTypeSymbol.DoesOverrideEquals() && !IsEqualityOperatorImplemented(namedTypeSymbol))
+            if (namedTypeSymbol.IsValueType && namedTypeSymbol.OverridesEquals() && !IsEqualityOperatorImplemented(namedTypeSymbol))
             {
                 addDiagnostic(namedTypeSymbol.CreateDiagnostic(Rule));
             }

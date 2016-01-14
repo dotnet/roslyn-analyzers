@@ -56,7 +56,7 @@ Namespace Microsoft.ApiDesignGuidelines.Analyzers
                     End If
 
                     ' ...search for a corresponding Equals override.
-                    If type.DoesOverrideEquals() Then
+                    If type.OverridesEquals() Then
                         Return
                     End If
 

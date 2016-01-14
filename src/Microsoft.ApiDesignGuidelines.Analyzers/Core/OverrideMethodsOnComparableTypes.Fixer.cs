@@ -54,7 +54,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
 
-            if (!typeSymbol.DoesOverrideEquals())
+            if (!typeSymbol.OverridesEquals())
             {
                 var equalsMethod = generator.MethodDeclaration(WellKnownMemberNames.ObjectEquals,
                                         new[] { generator.ParameterDeclaration("obj", generator.TypeExpression(SpecialType.System_Object)) },
@@ -65,7 +65,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 editor.AddMember(declaration, equalsMethod);
             }
 
-            if (!typeSymbol.DoesOverrideGetHashCode())
+            if (!typeSymbol.OverridesGetHashCode())
             {
                 var getHashCodeMethod = generator.MethodDeclaration(WellKnownMemberNames.ObjectGetHashCode,
                                             returnType: generator.TypeExpression(SpecialType.System_Int32),

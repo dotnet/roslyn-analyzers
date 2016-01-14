@@ -427,10 +427,7 @@
     <value>Pass system uri objects instead of strings</value>
   </data>
   <data name="ImplementIEquatableWhenOverridingObjectEqualsTitle" xml:space="preserve">
-    <value>Implement IEquatable when overriding Object.Equals</value>
-  </data>
-  <data name="ImplementIEquatableWhenOverridingObjectEqualsDescription" xml:space="preserve">
-    <value>#N/A</value>
+    <value>Type {0} should implement IEquatable&lt;T&gt; because it overrides Equals</value>
   </data>
   <data name="ImplementIEquatableWhenOverridingObjectEqualsMessage" xml:space="preserve">
     <value>Implement IEquatable when overriding Object.Equals</value>
@@ -954,5 +951,11 @@ Names of parameters and members are better used to communicate their meaning tha
   </data>
   <data name="MakeClassStatic" xml:space="preserve">
     <value>Make Class Static</value>
+  </data>
+  <data name="OverrideObjectEqualsMessage" xml:space="preserve">
+    <value>Type {0} should override Equals because it implements IEquatable&lt;T&gt;</value>
+  </data>
+  <data name="OverrideObjectEqualsTitle" xml:space="preserve">
+    <value>Override Object.Equals(object) when implementing IEquatable&lt;T&gt;</value>
   </data>
 </root>

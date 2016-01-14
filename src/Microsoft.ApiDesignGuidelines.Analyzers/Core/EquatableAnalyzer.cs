@@ -3,35 +3,38 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Roslyn.Diagnostics.Analyzers
+namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class EquatableAnalyzer : DiagnosticAnalyzer
     {
         private const string IEquatableMetadataName = "System.IEquatable`1";
+        internal const string ImplementIEquatableRuleId = "CA1066";
+        internal const string OverrideObjectEqualsRuleId = "CA1067";
 
-        private static readonly LocalizableString s_localizableTitleImplementIEquatable = new LocalizableResourceString(nameof(RoslynDiagnosticsResources.ImplementIEquatableDescription), RoslynDiagnosticsResources.ResourceManager, typeof(RoslynDiagnosticsResources));
-        private static readonly LocalizableString s_localizableMessageImplementIEquatable = new LocalizableResourceString(nameof(RoslynDiagnosticsResources.ImplementIEquatableMessage), RoslynDiagnosticsResources.ResourceManager, typeof(RoslynDiagnosticsResources));
+        private static readonly LocalizableString s_localizableTitleImplementIEquatable = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageImplementIEquatable = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
         private static readonly DiagnosticDescriptor s_implementIEquatableDescriptor = new DiagnosticDescriptor(
-            RoslynDiagnosticIds.ImplementIEquatableRuleId,
+            ImplementIEquatableRuleId,
             s_localizableTitleImplementIEquatable,
             s_localizableMessageImplementIEquatable,
-            "Performance",
+            DiagnosticCategory.Design,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true);
 
-        private static readonly LocalizableString s_localizableTitleOverridesObjectEquals = new LocalizableResourceString(nameof(RoslynDiagnosticsResources.OverrideObjectEqualsDescription), RoslynDiagnosticsResources.ResourceManager, typeof(RoslynDiagnosticsResources));
-        private static readonly LocalizableString s_localizableMessageOverridesObjectEquals = new LocalizableResourceString(nameof(RoslynDiagnosticsResources.OverrideObjectEqualsMessage), RoslynDiagnosticsResources.ResourceManager, typeof(RoslynDiagnosticsResources));
+        private static readonly LocalizableString s_localizableTitleOverridesObjectEquals = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageOverridesObjectEquals = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
         private static readonly DiagnosticDescriptor s_overridesObjectEqualsDescriptor = new DiagnosticDescriptor(
-            RoslynDiagnosticIds.OverrideObjectEqualsRuleId,
+            OverrideObjectEqualsRuleId,
             s_localizableTitleOverridesObjectEquals,
             s_localizableMessageOverridesObjectEquals,
-            "Reliability",
+            DiagnosticCategory.Design,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true);
 
@@ -66,12 +69,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 return;
             }
 
-            var methodSymbol = namedType
-                .GetMembers("Equals")
-                .OfType<IMethodSymbol>()
-                .Where(m => IsObjectEqualsOverride(m, objectType))
-                .FirstOrDefault();
-            var overridesObjectEquals = methodSymbol != null;
+            var overridesObjectEquals = namedType.OverridesEquals();
 
             var constructedEquatable = equatableType.Construct(namedType);
             var implementation = namedType
@@ -82,46 +80,13 @@ namespace Roslyn.Diagnostics.Analyzers
 
             if (overridesObjectEquals && !implementsEquatable && namedType.TypeKind == TypeKind.Struct)
             {
-                context.ReportDiagnostic(Diagnostic.Create(s_implementIEquatableDescriptor, methodSymbol.Locations[0], namedType));
+                context.ReportDiagnostic(namedType.CreateDiagnostic(s_implementIEquatableDescriptor, namedType));
             }
 
             if (!overridesObjectEquals && implementsEquatable)
             {
-                context.ReportDiagnostic(Diagnostic.Create(s_overridesObjectEqualsDescriptor, namedType.Locations[0], namedType));
+                context.ReportDiagnostic(namedType.CreateDiagnostic(s_overridesObjectEqualsDescriptor, namedType));
             }
-        }
-
-        private bool IsObjectEqualsOverride(IMethodSymbol methodSymbol, INamedTypeSymbol objectType)
-        {
-            Debug.Assert(methodSymbol != null);
-            if (methodSymbol == null)
-            {
-                return false;
-            }
-
-            if (!methodSymbol.IsOverride)
-            {
-                return false;
-            }
-
-            if (methodSymbol.Parameters.Length != 1 ||
-                methodSymbol.Parameters[0]?.Type?.Equals(objectType) != true)
-            {
-                return false;
-            }
-
-            if (methodSymbol.ReturnType?.SpecialType != SpecialType.System_Boolean)
-            {
-                return false;
-            }
-
-            do
-            {
-                methodSymbol = methodSymbol.OverriddenMethod;
-            }
-            while (methodSymbol?.IsOverride == true);
-
-            return methodSymbol.ContainingType?.Equals(objectType) == true;
         }
     }
 }

@@ -66,7 +66,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             if (namedTypeSymbol.AllInterfaces.Any(t => t.Equals(comparableType) ||
                                                       (t.ConstructedFrom?.Equals(genericComparableType) ?? false)))
             {
-                if (!(namedTypeSymbol.DoesOverrideEquals() && IsEqualityOperatorImplemented(namedTypeSymbol)))
+                if (!(namedTypeSymbol.OverridesEquals() && IsEqualityOperatorImplemented(namedTypeSymbol)))
                 {
                     addDiagnostic(namedTypeSymbol.CreateDiagnostic(Rule));
                 }

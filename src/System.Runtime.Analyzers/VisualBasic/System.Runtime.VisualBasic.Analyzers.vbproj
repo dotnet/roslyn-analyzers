@@ -122,7 +122,6 @@
     <Compile Include="BasicAttributeStringLiteralsShouldParseCorrectly.vb" />
     <Compile Include="BasicAttributeStringLiteralsShouldParseCorrectly.Fixer.vb" />
     <Compile Include="BasicAvoidZeroLengthArrayAllocations.vb" />
-    <Compile Include="BasicAvoidZeroLengthArrayAllocations.Fixer.vb" />
     <Compile Include="BasicDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.vb" />
     <Compile Include="BasicDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.Fixer.vb" />
     <Compile Include="BasicSpecifyCultureInfo.vb" />

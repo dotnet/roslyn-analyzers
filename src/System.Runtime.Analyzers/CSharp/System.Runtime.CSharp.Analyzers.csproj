@@ -124,7 +124,6 @@
     <Compile Include="CSharpAttributeStringLiteralsShouldParseCorrectly.cs" />
     <Compile Include="CSharpAttributeStringLiteralsShouldParseCorrectly.Fixer.cs" />
     <Compile Include="CSharpAvoidZeroLengthArrayAllocations.cs" />
-    <Compile Include="CSharpAvoidZeroLengthArrayAllocations.Fixer.cs" />
     <Compile Include="CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.cs" />
     <Compile Include="CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.Fixer.cs" />
     <Compile Include="CSharpSpecifyCultureInfo.cs" />

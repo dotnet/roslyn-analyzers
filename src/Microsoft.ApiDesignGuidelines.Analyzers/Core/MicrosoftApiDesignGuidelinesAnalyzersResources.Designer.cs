@@ -234,16 +234,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #N/A.
-        /// </summary>
-        internal static string CancellationTokenParametersMustComeLastDescription {
-            get {
-                return ResourceManager.GetString("CancellationTokenParametersMustComeLastDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to CancellationToken parameters must come last.
+        ///   Looks up a localized string similar to Method &apos;{0}&apos; should take CancellationToken as the last parameter.
         /// </summary>
         internal static string CancellationTokenParametersMustComeLastMessage {
             get {

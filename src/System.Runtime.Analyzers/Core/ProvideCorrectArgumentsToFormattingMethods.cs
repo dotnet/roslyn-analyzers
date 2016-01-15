@@ -86,7 +86,7 @@ namespace System.Runtime.Analyzers
 
                     // params case
                     var paramsArgument = invocation.ArgumentsInParameterOrder[info.FormatStringIndex + 1];
-                    if (paramsArgument.Kind != ArgumentKind.ParamArray)
+                    if (paramsArgument.ArgumentKind != ArgumentKind.ParamArray)
                     {
                         // wrong format
                         return;
@@ -102,15 +102,15 @@ namespace System.Runtime.Analyzers
                     }
 
                     // compiler generating object array for params case
-                    var dimensionInitializer = arrayCreation.ElementValues as IDimensionArrayInitializer;
-                    if (dimensionInitializer == null)
+                    var intializer = arrayCreation.Initializer;
+                    if (intializer == null)
                     {
                         // unsupported format
                         return;
                     }
 
                     // REVIEW: "ElementValues" is a bit confusing where I need to double dot those to get number of elements
-                    var actualArgumentCount = dimensionInitializer.ElementValues.Length;
+                    var actualArgumentCount = intializer.ElementValues.Length;
                     if (actualArgumentCount != expectedStringFormatArgumentCount)
                     {
                         operationContext.ReportDiagnostic(operationContext.Operation.Syntax.CreateDiagnostic(Rule));

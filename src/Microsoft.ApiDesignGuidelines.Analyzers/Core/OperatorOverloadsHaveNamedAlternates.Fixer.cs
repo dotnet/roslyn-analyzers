@@ -28,33 +28,31 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
-        {
-            return Task.Run(() => context.RegisterCodeFix(new MyCodeAction(ct => Fix(context, ct)), context.Diagnostics.First()));
-        }
-
-        private static async Task<Document> Fix(CodeFixContext context, CancellationToken cancellationToken)
+        public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            var root = await context.Document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var node = root.FindNode(context.Span);
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var generator = context.Document.Project?.LanguageServices?.GetService<SyntaxGenerator>();
-            if (generator == null)
+            if (semanticModel != null && generator != null)
             {
-                return context.Document;
+                context.RegisterCodeFix(new MyCodeAction(ct => Fix(context, root, generator, semanticModel, ct)), context.Diagnostics.First());
             }
+        }
 
+        private static async Task<Document> Fix(CodeFixContext context, SyntaxNode root, SyntaxGenerator generator, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            var node = root.FindNode(context.Span);
             var diagnostic = context.Diagnostics.First();
             switch (diagnostic.Properties[OperatorOverloadsHaveNamedAlternatesAnalyzer.DiagnosticKindText])
             {
                 case OperatorOverloadsHaveNamedAlternatesAnalyzer.AddAlternateText:
                     var methodDeclaration = generator.GetDeclaration(node, DeclarationKind.Operator) ?? generator.GetDeclaration(node, DeclarationKind.ConversionOperator);
-                    var operatorOverloadSymbol = (IMethodSymbol)semanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken);
-                    var typeSymbol = (ITypeSymbol)operatorOverloadSymbol.ContainingSymbol;
+                    var operatorOverloadSymbol = (IMethodSymbol)semanticModel.GetDeclaredSymbol(methodDeclaration, cancellationToken);
+                    var typeSymbol = operatorOverloadSymbol.ContainingType;
 
                     // For C# the following `typeDeclarationSyntax` and `typeDeclaration` nodes are identical, but for VB they're different so in
                     // an effort to keep this as language-agnostic as possible, the heavy-handed approach is used.
-                    var typeDeclarationSyntax = typeSymbol.DeclaringSyntaxReferences.First().GetSyntax(context.CancellationToken);
+                    var typeDeclarationSyntax = typeSymbol.DeclaringSyntaxReferences.First().GetSyntax(cancellationToken);
                     var typeDeclaration = generator.GetDeclaration(typeDeclarationSyntax, DeclarationKind.Class);
 
                     SyntaxNode addedMember;
@@ -87,12 +85,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return context.Document.WithSyntaxRoot(root.ReplaceNode(typeDeclaration, newTypeDeclaration));
                 case OperatorOverloadsHaveNamedAlternatesAnalyzer.FixVisibilityText:
                     var badVisibilityNode = generator.GetDeclaration(node, DeclarationKind.Method) ?? generator.GetDeclaration(node, DeclarationKind.Property);
-                    var badVisibilitySymbol = semanticModel.GetDeclaredSymbol(badVisibilityNode, context.CancellationToken);
+                    var badVisibilitySymbol = semanticModel.GetDeclaredSymbol(badVisibilityNode, cancellationToken);
                     var symbolEditor = SymbolEditor.Create(context.Document);
                     var newSymbol = await symbolEditor.EditOneDeclarationAsync(badVisibilitySymbol,
-                        (documentEditor, syntaxNode, ct) => Task.Run(() => documentEditor.SetAccessibility(badVisibilityNode, Accessibility.Public))).ConfigureAwait(false);
+                        (documentEditor, syntaxNode) => documentEditor.SetAccessibility(badVisibilityNode, Accessibility.Public));
                     var newDocument = symbolEditor.GetChangedDocuments().Single();
-                    var newRoot = await newDocument.GetSyntaxRootAsync(context.CancellationToken);
+                    var newRoot = await newDocument.GetSyntaxRootAsync(cancellationToken);
                     return context.Document.WithSyntaxRoot(newRoot);
                 default:
                     return context.Document;

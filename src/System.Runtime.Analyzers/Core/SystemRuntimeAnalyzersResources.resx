@@ -303,11 +303,8 @@
   <data name="AvoidZeroLengthArrayAllocationsTitle" xml:space="preserve">
     <value>Avoid zero-length array allocations.</value>
   </data>
-  <data name="AvoidZeroLengthArrayAllocationsDescription" xml:space="preserve">
-    <value>#N/A</value>
-  </data>
   <data name="AvoidZeroLengthArrayAllocationsMessage" xml:space="preserve">
-    <value>Avoid zero-length array allocations.</value>
+    <value>Avoid unnecessary zero-length array allocations.  Use Array.Empty&lt;T&gt;() instead.</value>
   </data>
   <data name="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyTitle" xml:space="preserve">
     <value>Do not use Enumerable methods on indexable collections. Instead use the collection directly</value>
@@ -398,5 +395,8 @@
   </data>
   <data name="InstantiateArgumentExceptionsCorrectlyMessageIncorrectParameterName" xml:space="preserve">
     <value>Method {0} passes '{1}' as the {2} argument to a {3} constructor. Replace this argument with one of the method's parameter names. Note that the provided parameter name should have the exact casing as declared on the method.</value>
+  </data>
+  <data name="UseArrayEmpty" xml:space="preserve">
+    <value>Use Array.Empty</value>
   </data>
 </root>

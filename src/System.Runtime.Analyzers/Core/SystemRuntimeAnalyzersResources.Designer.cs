@@ -125,16 +125,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #N/A.
-        /// </summary>
-        internal static string AvoidZeroLengthArrayAllocationsDescription {
-            get {
-                return ResourceManager.GetString("AvoidZeroLengthArrayAllocationsDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Avoid zero-length array allocations..
+        ///   Looks up a localized string similar to Avoid unnecessary zero-length array allocations.  Use Array.Empty&lt;T&gt;() instead..
         /// </summary>
         internal static string AvoidZeroLengthArrayAllocationsMessage {
             get {
@@ -871,6 +862,15 @@ namespace System.Runtime.Analyzers {
         internal static string TestForNaNCorrectlyTitle {
             get {
                 return ResourceManager.GetString("TestForNaNCorrectlyTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use Array.Empty.
+        /// </summary>
+        internal static string UseArrayEmpty {
+            get {
+                return ResourceManager.GetString("UseArrayEmpty", resourceCulture);
             }
         }
         

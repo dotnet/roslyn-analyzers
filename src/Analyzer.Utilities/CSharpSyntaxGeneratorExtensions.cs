@@ -1,22 +1,23 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
-
-using System.Collections.Generic;
-using System.Composition;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Editing;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Analyzer.Utilities
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
-    public class CSharpOverrideMethodsOnComparableTypesFixer : OverrideMethodsOnComparableTypesFixer
+    internal static class CSharpSyntaxGeneratorExtensions
     {
-        protected override SyntaxNode GenerateOperatorDeclaration(SyntaxNode returnType, string operatorName, IEnumerable<SyntaxNode> parameters, SyntaxNode notImplementedStatement)
+        internal static SyntaxNode CSharpOperatorDeclaration(
+            this SyntaxGenerator generator,
+            SyntaxNode returnType,
+            string operatorName,
+            SyntaxNode[] parameters,
+            SyntaxNode statement)
         {
             Debug.Assert(returnType is TypeSyntax);
+            Debug.Assert(statement is StatementSyntax);
 
             SyntaxToken operatorToken;
             switch (operatorName)
@@ -44,7 +45,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 SyntaxFactory.Token(SyntaxKind.OperatorKeyword),
                 operatorToken,
                 SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList(parameters.Cast<ParameterSyntax>())),
-                SyntaxFactory.Block((StatementSyntax)notImplementedStatement),
+                SyntaxFactory.Block((StatementSyntax)statement),
                 default(SyntaxToken));
         }
     }

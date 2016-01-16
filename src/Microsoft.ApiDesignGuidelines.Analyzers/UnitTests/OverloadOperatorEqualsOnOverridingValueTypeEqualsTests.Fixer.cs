@@ -11,12 +11,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     {
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
-            return new BasicOverloadOperatorEqualsOnOverridingValueTypeEqualsFixer();
+            return new OverloadOperatorEqualsOnOverridingValueTypeEqualsFixer();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new CSharpOverloadOperatorEqualsOnOverridingValueTypeEqualsFixer();
+            return new OverloadOperatorEqualsOnOverridingValueTypeEqualsFixer();
         }
 
         [Fact]

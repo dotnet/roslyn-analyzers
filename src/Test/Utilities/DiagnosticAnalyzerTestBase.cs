@@ -441,7 +441,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
         protected static Diagnostic[] GetSortedDiagnostics(IEnumerable<Diagnostic> diagnostics)
         {
-            return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
+            return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ThenBy(d => d.GetMessage()).ToArray();
         }
     }
 }

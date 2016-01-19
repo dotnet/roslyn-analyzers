@@ -37,7 +37,7 @@ Microsoft.CodeAnalysis.Analyzers
 
 Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
 
-[More info](src/CodeAnalysis/Microsoft.CodeAnalysis.Analyzers.md)
+[More info](src/Microsoft.CodeAnalysis.Analyzers/Microsoft.CodeAnalysis.Analyzers.md)
 
 
 Roslyn.Diagnostics.Analyzers

@@ -18,10 +18,45 @@ namespace Analyzer.Utilities
             }
         }
 
-        public static bool IsOperatorImplemented(this INamedTypeSymbol symbol, string op)
+        public static bool ImplementsOperator(this INamedTypeSymbol symbol, string op)
         {
             // TODO: should this filter on the right-hand-side operator type?
             return symbol.GetMembers(op).OfType<IMethodSymbol>().Where(m => m.MethodKind == MethodKind.UserDefinedOperator).Any();
+        }
+
+        /// <summary>
+        /// Returns a value indicating whether the specified type implements both the
+        /// equality and inequality operators.
+        /// </summary>
+        /// <param name="symbol">
+        /// A symbols specifying the type to examine.
+        /// </param>
+        /// <returns>
+        /// true if the type specified by <paramref name="symbol"/> implements both the
+        /// equality and inequality operators, otherwise false.
+        /// </returns>
+        public static bool ImplementsEqualityOperators(this INamedTypeSymbol symbol)
+        {
+            return symbol.ImplementsOperator(WellKnownMemberNames.EqualityOperatorName) &&
+                   symbol.ImplementsOperator(WellKnownMemberNames.InequalityOperatorName);
+        }
+
+        /// <summary>
+        /// Returns a value indicating whether the specified type implements the comparison
+        /// operators.
+        /// </summary>
+        /// <param name="symbol">
+        /// A symbols specifying the type to examine.
+        /// </param>
+        /// <returns>
+        /// true if the type specified by <paramref name="symbol"/> implements the comparison
+        /// operators (which includes the equality and inequality operators), otherwise false.
+        /// </returns>
+        public static bool ImplementsComparisonOperators(this INamedTypeSymbol symbol)
+        {
+            return symbol.ImplementsEqualityOperators() &&
+                   symbol.ImplementsOperator(WellKnownMemberNames.LessThanOperatorName) &&
+                   symbol.ImplementsOperator(WellKnownMemberNames.GreaterThanOperatorName);
         }
 
         public static bool OverridesEquals(this INamedTypeSymbol symbol)

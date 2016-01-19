@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Editing;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
-    public abstract class OverrideMethodsOnComparableTypesFixer : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
+    public sealed class OverrideMethodsOnComparableTypesFixer : CodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(OverrideMethodsOnComparableTypesAnalyzer.RuleId);
 
@@ -47,8 +47,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                     diagnostic);
         }
 
-        protected abstract SyntaxNode GenerateOperatorDeclaration(SyntaxNode returnType, string operatorName, IEnumerable<SyntaxNode> parameters, SyntaxNode notImplementedStatement);
-
         private async Task<Document> ImplementComparable(Document document, SyntaxNode declaration, INamedTypeSymbol typeSymbol, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
@@ -56,74 +54,43 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             if (!typeSymbol.OverridesEquals())
             {
-                var equalsMethod = generator.MethodDeclaration(WellKnownMemberNames.ObjectEquals,
-                                        new[] { generator.ParameterDeclaration("obj", generator.TypeExpression(SpecialType.System_Object)) },
-                                        returnType: generator.TypeExpression(SpecialType.System_Boolean),
-                                        accessibility: Accessibility.Public,
-                                        modifiers: DeclarationModifiers.Override,
-                                        statements: new[] { generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException"))) });
+                var equalsMethod = generator.EqualsOverrideDeclaration();
+
                 editor.AddMember(declaration, equalsMethod);
             }
 
             if (!typeSymbol.OverridesGetHashCode())
             {
-                var getHashCodeMethod = generator.MethodDeclaration(WellKnownMemberNames.ObjectGetHashCode,
-                                            returnType: generator.TypeExpression(SpecialType.System_Int32),
-                                            accessibility: Accessibility.Public,
-                                            modifiers: DeclarationModifiers.Override,
-                                            statements: new[] { generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException"))) });
+                var getHashCodeMethod = generator.GetHashCodeOverrideDeclaration();
+
                 editor.AddMember(declaration, getHashCodeMethod);
             }
 
-            if (!typeSymbol.IsOperatorImplemented(WellKnownMemberNames.EqualityOperatorName))
+            if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.EqualityOperatorName))
             {
-                var equalityOperator = GenerateOperatorDeclaration(generator.TypeExpression(SpecialType.System_Boolean),
-                                                                   WellKnownMemberNames.EqualityOperatorName,
-                                                                   new[]
-                                                                   {
-                                                                       generator.ParameterDeclaration("left", generator.TypeExpression(typeSymbol)),
-                                                                       generator.ParameterDeclaration("right", generator.TypeExpression(typeSymbol)),
-                                                                   },
-                                                                   generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException"))));
+                var equalityOperator = generator.ComparisonOperatorDeclaration(OperatorKind.Equality, typeSymbol);
+
                 editor.AddMember(declaration, equalityOperator);
             }
 
-            if (!typeSymbol.IsOperatorImplemented(WellKnownMemberNames.InequalityOperatorName))
+            if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.InequalityOperatorName))
             {
-                var inequalityOperator = GenerateOperatorDeclaration(generator.TypeExpression(SpecialType.System_Boolean),
-                                                                   WellKnownMemberNames.InequalityOperatorName,
-                                                                   new[]
-                                                                   {
-                                                                       generator.ParameterDeclaration("left", generator.TypeExpression(typeSymbol)),
-                                                                       generator.ParameterDeclaration("right", generator.TypeExpression(typeSymbol)),
-                                                                   },
-                                                                   generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException"))));
+                var inequalityOperator = generator.ComparisonOperatorDeclaration(OperatorKind.Inequality, typeSymbol);
+
                 editor.AddMember(declaration, inequalityOperator);
             }
 
-            if (!typeSymbol.IsOperatorImplemented(WellKnownMemberNames.LessThanOperatorName))
+            if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.LessThanOperatorName))
             {
-                var lessThanOperator = GenerateOperatorDeclaration(generator.TypeExpression(SpecialType.System_Boolean),
-                                                                   WellKnownMemberNames.LessThanOperatorName,
-                                                                   new[]
-                                                                   {
-                                                                       generator.ParameterDeclaration("left", generator.TypeExpression(typeSymbol)),
-                                                                       generator.ParameterDeclaration("right", generator.TypeExpression(typeSymbol)),
-                                                                   },
-                                                                   generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException"))));
+                var lessThanOperator = generator.ComparisonOperatorDeclaration(OperatorKind.LessThan, typeSymbol);
+
                 editor.AddMember(declaration, lessThanOperator);
             }
 
-            if (!typeSymbol.IsOperatorImplemented(WellKnownMemberNames.GreaterThanOperatorName))
+            if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.GreaterThanOperatorName))
             {
-                var greaterThanOperator = GenerateOperatorDeclaration(generator.TypeExpression(SpecialType.System_Boolean),
-                                                                   WellKnownMemberNames.GreaterThanOperatorName,
-                                                                   new[]
-                                                                   {
-                                                                       generator.ParameterDeclaration("left", generator.TypeExpression(typeSymbol)),
-                                                                       generator.ParameterDeclaration("right", generator.TypeExpression(typeSymbol)),
-                                                                   },
-                                                                   generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException"))));
+                var greaterThanOperator = generator.ComparisonOperatorDeclaration(OperatorKind.GreaterThan, typeSymbol);
+
                 editor.AddMember(declaration, greaterThanOperator);
             }
 

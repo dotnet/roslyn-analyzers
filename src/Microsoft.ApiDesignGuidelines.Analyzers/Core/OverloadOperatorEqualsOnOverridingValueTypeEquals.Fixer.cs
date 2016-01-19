@@ -1,8 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,12 +16,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// CA2231: Overload operator equals on overriding ValueType.Equals
     /// </summary>
-    public abstract class OverloadOperatorEqualsOnOverridingValueTypeEqualsFixer : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
+    public sealed class OverloadOperatorEqualsOnOverridingValueTypeEqualsFixer : CodeFixProvider
     {
-        protected const string LeftName = "left";
-        protected const string RightName = "right";
-        protected const string NotImplementedExceptionName = "System.NotImplementedException";
-
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(OverloadOperatorEqualsOnOverridingValueTypeEqualsAnalyzer.RuleId);
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -51,36 +48,22 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                     diagnostic);
         }
 
-        protected abstract SyntaxNode GenerateOperatorDeclaration(SyntaxNode returnType, string operatorName, IEnumerable<SyntaxNode> parameters, SyntaxNode notImplementedStatement);
-
         private async Task<Document> ImplementOperatorEquals(Document document, SyntaxNode declaration, INamedTypeSymbol typeSymbol, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
 
-            if (!typeSymbol.IsOperatorImplemented(WellKnownMemberNames.EqualityOperatorName))
+            if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.EqualityOperatorName))
             {
-                var equalityOperator = GenerateOperatorDeclaration(generator.TypeExpression(SpecialType.System_Boolean),
-                                                                   WellKnownMemberNames.EqualityOperatorName,
-                                                                   new[]
-                                                                   {
-                                                                       generator.ParameterDeclaration("left", generator.TypeExpression(typeSymbol)),
-                                                                       generator.ParameterDeclaration("right", generator.TypeExpression(typeSymbol)),
-                                                                   },
-                                                                   generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException"))));
+                var equalityOperator = generator.ComparisonOperatorDeclaration(OperatorKind.Equality, typeSymbol);
+
                 editor.AddMember(declaration, equalityOperator);
             }
 
-            if (!typeSymbol.IsOperatorImplemented(WellKnownMemberNames.InequalityOperatorName))
+            if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.InequalityOperatorName))
             {
-                var inequalityOperator = GenerateOperatorDeclaration(generator.TypeExpression(SpecialType.System_Boolean),
-                                                                   WellKnownMemberNames.InequalityOperatorName,
-                                                                   new[]
-                                                                   {
-                                                                       generator.ParameterDeclaration("left", generator.TypeExpression(typeSymbol)),
-                                                                       generator.ParameterDeclaration("right", generator.TypeExpression(typeSymbol)),
-                                                                   },
-                                                                   generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException"))));
+                var inequalityOperator = generator.ComparisonOperatorDeclaration(OperatorKind.Inequality, typeSymbol);
+
                 editor.AddMember(declaration, inequalityOperator);
             }
 

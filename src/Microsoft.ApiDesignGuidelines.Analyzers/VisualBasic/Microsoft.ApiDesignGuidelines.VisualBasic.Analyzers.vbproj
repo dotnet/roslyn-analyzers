@@ -122,7 +122,6 @@
     <Compile Include="BasicMarkAssembliesWithAssemblyVersion.Fixer.vb" />
     <Compile Include="BasicDefineAccessorsForAttributeArguments.vb" />
     <Compile Include="BasicUsePropertiesWhereAppropriate.Fixer.vb" />
-    <Compile Include="BasicOverrideMethodsOnComparableTypes.Fixer.vb" />
     <Compile Include="BasicMovePInvokesToNativeMethodsClass.Fixer.vb" />
     <Compile Include="BasicIdentifiersShouldHaveCorrectPrefix.Fixer.vb" />
     <Compile Include="BasicNonConstantFieldsShouldNotBeVisible.vb" />
@@ -131,7 +130,6 @@
     <Compile Include="BasicDoNotDecreaseInheritedMemberVisibility.Fixer.vb" />
     <Compile Include="BasicOperatorsShouldHaveSymmetricalOverloads.vb" />
     <Compile Include="BasicOperatorsShouldHaveSymmetricalOverloads.Fixer.vb" />
-    <Compile Include="BasicOverloadOperatorEqualsOnOverridingValueTypeEquals.Fixer.vb" />
     <Compile Include="BasicPassSystemUriObjectsInsteadOfStrings.vb" />
     <Compile Include="BasicPassSystemUriObjectsInsteadOfStrings.Fixer.vb" />
     <Compile Include="BasicDoNotDeclareStaticMembersOnGenericTypes.vb" />
@@ -184,7 +182,6 @@
     <Compile Include="BasicParameterNamesShouldMatchBaseDeclaration.Fixer.vb" />
     <Compile Include="BasicUsePreferredTerms.vb" />
     <Compile Include="BasicUsePreferredTerms.Fixer.vb" />
-    <Compile Include="BasicOverrideEqualsAndOperatorEqualsOnValueTypes.vb" />
     <Compile Include="BasicOverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.vb" />
     <Compile Include="BasicPropertiesShouldNotReturnArrays.vb" />
     <Compile Include="BasicPropertiesShouldNotReturnArrays.Fixer.vb" />

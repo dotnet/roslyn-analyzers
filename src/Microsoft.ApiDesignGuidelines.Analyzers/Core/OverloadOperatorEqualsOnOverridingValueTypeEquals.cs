@@ -43,16 +43,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private static void AnalyzeSymbol(INamedTypeSymbol namedTypeSymbol, Action<Diagnostic> addDiagnostic)
         {
-            if (namedTypeSymbol.IsValueType && namedTypeSymbol.OverridesEquals() && !IsEqualityOperatorImplemented(namedTypeSymbol))
+            if (namedTypeSymbol.IsValueType && namedTypeSymbol.OverridesEquals() && !namedTypeSymbol.ImplementsEqualityOperators())
             {
                 addDiagnostic(namedTypeSymbol.CreateDiagnostic(Rule));
             }
-        }
-
-        private static bool IsEqualityOperatorImplemented(INamedTypeSymbol symbol)
-        {
-            return symbol.IsOperatorImplemented(WellKnownMemberNames.EqualityOperatorName) ||
-                   symbol.IsOperatorImplemented(WellKnownMemberNames.InequalityOperatorName);
         }
     }
 }

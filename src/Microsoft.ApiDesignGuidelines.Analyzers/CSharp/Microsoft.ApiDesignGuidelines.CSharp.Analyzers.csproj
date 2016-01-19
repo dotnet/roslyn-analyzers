@@ -122,7 +122,6 @@
     <Compile Include="CSharpMarkAssembliesWithAssemblyVersion.Fixer.cs" />
     <Compile Include="CSharpDefineAccessorsForAttributeArguments.cs" />
     <Compile Include="CSharpUsePropertiesWhereAppropriate.Fixer.cs" />
-    <Compile Include="CSharpOverrideMethodsOnComparableTypes.Fixer.cs" />
     <Compile Include="CSharpMovePInvokesToNativeMethodsClass.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldHaveCorrectPrefix.Fixer.cs" />
     <Compile Include="CSharpNonConstantFieldsShouldNotBeVisible.cs" />
@@ -131,7 +130,6 @@
     <Compile Include="CSharpDoNotDecreaseInheritedMemberVisibility.Fixer.cs" />
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.cs" />
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.Fixer.cs" />
-    <Compile Include="CSharpOverloadOperatorEqualsOnOverridingValueTypeEquals.Fixer.cs" />
     <Compile Include="CSharpPassSystemUriObjectsInsteadOfStrings.cs" />
     <Compile Include="CSharpPassSystemUriObjectsInsteadOfStrings.Fixer.cs" />
     <Compile Include="CSharpDoNotDeclareStaticMembersOnGenericTypes.cs" />
@@ -184,7 +182,6 @@
     <Compile Include="CSharpParameterNamesShouldMatchBaseDeclaration.Fixer.cs" />
     <Compile Include="CSharpUsePreferredTerms.cs" />
     <Compile Include="CSharpUsePreferredTerms.Fixer.cs" />
-    <Compile Include="CSharpOverrideEqualsAndOperatorEqualsOnValueTypes.cs" />
     <Compile Include="CSharpOverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.cs" />
     <Compile Include="CSharpPropertiesShouldNotReturnArrays.cs" />
     <Compile Include="CSharpPropertiesShouldNotReturnArrays.Fixer.cs" />

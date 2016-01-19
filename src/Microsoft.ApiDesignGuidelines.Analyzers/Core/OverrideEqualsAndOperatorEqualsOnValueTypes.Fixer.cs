@@ -72,6 +72,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 editor.AddMember(declaration, equalsMethod);
             }
 
+            if (!typeSymbol.OverridesGetHashCode())
+            {
+                SyntaxNode getHashCodeMethod = generator.GetHashCodeOverrideDeclaration();
+
+                editor.AddMember(declaration, getHashCodeMethod);
+            }
+
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.EqualityOperatorName))
             {
                 SyntaxNode equalityOperator = generator.ComparisonOperatorDeclaration(OperatorKind.Equality,typeSymbol);

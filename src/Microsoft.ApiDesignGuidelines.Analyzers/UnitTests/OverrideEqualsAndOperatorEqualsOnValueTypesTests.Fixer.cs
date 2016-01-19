@@ -2,7 +2,6 @@
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 
@@ -23,6 +22,11 @@ public struct A
 public struct A
 {
     public override bool Equals(object obj)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override int GetHashCode()
     {
         throw new System.NotImplementedException();
     }
@@ -79,6 +83,11 @@ public struct A
     {
         throw new System.NotImplementedException();
     }
+
+    public override int GetHashCode()
+    {
+        throw new System.NotImplementedException();
+    }
 }
 ",
             allowNewCompilerDiagnostics: true);
@@ -95,6 +104,11 @@ public struct A
         throw new System.NotImplementedException();
     }
 
+    public override int GetHashCode()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public static bool operator !=(A left, A right)
     {
         throw new System.NotImplementedException();
@@ -106,6 +120,11 @@ public struct A
 public struct A
 {
     public override bool Equals(object obj)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override int GetHashCode()
     {
         throw new System.NotImplementedException();
     }
@@ -135,6 +154,11 @@ public struct A
         throw new System.NotImplementedException();
     }
 
+    public override int GetHashCode()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public static bool operator ==(A left, A right)
     {
         throw new System.NotImplementedException();
@@ -146,6 +170,11 @@ public struct A
 public struct A
 {
     public override bool Equals(object obj)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override int GetHashCode()
     {
         throw new System.NotImplementedException();
     }

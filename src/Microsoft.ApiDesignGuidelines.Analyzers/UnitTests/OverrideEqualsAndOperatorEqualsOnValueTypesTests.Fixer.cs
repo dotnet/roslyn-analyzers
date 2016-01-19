@@ -41,11 +41,7 @@ public struct A
         throw new System.NotImplementedException();
     }
 }
-",
-            // This fix introduces the compiler warnings:
-            // Test0.cs(2, 15): warning CS0659: 'S' overrides Object.Equals(object o) but does not override Object.GetHashCode()
-            // Test0.cs(2,15): warning CS0661: 'S' defines operator == or operator != but does not override Object.GetHashCode()
-            allowNewCompilerDiagnostics: true);
+");
         }
 
         [Fact]
@@ -89,8 +85,7 @@ public struct A
         throw new System.NotImplementedException();
     }
 }
-",
-            allowNewCompilerDiagnostics: true);
+");
         }
 
         [Fact]
@@ -139,8 +134,7 @@ public struct A
         throw new System.NotImplementedException();
     }
 }
-",
-            allowNewCompilerDiagnostics: true);
+");
         }
 
         [Fact]
@@ -189,8 +183,151 @@ public struct A
         throw new System.NotImplementedException();
     }
 }
+");
+        }
+        [Fact]
+        public void BasicCodeFixNoEqualsOverrideOrEqualityOperators()
+        {
+            VerifyBasicFix(@"
+Public Structure A
+End Structure
 ",
-            allowNewCompilerDiagnostics: true);
+
+@"
+Public Structure A
+    Public Overrides Function Equals(obj As Object) As Boolean
+        Throw New System.NotImplementedException()
+    End Function
+
+    Public Overrides Function GetHashCode() As Integer
+        Throw New System.NotImplementedException()
+    End Function
+
+    Public Shared Operator =(left As A, right As A) As Boolean
+        Throw New System.NotImplementedException()
+    End Operator
+
+    Public Shared Operator <>(left As A, right As A) As Boolean
+        Throw New System.NotImplementedException()
+    End Operator
+End Structure
+");
+        }
+
+        [Fact]
+        public void BasicCodeFixNoEqualsOverride()
+        {
+            VerifyBasicFix(@"
+Public Structure A
+    Public Shared Operator =(left As A, right As A) As Boolean
+        Throw New System.NotImplementedException()
+    End Operator
+
+    Public Shared Operator <>(left As A, right As A) As Boolean
+        Throw New System.NotImplementedException()
+    End Operator
+End Structure
+",
+
+@"
+Public Structure A
+    Public Shared Operator =(left As A, right As A) As Boolean
+        Throw New System.NotImplementedException()
+    End Operator
+
+    Public Shared Operator <>(left As A, right As A) As Boolean
+        Throw New System.NotImplementedException()
+    End Operator
+
+    Public Overrides Function Equals(obj As Object) As Boolean
+        Throw New System.NotImplementedException()
+    End Function
+
+    Public Overrides Function GetHashCode() As Integer
+        Throw New System.NotImplementedException()
+    End Function
+End Structure
+");
+        }
+
+        [Fact]
+        public void BasicCodeFixNoEqualityOperator()
+        {
+            VerifyBasicFix(@"
+Public Structure A
+    Public Overrides Function Equals(obj As Object) As Boolean
+        Throw New System.NotImplementedException()
+    End Function
+
+    Public Overrides Function GetHashCode() As Integer
+        Throw New System.NotImplementedException()
+    End Function
+
+    Public Shared Operator <>(left As A, right As A) As Boolean
+        Throw New System.NotImplementedException()
+    End Operator
+End Structure
+",
+
+@"
+Public Structure A
+    Public Overrides Function Equals(obj As Object) As Boolean
+        Throw New System.NotImplementedException()
+    End Function
+
+    Public Overrides Function GetHashCode() As Integer
+        Throw New System.NotImplementedException()
+    End Function
+
+    Public Shared Operator <>(left As A, right As A) As Boolean
+        Throw New System.NotImplementedException()
+    End Operator
+
+    Public Shared Operator =(left As A, right As A) As Boolean
+        Throw New System.NotImplementedException()
+    End Operator
+End Structure
+");
+        }
+
+        [Fact]
+        public void BasicCodeFixNoInequalityOperator()
+        {
+            VerifyBasicFix(@"
+Public Structure A
+    Public Overrides Function Equals(obj As Object) As Boolean
+        Throw New System.NotImplementedException()
+    End Function
+
+    Public Overrides Function GetHashCode() As Integer
+        Throw New System.NotImplementedException()
+    End Function
+
+    Public Shared Operator =(left As A, right As A) As Boolean
+        Throw New System.NotImplementedException()
+    End Operator
+End Structure
+",
+
+@"
+Public Structure A
+    Public Overrides Function Equals(obj As Object) As Boolean
+        Throw New System.NotImplementedException()
+    End Function
+
+    Public Overrides Function GetHashCode() As Integer
+        Throw New System.NotImplementedException()
+    End Function
+
+    Public Shared Operator =(left As A, right As A) As Boolean
+        Throw New System.NotImplementedException()
+    End Operator
+
+    Public Shared Operator <>(left As A, right As A) As Boolean
+        Throw New System.NotImplementedException()
+    End Operator
+End Structure
+");
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

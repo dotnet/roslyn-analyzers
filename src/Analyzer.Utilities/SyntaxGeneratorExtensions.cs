@@ -21,7 +21,7 @@ namespace Analyzer.Utilities
         };
 
         /// <summary>
-        /// Create a declaration for a comparison operator overload.
+        /// Creates a declaration for a comparison operator overload.
         /// </summary>
         /// <param name="generator">
         /// The <see cref="SyntaxGenerator"/> used to create the declaration.
@@ -31,7 +31,7 @@ namespace Analyzer.Utilities
         /// Equality, Inequality, GreaterThan, GreaterThanOrEqual, LessThan, or LessThanOrEqual.
         /// </param>
         /// <param name="containingType">
-        /// A symbol specifying the type within which the declaration is to be created.
+        /// A symbol specifying the type of the operands of the comparison operator.
         /// </param>
         /// <returns>
         /// A <see cref="SyntaxNode"/> representing the declaration.
@@ -61,7 +61,7 @@ namespace Analyzer.Utilities
         }
 
         /// <summary>
-        /// Create a declaration for an override of <see cref="object.Equals(object)"/>.
+        /// Creates a declaration for an override of <see cref="object.Equals(object)"/>.
         /// </summary>
         /// <param name="generator">
         /// The <see cref="SyntaxGenerator"/> used to create the declaration.
@@ -84,7 +84,7 @@ namespace Analyzer.Utilities
         }
 
         /// <summary>
-        /// Create a declaration for an override of <see cref="object.GetHashCode()"/>.
+        /// Creates a declaration for an override of <see cref="object.GetHashCode()"/>.
         /// </summary>
         /// <param name="generator">
         /// The <see cref="SyntaxGenerator"/> used to create the declaration.
@@ -103,7 +103,7 @@ namespace Analyzer.Utilities
         }
 
         /// <summary>
-        /// Create a default set of statements to place within a generated method body.
+        /// Creates a default set of statements to place within a generated method body.
         /// </summary>
         /// <param name="generator">
         /// The <see cref="SyntaxGenerator"/> used to create the statements.

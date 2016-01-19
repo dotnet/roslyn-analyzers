@@ -67,52 +67,21 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             if (!typeSymbol.OverridesEquals())
             {
-                SyntaxNode equalsMethod = generator.MethodDeclaration(WellKnownMemberNames.ObjectEquals,
-                                        new[] { generator.ParameterDeclaration("obj", generator.TypeExpression(SpecialType.System_Object)) },
-                                        returnType: generator.TypeExpression(SpecialType.System_Boolean),
-                                        accessibility: Accessibility.Public,
-                                        modifiers: DeclarationModifiers.Override,
-                                        statements: new[] { generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException"))) });
+                SyntaxNode equalsMethod = generator.EqualsOverrideDeclaration();
 
                 editor.AddMember(declaration, equalsMethod);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.EqualityOperatorName))
             {
-                SyntaxNode equalityOperator = generator.OperatorDeclaration(OperatorKind.Equality,
-                                                                   new SyntaxNode[]
-                                                                   {
-                                                                       generator.ParameterDeclaration("left", generator.TypeExpression(typeSymbol)),
-                                                                       generator.ParameterDeclaration("right", generator.TypeExpression(typeSymbol)),
-                                                                   },
-                                                                   generator.TypeExpression(SpecialType.System_Boolean),
-                                                                   Accessibility.Public,
-                                                                   DeclarationModifiers.Static,
-                                                                   new SyntaxNode[]
-                                                                   {
-                                                                       generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException")))
-                                                                   });
-
+                SyntaxNode equalityOperator = generator.ComparisonOperatorDeclaration(OperatorKind.Equality,typeSymbol);
 
                 editor.AddMember(declaration, equalityOperator);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.InequalityOperatorName))
             {
-                var inequalityOperator = generator.OperatorDeclaration(OperatorKind.Inequality,
-                                                                   new SyntaxNode[]
-                                                                   {
-                                                                       generator.ParameterDeclaration("left", generator.TypeExpression(typeSymbol)),
-                                                                       generator.ParameterDeclaration("right", generator.TypeExpression(typeSymbol)),
-                                                                   },
-                                                                   generator.TypeExpression(SpecialType.System_Boolean),
-                                                                   Accessibility.Public,
-                                                                   DeclarationModifiers.Static,
-                                                                   new SyntaxNode[]
-                                                                   {
-                                                                       generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException")))
-                                                                   });
-
+                var inequalityOperator = generator.ComparisonOperatorDeclaration(OperatorKind.Inequality, typeSymbol);
 
                 editor.AddMember(declaration, inequalityOperator);
             }

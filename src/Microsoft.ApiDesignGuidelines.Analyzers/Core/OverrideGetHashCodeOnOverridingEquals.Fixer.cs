@@ -50,13 +50,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
 
-            var throwStatement = generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException")));
-            var methodDeclaration = generator.MethodDeclaration(
-                WellKnownMemberNames.ObjectGetHashCode,
-                returnType: generator.TypeExpression(SpecialType.System_Int32),
-                accessibility: Accessibility.Public,
-                modifiers: DeclarationModifiers.Override,
-                statements: new[] { throwStatement });
+            var methodDeclaration = generator.GetHashCodeOverrideDeclaration();
 
             editor.AddMember(typeDeclaration, methodDeclaration);
             return editor.GetChangedDocument();

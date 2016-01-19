@@ -239,7 +239,6 @@
     <Compile Include="ExceptionsShouldBePublicTests.cs" />
     <Compile Include="ExceptionsShouldBePublicTests.Fixer.cs" />
     <Compile Include="DoNotRaiseExceptionsInUnexpectedLocationsTests.cs" />
-    <Compile Include="DoNotRaiseExceptionsInUnexpectedLocationsTests.Fixer.cs" />
     <Compile Include="IdentifiersShouldNotContainUnderscoresTests.cs" />
     <Compile Include="IdentifiersShouldNotContainUnderscoresTests.Fixer.cs" />
     <Compile Include="IdentifiersShouldHaveCorrectSuffixTests.cs" />

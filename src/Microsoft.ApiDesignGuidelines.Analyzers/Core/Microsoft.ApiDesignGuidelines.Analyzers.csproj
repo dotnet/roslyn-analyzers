@@ -193,7 +193,6 @@
     <Compile Include="ExceptionsShouldBePublic.cs" />
     <Compile Include="ExceptionsShouldBePublic.Fixer.cs" />
     <Compile Include="DoNotRaiseExceptionsInUnexpectedLocations.cs" />
-    <Compile Include="DoNotRaiseExceptionsInUnexpectedLocations.Fixer.cs" />
     <Compile Include="IdentifiersShouldNotContainUnderscores.cs" />
     <Compile Include="IdentifiersShouldNotContainUnderscores.Fixer.cs" />
     <Compile Include="IdentifiersShouldHaveCorrectSuffix.cs" />

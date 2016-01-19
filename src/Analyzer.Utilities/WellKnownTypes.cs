@@ -232,5 +232,30 @@ namespace Analyzer.Utilities
         {
             return compilation.GetSpecialType(SpecialType.System_Object);
         }
+
+        public static INamedTypeSymbol Exception(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Exception");
+        }
+
+        public static INamedTypeSymbol InvalidOperationException(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.InvalidOperationException");
+        }
+
+        public static INamedTypeSymbol ArgumentException(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.ArgumentException");
+        }
+
+        public static INamedTypeSymbol NotSupportedException(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.NotSupportedException");
+        }
+
+        public static INamedTypeSymbol KeyNotFoundException(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.KeyNotFoundException");
+        }
     }
 }

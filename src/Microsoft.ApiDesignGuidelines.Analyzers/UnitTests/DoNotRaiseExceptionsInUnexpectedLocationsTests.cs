@@ -12,12 +12,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicDoNotRaiseExceptionsInUnexpectedLocationsAnalyzer();
+            return new DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpDoNotRaiseExceptionsInUnexpectedLocationsAnalyzer();
+            return new DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer();
         }
     }
 }

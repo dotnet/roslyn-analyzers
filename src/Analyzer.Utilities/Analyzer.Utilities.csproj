@@ -48,7 +48,6 @@
     <Compile Include="Extensions\ITypeSymbolExtensions.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\SyntaxNodeExtensions.cs" />
-    <Compile Include="LocationExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SyntaxGeneratorExtensions.cs" />
     <Compile Include="WellKnownTypes.cs" />

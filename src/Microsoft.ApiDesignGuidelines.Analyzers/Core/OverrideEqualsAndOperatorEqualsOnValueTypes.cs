@@ -58,14 +58,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 {
                     if (!namedType.OverridesEquals())
                     {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(EqualsRule, namedType.FirstLocation(), namedType.Name));
+                        context.ReportDiagnostic(namedType.CreateDiagnostic(EqualsRule, namedType.Name));
                     }
 
                     if (!namedType.ImplementsEqualityOperators())
                     {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(OpEqualityRule, namedType.FirstLocation(), namedType.Name));
+                        context.ReportDiagnostic(namedType.CreateDiagnostic(OpEqualityRule, namedType.Name));
                     }
                 }
             }, SymbolKind.NamedType);

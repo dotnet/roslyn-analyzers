@@ -109,7 +109,7 @@ namespace Analyzer.Utilities
         /// The <see cref="SyntaxGenerator"/> used to create the statements.
         /// </param>
         /// <returns>
-        /// An sequence containing single statement that throws <see cref="System.NotImplementedException"/>.
+        /// An sequence containing a single statement that throws <see cref="System.NotImplementedException"/>.
         /// </returns>
         private static IEnumerable<SyntaxNode> DefaultMethodBody(this SyntaxGenerator generator)
         {

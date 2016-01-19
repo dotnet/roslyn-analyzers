@@ -26,14 +26,26 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/0fss9skc.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            
+            analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Property);
+
+        }
+
+        private void AnalyzeSymbol(SymbolAnalysisContext context)
+        {
+            var symbol = (IPropertySymbol)context.Symbol;
+            if ((symbol.Type.TypeKind == TypeKind.Array) && !(symbol.IsOverride))
+            {
+                var diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], symbol.Name);
+                context.ReportDiagnostic(symbol.CreateDiagnostic(Rule));
+            }
+
         }
     }
 }

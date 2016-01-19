@@ -19,5 +19,56 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         {
             return new CSharpPropertiesShouldNotReturnArraysAnalyzer();
         }
+
+        [Fact]
+        public void TestCSharpPropertiesShouldNotReturnArraysArray()
+        {
+            VerifyCSharp(@"
+    public class Book
+    {
+        private string[] _Pages;
+
+        public Book(string[] pages)
+        {
+            _Pages = pages;
+        }
+
+        public string[] Pages
+        {
+            get { return _Pages; }
+        }
     }
+ ", CreateCSharpResult(11, 25));
+        }
+
+        [Fact]
+        public void TestCSharpPropertiesShouldNotReturnArraysOverride()
+        {
+            VerifyCSharp(@"
+    public class Book
+    {
+        public Book(string[] pages)
+        {
+            _Pages = pages;
+        }
+
+        public override string[] Pages
+        {
+            get { return _Pages; }
+        }
+    }
+");
+        }
+
+        private static DiagnosticResult CreateCSharpResult(int line, int col)
+        {
+            return GetCSharpResultAt(line, col, PropertiesShouldNotReturnArraysAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.PropertiesShouldNotReturnArraysMessage);
+        }
+
+        private static DiagnosticResult CreateBasicResult(int line, int col)
+        {
+            return GetBasicResultAt(line, col, PropertiesShouldNotReturnArraysAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.PropertiesShouldNotReturnArraysMessage);
+        }
+    }
+
 }

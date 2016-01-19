@@ -79,32 +79,40 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.EqualityOperatorName))
             {
-                SyntaxNode equalityOperator = generator.OperatorDeclaration(
-                    document.Project.Language,
-                    generator.TypeExpression(SpecialType.System_Boolean),
-                    WellKnownMemberNames.EqualityOperatorName,
-                    new[]
-                    {
-                        generator.ParameterDeclaration("left", generator.TypeExpression(typeSymbol)),
-                        generator.ParameterDeclaration("right", generator.TypeExpression(typeSymbol)),
-                    },
-                    generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException"))));
+                SyntaxNode equalityOperator = generator.OperatorDeclaration(OperatorKind.Equality,
+                                                                   new SyntaxNode[]
+                                                                   {
+                                                                       generator.ParameterDeclaration("left", generator.TypeExpression(typeSymbol)),
+                                                                       generator.ParameterDeclaration("right", generator.TypeExpression(typeSymbol)),
+                                                                   },
+                                                                   generator.TypeExpression(SpecialType.System_Boolean),
+                                                                   Accessibility.Public,
+                                                                   DeclarationModifiers.Static,
+                                                                   new SyntaxNode[]
+                                                                   {
+                                                                       generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException")))
+                                                                   });
+
 
                 editor.AddMember(declaration, equalityOperator);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.InequalityOperatorName))
             {
-                var inequalityOperator = generator.OperatorDeclaration(
-                    document.Project.Language,
-                    generator.TypeExpression(SpecialType.System_Boolean),
-                    WellKnownMemberNames.InequalityOperatorName,
-                    new[]
-                    {
-                        generator.ParameterDeclaration("left", generator.TypeExpression(typeSymbol)),
-                        generator.ParameterDeclaration("right", generator.TypeExpression(typeSymbol)),
-                    },
-                    generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException"))));
+                var inequalityOperator = generator.OperatorDeclaration(OperatorKind.Inequality,
+                                                                   new SyntaxNode[]
+                                                                   {
+                                                                       generator.ParameterDeclaration("left", generator.TypeExpression(typeSymbol)),
+                                                                       generator.ParameterDeclaration("right", generator.TypeExpression(typeSymbol)),
+                                                                   },
+                                                                   generator.TypeExpression(SpecialType.System_Boolean),
+                                                                   Accessibility.Public,
+                                                                   DeclarationModifiers.Static,
+                                                                   new SyntaxNode[]
+                                                                   {
+                                                                       generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException")))
+                                                                   });
+
 
                 editor.AddMember(declaration, inequalityOperator);
             }

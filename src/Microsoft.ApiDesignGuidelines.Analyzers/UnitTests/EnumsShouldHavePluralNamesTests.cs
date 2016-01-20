@@ -6,16 +6,16 @@ using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 {
-    public class FlagsEnumsShouldHavePluralNamesTests : DiagnosticAnalyzerTestBase
+    public class EnumsShouldHavePluralNamesTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new FlagsEnumsShouldHavePluralNamesAnalyzer();
+            return new EnumsShouldHavePluralNamesAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new FlagsEnumsShouldHavePluralNamesAnalyzer();
+            return new EnumsShouldHavePluralNamesAnalyzer();
         }
 
         [Fact]
@@ -61,7 +61,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                                        
                                 };
                             }",
-                            GetCSharpResultAt(4, 37, FlagsEnumsShouldHavePluralNamesAnalyzer.Rule_EnumsWithNoFlag, FlagsEnumsShouldHavePluralNamesAnalyzer.Rule_EnumsWithNoFlag.MessageFormat.ToString()));
+                            GetCSharpResultAt(4, 37, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717.MessageFormat.ToString()));
 
             VerifyBasic(@"
                         Class A
@@ -73,7 +73,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 	                        End Enum
                         End Class
                         ",
-                        GetBasicResultAt(3, 39, FlagsEnumsShouldHavePluralNamesAnalyzer.Rule_EnumsWithNoFlag, FlagsEnumsShouldHavePluralNamesAnalyzer.Rule_EnumsWithNoFlag.MessageFormat.ToString()));
+                        GetBasicResultAt(3, 39, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717.MessageFormat.ToString()));
 
         }
 
@@ -92,7 +92,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                                        
                                 };
                             }",
-                            GetCSharpResultAt(5, 37, FlagsEnumsShouldHavePluralNamesAnalyzer.RuleId_EnumsWithFlag, FlagsEnumsShouldHavePluralNamesAnalyzer.Rule_EnumsWithFlag.MessageFormat.ToString()));
+                            GetCSharpResultAt(5, 37, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1714.MessageFormat.ToString()));
 
             VerifyBasic(@"
                        Class A
@@ -103,7 +103,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 		                    Tuesday = 2
 	                    End Enum
                         End Class",
-                            GetBasicResultAt(4, 35, FlagsEnumsShouldHavePluralNamesAnalyzer.RuleId_EnumsWithFlag, FlagsEnumsShouldHavePluralNamesAnalyzer.Rule_EnumsWithFlag.MessageFormat.ToString()));
+                            GetBasicResultAt(4, 35, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1714.MessageFormat.ToString()));
 
         }
 
@@ -178,7 +178,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                                        
                                 };
                             }",
-                            GetCSharpResultAt(5, 37, FlagsEnumsShouldHavePluralNamesAnalyzer.RuleId_EnumsWithFlag, FlagsEnumsShouldHavePluralNamesAnalyzer.Rule_EnumsWithFlag.MessageFormat.ToString()));
+                            GetCSharpResultAt(5, 37, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1714.MessageFormat.ToString()));
 
             VerifyBasic(@"
                        Class A
@@ -189,7 +189,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                             M3 = 2
                         End Enum
                         End Class",
-                            GetBasicResultAt(4, 38, FlagsEnumsShouldHavePluralNamesAnalyzer.RuleId_EnumsWithFlag, FlagsEnumsShouldHavePluralNamesAnalyzer.Rule_EnumsWithFlag.MessageFormat.ToString()));
+                            GetBasicResultAt(4, 38, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1714.MessageFormat.ToString()));
 
         }
 

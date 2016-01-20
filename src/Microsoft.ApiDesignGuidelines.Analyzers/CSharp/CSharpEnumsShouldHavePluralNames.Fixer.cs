@@ -13,7 +13,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// CA1714: Flags enums should have plural names
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
-    public sealed class CSharpFlagsEnumsShouldHavePluralNamesFixer : FlagsEnumsShouldHavePluralNamesFixer
+    public sealed class CSharpEnumsShouldHavePluralNamesFixer : EnumsShouldHavePluralNamesFixer
     { 
         
     }

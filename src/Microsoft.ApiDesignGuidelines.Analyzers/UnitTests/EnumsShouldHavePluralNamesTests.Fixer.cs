@@ -8,26 +8,26 @@ using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 {
-    public class FlagsEnumsShouldHavePluralNamesFixerTests : CodeFixTestBase
+    public class EnumsShouldHavePluralNamesFixerTests : CodeFixTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new FlagsEnumsShouldHavePluralNamesAnalyzer();
+            return new EnumsShouldHavePluralNamesAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new FlagsEnumsShouldHavePluralNamesAnalyzer();
+            return new EnumsShouldHavePluralNamesAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
-            return new BasicFlagsEnumsShouldHavePluralNamesFixer();
+            return new BasicEnumsShouldHavePluralNamesFixer();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new CSharpFlagsEnumsShouldHavePluralNamesFixer();
+            return new CSharpEnumsShouldHavePluralNamesFixer();
         }
     }
 }

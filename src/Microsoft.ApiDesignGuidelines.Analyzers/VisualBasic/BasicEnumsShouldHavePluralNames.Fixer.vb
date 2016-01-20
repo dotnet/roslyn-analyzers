@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA1714: Flags enums should have plural names
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
-    Public NotInheritable Class BasicFlagsEnumsShouldHavePluralNamesFixer
-        Inherits FlagsEnumsShouldHavePluralNamesFixer 
+    Public NotInheritable Class BasicEnumsShouldHavePluralNamesFixer
+        Inherits EnumsShouldHavePluralNamesFixer
 
     End Class
 End Namespace

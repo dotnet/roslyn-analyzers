@@ -200,8 +200,8 @@
     <Compile Include="IdentifiersShouldHaveCorrectSuffix.Fixer.cs" />
     <Compile Include="IdentifiersShouldNotHaveIncorrectSuffix.cs" />
     <Compile Include="IdentifiersShouldNotHaveIncorrectSuffix.Fixer.cs" />
-    <Compile Include="FlagsEnumsShouldHavePluralNames.cs" />
-    <Compile Include="FlagsEnumsShouldHavePluralNames.Fixer.cs" />
+    <Compile Include="EnumsShouldHavePluralNames.cs" />
+    <Compile Include="EnumsShouldHavePluralNames.Fixer.cs" />
     <Compile Include="IdentifiersShouldNotMatchKeywords.cs" />
     <Compile Include="IdentifiersShouldNotMatchKeywords.Fixer.cs" />
     <Compile Include="OnlyFlagsEnumsShouldHavePluralNames.cs" />

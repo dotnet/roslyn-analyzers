@@ -95,8 +95,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicDoNotDirectlyAwaitATask.vb" />
-    <Compile Include="BasicDoNotDirectlyAwaitATask.Fixer.vb" />
     <Compile Include="BasicDoNotCreateTasksWithoutPassingATaskScheduler.vb" />
     <Compile Include="BasicDoNotCreateTasksWithoutPassingATaskScheduler.Fixer.vb" />
   </ItemGroup>

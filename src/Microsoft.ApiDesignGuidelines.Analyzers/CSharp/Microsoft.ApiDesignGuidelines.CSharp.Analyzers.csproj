@@ -147,7 +147,6 @@
     <Compile Include="CSharpProvideObsoleteAttributeMessage.Fixer.cs" />
     <Compile Include="CSharpPropertiesShouldNotBeWriteOnly.cs" />
     <Compile Include="CSharpPropertiesShouldNotBeWriteOnly.Fixer.cs" />
-    <Compile Include="CSharpDeclareTypesInNamespaces.cs" />
     <Compile Include="CSharpDeclareTypesInNamespaces.Fixer.cs" />
     <Compile Include="CSharpDoNotDeclareVisibleInstanceFields.cs" />
     <Compile Include="CSharpDoNotDeclareVisibleInstanceFields.Fixer.cs" />

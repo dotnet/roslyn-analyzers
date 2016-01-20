@@ -147,7 +147,6 @@
     <Compile Include="BasicProvideObsoleteAttributeMessage.Fixer.vb" />
     <Compile Include="BasicPropertiesShouldNotBeWriteOnly.vb" />
     <Compile Include="BasicPropertiesShouldNotBeWriteOnly.Fixer.vb" />
-    <Compile Include="BasicDeclareTypesInNamespaces.vb" />
     <Compile Include="BasicDeclareTypesInNamespaces.Fixer.vb" />
     <Compile Include="BasicDoNotDeclareVisibleInstanceFields.vb" />
     <Compile Include="BasicDoNotDeclareVisibleInstanceFields.Fixer.vb" />

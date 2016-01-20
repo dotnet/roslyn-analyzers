@@ -169,7 +169,6 @@
     <Compile Include="BasicIdentifiersShouldHaveCorrectSuffix.Fixer.vb" />
     <Compile Include="BasicIdentifiersShouldNotHaveIncorrectSuffix.vb" />
     <Compile Include="BasicIdentifiersShouldNotHaveIncorrectSuffix.Fixer.vb" />
-    <Compile Include="BasicFlagsEnumsShouldHavePluralNames.vb" />
     <Compile Include="BasicFlagsEnumsShouldHavePluralNames.Fixer.vb" />
     <Compile Include="BasicIdentifiersShouldNotMatchKeywords.vb" />
     <Compile Include="BasicIdentifiersShouldNotMatchKeywords.Fixer.vb" />

@@ -169,7 +169,6 @@
     <Compile Include="CSharpIdentifiersShouldHaveCorrectSuffix.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldNotHaveIncorrectSuffix.cs" />
     <Compile Include="CSharpIdentifiersShouldNotHaveIncorrectSuffix.Fixer.cs" />
-    <Compile Include="CSharpFlagsEnumsShouldHavePluralNames.cs" />
     <Compile Include="CSharpFlagsEnumsShouldHavePluralNames.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldNotMatchKeywords.cs" />
     <Compile Include="CSharpIdentifiersShouldNotMatchKeywords.Fixer.cs" />

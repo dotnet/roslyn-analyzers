@@ -1,39 +1,129 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Linq;
+using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Analyzer.Utilities;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
-{                   
+{
     /// <summary>
     /// CA1714: Flags enums should have plural names
     /// </summary>
-    public abstract class FlagsEnumsShouldHavePluralNamesAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class FlagsEnumsShouldHavePluralNamesAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA1714";
-
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.FlagsEnumsShouldHavePluralNamesTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        #region CA1714
+        internal const string RuleId_EnumsWithFlag = "CA1714";
         
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.FlagsEnumsShouldHavePluralNamesMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.FlagsEnumsShouldHavePluralNamesDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
-                                                                             DiagnosticCategory.Naming,
-                                                                             DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
-                                                                             description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+        private static readonly LocalizableString s_localizableTitle_EnumsWithFlag =
+            new LocalizableResourceString(
+                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.FlagsEnumsShouldHavePluralNamesTitle),
+                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
+                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        private static readonly LocalizableString s_localizableMessage_EnumsWithFlag =
+            new LocalizableResourceString(
+                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.FlagsEnumsShouldHavePluralNamesMessage),
+                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
+                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+
+        private static readonly LocalizableString s_localizableDescription_EnumsWithFlag =
+            new LocalizableResourceString(
+                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.FlagsEnumsShouldHavePluralNamesDescription),
+                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
+                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+
+        internal static DiagnosticDescriptor Rule_EnumsWithFlag =
+            new DiagnosticDescriptor(
+                RuleId_EnumsWithFlag,
+                s_localizableTitle_EnumsWithFlag,
+                s_localizableMessage_EnumsWithFlag,
+                DiagnosticCategory.Naming,
+                DiagnosticSeverity.Warning,
+                isEnabledByDefault: true,
+                description: s_localizableDescription_EnumsWithFlag,
+                helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb264486.aspx",
+                customTags: WellKnownDiagnosticTags.Telemetry);
+        #endregion
+
+        #region CA1717
+        internal const string RuleId_EnumsWithNoFlag = "CA1717";
+
+        private static readonly LocalizableString s_localizableTitle_EnumsWithNoFlag =
+            new LocalizableResourceString(
+                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesTitle),
+                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
+                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+
+        private static readonly LocalizableString s_localizableMessage_EnumsWithNoFlag =
+            new LocalizableResourceString(
+                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesMessage),
+                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
+                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+
+        private static readonly LocalizableString s_localizableDescription_EnumsWithNoFlag =
+            new LocalizableResourceString(
+                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesDescription),
+                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
+                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+
+        internal static DiagnosticDescriptor Rule_EnumsWithNoFlag =
+            new DiagnosticDescriptor(
+                RuleId_EnumsWithNoFlag,
+                s_localizableTitle_EnumsWithNoFlag,
+                s_localizableMessage_EnumsWithNoFlag,
+                DiagnosticCategory.Naming,
+                DiagnosticSeverity.Warning,
+                isEnabledByDefault: true,
+                description: s_localizableDescription_EnumsWithNoFlag,
+                helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb264487.aspx",
+                customTags: WellKnownDiagnosticTags.Telemetry);
+
+        #endregion
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule_EnumsWithFlag, Rule_EnumsWithNoFlag);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            
+            analysisContext.RegisterCompilationStartAction(compilationContext =>
+            {
+                var flagsAttribute = WellKnownTypes.FlagsAttribute(compilationContext.Compilation);
+                if (flagsAttribute == null)
+                {
+                    return;
+                }
+
+                compilationContext.RegisterSymbolAction(symbolContext => AnalyzeSymbol(symbolContext, flagsAttribute), SymbolKind.NamedType);
+            });
+
+        }
+
+        private static void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol flagsAttribute)
+        {
+            var symbol = (INamedTypeSymbol)context.Symbol;
+            if (symbol.TypeKind != TypeKind.Enum)
+            {
+                return;
+            }
+
+            bool hasFlagsAttribute = symbol.GetAttributes().Any(a => a.AttributeClass == flagsAttribute);
+            if (hasFlagsAttribute)
+            {
+                if (!symbol.Name.IsPlural()) // Checking Rule CA1714
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Rule_EnumsWithFlag, symbol.Locations.First(), symbol.Name));
+                }
+            }
+            else
+            {
+                if (symbol.Name.IsPlural()) // Checking Rule CA1717
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Rule_EnumsWithNoFlag, symbol.Locations.First(), symbol.Name));
+                }
+            }
         }
     }
 }
+    

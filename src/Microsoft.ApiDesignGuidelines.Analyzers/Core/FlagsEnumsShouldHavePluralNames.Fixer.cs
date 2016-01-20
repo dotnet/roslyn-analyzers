@@ -18,7 +18,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// </summary>
     public abstract class FlagsEnumsShouldHavePluralNamesFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(FlagsEnumsShouldHavePluralNamesAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(FlagsEnumsShouldHavePluralNamesAnalyzer.RuleId_EnumsWithFlag, FlagsEnumsShouldHavePluralNamesAnalyzer.RuleId_EnumsWithNoFlag);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

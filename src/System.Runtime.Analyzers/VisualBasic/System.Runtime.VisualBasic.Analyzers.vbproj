@@ -111,7 +111,6 @@
     <Compile Include="BasicInitializeStaticFieldsInline.Fixer.vb" />
     <Compile Include="BasicDisposeMethodsShouldCallBaseClassDispose.vb" />
     <Compile Include="BasicDisposeMethodsShouldCallBaseClassDispose.Fixer.vb" />
-    <Compile Include="BasicDisposableTypesShouldDeclareFinalizer.vb" />
     <Compile Include="BasicDisposableTypesShouldDeclareFinalizer.Fixer.vb" />
     <Compile Include="BasicDoNotRaiseExceptionsInExceptionClauses.vb" />
     <Compile Include="BasicDoNotRaiseExceptionsInExceptionClauses.Fixer.vb" />

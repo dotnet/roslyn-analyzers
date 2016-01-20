@@ -12,12 +12,12 @@ namespace System.Runtime.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicDisposableTypesShouldDeclareFinalizerAnalyzer();
+            return new DisposableTypesShouldDeclareFinalizerAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpDisposableTypesShouldDeclareFinalizerAnalyzer();
+            return new DisposableTypesShouldDeclareFinalizerAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

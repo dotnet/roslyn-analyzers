@@ -15,17 +15,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class CSharpImplementStandardExceptionConstructorsAnalyzer : ImplementStandardExceptionConstructorsAnalyzer
     {
-        protected override string GetParameterLessConstructorMessage(ISymbol symbol)
+        protected override string GetConstructorSignatureNoParameter(ISymbol symbol)
         {
             return $"public {symbol.Name}()";
         }
 
-        protected override string GetConstructorWithStringTypeParameter(ISymbol symbol)
+        protected override string GetConstructorSignatureStringTypeParameter(ISymbol symbol)
         {
             return $"public {symbol.Name}(string message)";
         }
 
-        protected override string GetConstructorWithStringAndExceptionTypeParameter(ISymbol symbol)
+        protected override string GetConstructorSignatureStringAndExceptionTypeParameter(ISymbol symbol)
         {
             return $"public {symbol.Name}(string message, Exception innerException)";
         }

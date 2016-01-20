@@ -235,7 +235,6 @@ Public Class GoodException2 : Inherits Exception
     End Sub
     Sub New(message As String, innerException As Exception)
     End Sub
-    End Sub
     Sub New(i As Integer, message As String)
     End Sub
 End Class 
@@ -281,7 +280,6 @@ Public Class BadException3 : Inherits Exception
     End Sub
     Sub New(message As String, innerException As Exception)
     End Sub
-    End Sub
 End Class  
 ",
             GetCA1032BasicMissingConstructorResultAt(line: 4, column: 14, typeName: "BadException3", constructor: "Public Sub New()"));
@@ -297,7 +295,6 @@ Public Class BadException4 : Inherits Exception
     Sub New()
     End Sub
     Sub New(message As String, innerException As Exception)
-    End Sub
     End Sub
 End Class 
 ",
@@ -330,7 +327,6 @@ Public Class BadException6 : Inherits Exception
     Sub New()
     End Sub
     Sub New(message As String, innerException As Exception)
-    End Sub
     End Sub
     Sub New(i As Integer, message As String)
     End Sub

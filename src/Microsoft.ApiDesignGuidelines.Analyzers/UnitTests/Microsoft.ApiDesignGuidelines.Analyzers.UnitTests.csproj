@@ -207,7 +207,6 @@
     <Compile Include="PassSystemUriObjectsInsteadOfStringsTests.Fixer.cs" />
     <Compile Include="CancellationTokenParametersMustComeLastTests.cs" />
     <Compile Include="DoNotDeclareStaticMembersOnGenericTypesTests.cs" />
-    <Compile Include="DoNotDeclareStaticMembersOnGenericTypesTests.Fixer.cs" />
     <Compile Include="CollectionsShouldImplementGenericInterfaceTests.cs" />
     <Compile Include="CollectionsShouldImplementGenericInterfaceTests.Fixer.cs" />
     <Compile Include="EnumStorageShouldBeInt32Tests.cs" />

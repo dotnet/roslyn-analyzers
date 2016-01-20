@@ -10,7 +10,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// CA1000: Do not declare static members on generic types
     /// </summary>
-    public abstract class DoNotDeclareStaticMembersOnGenericTypesAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class DoNotDeclareStaticMembersOnGenericTypesAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1000";
 
@@ -26,14 +27,35 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182139.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            
+            analysisContext.RegisterSymbolAction(
+                (symbolAnalysisContext) =>
+                {
+                    var symbol = symbolAnalysisContext.Symbol;
+                    if (!symbol.ContainingType.IsGenericType ||
+                        symbol.DeclaredAccessibility != Accessibility.Public ||
+                        !symbol.IsStatic)
+                    {
+                        return;
+                    }
+
+                    var methodSymbol = symbol as IMethodSymbol;
+                    if (methodSymbol != null &&
+                        (methodSymbol.IsUserDefinedOperator() ||
+                         methodSymbol.IsAccessorMethod()))
+                    {
+                        return;
+                    }
+
+                    symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(Rule, symbol.Name));
+
+                }, SymbolKind.Method, SymbolKind.Property);
         }
     }
 }

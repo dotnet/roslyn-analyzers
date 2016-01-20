@@ -134,8 +134,6 @@
     <Compile Include="BasicOverloadOperatorEqualsOnOverridingValueTypeEquals.Fixer.vb" />
     <Compile Include="BasicPassSystemUriObjectsInsteadOfStrings.vb" />
     <Compile Include="BasicPassSystemUriObjectsInsteadOfStrings.Fixer.vb" />
-    <Compile Include="BasicDoNotDeclareStaticMembersOnGenericTypes.vb" />
-    <Compile Include="BasicDoNotDeclareStaticMembersOnGenericTypes.Fixer.vb" />
     <Compile Include="BasicCollectionsShouldImplementGenericInterface.Fixer.vb" />
     <Compile Include="BasicEnumStorageShouldBeInt32.vb" />
     <Compile Include="BasicEnumStorageShouldBeInt32.Fixer.vb" />

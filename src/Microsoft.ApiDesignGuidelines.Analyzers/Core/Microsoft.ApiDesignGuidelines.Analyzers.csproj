@@ -161,7 +161,6 @@
     <Compile Include="PassSystemUriObjectsInsteadOfStrings.Fixer.cs" />
     <Compile Include="CancellationTokenParametersMustComeLast.cs" />
     <Compile Include="DoNotDeclareStaticMembersOnGenericTypes.cs" />
-    <Compile Include="DoNotDeclareStaticMembersOnGenericTypes.Fixer.cs" />
     <Compile Include="CollectionsShouldImplementGenericInterface.cs" />
     <Compile Include="CollectionsShouldImplementGenericInterface.Fixer.cs" />
     <Compile Include="EnumStorageShouldBeInt32.cs" />

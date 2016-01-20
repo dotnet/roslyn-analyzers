@@ -134,8 +134,6 @@
     <Compile Include="CSharpOverloadOperatorEqualsOnOverridingValueTypeEquals.Fixer.cs" />
     <Compile Include="CSharpPassSystemUriObjectsInsteadOfStrings.cs" />
     <Compile Include="CSharpPassSystemUriObjectsInsteadOfStrings.Fixer.cs" />
-    <Compile Include="CSharpDoNotDeclareStaticMembersOnGenericTypes.cs" />
-    <Compile Include="CSharpDoNotDeclareStaticMembersOnGenericTypes.Fixer.cs" />
     <Compile Include="CSharpCollectionsShouldImplementGenericInterface.Fixer.cs" />
     <Compile Include="CSharpEnumStorageShouldBeInt32.cs" />
     <Compile Include="CSharpEnumStorageShouldBeInt32.Fixer.cs" />

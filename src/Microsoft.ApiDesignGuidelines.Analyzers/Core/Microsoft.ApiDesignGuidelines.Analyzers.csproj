@@ -204,8 +204,6 @@
     <Compile Include="EnumsShouldHavePluralNames.Fixer.cs" />
     <Compile Include="IdentifiersShouldNotMatchKeywords.cs" />
     <Compile Include="IdentifiersShouldNotMatchKeywords.Fixer.cs" />
-    <Compile Include="OnlyFlagsEnumsShouldHavePluralNames.cs" />
-    <Compile Include="OnlyFlagsEnumsShouldHavePluralNames.Fixer.cs" />
     <Compile Include="PropertyNamesShouldNotMatchGetMethods.cs" />
     <Compile Include="PropertyNamesShouldNotMatchGetMethods.Fixer.cs" />
     <Compile Include="TypeNamesShouldNotMatchNamespaces.cs" />

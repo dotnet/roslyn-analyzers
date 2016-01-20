@@ -2386,6 +2386,33 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the Object type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method..
+        /// </summary>
+        internal static string UseIntegralOrStringArgumentForIndexersDescription {
+            get {
+                return ResourceManager.GetString("UseIntegralOrStringArgumentForIndexersDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use Integral Or String Argument For Indexers.
+        /// </summary>
+        internal static string UseIntegralOrStringArgumentForIndexersMessage {
+            get {
+                return ResourceManager.GetString("UseIntegralOrStringArgumentForIndexersMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use Integral Or String Argument For Indexers.
+        /// </summary>
+        internal static string UseIntegralOrStringArgumentForIndexersTitle {
+            get {
+                return ResourceManager.GetString("UseIntegralOrStringArgumentForIndexersTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The name of an externally visible identifier includes a term for which an alternative, preferred term exists. Alternatively, the name includes the term &quot;&quot;Flag&quot;&quot; or &quot;&quot;Flags&quot;&quot;..
         /// </summary>
         internal static string UsePreferredTermsDescription {

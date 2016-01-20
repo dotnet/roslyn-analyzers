@@ -101,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CSharpStaticHolderTypes.Fixer.cs" />
+    <Compile Include="CSharpUseIntegralOrStringArgumentForIndexers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CSharpAvoidAsyncVoid.cs" />
     <Compile Include="CSharpAvoidAsyncVoid.Fixer.cs" />

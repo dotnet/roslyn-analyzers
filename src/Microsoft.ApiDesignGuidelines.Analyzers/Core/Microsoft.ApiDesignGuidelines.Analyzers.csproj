@@ -134,6 +134,7 @@
     <Compile Include="MarkAttributesWithAttributeUsage.cs" />
     <Compile Include="DefineAccessorsForAttributeArguments.cs" />
     <Compile Include="DefineAccessorsForAttributeArguments.Fixer.cs" />
+    <Compile Include="UseIntegralOrStringArgumentForIndexers.cs" />
     <Compile Include="UsePropertiesWhereAppropriate.cs" />
     <Compile Include="UsePropertiesWhereAppropriate.Fixer.cs" />
     <Compile Include="InterfaceMethodsShouldBeCallableByChildTypes.cs" />

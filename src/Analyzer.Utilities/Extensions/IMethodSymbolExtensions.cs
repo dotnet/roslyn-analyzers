@@ -50,18 +50,24 @@ namespace Analyzer.Utilities
             if (method.ReturnType.SpecialType == SpecialType.System_Boolean &&
                 (paramCount == 1 || paramCount == 2))
             {
-                var iEqualityComparer = compilation.GetTypeByMetadataName("System.IEqualityComparer");
-                var iEqualityComparerEquals = iEqualityComparer.GetMembers("Equals").Single();
-
-                if (method.ContainingType.FindImplementationForInterfaceMember(iEqualityComparerEquals) == method)
+                // Substitue the type of the first parameter of Equals in the generic interfaces and then check if that
+                // interface method is implemented by the given method.
+                var iEqualityComparer = compilation.GetTypeByMetadataName("System.Collections.Generic.IEqualityComparer`1");
+                var constructedIEqualityComparer = iEqualityComparer?.Construct(method.Parameters.First().Type);
+                var iEqualityComparerEquals = constructedIEqualityComparer?.GetMembers("Equals").Single() as IMethodSymbol;
+                
+                if (iEqualityComparerEquals != null && method.ContainingType.FindImplementationForInterfaceMember(iEqualityComparerEquals) == method)
                 {
                     return true;
                 }
 
-                var iEquatable = compilation.GetTypeByMetadataName("System.IEquatable");
-                var iEquatableEquals = iEquatable.GetMembers("Equals").Single();
+                // Substitue the type of the first parameter of Equals in the generic interfaces and then check if that
+                // interface method is implemented by the given method.
+                var iEquatable = compilation.GetTypeByMetadataName("System.IEquatable`1");
+                var constructedIEquatable = iEquatable?.Construct(method.Parameters.First().Type);
+                var iEquatableEquals = constructedIEquatable?.GetMembers("Equals").Single();
 
-                if (method.ContainingType.FindImplementationForInterfaceMember(iEquatableEquals) == method)
+                if (iEquatableEquals != null && method.ContainingType.FindImplementationForInterfaceMember(iEquatableEquals) == method)
                 {
                     return true;
                 }
@@ -79,18 +85,21 @@ namespace Analyzer.Utilities
 
             if (method.ReturnType.SpecialType == SpecialType.System_Int32 && method.Parameters.Length == 1)
             {
-                var iEqualityComparer = compilation.GetTypeByMetadataName("System.IEqualityComparer");
-                var iEqualityComparerGetHashCode = iEqualityComparer.GetMembers("Equals").Single();
+                // Substitue the type of the first parameter of Equals in the generic interfaces and then check if that
+                // interface method is implemented by the given method.
+                var iEqualityComparer = compilation.GetTypeByMetadataName("System.Collections.Generic.IEqualityComparer`1");
+                var constructedIEqualityComparer = iEqualityComparer?.Construct(method.Parameters.First().Type);
+                var iEqualityComparerGetHashCode = constructedIEqualityComparer?.GetMembers("GetHashCode").Single();
 
-                if (method.ContainingType.FindImplementationForInterfaceMember(iEqualityComparerGetHashCode) == method)
+                if (iEqualityComparerGetHashCode != null && method.ContainingType.FindImplementationForInterfaceMember(iEqualityComparerGetHashCode) == method)
                 {
                     return true;
                 }
 
                 var iHashCodeProvider = compilation.GetTypeByMetadataName("System.Collections.IHashCodeProvider");
-                var iHashCodeProviderGetHashCode = iHashCodeProvider.GetMembers("Equals").Single();
+                var iHashCodeProviderGetHashCode = iHashCodeProvider?.GetMembers("GetHashCode").Single();
 
-                if (method.ContainingType.FindImplementationForInterfaceMember(iHashCodeProviderGetHashCode) == method)
+                if (iHashCodeProviderGetHashCode != null && method.ContainingType.FindImplementationForInterfaceMember(iHashCodeProviderGetHashCode) == method)
                 {
                     return true;
                 }
@@ -142,9 +151,9 @@ namespace Analyzer.Utilities
             if (method.ReturnType.SpecialType == SpecialType.System_Void && method.Parameters.Length == 0)
             {
                 var iDisposable = compilation.GetTypeByMetadataName("System.IDisposable");
-                var iDisposableDispose = iDisposable.GetMembers("Dispose").Single();
+                var iDisposableDispose = iDisposable?.GetMembers("Dispose").Single();
 
-                if (method.ContainingType.FindImplementationForInterfaceMember(iDisposableDispose) == method)
+                if (iDisposableDispose != null && method.ContainingType.FindImplementationForInterfaceMember(iDisposableDispose) == method)
                 {
                     return true;
                 }

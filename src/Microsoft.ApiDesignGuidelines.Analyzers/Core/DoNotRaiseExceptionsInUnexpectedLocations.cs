@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Immutable;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Analyzer.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
+using Analyzer.Utilities;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Semantics;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
@@ -89,9 +89,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         var type = operation.Thrown.ResultType as INamedTypeSymbol;
                         if (type != null && type.DerivesFrom(exceptionType))
                         {
-                            if (match.AllowedExceptions.IsEmpty || match.AllowedExceptions.Contains(type))
+                            if (match.AllowedExceptions.IsEmpty || !match.AllowedExceptions.Contains(type))
                             {
-                                operation.Syntax.CreateDiagnostic(match.Rule, type.Name);
+                                operationContext.ReportDiagnostic(operation.Syntax.CreateDiagnostic(match.Rule, methodSymbol.Name, type.Name));
                             }
                         }
                     }, OperationKind.ThrowStatement);

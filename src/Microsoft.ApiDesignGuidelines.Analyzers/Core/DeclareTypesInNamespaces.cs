@@ -4,13 +4,15 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
+using System.Diagnostics;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
-{                   
+{
     /// <summary>
     /// CA1050: Declare types in namespaces
     /// </summary>
-    public abstract class DeclareTypesInNamespacesAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class DeclareTypesInNamespacesAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1050";
 
@@ -26,14 +28,26 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182134.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            
+            analysisContext.RegisterSymbolAction(context => AnalyzeSymbol(context), SymbolKind.NamedType);
+        }
+
+        private void AnalyzeSymbol(SymbolAnalysisContext context)
+        {
+            ISymbol type = context.Symbol;
+
+            if (type.DeclaredAccessibility == Accessibility.Public && 
+                type.ContainingType == null &&
+                type.ContainingNamespace.IsGlobalNamespace)
+            {
+                context.ReportDiagnostic(type.CreateDiagnostic(Rule));
+            }
         }
     }
 }

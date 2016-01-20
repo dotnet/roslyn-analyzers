@@ -61,13 +61,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             analysisContext.RegisterCompilationStartAction(compilationStartContext =>
             {
                 var compilation = compilationStartContext.Compilation;
-                var locations = GetLocationTargets(compilation);
                 var exceptionType = WellKnownTypes.Exception(compilation);
-
                 if (exceptionType == null)
                 {
                     return;
                 }
+                
+                // Get a list of interesting categories of methods to analyze.
+                var methodCategories = GetMethodCategories(compilation);
 
                 compilationStartContext.RegisterOperationBlockStartAction(operationBlockContext =>
                 {
@@ -77,21 +78,27 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         return;
                     }
 
-                    var match = locations.FirstOrDefault(l => l.IsMatch(methodSymbol, compilation));
-                    if (match == null)
+                    // Find out if this given method is one of the interesting categories of methods.
+                    // (For eg: certain Equals methods or certain accessors etc.
+                    var methodCategory = methodCategories.FirstOrDefault(l => l.IsMatch(methodSymbol, compilation));
+                    if (methodCategory == null)
                     {
                         return;
                     }
 
+                    // For the interesting methods, register an operation action to catch all
+                    // Throw statements.
                     operationBlockContext.RegisterOperationAction(operationContext =>
                     {
                         IThrowStatement operation = operationContext.Operation as IThrowStatement;
                         var type = operation.Thrown.ResultType as INamedTypeSymbol;
                         if (type != null && type.DerivesFrom(exceptionType))
                         {
-                            if (match.AllowedExceptions.IsEmpty || !match.AllowedExceptions.Contains(type))
+                            // If no exceptions are allowed or if the thrown exceptions is not an allowed one..
+                            if (methodCategory.AllowedExceptions.IsEmpty || !methodCategory.AllowedExceptions.Contains(type))
                             {
-                                operationContext.ReportDiagnostic(operation.Syntax.CreateDiagnostic(match.Rule, methodSymbol.Name, type.Name));
+                                operationContext.ReportDiagnostic(
+                                    operation.Syntax.CreateDiagnostic(methodCategory.Rule, methodSymbol.Name, type.Name));
                             }
                         }
                     }, OperationKind.ThrowStatement);
@@ -99,100 +106,103 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             });
         }
 
-        private class LocationTarget
+        /// <summary>
+        /// This object describes a class of methods where exception throwing statements should be analyzed.
+        /// </summary>
+        private class MethodCategory
         {
+            /// <summary>
+            /// Function used to determine whether a given method symbol should be analyzed.
+            /// </summary>
             private readonly Func<IMethodSymbol, Compilation, bool> matchFunction;
-            private readonly Visibility visibility;
+            
+            /// <summary>
+            /// Determines if we should analyze non-public methods of a given type.
+            /// </summary>
+            private readonly bool analyzeOnlyPublicMethods;
+
+            /// <summary>
+            /// The rule that should be fired if there is an exception in this kind of method.
+            /// </summary>
             public DiagnosticDescriptor Rule { get; }
+
+            /// <summary>
+            /// List of exception types which are allowed to be thrown inside this category of method.
+            /// This list will be empty if no exceptions are allowed.
+            /// </summary>
             public ImmutableArray<ITypeSymbol> AllowedExceptions { get; }
 
-            public LocationTarget(Func<IMethodSymbol, Compilation, bool> matchFunction, Visibility visibility, DiagnosticDescriptor rule, params ITypeSymbol[] allowedExceptionTypes)
+            public MethodCategory(Func<IMethodSymbol, Compilation, bool> matchFunction, bool analyzeOnlyPublicMethods, DiagnosticDescriptor rule, params ITypeSymbol[] allowedExceptionTypes)
             {
                 this.matchFunction = matchFunction;
-                this.visibility = visibility;
+                this.analyzeOnlyPublicMethods = analyzeOnlyPublicMethods;
                 this.Rule = rule;
                 AllowedExceptions = ImmutableArray.Create(allowedExceptionTypes);
             }
 
+            /// <summary>
+            /// Checks if the given method belong this category
+            /// </summary>
             public bool IsMatch(IMethodSymbol method, Compilation compilation)
             {
-                if (visibility == Visibility.OutsideAssembly &&
+                // If we are supposed to analyze only public methods get the resultant visibility
+                // i.e public method inside an internal class is not considered public.
+                if (analyzeOnlyPublicMethods &&
                     method.GetResultantVisibility() != SymbolVisibility.Public)
                 {
                     return false;
                 }
+
                 return matchFunction(method, compilation);
             }
         }
-
-        private enum Visibility
+        
+        private static List<MethodCategory> GetMethodCategories(Compilation compilation)
         {
-            All = 0,
-            OutsideAssembly,
-        }
-
-        private static bool IsEqualsOverrideOrInterfaceImplementation(IMethodSymbol method, Compilation compilation)
-        {
-            return method.IsEqualsOverride() || method.IsEqualsInterfaceImplementation(compilation);
-        }
-
-
-        private static List<LocationTarget> GetLocationTargets(Compilation compilation)
-        {
-            var locationTargets = new List<LocationTarget>(12);
-            locationTargets.Add(new LocationTarget(IsPropertyGetter, Visibility.OutsideAssembly,
+            var methodCategories = new List<MethodCategory>(12);
+            methodCategories.Add(new MethodCategory(IsPropertyGetter, true,
                 PropertyGetterRule,
                 WellKnownTypes.InvalidOperationException(compilation), WellKnownTypes.NotSupportedException(compilation)));
 
-            locationTargets.Add(new LocationTarget(IsIndexerGetter, Visibility.OutsideAssembly,
+            methodCategories.Add(new MethodCategory(IsIndexerGetter, true,
                 PropertyGetterRule,
                 WellKnownTypes.InvalidOperationException(compilation), WellKnownTypes.NotSupportedException(compilation),
                 WellKnownTypes.ArgumentException(compilation), WellKnownTypes.KeyNotFoundException(compilation)));
 
-            locationTargets.Add(new LocationTarget(IsEventAccessor, Visibility.OutsideAssembly,
+            methodCategories.Add(new MethodCategory(IsEventAccessor, true,
                 HasAllowedExceptionsRule,
                 WellKnownTypes.InvalidOperationException(compilation), WellKnownTypes.NotSupportedException(compilation),
                 WellKnownTypes.ArgumentException(compilation)));
 
-            locationTargets.Add(new LocationTarget(IMethodSymbolExtensions.IsGetHashCodeInterfaceImplementation, Visibility.OutsideAssembly,
+            methodCategories.Add(new MethodCategory(IsGetHashCodeInterfaceImplementation, true,
                 HasAllowedExceptionsRule,
                 WellKnownTypes.ArgumentException(compilation)));
 
-            locationTargets.Add(new LocationTarget(IsEqualsOverrideOrInterfaceImplementation, Visibility.OutsideAssembly,
+            methodCategories.Add(new MethodCategory(IsEqualsOverrideOrInterfaceImplementation, true,
                 NoAllowedExceptionsRule));
 
-            locationTargets.Add(new LocationTarget(IsEqualityOperator, Visibility.OutsideAssembly,
+            methodCategories.Add(new MethodCategory(IsEqualityOperator, true,
                 NoAllowedExceptionsRule));
 
-            locationTargets.Add(new LocationTarget(IsGetHashCodeOverride, Visibility.OutsideAssembly,
+            methodCategories.Add(new MethodCategory(IsGetHashCodeOverride, true,
                 NoAllowedExceptionsRule));
 
-            locationTargets.Add(new LocationTarget(IsToString, Visibility.OutsideAssembly,
+            methodCategories.Add(new MethodCategory(IsToString, true,
                 NoAllowedExceptionsRule));
 
-            locationTargets.Add(new LocationTarget(IsImplicitCastOperator, Visibility.OutsideAssembly,
+            methodCategories.Add(new MethodCategory(IsImplicitCastOperator, true,
                 NoAllowedExceptionsRule));
 
-            locationTargets.Add(new LocationTarget(IsStaticConstructor, Visibility.All,
+            methodCategories.Add(new MethodCategory(IsStaticConstructor, false,
                 NoAllowedExceptionsRule));
 
-            locationTargets.Add(new LocationTarget(IsFinalizer, Visibility.All,
+            methodCategories.Add(new MethodCategory(IsFinalizer, false,
                 NoAllowedExceptionsRule));
 
-            locationTargets.Add(new LocationTarget(IMethodSymbolExtensions.IsDisposeImplementation, Visibility.OutsideAssembly,
+            methodCategories.Add(new MethodCategory(IMethodSymbolExtensions.IsDisposeImplementation, true,
                 NoAllowedExceptionsRule));
 
-            return locationTargets;
-        }
-
-        private static bool IsToString(IMethodSymbol method, Compilation compilation)
-        {
-            return method.IsToString();
-        }
-
-        private static bool IsGetHashCodeOverride(IMethodSymbol method, Compilation compilation)
-        {
-            return method.IsGetHashCodeOverride();
+            return methodCategories;
         }
 
         private static bool IsPropertyGetter(IMethodSymbol method, Compilation compilation)
@@ -214,6 +224,99 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                    method.MethodKind == MethodKind.EventRemove;
         }
 
+        private static bool IsEqualsOverrideOrInterfaceImplementation(IMethodSymbol method, Compilation compilation)
+        {
+            return method.IsEqualsOverride() || IsEqualsInterfaceImplementation(method, compilation);
+        }
+
+        /// <summary>
+        /// Checks if a given method implements IEqualityComparer.Equals or IEquatable.Equals.
+        /// </summary>
+        private static bool IsEqualsInterfaceImplementation(IMethodSymbol method, Compilation compilation)
+        {
+            if (method.Name != "Equals")
+            {
+                return false;
+            }
+
+            int paramCount = method.Parameters.Length;
+            if (method.ReturnType.SpecialType == SpecialType.System_Boolean &&
+                (paramCount == 1 || paramCount == 2))
+            {
+                // Substitue the type of the first parameter of Equals in the generic interface and then check if that
+                // interface method is implemented by the given method.
+                var iEqualityComparer = WellKnownTypes.GenericIEqualityComparer(compilation);
+                var constructedIEqualityComparer = iEqualityComparer?.Construct(method.Parameters.First().Type);
+                var iEqualityComparerEquals = constructedIEqualityComparer?.GetMembers("Equals").Single() as IMethodSymbol;
+
+                if (iEqualityComparerEquals != null && method.ContainingType.FindImplementationForInterfaceMember(iEqualityComparerEquals) == method)
+                {
+                    return true;
+                }
+
+                // Substitue the type of the first parameter of Equals in the generic interface and then check if that
+                // interface method is implemented by the given method.
+                var iEquatable = WellKnownTypes.GenericIEquatable(compilation);
+                var constructedIEquatable = iEquatable?.Construct(method.Parameters.First().Type);
+                var iEquatableEquals = constructedIEquatable?.GetMembers("Equals").Single();
+
+                if (iEquatableEquals != null && method.ContainingType.FindImplementationForInterfaceMember(iEquatableEquals) == method)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if a given method implements IEqualityComparer.GetHashCode or IHashCodeProvider.GetHashCode.
+        /// </summary>
+        /// <param name="method"></param>
+        /// <param name="compilation"></param>
+        /// <returns></returns>
+        private static bool IsGetHashCodeInterfaceImplementation(IMethodSymbol method, Compilation compilation)
+        {
+            if (method.Name != "GetHashCode")
+            {
+                return false;
+            }
+
+            if (method.ReturnType.SpecialType == SpecialType.System_Int32 && method.Parameters.Length == 1)
+            {
+                // Substitue the type of the first parameter of Equals in the generic interface and then check if that
+                // interface method is implemented by the given method.
+                var iEqualityComparer = WellKnownTypes.GenericIEqualityComparer(compilation);
+                var constructedIEqualityComparer = iEqualityComparer?.Construct(method.Parameters.First().Type);
+                var iEqualityComparerGetHashCode = constructedIEqualityComparer?.GetMembers("GetHashCode").Single();
+
+                if (iEqualityComparerGetHashCode != null && method.ContainingType.FindImplementationForInterfaceMember(iEqualityComparerGetHashCode) == method)
+                {
+                    return true;
+                }
+
+                var iHashCodeProvider = WellKnownTypes.IHashCodeProvider(compilation);
+                var iHashCodeProviderGetHashCode = iHashCodeProvider?.GetMembers("GetHashCode").Single();
+
+                if (iHashCodeProviderGetHashCode != null && method.ContainingType.FindImplementationForInterfaceMember(iHashCodeProviderGetHashCode) == method)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsGetHashCodeOverride(IMethodSymbol method, Compilation compilation)
+        {
+            return method.IsGetHashCodeOverride();
+        }
+
+        private static bool IsToString(IMethodSymbol method, Compilation compilation)
+        {
+            return method.IsToStringOverride();
+        }
+        
         private static bool IsStaticConstructor(IMethodSymbol method, Compilation compilation)
         {
             return method.MethodKind == MethodKind.StaticConstructor;

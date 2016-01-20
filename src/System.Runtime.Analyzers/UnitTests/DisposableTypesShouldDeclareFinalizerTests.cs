@@ -10,37 +10,6 @@ namespace System.Runtime.Analyzers.UnitTests
     public class DisposableTypesShouldDeclareFinalizerTests : DiagnosticAnalyzerTestBase
     {
         [Fact]
-        public void CSharpNoDiagnosticIfNoFieldsHaveNativeType()
-        {
-            const string code = @"
-public class A
-{
-    private readonly int _n;
-    private readonly string _s;
-
-    public A()
-    {
-        _n = 1;
-        _s = ""a"";
-    }
-}
-";
-            VerifyCSharp(code);
-        }
-
-        [Fact]
-        public void BasicNoDiagnosticIfNoFieldsHaveNativeType()
-        {
-            var code = @"
-Public Class A
-    Private _n As Integer
-    Private _s As String
-End Class
-";
-            VerifyBasic(code);
-        }
-
-        [Fact]
         public void CSharpDiagnosticIfIntPtrFieldIsAssignedFromNativeCodeAndNoFinalizerExists()
         {
             var code = @"

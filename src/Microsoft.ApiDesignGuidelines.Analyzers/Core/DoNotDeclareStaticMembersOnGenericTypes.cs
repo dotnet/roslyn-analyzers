@@ -34,7 +34,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         public override void Initialize(AnalysisContext analysisContext)
         {
             analysisContext.RegisterSymbolAction(
-                (symbolAnalysisContext) =>
+                symbolAnalysisContext =>
                 {
                     var symbol = symbolAnalysisContext.Symbol;
                     if (!symbol.ContainingType.IsGenericType ||
@@ -46,8 +46,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                     var methodSymbol = symbol as IMethodSymbol;
                     if (methodSymbol != null &&
-                        (methodSymbol.IsUserDefinedOperator() ||
-                         methodSymbol.IsAccessorMethod()))
+                        (methodSymbol.IsAccessorMethod() ||
+                         (methodSymbol.MethodKind == MethodKind.UserDefinedOperator &&
+                          (methodSymbol.Name == WellKnownMemberNames.EqualityOperatorName ||
+                           methodSymbol.Name == WellKnownMemberNames.InequalityOperatorName))))
                     {
                         return;
                     }

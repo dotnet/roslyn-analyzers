@@ -272,5 +272,20 @@ namespace Analyzer.Utilities
         {
             return compilation.GetTypeByMetadataName("System.Collections.IHashCodeProvider");
         }
+
+        public static INamedTypeSymbol IntPtr(Compilation compilation)
+        {
+            return compilation.GetSpecialType(SpecialType.System_IntPtr);
+        }
+
+        public static INamedTypeSymbol UIntPtr(Compilation compilation)
+        {
+            return compilation.GetSpecialType(SpecialType.System_UIntPtr);
+        }
+
+        public static INamedTypeSymbol HandleRef(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Runtime.InteropServices.HandleRef");
+        }
     }
 }

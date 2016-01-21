@@ -132,8 +132,6 @@
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.Fixer.cs" />
     <Compile Include="CSharpPassSystemUriObjectsInsteadOfStrings.cs" />
     <Compile Include="CSharpPassSystemUriObjectsInsteadOfStrings.Fixer.cs" />
-    <Compile Include="CSharpDoNotDeclareStaticMembersOnGenericTypes.cs" />
-    <Compile Include="CSharpDoNotDeclareStaticMembersOnGenericTypes.Fixer.cs" />
     <Compile Include="CSharpCollectionsShouldImplementGenericInterface.Fixer.cs" />
     <Compile Include="CSharpEnumStorageShouldBeInt32.cs" />
     <Compile Include="CSharpEnumStorageShouldBeInt32.Fixer.cs" />
@@ -149,7 +147,6 @@
     <Compile Include="CSharpProvideObsoleteAttributeMessage.Fixer.cs" />
     <Compile Include="CSharpPropertiesShouldNotBeWriteOnly.cs" />
     <Compile Include="CSharpPropertiesShouldNotBeWriteOnly.Fixer.cs" />
-    <Compile Include="CSharpDeclareTypesInNamespaces.cs" />
     <Compile Include="CSharpDeclareTypesInNamespaces.Fixer.cs" />
     <Compile Include="CSharpDoNotDeclareVisibleInstanceFields.cs" />
     <Compile Include="CSharpDoNotDeclareVisibleInstanceFields.Fixer.cs" />

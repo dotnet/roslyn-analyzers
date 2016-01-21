@@ -106,7 +106,6 @@
       <DependentUpon>SystemResourcesAnalyzersResources.resx</DependentUpon>
     </Compile>
     <Compile Include="MarkAssembliesWithNeutralResourcesLanguage.cs" />
-    <Compile Include="MarkAssembliesWithNeutralResourcesLanguage.Fixer.cs" />
     <Compile Include="DiagnosticCategory.cs" />
   </ItemGroup>
   <ItemGroup>

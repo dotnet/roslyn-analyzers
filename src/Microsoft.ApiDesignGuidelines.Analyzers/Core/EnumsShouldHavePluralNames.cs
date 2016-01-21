@@ -111,7 +111,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
-            bool hasFlagsAttribute = symbol.GetAttributes().Any(a => a.AttributeClass == flagsAttribute);
+            bool hasFlagsAttribute = symbol.GetAttributes().Any(a => a.AttributeClass.Equals(flagsAttribute));
             if (hasFlagsAttribute)
             {
                 if (!symbol.Name.IsPlural()) // Checking Rule CA1714

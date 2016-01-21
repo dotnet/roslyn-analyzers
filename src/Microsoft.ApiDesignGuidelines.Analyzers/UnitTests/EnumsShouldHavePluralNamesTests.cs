@@ -76,6 +76,35 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                         GetBasicResultAt(3, 39, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717.MessageFormat.ToString()));
 
         }
+        [Fact]
+        public void CA1714_CA1717__Test_EnumWithNoFlags_PluralName_UpperCase()
+        {
+            VerifyCSharp(@" 
+                            class A 
+                            { 
+                               enum DAYS 
+                                {
+                                    sunday = 0,
+                                    Monday = 1,
+                                    Tuesday = 2
+                                       
+                                };
+                            }",
+                            GetCSharpResultAt(4, 37, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717.MessageFormat.ToString()));
+
+            VerifyBasic(@"
+                        Class A
+	                        Private Enum DAYS
+		                           Sunday = 0
+		                           Monday = 1
+		                           Tuesday = 2
+
+	                        End Enum
+                        End Class
+                        ",
+                        GetBasicResultAt(3, 39, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717.MessageFormat.ToString()));
+
+        }
 
         [Fact]
         public void CA1714_CA1717_Test_EnumWithFlags_SingularName()
@@ -106,7 +135,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                             GetBasicResultAt(4, 35, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1714.MessageFormat.ToString()));
 
         }
-
+        
         [Fact]
         public void CA1714_CA1717_Test_EnumWithFlags_PluralName()
         {
@@ -127,6 +156,35 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                        Class A
 	                    <System.Flags> _
 	                    Private Enum Days
+		                    Sunday = 0
+		                    Monday = 1
+		                    Tuesday = 2
+	                    End Enum
+                        End Class");
+
+
+        }
+
+        [Fact]
+        public void CA1714_CA1717_Test_EnumWithFlags_PluralName_UpperCase()
+        {
+            VerifyCSharp(@" 
+                            class A 
+                            { 
+                               [System.Flags] 
+                               enum DAYS 
+                               {
+                                    sunday = 0,
+                                    Monday = 1,
+                                    Tuesday = 2
+                                       
+                                };
+                            }");
+
+            VerifyBasic(@"
+                       Class A
+	                    <System.Flags> _
+	                    Private Enum DAYS
 		                    Sunday = 0
 		                    Monday = 1
 		                    Tuesday = 2
@@ -211,6 +269,59 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyBasic(@"
                        Class A
                         Private Enum Men
+                            M1 = 0
+                            M2 = 1
+                            M3 = 2
+                        End Enum
+                        End Class");
+        }
+
+        [Fact]
+        public void CA1714_CA1717_Test_EnumWithNoFlags_irregularPluralWord_EndingWith_ae()
+        {
+            VerifyCSharp(@" 
+                            class A 
+                            { 
+                               [System.Flags] 
+                               enum formulae 
+                               {
+                                    M1 = 0,
+                                    M2 = 1,
+                                    M3 = 2
+                                       
+                                };
+                            }");
+
+            VerifyBasic(@"
+                       Class A
+                        < System.Flags > _
+                        Private Enum formulae
+                            M1 = 0
+                            M2 = 1
+                            M3 = 2
+                        End Enum
+                        End Class");
+        }
+        [Fact]
+        public void CA1714_CA1717_Test_EnumWithNoFlags_irregularPluralWord_EndingWith_i()
+        {
+            VerifyCSharp(@" 
+                            class A 
+                            { 
+                               [System.Flags] 
+                               enum trophi 
+                               {
+                                    M1 = 0,
+                                    M2 = 1,
+                                    M3 = 2
+                                       
+                                };
+                            }");
+
+            VerifyBasic(@"
+                       Class A
+                        < System.Flags > _
+                        Private Enum trophi
                             M1 = 0
                             M2 = 1
                             M3 = 2

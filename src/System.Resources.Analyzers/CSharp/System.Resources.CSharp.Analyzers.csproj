@@ -30,6 +30,10 @@
     <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
+      <Project>{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}</Project>
+      <Name>Analyzer.Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\System.Resources.Analyzers.csproj">
       <Project>{4D517B34-C3D1-4358-9CF0-2240B6AA7A75}</Project>
       <Name>System.Resources.Analyzers</Name>

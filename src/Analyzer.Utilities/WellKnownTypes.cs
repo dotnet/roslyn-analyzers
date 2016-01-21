@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities
@@ -14,7 +13,7 @@ namespace Analyzer.Utilities
 
         public static INamedTypeSymbol GenericICollection(Compilation compilation)
         {
-           
+
             return compilation.GetTypeByMetadataName("System.Collections.Generic.ICollection`1");
         }
 
@@ -216,6 +215,16 @@ namespace Analyzer.Utilities
         public static INamedTypeSymbol ComVisibleAttribute(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName("System.Runtime.InteropServices.ComVisibleAttribute");
+        }
+
+        public static INamedTypeSymbol NeutralResourcesLanguageAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Resources.NeutralResourcesLanguageAttribute");
+        }
+
+        public static INamedTypeSymbol GeneratedCodeAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.CodeDom.Compiler.GeneratedCodeAttribute");
         }
 
         public static INamedTypeSymbol Console(Compilation compilation)

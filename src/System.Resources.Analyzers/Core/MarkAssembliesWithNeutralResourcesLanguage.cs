@@ -41,7 +41,11 @@ namespace System.Resources.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            // set generated file mode to analyze since I only analyze generated files and doesn't report
+            // any diagnostics from it.
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
+
+            // this analyzer is safe from running concurrently.
             analysisContext.EnableConcurrentExecution();
 
             var hasResource = false;

@@ -116,14 +116,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 if (!symbol.Name.IsPlural()) // Checking Rule CA1714
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Rule_CA1714, symbol.Locations.First(), symbol.Name));
+                    context.ReportDiagnostic(symbol.CreateDiagnostic(Rule_CA1714, symbol.OriginalDefinition.Locations.First(), symbol.Name));
                 }
             }
             else
             {
                 if (symbol.Name.IsPlural()) // Checking Rule CA1717
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Rule_CA1717, symbol.Locations.First(), symbol.Name));
+                    context.ReportDiagnostic(symbol.CreateDiagnostic(Rule_CA1717, symbol.OriginalDefinition.Locations.First(), symbol.Name));
                 }
             }
         }

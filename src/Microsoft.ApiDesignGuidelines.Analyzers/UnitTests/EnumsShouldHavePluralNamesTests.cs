@@ -222,6 +222,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
+        // TODO: when the Isplural function handles better checks.
+        // this test should not fail.
         public void CA1714_CA1717_Test_EnumWithFlags_PluralName_NotEndingWithS()
         {
             VerifyCSharp(@" 

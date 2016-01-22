@@ -144,6 +144,34 @@ namespace Analyzer.Utilities
         {
             return typeSymbol.Accept(MinimalAccessibilityVisitor.Instance);
         }
+        
+        public static bool IsTypeDeclaredInExpectedAssembly(ITypeSymbol typeSymbol, string assemblyName)
+        {
+            return typeSymbol.ContainingAssembly.Identity.Name.Equals(assemblyName, StringComparison.Ordinal);
+        }
+
+        public static bool IsDerivedFrom(this ITypeSymbol typeSymbol, ITypeSymbol baseSymbol, bool baseTypesOnly = false)
+        {
+            if (baseSymbol == null)
+            {
+                return false;
+            }
+            
+            if (!baseTypesOnly && typeSymbol.AllInterfaces.As<ITypeSymbol>().Contains(baseSymbol))
+            {
+                return true;
+            }
+
+            for (ITypeSymbol baseType = typeSymbol; baseType != null; baseType = baseType.BaseType)
+            {
+                if (baseType == baseSymbol)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         private class MinimalAccessibilityVisitor : SymbolVisitor<Accessibility>
         {

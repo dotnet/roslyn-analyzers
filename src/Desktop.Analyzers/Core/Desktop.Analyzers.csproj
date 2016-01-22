@@ -95,16 +95,22 @@
     <None Include="uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CA3075DiagnosticAnalyzer.cs" />
+    <Compile Include="CA3076DiagnosticAnalyzer.cs" />
+    <Compile Include="CA3077DiagnosticAnalyzer.cs" />
     <Compile Include="DoNotCatchCorruptedStateExceptions.cs" />
     <Compile Include="DoNotUseInsecureCryptographicAlgorithms.cs" />
     <Compile Include="Helpers\CompilationSecurityTypes.cs" />
+    <Compile Include="Helpers\SecurityDiagnosticHelpers.cs" />
     <Compile Include="Helpers\SecurityTypes.cs" />
+    <Compile Include="Helpers\SyntaxNodeHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DesktopAnalyzersResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>DesktopAnalyzersResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SecurityMemberNames.cs" />
     <Compile Include="SerializationDiagnosticAnalyzer.cs" />
     <Compile Include="SpecifyMessageBoxOptions.cs" />
     <Compile Include="SpecifyMessageBoxOptions.Fixer.cs" />

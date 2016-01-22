@@ -215,6 +215,42 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This API internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector..
+        /// </summary>
+        internal static string DoNotUseDtdProcessingOverloadsDescription {
+            get {
+                return ResourceManager.GetString("DoNotUseDtdProcessingOverloadsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not use unsafe overload of &apos;{0}&apos; method, replace with an overload that takes an XmlReader instance..
+        /// </summary>
+        internal static string DoNotUseDtdProcessingOverloadsDiagnosis {
+            get {
+                return ResourceManager.GetString("DoNotUseDtdProcessingOverloadsDiagnosis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Setting the InnerXml property of XmlDocument is potentially unsafe. This API internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector..
+        /// </summary>
+        internal static string DoNotUseSetInnerXmlDescription {
+            get {
+                return ResourceManager.GetString("DoNotUseSetInnerXmlDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not use the unsafe setter of InnerXml property of System.Xml.XmlDocument, replace with a call to the Load() method overload that takes an XmlReader instance..
+        /// </summary>
+        internal static string DoNotUseSetInnerXmlDiagnosis {
+            get {
+                return ResourceManager.GetString("DoNotUseSetInnerXmlDiagnosis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do Not Use Weak Cryptographic Algorithms.
         /// </summary>
         internal static string DoNotUseWeakCryptographicAlgorithms {
@@ -404,6 +440,60 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insecure DTD processing in API design..
+        /// </summary>
+        internal static string InsecureDtdProcessingInApiDesign {
+            get {
+                return ResourceManager.GetString("InsecureDtdProcessingInApiDesign", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insecure DTD processing in XML.
+        /// </summary>
+        internal static string InsecureXmlDtdProcessing {
+            get {
+                return ResourceManager.GetString("InsecureXmlDtdProcessing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insecure XSLT script processing..
+        /// </summary>
+        internal static string InsecureXsltScriptProcessing {
+            get {
+                return ResourceManager.GetString("InsecureXsltScriptProcessing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which, on untrusted XSL input, may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argurment with null or an XmlSecureResolver instance. This message may be suppressed  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string InsecureXsltScriptProcessingDescription {
+            get {
+                return ResourceManager.GetString("InsecureXsltScriptProcessingDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ensure that  DTD processing is secure on all instances of classes derived from System.Xml.XmlDocument by explicitly setting XmlResolver property to a secure value (instance of XmlSecureResolver or null). Using default resolver for resolving external XML entities may lead to information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector..
+        /// </summary>
+        internal static string MakeDtdProcessingSecureInApiDesignXmlDocumentDescription {
+            get {
+                return ResourceManager.GetString("MakeDtdProcessingSecureInApiDesignXmlDocumentDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ensure that  DTD processing is secure on all instances of classes derived from System.Xml.XmlTextReader by setting XmlResolver and DtdProcessing properties to secure values. Enable DTD processing on the XmlTextReader and using UrlResolver for resolving external XML entities may lead to information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector..
+        /// </summary>
+        internal static string MakeDtdProcessingSecureInApiDesignXmlTextReaderDescription {
+            get {
+                return ResourceManager.GetString("MakeDtdProcessingSecureInApiDesignXmlTextReaderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An instance field of a type that is not serializable is declared in a type that is serializable..
         /// </summary>
         internal static string MarkAllNonSerializableFieldsDescription {
@@ -544,6 +634,24 @@ namespace Desktop.Analyzers {
         internal static string ReviewDataViewCollectionStringTitle {
             get {
                 return ResourceManager.GetString("ReviewDataViewCollectionStringTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Review code to insure that the property is set from a trusted source. This pattern internally enables DTD processing in XML and uses XmlUrlResolver for resolving external XML entities, which, on untrusted input, may lead to information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector..
+        /// </summary>
+        internal static string ReviewDtdProcessingPropertiesDescription {
+            get {
+                return ResourceManager.GetString("ReviewDtdProcessingPropertiesDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ensure DataViewSettingCollectionString property of DataViewManager is assigned from a trusted source, otherwise avoid using this control..
+        /// </summary>
+        internal static string ReviewDtdProcessingPropertiesDiagnosis {
+            get {
+                return ResourceManager.GetString("ReviewDtdProcessingPropertiesDiagnosis", resourceCulture);
             }
         }
         
@@ -797,6 +905,159 @@ namespace Desktop.Analyzers {
         internal static string UseXmlReaderForDataTableReadXmlTitle {
             get {
                 return ResourceManager.GetString("UseXmlReaderForDataTableReadXmlTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Constructor of XmlDocument derived class implicitly uses insecure default value for DTD processing..
+        /// </summary>
+        internal static string XmlDocumentDerivedClassConstructorNoSecureXmlResolverDiagnosis {
+            get {
+                return ResourceManager.GetString("XmlDocumentDerivedClassConstructorNoSecureXmlResolverDiagnosis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XmlDocument derived class doesn&apos;t explictily define a constructor, therefore enables insecure DTD processing by default..
+        /// </summary>
+        internal static string XmlDocumentDerivedClassNoConstructorDiagnosis {
+            get {
+                return ResourceManager.GetString("XmlDocumentDerivedClassNoConstructorDiagnosis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Method of XmlDocument derived class sets XmlResolver property to an insecure value..
+        /// </summary>
+        internal static string XmlDocumentDerivedClassSetInsecureXmlResolverInMethodDiagnosis {
+            get {
+                return ResourceManager.GetString("XmlDocumentDerivedClassSetInsecureXmlResolverInMethodDiagnosis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This usage is potentially unsafe as untrusted external resources may be resolved during read operations. Ensure to set the XmlResolver property to null or an instance of XmlSecureResolver when processing untrusted input. Using insecure resolver (including the dafault resolver) for resolving external XML entities may lead to information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector..
+        /// </summary>
+        internal static string XmlDocumentUseSecureResolverDescription {
+            get {
+                return ResourceManager.GetString("XmlDocumentUseSecureResolverDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An XmlDocument instance is created without setting its XmlResolver property to a secure value. .
+        /// </summary>
+        internal static string XmlDocumentWithNoSecureResolverDiagnosis {
+            get {
+                return ResourceManager.GetString("XmlDocumentWithNoSecureResolverDiagnosis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An insecure XmlReaderSettings instance is provided to XmlReader.Create method..
+        /// </summary>
+        internal static string XmlReaderCreateInsecureConstructedDiagnosis {
+            get {
+                return ResourceManager.GetString("XmlReaderCreateInsecureConstructedDiagnosis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invoking XmlReader.Create method without providing a secure XmlReaderSettings instance is potentially unsafe as it enables DTD processing and uses XmlUrlResolver for resolving external XML entities, which, on untrusted input, may lead to information disclosure.  Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector. Ensure the XmlReaderSettings instance is secure by settings DtdProcessing property to fa [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string XmlReaderCreateInsecureDescription {
+            get {
+                return ResourceManager.GetString("XmlReaderCreateInsecureDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A potentially insecure XmlReaderSettings instance is provided to XmlReader.Create method. Consider explicitly setting secure values to the instance at call site..
+        /// </summary>
+        internal static string XmlReaderCreateInsecureInputDiagnosis {
+            get {
+                return ResourceManager.GetString("XmlReaderCreateInsecureInputDiagnosis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not use an insecure overload of XmlReader.Create which does not accept an XmlReaderSettings argument..
+        /// </summary>
+        internal static string XmlReaderCreateWrongOverloadDiagnosis {
+            get {
+                return ResourceManager.GetString("XmlReaderCreateWrongOverloadDiagnosis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not create XmlTextReader instance with insecure default settings..
+        /// </summary>
+        internal static string XmlTextReaderConstructedWithNoSecureResolutionDiagnosis {
+            get {
+                return ResourceManager.GetString("XmlTextReaderConstructedWithNoSecureResolutionDiagnosis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Constructor of XmlTextReader derived class uses insecure default values for DTD processing..
+        /// </summary>
+        internal static string XmlTextReaderDerivedClassConstructorNoSecureSettingsDiagnosis {
+            get {
+                return ResourceManager.GetString("XmlTextReaderDerivedClassConstructorNoSecureSettingsDiagnosis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XmlTextReader derived class doesn&apos;t explictily define a constructor..
+        /// </summary>
+        internal static string XmlTextReaderDerivedClassNoConstructorDiagnosis {
+            get {
+                return ResourceManager.GetString("XmlTextReaderDerivedClassNoConstructorDiagnosis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Method of XmlTextReader derived class sets XmlResolver and/or DtdProcessing property to insecure value..
+        /// </summary>
+        internal static string XmlTextReaderDerivedClassSetInsecureSettingsInMethodDiagnosis {
+            get {
+                return ResourceManager.GetString("XmlTextReaderDerivedClassSetInsecureSettingsInMethodDiagnosis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Creating an XmlTextReader instance without disabling DTD processing  and using a secure resolver for resolving external XML entities may lead to information disclosure on untrusted input. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector. Ensure the DtdProcessing property to false and XmlResolver proeprty to a secure resolver (XmlSecureResolver or null), or use XmlReader.Create method with a secure  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string XmlTextReaderInsecureResolutionDescription {
+            get {
+                return ResourceManager.GetString("XmlTextReaderInsecureResolutionDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not set XmlTextReader instance with insecure values..
+        /// </summary>
+        internal static string XmlTextReaderSetInsecureResolutionDiagnosis {
+            get {
+                return ResourceManager.GetString("XmlTextReaderSetInsecureResolutionDiagnosis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An insecure combination of XsltSettings and XmlResolver instances are provided to XslCompiledTransfor.Load as arguments. .
+        /// </summary>
+        internal static string XslCompiledTransformLoadInsecureConstructedDiagnosis {
+            get {
+                return ResourceManager.GetString("XslCompiledTransformLoadInsecureConstructedDiagnosis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A potentially insecure XsltSettings instance and an insecure XmlResolver instance are provided to XslCompiledTransform.Load as arguments. To avoid false alarm, consider creating a secure XsltSettings instance at the call site..
+        /// </summary>
+        internal static string XslCompiledTransformLoadInsecureInputDiagnosis {
+            get {
+                return ResourceManager.GetString("XslCompiledTransformLoadInsecureInputDiagnosis", resourceCulture);
             }
         }
     }

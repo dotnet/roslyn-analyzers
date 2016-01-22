@@ -233,6 +233,46 @@ namespace Analyzer.Utilities
             return compilation.GetSpecialType(SpecialType.System_Object);
         }
 
+        public static INamedTypeSymbol Exception(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Exception");
+        }
+
+        public static INamedTypeSymbol InvalidOperationException(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.InvalidOperationException");
+        }
+
+        public static INamedTypeSymbol ArgumentException(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.ArgumentException");
+        }
+
+        public static INamedTypeSymbol NotSupportedException(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.NotSupportedException");
+        }
+
+        public static INamedTypeSymbol KeyNotFoundException(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.KeyNotFoundException");
+        }
+
+        public static INamedTypeSymbol GenericIEqualityComparer(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Collections.Generic.IEqualityComparer`1");
+        }
+
+        public static INamedTypeSymbol GenericIEquatable(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.IEquatable`1");
+        }
+
+        public static INamedTypeSymbol IHashCodeProvider(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Collections.IHashCodeProvider");
+        }
+
         public static INamedTypeSymbol IntPtr(Compilation compilation)
         {
             return compilation.GetSpecialType(SpecialType.System_IntPtr);

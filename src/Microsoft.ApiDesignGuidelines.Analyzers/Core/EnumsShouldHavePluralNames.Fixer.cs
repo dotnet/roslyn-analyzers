@@ -14,11 +14,11 @@ using Microsoft.CodeAnalysis.Editing;
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {                              
     /// <summary>
-    /// CA1717: Only FlagsAttribute enums should have plural names
+    /// CA1714: Flags enums should have plural names
     /// </summary>
-    public abstract class OnlyFlagsEnumsShouldHavePluralNamesFixer : CodeFixProvider
+    public abstract class EnumsShouldHavePluralNamesFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(OnlyFlagsEnumsShouldHavePluralNamesAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, EnumsShouldHavePluralNamesAnalyzer.RuleId_NoPlural);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

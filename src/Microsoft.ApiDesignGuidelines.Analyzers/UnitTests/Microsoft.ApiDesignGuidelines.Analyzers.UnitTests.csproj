@@ -247,12 +247,10 @@
     <Compile Include="IdentifiersShouldHaveCorrectSuffixTests.Fixer.cs" />
     <Compile Include="IdentifiersShouldNotHaveIncorrectSuffixTests.cs" />
     <Compile Include="IdentifiersShouldNotHaveIncorrectSuffixTests.Fixer.cs" />
-    <Compile Include="FlagsEnumsShouldHavePluralNamesTests.cs" />
-    <Compile Include="FlagsEnumsShouldHavePluralNamesTests.Fixer.cs" />
+    <Compile Include="EnumsShouldHavePluralNamesTests.cs" />
+    <Compile Include="EnumsShouldHavePluralNamesTests.Fixer.cs" />
     <Compile Include="IdentifiersShouldNotMatchKeywordsTests.cs" />
     <Compile Include="IdentifiersShouldNotMatchKeywordsTests.Fixer.cs" />
-    <Compile Include="OnlyFlagsEnumsShouldHavePluralNamesTests.cs" />
-    <Compile Include="OnlyFlagsEnumsShouldHavePluralNamesTests.Fixer.cs" />
     <Compile Include="PropertyNamesShouldNotMatchGetMethodsTests.cs" />
     <Compile Include="PropertyNamesShouldNotMatchGetMethodsTests.Fixer.cs" />
     <Compile Include="TypeNamesShouldNotMatchNamespacesTests.cs" />

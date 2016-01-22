@@ -25,6 +25,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static readonly LocalizableString s_localizableMessageHasAllowedExceptions = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsMessageHasAllowedExceptions), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageNoAllowedExceptions = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsMessageNoAllowedExceptions), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private const string helpLinkUri = "https://msdn.microsoft.com/en-us/library/bb386039.aspx";
 
         internal static DiagnosticDescriptor PropertyGetterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -33,7 +34,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb386039.aspx",
+                                                                             helpLinkUri: helpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor HasAllowedExceptionsRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -42,7 +43,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb386039.aspx",
+                                                                             helpLinkUri: helpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor NoAllowedExceptionsRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -51,7 +52,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb386039.aspx",
+                                                                             helpLinkUri: helpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(PropertyGetterRule, HasAllowedExceptionsRule, NoAllowedExceptionsRule);
@@ -66,7 +67,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 {
                     return;
                 }
-                
+
                 // Get a list of interesting categories of methods to analyze.
                 var methodCategories = GetMethodCategories(compilation);
 
@@ -79,7 +80,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     }
 
                     // Find out if this given method is one of the interesting categories of methods.
-                    // (For eg: certain Equals methods or certain accessors etc.
+                    // For eg: certain Equals methods or certain accessors etc.
                     var methodCategory = methodCategories.FirstOrDefault(l => l.IsMatch(methodSymbol, compilation));
                     if (methodCategory == null)
                     {
@@ -91,7 +92,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     operationBlockContext.RegisterOperationAction(operationContext =>
                     {
                         IThrowStatement operation = operationContext.Operation as IThrowStatement;
-                        var type = operation.Thrown.ResultType as INamedTypeSymbol;
+                        var type = operation.Thrown?.ResultType as INamedTypeSymbol;
                         if (type != null && type.DerivesFrom(exceptionType))
                         {
                             // If no exceptions are allowed or if the thrown exceptions is not an allowed one..
@@ -112,10 +113,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private class MethodCategory
         {
             /// <summary>
-            /// Function used to determine whether a given method symbol should be analyzed.
+            /// Function used to determine whether a given method symbol falls into this category.
             /// </summary>
             private readonly Func<IMethodSymbol, Compilation, bool> matchFunction;
-            
+
             /// <summary>
             /// Determines if we should analyze non-public methods of a given type.
             /// </summary>
@@ -130,14 +131,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             /// List of exception types which are allowed to be thrown inside this category of method.
             /// This list will be empty if no exceptions are allowed.
             /// </summary>
-            public ImmutableArray<ITypeSymbol> AllowedExceptions { get; }
+            public ImmutableHashSet<ITypeSymbol> AllowedExceptions { get; }
 
             public MethodCategory(Func<IMethodSymbol, Compilation, bool> matchFunction, bool analyzeOnlyPublicMethods, DiagnosticDescriptor rule, params ITypeSymbol[] allowedExceptionTypes)
             {
                 this.matchFunction = matchFunction;
                 this.analyzeOnlyPublicMethods = analyzeOnlyPublicMethods;
                 this.Rule = rule;
-                AllowedExceptions = ImmutableArray.Create(allowedExceptionTypes);
+                AllowedExceptions = allowedExceptionTypes.ToImmutableHashSet();
             }
 
             /// <summary>
@@ -156,85 +157,82 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return matchFunction(method, compilation);
             }
         }
-        
+
         private static List<MethodCategory> GetMethodCategories(Compilation compilation)
         {
-            var methodCategories = new List<MethodCategory>(12);
-            methodCategories.Add(new MethodCategory(IsPropertyGetter, true,
-                PropertyGetterRule,
-                WellKnownTypes.InvalidOperationException(compilation), WellKnownTypes.NotSupportedException(compilation)));
+            var methodCategories = new List<MethodCategory> {
+                new MethodCategory(IsPropertyGetter, true,
+                    PropertyGetterRule,
+                    WellKnownTypes.InvalidOperationException(compilation), WellKnownTypes.NotSupportedException(compilation)),
 
-            methodCategories.Add(new MethodCategory(IsIndexerGetter, true,
-                PropertyGetterRule,
-                WellKnownTypes.InvalidOperationException(compilation), WellKnownTypes.NotSupportedException(compilation),
-                WellKnownTypes.ArgumentException(compilation), WellKnownTypes.KeyNotFoundException(compilation)));
+                new MethodCategory(IsIndexerGetter, true,
+                    PropertyGetterRule,
+                    WellKnownTypes.InvalidOperationException(compilation), WellKnownTypes.NotSupportedException(compilation),
+                    WellKnownTypes.ArgumentException(compilation), WellKnownTypes.KeyNotFoundException(compilation)),
 
-            methodCategories.Add(new MethodCategory(IsEventAccessor, true,
-                HasAllowedExceptionsRule,
-                WellKnownTypes.InvalidOperationException(compilation), WellKnownTypes.NotSupportedException(compilation),
-                WellKnownTypes.ArgumentException(compilation)));
+                new MethodCategory(IsEventAccessor, true,
+                    HasAllowedExceptionsRule,
+                    WellKnownTypes.InvalidOperationException(compilation), WellKnownTypes.NotSupportedException(compilation),
+                    WellKnownTypes.ArgumentException(compilation)),
 
-            methodCategories.Add(new MethodCategory(IsGetHashCodeInterfaceImplementation, true,
-                HasAllowedExceptionsRule,
-                WellKnownTypes.ArgumentException(compilation)));
+                new MethodCategory(IsGetHashCodeInterfaceImplementation, true,
+                    HasAllowedExceptionsRule,
+                    WellKnownTypes.ArgumentException(compilation)),
 
-            methodCategories.Add(new MethodCategory(IsEqualsOverrideOrInterfaceImplementation, true,
-                NoAllowedExceptionsRule));
+                new MethodCategory(IsEqualsOverrideOrInterfaceImplementation, true,
+                    NoAllowedExceptionsRule),
 
-            methodCategories.Add(new MethodCategory(IsEqualityOperator, true,
-                NoAllowedExceptionsRule));
+                new MethodCategory(IsEqualityOperator, true,
+                    NoAllowedExceptionsRule),
 
-            methodCategories.Add(new MethodCategory(IsGetHashCodeOverride, true,
-                NoAllowedExceptionsRule));
+                new MethodCategory(IsGetHashCodeOverride, true,
+                    NoAllowedExceptionsRule),
 
-            methodCategories.Add(new MethodCategory(IsToString, true,
-                NoAllowedExceptionsRule));
+                new MethodCategory(IsToString, true,
+                    NoAllowedExceptionsRule),
 
-            methodCategories.Add(new MethodCategory(IsImplicitCastOperator, true,
-                NoAllowedExceptionsRule));
+                new MethodCategory(IsImplicitCastOperator, true,
+                    NoAllowedExceptionsRule),
 
-            methodCategories.Add(new MethodCategory(IsStaticConstructor, false,
-                NoAllowedExceptionsRule));
+                new MethodCategory(IsStaticConstructor, false,
+                    NoAllowedExceptionsRule),
 
-            methodCategories.Add(new MethodCategory(IsFinalizer, false,
-                NoAllowedExceptionsRule));
+                new MethodCategory(IsFinalizer, false,
+                    NoAllowedExceptionsRule),
 
-            methodCategories.Add(new MethodCategory(IMethodSymbolExtensions.IsDisposeImplementation, true,
-                NoAllowedExceptionsRule));
+                new MethodCategory(IMethodSymbolExtensions.IsDisposeImplementation, true,
+                    NoAllowedExceptionsRule),
+            };
 
             return methodCategories;
         }
 
         private static bool IsPropertyGetter(IMethodSymbol method, Compilation compilation)
         {
-            return method.MethodKind == MethodKind.PropertyGet &&
-                   method.AssociatedSymbol?.GetParameters().Length == 0;
+            return method.IsPropertyGetter();
         }
 
         private static bool IsIndexerGetter(IMethodSymbol method, Compilation compilation)
         {
-            return method.MethodKind == MethodKind.PropertyGet &&
-                   method.AssociatedSymbol.IsIndexer();
+            return method.IsIndexerGetter();
         }
 
         private static bool IsEventAccessor(IMethodSymbol method, Compilation compilation)
         {
-            return method.MethodKind == MethodKind.EventAdd ||
-                   method.MethodKind == MethodKind.EventRaise ||
-                   method.MethodKind == MethodKind.EventRemove;
+            return method.IsEventAccessor();
         }
 
         private static bool IsEqualsOverrideOrInterfaceImplementation(IMethodSymbol method, Compilation compilation)
         {
             return method.IsEqualsOverride() || IsEqualsInterfaceImplementation(method, compilation);
         }
-
+        
         /// <summary>
         /// Checks if a given method implements IEqualityComparer.Equals or IEquatable.Equals.
         /// </summary>
         private static bool IsEqualsInterfaceImplementation(IMethodSymbol method, Compilation compilation)
         {
-            if (method.Name != "Equals")
+            if (method.Name != WellKnownMemberNames.ObjectEquals)
             {
                 return false;
             }
@@ -243,24 +241,18 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             if (method.ReturnType.SpecialType == SpecialType.System_Boolean &&
                 (paramCount == 1 || paramCount == 2))
             {
-                // Substitue the type of the first parameter of Equals in the generic interface and then check if that
+                // Substitute the type of the first parameter of Equals in the generic interface and then check if that
                 // interface method is implemented by the given method.
                 var iEqualityComparer = WellKnownTypes.GenericIEqualityComparer(compilation);
-                var constructedIEqualityComparer = iEqualityComparer?.Construct(method.Parameters.First().Type);
-                var iEqualityComparerEquals = constructedIEqualityComparer?.GetMembers("Equals").Single() as IMethodSymbol;
-
-                if (iEqualityComparerEquals != null && method.ContainingType.FindImplementationForInterfaceMember(iEqualityComparerEquals) == method)
+                if (method.IsImplementationOfInterfaceMethod(method.Parameters.First().Type, iEqualityComparer, WellKnownMemberNames.ObjectEquals))
                 {
                     return true;
                 }
 
-                // Substitue the type of the first parameter of Equals in the generic interface and then check if that
+                // Substitute the type of the first parameter of Equals in the generic interface and then check if that
                 // interface method is implemented by the given method.
                 var iEquatable = WellKnownTypes.GenericIEquatable(compilation);
-                var constructedIEquatable = iEquatable?.Construct(method.Parameters.First().Type);
-                var iEquatableEquals = constructedIEquatable?.GetMembers("Equals").Single();
-
-                if (iEquatableEquals != null && method.ContainingType.FindImplementationForInterfaceMember(iEquatableEquals) == method)
+                if (method.IsImplementationOfInterfaceMethod(method.Parameters.First().Type, iEquatable, WellKnownMemberNames.ObjectEquals))
                 {
                     return true;
                 }
@@ -277,31 +269,28 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         /// <returns></returns>
         private static bool IsGetHashCodeInterfaceImplementation(IMethodSymbol method, Compilation compilation)
         {
-            if (method.Name != "GetHashCode")
+            if (method.Name != WellKnownMemberNames.ObjectGetHashCode)
             {
                 return false;
             }
 
             if (method.ReturnType.SpecialType == SpecialType.System_Int32 && method.Parameters.Length == 1)
             {
-                // Substitue the type of the first parameter of Equals in the generic interface and then check if that
+                // Substitute the type of the first parameter of Equals in the generic interface and then check if that
                 // interface method is implemented by the given method.
                 var iEqualityComparer = WellKnownTypes.GenericIEqualityComparer(compilation);
-                var constructedIEqualityComparer = iEqualityComparer?.Construct(method.Parameters.First().Type);
-                var iEqualityComparerGetHashCode = constructedIEqualityComparer?.GetMembers("GetHashCode").Single();
-
-                if (iEqualityComparerGetHashCode != null && method.ContainingType.FindImplementationForInterfaceMember(iEqualityComparerGetHashCode) == method)
+                if (method.IsImplementationOfInterfaceMethod(method.Parameters.First().Type, iEqualityComparer, WellKnownMemberNames.ObjectGetHashCode))
                 {
                     return true;
                 }
+
 
                 var iHashCodeProvider = WellKnownTypes.IHashCodeProvider(compilation);
-                var iHashCodeProviderGetHashCode = iHashCodeProvider?.GetMembers("GetHashCode").Single();
-
-                if (iHashCodeProviderGetHashCode != null && method.ContainingType.FindImplementationForInterfaceMember(iHashCodeProviderGetHashCode) == method)
+                if (method.IsImplementationOfInterfaceMethod(null, iHashCodeProvider, WellKnownMemberNames.ObjectGetHashCode))
                 {
                     return true;
                 }
+
             }
 
             return false;
@@ -316,7 +305,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             return method.IsToStringOverride();
         }
-        
+
         private static bool IsStaticConstructor(IMethodSymbol method, Compilation compilation)
         {
             return method.MethodKind == MethodKind.StaticConstructor;

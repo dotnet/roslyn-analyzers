@@ -106,7 +106,6 @@
       <DependentUpon>SystemResourcesAnalyzersResources.resx</DependentUpon>
     </Compile>
     <Compile Include="MarkAssembliesWithNeutralResourcesLanguage.cs" />
-    <Compile Include="MarkAssembliesWithNeutralResourcesLanguage.Fixer.cs" />
     <Compile Include="DiagnosticCategory.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -114,6 +113,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SystemResourcesAnalyzersResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
+      <Project>{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}</Project>
+      <Name>Analyzer.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

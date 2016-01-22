@@ -100,7 +100,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicMarkAssembliesWithNeutralResourcesLanguage.vb" />
-    <Compile Include="BasicMarkAssembliesWithNeutralResourcesLanguage.Fixer.vb" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

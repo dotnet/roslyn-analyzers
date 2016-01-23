@@ -1,16 +1,19 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
+using Microsoft.CodeAnalysis.Semantics;
 
 namespace System.Runtime.Analyzers
-{                   
+{
     /// <summary>
     /// CA2242: Test for NaN correctly
     /// </summary>
-    public abstract class TestForNaNCorrectlyAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class TestForNaNCorrectlyAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2242";
 
@@ -24,16 +27,63 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb264491.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
+        private readonly BinaryOperationKind[] s_comparisonOperators = new BinaryOperationKind[]
+        {
+            BinaryOperationKind.FloatingEquals,
+            BinaryOperationKind.FloatingGreaterThan,
+            BinaryOperationKind.FloatingGreaterThanOrEqual,
+            BinaryOperationKind.FloatingLessThan,
+            BinaryOperationKind.FloatingLessThanOrEqual,
+            BinaryOperationKind.FloatingNotEquals
+        };
+
         public override void Initialize(AnalysisContext analysisContext)
-        { 
-            
+        {
+            analysisContext.RegisterOperationAction(
+                operationAnalysisContext =>
+                {
+                    var binaryOperatorExpression = (IBinaryOperatorExpression)operationAnalysisContext.Operation;
+                    if (!s_comparisonOperators.Contains(binaryOperatorExpression.BinaryOperationKind))
+                    {
+                        return;
+                    }
+
+                    if (IsNan(binaryOperatorExpression.Left) || IsNan(binaryOperatorExpression.Right))
+                    {
+                        operationAnalysisContext.ReportDiagnostic(
+                            binaryOperatorExpression.Syntax.CreateDiagnostic(Rule));
+                    }
+                },
+                OperationKind.BinaryOperatorExpression);
+        }
+
+        private bool IsNan(IExpression expr)
+        {
+            if (expr == null ||
+                !expr.ConstantValue.HasValue)
+            {
+                return false;
+            }
+
+            object value = expr.ConstantValue.Value;
+            if (value is float)
+            {
+                return float.IsNaN((float)value);
+            }
+
+            if (value is double)
+            {
+                return double.IsNaN((double)value);
+            }
+
+            return false;
         }
     }
 }

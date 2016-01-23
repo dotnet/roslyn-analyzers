@@ -9,16 +9,16 @@ namespace Desktop.Analyzers.UnitTests
 {
     public partial class CA3075DiagnosticAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private readonly string CA3075DataViewConnectionStringMessage = DesktopAnalyzersResources.ReviewDtdProcessingPropertiesDiagnosis;
+        private readonly string CA3075DataViewConnectionStringMessage = DesktopAnalyzersResources.ReviewDtdProcessingPropertiesMessage;
 
-        private DiagnosticResult GetCA3075DataViewCSharpResultAt(int line, int column)
+        private DiagnosticResult GetCA3075DataViewCSharpResultAt(int line, int column, string name)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, CA3075DataViewConnectionStringMessage);
+            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(CA3075DataViewConnectionStringMessage, name));
         }
 
-        private DiagnosticResult GetCA3075DataViewBasicResultAt(int line, int column)
+        private DiagnosticResult GetCA3075DataViewBasicResultAt(int line, int column, string name)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, CA3075DataViewConnectionStringMessage);
+            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(CA3075DataViewConnectionStringMessage, name));
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace FxCopUnsafeXml
     }
 }
 ",
-                GetCA3075DataViewCSharpResultAt(11, 13)
+                GetCA3075DataViewCSharpResultAt(11, 13, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -53,7 +53,7 @@ Namespace FxCopUnsafeXml
         End Sub
     End Class
 End Namespace",
-                GetCA3075DataViewBasicResultAt(8, 13)
+                GetCA3075DataViewBasicResultAt(8, 13, "TestMethod")
             );
         }
 
@@ -75,7 +75,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075DataViewCSharpResultAt(11, 13)
+                GetCA3075DataViewCSharpResultAt(11, 13, "get_Test")
             );
 
             VerifyBasic(@"
@@ -91,7 +91,7 @@ Class TestClass
         End Get
     End Property
 End Class",
-                GetCA3075DataViewBasicResultAt(9, 13)
+                GetCA3075DataViewBasicResultAt(9, 13, "get_Test")
             );
         }
 
@@ -120,7 +120,7 @@ public DataSet GetDoc
             }
         }
 }",
-                GetCA3075DataViewCSharpResultAt(15, 21)
+                GetCA3075DataViewCSharpResultAt(15, 21, "set_GetDoc")
             );
 
             VerifyBasic(@"
@@ -141,7 +141,7 @@ Class TestClass
         End Set
     End Property
 End Class",
-                GetCA3075DataViewBasicResultAt(11, 17)
+                GetCA3075DataViewBasicResultAt(11, 17, "set_GetDoc")
             );
         }
 
@@ -166,7 +166,7 @@ End Class",
             finally { }
         }
     }",
-                GetCA3075DataViewCSharpResultAt(13, 17)
+                GetCA3075DataViewCSharpResultAt(13, 17, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -184,7 +184,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataViewBasicResultAt(9, 13)
+                GetCA3075DataViewBasicResultAt(9, 13, "TestMethod")
             );
         }
 
@@ -209,7 +209,7 @@ End Class",
             finally { }
         }
     }",
-                GetCA3075DataViewCSharpResultAt(14, 17)
+                GetCA3075DataViewCSharpResultAt(14, 17, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -226,7 +226,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataViewBasicResultAt(10, 13)
+                GetCA3075DataViewBasicResultAt(10, 13, "TestMethod")
             );
         }
 
@@ -251,7 +251,7 @@ End Class",
             }
         }
     }",
-                GetCA3075DataViewCSharpResultAt(15, 17)
+                GetCA3075DataViewCSharpResultAt(15, 17, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -269,7 +269,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataViewBasicResultAt(12, 13)
+                GetCA3075DataViewBasicResultAt(12, 13, "TestMethod")
             );
         }
 
@@ -296,7 +296,7 @@ using System.Data;
             await TestMethod();
         }
     }",
-                GetCA3075DataViewCSharpResultAt(12, 17)
+                GetCA3075DataViewCSharpResultAt(12, 17, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -317,7 +317,7 @@ End Function)
         Await TestMethod()
     End Sub
 End Class",
-                GetCA3075DataViewBasicResultAt(10, 9)
+                GetCA3075DataViewBasicResultAt(10, 9, "TestMethod")
             );
         }
 
@@ -337,7 +337,7 @@ class TestClass
         ds.DefaultViewManager.DataViewSettingCollectionString = src;
     };
 }",
-                GetCA3075DataViewCSharpResultAt(11, 9)
+                GetCA3075DataViewCSharpResultAt(11, 9, "TestClass")
             );
 
             VerifyBasic(@"
@@ -353,7 +353,7 @@ Class TestClass
 
 End Sub
 End Class",
-                GetCA3075DataViewBasicResultAt(10, 5)
+                GetCA3075DataViewBasicResultAt(10, 5, "TestClass")
             );
         }
 
@@ -375,7 +375,7 @@ namespace FxCopUnsafeXml
     }
 }
 ",
-                GetCA3075DataViewCSharpResultAt(11, 13)
+                GetCA3075DataViewCSharpResultAt(11, 13, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -389,7 +389,7 @@ Namespace FxCopUnsafeXml
         End Sub
     End Class
 End Namespace",
-                GetCA3075DataViewBasicResultAt(8, 13)
+                GetCA3075DataViewBasicResultAt(8, 13, "TestMethod")
             );
         }
 
@@ -411,7 +411,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075DataViewCSharpResultAt(11, 13)
+                GetCA3075DataViewCSharpResultAt(11, 13, "get_Test")
             );
 
             VerifyBasic(@"
@@ -427,7 +427,7 @@ Class TestClass
         End Get
     End Property
 End Class",
-                GetCA3075DataViewBasicResultAt(9, 13)
+                GetCA3075DataViewBasicResultAt(9, 13, "get_Test")
             );
         }
 
@@ -456,7 +456,7 @@ public DataViewManager GetDoc
             }
         }
 }",
-                GetCA3075DataViewCSharpResultAt(15, 21)
+                GetCA3075DataViewCSharpResultAt(15, 21, "set_GetDoc")
             );
 
             VerifyBasic(@"
@@ -477,7 +477,7 @@ Class TestClass
         End Set
     End Property
 End Class",
-                GetCA3075DataViewBasicResultAt(11, 17)
+                GetCA3075DataViewBasicResultAt(11, 17, "set_GetDoc")
             );
         }
 
@@ -502,7 +502,7 @@ End Class",
             finally { }
         }
     }",
-                GetCA3075DataViewCSharpResultAt(13, 17)
+                GetCA3075DataViewCSharpResultAt(13, 17, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -520,7 +520,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataViewBasicResultAt(9, 13)
+                GetCA3075DataViewBasicResultAt(9, 13, "TestMethod")
             );
         }
 
@@ -545,7 +545,7 @@ End Class",
             finally { }
         }
     }",
-                GetCA3075DataViewCSharpResultAt(14, 17)
+                GetCA3075DataViewCSharpResultAt(14, 17, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -562,7 +562,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataViewBasicResultAt(10, 13)
+                GetCA3075DataViewBasicResultAt(10, 13, "TestMethod")
             );
         }
 
@@ -587,7 +587,7 @@ End Class",
             }
         }
     }",
-                GetCA3075DataViewCSharpResultAt(15, 17)
+                GetCA3075DataViewCSharpResultAt(15, 17, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -605,7 +605,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataViewBasicResultAt(12, 13)
+                GetCA3075DataViewBasicResultAt(12, 13, "TestMethod")
             );
         }
 
@@ -632,7 +632,7 @@ using System.Data;
             await TestMethod();
         }
     }",
-                GetCA3075DataViewCSharpResultAt(12, 17)
+                GetCA3075DataViewCSharpResultAt(12, 17, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -653,7 +653,7 @@ End Function)
         Await TestMethod()
     End Sub
 End Class",
-                GetCA3075DataViewBasicResultAt(10, 9)
+                GetCA3075DataViewBasicResultAt(10, 9, "TestMethod")
             );
         }
 
@@ -673,7 +673,7 @@ class TestClass
         manager.DataViewSettingCollectionString = src;
     };
 }",
-                GetCA3075DataViewCSharpResultAt(11, 9)
+                GetCA3075DataViewCSharpResultAt(11, 9, "TestClass")
             );
 
             VerifyBasic(@"
@@ -689,7 +689,7 @@ Class TestClass
 
     End Sub
 End Class",
-                GetCA3075DataViewBasicResultAt(10, 5)
+                GetCA3075DataViewBasicResultAt(10, 5, "TestClass")
             );
         }
 

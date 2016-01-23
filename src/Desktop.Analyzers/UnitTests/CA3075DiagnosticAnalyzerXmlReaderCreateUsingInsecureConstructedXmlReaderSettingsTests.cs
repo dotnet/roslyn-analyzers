@@ -9,7 +9,7 @@ namespace Desktop.Analyzers.UnitTests
 {
     public partial class CA3075DiagnosticAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private static readonly string CA3075XmlReaderCreateUsingInsecureConstructedXmlReaderSettingsMessage = DesktopAnalyzersResources.XmlReaderCreateInsecureConstructedDiagnosis;
+        private static readonly string CA3075XmlReaderCreateUsingInsecureConstructedXmlReaderSettingsMessage = DesktopAnalyzersResources.XmlReaderCreateInsecureConstructedMessage;
 
         private DiagnosticResult GetCA3075XmlReaderCreateUsingInsecureConstructedXmlReaderSettingsCSharpResultAt(int line, int column)
         {

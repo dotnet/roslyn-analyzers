@@ -127,15 +127,39 @@ namespace Analyzer.Utilities
 
             return false;
         }
-        
-        /// <summary>
-        /// Determine wether a type (given by name) is actually declared in the expected assembly (also given by name)
-        /// </summary>               
-        /// <remarks>
-        /// This can be used to decide wether we are referencing the expected framework for a given type. 
-        /// For example, System.String exists in mscorlib for .NET Framework and System.Runtime for other framework (e.g. .NET Core). 
-        /// </remarks>
-        public static bool? IsTypeDeclaredInExpectedAssembly(Compilation compilation, string typeName, string assemblyName)
+
+        public static string GetMeaningfulParentName(SyntaxNode cur, SemanticModel model)
+        {
+            while (cur.Parent != null)
+            {
+                var pNode = cur.Parent;
+                ISymbol sym = pNode.GetDeclaredOrReferencedSymbol(model);
+
+                if (sym != null &&
+                    !string.IsNullOrEmpty(sym.Name)
+                    && (
+                        sym.Kind == SymbolKind.Method ||
+                        sym.Kind == SymbolKind.NamedType
+                       )
+                )
+                {
+                    return sym.Name;
+                }
+
+                cur = pNode;
+            }
+
+            return String.Empty;
+        }
+
+/// <summary>
+/// Determine wether a type (given by name) is actually declared in the expected assembly (also given by name)
+/// </summary>               
+/// <remarks>
+/// This can be used to decide wether we are referencing the expected framework for a given type. 
+/// For example, System.String exists in mscorlib for .NET Framework and System.Runtime for other framework (e.g. .NET Core). 
+/// </remarks>
+public static bool? IsTypeDeclaredInExpectedAssembly(Compilation compilation, string typeName, string assemblyName)
         {
             if (compilation == null)
             {

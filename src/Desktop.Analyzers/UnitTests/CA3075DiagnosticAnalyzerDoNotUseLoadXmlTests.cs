@@ -11,7 +11,7 @@ namespace Desktop.Analyzers.UnitTests
     {
         private const string CA3075RuleId = CA3075DiagnosticAnalyzer<SyntaxKind>.RuleId;
 
-        private readonly string CA3075LoadXmlMessage = DesktopAnalyzersResources.DoNotUseDtdProcessingOverloadsDiagnosis;
+        private readonly string CA3075LoadXmlMessage = DesktopAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage;
 
         protected override DiagnosticAnalyzer  GetBasicDiagnosticAnalyzer()
         {

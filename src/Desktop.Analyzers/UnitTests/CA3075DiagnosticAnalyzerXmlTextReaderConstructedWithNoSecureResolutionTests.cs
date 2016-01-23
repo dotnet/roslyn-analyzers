@@ -9,16 +9,16 @@ namespace Desktop.Analyzers.UnitTests
 {
     public partial class CA3075DiagnosticAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private static readonly string CA3075XmlTextReaderConstructedWithNoSecureResolutionMessage = DesktopAnalyzersResources.XmlTextReaderConstructedWithNoSecureResolutionDiagnosis;
+        private static readonly string CA3075XmlTextReaderConstructedWithNoSecureResolutionMessage = DesktopAnalyzersResources.XmlTextReaderConstructedWithNoSecureResolutionMessage;
 
-        private DiagnosticResult GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(int line, int column)
+        private DiagnosticResult GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(int line, int column, string name)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, CA3075XmlTextReaderConstructedWithNoSecureResolutionMessage);
+            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(CA3075XmlTextReaderConstructedWithNoSecureResolutionMessage, name));
         }
 
-        private DiagnosticResult GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(int line, int column)
+        private DiagnosticResult GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(int line, int column, string name)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, CA3075XmlTextReaderConstructedWithNoSecureResolutionMessage);
+            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(CA3075XmlTextReaderConstructedWithNoSecureResolutionMessage, name));
         }
 
         [Fact]
@@ -38,7 +38,7 @@ namespace TestNamespace
     }
 }
 ",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(10, 27)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(10, 27, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -51,7 +51,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(7, 17)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(7, 17, "TestMethod")
             );
         }
 
@@ -76,7 +76,7 @@ namespace TestNamespace
     }
 }
 ",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(11, 31)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(11, 31, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -94,7 +94,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(8, 21)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(8, 21, "TestMethod")
             );
         }
 
@@ -119,7 +119,7 @@ namespace TestNamespace
     }
 }
 ",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(12, 31)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(12, 31, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -136,7 +136,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(9, 21)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(9, 21, "TestMethod")
             );
         }
 
@@ -161,7 +161,7 @@ namespace TestNamespace
     }
 }
 ",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(13, 31)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(13, 31, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -179,7 +179,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(11, 21)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(11, 21, "TestMethod")
             );
         }
 
@@ -201,7 +201,7 @@ namespace TestNamespace
     }
 }
 ",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(10, 27)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(10, 27, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -215,7 +215,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(7, 17)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(7, 17, "TestMethod")
             );
         }
 
@@ -241,7 +241,7 @@ namespace TestNamespace
     }
 }
 ",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(11, 31)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(11, 31, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -260,7 +260,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(8, 21)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(8, 21, "TestMethod")
             );
         }
 
@@ -286,7 +286,7 @@ namespace TestNamespace
     }
 }
 ",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(12, 31)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(12, 31, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -304,7 +304,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(9, 21)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(9, 21, "TestMethod")
             );
         }
 
@@ -330,7 +330,7 @@ namespace TestNamespace
     }
 }
 ",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(13, 31)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(13, 31, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -349,7 +349,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(11, 21)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(11, 21, "TestMethod")
             );
         }
 
@@ -736,7 +736,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(10, 27)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(10, 27, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -751,7 +751,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(7, 17)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(7, 17, "TestMethod")
             );
         }
 
@@ -804,7 +804,7 @@ namespace TestNamespace
         public XmlTextReader reader = new XmlTextReader(""file.xml"");
     }
 }",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 30)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 30, "TestClass")
             );
 
             VerifyBasic(@"
@@ -815,7 +815,7 @@ Namespace TestNamespace
         Public reader As XmlTextReader = New XmlTextReader(""file.xml"")
     End Class
 End Namespace",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(6, 16)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(6, 16, "TestClass")
             );
         }
 
@@ -867,7 +867,7 @@ namespace TestNamespace
         };
     }
 }",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 30)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 30, "TestClass")
             );
 
             VerifyBasic(@"
@@ -881,7 +881,7 @@ Namespace TestNamespace
         }
         End Class
 End Namespace",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(7, 16)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(7, 16, "TestClass")
             );
         }
 
@@ -935,7 +935,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 30)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 30, "TestClass")
             );
 
             VerifyBasic(@"
@@ -952,7 +952,7 @@ Namespace TestNamespace
     End Class
 End Namespace
 ",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(6, 16)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(6, 16, "TestClass")
             );
         }
 
@@ -974,7 +974,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 30)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 30, "TestClass")
             );
 
             VerifyBasic(@"
@@ -989,7 +989,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(6, 16)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(6, 16, "TestClass")
             );
         }
 
@@ -1016,7 +1016,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 30)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 30, "TestClass")
             );
 
             VerifyBasic(@"
@@ -1036,7 +1036,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(6, 16)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(6, 16, "TestClass")
             );
         }
 
@@ -1060,7 +1060,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 30)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 30, "TestClass")
             );
 
             VerifyBasic(@"
@@ -1079,7 +1079,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(6, 16)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(6, 16, "TestClass")
             );
         }
 
@@ -1103,7 +1103,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 30)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 30, "TestClass")
             );
 
             VerifyBasic(@"
@@ -1123,7 +1123,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(6, 16)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(6, 16, "TestClass")
             );
         }
 
@@ -1145,7 +1145,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 30)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 30, "TestClass")
             );
 
             VerifyBasic(@"
@@ -1160,7 +1160,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(6, 16)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(6, 16, "TestClass")
             );
         }
 
@@ -1221,7 +1221,7 @@ namespace TestNamespace
         public void Method2(XmlTextReader reader){}
     }
 }",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(11, 21)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(11, 21, "TestClass.Method1")
             );
 
             VerifyBasic(@"
@@ -1238,7 +1238,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(8, 21)
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(8, 21, "TestClass.Method1")
             );
         }
 

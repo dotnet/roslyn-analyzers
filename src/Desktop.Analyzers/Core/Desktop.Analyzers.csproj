@@ -139,7 +139,6 @@
   <ItemGroup>
     <EmbeddedResource Include="DesktopAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>DesktopAnalyzersResources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

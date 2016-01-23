@@ -9,7 +9,7 @@ namespace Desktop.Analyzers.UnitTests
 {
     public partial class CA3075DiagnosticAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private static readonly string CA3075XmlReaderCreateInsecureInputMessage = DesktopAnalyzersResources.XmlReaderCreateInsecureInputDiagnosis;
+        private static readonly string CA3075XmlReaderCreateInsecureInputMessage = DesktopAnalyzersResources.XmlReaderCreateInsecureInputMessage;
 
         private DiagnosticResult GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(int line, int column)
         {
@@ -539,7 +539,7 @@ namespace TestNamespace
     }
 }
 ",
-                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(15, 29)
+                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(15, 29, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -579,7 +579,7 @@ Namespace TestNamespace
         End Function
     End Class
 End Namespace",
-                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(10, 21)
+                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(10, 21, "TestMethod")
             );
         }
     }

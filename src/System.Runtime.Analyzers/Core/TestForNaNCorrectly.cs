@@ -64,7 +64,7 @@ namespace System.Runtime.Analyzers
                 OperationKind.BinaryOperatorExpression);
         }
 
-        private bool IsNan(IExpression expr)
+        private static bool IsNan(IExpression expr)
         {
             if (expr == null ||
                 !expr.ConstantValue.HasValue)

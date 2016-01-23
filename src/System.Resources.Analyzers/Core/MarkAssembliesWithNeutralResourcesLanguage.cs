@@ -48,9 +48,10 @@ namespace System.Resources.Analyzers
             // this analyzer is safe from running concurrently.
             analysisContext.EnableConcurrentExecution();
 
-            var hasResource = false;
             analysisContext.RegisterCompilationStartAction(cc =>
             {
+                var hasResource = false;
+
                 RegisterAttributeAnalyzer(cc, () => hasResource = true);
 
                 cc.RegisterCompilationEndAction(ce =>

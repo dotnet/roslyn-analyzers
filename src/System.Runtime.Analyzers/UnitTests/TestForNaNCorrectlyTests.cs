@@ -381,10 +381,81 @@ End Class
             VerifyBasic(code, GetBasicResultAt(4, 16));
         }
 
-        // TODO: Not really testing bad expression right.
-        // TODO: Other kinds of syntax errors:
-        //  Wrong comparison operator
-        //  Wrong data type (float <=> Single)
+        // At @srivatsn's suggestion, here are a few tests that verify that the operation
+        // tree is correct when the comparison occurs in syntactic constructs other than
+        // a function return value. Of course we can't be exhaustive about this, and these
+        // tests are really more about the correctness of the operation tree -- ensuring
+        // that "binary operator expressions" are present in places we expect them to be --
+        // than they are about the correctness of our treatment of these expressions once
+        // we find them.
+        [Fact]
+        public void CSharpDiagnosticForComparisonWithNaNInFunctionArgument()
+        {
+            var code = @"
+public class A
+{
+    float _n = 42.0;
+
+    public void F()
+    {
+        G(_n == float.NaN);
+    }
+
+    public void G(bool comparison) {}
+}
+";
+            VerifyCSharp(code, GetCSharpResultAt(8, 11));
+        }
+
+        [Fact]
+        public void BasicDiagnosticForComparisonWithNaNInFunctionArgument()
+        {
+            var code = @"
+Public Class A
+    Private _n As Single = 42.0;
+
+    Public Sub F()
+        G(_n = Single.NaN)
+    End Sub
+
+    Public Sub G(comparison As Boolean)
+    End Sub
+End Class
+";
+            VerifyBasic(code, GetBasicResultAt(6, 11));
+        }
+        [Fact]
+        public void CSharpDiagnosticForComparisonWithNaNInTernaryOperator()
+        {
+            var code = @"
+public class A
+{
+    float _n = 42.0;
+
+    public int F()
+    {
+        return _n == float.NaN ? 1 : 0;
+    }
+}
+";
+            VerifyCSharp(code, GetCSharpResultAt(8, 16));
+        }
+
+        [Fact]
+        public void BasicDiagnosticForComparisonWithNaNInIfOperator()
+        {
+            // VB doesn't have the ternary operator, but we add this test for symmetry.
+            var code = @"
+Public Class A
+    Private _n As Single = 42.0;
+
+    Public Function F() As Integer
+        Return If(_n = Single.NaN, 1, 0)
+    End Function
+End Class
+";
+            VerifyBasic(code, GetBasicResultAt(6, 19));
+        }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {

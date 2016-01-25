@@ -139,8 +139,6 @@
     <Compile Include="CSharpUseEventsWhereAppropriate.Fixer.cs" />
     <Compile Include="CSharpImplementStandardExceptionConstructors.cs" />
     <Compile Include="CSharpImplementStandardExceptionConstructors.Fixer.cs" />
-    <Compile Include="CSharpNestedTypesShouldNotBeVisible.cs" />
-    <Compile Include="CSharpNestedTypesShouldNotBeVisible.Fixer.cs" />
     <Compile Include="CSharpAvoidEmptyInterfaces.cs" />
     <Compile Include="CSharpAvoidEmptyInterfaces.Fixer.cs" />
     <Compile Include="CSharpProvideObsoleteAttributeMessage.cs" />

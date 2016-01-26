@@ -15,7 +15,7 @@ namespace Desktop.Analyzers
     public abstract class CA3076DiagnosticAnalyzer<TLanguageKindEnum> : DiagnosticAnalyzer where TLanguageKindEnum : struct
     {
         internal const string RuleId = "CA3076";
-
+        private const string HelpLink = "http://aka.ms/CA3076";
         /*
          * these 3 FxCop rules are removed since they only trigger on secure code:
          *   XslCompiledTransformTransformWrongOverload
@@ -24,11 +24,13 @@ namespace Desktop.Analyzers
          */
 
         //TODO: create new strings
-        internal static DiagnosticDescriptor RuleXslCompiledTransformLoadInsecureInputSettings = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XslCompiledTransformLoadInsecureInputDiagnosis)),
-                                                                                                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.InsecureXsltScriptProcessingDescription)));
+        internal static DiagnosticDescriptor RuleXslCompiledTransformLoadInsecureInputSettings = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XslCompiledTransformLoadInsecureInputMessage)),
+                                                                                                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.InsecureXsltScriptProcessingDescription)),
+                                                                                                                         HelpLink);
 
-        internal static DiagnosticDescriptor RuleXslCompiledTransformLoadInsecureConstructedSettings = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XslCompiledTransformLoadInsecureConstructedDiagnosis)),
-                                                                                                                          SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.InsecureXsltScriptProcessingDescription)));
+        internal static DiagnosticDescriptor RuleXslCompiledTransformLoadInsecureConstructedSettings = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XslCompiledTransformLoadInsecureConstructedMessage)),
+                                                                                                                          SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.InsecureXsltScriptProcessingDescription)),
+                                                                                                                          HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> supportDiagnostics = ImmutableArray.Create(RuleXslCompiledTransformLoadInsecureInputSettings,
                                                                                                                 RuleXslCompiledTransformLoadInsecureConstructedSettings);
@@ -64,7 +66,7 @@ namespace Desktop.Analyzers
         private static DiagnosticDescriptor CreateDiagnosticDescriptor(LocalizableResourceString messageFormat, LocalizableResourceString description, string helpLink = null)
         {
             return new DiagnosticDescriptor(RuleId,
-                                            SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.InsecureXsltScriptProcessing)),
+                                            SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.InsecureXsltScriptProcessingMessage)),
                                             messageFormat,
                                             DiagnosticCategory.Security,
                                             DiagnosticSeverity.Warning,
@@ -160,7 +162,9 @@ namespace Desktop.Analyzers
                                             RuleXslCompiledTransformLoadInsecureInputSettings;
 
                             context.ReportDiagnostic(Diagnostic.Create(rule,
-                                                                      node.GetLocation())); 
+                                                                      node.GetLocation(),
+                                                                      DiagnosticHelpers.GetMeaningfulParentName(node, model))
+                                                                      ); 
                         }
                     }
                 }

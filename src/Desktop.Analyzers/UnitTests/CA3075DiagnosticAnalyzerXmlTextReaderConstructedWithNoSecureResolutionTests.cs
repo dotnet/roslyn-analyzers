@@ -1221,7 +1221,7 @@ namespace TestNamespace
         public void Method2(XmlTextReader reader){}
     }
 }",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(11, 21, "TestClass.Method1")
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(11, 21, "Method2")
             );
 
             VerifyBasic(@"
@@ -1238,7 +1238,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(8, 21, "TestClass.Method1")
+                GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(8, 21, "Method2")
             );
         }
 

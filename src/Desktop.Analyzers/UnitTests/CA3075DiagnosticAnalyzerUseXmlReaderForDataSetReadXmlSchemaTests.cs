@@ -294,7 +294,7 @@ using System.Data;
             await TestMethod();
         }
     }",
-                CA3075ReadXmlSchemaGetCSharpResultAt(12, 17, "TestMethod")
+                CA3075ReadXmlSchemaGetCSharpResultAt(12, 17, "Run")
             );
 
             VerifyBasic(@"
@@ -315,7 +315,7 @@ End Function)
         Await TestMethod()
     End Sub
 End Class",
-                CA3075ReadXmlSchemaGetBasicResultAt(10, 9, "TestMethod")
+                CA3075ReadXmlSchemaGetBasicResultAt(10, 9, "Run")
             );
         }
 
@@ -335,7 +335,7 @@ class TestClass
         ds.ReadXmlSchema(src);
     };
 }",
-                CA3075ReadXmlSchemaGetCSharpResultAt(11, 9, "TestMethod")
+                CA3075ReadXmlSchemaGetCSharpResultAt(11, 9, "TestClass")
             );
 
             VerifyBasic(@"
@@ -351,7 +351,7 @@ Class TestClass
 
 End Sub
 End Class",
-                CA3075ReadXmlSchemaGetBasicResultAt(10, 5, "TestMethod")
+                CA3075ReadXmlSchemaGetBasicResultAt(10, 5, "TestClass")
             );
         }
 

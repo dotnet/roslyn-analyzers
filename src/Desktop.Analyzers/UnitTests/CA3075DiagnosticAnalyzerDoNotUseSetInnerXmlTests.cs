@@ -115,7 +115,7 @@ public XmlDocument GetDoc
             }
         }
 }",
-                GetCA3075InnerXmlCSharpResultAt(15, 21, "get_GetDoc")
+                GetCA3075InnerXmlCSharpResultAt(15, 21, "set_GetDoc")
             );
 
             VerifyBasic(@"
@@ -138,7 +138,7 @@ Class TestClass
         End Set
     End Property
 End Class",
-                GetCA3075InnerXmlBasicResultAt(13, 17, "get_GetDoc")
+                GetCA3075InnerXmlBasicResultAt(13, 17, "set_GetDoc")
             );
         }
 
@@ -299,7 +299,7 @@ class TestClass
         await TestMethod();
     }
 }",
-                GetCA3075InnerXmlCSharpResultAt(12, 13, "TestMethod")
+                GetCA3075InnerXmlCSharpResultAt(12, 13, "Run")
             );
 
             VerifyBasic(@"
@@ -322,7 +322,7 @@ End Function)
         Await TestMethod()
     End Sub
 End Class",
-                GetCA3075InnerXmlBasicResultAt(12, 9, "TestMethod")
+                GetCA3075InnerXmlBasicResultAt(12, 9, "Run")
             );
         }
 
@@ -385,7 +385,7 @@ namespace FxCopUnsafeXml
         }
     }
 }",
-                GetCA3075InnerXmlCSharpResultAt(14, 17, "TestMethod")
+                GetCA3075InnerXmlCSharpResultAt(14, 17, ".ctor")
             );
 
             VerifyBasic(@"
@@ -402,7 +402,7 @@ Namespace FxCopUnsafeXml
         End Sub
     End Class
 End Namespace",
-                GetCA3075InnerXmlBasicResultAt(10, 17, "TestMethod")
+                GetCA3075InnerXmlBasicResultAt(10, 17, ".ctor")
             );
         }
 
@@ -695,7 +695,7 @@ class TestClass
         await TestMethod();
     }
 }",
-                GetCA3075InnerXmlCSharpResultAt(12, 13, "TestMethod")
+                GetCA3075InnerXmlCSharpResultAt(12, 13, "Run")
             );
 
             VerifyBasic(@"
@@ -718,7 +718,7 @@ End Function)
         Await TestMethod()
     End Sub
 End Class",
-                GetCA3075InnerXmlBasicResultAt(12, 9, "TestMethod")
+                GetCA3075InnerXmlBasicResultAt(12, 9, "Run")
             );
         }
 
@@ -781,7 +781,7 @@ namespace FxCopUnsafeXml
         }
     }
 }",
-                GetCA3075InnerXmlCSharpResultAt(14, 17, "TestMethod")
+                GetCA3075InnerXmlCSharpResultAt(14, 17, ".ctor")
             );
 
             VerifyBasic(@"
@@ -798,7 +798,7 @@ Namespace FxCopUnsafeXml
         End Sub
     End Class
 End Namespace",
-                GetCA3075InnerXmlBasicResultAt(10, 17, "TestMethod")
+                GetCA3075InnerXmlBasicResultAt(10, 17, ".ctor")
             );
         }
 

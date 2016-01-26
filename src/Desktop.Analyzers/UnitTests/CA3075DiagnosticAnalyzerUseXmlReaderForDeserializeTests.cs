@@ -9,14 +9,14 @@ namespace Desktop.Analyzers.UnitTests
 {
     public partial class CA3075DiagnosticAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private DiagnosticResult GetCA3075DeserializeCSharpResultAt(int line, int column)
+        private DiagnosticResult GetCA3075DeserializeCSharpResultAt(int line, int column, string name)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(CA3075LoadXmlMessage, "Deserialize"));
+            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(CA3075LoadXmlMessage, name, "Deserialize"));
         }
 
-        private DiagnosticResult GetCA3075DeserializeBasicResultAt(int line, int column)
+        private DiagnosticResult GetCA3075DeserializeBasicResultAt(int line, int column, string name)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(CA3075LoadXmlMessage, "Deserialize"));
+            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(CA3075LoadXmlMessage, name, "Deserialize"));
         }
 
         [Fact]
@@ -38,7 +38,7 @@ namespace FxCopUnsafeXml
         }
     }
 }",
-                GetCA3075DeserializeCSharpResultAt(13, 13)
+                GetCA3075DeserializeCSharpResultAt(13, 13, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -54,7 +54,7 @@ Namespace FxCopUnsafeXml
         End Sub
     End Class
 End Namespace",
-                GetCA3075DeserializeBasicResultAt(10, 13)
+                GetCA3075DeserializeBasicResultAt(10, 13, "TestMethod")
             );
         }
 
@@ -78,7 +78,7 @@ public class UseXmlReaderForDeserialize
         }
     }
 }",
-                GetCA3075DeserializeCSharpResultAt(13, 13)
+                GetCA3075DeserializeCSharpResultAt(13, 13, "get_Test")
             );
 
             VerifyBasic(@"
@@ -95,7 +95,7 @@ Public Class UseXmlReaderForDeserialize
         End Get
     End Property
 End Class",
-                GetCA3075DeserializeBasicResultAt(10, 13)
+                GetCA3075DeserializeBasicResultAt(10, 13, "get_Test")
             );
         }
 
@@ -125,7 +125,7 @@ public class UseXmlReaderForDeserialize
         }
     }
 }",
-                GetCA3075DeserializeCSharpResultAt(16, 17)
+                GetCA3075DeserializeCSharpResultAt(16, 17, "set_SetDoc")
             );
 
             VerifyBasic(@"
@@ -147,7 +147,7 @@ Public Class UseXmlReaderForDeserialize
         End Set
     End Property
 End Class",
-                GetCA3075DeserializeBasicResultAt(12, 17)
+                GetCA3075DeserializeBasicResultAt(12, 17, "set_SetDoc")
             );
         }
 
@@ -173,7 +173,7 @@ public class UseXmlReaderForDeserialize
         finally { }
     }
 }",
-                GetCA3075DeserializeCSharpResultAt(14, 13)
+                GetCA3075DeserializeCSharpResultAt(14, 13, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -192,7 +192,7 @@ Public Class UseXmlReaderForDeserialize
         End Try
     End Sub
 End Class",
-                GetCA3075DeserializeBasicResultAt(10, 13)
+                GetCA3075DeserializeBasicResultAt(10, 13, "TestMethod")
             );
         }
 
@@ -217,7 +217,7 @@ public class UseXmlReaderForDeserialize
         finally { }
     }
 }",
-                GetCA3075DeserializeCSharpResultAt(14, 13)
+                GetCA3075DeserializeCSharpResultAt(14, 13, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -235,7 +235,7 @@ Public Class UseXmlReaderForDeserialize
         End Try
     End Sub
 End Class",
-                GetCA3075DeserializeBasicResultAt(11, 13)
+                GetCA3075DeserializeBasicResultAt(11, 13, "TestMethod")
             );
         }
 
@@ -260,7 +260,7 @@ public class UseXmlReaderForDeserialize
         }
     }
 }",
-                GetCA3075DeserializeCSharpResultAt(15, 13)
+                GetCA3075DeserializeCSharpResultAt(15, 13, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -279,7 +279,7 @@ Public Class UseXmlReaderForDeserialize
         End Try
     End Sub
 End Class",
-                GetCA3075DeserializeBasicResultAt(13, 13)
+                GetCA3075DeserializeBasicResultAt(13, 13, "TestMethod")
             );
         }
 
@@ -302,7 +302,7 @@ public class UseXmlReaderForDeserialize
     };
 
 }",
-                GetCA3075DeserializeCSharpResultAt(13, 9)
+                GetCA3075DeserializeCSharpResultAt(13, 9, "UseXmlReaderForDeserialize")
             );
 
             VerifyBasic(@"
@@ -320,7 +320,7 @@ Public Class UseXmlReaderForDeserialize
 End Sub
 
 End Class",
-                GetCA3075DeserializeBasicResultAt(11, 5)
+                GetCA3075DeserializeBasicResultAt(11, 5, "UseXmlReaderForDeserialize")
             );
         }
 
@@ -347,7 +347,7 @@ class UseXmlReaderForDeserialize
         await TestMethod(null);
     }
 }",
-                GetCA3075DeserializeCSharpResultAt(12, 13)
+                GetCA3075DeserializeCSharpResultAt(12, 13, "Run")
             );
 
             VerifyBasic(@"
@@ -368,7 +368,7 @@ End Function)
         Await TestMethod(Nothing)
     End Sub
 End Class",
-                GetCA3075DeserializeBasicResultAt(10, 9)
+                GetCA3075DeserializeBasicResultAt(10, 9, "Run")
             );
         }
 

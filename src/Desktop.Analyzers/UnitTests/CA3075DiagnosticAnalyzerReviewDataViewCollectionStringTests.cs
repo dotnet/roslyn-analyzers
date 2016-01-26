@@ -296,7 +296,7 @@ using System.Data;
             await TestMethod();
         }
     }",
-                GetCA3075DataViewCSharpResultAt(12, 17, "TestMethod")
+                GetCA3075DataViewCSharpResultAt(12, 17, "Run")
             );
 
             VerifyBasic(@"
@@ -317,7 +317,7 @@ End Function)
         Await TestMethod()
     End Sub
 End Class",
-                GetCA3075DataViewBasicResultAt(10, 9, "TestMethod")
+                GetCA3075DataViewBasicResultAt(10, 9, "Run")
             );
         }
 
@@ -632,7 +632,7 @@ using System.Data;
             await TestMethod();
         }
     }",
-                GetCA3075DataViewCSharpResultAt(12, 17, "TestMethod")
+                GetCA3075DataViewCSharpResultAt(12, 17, "Run")
             );
 
             VerifyBasic(@"
@@ -653,7 +653,7 @@ End Function)
         Await TestMethod()
     End Sub
 End Class",
-                GetCA3075DataViewBasicResultAt(10, 9, "TestMethod")
+                GetCA3075DataViewBasicResultAt(10, 9, "Run")
             );
         }
 

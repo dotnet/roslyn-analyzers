@@ -37,7 +37,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(10, 26, "TestClass.TestMethod")
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(10, 26, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -50,7 +50,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(7, 26, "TestClass.TestMethod")
+                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(7, 26, "TestMethod")
             );
         }
 
@@ -71,7 +71,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(10, 32, "TestClass")
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(10, 32, "get_Test")
             );
 
             VerifyBasic(@"
@@ -86,7 +86,7 @@ Class TestClass
         End Get
     End Property
 End Class",
-                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(8, 39, "TestClass")
+                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(8, 39, "get_Test")
             );
         }
 
@@ -110,7 +110,7 @@ class TestClass1
         }
     }
 }",
-                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(12, 26, "TestClass1")
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(12, 26, "set_Test")
             );
 
             VerifyBasic(@"
@@ -128,7 +128,7 @@ Class TestClass1
         End Set
     End Property
 End Class",
-                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(9, 26, "TestClass1")
+                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(9, 26, "set_Test")
             );
         }
 
@@ -151,7 +151,7 @@ class TestClass
         finally { }
     }
 }",
-                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(11, 26, "TestClass.TestMethod")
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(11, 26, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -167,7 +167,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(7, 26, "TestClass.TestMethod")
+                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(7, 26, "TestMethod")
             );
         }
 
@@ -189,7 +189,7 @@ class TestClass
         finally { }
     }
 }",
-                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(11, 26, "TestClass.TestMethod")
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(11, 26, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -204,7 +204,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(8, 26, "TestClass.TestMethod")
+                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(8, 26, "TestMethod")
             );
         }
 
@@ -226,7 +226,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(12, 26, "TestClass.TestMethod")
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(12, 26, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -242,7 +242,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(10, 26, "TestClass.TestMethod")
+                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(10, 26, "TestMethod")
             );
         }
 
@@ -265,7 +265,7 @@ class TestClass
         await TestMethod();
     }
 }",
-                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(9, 45, "TestClass.TestMethod")
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(9, 45, "Run")
             );
 
             VerifyBasic(@"
@@ -284,7 +284,7 @@ End Function)
         Await TestMethod()
     End Sub
 End Class",
-                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(8, 22, "TestClass.TestMethod")
+                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(8, 22, "Run")
             );
         }
 
@@ -300,7 +300,7 @@ class TestClass
 
     Del d = delegate () { var reader = XmlTextReader.Create(""doc.xml""); };
 }",
-                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(8, 40, "TestClass.TestMethod")
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(8, 40, "TestClass")
             );
 
             VerifyBasic(@"
@@ -311,7 +311,7 @@ Class TestClass
 
     Private d As Del = Sub() Dim reader = XmlTextReader.Create(""doc.xml"")
 End Class",
-                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(7, 43, "TestClass.TestMethod")
+                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(7, 43, "TestClass")
             );
         }
     }

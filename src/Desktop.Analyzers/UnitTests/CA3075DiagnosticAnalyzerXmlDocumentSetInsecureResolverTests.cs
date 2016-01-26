@@ -429,7 +429,7 @@ namespace TestNamespace
         public void Method2(XmlDocument doc){}
     }
 }",
-                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(11, 39, "TestMethod")
+                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(11, 39, "Method1")
             );
 
             VerifyBasic(@"
@@ -448,7 +448,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(9, 17, "TestMethod")
+                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(9, 17, "Method1")
             );
         }
     }

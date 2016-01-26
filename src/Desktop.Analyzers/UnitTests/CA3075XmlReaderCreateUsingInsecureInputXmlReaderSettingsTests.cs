@@ -11,14 +11,14 @@ namespace Desktop.Analyzers.UnitTests
     {
         private static readonly string CA3075XmlReaderCreateInsecureInputMessage = DesktopAnalyzersResources.XmlReaderCreateInsecureInputMessage;
 
-        private DiagnosticResult GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(int line, int column)
+        private DiagnosticResult GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(int line, int column, string name)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, CA3075XmlReaderCreateInsecureInputMessage);
+            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(CA3075XmlReaderCreateInsecureInputMessage, name));
         }
 
-        private DiagnosticResult GetCA3075XmlReaderCreateInsecureInputBasicResultAt(int line, int column)
+        private DiagnosticResult GetCA3075XmlReaderCreateInsecureInputBasicResultAt(int line, int column, string name)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, CA3075XmlReaderCreateInsecureInputMessage);
+            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(CA3075XmlReaderCreateInsecureInputMessage, name));
         }
 
         [Fact]
@@ -40,7 +40,7 @@ namespace TestNamespace
     }
 }
 ",
-                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(12, 26)
+                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(12, 26, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -56,7 +56,8 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(9, 26));
+                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(9, 26, "TestMethod")
+            );
         }
 
         [Fact]
@@ -146,7 +147,7 @@ namespace TestNamespace
     }
 }
 ",
-                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(10, 26)
+                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(10, 26, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -159,7 +160,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(7, 26)
+                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(7, 26, "TestMethod")
              );
         }
 
@@ -183,7 +184,7 @@ public class TestClass
     }
 }
 ",
-                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(12, 32)
+                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(12, 32, "get_Test")
             );
 
             VerifyBasic(@"
@@ -199,7 +200,7 @@ Public Class TestClass
         End Get
     End Property
 End Class",
-                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(9, 39)
+                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(9, 39, "get_Test")
             );
         }
 
@@ -225,7 +226,7 @@ class TestClass6a
     }
 }
 ",
-                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(13, 26)
+                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(13, 26, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -243,7 +244,7 @@ Class TestClass6a
         End Try
     End Sub
 End Class",
-                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(9, 26)
+                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(9, 26, "TestMethod")
             );
         }
 
@@ -268,7 +269,7 @@ class TestClass6a
     }
 }
 ",
-                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(13, 26)
+                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(13, 26, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -285,7 +286,7 @@ Class TestClass6a
         End Try
     End Sub
 End Class",
-                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(10, 26)
+                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(10, 26, "TestMethod")
             );
         }
 
@@ -310,7 +311,7 @@ class TestClass6a
     }
 }
 ",
-                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(14, 26)
+                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(14, 26, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -328,7 +329,7 @@ Class TestClass6a
         End Try
     End Sub
 End Class",
-                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(12, 26)
+                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(12, 26, "TestMethod")
             );
         }
 
@@ -356,7 +357,7 @@ class TestClass
     }
 }
 ",
-                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(12, 26)
+                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(12, 26, "Run")
             );
 
             VerifyBasic(@"
@@ -377,7 +378,7 @@ End Function)
         Await TestMethod()
     End Sub
 End Class",
-                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(10, 22)
+                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(10, 22, "Run")
             );
         }
 
@@ -399,7 +400,7 @@ class TestClass
     };
 }
 ",
-                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(12, 22)
+                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(12, 22, "TestClass")
             );
 
             VerifyBasic(@"
@@ -416,7 +417,7 @@ Class TestClass
 
 End Sub
 End Class",
-                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(11, 18)
+                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(11, 18, "TestClass")
             );
         }
 

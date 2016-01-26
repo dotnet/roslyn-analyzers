@@ -9,14 +9,14 @@ namespace Desktop.Analyzers.UnitTests
 {
     public partial class CA3075DiagnosticAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private DiagnosticResult GetCA3075CSharpResultAt(int line, int column)
+        private DiagnosticResult GetCA3075CSharpResultAt(int line, int column, string name)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(CA3075LoadXmlMessage, "Read"));
+            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(CA3075LoadXmlMessage, name, "Read"));
         }
 
-        private DiagnosticResult GetCA3075BasicResultAt(int line, int column)
+        private DiagnosticResult GetCA3075BasicResultAt(int line, int column, string name)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(CA3075LoadXmlMessage, "Read"));
+            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(CA3075LoadXmlMessage, name, "Read"));
         }
 
         [Fact]
@@ -38,7 +38,7 @@ namespace FxCopUnsafeXml
         }
     }
 }",
-                GetCA3075CSharpResultAt(13, 32)
+                GetCA3075CSharpResultAt(13, 32, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -54,7 +54,7 @@ Namespace FxCopUnsafeXml
         End Sub
     End Class
 End Namespace",
-                GetCA3075BasicResultAt(10, 39)
+                GetCA3075BasicResultAt(10, 39, "TestMethod")
             );
         }
 
@@ -78,7 +78,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075CSharpResultAt(13, 32)
+                GetCA3075CSharpResultAt(13, 32, "get_Test")
             );
 
             VerifyBasic(@"
@@ -95,7 +95,7 @@ Class TestClass
         End Get
     End Property
 End Class",
-                GetCA3075BasicResultAt(10, 39)
+                GetCA3075BasicResultAt(10, 39, "get_Test")
             );
         }
 
@@ -126,7 +126,7 @@ public XmlSchema GetDoc
             }
         }
 }",
-                GetCA3075CSharpResultAt(17, 40)
+                GetCA3075CSharpResultAt(17, 40, "set_GetDoc")
             );
 
             VerifyBasic(@"
@@ -149,7 +149,7 @@ Class TestClass
         End Set
     End Property
 End Class",
-                GetCA3075BasicResultAt(13, 43)
+                GetCA3075BasicResultAt(13, 43, "set_GetDoc")
             );
         }
 
@@ -175,7 +175,7 @@ class TestClass
         finally { }
     }
 }",
-                GetCA3075CSharpResultAt(14, 32)
+                GetCA3075CSharpResultAt(14, 32, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -194,7 +194,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075BasicResultAt(10, 39)
+                GetCA3075BasicResultAt(10, 39, "TestMethod")
             );
         }
 
@@ -220,7 +220,7 @@ using System.Xml.Schema;
             finally { }
         }
     }",
-                GetCA3075CSharpResultAt(15, 36)
+                GetCA3075CSharpResultAt(15, 36, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -238,7 +238,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075BasicResultAt(11, 39)
+                GetCA3075BasicResultAt(11, 39, "TestMethod")
             );
         }
 
@@ -264,7 +264,7 @@ using System.Xml.Schema;
             }
         }
     }",
-                GetCA3075CSharpResultAt(16, 36)
+                GetCA3075CSharpResultAt(16, 36, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -283,7 +283,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075BasicResultAt(13, 39)
+                GetCA3075BasicResultAt(13, 39, "TestMethod")
             );
         }
 
@@ -311,7 +311,7 @@ using System.Xml.Schema;
             await TestMethod();
         }
     }",
-                GetCA3075CSharpResultAt(13, 36)
+                GetCA3075CSharpResultAt(13, 36, "Run")
             );
 
             VerifyBasic(@"
@@ -333,7 +333,7 @@ End Function)
         Await TestMethod()
     End Sub
 End Class",
-                GetCA3075BasicResultAt(11, 35)
+                GetCA3075BasicResultAt(11, 35, "Run")
             );
         }
 
@@ -354,7 +354,7 @@ using System.Xml.Schema;
             XmlSchema schema = XmlSchema.Read(tr, null);
         };
     }",
-                GetCA3075CSharpResultAt(12, 32)
+                GetCA3075CSharpResultAt(12, 32, "TestClass")
             );
 
             VerifyBasic(@"
@@ -371,7 +371,7 @@ Class TestClass
 
 End Sub
 End Class",
-                GetCA3075BasicResultAt(11, 31)
+                GetCA3075BasicResultAt(11, 31, "TestClass")
             );
         }
 

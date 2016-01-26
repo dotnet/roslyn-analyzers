@@ -9,14 +9,14 @@ namespace Desktop.Analyzers.UnitTests
 {
     public partial class CA3075DiagnosticAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private DiagnosticResult GetCA3075XPathDocumentCSharpResultAt(int line, int column)
+        private DiagnosticResult GetCA3075XPathDocumentCSharpResultAt(int line, int column, string name)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(CA3075LoadXmlMessage, ".ctor"));
+            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(CA3075LoadXmlMessage, name, ".ctor"));
         }
 
-        private DiagnosticResult GetCA3075XPathDocumentBasicResultAt(int line, int column)
+        private DiagnosticResult GetCA3075XPathDocumentBasicResultAt(int line, int column, string name)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(CA3075LoadXmlMessage, ".ctor"));
+            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(CA3075LoadXmlMessage, name, ".ctor"));
         }
 
         [Fact]
@@ -37,7 +37,7 @@ namespace FxCopUnsafeXml
     }
 }
 ",
-                GetCA3075XPathDocumentCSharpResultAt(11, 33)
+                GetCA3075XPathDocumentCSharpResultAt(11, 33, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -51,7 +51,7 @@ Namespace FxCopUnsafeXml
         End Sub
     End Class
 End Namespace",
-                GetCA3075XPathDocumentBasicResultAt(8, 24)
+                GetCA3075XPathDocumentBasicResultAt(8, 24, "TestMethod")
             );
         }
 
@@ -73,7 +73,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075XPathDocumentCSharpResultAt(11, 33)
+                GetCA3075XPathDocumentCSharpResultAt(11, 33, "get_Test")
             );
 
             VerifyBasic(@"
@@ -88,7 +88,7 @@ Class TestClass
         End Get
     End Property
 End Class",
-                GetCA3075XPathDocumentBasicResultAt(8, 24)
+                GetCA3075XPathDocumentBasicResultAt(8, 24, "get_Test")
             );
         }
 
@@ -116,7 +116,7 @@ public XPathDocument GetDoc
             }
         }
 }",
-                GetCA3075XPathDocumentCSharpResultAt(14, 41)
+                GetCA3075XPathDocumentCSharpResultAt(14, 41, "set_GetDoc")
             );
 
             VerifyBasic(@"
@@ -136,7 +136,7 @@ Class TestClass
         End Set
     End Property
 End Class",
-                GetCA3075XPathDocumentBasicResultAt(10, 28)
+                GetCA3075XPathDocumentBasicResultAt(10, 28, "set_GetDoc")
             );
         }
 
@@ -160,7 +160,7 @@ End Class",
             finally { }
         }
     }",
-                GetCA3075XPathDocumentCSharpResultAt(12, 37)
+                GetCA3075XPathDocumentCSharpResultAt(12, 37, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -177,7 +177,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075XPathDocumentBasicResultAt(8, 24)
+                GetCA3075XPathDocumentBasicResultAt(8, 24, "TestMethod")
             );
         }
 
@@ -201,7 +201,7 @@ End Class",
             finally { }
         }
     }",
-                GetCA3075XPathDocumentCSharpResultAt(13, 37)
+                GetCA3075XPathDocumentCSharpResultAt(13, 37, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -217,7 +217,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075XPathDocumentBasicResultAt(9, 24)
+                GetCA3075XPathDocumentBasicResultAt(9, 24, "TestMethod")
             );
         }
 
@@ -241,7 +241,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075XPathDocumentCSharpResultAt(14, 33)
+                GetCA3075XPathDocumentCSharpResultAt(14, 33, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -258,7 +258,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075XPathDocumentBasicResultAt(11, 24)
+                GetCA3075XPathDocumentBasicResultAt(11, 24, "TestMethod")
             );
         }
 
@@ -284,7 +284,7 @@ class TestClass
         await TestMethod();
     }
 }",
-                GetCA3075XPathDocumentCSharpResultAt(11, 33)
+                GetCA3075XPathDocumentCSharpResultAt(11, 33, "Run")
             );
 
             VerifyBasic(@"
@@ -304,7 +304,7 @@ Class TestClass
         Await TestMethod()
     End Sub
 End Class",
-                GetCA3075XPathDocumentBasicResultAt(9, 20)
+                GetCA3075XPathDocumentBasicResultAt(9, 20, "Run")
             );
         }
 
@@ -323,7 +323,7 @@ class TestClass
         XPathDocument doc = new XPathDocument(xml);
     };
 }",
-                GetCA3075XPathDocumentCSharpResultAt(10, 29)
+                GetCA3075XPathDocumentCSharpResultAt(10, 29, "TestClass")
             );
 
             VerifyBasic(@"
@@ -338,7 +338,7 @@ Class TestClass
 
 End Sub
 End Class",
-                GetCA3075XPathDocumentBasicResultAt(9, 16)
+                GetCA3075XPathDocumentBasicResultAt(9, 16, "TestClass")
             );
         }
 

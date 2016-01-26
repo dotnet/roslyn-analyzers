@@ -657,7 +657,7 @@ namespace TestNamespace
         public void Method2(XmlTextReader reader){}
     }
 }",
-                GetCA3075XmlTextReaderSetInsecureResolutionCSharpResultAt(11, 21, "TestMethod")
+                GetCA3075XmlTextReaderSetInsecureResolutionCSharpResultAt(11, 21, "Method1")
             );
 
             VerifyBasic(@"
@@ -678,7 +678,7 @@ Namespace TestNamespace
     End Class
 End Namespace
 ",
-                GetCA3075XmlTextReaderSetInsecureResolutionBasicResultAt(8, 21, "TestMethod")
+                GetCA3075XmlTextReaderSetInsecureResolutionBasicResultAt(8, 21, "Method1")
             );
         }
 
@@ -701,7 +701,7 @@ namespace TestNamespace
         public void Method2(XmlTextReader reader){}
     }
 }",
-                GetCA3075XmlTextReaderSetInsecureResolutionCSharpResultAt(11, 21, "TestMethod")
+                GetCA3075XmlTextReaderSetInsecureResolutionCSharpResultAt(11, 21, "Method1")
             );
 
             VerifyBasic(@"
@@ -721,7 +721,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlTextReaderSetInsecureResolutionBasicResultAt(8, 21, "TestMethod")
+                GetCA3075XmlTextReaderSetInsecureResolutionBasicResultAt(8, 21, "Method1")
             );
         }
     }

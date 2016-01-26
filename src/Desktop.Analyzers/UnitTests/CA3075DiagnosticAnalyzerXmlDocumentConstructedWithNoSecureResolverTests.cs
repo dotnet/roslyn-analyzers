@@ -361,7 +361,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(10, 25, "TestClass")
+                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(10, 25, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -374,7 +374,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(7, 17, "TestClass")
+                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(7, 17, "TestMethod")
             );
         }
 
@@ -423,7 +423,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(11, 13, "TestClass")
+                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(11, 13, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -438,7 +438,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(8, 13, "TestClass")
+                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(8, 13, "TestMethod")
             );
         }
 
@@ -463,7 +463,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(13, 17, "TestClass")
+                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(13, 17, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -482,7 +482,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(10, 17, "TestClass")
+                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(10, 17, "TestMethod")
             );
         }
 
@@ -544,7 +544,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(14, 13, "TestClass")
+                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(14, 13, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -561,7 +561,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(10, 13, "TestClass")
+                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(10, 13, "TestMethod")
             );
         }
 
@@ -629,7 +629,7 @@ namespace TestNamespace
     }
 }",
                 GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(8, 28, "TestClass"),
-                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(12, 13, "TestClass")
+                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(12, 13, "Method1")
             );
 
             VerifyBasic(@"
@@ -645,7 +645,7 @@ Namespace TestNamespace
     End Class
 End Namespace",
                 GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(6, 16, "TestClass"),
-                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(9, 13, "TestClass")
+                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(9, 13, "Method1")
             );
         }
 
@@ -673,7 +673,7 @@ namespace TestNamespace
     }
 }",
                 GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(8, 28, "TestClass"),
-                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(17, 13, "Method2()")
+                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(17, 13, "Method2")
             );
 
             VerifyBasic(@"

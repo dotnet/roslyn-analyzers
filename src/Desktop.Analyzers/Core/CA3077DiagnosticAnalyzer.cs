@@ -16,24 +16,31 @@ namespace Desktop.Analyzers
     public abstract class CA3077DiagnosticAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA3077";
+        private const string HelpLink = "http://aka.ms/CA3077";
 
-        internal static DiagnosticDescriptor RuleXmlDocumentDerivedClassDesignNoConstructor = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlDocumentDerivedClassNoConstructorDiagnosis)),
-                                                                                                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.MakeDtdProcessingSecureInApiDesignXmlDocumentDescription)));
+        internal static DiagnosticDescriptor RuleXmlDocumentDerivedClassDesignNoConstructor = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlDocumentDerivedClassNoConstructorMessage)),
+                                                                                                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlDocumentDerivedClassNoConstructorDescription)),
+                                                                                                                         HelpLink);
 
-        internal static DiagnosticDescriptor RuleXmlDocumentDerivedClassDesignConstructorNoSecureXmlResolver = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlDocumentDerivedClassConstructorNoSecureXmlResolverDiagnosis)),
-                                                                                                                                          SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.MakeDtdProcessingSecureInApiDesignXmlDocumentDescription)));
+        internal static DiagnosticDescriptor RuleXmlDocumentDerivedClassDesignConstructorNoSecureXmlResolver = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlDocumentDerivedClassConstructorNoSecureXmlResolverMessage)),
+                                                                                                                                          SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlDocumentDerivedClassConstructorNoSecureXmlResolverDescription)),
+                                                                                                                                          HelpLink);
 
-        internal static DiagnosticDescriptor RuleXmlDocumentDerivedClassDesignSetInsecureXmlResolverInMethod = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlDocumentDerivedClassSetInsecureXmlResolverInMethodDiagnosis)),
-                                                                                                                                          SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.MakeDtdProcessingSecureInApiDesignXmlDocumentDescription)));
+        internal static DiagnosticDescriptor RuleXmlDocumentDerivedClassDesignSetInsecureXmlResolverInMethod = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlDocumentDerivedClassSetInsecureXmlResolverInMethodMessage)),
+                                                                                                                                          SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlDocumentDerivedClassSetInsecureXmlResolverInMethodDescription)),
+                                                                                                                                          HelpLink);
 
-        internal static DiagnosticDescriptor RuleXmlTextReaderDerivedClassDesignNoConstructor = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlTextReaderDerivedClassNoConstructorDiagnosis)),
-                                                                                                                           SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.MakeDtdProcessingSecureInApiDesignXmlTextReaderDescription)));
+        internal static DiagnosticDescriptor RuleXmlTextReaderDerivedClassDesignNoConstructor = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlTextReaderDerivedClassNoConstructorMessage)),
+                                                                                                                           SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlTextReaderDerivedClassNoConstructorDescription)),
+                                                                                                                           HelpLink);
 
-        internal static DiagnosticDescriptor RuleXmlTextReaderDerivedClassDesignConstructorNoSecureSettings = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlTextReaderDerivedClassConstructorNoSecureSettingsDiagnosis)),
-                                                                                                                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.MakeDtdProcessingSecureInApiDesignXmlTextReaderDescription)));
+        internal static DiagnosticDescriptor RuleXmlTextReaderDerivedClassDesignConstructorNoSecureSettings = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlTextReaderDerivedClassConstructorNoSecureSettingsMessage)),
+                                                                                                                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlTextReaderDerivedClassConstructorNoSecureSettingsDescription)),
+                                                                                                                                         HelpLink);
 
-        internal static DiagnosticDescriptor RuleXmlTextReaderDerivedClassDesignSetInsecureSettingsInMethod = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlTextReaderDerivedClassSetInsecureSettingsInMethodDiagnosis)),
-                                                                                                                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.MakeDtdProcessingSecureInApiDesignXmlTextReaderDescription)));
+        internal static DiagnosticDescriptor RuleXmlTextReaderDerivedClassDesignSetInsecureSettingsInMethod = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlTextReaderDerivedClassSetInsecureSettingsInMethodMessage)),
+                                                                                                                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlTextReaderDerivedClassSetInsecureSettingsInMethodDescription)),
+                                                                                                                                         HelpLink);
   
         private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics = ImmutableArray.Create(RuleXmlDocumentDerivedClassDesignNoConstructor,
                                                                                                                   RuleXmlDocumentDerivedClassDesignConstructorNoSecureXmlResolver,

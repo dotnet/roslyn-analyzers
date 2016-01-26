@@ -12,7 +12,7 @@ namespace Desktop.Analyzers.UnitTests
     {
         private const string CA3076RuleId = CA3076DiagnosticAnalyzer<SyntaxKind>.RuleId;
 
-        private readonly string CA3076LoadInsecureInputMessage = DesktopAnalyzersResources.XslCompiledTransformLoadInsecureInputDiagnosis;
+        private readonly string CA3076LoadInsecureInputMessage = DesktopAnalyzersResources.XslCompiledTransformLoadInsecureInputMessage;
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
@@ -24,14 +24,14 @@ namespace Desktop.Analyzers.UnitTests
             return new CSharpCA3076DiagnosticAnalyzer();
         }
 
-        private DiagnosticResult GetCA3076LoadCSharpResultAt(int line, int column)
+        private DiagnosticResult GetCA3076LoadCSharpResultAt(int line, int column, string name)
         {
-            return GetCSharpResultAt(line, column, CA3076RuleId, CA3076LoadInsecureInputMessage);
+            return GetCSharpResultAt(line, column, CA3076RuleId, string.Format(CA3076LoadInsecureInputMessage, name));
         }
 
-        private DiagnosticResult GetCA3076LoadBasicResultAt(int line, int column)
+        private DiagnosticResult GetCA3076LoadBasicResultAt(int line, int column, string name)
         {
-            return GetBasicResultAt(line, column, CA3076RuleId, CA3076LoadInsecureInputMessage);
+            return GetBasicResultAt(line, column, CA3076RuleId, string.Format(CA3076LoadInsecureInputMessage, name));
         }
 
         [Fact]
@@ -553,7 +553,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3076LoadCSharpResultAt(14, 13)
+                GetCA3076LoadCSharpResultAt(14, 13, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -570,7 +570,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3076LoadBasicResultAt(11, 13)
+                GetCA3076LoadBasicResultAt(11, 13, "TestMethod")
             );
         }
 
@@ -784,7 +784,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3076LoadCSharpResultAt(14, 13)
+                GetCA3076LoadCSharpResultAt(14, 13, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -803,7 +803,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3076LoadBasicResultAt(13, 13)
+                GetCA3076LoadBasicResultAt(13, 13, "TestMethod")
             );
         }
 
@@ -828,7 +828,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3076LoadCSharpResultAt(15, 13)
+                GetCA3076LoadCSharpResultAt(15, 13, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -846,7 +846,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3076LoadBasicResultAt(12, 13)
+                GetCA3076LoadBasicResultAt(12, 13, "TestMethod")
             );
         }
 
@@ -870,7 +870,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3076LoadCSharpResultAt(14, 13)
+                GetCA3076LoadCSharpResultAt(14, 13, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -889,7 +889,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3076LoadBasicResultAt(13, 13)
+                GetCA3076LoadBasicResultAt(13, 13, "TestMethod")
             );
         }
 
@@ -914,7 +914,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3076LoadCSharpResultAt(15, 13)
+                GetCA3076LoadCSharpResultAt(15, 13, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -932,7 +932,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3076LoadBasicResultAt(12, 13)
+                GetCA3076LoadBasicResultAt(12, 13, "TestMethod")
             );
         }
 
@@ -1036,7 +1036,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3076LoadCSharpResultAt(14, 13)
+                GetCA3076LoadCSharpResultAt(14, 13, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -1053,7 +1053,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3076LoadBasicResultAt(11, 13)
+                GetCA3076LoadBasicResultAt(11, 13, "TestMethod")
             );
         }
 
@@ -1077,7 +1077,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3076LoadCSharpResultAt(14, 13)
+                GetCA3076LoadCSharpResultAt(14, 13, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -1094,7 +1094,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3076LoadBasicResultAt(11, 13)
+                GetCA3076LoadBasicResultAt(11, 13, "TestMethod")
             );
         }
 
@@ -1230,7 +1230,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3076LoadInsecureConstructedCSharpResultAt(13, 13)
+                GetCA3076LoadInsecureConstructedCSharpResultAt(13, 13, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -1246,7 +1246,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3076LoadInsecureConstructedBasicResultAt(10, 13)
+                GetCA3076LoadInsecureConstructedBasicResultAt(10, 13, "TestMethod")
             );
         }
     }

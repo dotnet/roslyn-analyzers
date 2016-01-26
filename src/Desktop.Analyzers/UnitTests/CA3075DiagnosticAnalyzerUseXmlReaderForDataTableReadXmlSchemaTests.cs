@@ -77,7 +77,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075DataTableReadXmlSchemaCSharpResultAt(11, 13, "TestClass")
+                GetCA3075DataTableReadXmlSchemaCSharpResultAt(11, 13, "get_Test")
             );
 
             VerifyBasic(@"
@@ -93,7 +93,7 @@ Class TestClass
         End Get
     End Property
 End Class",
-                GetCA3075DataTableReadXmlSchemaBasicResultAt(9, 13, "TestClass")
+                GetCA3075DataTableReadXmlSchemaBasicResultAt(9, 13, "get_Test")
             );
         }
 
@@ -122,7 +122,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075DataTableReadXmlSchemaCSharpResultAt(15, 17, "TestClass")
+                GetCA3075DataTableReadXmlSchemaCSharpResultAt(15, 17, "set_GetDoc")
             );
 
             VerifyBasic(@"
@@ -143,7 +143,7 @@ Class TestClass
         End Set
     End Property
 End Class",
-                GetCA3075DataTableReadXmlSchemaBasicResultAt(11, 17, "TestClass")
+                GetCA3075DataTableReadXmlSchemaBasicResultAt(11, 17, "set_GetDoc")
             );
         }
 
@@ -298,7 +298,7 @@ using System.Data;
             await TestMethod();
         }
     }",
-                GetCA3075DataTableReadXmlSchemaCSharpResultAt(12, 17, "TestMethod")
+                GetCA3075DataTableReadXmlSchemaCSharpResultAt(12, 17, "Run")
             );
 
             VerifyBasic(@"
@@ -319,7 +319,7 @@ End Function)
         Await TestMethod()
     End Sub
 End Class",
-                GetCA3075DataTableReadXmlSchemaBasicResultAt(10, 9, "TestMethod")
+                GetCA3075DataTableReadXmlSchemaBasicResultAt(10, 9, "Run")
             );
         }
 
@@ -339,7 +339,7 @@ class TestClass
         dt.ReadXmlSchema(src);
     };
 }",
-                GetCA3075DataTableReadXmlSchemaCSharpResultAt(11, 9, "TestMethod")
+                GetCA3075DataTableReadXmlSchemaCSharpResultAt(11, 9, "TestClass")
             );
 
             VerifyBasic(@"
@@ -355,7 +355,7 @@ Class TestClass
 
 End Sub
 End Class",
-                GetCA3075DataTableReadXmlSchemaBasicResultAt(10, 5, "TestMethod")
+                GetCA3075DataTableReadXmlSchemaBasicResultAt(10, 5, "TestClass")
             );
         }
 

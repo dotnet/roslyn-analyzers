@@ -167,14 +167,6 @@
     <Compile Include="CA3075DiagnosticAnalyzerXmlTextReaderConstructedWithNoSecureResolutionTests.cs" />
     <Compile Include="CA3075DiagnosticAnalyzerXmlTextReaderSetInsecureResolutionTests.cs" />
     <Compile Include="CA3075XmlReaderCreateUsingInsecureInputXmlReaderSettingsTests.cs" />
-    <Compile Include="CA3076XslCompiledTransformLoadInsecureConstructedSettingsTests.cs" />
-    <Compile Include="CA3076XslCompiledTransformLoadInsecureInputSettingsTests.cs" />
-    <Compile Include="CA3077XmlDocumentDerivedClassDesignConstructorNoSecureXmlResolverTests.cs" />
-    <Compile Include="CA3077XmlDocumentDerivedClassDesignNoConstructorTests.cs" />
-    <Compile Include="CA3077XmlDocumentDerivedClassDesignSetInsecureXmlResolverInMethodTests.cs" />
-    <Compile Include="CA3077XmlTextReaderDerivedClassDesignConstructorNoSecureSettingsTests.cs" />
-    <Compile Include="CA3077XmlTextReaderDerivedClassDesignNoConstructorTests.cs" />
-    <Compile Include="CA3077XmlTextReaderDerivedClassDesignSetInsecureSettingsInMethodTests.cs" />
     <Compile Include="DoNotCatchCorruptedStateExceptionsTests.cs" />
     <Compile Include="DoNotUseInsecureCryptographicAlgorithmsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

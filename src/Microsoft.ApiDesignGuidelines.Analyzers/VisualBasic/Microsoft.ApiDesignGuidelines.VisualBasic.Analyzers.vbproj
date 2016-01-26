@@ -121,7 +121,6 @@
     <Compile Include="BasicMarkAssembliesWithClsCompliant.Fixer.vb" />
     <Compile Include="BasicMarkAssembliesWithAssemblyVersion.Fixer.vb" />
     <Compile Include="BasicDefineAccessorsForAttributeArguments.vb" />
-    <Compile Include="BasicUseIntegralOrStringArgumentForIndexers.vb" />
     <Compile Include="BasicUsePropertiesWhereAppropriate.Fixer.vb" />
     <Compile Include="BasicMovePInvokesToNativeMethodsClass.Fixer.vb" />
     <Compile Include="BasicIdentifiersShouldHaveCorrectPrefix.Fixer.vb" />

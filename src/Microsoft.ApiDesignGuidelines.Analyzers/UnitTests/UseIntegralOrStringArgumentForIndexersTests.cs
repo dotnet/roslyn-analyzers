@@ -12,21 +12,50 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicUseIntegralOrStringArgumentForIndexersAnalyzer();
+            return new UseIntegralOrStringArgumentForIndexersAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpUseIntegralOrStringArgumentForIndexersAnalyzer();
+            return new UseIntegralOrStringArgumentForIndexersAnalyzer();
         }
- 
+
         [Fact]
-        public void UseIntegralOrStringArgumentForIndexersChar()
+        public void TestBasicUseIntegralOrStringArgumentForIndexersWarning1()
+        {
+            VerifyBasic(@"
+    Public Class Months
+        Private month() As String = {""Jan"", ""Feb"", ""...""}
+        Default ReadOnly Property Item(index As Float) As String
+            Get
+                Return month(index)
+            End Get
+        End Property
+    End Class
+", CreateBasicResult(4, 35));
+        }
+        [Fact]
+        public void TestBasicUseIntegralOrStringArgumentForIndexersNoWarning1()
+        {
+            VerifyBasic(@"
+    Public Class Months
+        Private month() As String = {""Jan"", ""Feb"", ""...""}
+        Default ReadOnly Property Item(index As String) As String
+            Get
+                Return month(index)
+            End Get
+        End Property
+    End Class
+");
+        }
+
+        [Fact]
+        public void TestCSharpUseIntegralOrStringArgumentForIndexersWarning1()
         {
             VerifyCSharp(@"
     public class Months
     {
-        string[] month = new char[] {'J', 'F', 'M'};
+        string[] month = new string[] {""Jan"", ""Feb"", ""...""};
         public string this[char index]
         {
             get
@@ -38,7 +67,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void UseIntegralOrStringArgumentForIndexersInt()
+        public void TestCSharpUseIntegralOrStringArgumentForIndexersNoWarning1()
         {
             VerifyCSharp(@"
     public class Months

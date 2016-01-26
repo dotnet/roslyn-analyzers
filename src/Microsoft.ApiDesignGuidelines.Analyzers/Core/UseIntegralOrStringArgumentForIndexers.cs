@@ -10,7 +10,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// CA1043: Use Integral Or String Argument For Indexers
     /// </summary>
-    public abstract class UseIntegralOrStringArgumentForIndexersAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class UseIntegralOrStringArgumentForIndexersAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1043";
 
@@ -24,7 +25,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182180.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
@@ -40,15 +41,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private void AnalyzeSymbol(SymbolAnalysisContext context)
         {
             var symbol = (IPropertySymbol)context.Symbol;
-            if ((symbol.IsIndexer) && !(symbol.IsOverride))
+            if (symbol.IsIndexer && !symbol.IsOverride)
             {
                 if (symbol.GetParameters().Length == 1)
                 {
                     var paramType = symbol.GetParameters()[0].Type;
-                    if (!(paramType.SpecialType == SpecialType.System_String || paramType.SpecialType == SpecialType.System_Int32 || paramType.SpecialType == SpecialType.System_Int16 || paramType.SpecialType == SpecialType.System_Int64 || paramType.SpecialType == SpecialType.System_Object))
+                    var allowedTypes = (paramType.SpecialType == SpecialType.System_String || paramType.SpecialType == SpecialType.System_Int32 || paramType.SpecialType == SpecialType.System_Int16 || paramType.SpecialType == SpecialType.System_Int64 || paramType.SpecialType == SpecialType.System_Object);
+                    if (!allowedTypes)
                     {
-                        var diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], symbol.Name);
-                        context.ReportDiagnostic(diagnostic);
+                        context.ReportDiagnostic(symbol.CreateDiagnostic(Rule, symbol.Locations[0], symbol.Name));
                     }
                 }
             }

@@ -183,7 +183,6 @@
     <Compile Include="BasicUsePreferredTerms.vb" />
     <Compile Include="BasicUsePreferredTerms.Fixer.vb" />
     <Compile Include="BasicOverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.vb" />
-    <Compile Include="BasicPropertiesShouldNotReturnArrays.Fixer.vb" />
     <Compile Include="BasicAssembliesShouldHaveValidStrongNames.vb" />
     <Compile Include="BasicAssembliesShouldHaveValidStrongNames.Fixer.vb" />
     <Compile Include="BasicOverrideGetHashCodeOnOverridingEquals.vb" />

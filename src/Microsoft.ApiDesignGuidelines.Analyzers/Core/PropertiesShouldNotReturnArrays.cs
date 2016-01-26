@@ -45,7 +45,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 if (symbol.GetResultantVisibility() == SymbolVisibility.Public && symbol.ContainingType.BaseType.MetadataName != "Attribute")
                 {
-                    context.ReportDiagnostic(symbol.CreateDiagnostic(Rule, symbol.Locations[0], symbol.Name));
+                    context.ReportDiagnostic(symbol.CreateDiagnostic(Rule));
                 }
             }
 

@@ -449,7 +449,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Insecure DTD processing in API design..
+        ///   Looks up a localized string similar to Insecure Processing in API Design, XmlDocument and XmlTextReader.
         /// </summary>
         internal static string InsecureDtdProcessingInApiDesign {
             get {

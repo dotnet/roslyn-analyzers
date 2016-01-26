@@ -10,16 +10,16 @@ namespace Desktop.Analyzers.UnitTests
 {
     public partial class CA3077DiagnosticAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private static readonly string CA3077NoConstructorMessage = DesktopAnalyzersResources.XmlDocumentDerivedClassNoConstructorDiagnosis;
+        private static readonly string CA3077NoConstructorMessage = DesktopAnalyzersResources.XmlDocumentDerivedClassNoConstructorMessage;
 
-        private DiagnosticResult GetCA3077NoConstructorCSharpResultAt(int line, int column)
+        private DiagnosticResult GetCA3077NoConstructorCSharpResultAt(int line, int column, string name)
         {
-            return GetCSharpResultAt(line, column, CA3077RuleId, CA3077NoConstructorMessage);
+            return GetCSharpResultAt(line, column, CA3077RuleId, string.Format(CA3077NoConstructorMessage, name));
         }
 
-        private DiagnosticResult GetCA3077NoConstructorBasicResultAt(int line, int column)
+        private DiagnosticResult GetCA3077NoConstructorBasicResultAt(int line, int column, string name)
         {
-            return GetBasicResultAt(line, column, CA3077RuleId, CA3077NoConstructorMessage);
+            return GetBasicResultAt(line, column, CA3077RuleId, string.Format(CA3077NoConstructorMessage, name));
         }
 
         [Fact]
@@ -104,7 +104,7 @@ namespace TestNamespace
 {
     class TestClass : XmlDocument {}
 }",
-                GetCA3077NoConstructorCSharpResultAt(7, 11)
+                GetCA3077NoConstructorCSharpResultAt(7, 11, "TestClass")
             );
 
             VerifyBasic(@"
@@ -115,7 +115,7 @@ Namespace TestNamespace
         Inherits XmlDocument
     End Class
 End Namespace",
-                GetCA3077NoConstructorBasicResultAt(5, 11)
+                GetCA3077NoConstructorBasicResultAt(5, 11, "TestClass")
             );
         }
     }

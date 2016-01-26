@@ -468,7 +468,7 @@
     <comment>CA3076</comment>
   </data>
   <data name="InsecureDtdProcessingInApiDesign" xml:space="preserve">
-    <value>Insecure DTD processing in API design.</value>
+    <value>Insecure Processing in API Design, XmlDocument and XmlTextReader</value>
     <comment>CA3077</comment>
   </data>
   <data name="MakeDtdProcessingSecureInApiDesignXmlDocumentDescription" xml:space="preserve">

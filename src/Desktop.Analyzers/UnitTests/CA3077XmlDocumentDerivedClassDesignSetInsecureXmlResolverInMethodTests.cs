@@ -10,16 +10,16 @@ namespace Desktop.Analyzers.UnitTests
 {
     public partial class CA3077DiagnosticAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private static readonly string CA3077InsecureMethodMessage = DesktopAnalyzersResources.XmlDocumentDerivedClassSetInsecureXmlResolverInMethodDiagnosis;
+        private static readonly string CA3077InsecureMethodMessage = DesktopAnalyzersResources.XmlDocumentDerivedClassSetInsecureXmlResolverInMethodMessage;
 
-        private DiagnosticResult GetCA3077InsecureMethodCSharpResultAt(int line, int column)
+        private DiagnosticResult GetCA3077InsecureMethodCSharpResultAt(int line, int column, string name)
         {
-            return GetCSharpResultAt(line, column, CA3077RuleId, CA3077InsecureMethodMessage);
+            return GetCSharpResultAt(line, column, CA3077RuleId, string.Format(CA3077InsecureMethodMessage, name));
         }
 
-        private DiagnosticResult GetCA3077InsecureMethodBasicResultAt(int line, int column)
+        private DiagnosticResult GetCA3077InsecureMethodBasicResultAt(int line, int column, string name)
         {
-            return GetBasicResultAt(line, column, CA3077RuleId, CA3077InsecureMethodMessage);
+            return GetBasicResultAt(line, column, CA3077RuleId, string.Format(CA3077InsecureMethodMessage, name));
         }
 
 
@@ -46,7 +46,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3077InsecureMethodCSharpResultAt(17, 13)
+                GetCA3077InsecureMethodCSharpResultAt(17, 13, "method")
             );
 
             VerifyBasic(@"
@@ -64,7 +64,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3077InsecureMethodBasicResultAt(12, 13)
+                GetCA3077InsecureMethodBasicResultAt(12, 13, "method")
             );
         }
 
@@ -90,7 +90,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3077InsecureMethodCSharpResultAt(16, 13)
+                GetCA3077InsecureMethodCSharpResultAt(16, 13, "method")
             );
 
             VerifyBasic(@"
@@ -108,7 +108,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3077InsecureMethodBasicResultAt(12, 13)
+                GetCA3077InsecureMethodBasicResultAt(12, 13, "method")
             );
         }
 
@@ -176,7 +176,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3077InsecureMethodCSharpResultAt(16, 13)
+                GetCA3077InsecureMethodCSharpResultAt(16, 13, "method")
             );
 
             VerifyBasic(@"
@@ -194,7 +194,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3077InsecureMethodBasicResultAt(12, 13)
+                GetCA3077InsecureMethodBasicResultAt(12, 13, "method")
             );
         }
 
@@ -262,7 +262,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3077InsecureMethodCSharpResultAt(16, 13)
+                GetCA3077InsecureMethodCSharpResultAt(16, 13, "method")
             );
 
             VerifyBasic(@"
@@ -280,7 +280,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3077InsecureMethodBasicResultAt(12, 13)
+                GetCA3077InsecureMethodBasicResultAt(12, 13, "method")
             );
         }
 

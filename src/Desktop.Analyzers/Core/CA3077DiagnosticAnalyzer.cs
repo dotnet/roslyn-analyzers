@@ -183,7 +183,13 @@ namespace Desktop.Analyzers
                 if (!hasSetSecureXmlResolver)
                 {
                     var rule = RuleXmlDocumentDerivedClassDesignConstructorNoSecureXmlResolver;
-                    context.ReportDiagnostic(CreateDiagnostic(methodSymbol.Locations, rule));
+                    context.ReportDiagnostic(
+                        CreateDiagnostic(
+                            methodSymbol.Locations, 
+                            rule,
+                            DiagnosticHelpers.GetMeaningfulParentName(node, model)
+                        )
+                    );
                 }
             }
 
@@ -223,7 +229,7 @@ namespace Desktop.Analyzers
                         )
                     {
                         var rule = RuleXmlDocumentDerivedClassDesignSetInsecureXmlResolverInMethod;
-                        context.ReportDiagnostic(CreateDiagnostic(assignment.GetLocation(), rule));
+                        context.ReportDiagnostic(CreateDiagnostic(assignment.GetLocation(), rule, methodSymbol.Name));
                     }
                 }
             }
@@ -287,7 +293,13 @@ namespace Desktop.Analyzers
                 }
                 
                 var rule = RuleXmlTextReaderDerivedClassDesignConstructorNoSecureSettings;
-                context.ReportDiagnostic(CreateDiagnostic(methodSymbol.Locations, rule));
+                context.ReportDiagnostic(
+                    CreateDiagnostic(
+                        methodSymbol.Locations, 
+                        rule, 
+                        DiagnosticHelpers.GetMeaningfulParentName(node, model)
+                    )
+                );
             }
 
             private void AnalyzeNodeForXmlTextReaderDerivedTypeMethodDecl(SyntaxNodeAnalysisContext context)
@@ -407,7 +419,7 @@ namespace Desktop.Analyzers
                     var rule = RuleXmlTextReaderDerivedClassDesignSetInsecureSettingsInMethod;
                     // TODO: Only first location is shown in error, maybe we want to report on method instead?
                     //       Or on each insecure assignment?
-                    context.ReportDiagnostic(CreateDiagnostic(locs, rule));
+                    context.ReportDiagnostic(CreateDiagnostic(locs, rule, methodSymbol.Name));
                 }
             }
 
@@ -433,7 +445,13 @@ namespace Desktop.Analyzers
                         if (!explicitlyDeclared)
                         {
                             var rule = RuleXmlDocumentDerivedClassDesignNoConstructor;
-                            context.ReportDiagnostic(CreateDiagnostic(typeSymbol.Locations, rule));
+                            context.ReportDiagnostic(
+                                CreateDiagnostic(
+                                    typeSymbol.Locations, 
+                                    rule,
+                                    typeSymbol.Name
+                                )
+                            );
                         }
                     }
 
@@ -463,7 +481,7 @@ namespace Desktop.Analyzers
                         if (!explicitlyDeclared && !this.isFrameworkSecure)
                         {
                             var rule = RuleXmlTextReaderDerivedClassDesignNoConstructor;
-                            context.ReportDiagnostic(CreateDiagnostic(typeSymbol.Locations, rule));
+                            context.ReportDiagnostic(CreateDiagnostic(typeSymbol.Locations, rule, symbol.Name));
                         }
                     }
 

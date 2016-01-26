@@ -6,11 +6,12 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
-{                   
+{
     /// <summary>
     /// CA1819: Properties should not return arrays
     /// </summary>
-    public abstract class PropertiesShouldNotReturnArraysAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class PropertiesShouldNotReturnArraysAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1819";
 
@@ -40,10 +41,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private void AnalyzeSymbol(SymbolAnalysisContext context)
         {
             var symbol = (IPropertySymbol)context.Symbol;
-            if ((symbol.Type.TypeKind == TypeKind.Array) && !(symbol.IsOverride))
+            if (symbol.Type.TypeKind == TypeKind.Array && !symbol.IsOverride)
             {
-                var diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], symbol.Name);
-                context.ReportDiagnostic(symbol.CreateDiagnostic(Rule));
+                if (symbol.GetResultantVisibility() == SymbolVisibility.Public && symbol.ContainingType.BaseType.MetadataName != "Attribute")
+                {
+                    context.ReportDiagnostic(symbol.CreateDiagnostic(Rule, symbol.Locations[0], symbol.Name));
+                }
             }
 
         }

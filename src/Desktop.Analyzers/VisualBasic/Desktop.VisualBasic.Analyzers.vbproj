@@ -99,8 +99,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicCA3075DiagnosticAnalyzers.vb" />
-    <Compile Include="BasicCA3076DiagnosticAnalyzers.vb" />
     <Compile Include="BasicCA3077DiagnosticAnalyzers.vb" />
     <Compile Include="BasicDoNotCatchCorruptedStateExceptions.vb" />
     <Compile Include="BasicDoNotUseInsecureCryptographicAlgorithms.vb" />

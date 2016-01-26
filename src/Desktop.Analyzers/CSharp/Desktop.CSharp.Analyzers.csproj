@@ -100,8 +100,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CSharpCA3075DiagnosticAnalyzer.cs" />
-    <Compile Include="CSharpCA3076DiagnosticAnalyzer.cs" />
     <Compile Include="CSharpCA3077DiagnosticAnalyzer.cs" />
     <Compile Include="CSharpDoNotCatchCorruptedStateExceptions.cs" />
     <Compile Include="CSharpDoNotUseInsecureCyrptographicAlgorithms.cs" />

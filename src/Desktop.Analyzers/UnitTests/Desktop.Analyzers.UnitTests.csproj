@@ -149,26 +149,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CA3075DiagnosticAnalyzerDoNotUseLoadXmlTests.cs" />
-    <Compile Include="CA3075DiagnosticAnalyzerDoNotUseSetInnerXmlTests.cs" />
-    <Compile Include="CA3075DiagnosticAnalyzerReviewDataViewCollectionStringTests.cs" />
-    <Compile Include="CA3075DiagnosticAnalyzerUseXmlReaderForDataSetReadXmlSchemaTests.cs" />
-    <Compile Include="CA3075DiagnosticAnalyzerUseXmlReaderForDataSetReadXmlTests.cs" />
-    <Compile Include="CA3075DiagnosticAnalyzerUseXmlReaderForDataTableReadXmlSchemaTests.cs" />
-    <Compile Include="CA3075DiagnosticAnalyzerUseXmlReaderForDataTableReadXmlTests.cs" />
-    <Compile Include="CA3075DiagnosticAnalyzerUseXmlReaderForDeserializeTests.cs" />
-    <Compile Include="CA3075DiagnosticAnalyzerUseXmlReaderForLoadTests.cs" />
-    <Compile Include="CA3075DiagnosticAnalyzerUseXmlReaderForSchemaReadTests.cs" />
-    <Compile Include="CA3075DiagnosticAnalyzerUseXmlReaderForXPathDocumentTests.cs" />
-    <Compile Include="CA3075DiagnosticAnalyzerXmlDocumentConstructedWithNoSecureResolverTests.cs" />
-    <Compile Include="CA3075DiagnosticAnalyzerXmlDocumentSetInsecureResolverTests.cs" />
-    <Compile Include="CA3075DiagnosticAnalyzerXmlReaderCreateUsingInsecureConstructedXmlReaderSettingsTests.cs" />
-    <Compile Include="CA3075DiagnosticAnalyzerXmlReaderCreateWrongOverloadTests.cs" />
-    <Compile Include="CA3075DiagnosticAnalyzerXmlTextReaderConstructedWithNoSecureResolutionTests.cs" />
-    <Compile Include="CA3075DiagnosticAnalyzerXmlTextReaderSetInsecureResolutionTests.cs" />
-    <Compile Include="CA3075XmlReaderCreateUsingInsecureInputXmlReaderSettingsTests.cs" />
-    <Compile Include="CA3076XslCompiledTransformLoadInsecureConstructedSettingsTests.cs" />
-    <Compile Include="CA3076XslCompiledTransformLoadInsecureInputSettingsTests.cs" />
     <Compile Include="CA3077XmlDocumentDerivedClassDesignConstructorNoSecureXmlResolverTests.cs" />
     <Compile Include="CA3077XmlDocumentDerivedClassDesignNoConstructorTests.cs" />
     <Compile Include="CA3077XmlDocumentDerivedClassDesignSetInsecureXmlResolverInMethodTests.cs" />

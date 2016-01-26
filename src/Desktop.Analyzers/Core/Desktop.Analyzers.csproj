@@ -95,8 +95,6 @@
     <None Include="uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CA3075DiagnosticAnalyzer.cs" />
-    <Compile Include="CA3076DiagnosticAnalyzer.cs" />
     <Compile Include="CA3077DiagnosticAnalyzer.cs" />
     <Compile Include="DesktopAnalyzersResources1.Designer.cs">
       <AutoGen>True</AutoGen>

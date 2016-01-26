@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
+using System.Linq;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
@@ -45,11 +46,20 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 if (symbol.GetParameters().Length == 1)
                 {
+                    SpecialType[] allowedTypes = new SpecialType[] {
+                        SpecialType.System_String,
+                        SpecialType.System_Int16,
+                        SpecialType.System_Int32,
+                        SpecialType.System_Int64,
+                        SpecialType.System_Object,
+                        SpecialType.System_UInt16,
+                        SpecialType.System_UInt32,
+                        SpecialType.System_UInt64
+                        };
                     var paramType = symbol.GetParameters()[0].Type;
-                    var allowedTypes = (paramType.SpecialType == SpecialType.System_String || paramType.SpecialType == SpecialType.System_Int32 || paramType.SpecialType == SpecialType.System_Int16 || paramType.SpecialType == SpecialType.System_Int64 || paramType.SpecialType == SpecialType.System_Object);
-                    if (!allowedTypes)
+                    if (!allowedTypes.Contains(paramType.SpecialType))
                     {
-                        context.ReportDiagnostic(symbol.CreateDiagnostic(Rule, symbol.Locations[0], symbol.Name));
+                        context.ReportDiagnostic(symbol.CreateDiagnostic(Rule));
                     }
                 }
             }

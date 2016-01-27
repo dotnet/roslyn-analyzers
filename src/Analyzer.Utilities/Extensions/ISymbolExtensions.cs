@@ -169,29 +169,6 @@ namespace Analyzer.Utilities
                     return null;
             }
         }
-
-        /// <summary>
-        /// Checks if a symbol is visible outside of an assembly.
-        /// </summary>
-        /// <param name="symbol">The symbol whose access shall be checked.</param>
-        /// <returns>true if the symbol is visible outside its assembly; otherwise, false.</returns>
-        public static bool IsVisibleOutsideAssembly(this ISymbol symbol)
-        {
-            if (symbol == null)
-            {
-                return false;
-            }
-
-            for (ISymbol containingType = symbol; containingType != null; containingType = containingType.ContainingType)
-            {
-                if (DiagnosticHelpers.IsInvisibleOutsideAssemblyAtSymbolLevel(containingType))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
     }
 
     public enum SymbolVisibility

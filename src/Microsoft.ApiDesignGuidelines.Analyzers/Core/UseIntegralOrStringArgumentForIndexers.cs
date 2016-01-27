@@ -31,6 +31,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182180.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
+        private static SpecialType[] allowedTypes = new SpecialType[] {
+                        SpecialType.System_String,
+                        SpecialType.System_Int16,
+                        SpecialType.System_Int32,
+                        SpecialType.System_Int64,
+                        SpecialType.System_Object,
+                        SpecialType.System_UInt16,
+                        SpecialType.System_UInt32,
+                        SpecialType.System_UInt64
+                        };
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext analysisContext)
@@ -46,16 +57,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 if (symbol.GetParameters().Length == 1)
                 {
-                    SpecialType[] allowedTypes = new SpecialType[] {
-                        SpecialType.System_String,
-                        SpecialType.System_Int16,
-                        SpecialType.System_Int32,
-                        SpecialType.System_Int64,
-                        SpecialType.System_Object,
-                        SpecialType.System_UInt16,
-                        SpecialType.System_UInt32,
-                        SpecialType.System_UInt64
-                        };
                     var paramType = symbol.GetParameters()[0].Type;
                     if (!allowedTypes.Contains(paramType.SpecialType))
                     {

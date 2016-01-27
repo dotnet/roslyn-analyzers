@@ -13,7 +13,7 @@ Namespace System.Runtime.Analyzers
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicTestForEmptyStringsUsingStringLengthFixer
-        Inherits TestForEmptyStringsUsingStringLengthFixer(Of SyntaxKind)
+        Inherits TestForEmptyStringsUsingStringLengthFixer
 
     End Class
 End Namespace

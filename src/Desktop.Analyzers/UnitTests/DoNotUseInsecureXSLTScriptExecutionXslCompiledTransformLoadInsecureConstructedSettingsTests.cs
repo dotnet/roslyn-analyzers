@@ -8,20 +8,20 @@ using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
-    public partial class CA3076DiagnosticAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureXSLTScriptExecutionAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private const string CA3076RuleId = CA3076DiagnosticAnalyzer<SyntaxKind>.RuleId;
+        private const string CA3076RuleId = DoNotUseInsecureXSLTScriptExecutionAnalyzer<SyntaxKind>.RuleId;
 
         private readonly string CA3076LoadInsecureInputMessage = DesktopAnalyzersResources.XslCompiledTransformLoadInsecureInputMessage;
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicCA3076DiagnosticAnalyzer();
+            return new BasicDoNotUseInsecureXSLTScriptExecutionAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpCA3076DiagnosticAnalyzer();
+            return new CSharpDoNotUseInsecureXSLTScriptExecutionAnalyzer();
         }
 
         private DiagnosticResult GetCA3076LoadCSharpResultAt(int line, int column, string name)

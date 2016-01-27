@@ -149,8 +149,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CA3076XslCompiledTransformLoadInsecureConstructedSettingsTests.cs" />
-    <Compile Include="CA3076XslCompiledTransformLoadInsecureInputSettingsTests.cs" />
+    <Compile Include="DoNotUseInsecureXSLTScriptExecutionXslCompiledTransformLoadInsecureConstructedSettingsTests.cs" />
+    <Compile Include="DoNotUseInsecureXSLTScriptExecutionXslCompiledTransformLoadInsecureInputSettingsTests.cs" />
     <Compile Include="DoNotCatchCorruptedStateExceptionsTests.cs" />
     <Compile Include="DoNotUseInsecureCryptographicAlgorithmsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

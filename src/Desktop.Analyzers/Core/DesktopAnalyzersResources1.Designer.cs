@@ -107,15 +107,6 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which on an untrusted XSL input may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argurment with null or an XmlSecureResolver instance. This message may be suppressed [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string CA3076Description {
-            get {
-                return ResourceManager.GetString("CA3076Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to To fix a violation of this rule, call the base type GetObjectData method or serialization constructor from the corresponding derived type method or constructor..
         /// </summary>
         internal static string CallBaseClassMethodsOnISerializableTypesDescription {
@@ -220,6 +211,15 @@ namespace Desktop.Analyzers {
         internal static string DoNotUseBrokenCryptographicAlgorithmsMessage {
             get {
                 return ResourceManager.GetString("DoNotUseBrokenCryptographicAlgorithmsMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which on an untrusted XSL input may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argurment with null or an XmlSecureResolver instance. This message may be suppressed [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DoNotUseInsecureXSLTScriptExecutionDescription {
+            get {
+                return ResourceManager.GetString("DoNotUseInsecureXSLTScriptExecutionDescription", resourceCulture);
             }
         }
         

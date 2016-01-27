@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
-    public partial class CA3076DiagnosticAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureXSLTScriptExecutionAnalyzerTests : DiagnosticAnalyzerTestBase
     {
         private readonly string CA3076LoadInsecureConstructedMessage = DesktopAnalyzersResources.XslCompiledTransformLoadInsecureConstructedMessage;
 

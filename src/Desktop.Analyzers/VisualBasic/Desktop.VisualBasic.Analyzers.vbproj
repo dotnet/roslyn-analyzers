@@ -99,7 +99,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicCA3076DiagnosticAnalyzers.vb" />
+    <Compile Include="BasicDoNotUseInsecureXSLTScriptExecution.vb" />
     <Compile Include="BasicDoNotCatchCorruptedStateExceptions.vb" />
     <Compile Include="BasicDoNotUseInsecureCryptographicAlgorithms.vb" />
     <Compile Include="BasicSpecifyMessageBoxOptions.vb" />

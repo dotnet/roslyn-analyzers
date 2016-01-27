@@ -367,7 +367,7 @@
     <value>Insecure XSLT script processing.</value>
     <comment>CA3076</comment>
   </data>
-  <data name="CA3076Description" xml:space="preserve">
+  <data name="DoNotUseInsecureXSLTScriptExecutionDescription" xml:space="preserve">
     <value>Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which on an untrusted XSL input may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argurment with null or an XmlSecureResolver instance. This message may be suppressed if the input is known to be from a trusted source and external resource resolution from locations that are not known in advance must be supported.</value>
     <comment>CA3076</comment>
   </data>

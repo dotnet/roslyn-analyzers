@@ -12,7 +12,7 @@ using Analyzer.Utilities;
 
 namespace Desktop.Analyzers
 { 
-    public abstract class CA3076DiagnosticAnalyzer<TLanguageKindEnum> : DiagnosticAnalyzer where TLanguageKindEnum : struct
+    public abstract class DoNotUseInsecureXSLTScriptExecutionAnalyzer<TLanguageKindEnum> : DiagnosticAnalyzer where TLanguageKindEnum : struct
     {
         internal const string RuleId = "CA3076";
         private const string HelpLink = "http://aka.ms/CA3076";
@@ -25,11 +25,11 @@ namespace Desktop.Analyzers
 
         //TODO: create new strings
         internal static DiagnosticDescriptor RuleXslCompiledTransformLoadInsecureInputSettings = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XslCompiledTransformLoadInsecureInputMessage)),
-                                                                                                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.CA3076Description)),
+                                                                                                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureXSLTScriptExecutionDescription)),
                                                                                                                          HelpLink);
 
         internal static DiagnosticDescriptor RuleXslCompiledTransformLoadInsecureConstructedSettings = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XslCompiledTransformLoadInsecureConstructedMessage)),
-                                                                                                                          SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.CA3076Description)),
+                                                                                                                          SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureXSLTScriptExecutionDescription)),
                                                                                                                           HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> supportDiagnostics = ImmutableArray.Create(RuleXslCompiledTransformLoadInsecureInputSettings,
@@ -39,7 +39,7 @@ namespace Desktop.Analyzers
         {
             get
             {
-                return CA3076DiagnosticAnalyzer<TLanguageKindEnum>.supportDiagnostics;
+                return DoNotUseInsecureXSLTScriptExecutionAnalyzer<TLanguageKindEnum>.supportDiagnostics;
             }
         }
 

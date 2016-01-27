@@ -5,8 +5,8 @@
     <NuGetLicenseURLNonRedist>http://go.microsoft.com/fwlink/?LinkId=529444</NuGetLicenseURLNonRedist>
     <NuGetLicenseURLTest>http://go.microsoft.com/fwlink/?LinkID=529445</NuGetLicenseURLTest>
     <NuGetAuthors>Microsoft</NuGetAuthors>
-    <NuGetProjectURL>http://msdn.com/roslyn</NuGetProjectURL>
-    <NuGetReleaseNotes>Preview of Microsoft .NET Compiler Platform ("Roslyn")</NuGetReleaseNotes>
-    <NuGetTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Parser Scanner Lexer Emit CodeGeneration Metadata IL Compilation Scripting Syntax Semantics</NuGetTags>
+    <NuGetProjectURL>https://github.com/dotnet/roslyn-analyzers</NuGetProjectURL>
+    <NuGetReleaseNotes>Diagnostic analyzers for the Microsoft .NET Compiler Platform ("Roslyn")</NuGetReleaseNotes>
+    <NuGetTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Diagnostic Analyzers Syntax Semantics</NuGetTags>
   </PropertyGroup>
 </Project>

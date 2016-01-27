@@ -81,6 +81,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                 return;
                             }
 
+                            // Even if the nested type is declared public, don't complain if it's within
+                            // a type that's not visible outside the assembly.
+                            if (containingType.GetResultantVisibility() != SymbolVisibility.Public)
+                            {
+                                return;
+                            }
+
                             // By the design guidelines, nested enumerators are exempt.
                             if (nestedType.AllInterfaces.Contains(enumeratorType))
                             {

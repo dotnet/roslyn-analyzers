@@ -259,6 +259,32 @@ public class Outer
         }
 
         [Fact]
+        public void CSharpNoDiagnosticPublicTypeNestedInInternalType()
+        {
+            var code = @"
+internal class Outer
+{
+    public class Inner
+    {
+    }
+}
+";
+            VerifyCSharp(code);
+        }
+
+        [Fact]
+        public void BasicNoDiagnosticPublicTypeNestedInFriendType()
+        {
+            var code = @"
+Friend Class Outer
+    Public Class Inner
+    End Class
+End Class
+";
+            VerifyBasic(code);
+        }
+
+        [Fact]
         public void BasicNoDiagnosticPublicNestedEnumerator()
         {
             var code = @"

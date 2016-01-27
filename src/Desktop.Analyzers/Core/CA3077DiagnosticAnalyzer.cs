@@ -151,7 +151,7 @@ namespace Desktop.Analyzers
 
                 if (methodSymbol == null || 
                     methodSymbol.MethodKind != MethodKind.Constructor ||
-                    !((methodSymbol.ContainingType != xmlTypes.XmlDocument) && methodSymbol.ContainingType.IsDerivedFrom(xmlTypes.XmlDocument, baseTypesOnly: true)))
+                    !((methodSymbol.ContainingType != xmlTypes.XmlDocument) && methodSymbol.ContainingType.DerivesFrom(xmlTypes.XmlDocument, baseTypesOnly: true)))
                 {
                     return;
                 }
@@ -204,7 +204,7 @@ namespace Desktop.Analyzers
                 if (methodSymbol == null ||
                     // skip constructors since we report on the absence of secure assignment in AnalyzeNodeForXmlDocumentDerivedTypeConstructorDecl
                     methodSymbol.MethodKind == MethodKind.Constructor ||
-                    !((methodSymbol.ContainingType != xmlTypes.XmlDocument) && methodSymbol.ContainingType.IsDerivedFrom(xmlTypes.XmlDocument, baseTypesOnly: true)))
+                    !((methodSymbol.ContainingType != xmlTypes.XmlDocument) && methodSymbol.ContainingType.DerivesFrom(xmlTypes.XmlDocument, baseTypesOnly: true)))
                 {
                     return;
                 }
@@ -243,7 +243,7 @@ namespace Desktop.Analyzers
 
                 if (methodSymbol == null ||
                     methodSymbol.MethodKind != MethodKind.Constructor ||
-                    !((methodSymbol.ContainingType != xmlTypes.XmlTextReader) && methodSymbol.ContainingType.IsDerivedFrom(xmlTypes.XmlTextReader, baseTypesOnly: true)))
+                    !((methodSymbol.ContainingType != xmlTypes.XmlTextReader) && methodSymbol.ContainingType.DerivesFrom(xmlTypes.XmlTextReader, baseTypesOnly: true)))
                 {
                     return;
                 }
@@ -310,7 +310,7 @@ namespace Desktop.Analyzers
                 IMethodSymbol methodSymbol = SyntaxNodeHelper.GetDeclaredSymbol(node, model) as IMethodSymbol;
 
                 if (methodSymbol == null ||
-                   !((methodSymbol.ContainingType != xmlTypes.XmlTextReader) && methodSymbol.ContainingType.IsDerivedFrom(xmlTypes.XmlTextReader, baseTypesOnly: true)))
+                   !((methodSymbol.ContainingType != xmlTypes.XmlTextReader) && methodSymbol.ContainingType.DerivesFrom(xmlTypes.XmlTextReader, baseTypesOnly: true)))
                 {
                     return;
                 }
@@ -433,7 +433,7 @@ namespace Desktop.Analyzers
                 }
                 var typeSymbol = (INamedTypeSymbol)symbol;
                 var xmlDocumentSym = this.xmlTypes.XmlDocument;
-                if ((typeSymbol != xmlDocumentSym) && typeSymbol.IsDerivedFrom(xmlDocumentSym, baseTypesOnly: true))
+                if ((typeSymbol != xmlDocumentSym) && typeSymbol.DerivesFrom(xmlDocumentSym, baseTypesOnly: true))
                 {
                     bool explicitlyDeclared = true;
 
@@ -469,7 +469,7 @@ namespace Desktop.Analyzers
                 }
                 var typeSymbol = (INamedTypeSymbol)symbol;
                 var xmlTextReaderSym = this.xmlTypes.XmlTextReader;
-                if ((typeSymbol != xmlTextReaderSym) && typeSymbol.IsDerivedFrom(xmlTextReaderSym, baseTypesOnly: true))
+                if ((typeSymbol != xmlTextReaderSym) && typeSymbol.DerivesFrom(xmlTextReaderSym, baseTypesOnly: true))
                 {
                     bool explicitlyDeclared = true;
 

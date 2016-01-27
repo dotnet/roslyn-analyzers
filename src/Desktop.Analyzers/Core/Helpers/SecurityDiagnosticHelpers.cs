@@ -119,13 +119,13 @@ namespace Desktop.Analyzers
         public static bool IsXmlResolverType(ITypeSymbol symbol, CompilationSecurityTypes xmlTypes)
         {
             return symbol != null
-                && symbol.IsDerivedFrom(xmlTypes.XmlResolver, baseTypesOnly: true);
+                && symbol.DerivesFrom(xmlTypes.XmlResolver, baseTypesOnly: true);
         }
 
         public static bool IsXmlSecureResolverType(ITypeSymbol symbol, CompilationSecurityTypes xmlTypes)
         {
             return symbol != null
-                && symbol.IsDerivedFrom(xmlTypes.XmlSecureResolver, baseTypesOnly: true);
+                && symbol.DerivesFrom(xmlTypes.XmlSecureResolver, baseTypesOnly: true);
         }
 
         public static bool IsXsltSettingsType(ITypeSymbol symbol, CompilationSecurityTypes xmlTypes)
@@ -156,7 +156,7 @@ namespace Desktop.Analyzers
         public static bool IsXmlReaderType(ITypeSymbol symbol, CompilationSecurityTypes xmlTypes)
         {
             return symbol != null
-                && symbol.IsDerivedFrom(xmlTypes.XmlReader, baseTypesOnly: true);
+                && symbol.DerivesFrom(xmlTypes.XmlReader, baseTypesOnly: true);
         }
 
         public static int HasXmlReaderParameter(IMethodSymbol method, CompilationSecurityTypes xmlTypes)

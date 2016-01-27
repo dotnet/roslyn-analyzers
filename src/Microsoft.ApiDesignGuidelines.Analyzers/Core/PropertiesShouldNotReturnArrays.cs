@@ -43,7 +43,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             var symbol = (IPropertySymbol)context.Symbol;
             if (symbol.Type.TypeKind == TypeKind.Array && !symbol.IsOverride)
             {
-                if (symbol.GetResultantVisibility() == SymbolVisibility.Public && symbol.ContainingType.BaseType.MetadataName != "Attribute")
+                if (symbol.GetResultantVisibility() == SymbolVisibility.Public && !symbol.ContainingType.IsAttribute())
                 {
                     context.ReportDiagnostic(symbol.CreateDiagnostic(Rule));
                 }

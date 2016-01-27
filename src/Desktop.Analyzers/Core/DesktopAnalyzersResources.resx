@@ -367,62 +367,32 @@
     <value>Insecure Processing in API Design, XmlDocument and XmlTextReader</value>
     <comment>CA3077</comment>
   </data>
-  <data name="MakeDtdProcessingSecureInApiDesignXmlDocumentDescription" xml:space="preserve">
-    <value>Content from file system or network shares for the machine processing the XML can be exposed to an attacker. In addition, the attacker can use this as a DoS vector.
-Ensure that  DTD processing is secure on all instances of classes derived from System.Xml.XmlDocument by explicitly setting XmlResolver property to a secure value (instance of XmlSecureResolver or null). Using default resolver for resolving external XML entities may lead to information disclosure.</value>
-    <comment>CA3077</comment>
-  </data>
-  <data name="MakeDtdProcessingSecureInApiDesignXmlTextReaderDescription" xml:space="preserve">
-    <value>Enabling DTD processing on the XmlTextReader and using UrlResolver for resolving external XML entities may lead to information disclosure. 
-Ensure that  DTD processing is secure on all instances of classes derived from System.Xml.XmlTextReader by setting XmlResolver and DtdProcessing properties to secure values. Content from file system or network shares for the machine processing the XML can be exposed to an attacker. In addition, the attacker can use this as a DoS vector.
-</value>
+  <data name="CA3077Description" xml:space="preserve">
+    <value>Enabling DTD processing on all instances derived from XmlTextReader or  XmlDocument and using XmlUrlResolver for resolving external XML entities may lead to information disclosure. Ensure to set the XmlResolver property to null, create an instance of XmlSecureResolver when processing untrusted input, or use XmlReader.Create method with a secure XmlReaderSettings argument. Unless you need to enable it, ensure the DtdProcessing property is set to false. </value>
     <comment>CA3077</comment>
   </data>
   <data name="XmlDocumentDerivedClassConstructorNoSecureXmlResolverMessage" xml:space="preserve">
     <value>Constructor of XmlDocument derived class {0} implicitly uses insecure default value for DTD processing.</value>
     <comment>CA3077</comment>
   </data>
-  <data name="XmlDocumentDerivedClassConstructorNoSecureXmlResolverDescription" xml:space="preserve">
-    <value>This usage is potentially unsafe as untrusted external resources may be resolved during read operations. Ensure to set the XmlResolver property to null or an instance of XmlSecureResolver when processing untrusted input.</value>
-  </data>
   <data name="XmlDocumentDerivedClassNoConstructorMessage" xml:space="preserve">
     <value>XmlDocument derived class {0} doesn't explictily define a constructor.</value>
-    <comment>CA3077</comment>
-  </data>
-  <data name="XmlDocumentDerivedClassNoConstructorDescription" xml:space="preserve">
-    <value>This enables insecure DTD processing by default. Ensure to set the XmlResolver property to null or an instance of XmlSecureResolver when processing untrusted input.</value>
     <comment>CA3077</comment>
   </data>
   <data name="XmlDocumentDerivedClassSetInsecureXmlResolverInMethodMessage" xml:space="preserve">
     <value>Method {0} of XmlDocument derived class sets XmlResolver property to an insecure value.</value>
     <comment>CA3077</comment>
   </data>
-  <data name="XmlDocumentDerivedClassSetInsecureXmlResolverInMethodDescription" xml:space="preserve">
-    <value>This usage is potentially unsafe as untrusted external resources may be resolved during read operations. Ensure to set the XmlResolver property to null or an instance of XmlSecureResolver when processing untrusted input.</value>
-    <comment>CA3077</comment>
-  </data>
   <data name="XmlTextReaderDerivedClassConstructorNoSecureSettingsMessage" xml:space="preserve">
     <value>Constructor of XmlTextReader derived class {0} uses insecure default values for DTD processing.</value>
-    <comment>CA3077</comment>
-  </data>
-  <data name="XmlTextReaderDerivedClassConstructorNoSecureSettingsDescription" xml:space="preserve">
-    <value>It may lead to information disclosure on untrusted input. Ensure the DtdProcessing property is set to false and XmlResolver proeprty to a secure resolver (XmlSecureResolver or null), or use XmlReader.Create method with a secure XmlReaderSettings argument instead.</value>
     <comment>CA3077</comment>
   </data>
   <data name="XmlTextReaderDerivedClassNoConstructorMessage" xml:space="preserve">
     <value>XmlTextReader derived class {0} doesn't explictily define a constructor.</value>
     <comment>CA3077</comment>
   </data>
-  <data name="XmlTextReaderDerivedClassNoConstructorDescription" xml:space="preserve">
-    <value>It may lead to information disclosure on untrusted input.</value>
-    <comment>CA3077</comment>
-  </data>
   <data name="XmlTextReaderDerivedClassSetInsecureSettingsInMethodMessage" xml:space="preserve">
     <value>{0} method of XmlTextReader derived class sets XmlResolver and/or DtdProcessing property to insecure value.</value>
-    <comment>CA3077</comment>
-  </data>
-  <data name="XmlTextReaderDerivedClassSetInsecureSettingsInMethodDescription" xml:space="preserve">
-    <value>It may lead to information disclosure on untrusted input. Ensure the DtdProcessing property is set to false and XmlResolver proeprty to a secure resolver (XmlSecureResolver or null), or use XmlReader.Create method with a secure XmlReaderSettings argument instead.</value>
     <comment>CA3077</comment>
   </data>
 </root>

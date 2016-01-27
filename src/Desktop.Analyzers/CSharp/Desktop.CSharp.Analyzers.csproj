@@ -100,7 +100,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CSharpCA3077DiagnosticAnalyzer.cs" />
+    <Compile Include="CSharpDoNotUseInsecureDtdProcessingInApiDesigner.cs" />
     <Compile Include="CSharpDoNotCatchCorruptedStateExceptions.cs" />
     <Compile Include="CSharpDoNotUseInsecureCyrptographicAlgorithms.cs" />
     <Compile Include="Helpers\SyntaxNodeHelper.cs" />

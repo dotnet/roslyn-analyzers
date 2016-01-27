@@ -99,7 +99,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicCA3077DiagnosticAnalyzers.vb" />
+    <Compile Include="BasicDoNotUseInsecureDtdProcessingInApiDesign.vb" />
     <Compile Include="BasicDoNotCatchCorruptedStateExceptions.vb" />
     <Compile Include="BasicDoNotUseInsecureCryptographicAlgorithms.vb" />
     <Compile Include="BasicSpecifyMessageBoxOptions.vb" />

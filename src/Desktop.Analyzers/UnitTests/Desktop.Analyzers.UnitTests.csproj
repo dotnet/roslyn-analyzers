@@ -149,12 +149,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CA3077XmlDocumentDerivedClassDesignConstructorNoSecureXmlResolverTests.cs" />
-    <Compile Include="CA3077XmlDocumentDerivedClassDesignNoConstructorTests.cs" />
-    <Compile Include="CA3077XmlDocumentDerivedClassDesignSetInsecureXmlResolverInMethodTests.cs" />
-    <Compile Include="CA3077XmlTextReaderDerivedClassDesignConstructorNoSecureSettingsTests.cs" />
-    <Compile Include="CA3077XmlTextReaderDerivedClassDesignNoConstructorTests.cs" />
-    <Compile Include="CA3077XmlTextReaderDerivedClassDesignSetInsecureSettingsInMethodTests.cs" />
+    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesignXmlDocumentDerivedClassDesignConstructorNoSecureXmlResolverTests.cs" />
+    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesignXmlDocumentDerivedClassDesignNoConstructorTests.cs" />
+    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesignXmlDocumentDerivedClassDesignSetInsecureXmlResolverInMethodTests.cs" />
+    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesignXmlTextReaderDerivedClassDesignConstructorNoSecureSettingsTests.cs" />
+    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesignXmlTextReaderDerivedClassDesignNoConstructorTests.cs" />
+    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesignXmlTextReaderDerivedClassDesignSetInsecureSettingsInMethodTests.cs" />
     <Compile Include="DoNotCatchCorruptedStateExceptionsTests.cs" />
     <Compile Include="DoNotUseInsecureCryptographicAlgorithmsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

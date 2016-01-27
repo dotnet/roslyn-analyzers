@@ -107,15 +107,6 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enabling DTD processing on all instances derived from XmlTextReader or  XmlDocument and using XmlUrlResolver for resolving external XML entities may lead to information disclosure. Ensure to set the XmlResolver property to null, create an instance of XmlSecureResolver when processing untrusted input, or use XmlReader.Create method with a secure XmlReaderSettings argument. Unless you need to enable it, ensure the DtdProcessing property is set to false. .
-        /// </summary>
-        internal static string CA3077Description {
-            get {
-                return ResourceManager.GetString("CA3077Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to To fix a violation of this rule, call the base type GetObjectData method or serialization constructor from the corresponding derived type method or constructor..
         /// </summary>
         internal static string CallBaseClassMethodsOnISerializableTypesDescription {
@@ -220,6 +211,15 @@ namespace Desktop.Analyzers {
         internal static string DoNotUseBrokenCryptographicAlgorithmsMessage {
             get {
                 return ResourceManager.GetString("DoNotUseBrokenCryptographicAlgorithmsMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enabling DTD processing on all instances derived from XmlTextReader or  XmlDocument and using XmlUrlResolver for resolving external XML entities may lead to information disclosure. Ensure to set the XmlResolver property to null, create an instance of XmlSecureResolver when processing untrusted input, or use XmlReader.Create method with a secure XmlReaderSettings argument. Unless you need to enable it, ensure the DtdProcessing property is set to false. .
+        /// </summary>
+        internal static string DoNotUseInsecureDtdProcessingInApiDesignDescription {
+            get {
+                return ResourceManager.GetString("DoNotUseInsecureDtdProcessingInApiDesignDescription", resourceCulture);
             }
         }
         

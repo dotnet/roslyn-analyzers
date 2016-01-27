@@ -13,33 +13,33 @@ using System.Collections.Concurrent;
 
 namespace Desktop.Analyzers
 {
-    public abstract class CA3077DiagnosticAnalyzer : DiagnosticAnalyzer
+    public abstract class DoNotUseInsecureDtdProcessingInApiDesignAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA3077";
         private const string HelpLink = "http://aka.ms/CA3077";
 
         internal static DiagnosticDescriptor RuleXmlDocumentDerivedClassDesignNoConstructor = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlDocumentDerivedClassNoConstructorMessage)),
-                                                                                                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.CA3077Description)),
+                                                                                                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDtdProcessingInApiDesignDescription)),
                                                                                                                          HelpLink);
 
         internal static DiagnosticDescriptor RuleXmlDocumentDerivedClassDesignConstructorNoSecureXmlResolver = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlDocumentDerivedClassConstructorNoSecureXmlResolverMessage)),
-                                                                                                                                          SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.CA3077Description)),
+                                                                                                                                          SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDtdProcessingInApiDesignDescription)),
                                                                                                                                           HelpLink);
 
         internal static DiagnosticDescriptor RuleXmlDocumentDerivedClassDesignSetInsecureXmlResolverInMethod = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlDocumentDerivedClassSetInsecureXmlResolverInMethodMessage)),
-                                                                                                                                          SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.CA3077Description)),
+                                                                                                                                          SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDtdProcessingInApiDesignDescription)),
                                                                                                                                           HelpLink);
 
         internal static DiagnosticDescriptor RuleXmlTextReaderDerivedClassDesignNoConstructor = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlTextReaderDerivedClassNoConstructorMessage)),
-                                                                                                                           SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.CA3077Description)),
+                                                                                                                           SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDtdProcessingInApiDesignDescription)),
                                                                                                                            HelpLink);
 
         internal static DiagnosticDescriptor RuleXmlTextReaderDerivedClassDesignConstructorNoSecureSettings = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlTextReaderDerivedClassConstructorNoSecureSettingsMessage)),
-                                                                                                                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.CA3077Description)),
+                                                                                                                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDtdProcessingInApiDesignDescription)),
                                                                                                                                          HelpLink);
 
         internal static DiagnosticDescriptor RuleXmlTextReaderDerivedClassDesignSetInsecureSettingsInMethod = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlTextReaderDerivedClassSetInsecureSettingsInMethodMessage)),
-                                                                                                                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.CA3077Description)),
+                                                                                                                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDtdProcessingInApiDesignDescription)),
                                                                                                                                          HelpLink);
   
         private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics = ImmutableArray.Create(RuleXmlDocumentDerivedClassDesignNoConstructor,
@@ -53,7 +53,7 @@ namespace Desktop.Analyzers
         {
             get
             {
-                return CA3077DiagnosticAnalyzer.supportedDiagnostics;
+                return DoNotUseInsecureDtdProcessingInApiDesignAnalyzer.supportedDiagnostics;
             }
         }
 

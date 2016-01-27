@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
-    public partial class CA3077DiagnosticAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDtdProcessingInApiDesignAnalyzerTests : DiagnosticAnalyzerTestBase
     {
         private static readonly string CA3077InsecureMethodMessage = DesktopAnalyzersResources.XmlDocumentDerivedClassSetInsecureXmlResolverInMethodMessage;
 

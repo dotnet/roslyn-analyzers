@@ -367,7 +367,7 @@
     <value>Insecure Processing in API Design, XmlDocument and XmlTextReader</value>
     <comment>CA3077</comment>
   </data>
-  <data name="CA3077Description" xml:space="preserve">
+  <data name="DoNotUseInsecureDtdProcessingInApiDesignDescription" xml:space="preserve">
     <value>Enabling DTD processing on all instances derived from XmlTextReader or  XmlDocument and using XmlUrlResolver for resolving external XML entities may lead to information disclosure. Ensure to set the XmlResolver property to null, create an instance of XmlSecureResolver when processing untrusted input, or use XmlReader.Create method with a secure XmlReaderSettings argument. Unless you need to enable it, ensure the DtdProcessing property is set to false. </value>
     <comment>CA3077</comment>
   </data>

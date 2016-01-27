@@ -67,7 +67,7 @@ namespace Desktop.Analyzers
                     var xmlTypes = new CompilationSecurityTypes(compilation);
                     if (ReferencesAnyTargetType(xmlTypes))
                     {
-                        Version version = DiagnosticHelpers.GetDotNetFrameworkVersion(compilation);
+                        Version version = SecurityDiagnosticHelpers.GetDotNetFrameworkVersion(compilation);
 
                         // bail if we are not analyzing project targeting .NET Framework
                         // TODO: should we throw an exception to notify user?

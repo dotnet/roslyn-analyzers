@@ -99,41 +99,13 @@ namespace Analyzer.Utilities
             // For other language constructs
             return symbol.Name;
         }
-               
-        public static bool IsInvisibleOutsideAssemblyAtSymbolLevel(ISymbol symbol)
-        {
-            return SymbolIsPrivateOrInternal(symbol)
-                || SymbolIsProtectedInSealed(symbol);
-        }
 
-        public static bool SymbolIsPrivateOrInternal(ISymbol symbol)
+        public static string GetMeaningfulParentName(SyntaxNode current, SemanticModel model)
         {
-            var access = symbol.DeclaredAccessibility;
-            return access == Accessibility.Private
-                || access == Accessibility.Internal
-                || access == Accessibility.ProtectedAndInternal
-                || access == Accessibility.NotApplicable;
-        }
-
-        public static bool SymbolIsProtectedInSealed(ISymbol symbol)
-        {
-            var containgType = symbol.ContainingType;
-            if (containgType != null && containgType.IsSealed)
+            while (current.Parent != null)
             {
-                var access = symbol.DeclaredAccessibility;
-                return access == Accessibility.Protected
-                    || access == Accessibility.ProtectedOrInternal;
-            }
-
-            return false;
-        }
-
-        public static string GetMeaningfulParentName(SyntaxNode cur, SemanticModel model)
-        {
-            while (cur.Parent != null)
-            {
-                var pNode = cur.Parent;
-                ISymbol sym = pNode.GetDeclaredOrReferencedSymbol(model);
+                var parent = current.Parent;
+                ISymbol sym = parent.GetDeclaredOrReferencedSymbol(model);
 
                 if (sym != null &&
                     !string.IsNullOrEmpty(sym.Name)
@@ -146,70 +118,10 @@ namespace Analyzer.Utilities
                     return sym.Name;
                 }
 
-                cur = pNode;
+                current = parent;
             }
 
             return String.Empty;
-        }
-
-/// <summary>
-/// Determine wether a type (given by name) is actually declared in the expected assembly (also given by name)
-/// </summary>               
-/// <remarks>
-/// This can be used to decide wether we are referencing the expected framework for a given type. 
-/// For example, System.String exists in mscorlib for .NET Framework and System.Runtime for other framework (e.g. .NET Core). 
-/// </remarks>
-public static bool? IsTypeDeclaredInExpectedAssembly(Compilation compilation, string typeName, string assemblyName)
-        {
-            if (compilation == null)
-            {
-                return null;
-            }
-            var typeSymbol = compilation.GetTypeByMetadataName(typeName);
-            return typeSymbol?.ContainingAssembly.Identity.Name.Equals(assemblyName, StringComparison.Ordinal);
-        }
-        
-        /// <summary>
-        /// Gets the version of the target .NET framework of the compilation.
-        /// </summary>                          
-        /// <returns>
-        /// Null if the target framenwork is not .NET Framework.
-        /// </returns>
-        /// <remarks>
-        /// This method returns the assembly version of mscorlib for .NET Framework prior version 4.0, 
-        /// i.e. for .NET framework 3.5, the returned version would be 2.0.0.0.
-        /// For .NET Framework 4.X, this method returns the actual framework version instead of assembly verison of mscorlib,
-        /// i.e. for .NET framework 4.5.2, this method return 4.5.2 instead of 4.0.0.0.
-        /// </remarks>
-        public static Version GetDotNetFrameworkVersion(Compilation compilation)
-        {
-            if (compilation == null || !IsTypeDeclaredInExpectedAssembly(compilation, "System.String", "mscorlib").GetValueOrDefault())
-            {
-                return null;
-            }
-
-
-            var mscorlibAssembly = compilation.GetTypeByMetadataName("System.String").ContainingAssembly;
-            if (mscorlibAssembly.Identity.Version.Major < 4)
-            {
-                return mscorlibAssembly.Identity.Version;
-            }
-
-            if (mscorlibAssembly.GetTypeByMetadataName("System.AppContext") != null)
-            {
-                return new Version(4, 6);
-            }
-            INamedTypeSymbol typeSymbol = mscorlibAssembly.GetTypeByMetadataName("System.IO.UnmanagedMemoryStream");
-            if (!typeSymbol.GetMembers("FlushAsync").IsEmpty)
-            {
-                return new Version(4, 5, 2);
-            }
-            typeSymbol = mscorlibAssembly.GetTypeByMetadataName("System.Diagnostics.Tracing.EventSource");
-            if (typeSymbol != null)
-            {
-                return typeSymbol.GetMembers("CurrentThreadActivityId").IsEmpty ? new Version(4, 5) : new Version(4, 5, 1);
-            }
-            return new Version(4, 0);
         }
     }
 }

@@ -367,24 +367,16 @@
     <value>Insecure XSLT script processing.</value>
     <comment>CA3076</comment>
   </data>
-  <data name="InsecureXsltScriptProcessingDescription" xml:space="preserve">
-    <value>Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which on an untrusted XSL input may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argurment with null or an XmlSecureResolver instance.</value>
+  <data name="CA3076Description" xml:space="preserve">
+    <value>Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which on an untrusted XSL input may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argurment with null or an XmlSecureResolver instance. This message may be suppressed if the input is known to be from a trusted source and external resource resolution from locations that are not known in advance must be supported.</value>
     <comment>CA3076</comment>
   </data>
   <data name="XslCompiledTransformLoadInsecureConstructedMessage" xml:space="preserve">
     <value>In {0} an insecure combination of XsltSettings and XmlResolver instances are provided to XslCompiledTransfor.Load as arguments.</value>
     <comment>CA3076</comment>
   </data>
-  <data name="XslCompiledTransformLoadInsecureConstructedDescription" xml:space="preserve">
-    <value>It may lead to information disclosure on untrusted input. To avoid false alarm, consider creating a secure XsltSettings instance at the call site.</value>
-    <comment>CA3076</comment>
-  </data>
   <data name="XslCompiledTransformLoadInsecureInputMessage" xml:space="preserve">
     <value>In {0} an insecure combination of XsltSettings and XmlResolver instances are provided to XslCompiledTransfor.Load as arguments.</value>
-    <comment>CA3076</comment>
-  </data>
-  <data name="XslCompiledTransformLoadInsecureInputDescription" xml:space="preserve">
-    <value>It may lead to information disclosure on untrusted input. Consider creating a secure XsltSettings instance at the call site.</value>
     <comment>CA3076</comment>
   </data>
 </root>

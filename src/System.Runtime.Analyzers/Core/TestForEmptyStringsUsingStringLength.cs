@@ -1,10 +1,10 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Threading;
+using System.Linq;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Semantics;
 
 namespace System.Runtime.Analyzers
@@ -134,15 +134,7 @@ namespace System.Runtime.Analyzers
         /// </summary>
         private static bool HasAnEmptyStringArgument(IInvocationExpression invocation)
         {
-            foreach (var argument in invocation.ArgumentsInSourceOrder)
-            {
-                if (IsEmptyString(argument.Value))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return invocation.ArgumentsInSourceOrder.Any(arg => IsEmptyString(arg.Value));
         }
     }
 }

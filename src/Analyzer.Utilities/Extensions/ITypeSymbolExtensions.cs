@@ -93,8 +93,18 @@ namespace Analyzer.Utilities
             }
         }
 
-        public static bool DerivesFrom(this INamedTypeSymbol symbol, INamedTypeSymbol candidateBaseType)
+        public static bool DerivesFrom(this ITypeSymbol symbol, ITypeSymbol candidateBaseType, bool baseTypesOnly = false)
         {
+            if (candidateBaseType == null)
+            {
+                return false;
+            }
+
+            if (!baseTypesOnly && symbol.AllInterfaces.As<ITypeSymbol>().Contains(candidateBaseType))
+            {
+                return true;
+            }
+
             while (symbol != null)
             {
                 if (symbol.Equals(candidateBaseType))
@@ -149,30 +159,7 @@ namespace Analyzer.Utilities
         {
             return typeSymbol.ContainingAssembly.Identity.Name.Equals(assemblyName, StringComparison.Ordinal);
         }
-
-        public static bool IsDerivedFrom(this ITypeSymbol typeSymbol, ITypeSymbol baseSymbol, bool baseTypesOnly = false)
-        {
-            if (baseSymbol == null)
-            {
-                return false;
-            }
-            
-            if (!baseTypesOnly && typeSymbol.AllInterfaces.As<ITypeSymbol>().Contains(baseSymbol))
-            {
-                return true;
-            }
-
-            for (ITypeSymbol baseType = typeSymbol; baseType != null; baseType = baseType.BaseType)
-            {
-                if (baseType == baseSymbol)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
+        
         private class MinimalAccessibilityVisitor : SymbolVisitor<Accessibility>
         {
             public static readonly SymbolVisitor<Accessibility> Instance = new MinimalAccessibilityVisitor();

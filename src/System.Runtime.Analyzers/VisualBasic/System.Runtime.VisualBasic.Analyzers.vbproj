@@ -103,7 +103,6 @@
     <Compile Include="BasicUseOrdinalStringComparison.Fixer.vb" />
     <Compile Include="BasicDoNotUseTimersThatPreventPowerStateChanges.vb" />
     <Compile Include="BasicDoNotUseTimersThatPreventPowerStateChanges.Fixer.vb" />
-    <Compile Include="BasicTestForEmptyStringsUsingStringLength.vb" />
     <Compile Include="BasicTestForEmptyStringsUsingStringLength.Fixer.vb" />
     <Compile Include="BasicDoNotRaiseReservedExceptionTypes.vb" />
     <Compile Include="BasicInitializeStaticFieldsInline.vb" />

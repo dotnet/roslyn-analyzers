@@ -105,7 +105,6 @@
     <Compile Include="CSharpUseOrdinalStringComparison.Fixer.cs" />
     <Compile Include="CSharpDoNotUseTimersThatPreventPowerStateChanges.cs" />
     <Compile Include="CSharpDoNotUseTimersThatPreventPowerStateChanges.Fixer.cs" />
-    <Compile Include="CSharpTestForEmptyStringsUsingStringLength.cs" />
     <Compile Include="CSharpTestForEmptyStringsUsingStringLength.Fixer.cs" />
     <Compile Include="CSharpDoNotRaiseReservedExceptionTypes.cs" />
     <Compile Include="CSharpInitializeStaticFieldsInline.cs" />

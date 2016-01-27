@@ -16,10 +16,9 @@ namespace System.Runtime.Analyzers
     /// <summary>
     /// CA1820: Test for empty strings using string length
     /// </summary>
-    public abstract class TestForEmptyStringsUsingStringLengthFixer<TLanguageKindEnum> : CodeFixProvider
-        where TLanguageKindEnum : struct
+    public abstract class TestForEmptyStringsUsingStringLengthFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(TestForEmptyStringsUsingStringLengthAnalyzer<TLanguageKindEnum>.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(TestForEmptyStringsUsingStringLengthAnalyzer.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

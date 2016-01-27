@@ -105,7 +105,6 @@
     <Compile Include="BasicDoNotUseTimersThatPreventPowerStateChanges.Fixer.vb" />
     <Compile Include="BasicTestForEmptyStringsUsingStringLength.vb" />
     <Compile Include="BasicTestForEmptyStringsUsingStringLength.Fixer.vb" />
-    <Compile Include="BasicDoNotLockOnObjectsWithWeakIdentity.vb" />
     <Compile Include="BasicDoNotRaiseReservedExceptionTypes.vb" />
     <Compile Include="BasicInitializeStaticFieldsInline.vb" />
     <Compile Include="BasicInitializeStaticFieldsInline.Fixer.vb" />

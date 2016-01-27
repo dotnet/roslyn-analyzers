@@ -87,14 +87,21 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                 return;
                             }
 
+                            // FxCop allowed public nested enums to accommodate .NET types such as
+                            // Environment.SpecialFolders.
+                            if (nestedType.TypeKind == TypeKind.Enum)
+                            {
+                                return;
+                            }
+
                             if (IsDataSetSpecialCase(containingType, nestedType, dataSetType, dataTableType, dataRowType))
                             {
                                 return;
                             }
 
                             DiagnosticDescriptor descriptor = containingType.TypeKind == TypeKind.Module
-                            ? VisualBasicModuleRule
-                            : DefaultRule;
+                                ? VisualBasicModuleRule
+                                : DefaultRule;
 
                             symbolAnalysisContext.ReportDiagnostic(nestedType.CreateDiagnostic(descriptor, nestedType.Name));
                         },

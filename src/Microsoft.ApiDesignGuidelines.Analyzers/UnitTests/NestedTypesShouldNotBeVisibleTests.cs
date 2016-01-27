@@ -61,7 +61,7 @@ End Class
         }
 
         [Fact]
-        public void CSharpDiagnosticPublicNestedEnum()
+        public void CSharpNoDiagnosticPublicNestedEnum()
         {
             var code = @"
 public class Outer
@@ -72,11 +72,11 @@ public class Outer
     }
 }
 ";
-            VerifyCSharp(code, GetCSharpCA1034ResultAt(4, 17, "Inner"));
+            VerifyCSharp(code);
         }
 
         [Fact]
-        public void BasicDiagnosticPublicNestedEnum()
+        public void BasicNoDiagnosticPublicNestedEnum()
         {
             var code = @"
 Public Class Outer
@@ -85,7 +85,7 @@ Public Class Outer
     End Enum
 End Class
 ";
-            VerifyBasic(code, GetBasicCA1034ResultAt(3, 17, "Inner"));
+            VerifyBasic(code);
         }
 
         [Fact]

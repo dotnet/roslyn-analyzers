@@ -15,7 +15,7 @@ namespace Desktop.Analyzers
     /// <summary>
     /// Secure DTD processing and entity resolution in XML
     /// </summary>
-    public abstract class CA3075DiagnosticAnalyzer<TLanguageKindEnum> : DiagnosticAnalyzer where TLanguageKindEnum : struct
+    public abstract class DoNotUseInsecureDTDProcessingAnalyzer<TLanguageKindEnum> : DiagnosticAnalyzer where TLanguageKindEnum : struct
     {
         internal const string RuleId = "CA3075";
         private const string HelpLink = "http://aka.ms/CA3075";
@@ -24,18 +24,18 @@ namespace Desktop.Analyzers
         // Do not use overloads that enable dtd processing, use one takes XmlReader instead.
         // Matches FxCop warnings 3056,3057,3059, 3060, 3062, 3063, 3064, 3070, 3071, 3072
         internal static DiagnosticDescriptor RuleDoNotUseUnsafeDtdProcessingOverloads = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage)),
-                                                                                                                  SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.CA3075Description)),
+                                                                                                                  SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDTDProcessingDescription)),
                                                                                                                   HelpLink);
         // Do not use SetInnerXml that enable dtd processing, replace with call to Load.
         // Matches FxCop warnings 3058
         internal static DiagnosticDescriptor RuleDoNotUseSetInnerXml = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseSetInnerXmlMessage)),
-                                                                                                  SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.CA3075Description)),
+                                                                                                  SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDTDProcessingDescription)),
                                                                                                   HelpLink);
 
         // Do not use unsafe properties that implicitly use DTD procesing. 
         // Matches FxCop warnings 3065
         internal static DiagnosticDescriptor RuleReviewUnsafeDtdProcessingProperties = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.ReviewDtdProcessingPropertiesMessage)),
-                                                                                                                  SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.CA3075Description)),
+                                                                                                                  SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDTDProcessingDescription)),
                                                                                                                   HelpLink);
 
         // Secure DTD processing on instances of XmlReader, XmlTextReader and XmlDocument:
@@ -43,7 +43,7 @@ namespace Desktop.Analyzers
         // Do not use overloads of XmlReader.Create() that doesn't accept an XmlReaderSettings parameter.
         // Match FxCop waning CA3053 : XmlReaderCreateWrongOverload
         internal static DiagnosticDescriptor RuleXmlReaderCreateWrongOverload = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlReaderCreateWrongOverloadMessage)),
-                                                                                                           SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.CA3075Description)),
+                                                                                                           SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDTDProcessingDescription)),
                                                                                                            HelpLink);   
 
         // If XmlReaderSettings is constructed in the code block with insecure value, do not pass it to XmlReader.Create.
@@ -52,7 +52,7 @@ namespace Desktop.Analyzers
         //      FxCop CA 3055
         //      FxCop CA 3069
         internal static DiagnosticDescriptor RuleXmlReaderCreateUsingInsecureConstructedXmlReaderSettings = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlReaderCreateInsecureConstructedMessage)),
-                                                                                                                                       SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.CA3075Description)),
+                                                                                                                                       SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDTDProcessingDescription)),
                                                                                                                                        HelpLink);
 
         // If XmlReaderSettings is NOT constructed onsite (i.e. passed in as parameter or a field), do not pass it to XmlReader.Create if DtdProcessing, 
@@ -62,21 +62,21 @@ namespace Desktop.Analyzers
         //      FxCop CA 3055
         //      FxCop CA 3069
         internal static DiagnosticDescriptor RuleXmlReaderCreateUsingInsecureInputXmlReaderSettings = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlReaderCreateInsecureInputMessage)),
-                                                                                                                                 SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.CA3075Description)),
+                                                                                                                                 SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDTDProcessingDescription)),
                                                                                                                                  HelpLink); 
 
         // Do not create an XmlDocument without setting its XmlResolver property.
         // This DOES NOT trigger when an XmlDocument.XmlResolver is set to any value
         // Partially match FxCop warning CA3053 : XmlDocumentWithNoSecureResolver
         internal static DiagnosticDescriptor RuleXmlDocumentConstructedWithNoSecureResolver = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlDocumentWithNoSecureResolverMessage)),
-                                                                                                              SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.CA3075Description)),
+                                                                                                              SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDTDProcessingDescription)),
                                                                                                               HelpLink);
 
         // Do not explicitly set XmlDocument.XmlResolver property to an insecure value (anything thing other than null or a instance of XmlSecureResolver).
         // This DOES NOT trigger if the XmlDocument instance is created but its XmlResolver property is never explicitly set
         // Partially match FxCop CA3053 CA3053 : XmlDocumentWithNoSecureResolver
         internal static DiagnosticDescriptor RuleXmlDocumentSetInsecureResolver = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlDocumentWithNoSecureResolverMessage)),
-                                                                                                              SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.CA3075Description)),
+                                                                                                              SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDTDProcessingDescription)),
                                                                                                               HelpLink);
 
         // if XmlTextReader is constructed in the method/class as field, must set entity and resource resolution related properties to secure values
@@ -86,7 +86,7 @@ namespace Desktop.Analyzers
         //      FxCop CA 3054
         //      FxCop CA 3069
         internal static DiagnosticDescriptor RuleXmlTextReaderConstructedWithNoSecureResolution = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlTextReaderConstructedWithNoSecureResolutionMessage)),
-                                                                                                                             SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.CA3075Description)),
+                                                                                                                             SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDTDProcessingDescription)),
                                                                                                                              HelpLink);
 
         // if XmlTextReader instance is passed in as parameter (or is a field), Do not set entity or resource resolution related properties to insecure values
@@ -95,7 +95,7 @@ namespace Desktop.Analyzers
         //      FxCop CA 3054
         //      FxCop CA 3069
         internal static DiagnosticDescriptor RuleXmlTextReaderSetInsecureResolution = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XmlTextReaderSetInsecureResolutionMessage)),
-                                                                                                                 SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.CA3075Description)), 
+                                                                                                                 SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDTDProcessingDescription)), 
                                                                                                                  HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =ImmutableArray.Create(RuleDoNotUseUnsafeDtdProcessingOverloads,
@@ -112,7 +112,7 @@ namespace Desktop.Analyzers
         {
             get
             {
-                return CA3075DiagnosticAnalyzer<TLanguageKindEnum>.supportedDiagnostics;
+                return DoNotUseInsecureDTDProcessingAnalyzer<TLanguageKindEnum>.supportedDiagnostics;
             }
         }
 

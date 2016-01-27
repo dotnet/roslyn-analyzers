@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
-    public partial class CA3075DiagnosticAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDTDProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
     {
         private readonly string CA3075InnerXmlMessage = DesktopAnalyzersResources.DoNotUseSetInnerXmlMessage;
 

@@ -107,15 +107,6 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to When using XmlDocument or XmlTextReader&apos;s Load() method, Enabling DTD processing using XmlUrlResolver for resolving external XML entities can lead to information disclosure, make sure to replace it with a call to the Load() method overload that takes an XmlReader instance instead. Invoking XmlReader.Create() method without providing a secure XmlReaderSettings instance is potentially unsafe as it enables DTD processing and uses XmlUrlResolver for resolving external XML entities, which on an untrusted input m [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string CA3075Description {
-            get {
-                return ResourceManager.GetString("CA3075Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to To fix a violation of this rule, call the base type GetObjectData method or serialization constructor from the corresponding derived type method or constructor..
         /// </summary>
         internal static string CallBaseClassMethodsOnISerializableTypesDescription {
@@ -238,6 +229,15 @@ namespace Desktop.Analyzers {
         internal static string DoNotUseDtdProcessingOverloadsMessage {
             get {
                 return ResourceManager.GetString("DoNotUseDtdProcessingOverloadsMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When using XmlDocument or XmlTextReader&apos;s Load() method, Enabling DTD processing using XmlUrlResolver for resolving external XML entities can lead to information disclosure, make sure to replace it with a call to the Load() method overload that takes an XmlReader instance instead. Invoking XmlReader.Create() method without providing a secure XmlReaderSettings instance is potentially unsafe as it enables DTD processing and uses XmlUrlResolver for resolving external XML entities, which on an untrusted input m [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DoNotUseInsecureDTDProcessingDescription {
+            get {
+                return ResourceManager.GetString("DoNotUseInsecureDTDProcessingDescription", resourceCulture);
             }
         }
         

@@ -7,58 +7,56 @@ using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
-    public partial class CA3075DiagnosticAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDTDProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private DiagnosticResult GetCA3075DataSetReadXmlCSharpResultAt(int line, int column, string name)
+        private DiagnosticResult CA3075ReadXmlSchemaGetCSharpResultAt(int line, int column, string name)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(CA3075LoadXmlMessage, name, "ReadXml"));
+            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(CA3075LoadXmlMessage, name, "ReadXmlSchema"));
         }
 
-        private DiagnosticResult GetCA3075DataSetReadXmlBasicResultAt(int line, int column, string name)
+        private DiagnosticResult CA3075ReadXmlSchemaGetBasicResultAt(int line, int column, string name)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(CA3075LoadXmlMessage, name, "ReadXml"));
+            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(CA3075LoadXmlMessage, name, "ReadXmlSchema"));
         }
 
         [Fact]
-        public void UseDataSetReadXmlShouldGenerateDiagnostic()
+        public void UseDataSetReadXmlSchemaShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
-using System.Xml;
 using System.Data;
 
 namespace FxCopUnsafeXml
 {
-    public class UseXmlReaderForDataSetReadXml
+    public class UseXmlReaderForDataSetReadXmlSchema
     {
-        public void TestMethod1214(string path)
+        public void TestMethod(string path)
         {
             DataSet ds = new DataSet();
-            ds.ReadXml(path);
+            ds.ReadXmlSchema(path);
         }
     }
 }
 ",
-                GetCA3075DataSetReadXmlCSharpResultAt(12, 13, "TestMethod1214")
+                CA3075ReadXmlSchemaGetCSharpResultAt(11, 13, "TestMethod")
             );
 
             VerifyBasic(@"
-Imports System.Xml
 Imports System.Data
 
 Namespace FxCopUnsafeXml
-    Public Class UseXmlReaderForDataSetReadXml
-        Public Sub TestMethod1214(path As String)
+    Public Class UseXmlReaderForDataSetReadXmlSchema
+        Public Sub TestMethod(path As String)
             Dim ds As New DataSet()
-            ds.ReadXml(path)
+            ds.ReadXmlSchema(path)
         End Sub
     End Class
 End Namespace",
-                GetCA3075DataSetReadXmlBasicResultAt(9, 13, "TestMethod1214")
+                CA3075ReadXmlSchemaGetBasicResultAt(8, 13, "TestMethod")
             );
         }
 
         [Fact]
-        public void UseDataSetReadXmlInGetShouldGenerateDiagnostic()
+        public void UseDataSetReadXmlSchemaInGetShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.Data;
@@ -70,12 +68,12 @@ class TestClass
         get {
             var src = """";
             DataSet ds = new DataSet();
-            ds.ReadXml(src);
+            ds.ReadXmlSchema(src);
             return ds;
         }
     }
 }",
-                GetCA3075DataSetReadXmlCSharpResultAt(11, 13, "get_Test")
+                CA3075ReadXmlSchemaGetCSharpResultAt(11, 13, "get_Test")
             );
 
             VerifyBasic(@"
@@ -86,17 +84,17 @@ Class TestClass
         Get
             Dim src = """"
             Dim ds As New DataSet()
-            ds.ReadXml(src)
+            ds.ReadXmlSchema(src)
             Return ds
         End Get
     End Property
 End Class",
-                GetCA3075DataSetReadXmlBasicResultAt(9, 13, "get_Test")
+                CA3075ReadXmlSchemaGetBasicResultAt(9, 13, "get_Test")
             );
         }
 
         [Fact]
-        public void UseDataSetReadXmlInSetShouldGenerateDiagnostic()
+        public void UseDataSetReadXmlSchemaInSetShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.Data;
@@ -112,7 +110,7 @@ public DataSet GetDoc
                 {
                     var src = """";
                     DataSet ds = new DataSet();
-                    ds.ReadXml(src);
+                    ds.ReadXmlSchema(src);
                     privateDoc = ds;
                 }
                 else
@@ -120,7 +118,7 @@ public DataSet GetDoc
             }
         }
 }",
-                GetCA3075DataSetReadXmlCSharpResultAt(15, 21, "set_GetDoc")
+                CA3075ReadXmlSchemaGetCSharpResultAt(15, 21, "set_GetDoc")
             );
 
             VerifyBasic(@"
@@ -133,7 +131,7 @@ Class TestClass
             If value Is Nothing Then
                 Dim src = """"
                 Dim ds As New DataSet()
-                ds.ReadXml(src)
+                ds.ReadXmlSchema(src)
                 privateDoc = ds
             Else
                 privateDoc = value
@@ -141,12 +139,12 @@ Class TestClass
         End Set
     End Property
 End Class",
-                GetCA3075DataSetReadXmlBasicResultAt(11, 17, "set_GetDoc")
+                CA3075ReadXmlSchemaGetBasicResultAt(11, 17, "set_GetDoc")
             );
         }
 
         [Fact]
-        public void UseDataSetReadXmlInTryBlockShouldGenerateDiagnostic()
+        public void UseDataSetReadXmlSchemaInTryBlockShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
   using System;
@@ -160,13 +158,13 @@ End Class",
             {
                 var src = """";
                 DataSet ds = new DataSet();
-                ds.ReadXml(src);
+                ds.ReadXmlSchema(src);
             }
             catch (Exception) { throw; }
             finally { }
         }
     }",
-                GetCA3075DataSetReadXmlCSharpResultAt(13, 17, "TestMethod")
+                CA3075ReadXmlSchemaGetCSharpResultAt(13, 17, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -177,19 +175,19 @@ Class TestClass
         Try
             Dim src = """"
             Dim ds As New DataSet()
-            ds.ReadXml(src)
+            ds.ReadXmlSchema(src)
         Catch generatedExceptionName As Exception
             Throw
         Finally
         End Try
     End Sub
 End Class",
-                GetCA3075DataSetReadXmlBasicResultAt(9, 13, "TestMethod")
+                CA3075ReadXmlSchemaGetBasicResultAt(9, 13, "TestMethod")
             );
         }
 
         [Fact]
-        public void UseDataSetReadXmlInCatchBlockShouldGenerateDiagnostic()
+        public void UseDataSetReadXmlSchemaInCatchBlockShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
    using System;
@@ -204,12 +202,12 @@ End Class",
             {
                 var src = """";
                 DataSet ds = new DataSet();
-                ds.ReadXml(src);
+                ds.ReadXmlSchema(src);
             }
             finally { }
         }
     }",
-                GetCA3075DataSetReadXmlCSharpResultAt(14, 17, "TestMethod")
+                CA3075ReadXmlSchemaGetCSharpResultAt(14, 17, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -221,17 +219,17 @@ Class TestClass
         Catch generatedExceptionName As Exception
             Dim src = """"
             Dim ds As New DataSet()
-            ds.ReadXml(src)
+            ds.ReadXmlSchema(src)
         Finally
         End Try
     End Sub
 End Class",
-                GetCA3075DataSetReadXmlBasicResultAt(10, 13, "TestMethod")
+                CA3075ReadXmlSchemaGetBasicResultAt(10, 13, "TestMethod")
             );
         }
 
         [Fact]
-        public void UseDataSetReadXmlInFinallyBlockShouldGenerateDiagnostic()
+        public void UseDataSetReadXmlSchemaInFinallyBlockShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
    using System;
@@ -247,11 +245,11 @@ End Class",
             {
                 var src = """";
                 DataSet ds = new DataSet();
-                ds.ReadXml(src);
+                ds.ReadXmlSchema(src);
             }
         }
     }",
-                GetCA3075DataSetReadXmlCSharpResultAt(15, 17, "TestMethod")
+                CA3075ReadXmlSchemaGetCSharpResultAt(15, 17, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -265,16 +263,16 @@ Class TestClass
         Finally
             Dim src = """"
             Dim ds As New DataSet()
-            ds.ReadXml(src)
+            ds.ReadXmlSchema(src)
         End Try
     End Sub
 End Class",
-                GetCA3075DataSetReadXmlBasicResultAt(12, 13, "TestMethod")
+                CA3075ReadXmlSchemaGetBasicResultAt(12, 13, "TestMethod")
             );
         }
 
         [Fact]
-        public void UseDataSetReadXmlInAsyncAwaitShouldGenerateDiagnostic()
+        public void UseDataSetReadXmlSchemaInAsyncAwaitShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
  using System.Threading.Tasks;
@@ -287,7 +285,7 @@ using System.Data;
             await Task.Run(() => {
                 var src = """";
                 DataSet ds = new DataSet();
-                ds.ReadXml(src);
+                ds.ReadXmlSchema(src);
             });
         }
 
@@ -296,7 +294,7 @@ using System.Data;
             await TestMethod();
         }
     }",
-                GetCA3075DataSetReadXmlCSharpResultAt(12, 17, "Run")
+                CA3075ReadXmlSchemaGetCSharpResultAt(12, 17, "Run")
             );
 
             VerifyBasic(@"
@@ -308,7 +306,7 @@ Class TestClass
         Await Task.Run(Function() 
         Dim src = """"
         Dim ds As New DataSet()
-        ds.ReadXml(src)
+        ds.ReadXmlSchema(src)
 
 End Function)
     End Function
@@ -317,12 +315,12 @@ End Function)
         Await TestMethod()
     End Sub
 End Class",
-                GetCA3075DataSetReadXmlBasicResultAt(10, 9, "Run")
+                CA3075ReadXmlSchemaGetBasicResultAt(10, 9, "Run")
             );
         }
 
         [Fact]
-        public void UseDataSetReadXmlInDelegateShouldGenerateDiagnostic()
+        public void UseDataSetReadXmlSchemaInDelegateShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.Data;
@@ -334,10 +332,10 @@ class TestClass
     Del d = delegate () {
         var src = """";
         DataSet ds = new DataSet();
-        ds.ReadXml(src);
+        ds.ReadXmlSchema(src);
     };
 }",
-                GetCA3075DataSetReadXmlCSharpResultAt(11, 9, "TestClass")
+                CA3075ReadXmlSchemaGetCSharpResultAt(11, 9, "TestClass")
             );
 
             VerifyBasic(@"
@@ -349,16 +347,16 @@ Class TestClass
     Private d As Del = Sub() 
     Dim src = """"
     Dim ds As New DataSet()
-    ds.ReadXml(src)
+    ds.ReadXmlSchema(src)
 
 End Sub
 End Class",
-                GetCA3075DataSetReadXmlBasicResultAt(10, 5, "TestClass")
+                CA3075ReadXmlSchemaGetBasicResultAt(10, 5, "TestClass")
             );
         }
 
         [Fact]
-        public void UseDataSetReadXmlWithXmlReaderShouldNotGenerateDiagnostic()
+        public void UseDataSetReadXmlSchemaWithXmlReaderShouldNotGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.Xml;
@@ -366,12 +364,12 @@ using System.Data;
 
 namespace FxCopUnsafeXml
 {
-    public class UseXmlReaderForDataSetReadXml
+    public class UseXmlReaderForDataSetReadXmlSchema
     {
-        public void TestMethod1214Ok(XmlReader reader)
+        public void TestMethod(XmlReader reader)
         {
             DataSet ds = new DataSet();
-            ds.ReadXml(reader);
+            ds.ReadXmlSchema(reader);
         }
     }
 }
@@ -383,10 +381,10 @@ Imports System.Xml
 Imports System.Data
 
 Namespace FxCopUnsafeXml
-    Public Class UseXmlReaderForDataSetReadXml
-        Public Sub TestMethod1214Ok(reader As XmlReader)
+    Public Class UseXmlReaderForDataSetReadXmlSchema
+        Public Sub TestMethod(reader As XmlReader)
             Dim ds As New DataSet()
-            ds.ReadXml(reader)
+            ds.ReadXmlSchema(reader)
         End Sub
     End Class
 End Namespace");

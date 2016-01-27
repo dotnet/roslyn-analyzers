@@ -54,6 +54,9 @@ namespace System.Runtime.Analyzers
             }
         }
 
+        /// <summary>
+        /// Check to see if we have an invocation to string.Equals that has an empty string as an argument.
+        /// </summary>
         private static void AnalyzeInvocationExpression(OperationAnalysisContext context)
         {
             var invocationOperation = (IInvocationExpression)context.Operation;
@@ -69,6 +72,10 @@ namespace System.Runtime.Analyzers
             }
         }
 
+        /// <summary>
+        /// Check to see if we have a equals or not equals expression where an empty string is being
+        /// compared.
+        /// </summary>
         private static void AnalyzeBinaryExpression(OperationAnalysisContext context)
         {
             var binaryOperation = (IBinaryOperatorExpression)context.Operation;
@@ -85,12 +92,20 @@ namespace System.Runtime.Analyzers
             }
         }
 
+
+        /// <summary>
+        /// Checks if the given method is the string.Equals method.
+        /// </summary>
         private static bool IsStringEqualsMethod(IMethodSymbol methodSymbol)
         {
             return string.Equals(methodSymbol.Name, WellKnownMemberNames.ObjectEquals, StringComparison.Ordinal) && 
                    methodSymbol.ContainingType.SpecialType == SpecialType.System_String;
         }
 
+        /// <summary>
+        /// Checks if the given expression something that evaluates to a constant string
+        /// or the string.Empty field
+        /// </summary>
         private static bool IsEmptyString(IExpression expression)
         {
             if (expression == null)
@@ -114,6 +129,9 @@ namespace System.Runtime.Analyzers
             return false;
         }
 
+        /// <summary>
+        /// Checks if the given invocation has an argument that is an empty string.
+        /// </summary>
         private static bool HasAnEmptyStringArgument(IInvocationExpression invocation)
         {
             foreach (var argument in invocation.ArgumentsInSourceOrder)

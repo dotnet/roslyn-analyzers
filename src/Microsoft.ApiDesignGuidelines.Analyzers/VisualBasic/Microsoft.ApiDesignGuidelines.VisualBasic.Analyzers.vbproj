@@ -139,8 +139,6 @@
     <Compile Include="BasicUseEventsWhereAppropriate.Fixer.vb" />
     <Compile Include="BasicImplementStandardExceptionConstructors.vb" />
     <Compile Include="BasicImplementStandardExceptionConstructors.Fixer.vb" />
-    <Compile Include="BasicNestedTypesShouldNotBeVisible.vb" />
-    <Compile Include="BasicNestedTypesShouldNotBeVisible.Fixer.vb" />
     <Compile Include="BasicAvoidEmptyInterfaces.vb" />
     <Compile Include="BasicAvoidEmptyInterfaces.Fixer.vb" />
     <Compile Include="BasicProvideObsoleteAttributeMessage.vb" />

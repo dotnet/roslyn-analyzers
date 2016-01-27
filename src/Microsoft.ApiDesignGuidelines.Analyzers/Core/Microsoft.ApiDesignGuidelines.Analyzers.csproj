@@ -172,7 +172,6 @@
     <Compile Include="ImplementStandardExceptionConstructors.cs" />
     <Compile Include="ImplementStandardExceptionConstructors.Fixer.cs" />
     <Compile Include="NestedTypesShouldNotBeVisible.cs" />
-    <Compile Include="NestedTypesShouldNotBeVisible.Fixer.cs" />
     <Compile Include="AvoidEmptyInterfaces.cs" />
     <Compile Include="AvoidEmptyInterfaces.Fixer.cs" />
     <Compile Include="ProvideObsoleteAttributeMessage.cs" />

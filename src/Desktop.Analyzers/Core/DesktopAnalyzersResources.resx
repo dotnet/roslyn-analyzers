@@ -363,8 +363,8 @@
   <data name="TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsStack" xml:space="preserve">
     <value>Change the base type of {0} from {1} to its generic equivalent 'System.Collections.Generic.Stack'.</value>
   </data>
-  <data name="DoNotUseDtdProcessingOverloadsDescription" xml:space="preserve">
-    <value>This API internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to an attacker. In addition, the attacker can use this as a DoS vector. Replace with an overload that takes an XmlReader instance.</value>
+  <data name="CA3075Description" xml:space="preserve">
+    <value>When using XmlDocument or XmlTextReader's Load() method, Enabling DTD processing using XmlUrlResolver for resolving external XML entities can lead to information disclosure, make sure to replace it with a call to the Load() method overload that takes an XmlReader instance instead. Invoking XmlReader.Create() method without providing a secure XmlReaderSettings instance is potentially unsafe as it enables DTD processing and uses XmlUrlResolver for resolving external XML entities, which on an untrusted input may lead to information disclosure. Use XmlReader.Create() that accepts XmlReaderSettings argument, or consider explicitly setting secure values. Also, ensure that DataViewSettingCollectionString property of DataViewManager is assigned from a trusted source, otherwise avoid using this control. When using XmlReaderSettings instance, make sure to secure it by setting DtdProcessing property to false, MaxCharactersFromEntities property to a small value, or XmlResolver property to XmlSecureResolver or null. Setting the InnerXml property of XmlDocument is potentially unsafe. This API internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to an attacker. In addition, the attacker can use this as a DoS vector. Replace with a call to the Load() method overload that takes an XmlReader instance.</value>
     <comment>CA3075</comment>
   </data>
   <data name="DoNotUseDtdProcessingOverloadsMessage" xml:space="preserve">
@@ -375,10 +375,6 @@
     <value>Insecure DTD Processing</value>
     <comment>CA3075</comment>
   </data>
-  <data name="DoNotUseSetInnerXmlDescription" xml:space="preserve">
-    <value>Setting the InnerXml property of XmlDocument is potentially unsafe. This API internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to an attacker. In addition, the attacker can use this as a DoS vector. Replace with a call to the Load() method overload that takes an XmlReader instance.</value>
-    <comment>CA3075</comment>
-  </data>
   <data name="DoNotUseSetInnerXmlMessage" xml:space="preserve">
     <value>{0} uses the unsafe setter of InnerXml property of System.Xml.XmlDocument.</value>
     <comment>CA3075</comment>
@@ -387,16 +383,8 @@
     <value>Insecure DTD processing in XML</value>
     <comment>CA3075</comment>
   </data>
-  <data name="ReviewDtdProcessingPropertiesDescription" xml:space="preserve">
-    <value>This pattern internally enables DTD processing in XML and uses XmlUrlResolver for resolving external XML entities, which on an untrusted input may lead to information disclosure. Ensure DataViewSettingCollectionString property of DataViewManager is assigned from a trusted source, otherwise avoid using this control. Review code to ensure that the property is set from a trusted source.</value>
-    <comment>CA3075</comment>
-  </data>
   <data name="ReviewDtdProcessingPropertiesMessage" xml:space="preserve">
     <value>Property in {0} might be set from an untrusted source.</value>
-    <comment>CA3075</comment>
-  </data>
-  <data name="XmlDocumentWithNoSecureResolverDescription" xml:space="preserve">
-    <value>This usage is potentially unsafe as untrusted external resources may be resolved during read operations. Ensure to set the XmlResolver property to null or an instance of XmlSecureResolver when processing untrusted input.</value>
     <comment>CA3075</comment>
   </data>
   <data name="XmlDocumentWithNoSecureResolverMessage" xml:space="preserve">
@@ -407,36 +395,16 @@
     <value>An insecure XmlReaderSettings instance is provided to XmlReader.Create method.</value>
     <comment>CA3075</comment>
   </data>
-  <data name="XmlReaderCreateInsecureConstructedDescription" xml:space="preserve">
-    <value>It enables DTD processing and uses XmlUrlResolver for resolving external XML entities, which on an untrusted input may lead to information disclosure. Ensure the XmlReaderSettings instance is secure by settings DtdProcessing property to false, or MaxCharactersFromEntities property to a small value and XmlResolver proeprty to a secure resolver (XmlSecureResolver or null).</value>
-    <comment>CA3075</comment>
-  </data>
   <data name="XmlReaderCreateInsecureInputMessage" xml:space="preserve">
     <value>In {0} a potentially insecure XmlReaderSettings instance is provided to XmlReader.Create method.</value>
-    <comment>CA3075</comment>
-  </data>
-  <data name="XmlReaderCreateInsecureInputDescription" xml:space="preserve">
-    <value>Invoking XmlReader.Create method without providing a secure XmlReaderSettings instance is potentially unsafe as it enables DTD processing and uses XmlUrlResolver for resolving external XML entities, which on an untrusted input may lead to information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to an attacker. In addition, the attacker can use this as a DoS vector. It enables DTD processing and uses XmlUrlResolver for resolving external XML entities, which on an untrusted input may lead to information disclosure. Consider explicitly setting secure values to the instance at call site.</value>
     <comment>CA3075</comment>
   </data>
   <data name="XmlReaderCreateWrongOverloadMessage" xml:space="preserve">
     <value>{0} uses an insecure overload of XmlReader.Create which does not accept an XmlReaderSettings argument. </value>
     <comment>CA3075</comment>
   </data>
-  <data name="XmlReaderCreateWrongOverloadDescription" xml:space="preserve">
-    <value>Invoking XmlReader.Create method without providing a secure XmlReaderSettings instance is potentially unsafe as it enables DTD processing and uses XmlUrlResolver for resolving external XML entities, which on an untrusted input may lead to information disclosure. Use XmlReader.Create that accepts XmlReaderSettings argument, or consider explicitly setting secure values.</value>
-    <comment>CA3075</comment>
-  </data>
   <data name="XmlTextReaderConstructedWithNoSecureResolutionMessage" xml:space="preserve">
     <value>{0} creates XmlTextReader instance with insecure default settings.</value>
-    <comment>CA3075</comment>
-  </data>
-  <data name="XmlTextReaderConstructedWithNoSecureResolutionDescription" xml:space="preserve">
-    <value>It may lead to information disclosure on untrusted input. Consider explicitly setting secure values to the instance at call site.</value>
-    <comment>CA3075</comment>
-  </data>
-  <data name="XmlTextReaderInsecureResolutionDescription" xml:space="preserve">
-    <value>Creating an XmlTextReader instance without disabling DTD processing  and using a secure resolver for resolving external XML entities may lead to information disclosure on untrusted input. Content from file system or network shares for the machine processing the XML can be exposed to an attacker. In addition, the attacker can use this as a DoS vector. It may lead to information disclosure on untrusted input. Ensure the DtdProcessing property is set to false and XmlResolver proeprty to a secure resolver (XmlSecureResolver or null), or use XmlReader. Create method with a secure XmlReaderSettings argument instead. </value>
     <comment>CA3075</comment>
   </data>
   <data name="XmlTextReaderSetInsecureResolutionMessage" xml:space="preserve">

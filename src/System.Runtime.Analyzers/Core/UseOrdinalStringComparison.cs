@@ -129,9 +129,10 @@ namespace System.Runtime.Analyzers
                 switch (methodSymbol.Parameters.Length)
                 {
                     case 1:
-                        // the instance method .Equals(object) is OK
+                        // the instance method .Equals(object) is acceptable
                         return methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_Object;
                     case 2:
+                        // .Equals(string, System.StringComparison) is acceptable
                         return methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_String &&
                             methodSymbol.Parameters[1].Type.Equals(stringComparisonType);
                 }

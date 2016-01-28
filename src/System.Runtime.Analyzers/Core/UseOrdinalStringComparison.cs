@@ -4,6 +4,8 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
+using Microsoft.CodeAnalysis.Semantics;
+using System.Linq;
 
 namespace System.Runtime.Analyzers
 {
@@ -30,7 +32,8 @@ namespace System.Runtime.Analyzers
         internal const string StringComparisonTypeName = "System.StringComparison";
         internal const string IgnoreCaseText = "IgnoreCase";
 
-        protected abstract void GetAnalyzer(CompilationStartAnalysisContext context, INamedTypeSymbol stringComparisonType);
+        protected abstract Location GetMethodNameLocation(SyntaxNode invocationNode);
+        protected abstract Location GetOperatorTokenLocation(SyntaxNode binaryOperationNode);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -42,99 +45,147 @@ namespace System.Runtime.Analyzers
                     var stringComparisonType = context.Compilation.GetTypeByMetadataName(StringComparisonTypeName);
                     if (stringComparisonType != null)
                     {
-                        GetAnalyzer(context, stringComparisonType);
+                        context.RegisterOperationAction(operationContext => AnalyzeOperation(operationContext, stringComparisonType),
+                                                        OperationKind.InvocationExpression, 
+                                                        OperationKind.BinaryOperatorExpression);
                     }
                 });
         }
 
-        protected abstract class AbstractCodeBlockAnalyzer
+        private void AnalyzeOperation(OperationAnalysisContext context, INamedTypeSymbol stringComparisonType)
         {
-            protected INamedTypeSymbol StringComparisonType { get; }
-
-            public AbstractCodeBlockAnalyzer(INamedTypeSymbol stringComparisonType)
+            var kind = context.Operation.Kind;
+            if (kind == OperationKind.InvocationExpression)
             {
-                this.StringComparisonType = stringComparisonType;
+                AnalyzeInvocationExpression((IInvocationExpression)context.Operation, stringComparisonType, context.ReportDiagnostic);
             }
-
-            protected static bool IsEqualsOrCompare(string methodName)
+            else
             {
-                return string.Equals(methodName, EqualsMethodName, StringComparison.Ordinal) ||
-                    string.Equals(methodName, CompareMethodName, StringComparison.Ordinal);
+                AnalyzeBinaryExpression((IBinaryOperatorExpression)context.Operation, context.ReportDiagnostic);
             }
+        }
 
-            protected static bool IsAcceptableOverload(IMethodSymbol methodSymbol, SemanticModel model)
+        private void AnalyzeInvocationExpression(IInvocationExpression operation, INamedTypeSymbol stringComparisonType, Action<Diagnostic> reportDiagnostic)
+        {
+            var methodSymbol = operation.TargetMethod;
+            if (methodSymbol != null && 
+                methodSymbol.ContainingType.SpecialType == SpecialType.System_String &&
+                IsEqualsOrCompare(methodSymbol.Name))
             {
-                var stringComparisonType = WellKnownTypes.StringComparison(model.Compilation);
-                return methodSymbol.IsStatic
-                    ? IsAcceptableStaticOverload(methodSymbol, stringComparisonType)
-                    : IsAcceptableInstanceOverload(methodSymbol, stringComparisonType);
-            }
-
-            protected static bool IsAcceptableInstanceOverload(IMethodSymbol methodSymbol, INamedTypeSymbol stringComparisonType)
-            {
-                if (string.Equals(methodSymbol.Name, EqualsMethodName, StringComparison.Ordinal))
+                if (!IsAcceptableOverload(methodSymbol, stringComparisonType))
                 {
-                    switch (methodSymbol.Parameters.Length)
+                    // wrong overload
+                    reportDiagnostic(Diagnostic.Create(Rule, GetMethodNameLocation(operation.Syntax)));
+                }
+                else
+                {
+                    var lastArgument = operation.ArgumentsInSourceOrder.Last();
+                    if (lastArgument.Value.Kind == OperationKind.FieldReferenceExpression)
                     {
-                        case 1:
-                            // the instance method .Equals(object) is OK
-                            return methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_Object;
-                        case 2:
-                            return methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_String &&
-                                methodSymbol.Parameters[1].Type.Equals(stringComparisonType);
+                        var fieldSymbol = ((IFieldReferenceExpression)lastArgument.Value).Field;
+                        if (fieldSymbol != null &&
+                            fieldSymbol.ContainingType.Equals(stringComparisonType) &&
+                            !IsOrdinalOrOrdinalIgnoreCase(fieldSymbol.Name))
+                        {
+                            // right overload, wrong value
+                            reportDiagnostic(lastArgument.Syntax.CreateDiagnostic(Rule));
+                        }
                     }
                 }
-
-                // all other overloads are unacceptable
-                return false;
             }
+        }
 
-            protected static bool IsAcceptableStaticOverload(IMethodSymbol methodSymbol, INamedTypeSymbol stringComparisonType)
+        private void AnalyzeBinaryExpression(IBinaryOperatorExpression operation, Action<Diagnostic> reportDiagnostic)
+        {
+            if (operation.BinaryOperationKind == BinaryOperationKind.StringEquals || operation.BinaryOperationKind == BinaryOperationKind.StringNotEquals)
             {
-                if (string.Equals(methodSymbol.Name, CompareMethodName, StringComparison.Ordinal))
+                // If either of the operands is null, we shouldn't report a diagnostic.
+                if ((operation.Left.ConstantValue.HasValue && operation.Left.ConstantValue.Value == null) ||
+                    (operation.Right.ConstantValue.HasValue && operation.Right.ConstantValue.Value == null))
                 {
-                    switch (methodSymbol.Parameters.Length)
-                    {
-                        case 3:
-                            // (string, string, StringComparison) is acceptable
-                            return methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_String &&
-                                methodSymbol.Parameters[1].Type.SpecialType == SpecialType.System_String &&
-                                methodSymbol.Parameters[2].Type.Equals(stringComparisonType);
-                        case 6:
-                            // (string, int, string, int, int, StringComparison) is acceptable
-                            return methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_String &&
-                                methodSymbol.Parameters[1].Type.SpecialType == SpecialType.System_Int32 &&
-                                methodSymbol.Parameters[2].Type.SpecialType == SpecialType.System_String &&
-                                methodSymbol.Parameters[3].Type.SpecialType == SpecialType.System_Int32 &&
-                                methodSymbol.Parameters[4].Type.SpecialType == SpecialType.System_Int32 &&
-                                methodSymbol.Parameters[5].Type.Equals(stringComparisonType);
-                    }
+                    return; 
                 }
-                else if (string.Equals(methodSymbol.Name, EqualsMethodName, StringComparison.Ordinal))
-                {
-                    switch (methodSymbol.Parameters.Length)
-                    {
-                        case 2:
-                            // (object, object) is acceptable
-                            return methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_Object &&
-                                methodSymbol.Parameters[1].Type.SpecialType == SpecialType.System_Object;
-                        case 3:
-                            // (string, string, StringComparison) is acceptable
-                            return methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_String &&
-                                methodSymbol.Parameters[1].Type.SpecialType == SpecialType.System_String &&
-                                methodSymbol.Parameters[2].Type.Equals(stringComparisonType);
-                    }
-                }
-
-                // all other overloads are unacceptable
-                return false;
+                reportDiagnostic(Diagnostic.Create(Rule, GetOperatorTokenLocation(operation.Syntax)));
             }
+        }
 
-            protected static bool IsOrdinalOrOrdinalIgnoreCase(string name)
+        private static bool IsEqualsOrCompare(string methodName)
+        {
+            return string.Equals(methodName, EqualsMethodName, StringComparison.Ordinal) ||
+                string.Equals(methodName, CompareMethodName, StringComparison.Ordinal);
+        }
+
+        private static bool IsAcceptableOverload(IMethodSymbol methodSymbol, INamedTypeSymbol stringComparisonType)
+        {
+            return methodSymbol.IsStatic
+                ? IsAcceptableStaticOverload(methodSymbol, stringComparisonType)
+                : IsAcceptableInstanceOverload(methodSymbol, stringComparisonType);
+        }
+
+        private static bool IsAcceptableInstanceOverload(IMethodSymbol methodSymbol, INamedTypeSymbol stringComparisonType)
+        {
+            if (string.Equals(methodSymbol.Name, EqualsMethodName, StringComparison.Ordinal))
             {
-                return string.Compare(name, OrdinalText, StringComparison.Ordinal) == 0 ||
-                    string.Compare(name, OrdinalIgnoreCaseText, StringComparison.Ordinal) == 0;
+                switch (methodSymbol.Parameters.Length)
+                {
+                    case 1:
+                        // the instance method .Equals(object) is OK
+                        return methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_Object;
+                    case 2:
+                        return methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_String &&
+                            methodSymbol.Parameters[1].Type.Equals(stringComparisonType);
+                }
             }
+
+            // all other overloads are unacceptable
+            return false;
+        }
+
+        private static bool IsAcceptableStaticOverload(IMethodSymbol methodSymbol, INamedTypeSymbol stringComparisonType)
+        {
+            if (string.Equals(methodSymbol.Name, CompareMethodName, StringComparison.Ordinal))
+            {
+                switch (methodSymbol.Parameters.Length)
+                {
+                    case 3:
+                        // (string, string, StringComparison) is acceptable
+                        return methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_String &&
+                            methodSymbol.Parameters[1].Type.SpecialType == SpecialType.System_String &&
+                            methodSymbol.Parameters[2].Type.Equals(stringComparisonType);
+                    case 6:
+                        // (string, int, string, int, int, StringComparison) is acceptable
+                        return methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_String &&
+                            methodSymbol.Parameters[1].Type.SpecialType == SpecialType.System_Int32 &&
+                            methodSymbol.Parameters[2].Type.SpecialType == SpecialType.System_String &&
+                            methodSymbol.Parameters[3].Type.SpecialType == SpecialType.System_Int32 &&
+                            methodSymbol.Parameters[4].Type.SpecialType == SpecialType.System_Int32 &&
+                            methodSymbol.Parameters[5].Type.Equals(stringComparisonType);
+                }
+            }
+            else if (string.Equals(methodSymbol.Name, EqualsMethodName, StringComparison.Ordinal))
+            {
+                switch (methodSymbol.Parameters.Length)
+                {
+                    case 2:
+                        // (object, object) is acceptable
+                        return methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_Object &&
+                            methodSymbol.Parameters[1].Type.SpecialType == SpecialType.System_Object;
+                    case 3:
+                        // (string, string, StringComparison) is acceptable
+                        return methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_String &&
+                            methodSymbol.Parameters[1].Type.SpecialType == SpecialType.System_String &&
+                            methodSymbol.Parameters[2].Type.Equals(stringComparisonType);
+                }
+            }
+
+            // all other overloads are unacceptable
+            return false;
+        }
+
+        private static bool IsOrdinalOrOrdinalIgnoreCase(string name)
+        {
+            return string.Compare(name, OrdinalText, StringComparison.Ordinal) == 0 ||
+                string.Compare(name, OrdinalIgnoreCaseText, StringComparison.Ordinal) == 0;
         }
     }
 }

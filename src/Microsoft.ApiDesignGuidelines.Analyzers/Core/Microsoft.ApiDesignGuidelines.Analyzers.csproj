@@ -214,7 +214,6 @@
     <Compile Include="OverrideEqualsAndOperatorEqualsOnValueTypes.cs" />
     <Compile Include="OverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.cs" />
     <Compile Include="PropertiesShouldNotReturnArrays.cs" />
-    <Compile Include="PropertiesShouldNotReturnArrays.Fixer.cs" />
     <Compile Include="AssembliesShouldHaveValidStrongNames.cs" />
     <Compile Include="AssembliesShouldHaveValidStrongNames.Fixer.cs" />
     <Compile Include="OverrideGetHashCodeOnOverridingEquals.Fixer.cs" />

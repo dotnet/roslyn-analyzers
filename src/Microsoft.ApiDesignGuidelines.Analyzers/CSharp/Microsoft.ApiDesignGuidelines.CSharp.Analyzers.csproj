@@ -138,7 +138,6 @@
     <Compile Include="CSharpUseEventsWhereAppropriate.cs" />
     <Compile Include="CSharpUseEventsWhereAppropriate.Fixer.cs" />
     <Compile Include="CSharpImplementStandardExceptionConstructors.cs" />
-    <Compile Include="CSharpImplementStandardExceptionConstructors.Fixer.cs" />
     <Compile Include="CSharpAvoidEmptyInterfaces.cs" />
     <Compile Include="CSharpAvoidEmptyInterfaces.Fixer.cs" />
     <Compile Include="CSharpProvideObsoleteAttributeMessage.cs" />

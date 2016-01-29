@@ -183,6 +183,7 @@
     <Compile Include="MarkAttributesWithAttributeUsageTests.cs" />
     <Compile Include="DefineAccessorsForAttributeArgumentsTests.cs" />
     <Compile Include="DefineAccessorsForAttributeArgumentsTests.Fixer.cs" />
+    <Compile Include="UseIntegralOrStringArgumentForIndexersTests.cs" />
     <Compile Include="UsePropertiesWhereAppropriateTests.cs" />
     <Compile Include="UsePropertiesWhereAppropriateTests.Fixer.cs" />
     <Compile Include="InterfaceMethodsShouldBeCallableByChildTypesTests.cs" />

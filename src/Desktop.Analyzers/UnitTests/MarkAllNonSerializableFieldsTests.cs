@@ -34,9 +34,14 @@ namespace Desktop.Analyzers.UnitTests
                     public string s1;
                     internal string s2;
                     private string s3;
+
                     public int i1;
                     internal int i2;
                     private int i3;
+
+                    public bool b1;
+                    internal bool b2;
+                    private bool b3;
                 }");
 
             VerifyBasic(@"
@@ -45,13 +50,119 @@ namespace Desktop.Analyzers.UnitTests
                 <Serializable>
                 Public Class CA2235WithOnlyPrimitiveFields 
 
-                    Public s1 As String;
-                    Friend s2 As String;
-                    Private s3 As String;
-                    Public i1 As Integer;
-                    Friend i2 As Integer;
-                    Private i3 As Integer;
+                    Public s1 As String
+                    Friend s2 As String
+                    Private s3 As String
+
+                    Public i1 As Integer
+                    Friend i2 As Integer
+                    Private i3 As Integer
+
+                    Public b1 As Boolean
+                    Friend b2 As Boolean
+                    Private b3 As Boolean
                 End Class");
+        }
+
+        [Fact]
+        public void CA2235WithConstPrimitiveFields()
+        {
+            VerifyCSharp(@"
+                using System;
+    
+                [Serializable]
+                public class CA2235WithConstPrimitiveFields
+                {
+                    public const int i1 = 42;
+                    internal const int i2 = 54;
+                    private const int i3 = 96;
+                }");
+
+            VerifyBasic(@"
+                Imports System
+
+                <Serializable>
+                Public Class CA2235WithConstPrimitiveFields 
+
+                    Public Const i1 As Integer = 42
+                    Friend Const i2 As Integer = 54
+                    Private Const i3 As Integer = 96
+                End Class");
+        }
+
+        [Fact]
+        public void CA2235WithPrimitiveGetOnlyProperties()
+        {
+            VerifyCSharp(@"
+                using System;
+    
+                [Serializable]
+                public class CA2235WithPrimitiveGetOnlyProperties
+                {
+                    public int I1 { get; } = 42;
+                    internal int I2 { get; } = 54;
+                    private int I3 { get; } = 96;
+                }");
+
+            VerifyBasic(@"
+                Imports System
+
+                <Serializable>
+                Public Class CA2235WithPrimitiveGetOnlyProperties 
+
+                    Public Property I1 As Integer
+                        Get
+                            Return 42
+                        End Get
+                    End Property
+
+                    Friend Property I2 As Integer
+                        Get
+                            Return 54
+                        End Get
+                    End Property
+
+                    Private Const i3 As Integer
+                        Get
+                            Return 96
+                        End Get
+                    End Property
+
+                   ' Using auto-implemented property syntax
+                    Public Property I1 As Integer = 42
+                    Friend Property I2 As Integer = 54
+                    Private Const i3 As Integer = 96
+                End Class");
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/3898")]
+        public void CA2235WithSerializableLibraryTypes()
+        {
+            VerifyCSharp(@"
+                using System;
+                using System.Text.RegularExpressions;
+
+                [Serializable]
+                public class CA2235WithSerializableLibraryTypes
+                {
+                    public Regex R = new Regex(""\w+"");
+                    public Nullable<int> NI = new Nullable<int>(42);
+                    public bool? NB = true;
+                    public Version V = new Version(1, 1, 12, 2);
+                }");
+
+            VerifyBasic(@"
+                Imports System
+                Imports System.Text.RegularExpressions
+
+                <Serializable>
+                Public Class CA2235WithSerializableLibraryTypes
+
+                    Public R As Regex = New Regex(""\w+"")
+                    Public NI As Nullable(Of Integer)  = new Nullable(Of Integer)(42)
+                    Public NB As Boolean? = true
+                    Public V As Version = New Version(1, 1, 12, 2)
+                }");
         }
 
         [Fact]
@@ -241,7 +352,7 @@ namespace Desktop.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2235AutoProperties()
+        public void CA2235WithNonSerializableAutoProperties()
         {
             VerifyCSharp(@"
                 using System;
@@ -251,12 +362,12 @@ namespace Desktop.Analyzers.UnitTests
                 public class SerializableType { }
     
                 [Serializable]
-                internal class CA2235WithAutoProperties
+                internal class CA2235WithNonSerializableAutoProperties
                 {
                     public SerializableType s1;
                     internal NonSerializableType s2 {get; set; }
                 }",
-                GetCA2235CSharpResultAt(12, 50, "s2", "CA2235WithAutoProperties", "NonSerializableType"));
+                GetCA2235CSharpResultAt(12, 50, "s2", "CA2235WithNonSerializableAutoProperties", "NonSerializableType"));
 
             VerifyBasic(@"
                 Imports System
@@ -267,11 +378,11 @@ namespace Desktop.Analyzers.UnitTests
                 End Class
 
                 <Serializable>
-                Friend Class CA2235WithAutoProperties 
+                Friend Class CA2235WithNonSerializableAutoProperties 
                     Public s1 As SerializableType
                     Friend Property s2 As NonSerializableType
                 End Class",
-                GetCA2235BasicResultAt(12, 37, "s2", "CA2235WithAutoProperties", "NonSerializableType"));
+                GetCA2235BasicResultAt(12, 37, "s2", "CA2235WithNonSerializableAutoProperties", "NonSerializableType"));
         }
 
         internal static string CA2235Name = SerializationRulesDiagnosticAnalyzer.RuleCA2235Id;

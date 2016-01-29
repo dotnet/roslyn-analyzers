@@ -6,11 +6,12 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
-{                   
+{
     /// <summary>
     /// CA1819: Properties should not return arrays
     /// </summary>
-    public abstract class PropertiesShouldNotReturnArraysAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class PropertiesShouldNotReturnArraysAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1819";
 
@@ -26,14 +27,28 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/0fss9skc.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            
+            analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Property);
+
+        }
+
+        private void AnalyzeSymbol(SymbolAnalysisContext context)
+        {
+            var symbol = (IPropertySymbol)context.Symbol;
+            if (symbol.Type.TypeKind == TypeKind.Array && !symbol.IsOverride)
+            {
+                if (symbol.GetResultantVisibility() == SymbolVisibility.Public && !symbol.ContainingType.IsAttribute())
+                {
+                    context.ReportDiagnostic(symbol.CreateDiagnostic(Rule));
+                }
+            }
+
         }
     }
 }

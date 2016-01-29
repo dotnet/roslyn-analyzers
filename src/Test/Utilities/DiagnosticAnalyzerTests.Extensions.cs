@@ -169,18 +169,23 @@ namespace Microsoft.CodeAnalysis.UnitTests
         }
 
         private static string GetResultMethodName(Diagnostic diagnostic)
-        {  
-            if (diagnostic.Location.IsInSource)  
-            {  
-                return diagnostic.Location.SourceTree.FilePath.EndsWith(".cs", StringComparison.OrdinalIgnoreCase) ? "GetCSharpResultAt" : "GetBasicResultAt";  
-            }  
-        
-            return "GetResultAt";  
+        {
+            if (diagnostic.Location.IsInSource)
+            {
+                return diagnostic.Location.SourceTree.FilePath.EndsWith(".cs", StringComparison.OrdinalIgnoreCase) ? "GetCSharpResultAt" : "GetBasicResultAt";
+            }
+
+            return "GetResultAt";
         }
 
         private static string FormatDiagnostics(DiagnosticAnalyzer analyzer, IEnumerable<Diagnostic> diagnostics)
         {
             return FormatDiagnostics(analyzer, diagnostics.ToArray());
+        }
+
+        public static DiagnosticAnalyzerTestBase.FileAndSource[] ToFileAndSource(this string[] sources)
+        {
+            return sources.Select(s => new DiagnosticAnalyzerTestBase.FileAndSource() { FilePath = null, Source = s }).ToArray();
         }
     }
 }

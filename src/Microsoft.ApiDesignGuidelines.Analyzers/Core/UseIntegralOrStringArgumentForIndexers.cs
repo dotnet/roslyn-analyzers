@@ -31,7 +31,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182180.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
-        private static SpecialType[] allowedTypes = new SpecialType[] {
+        private static readonly SpecialType[] allowedTypes = new SpecialType[] {
                         SpecialType.System_String,
                         SpecialType.System_Int16,
                         SpecialType.System_Int32,

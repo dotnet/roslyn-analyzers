@@ -151,7 +151,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MarkAssembliesWithNeutralResourcesLanguageTests.cs" />
-    <Compile Include="MarkAssembliesWithNeutralResourcesLanguageTests.Fixer.cs" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

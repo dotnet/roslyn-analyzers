@@ -13,5 +13,16 @@ Namespace Microsoft.ApiDesignGuidelines.Analyzers
     Public NotInheritable Class BasicImplementStandardExceptionConstructorsAnalyzer
         Inherits ImplementStandardExceptionConstructorsAnalyzer
 
+        Protected Overrides Function GetConstructorSignatureStringAndExceptionTypeParameter(symbol As ISymbol) As String
+            Return "Public Sub New(message As String, innerException As Exception)"
+        End Function
+
+        Protected Overrides Function GetConstructorSignatureStringTypeParameter(symbol As ISymbol) As String
+            Return "Public Sub New(message As String)"
+        End Function
+
+        Protected Overrides Function GetConstructorSignatureNoParameter(symbol As ISymbol) As String
+            Return "Public Sub New()"
+        End Function
     End Class
 End Namespace

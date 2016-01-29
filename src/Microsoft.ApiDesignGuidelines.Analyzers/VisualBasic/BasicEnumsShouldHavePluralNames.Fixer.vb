@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace System.Runtime.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
-    ''' CA1820: Test for empty strings using string length
+    ''' CA1714: Flags enums should have plural names
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
-    Public NotInheritable Class BasicTestForEmptyStringsUsingStringLengthFixer
-        Inherits TestForEmptyStringsUsingStringLengthFixer
+    Public NotInheritable Class BasicEnumsShouldHavePluralNamesFixer
+        Inherits EnumsShouldHavePluralNamesFixer
 
     End Class
 End Namespace

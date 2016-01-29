@@ -96,32 +96,5 @@ namespace System.Threading.Tasks.Analyzers {
                 return ResourceManager.GetString("DoNotCreateTasksWithoutPassingATaskSchedulerTitle", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to #N/A.
-        /// </summary>
-        internal static string DoNotDirectlyAwaitATaskDescription {
-            get {
-                return ResourceManager.GetString("DoNotDirectlyAwaitATaskDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do not directly await a Task.
-        /// </summary>
-        internal static string DoNotDirectlyAwaitATaskMessage {
-            get {
-                return ResourceManager.GetString("DoNotDirectlyAwaitATaskMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do not directly await a Task.
-        /// </summary>
-        internal static string DoNotDirectlyAwaitATaskTitle {
-            get {
-                return ResourceManager.GetString("DoNotDirectlyAwaitATaskTitle", resourceCulture);
-            }
-        }
     }
 }

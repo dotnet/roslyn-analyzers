@@ -2,23 +2,23 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Editing;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
+using System.Threading.Tasks;     
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.Editing;
 
-namespace System.Runtime.Analyzers
+namespace Microsoft.ApiDesignGuidelines.Analyzers
 {                              
     /// <summary>
-    /// CA1820: Test for empty strings using string length
+    /// CA1714: Flags enums should have plural names
     /// </summary>
-    public abstract class TestForEmptyStringsUsingStringLengthFixer : CodeFixProvider
+    public abstract class EnumsShouldHavePluralNamesFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(TestForEmptyStringsUsingStringLengthAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, EnumsShouldHavePluralNamesAnalyzer.RuleId_NoPlural);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

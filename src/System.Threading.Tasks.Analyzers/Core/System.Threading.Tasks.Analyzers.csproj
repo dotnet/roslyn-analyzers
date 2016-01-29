@@ -101,8 +101,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SystemThreadingTasksAnalyzersResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="DoNotDirectlyAwaitATask.cs" />
-    <Compile Include="DoNotDirectlyAwaitATask.Fixer.cs" />
     <Compile Include="DoNotCreateTasksWithoutPassingATaskScheduler.cs" />
     <Compile Include="DoNotCreateTasksWithoutPassingATaskScheduler.Fixer.cs" />
     <Compile Include="DiagnosticCategory.cs" />

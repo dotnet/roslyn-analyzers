@@ -6,28 +6,28 @@ using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 
-namespace System.Runtime.Analyzers.UnitTests
+namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 {
-    public class DisposableTypesShouldDeclareFinalizerFixerTests : CodeFixTestBase
+    public class EnumsShouldHavePluralNamesFixerTests : CodeFixTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new DisposableTypesShouldDeclareFinalizerAnalyzer();
+            return new EnumsShouldHavePluralNamesAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new DisposableTypesShouldDeclareFinalizerAnalyzer();
+            return new EnumsShouldHavePluralNamesAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
-            return new BasicDisposableTypesShouldDeclareFinalizerFixer();
+            return new BasicEnumsShouldHavePluralNamesFixer();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new CSharpDisposableTypesShouldDeclareFinalizerFixer();
+            return new CSharpEnumsShouldHavePluralNamesFixer();
         }
     }
 }

@@ -7,14 +7,14 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace System.Runtime.Analyzers
+namespace Microsoft.ApiDesignGuidelines.Analyzers
 {                                 
     /// <summary>
-    /// CA1820: Test for empty strings using string length
+    /// CA1714: Flags enums should have plural names
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
-    public class CSharpTestForEmptyStringsUsingStringLengthFixer : TestForEmptyStringsUsingStringLengthFixer
+    public sealed class CSharpEnumsShouldHavePluralNamesFixer : EnumsShouldHavePluralNamesFixer
     { 
-
+        
     }
 }

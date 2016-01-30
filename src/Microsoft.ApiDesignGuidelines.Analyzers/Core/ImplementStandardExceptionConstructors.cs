@@ -109,49 +109,36 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         //reaches here only when all 3 constructors are found - no diagnostic needed 
                         return;
                     }
-
                 } //end of for loop
 
                 if (!defaultConstructorFound) //missing default constructor
                 {
-                    //store MissingCtorSignature enum type into dictionary, to set diagnostic property. This is needed because Diagnostic is immutable
-                    var builder = ImmutableDictionary.CreateBuilder<string, string>();
-                    builder.Add("Signature", MissingCtorSignature.CtorWithNoParameter.ToString());
-
-                    //create dignostic and store signature into diagnostic property for fixer
-                    var diagnostic = namedTypeSymbol.Locations.CreateDiagnostic(MissingConstructorRule, builder.ToImmutableDictionary(), namedTypeSymbol.Name, GetConstructorSignatureNoParameter(namedTypeSymbol));
-
-                    //report diagnostic
-                    context.ReportDiagnostic(diagnostic);
+                    BuildDiagnostic(context, namedTypeSymbol, MissingCtorSignature.CtorWithNoParameter, GetConstructorSignatureNoParameter(namedTypeSymbol));
                 }
 
                 if (!secondConstructorFound) //missing constructor with string parameter
                 {
-                    //store MissingCtorSignature enum type into dictionary, to set diagnostic property. This is needed because Diagnostic is immutable
-                    var builder = ImmutableDictionary.CreateBuilder<string, string>();
-                    builder.Add("Signature", MissingCtorSignature.CtorWithStringParameter.ToString());
-
-                    //create dignostic and store signature into diagnostic property for fixer
-                    var diagnostic = namedTypeSymbol.Locations.CreateDiagnostic(MissingConstructorRule, builder.ToImmutableDictionary(), namedTypeSymbol.Name, GetConstructorSignatureStringTypeParameter(namedTypeSymbol));
-
-                    //report diagnostic
-                    context.ReportDiagnostic(diagnostic);
+                    BuildDiagnostic(context, namedTypeSymbol, MissingCtorSignature.CtorWithStringParameter, GetConstructorSignatureStringTypeParameter(namedTypeSymbol));
                 }
 
                 if (!thirdConstructorFound) //missing constructor with string and exception type parameter - report diagnostic
                 {
-                    //store MissingCtorSignature enum type into dictionary, to set diagnostic property. This is needed because Diagnostic is immutable
-                    var builder = ImmutableDictionary.CreateBuilder<string, string>();
-                    builder.Add("Signature", MissingCtorSignature.CtorWithStringAndExceptionParameters.ToString());
-
-                    //create dignostic and store signature into diagnostic property for fixer
-                    var diagnostic = namedTypeSymbol.Locations.CreateDiagnostic(MissingConstructorRule, builder.ToImmutableDictionary(), namedTypeSymbol.Name, GetConstructorSignatureStringAndExceptionTypeParameter(namedTypeSymbol));
-
-                    //report diagnostic
-                    context.ReportDiagnostic(diagnostic);
+                    BuildDiagnostic(context, namedTypeSymbol, MissingCtorSignature.CtorWithStringAndExceptionParameters, GetConstructorSignatureStringAndExceptionTypeParameter(namedTypeSymbol));
                 }
-
             }
+        }
+
+        private void BuildDiagnostic(SymbolAnalysisContext context, INamedTypeSymbol namedTypeSymbol, MissingCtorSignature missingCtorSignature, string constructorSignature)
+        {
+            //store MissingCtorSignature enum type into dictionary, to set diagnostic property. This is needed because Diagnostic is immutable
+            var builder = ImmutableDictionary.CreateBuilder<string, string>();
+            builder.Add("Signature", missingCtorSignature.ToString());
+
+            //create dignostic and store signature into diagnostic property for fixer
+            var diagnostic = namedTypeSymbol.Locations.CreateDiagnostic(MissingConstructorRule, builder.ToImmutableDictionary(), namedTypeSymbol.Name, constructorSignature);
+
+            //report diagnostic
+            context.ReportDiagnostic(diagnostic);
         }
     }
 }

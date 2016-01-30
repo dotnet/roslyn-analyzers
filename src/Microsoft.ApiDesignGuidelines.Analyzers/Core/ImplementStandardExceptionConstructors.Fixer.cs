@@ -67,47 +67,45 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 // Identify what is the signature of the missing constructor from diagnostic signature property that was filled in by the analyzer
                 var missingCtorSignature = (ImplementStandardExceptionConstructorsAnalyzer.MissingCtorSignature)Enum.Parse(typeof(ImplementStandardExceptionConstructorsAnalyzer.MissingCtorSignature), diagnostic.Properties["Signature"]);
 
-                if (missingCtorSignature == ImplementStandardExceptionConstructorsAnalyzer.MissingCtorSignature.CtorWithNoParameter)
+                switch (missingCtorSignature)
                 {
-                    // Add missing CtorWithNoParameter
-                    var newConstructorNode = generator.ConstructorDeclaration(typeSymbol.Name, accessibility: Accessibility.Public);
-                    editor.AddMember(targetNode, newConstructorNode);
-                }
-
-                if (missingCtorSignature == ImplementStandardExceptionConstructorsAnalyzer.MissingCtorSignature.CtorWithStringParameter)
-                {
-                    // Add missing CtorWithStringParameter 
-                    var newConstructorNode = generator.ConstructorDeclaration(
-                                                containingTypeName: typeSymbol.Name,
-                                                parameters: new[]
-                                                {
+                    case ImplementStandardExceptionConstructorsAnalyzer.MissingCtorSignature.CtorWithNoParameter:
+                        // Add missing CtorWithNoParameter
+                        var newConstructorNode1 = generator.ConstructorDeclaration(typeSymbol.Name, accessibility: Accessibility.Public);
+                        editor.AddMember(targetNode, newConstructorNode1);
+                        break;
+                    case ImplementStandardExceptionConstructorsAnalyzer.MissingCtorSignature.CtorWithStringParameter:
+                        // Add missing CtorWithStringParameter 
+                        var newConstructorNode2 = generator.ConstructorDeclaration(
+                                                    containingTypeName: typeSymbol.Name,
+                                                    parameters: new[]
+                                                    {
                                                     generator.ParameterDeclaration("message", generator.TypeExpression(WellKnownTypes.String(editor.SemanticModel.Compilation)))
-                                                },
-                                                accessibility: Accessibility.Public,
-                                                baseConstructorArguments: new[]
-                                                {
+                                                    },
+                                                    accessibility: Accessibility.Public,
+                                                    baseConstructorArguments: new[]
+                                                    {
                                                     generator.Argument(generator.IdentifierName("message"))
-                                                });
-                    editor.AddMember(targetNode, newConstructorNode);
-                }
-
-                if (missingCtorSignature == ImplementStandardExceptionConstructorsAnalyzer.MissingCtorSignature.CtorWithStringAndExceptionParameters)
-                {
-                    // Add missing CtorWithStringAndExceptionParameters 
-                    var newConstructorNode = generator.ConstructorDeclaration(
-                                                containingTypeName: typeSymbol.Name,
-                                                parameters: new[]
-                                                {
+                                                    });
+                        editor.AddMember(targetNode, newConstructorNode2);
+                        break;
+                    case ImplementStandardExceptionConstructorsAnalyzer.MissingCtorSignature.CtorWithStringAndExceptionParameters:
+                        // Add missing CtorWithStringAndExceptionParameters 
+                        var newConstructorNode3 = generator.ConstructorDeclaration(
+                                                    containingTypeName: typeSymbol.Name,
+                                                    parameters: new[]
+                                                    {
                                                     generator.ParameterDeclaration("message", generator.TypeExpression(WellKnownTypes.String(editor.SemanticModel.Compilation))),
                                                     generator.ParameterDeclaration("innerException", generator.TypeExpression(WellKnownTypes.Exception(editor.SemanticModel.Compilation)))
-                                                },
-                                                accessibility: Accessibility.Public,
-                                                baseConstructorArguments: new[]
-                                                {
+                                                    },
+                                                    accessibility: Accessibility.Public,
+                                                    baseConstructorArguments: new[]
+                                                    {
                                                     generator.Argument(generator.IdentifierName("message")),
                                                     generator.Argument(generator.IdentifierName("innerException"))
-                                                });
-                    editor.AddMember(targetNode, newConstructorNode);
+                                                    });
+                        editor.AddMember(targetNode, newConstructorNode3);
+                        break;
                 }
             }
 

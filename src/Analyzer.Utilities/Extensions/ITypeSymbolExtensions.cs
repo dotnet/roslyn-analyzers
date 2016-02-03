@@ -93,14 +93,14 @@ namespace Analyzer.Utilities
             }
         }
 
-        public static bool DerivesFrom(this ITypeSymbol symbol, ITypeSymbol candidateBaseType, bool baseTypesOnly = false)
+        public static bool DerivesFrom(this ITypeSymbol symbol, INamedTypeSymbol candidateBaseType, bool baseTypesOnly = false)
         {
             if (candidateBaseType == null)
             {
                 return false;
             }
 
-            if (!baseTypesOnly && symbol.AllInterfaces.As<ITypeSymbol>().Contains(candidateBaseType))
+            if (!baseTypesOnly && symbol.AllInterfaces.Contains(candidateBaseType ))
             {
                 return true;
             }

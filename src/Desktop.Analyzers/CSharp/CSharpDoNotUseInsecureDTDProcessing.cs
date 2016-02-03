@@ -11,7 +11,7 @@ using Analyzer.Utilities;
 namespace Desktop.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CSharpDoNotUseInsecureDTDProcessingAnalyzer : DoNotUseInsecureDTDProcessingAnalyzer<SyntaxKind>
+    public sealed class CSharpDoNotUseInsecureDTDProcessingAnalyzer : DoNotUseInsecureDTDProcessingAnalyzer<SyntaxKind>
     {
         protected override void RegisterAnalyzer(CodeBlockStartAnalysisContext<SyntaxKind> context, CompilationSecurityTypes types, Version frameworkVersion)
         {

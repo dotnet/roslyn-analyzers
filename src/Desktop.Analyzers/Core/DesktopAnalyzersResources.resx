@@ -411,4 +411,8 @@
     <value>XmlTextReader instance in {0} is set with insecure values.</value>
     <comment>CA3075</comment>
   </data>
+  <data name="DoNotUseInsecureDTDProcessingGenericMessage" xml:space="preserve">
+    <value>{0}</value>
+    <comment>CA3075</comment>
+  </data>
 </root>

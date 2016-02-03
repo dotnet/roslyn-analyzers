@@ -242,6 +242,15 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}.
+        /// </summary>
+        internal static string DoNotUseInsecureDTDProcessingGenericMessage {
+            get {
+                return ResourceManager.GetString("DoNotUseInsecureDTDProcessingGenericMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} uses the unsafe setter of InnerXml property of System.Xml.XmlDocument..
         /// </summary>
         internal static string DoNotUseSetInnerXmlMessage {

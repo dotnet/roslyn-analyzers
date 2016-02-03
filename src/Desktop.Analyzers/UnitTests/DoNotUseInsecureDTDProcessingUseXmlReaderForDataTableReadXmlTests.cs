@@ -27,7 +27,7 @@ using System.IO;
 using System.Xml;
 using System.Data;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class UseXmlReaderForDataTableReadXml
     {
@@ -47,7 +47,7 @@ Imports System.IO
 Imports System.Xml
 Imports System.Data
 
-Namespace FxCopUnsafeXml
+Namespace TestNamespace
     Public Class UseXmlReaderForDataTableReadXml
         Public Sub TestMethod(stream As Stream)
             Dim table As New DataTable()
@@ -105,24 +105,24 @@ using System.Data;
 
 class TestClass
 {
-DataTable privateDoc;
-public DataTable GetDoc
+    DataTable privateDoc;
+    public DataTable GetDoc
+    {
+        set
         {
-            set
+            if (value == null)
             {
-                if (value == null)
-                {
-                    var src = """";
-                    DataTable dt = new DataTable();
-                    dt.ReadXml(src);
-                    privateDoc = dt;
-                }
-                else
-                    privateDoc = value;
+                var src = """";
+                DataTable dt = new DataTable();
+                dt.ReadXml(src);
+                privateDoc = dt;
             }
+            else
+                privateDoc = value;
         }
+    }
 }",
-                GetCA3075DataTableReadXmlCSharpResultAt(15, 21, "set_GetDoc")
+                GetCA3075DataTableReadXmlCSharpResultAt(15, 17, "set_GetDoc")
             );
 
             VerifyBasic(@"
@@ -366,7 +366,7 @@ End Class",
 using System.Xml;
 using System.Data;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class UseXmlReaderForDataTableReadXml
     {
@@ -384,7 +384,7 @@ namespace FxCopUnsafeXml
 Imports System.Xml
 Imports System.Data
 
-Namespace FxCopUnsafeXml
+Namespace TestNamespace
     Public Class UseXmlReaderForDataTableReadXml
         Public Sub TestMethod(reader As XmlReader)
             Dim table As New DataTable()

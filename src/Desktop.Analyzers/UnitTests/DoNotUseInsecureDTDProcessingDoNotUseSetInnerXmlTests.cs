@@ -18,7 +18,7 @@ namespace Desktop.Analyzers.UnitTests
 using System.Xml;
 using System.Data;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class DoNotUseSetInnerXml
     {
@@ -36,7 +36,7 @@ namespace FxCopUnsafeXml
 Imports System.Xml
 Imports System.Data
 
-Namespace FxCopUnsafeXml
+Namespace TestNamespace
     Public Class DoNotUseSetInnerXml
         Public Sub TestMethod(xml As String)
             Dim doc As New XmlDocument() With { _
@@ -371,7 +371,7 @@ End Class",
 using System.Xml;
 using System.Data;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class DoNotUseSetInnerXml
     {
@@ -392,7 +392,7 @@ namespace FxCopUnsafeXml
 Imports System.Xml
 Imports System.Data
 
-Namespace FxCopUnsafeXml
+Namespace TestNamespace
     Public Class DoNotUseSetInnerXml
         Public Sub TestMethod(xml As String)
             Dim doc As New XmlDocument() With { _
@@ -413,7 +413,7 @@ End Namespace",
 using System.Xml;
 using System.Data;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class DoNotUseSetInnerXml
     {
@@ -431,7 +431,7 @@ namespace FxCopUnsafeXml
 Imports System.Xml
 Imports System.Data
 
-Namespace FxCopUnsafeXml
+Namespace TestNamespace
     Public Class DoNotUseSetInnerXml
         Public Sub TestMethod(xml As String)
             Dim doc As New XmlDataDocument() With { _
@@ -767,7 +767,7 @@ End Class",
 using System.Xml;
 using System.Data;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class DoNotUseSetInnerXml
     {
@@ -788,7 +788,7 @@ namespace FxCopUnsafeXml
 Imports System.Xml
 Imports System.Data
 
-Namespace FxCopUnsafeXml
+Namespace TestNamespace
     Public Class DoNotUseSetInnerXml
         Public Sub TestMethod(xml As String)
             Dim doc As New XmlDataDocument() With { _

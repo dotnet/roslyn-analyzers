@@ -379,34 +379,6 @@ End Namespace",
         }
 
         [Fact]
-        public void XmlDocumentNoResolverAsFieldShouldGenerateDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Xml;
-
-namespace TestNamespace
-{
-    public class TestClass
-    {
-        public XmlDocument Doc = new XmlDocument();
-    }
-}",
-                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(8, 28, "TestClass")
-            );
-
-            VerifyBasic(@"
-Imports System.Xml
-
-Namespace TestNamespace
-    Public Class TestClass
-        Public Doc As XmlDocument = New XmlDocument()
-    End Class
-End Namespace",
-                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(6, 16, "TestClass")
-            );
-        }
-
-        [Fact]
         public void XmlDocumentUseNonSecureResolverShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"

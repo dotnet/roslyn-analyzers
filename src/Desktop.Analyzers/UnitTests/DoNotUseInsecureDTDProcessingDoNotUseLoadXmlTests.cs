@@ -13,7 +13,7 @@ namespace Desktop.Analyzers.UnitTests
 
         private readonly string CA3075LoadXmlMessage = DesktopAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage;
 
-        protected override DiagnosticAnalyzer  GetBasicDiagnosticAnalyzer()
+        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new BasicDoNotUseInsecureDTDProcessingAnalyzer();
         }
@@ -39,7 +39,7 @@ namespace Desktop.Analyzers.UnitTests
             VerifyCSharp(@"
 using System.Xml;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class DoNotUseLoadXml
     {
@@ -351,7 +351,7 @@ End Class",
             VerifyCSharp(@"
 using System.Xml;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class DoNotUseLoadXml
     {
@@ -368,7 +368,7 @@ namespace FxCopUnsafeXml
             VerifyBasic(@"
 Imports System.Xml
 
-Namespace FxCopUnsafeXml
+Namespace TestNamespace
     Public Class DoNotUseLoadXml
         Public Sub TestMethod1(xml As String)
             Dim doc As New XmlDataDocument() With { _

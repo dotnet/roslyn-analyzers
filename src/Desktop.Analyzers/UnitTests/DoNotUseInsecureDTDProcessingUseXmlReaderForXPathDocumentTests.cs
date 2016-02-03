@@ -20,13 +20,13 @@ namespace Desktop.Analyzers.UnitTests
         }
 
         [Fact]
-        public void UseXPathDocumentShouldGenerateDiagnostic()
+        public void UseXPathDocumentWithoutReaderShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.Xml;
 using System.Xml.XPath;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class UseXmlReaderForXPathDocument
     {
@@ -44,7 +44,7 @@ namespace FxCopUnsafeXml
 Imports System.Xml
 Imports System.Xml.XPath
 
-Namespace FxCopUnsafeXml
+Namespace TestNamespace
     Public Class UseXmlReaderForXPathDocument
         Public Sub TestMethod(path As String)
             Dim doc As New XPathDocument(path)
@@ -56,7 +56,7 @@ End Namespace",
         }
 
         [Fact]
-        public void UseXPathDocumentInGetShouldGenerateDiagnostic()
+        public void UseXPathDocumentWithoutReaderInGetShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.Xml.XPath;
@@ -93,7 +93,7 @@ End Class",
         }
 
         [Fact]
-        public void UseXPathDocumentInSetShouldGenerateDiagnostic()
+        public void UseXPathDocumentWithoutReaderInSetShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.Xml.XPath;
@@ -141,7 +141,7 @@ End Class",
         }
 
         [Fact]
-        public void UseXPathDocumentInTryBlockShouldGenerateDiagnostic()
+        public void UseXPathDocumentWithoutReaderInTryBlockShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
   using System;
@@ -182,7 +182,7 @@ End Class",
         }
 
         [Fact]
-        public void UseXPathDocumentInCatchBlockShouldGenerateDiagnostic()
+        public void UseXPathDocumentWithoutReaderInCatchBlockShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
    using System;
@@ -222,7 +222,7 @@ End Class",
         }
 
         [Fact]
-        public void UseXPathDocumentInFinallyBlockShouldGenerateDiagnostic()
+        public void UseXPathDocumentWithoutReaderInFinallyBlockShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -263,7 +263,7 @@ End Class",
         }
 
         [Fact]
-        public void UseXPathDocumentInAsyncAwaitShouldGenerateDiagnostic()
+        public void UseXPathDocumentWithoutReaderInAsyncAwaitShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.Threading.Tasks;
@@ -309,7 +309,7 @@ End Class",
         }
 
         [Fact]
-        public void UseXPathDocumentInDelegateShouldGenerateDiagnostic()
+        public void UseXPathDocumentWithoutReaderInDelegateShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.Xml.XPath;
@@ -349,7 +349,7 @@ End Class",
 using System.Xml;
 using System.Xml.XPath;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class UseXmlReaderForXPathDocument
     {

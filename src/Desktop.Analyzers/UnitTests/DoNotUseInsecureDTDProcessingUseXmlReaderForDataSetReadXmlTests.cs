@@ -26,7 +26,7 @@ namespace Desktop.Analyzers.UnitTests
 using System.Xml;
 using System.Data;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class UseXmlReaderForDataSetReadXml
     {
@@ -45,7 +45,7 @@ namespace FxCopUnsafeXml
 Imports System.Xml
 Imports System.Data
 
-Namespace FxCopUnsafeXml
+Namespace TestNamespace
     Public Class UseXmlReaderForDataSetReadXml
         Public Sub TestMethod1214(path As String)
             Dim ds As New DataSet()
@@ -364,7 +364,7 @@ End Class",
 using System.Xml;
 using System.Data;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class UseXmlReaderForDataSetReadXml
     {
@@ -382,7 +382,7 @@ namespace FxCopUnsafeXml
 Imports System.Xml
 Imports System.Data
 
-Namespace FxCopUnsafeXml
+Namespace TestNamespace
     Public Class UseXmlReaderForDataSetReadXml
         Public Sub TestMethod1214Ok(reader As XmlReader)
             Dim ds As New DataSet()

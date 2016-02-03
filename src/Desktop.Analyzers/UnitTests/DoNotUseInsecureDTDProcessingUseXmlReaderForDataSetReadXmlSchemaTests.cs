@@ -25,7 +25,7 @@ namespace Desktop.Analyzers.UnitTests
             VerifyCSharp(@"
 using System.Data;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class UseXmlReaderForDataSetReadXmlSchema
     {
@@ -43,7 +43,7 @@ namespace FxCopUnsafeXml
             VerifyBasic(@"
 Imports System.Data
 
-Namespace FxCopUnsafeXml
+Namespace TestNamespace
     Public Class UseXmlReaderForDataSetReadXmlSchema
         Public Sub TestMethod(path As String)
             Dim ds As New DataSet()
@@ -362,7 +362,7 @@ End Class",
 using System.Xml;
 using System.Data;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class UseXmlReaderForDataSetReadXmlSchema
     {
@@ -380,7 +380,7 @@ namespace FxCopUnsafeXml
 Imports System.Xml
 Imports System.Data
 
-Namespace FxCopUnsafeXml
+Namespace TestNamespace
     Public Class UseXmlReaderForDataSetReadXmlSchema
         Public Sub TestMethod(reader As XmlReader)
             Dim ds As New DataSet()

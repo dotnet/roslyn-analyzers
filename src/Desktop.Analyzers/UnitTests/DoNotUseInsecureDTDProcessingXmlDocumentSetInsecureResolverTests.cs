@@ -31,11 +31,11 @@ namespace TestNamespace
 Imports System.Xml
 
 Namespace TestNamespace
-	Class TestClass
-		Private Shared Sub TestMethod(doc As XmlDocument)
-			doc.XmlResolver = Nothing
-		End Sub
-	End Class
+    Class TestClass
+        Private Shared Sub TestMethod(doc As XmlDocument)
+            doc.XmlResolver = Nothing
+        End Sub
+    End Class
 End Namespace");
         }
 
@@ -61,11 +61,11 @@ namespace TestNamespace
 Imports System.Xml
 
 Namespace TestNamespace
-	Class TestClass
-		Private Shared Sub TestMethod(doc As XmlDocument, resolver As XmlSecureResolver)
-			doc.XmlResolver = resolver
-		End Sub
-	End Class
+    Class TestClass
+        Private Shared Sub TestMethod(doc As XmlDocument, resolver As XmlSecureResolver)
+            doc.XmlResolver = resolver
+        End Sub
+    End Class
 End Namespace");
         }
         
@@ -104,11 +104,11 @@ Imports System.Security.Permissions
 Imports System.Xml
 
 Namespace TestNamespace
-	Class TestClass
-		Private Shared Sub TestMethod(doc As XmlDocument)
-			Dim myPermissions As New PermissionSet(PermissionState.None)
-			Dim permission As New WebPermission(PermissionState.None)
-			permission.AddPermission(NetworkAccess.Connect, ""http://www.contoso.com/"")
+    Class TestClass
+        Private Shared Sub TestMethod(doc As XmlDocument)
+            Dim myPermissions As New PermissionSet(PermissionState.None)
+            Dim permission As New WebPermission(PermissionState.None)
+            permission.AddPermission(NetworkAccess.Connect, ""http://www.contoso.com/"")
             permission.AddPermission(NetworkAccess.Connect, ""http://litwareinc.com/data/"")
             myPermissions.SetPermission(permission)
             Dim resolver As New XmlSecureResolver(New XmlUrlResolver(), myPermissions)
@@ -145,15 +145,15 @@ namespace TestNamespace
 Imports System.Xml
 
 Namespace TestNamespace
-	Class TestClass
-		Private Shared Sub TestMethod(doc As XmlDocument)
-			Try
-				doc.XmlResolver = Nothing
-			Catch
-				Throw
-			End Try
-		End Sub
-	End Class
+    Class TestClass
+        Private Shared Sub TestMethod(doc As XmlDocument)
+            Try
+                doc.XmlResolver = Nothing
+            Catch
+                Throw
+            End Try
+        End Sub
+    End Class
 End Namespace");
         }
 
@@ -262,11 +262,11 @@ namespace TestNamespace
 Imports System.Xml
 
 Namespace TestNamespace
-	Class TestClass
-		Private Shared Sub TestMethod(doc As XmlDocument, reader As XmlReader)
-			doc.Load(reader)
-		End Sub
-	End Class
+    Class TestClass
+        Private Shared Sub TestMethod(doc As XmlDocument, reader As XmlReader)
+            doc.Load(reader)
+        End Sub
+    End Class
 End Namespace");
         }
 
@@ -398,7 +398,6 @@ namespace TestNamespace
 {
     class TestClass
     {
-
         public void Method1()
         {
             Method2(new XmlDocument(){ XmlResolver = null });
@@ -407,6 +406,24 @@ namespace TestNamespace
         public void Method2(XmlDocument doc){}
     }
 }"
+            );
+
+            VerifyBasic(@"
+Imports System.Xml
+
+Namespace TestNamespace
+    Class TestClass
+
+        Public Sub Method1()
+            Method2(New XmlDocument() With { _
+                .XmlResolver = Nothing _
+            })
+        End Sub
+
+        Public Sub Method2(doc As XmlDocument)
+        End Sub
+    End Class
+End Namespace"
             );
         }
 

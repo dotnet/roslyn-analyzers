@@ -27,7 +27,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class UseXmlReaderForDeserialize
     {
@@ -46,7 +46,7 @@ Imports System.IO
 Imports System.Xml
 Imports System.Xml.Serialization
 
-Namespace FxCopUnsafeXml
+Namespace TestNamespace
     Public Class UseXmlReaderForDeserialize
         Public Sub TestMethod(stream As Stream)
             Dim serializer As New XmlSerializer(GetType(UseXmlReaderForDeserialize))
@@ -380,7 +380,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class UseXmlReaderForDeserialize
     {
@@ -398,7 +398,7 @@ Imports System.IO
 Imports System.Xml
 Imports System.Xml.Serialization
 
-Namespace FxCopUnsafeXml
+Namespace TestNamespace
     Public Class UseXmlReaderForDeserialize
         Public Sub TestMethod(reader As XmlTextReader)
             Dim serializer As System.Xml.Serialization.XmlSerializer = New XmlSerializer(GetType(UseXmlReaderForDeserialize))

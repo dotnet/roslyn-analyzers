@@ -27,7 +27,7 @@ namespace Desktop.Analyzers.UnitTests
             VerifyCSharp(@"
 using System.Data;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class ReviewDataViewConnectionString
     {
@@ -45,7 +45,7 @@ namespace FxCopUnsafeXml
             VerifyBasic(@"
 Imports System.Data
 
-Namespace FxCopUnsafeXml
+Namespace TestNamespace
     Public Class ReviewDataViewConnectionString
         Public Sub TestMethod(src As String)
             Dim ds As New DataSet()
@@ -363,7 +363,7 @@ End Class",
             VerifyCSharp(@"
 using System.Data;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class ReviewDataViewConnectionString
     {
@@ -381,7 +381,7 @@ namespace FxCopUnsafeXml
             VerifyBasic(@"
 Imports System.Data
 
-Namespace FxCopUnsafeXml
+Namespace TestNamespace
     Public Class ReviewDataViewConnectionString
         Public Sub TestMethod(src As String)
             Dim manager As New DataViewManager()

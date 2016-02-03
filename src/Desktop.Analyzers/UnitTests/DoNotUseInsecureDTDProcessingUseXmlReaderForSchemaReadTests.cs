@@ -9,27 +9,26 @@ namespace Desktop.Analyzers.UnitTests
 {
     public partial class DoNotUseInsecureDTDProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private DiagnosticResult GetCA3075CSharpResultAt(int line, int column, string name)
+        private DiagnosticResult GetCA3075SchemaReadCSharpResultAt(int line, int column, string name)
         {
             return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(CA3075LoadXmlMessage, name, "Read"));
         }
 
-        private DiagnosticResult GetCA3075BasicResultAt(int line, int column, string name)
+        private DiagnosticResult GetCA3075SchemaReadBasicResultAt(int line, int column, string name)
         {
             return GetBasicResultAt(line, column, CA3075RuleId, string.Format(CA3075LoadXmlMessage, name, "Read"));
         }
 
         [Fact]
-        public void UseXmlSchemaReadShouldGenerateDiagnostic()
+        public void UseXmlSchemaReadWithoutXmlTextReaderShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.IO;
-using System.Xml;
 using System.Xml.Schema;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
-    public class UseXmlReaderForSchemaRead
+    public class TestClass
     {
         public void TestMethod(string path)
         {
@@ -38,28 +37,27 @@ namespace FxCopUnsafeXml
         }
     }
 }",
-                GetCA3075CSharpResultAt(13, 32, "TestMethod")
+                GetCA3075SchemaReadCSharpResultAt(12, 32, "TestMethod")
             );
 
             VerifyBasic(@"
 Imports System.IO
-Imports System.Xml
 Imports System.Xml.Schema
 
-Namespace FxCopUnsafeXml
-    Public Class UseXmlReaderForSchemaRead
+Namespace TestNamespace
+    Public Class TestClass
         Public Sub TestMethod(path As String)
             Dim tr As TextReader = New StreamReader(path)
             Dim schema As XmlSchema = XmlSchema.Read(tr, Nothing)
         End Sub
     End Class
 End Namespace",
-                GetCA3075BasicResultAt(10, 39, "TestMethod")
+                GetCA3075SchemaReadBasicResultAt(9, 39, "TestMethod")
             );
         }
 
         [Fact]
-        public void UseXmlSchemaReadInGetShouldGenerateDiagnostic()
+        public void UseXmlSchemaReadWithoutXmlTextReaderInGetShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.IO;
@@ -78,7 +76,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075CSharpResultAt(13, 32, "get_Test")
+                GetCA3075SchemaReadCSharpResultAt(13, 32, "get_Test")
             );
 
             VerifyBasic(@"
@@ -95,12 +93,12 @@ Class TestClass
         End Get
     End Property
 End Class",
-                GetCA3075BasicResultAt(10, 39, "get_Test")
+                GetCA3075SchemaReadBasicResultAt(10, 39, "get_Test")
             );
         }
 
         [Fact]
-        public void UseUseXmlSchemaReadInSetShouldGenerateDiagnostic()
+        public void UseUseXmlSchemaReadWithoutXmlTextReaderInSetShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.Data;
@@ -126,7 +124,7 @@ public XmlSchema GetDoc
             }
         }
 }",
-                GetCA3075CSharpResultAt(17, 40, "set_GetDoc")
+                GetCA3075SchemaReadCSharpResultAt(17, 40, "set_GetDoc")
             );
 
             VerifyBasic(@"
@@ -149,12 +147,12 @@ Class TestClass
         End Set
     End Property
 End Class",
-                GetCA3075BasicResultAt(13, 43, "set_GetDoc")
+                GetCA3075SchemaReadBasicResultAt(13, 43, "set_GetDoc")
             );
         }
 
         [Fact]
-        public void UseXmlSchemaReadInTryBlockShouldGenerateDiagnostic()
+        public void UseXmlSchemaReadWithoutXmlTextReaderInTryBlockShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -175,7 +173,7 @@ class TestClass
         finally { }
     }
 }",
-                GetCA3075CSharpResultAt(14, 32, "TestMethod")
+                GetCA3075SchemaReadCSharpResultAt(14, 32, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -194,12 +192,12 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075BasicResultAt(10, 39, "TestMethod")
+                GetCA3075SchemaReadBasicResultAt(10, 39, "TestMethod")
             );
         }
 
         [Fact]
-        public void UseXmlSchemaReadInCatchBlockShouldGenerateDiagnostic()
+        public void UseXmlSchemaReadWithoutXmlTextReaderInCatchBlockShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
    using System;
@@ -220,7 +218,7 @@ using System.Xml.Schema;
             finally { }
         }
     }",
-                GetCA3075CSharpResultAt(15, 36, "TestMethod")
+                GetCA3075SchemaReadCSharpResultAt(15, 36, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -238,12 +236,12 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075BasicResultAt(11, 39, "TestMethod")
+                GetCA3075SchemaReadBasicResultAt(11, 39, "TestMethod")
             );
         }
 
         [Fact]
-        public void UseXmlSchemaReadInFinallyBlockShouldGenerateDiagnostic()
+        public void UseXmlSchemaReadWithoutXmlTextReaderInFinallyBlockShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
    using System;
@@ -264,7 +262,7 @@ using System.Xml.Schema;
             }
         }
     }",
-                GetCA3075CSharpResultAt(16, 36, "TestMethod")
+                GetCA3075SchemaReadCSharpResultAt(16, 36, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -283,12 +281,12 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075BasicResultAt(13, 39, "TestMethod")
+                GetCA3075SchemaReadBasicResultAt(13, 39, "TestMethod")
             );
         }
 
         [Fact]
-        public void UseXmlSchemaReadInAsyncAwaitShouldGenerateDiagnostic()
+        public void UseXmlSchemaReadWithoutXmlTextReaderInAsyncAwaitShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
  using System.Threading.Tasks;
@@ -311,7 +309,7 @@ using System.Xml.Schema;
             await TestMethod();
         }
     }",
-                GetCA3075CSharpResultAt(13, 36, "Run")
+                GetCA3075SchemaReadCSharpResultAt(13, 36, "Run")
             );
 
             VerifyBasic(@"
@@ -333,12 +331,12 @@ End Function)
         Await TestMethod()
     End Sub
 End Class",
-                GetCA3075BasicResultAt(11, 35, "Run")
+                GetCA3075SchemaReadBasicResultAt(11, 35, "Run")
             );
         }
 
         [Fact]
-        public void UseXmlSchemaReadInDelegateShouldGenerateDiagnostic()
+        public void UseXmlSchemaReadWithoutXmlTextReaderInDelegateShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.Data;
@@ -354,7 +352,7 @@ using System.Xml.Schema;
             XmlSchema schema = XmlSchema.Read(tr, null);
         };
     }",
-                GetCA3075CSharpResultAt(12, 32, "TestClass")
+                GetCA3075SchemaReadCSharpResultAt(12, 32, "TestClass")
             );
 
             VerifyBasic(@"
@@ -371,18 +369,18 @@ Class TestClass
 
 End Sub
 End Class",
-                GetCA3075BasicResultAt(11, 31, "TestClass")
+                GetCA3075SchemaReadBasicResultAt(11, 31, "TestClass")
             );
         }
 
         [Fact]
-        public void UseXmlSchemaReadWithXmlReaderShouldNotGenerateDiagnostic()
+        public void UseXmlSchemaReadWithXmlTextReaderShouldNotGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.Xml;
 using System.Xml.Schema;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class UseXmlReaderForSchemaRead
     {
@@ -398,7 +396,7 @@ namespace FxCopUnsafeXml
 Imports System.Xml
 Imports System.Xml.Schema
 
-Namespace FxCopUnsafeXml
+Namespace TestNamespace
     Public Class UseXmlReaderForSchemaRead
         Public Sub TestMethod19(reader As XmlTextReader)
             Dim schema As XmlSchema = XmlSchema.Read(reader, Nothing)

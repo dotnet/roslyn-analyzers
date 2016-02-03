@@ -27,7 +27,7 @@ using System.IO;
 using System.Xml;
 using System.Data;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class UseXmlReaderForDataTableReadXmlSchema
     {
@@ -47,7 +47,7 @@ Imports System.IO
 Imports System.Xml
 Imports System.Data
 
-Namespace FxCopUnsafeXml
+Namespace TestNamespace
     Public Class UseXmlReaderForDataTableReadXmlSchema
         Public Sub TestMethod(stream As Stream)
             Dim table As New DataTable()
@@ -366,7 +366,7 @@ End Class",
 using System.Xml;
 using System.Data;
 
-namespace FxCopUnsafeXml
+namespace TestNamespace
 {
     public class UseXmlReaderForDataTableReadXmlSchema
     {
@@ -384,7 +384,7 @@ namespace FxCopUnsafeXml
 Imports System.Xml
 Imports System.Data
 
-Namespace FxCopUnsafeXml
+Namespace TestNamespace
     Public Class UseXmlReaderForDataTableReadXmlSchema
         Public Sub TestMethod(reader As XmlReader)
             Dim table As New DataTable()

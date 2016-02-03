@@ -23,7 +23,6 @@ namespace Desktop.Analyzers.UnitTests
         public void UseXmlDocumentLoadShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
-using System;
 using System.Xml;
 
 namespace TestNamespace
@@ -39,7 +38,7 @@ namespace TestNamespace
     }
 }
 ",
-                GetCA3075LoadCSharpResultAt(13, 13, "TestMethod")
+                GetCA3075LoadCSharpResultAt(12, 13, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -106,25 +105,25 @@ using System.Xml;
 
 class TestClass
 {
-XmlDocument privateDoc;
-public XmlDocument GetDoc
+    XmlDocument privateDoc;
+    public XmlDocument GetDoc
+    {
+        set
         {
-            set
+            if (value == null)
             {
-                if (value == null)
-                {
-                    var xml = """";
-                    var doc = new XmlDocument();
-                    doc.XmlResolver = null;
-                    doc.Load(xml);
-                    privateDoc = doc;
-                }
-                else
-                    privateDoc = value;
+                var xml = """";
+                var doc = new XmlDocument();
+                doc.XmlResolver = null;
+                doc.Load(xml);
+                privateDoc = doc;
             }
+            else
+                privateDoc = value;
         }
+    }
 }",
-                GetCA3075LoadCSharpResultAt(16, 21, "set_GetDoc")
+                GetCA3075LoadCSharpResultAt(16, 17, "set_GetDoc")
             );
 
             VerifyBasic(@"
@@ -243,25 +242,25 @@ End Class",
         public void UseXmlDocumentLoadInFinallyBlockShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
-   using System;
-    using System.Xml;
+using System;
+using System.Xml;
 
-    class TestClass
+class TestClass
+{
+    private void TestMethod()
     {
-        private void TestMethod()
+        try { }
+        catch (Exception) { throw; }
+        finally
         {
-            try { }
-            catch (Exception) { throw; }
-            finally
-            {
-                var xml = """";
-                var doc = new XmlDocument();
-                doc.XmlResolver = null;
-                doc.Load(xml);
-            }
+            var xml = """";
+            var doc = new XmlDocument();
+            doc.XmlResolver = null;
+            doc.Load(xml);
         }
-    }",
-                GetCA3075LoadCSharpResultAt(16, 17, "TestMethod")
+    }
+}",
+                GetCA3075LoadCSharpResultAt(16, 13, "TestMethod")
             );
 
             VerifyBasic(@"
@@ -288,27 +287,27 @@ End Class",
         public void UseXmlDocumentLoadInAsyncAwaitShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
- using System.Threading.Tasks;
- using System.Xml;
+using System.Threading.Tasks;
+using System.Xml;
 
-    class TestClass
+class TestClass
+{
+    private async Task TestMethod()
     {
-        private async Task TestMethod()
-        {
-            await Task.Run(() => {
-                var xml = """";
-                var doc = new XmlDocument();
-                doc.XmlResolver = null;
-                doc.Load(xml);
-            });
-        }
+        await Task.Run(() => {
+            var xml = """";
+            var doc = new XmlDocument();
+            doc.XmlResolver = null;
+            doc.Load(xml);
+        });
+    }
 
-        private async void TestMethod2()
-        {
-            await TestMethod();
-        }
-    }",
-                GetCA3075LoadCSharpResultAt(13, 17, "Run")
+    private async void TestMethod2()
+    {
+        await TestMethod();
+    }
+}",
+                GetCA3075LoadCSharpResultAt(13, 13, "Run")
             );
 
             VerifyBasic(@"
@@ -318,19 +317,18 @@ Imports System.Xml
 Class TestClass
     Private Function TestMethod() As Task
         Await Task.Run(Function() 
-        Dim xml = """"
-        Dim doc = New XmlDocument()
-        doc.XmlResolver = Nothing
-        doc.Load(xml)
-
-End Function)
+                Dim xml = """"
+                Dim doc = New XmlDocument()
+                doc.XmlResolver = Nothing
+                doc.Load(xml)
+            End Function)
     End Function
 
     Private Sub TestMethod2()
         Await TestMethod()
     End Sub
 End Class",
-                GetCA3075LoadBasicResultAt(11, 9, "Run")
+                GetCA3075LoadBasicResultAt(11, 17, "Run")
             );
         }
 

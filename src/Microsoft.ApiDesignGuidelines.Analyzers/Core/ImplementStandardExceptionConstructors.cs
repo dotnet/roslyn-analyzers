@@ -25,12 +25,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
     public abstract class ImplementStandardExceptionConstructorsAnalyzer : DiagnosticAnalyzer
     {
+        internal enum MissingCtorSignature { CtorWithNoParameter, CtorWithStringParameter, CtorWithStringAndExceptionParameters }
+
         internal const string RuleId = "CA1032";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementStandardExceptionConstructorsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));      
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementStandardExceptionConstructorsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageMissingConstructor = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementStandardExceptionConstructorsMessageMissingConstructor), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementStandardExceptionConstructorsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        
+
         internal static DiagnosticDescriptor MissingConstructorRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageMissingConstructor,
@@ -107,31 +109,36 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         //reaches here only when all 3 constructors are found - no diagnostic needed 
                         return;
                     }
-
                 } //end of for loop
 
-                if (!defaultConstructorFound)
+                if (!defaultConstructorFound) //missing default constructor
                 {
-                    //Missing default constructor - report diagnostic
-                    var diagnostic = namedTypeSymbol.CreateDiagnostic(MissingConstructorRule, namedTypeSymbol.Name, GetConstructorSignatureNoParameter(namedTypeSymbol));
-                    context.ReportDiagnostic(diagnostic);
+                    BuildDiagnostic(context, namedTypeSymbol, MissingCtorSignature.CtorWithNoParameter, GetConstructorSignatureNoParameter(namedTypeSymbol));
                 }
 
-                if (!secondConstructorFound)
+                if (!secondConstructorFound) //missing constructor with string parameter
                 {
-                    //Missing constructor with string parameter - report diagnostic
-                    var diagnostic = namedTypeSymbol.CreateDiagnostic(MissingConstructorRule, namedTypeSymbol.Name, GetConstructorSignatureStringTypeParameter(namedTypeSymbol));
-                    context.ReportDiagnostic(diagnostic);
+                    BuildDiagnostic(context, namedTypeSymbol, MissingCtorSignature.CtorWithStringParameter, GetConstructorSignatureStringTypeParameter(namedTypeSymbol));
                 }
 
-                if (!thirdConstructorFound)
+                if (!thirdConstructorFound) //missing constructor with string and exception type parameter - report diagnostic
                 {
-                    //Missing constructor with string and exception type parameter - report diagnostic
-                    var diagnostic = namedTypeSymbol.CreateDiagnostic(MissingConstructorRule, namedTypeSymbol.Name, GetConstructorSignatureStringAndExceptionTypeParameter(namedTypeSymbol));
-                    context.ReportDiagnostic(diagnostic);
+                    BuildDiagnostic(context, namedTypeSymbol, MissingCtorSignature.CtorWithStringAndExceptionParameters, GetConstructorSignatureStringAndExceptionTypeParameter(namedTypeSymbol));
                 }
-
             }
+        }
+
+        private void BuildDiagnostic(SymbolAnalysisContext context, INamedTypeSymbol namedTypeSymbol, MissingCtorSignature missingCtorSignature, string constructorSignature)
+        {
+            //store MissingCtorSignature enum type into dictionary, to set diagnostic property. This is needed because Diagnostic is immutable
+            var builder = ImmutableDictionary.CreateBuilder<string, string>();
+            builder.Add("Signature", missingCtorSignature.ToString());
+
+            //create dignostic and store signature into diagnostic property for fixer
+            var diagnostic = namedTypeSymbol.Locations.CreateDiagnostic(MissingConstructorRule, builder.ToImmutableDictionary(), namedTypeSymbol.Name, constructorSignature);
+
+            //report diagnostic
+            context.ReportDiagnostic(diagnostic);
         }
     }
 }

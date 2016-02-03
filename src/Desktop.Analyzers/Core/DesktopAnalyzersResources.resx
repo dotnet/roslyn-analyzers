@@ -395,4 +395,8 @@
     <value>{0} method of XmlTextReader derived class sets XmlResolver and/or DtdProcessing property to insecure value.</value>
     <comment>CA3077</comment>
   </data>
+  <data name="DoNotUseInsecureDTDProcessingGenericMessage" xml:space="preserve">
+    <value>{0}</value>
+    <comment>CA3075</comment>
+  </data>
 </root>

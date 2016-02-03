@@ -215,6 +215,15 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}.
+        /// </summary>
+        internal static string DoNotUseInsecureDTDProcessingGenericMessage {
+            get {
+                return ResourceManager.GetString("DoNotUseInsecureDTDProcessingGenericMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enabling DTD processing on all instances derived from XmlTextReader or  XmlDocument and using XmlUrlResolver for resolving external XML entities may lead to information disclosure. Ensure to set the XmlResolver property to null, create an instance of XmlSecureResolver when processing untrusted input, or use XmlReader.Create method with a secure XmlReaderSettings argument. Unless you need to enable it, ensure the DtdProcessing property is set to false. .
         /// </summary>
         internal static string DoNotUseInsecureDtdProcessingInApiDesignDescription {

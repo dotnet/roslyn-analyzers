@@ -16,24 +16,11 @@ namespace Desktop.Analyzers
     {
         internal const string RuleId = "CA3076";
         private const string HelpLink = "http://aka.ms/CA3076";
-        /*
-         * these 3 FxCop rules are removed since they only trigger on secure code:
-         *   XslCompiledTransformTransformWrongOverload
-         *   XslCompiledTransformTransformInsecureXmlResolver
-         *   XslCompiledTransformLoadWrongOverload 
-         */
+        internal static DiagnosticDescriptor RuleDoNotUseInsecureXSLTScriptExecution = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDTDProcessingGenericMessage)),
+                                                                                                                SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureXSLTScriptExecutionDescription)),
+                                                                                                                 HelpLink);
 
-        //TODO: create new strings
-        internal static DiagnosticDescriptor RuleXslCompiledTransformLoadInsecureInputSettings = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XslCompiledTransformLoadInsecureInputMessage)),
-                                                                                                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureXSLTScriptExecutionDescription)),
-                                                                                                                         HelpLink);
-
-        internal static DiagnosticDescriptor RuleXslCompiledTransformLoadInsecureConstructedSettings = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.XslCompiledTransformLoadInsecureConstructedMessage)),
-                                                                                                                          SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureXSLTScriptExecutionDescription)),
-                                                                                                                          HelpLink);
-
-        private static readonly ImmutableArray<DiagnosticDescriptor> supportDiagnostics = ImmutableArray.Create(RuleXslCompiledTransformLoadInsecureInputSettings,
-                                                                                                                RuleXslCompiledTransformLoadInsecureConstructedSettings);
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportDiagnostics = ImmutableArray.Create(RuleDoNotUseInsecureXSLTScriptExecution);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -80,15 +67,15 @@ namespace Desktop.Analyzers
 
         protected class Analyzer
         {
-            private readonly CompilationSecurityTypes xmlTypes;
-            private readonly SyntaxNodeHelper syntaxNodeHelper;
+            private readonly CompilationSecurityTypes _xmlTypes;
+            private readonly SyntaxNodeHelper _syntaxNodeHelper;
 
-            private readonly Dictionary<ISymbol, XsltSettingsEnvironment> xsltSettingsEnvironments = new Dictionary<ISymbol, XsltSettingsEnvironment>();
+            private readonly Dictionary<ISymbol, XsltSettingsEnvironment> _xsltSettingsEnvironments = new Dictionary<ISymbol, XsltSettingsEnvironment>();
 
             public Analyzer(CompilationSecurityTypes xmlTypes, SyntaxNodeHelper helper)
             {
-                this.xmlTypes = xmlTypes;
-                this.syntaxNodeHelper = helper;
+                this._xmlTypes = xmlTypes;
+                this._syntaxNodeHelper = helper;
             }
 
             public void AnalyzeNode(SyntaxNodeAnalysisContext context)
@@ -101,16 +88,16 @@ namespace Desktop.Analyzers
             {
                 SyntaxNode node = context.Node;
                 SemanticModel model = context.SemanticModel;
-                IMethodSymbol methodSymbol = syntaxNodeHelper.GetCalleeMethodSymbol(node, model);
+                IMethodSymbol methodSymbol = _syntaxNodeHelper.GetCalleeMethodSymbol(node, model);
 
-                if (SecurityDiagnosticHelpers.IsXslCompiledTransformLoad(methodSymbol, this.xmlTypes))
+                if (SecurityDiagnosticHelpers.IsXslCompiledTransformLoad(methodSymbol, this._xmlTypes))
                 {
                     bool isSecureResolver;
                     bool isSecureSettings;
                     bool isSetInBlock;
 
-                    int xmlResolverIndex = SecurityDiagnosticHelpers.HasXmlResolverParameter(methodSymbol, this.xmlTypes);
-                    int xsltSettingsIndex = SecurityDiagnosticHelpers.HasXsltSettingsParameter(methodSymbol, this.xmlTypes);
+                    int xmlResolverIndex = SecurityDiagnosticHelpers.HasXmlResolverParameter(methodSymbol, this._xmlTypes);
+                    int xsltSettingsIndex = SecurityDiagnosticHelpers.HasXsltSettingsParameter(methodSymbol, this._xmlTypes);
 
                     // Overloads with no XmlResolver and XstlSettings specified are secure since they all have folowing behavior:
                     //  1. An XmlUrlResolver with no user credentials is used to process any xsl:import or xsl:include elements.
@@ -119,11 +106,11 @@ namespace Desktop.Analyzers
                     if (xmlResolverIndex >= 0 &&
                         xsltSettingsIndex >= 0)
                     {
-                        IEnumerable<SyntaxNode> argumentExpressionNodes = this.syntaxNodeHelper.GetInvocationArgumentExpressionNodes(node);
+                        IEnumerable<SyntaxNode> argumentExpressionNodes = this._syntaxNodeHelper.GetInvocationArgumentExpressionNodes(node);
                         SyntaxNode resolverNode = argumentExpressionNodes.ElementAt(xmlResolverIndex);
 
                         isSecureResolver = SyntaxNodeHelper.NodeHasConstantValueNull(resolverNode, model) ||
-                                           SecurityDiagnosticHelpers.IsXmlSecureResolverType(model.GetTypeInfo(resolverNode).Type, this.xmlTypes);
+                                           SecurityDiagnosticHelpers.IsXmlSecureResolverType(model.GetTypeInfo(resolverNode).Type, this._xmlTypes);
 
 
                         SyntaxNode settingsNode = argumentExpressionNodes.ElementAt(xsltSettingsIndex);
@@ -131,19 +118,19 @@ namespace Desktop.Analyzers
                         XsltSettingsEnvironment env = null;
 
                         // 1. pass null or XsltSettings.Default as XsltSetting : secure
-                        if (settingsSymbol == null || SecurityDiagnosticHelpers.IsXsltSettingsDefaultProperty(settingsSymbol, this.xmlTypes))
+                        if (settingsSymbol == null || SecurityDiagnosticHelpers.IsXsltSettingsDefaultProperty(settingsSymbol, this._xmlTypes))
                         {
                             isSetInBlock = true;
                             isSecureSettings = true;
                         }
                         // 2. XsltSettings.TrustedXslt : insecure
-                        else if (SecurityDiagnosticHelpers.IsXsltSettingsTrustedXsltProperty(settingsSymbol, this.xmlTypes))
+                        else if (SecurityDiagnosticHelpers.IsXsltSettingsTrustedXsltProperty(settingsSymbol, this._xmlTypes))
                         {
                             isSetInBlock = true;
                             isSecureSettings = false;
                         }
                         // 3. check xsltSettingsEnvironments, if IsScriptDisabled && IsDocumentFunctionDisabled then secure, else insecure
-                        else if (this.xsltSettingsEnvironments.TryGetValue(settingsSymbol, out env))
+                        else if (this._xsltSettingsEnvironments.TryGetValue(settingsSymbol, out env))
                         {
                             isSetInBlock = false;
                             isSecureSettings = env.IsDocumentFunctionDisabled && env.IsScriptDisabled;
@@ -157,14 +144,19 @@ namespace Desktop.Analyzers
 
                         if (!isSecureSettings && !isSecureResolver)
                         {
-                            var rule = isSetInBlock ? 
-                                            RuleXslCompiledTransformLoadInsecureConstructedSettings :
-                                            RuleXslCompiledTransformLoadInsecureInputSettings;
+                            var message = SecurityDiagnosticHelpers.GetLocalizableResourceString(
+                                isSetInBlock ? nameof(DesktopAnalyzersResources.XslCompiledTransformLoadInsecureConstructedMessage) :
+                                    nameof(DesktopAnalyzersResources.XslCompiledTransformLoadInsecureInputMessage),
+                                DiagnosticHelpers.GetMeaningfulParentName(node, model)
+                            );
 
-                            context.ReportDiagnostic(Diagnostic.Create(rule,
-                                                                      node.GetLocation(),
-                                                                      DiagnosticHelpers.GetMeaningfulParentName(node, model))
-                                                                      ); 
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    RuleDoNotUseInsecureXSLTScriptExecution,
+                                    node.GetLocation(),
+                                    message
+                                )
+                            ); 
                         }
                     }
                 }
@@ -176,8 +168,8 @@ namespace Desktop.Analyzers
                 SyntaxNode node = context.Node;
                 SemanticModel model = context.SemanticModel;
 
-                SyntaxNode lhs = this.syntaxNodeHelper.GetAssignmentLeftNode(node);
-                SyntaxNode rhs = this.syntaxNodeHelper.GetAssignmentRightNode(node);
+                SyntaxNode lhs = this._syntaxNodeHelper.GetAssignmentLeftNode(node);
+                SyntaxNode rhs = this._syntaxNodeHelper.GetAssignmentRightNode(node);
 
                 if (lhs == null || rhs == null)
                 {
@@ -190,19 +182,19 @@ namespace Desktop.Analyzers
                     return;
                 }
 
-                IMethodSymbol rhsMethodSymbol = syntaxNodeHelper.GetCalleeMethodSymbol(rhs, model);
+                IMethodSymbol rhsMethodSymbol = _syntaxNodeHelper.GetCalleeMethodSymbol(rhs, model);
                 IPropertySymbol rhsPropertySymbol = SyntaxNodeHelper.GetCalleePropertySymbol(rhs, model);
 
-                if (SecurityDiagnosticHelpers.IsXsltSettingsCtor(rhsMethodSymbol, this.xmlTypes))
+                if (SecurityDiagnosticHelpers.IsXsltSettingsCtor(rhsMethodSymbol, this._xmlTypes))
                 {
 
                     XsltSettingsEnvironment env = new XsltSettingsEnvironment();
-                    this.xsltSettingsEnvironments[lhsSymbol] = env;
+                    this._xsltSettingsEnvironments[lhsSymbol] = env;
 
                     env.XsltSettingsSymbol = lhsSymbol;
                     env.XsltSettingsDefinitionSymbol = rhsMethodSymbol;
                     env.XsltSettingsDefinition = node;
-                    env.EnclosingConstructSymbol = this.syntaxNodeHelper.GetEnclosingConstructSymbol(node, model);
+                    env.EnclosingConstructSymbol = this._syntaxNodeHelper.GetEnclosingConstructSymbol(node, model);
                     //default both properties are disbled
                     env.IsDocumentFunctionDisabled = true;
                     env.IsScriptDisabled = true;
@@ -210,62 +202,62 @@ namespace Desktop.Analyzers
                     // XsltSettings Constructor (Boolean, Boolean)
                     if (rhsMethodSymbol.Parameters.Any())
                     {
-                        IEnumerable<SyntaxNode> argumentExpressionNodes = this.syntaxNodeHelper.GetObjectCreationArgumentExpressionNodes(rhs);
+                        IEnumerable<SyntaxNode> argumentExpressionNodes = this._syntaxNodeHelper.GetObjectCreationArgumentExpressionNodes(rhs);
                         env.IsDocumentFunctionDisabled = SyntaxNodeHelper.NodeHasConstantValueBoolFalse(argumentExpressionNodes.ElementAt(0), model);
                         env.IsScriptDisabled = SyntaxNodeHelper.NodeHasConstantValueBoolFalse(argumentExpressionNodes.ElementAt(1), model);
                     }
 
-                    foreach (SyntaxNode arg in this.syntaxNodeHelper.GetObjectInitializerExpressionNodes(rhs))
+                    foreach (SyntaxNode arg in this._syntaxNodeHelper.GetObjectInitializerExpressionNodes(rhs))
                     {
-                        var argLhs = this.syntaxNodeHelper.GetAssignmentLeftNode(arg);
-                        var argRhs = this.syntaxNodeHelper.GetAssignmentRightNode(arg);
+                        var argLhs = this._syntaxNodeHelper.GetAssignmentLeftNode(arg);
+                        var argRhs = this._syntaxNodeHelper.GetAssignmentRightNode(arg);
 
                         var argLhsSymbol = SyntaxNodeHelper.GetSymbol(argLhs, model);
 
                         // anything other than a constant false is treated as true
-                        if (SecurityDiagnosticHelpers.IsXsltSettingsEnableDocumentFunctionProperty(argLhsSymbol, this.xmlTypes))
+                        if (SecurityDiagnosticHelpers.IsXsltSettingsEnableDocumentFunctionProperty(argLhsSymbol, this._xmlTypes))
                         {
                             env.IsDocumentFunctionDisabled = SyntaxNodeHelper.NodeHasConstantValueBoolFalse(argRhs, model);
                         }
-                        else if (SecurityDiagnosticHelpers.IsXsltSettingsEnableScriptProperty(argLhsSymbol, this.xmlTypes))
+                        else if (SecurityDiagnosticHelpers.IsXsltSettingsEnableScriptProperty(argLhsSymbol, this._xmlTypes))
                         {
                             env.IsScriptDisabled = SyntaxNodeHelper.NodeHasConstantValueBoolFalse(argRhs, model);
                         }
                     }
                 }
-                else if (SecurityDiagnosticHelpers.IsXsltSettingsDefaultProperty(rhsPropertySymbol, this.xmlTypes))
+                else if (SecurityDiagnosticHelpers.IsXsltSettingsDefaultProperty(rhsPropertySymbol, this._xmlTypes))
                 {
 
                     XsltSettingsEnvironment env = new XsltSettingsEnvironment();
-                    this.xsltSettingsEnvironments[lhsSymbol] = env;
+                    this._xsltSettingsEnvironments[lhsSymbol] = env;
 
                     env.XsltSettingsSymbol = lhsSymbol;
                     env.XsltSettingsDefinitionSymbol = rhsPropertySymbol;
                     env.XsltSettingsDefinition = node;
-                    env.EnclosingConstructSymbol = this.syntaxNodeHelper.GetEnclosingConstructSymbol(node, model);
+                    env.EnclosingConstructSymbol = this._syntaxNodeHelper.GetEnclosingConstructSymbol(node, model);
                     env.IsDocumentFunctionDisabled = true;
                     env.IsScriptDisabled = true;
                 }
-                else if (SecurityDiagnosticHelpers.IsXsltSettingsTrustedXsltProperty(rhsPropertySymbol, this.xmlTypes))
+                else if (SecurityDiagnosticHelpers.IsXsltSettingsTrustedXsltProperty(rhsPropertySymbol, this._xmlTypes))
                 {
                     XsltSettingsEnvironment env = new XsltSettingsEnvironment();
-                    this.xsltSettingsEnvironments[lhsSymbol] = env;
+                    this._xsltSettingsEnvironments[lhsSymbol] = env;
 
                     env.XsltSettingsSymbol = lhsSymbol;
                     env.XsltSettingsDefinitionSymbol = rhsPropertySymbol;
                     env.XsltSettingsDefinition = node;
-                    env.EnclosingConstructSymbol = this.syntaxNodeHelper.GetEnclosingConstructSymbol(node, model);
+                    env.EnclosingConstructSymbol = this._syntaxNodeHelper.GetEnclosingConstructSymbol(node, model);
                 }
                 else
                 {
-                    bool isXlstSettingsEnableDocumentFunctionProperty = SecurityDiagnosticHelpers.IsXsltSettingsEnableDocumentFunctionProperty(lhsSymbol, this.xmlTypes);
-                    bool isXlstSettingsEnableScriptProperty = SecurityDiagnosticHelpers.IsXsltSettingsEnableScriptProperty(lhsSymbol, this.xmlTypes);
+                    bool isXlstSettingsEnableDocumentFunctionProperty = SecurityDiagnosticHelpers.IsXsltSettingsEnableDocumentFunctionProperty(lhsSymbol, this._xmlTypes);
+                    bool isXlstSettingsEnableScriptProperty = SecurityDiagnosticHelpers.IsXsltSettingsEnableScriptProperty(lhsSymbol, this._xmlTypes);
 
 
                     if (isXlstSettingsEnableDocumentFunctionProperty ||
                         isXlstSettingsEnableScriptProperty)
                     {
-                        SyntaxNode lhsExpressionNode = this.syntaxNodeHelper.GetMemberAccessExpressionNode(lhs);
+                        SyntaxNode lhsExpressionNode = this._syntaxNodeHelper.GetMemberAccessExpressionNode(lhs);
                         if (lhsExpressionNode == null)
                         {
                             return;
@@ -278,11 +270,11 @@ namespace Desktop.Analyzers
                         }
 
                         XsltSettingsEnvironment env = null;
-                        if (!this.xsltSettingsEnvironments.TryGetValue(lhsExpressionSymbol, out env))
+                        if (!this._xsltSettingsEnvironments.TryGetValue(lhsExpressionSymbol, out env))
                         {
                             env = new XsltSettingsEnvironment();
                             env.XsltSettingsSymbol = lhsExpressionSymbol;
-                            this.xsltSettingsEnvironments[lhsExpressionSymbol] = env;
+                            this._xsltSettingsEnvironments[lhsExpressionSymbol] = env;
                         }
 
                         var rhsType = model.GetTypeInfo(rhs).Type;

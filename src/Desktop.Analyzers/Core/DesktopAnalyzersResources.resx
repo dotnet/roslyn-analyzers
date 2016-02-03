@@ -379,4 +379,7 @@
     <value>In {0} an insecure combination of XsltSettings and XmlResolver instances are provided to XslCompiledTransfor.Load as arguments.</value>
     <comment>CA3076</comment>
   </data>
+  <data name="DoNotUseInsecureDTDProcessingGenericMessage" xml:space="preserve">
+    <value>{0}</value>
+  </data>
 </root>

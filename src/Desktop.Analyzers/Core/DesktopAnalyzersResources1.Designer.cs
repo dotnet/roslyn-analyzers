@@ -215,6 +215,15 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}.
+        /// </summary>
+        internal static string DoNotUseInsecureDTDProcessingGenericMessage {
+            get {
+                return ResourceManager.GetString("DoNotUseInsecureDTDProcessingGenericMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which on an untrusted XSL input may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argurment with null or an XmlSecureResolver instance. This message may be suppressed [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DoNotUseInsecureXSLTScriptExecutionDescription {

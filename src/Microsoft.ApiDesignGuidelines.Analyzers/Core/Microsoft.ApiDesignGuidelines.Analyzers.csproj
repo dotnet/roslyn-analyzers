@@ -95,6 +95,7 @@
     <None Include="uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeclareEventHandlersCorrectly.cs" />
     <Compile Include="DoNotDirectlyAwaitATask.cs" />
     <Compile Include="DoNotDirectlyAwaitATask.Fixer.cs" />
     <Compile Include="EnumWithFlagsAttribute.cs" />

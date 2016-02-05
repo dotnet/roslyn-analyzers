@@ -233,7 +233,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to When using XmlDocument or XmlTextReader&apos;s Load() method, Enabling DTD processing using XmlUrlResolver for resolving external XML entities can lead to information disclosure, make sure to replace it with a call to the Load() method overload that takes an XmlReader instance instead. Invoking XmlReader.Create() method without providing a secure XmlReaderSettings instance is potentially unsafe as it enables DTD processing and uses XmlUrlResolver for resolving external XML entities, which on an untrusted input m [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to Using XmlTextReader.Load(), creating an insecure XmlReaderSettings instance when invoking XmlReader.Create(), setting the InnerXml property of the XmlDocument and enabling DTD processing using XmlUrlResolver insecurely can lead to information disclosure. Replace it with a call to the Load() method overload that takes an XmlReader instance, use XmlReader.Create() to accept XmlReaderSettings arguments or consider explicitly setting secure values. The DataViewSettingCollectionString property of DataViewManager [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DoNotUseInsecureDTDProcessingDescription {
             get {

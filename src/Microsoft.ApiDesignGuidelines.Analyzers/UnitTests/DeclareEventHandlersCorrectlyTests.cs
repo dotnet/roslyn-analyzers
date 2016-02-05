@@ -158,6 +158,38 @@ public delegate void D();
         }
 
         [Fact]
+        public void TestCSEventWithFirstParameterByReference()
+        {
+            var test = @"
+using System;
+
+public class C
+{
+    public event D E;
+}
+
+public delegate void D(ref object sender, EventArgs e);";
+
+            VerifyCSharp(test, GetCA1009CSharpResultAt(6, 20, "E"));
+        }
+
+        [Fact]
+        public void TestCSEventWithSecondParameterOut()
+        {
+            var test = @"
+using System;
+
+public class C
+{
+    public event D E;
+}
+
+public delegate void D(object sender, out EventArgs e);";
+
+            VerifyCSharp(test, GetCA1009CSharpResultAt(6, 20, "E"));
+        }
+
+        [Fact]
         public void TestCSEventWithNoParametersWithScope()
         {
             var test = @"

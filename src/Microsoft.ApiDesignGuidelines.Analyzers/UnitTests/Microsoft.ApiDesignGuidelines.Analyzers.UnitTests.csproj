@@ -145,6 +145,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeclareEventHandlersCorrectlyTests.cs" />
     <Compile Include="DoNotDirectlyAwaitATaskTests.cs" />
     <Compile Include="DoNotDirectlyAwaitATaskTests.Fixer.cs" />
     <Compile Include="EnumWithFlagsAttributeTests.cs" />

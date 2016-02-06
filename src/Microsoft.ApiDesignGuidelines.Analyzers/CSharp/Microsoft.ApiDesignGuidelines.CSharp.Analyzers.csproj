@@ -162,7 +162,6 @@
     <Compile Include="CSharpIdentifiersShouldNotHaveIncorrectSuffix.cs" />
     <Compile Include="CSharpIdentifiersShouldNotHaveIncorrectSuffix.Fixer.cs" />
     <Compile Include="CSharpEnumsShouldHavePluralNames.Fixer.cs" />
-    <Compile Include="CSharpIdentifiersShouldNotMatchKeywords.cs" />
     <Compile Include="CSharpIdentifiersShouldNotMatchKeywords.Fixer.cs" />
     <Compile Include="CSharpPropertyNamesShouldNotMatchGetMethods.Fixer.cs" />
     <Compile Include="CSharpTypeNamesShouldNotMatchNamespaces.cs" />

@@ -12,12 +12,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicIdentifiersShouldNotMatchKeywordsAnalyzer();
+            return new IdentifiersShouldNotMatchKeywordsAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpIdentifiersShouldNotMatchKeywordsAnalyzer();
+            return new IdentifiersShouldNotMatchKeywordsAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

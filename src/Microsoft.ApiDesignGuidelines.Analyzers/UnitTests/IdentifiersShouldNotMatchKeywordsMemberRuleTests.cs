@@ -7,7 +7,11 @@ using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 {
-    public class IdentifiersShouldNotMatchKeywordsTests : DiagnosticAnalyzerTestBase
+    /// <summary>
+    /// Contains those unit tests for the IdentifiersShouldNotMatchKeywords analyzer that
+    /// pertain to the MemberRule, which applies to the names of type members.
+    /// </summary>
+    public partial class IdentifiersShouldNotMatchKeywordsTests : DiagnosticAnalyzerTestBase
     {
         [Fact]
         public void CSharpDiagnosticForCaseSensitiveKeywordNamedPublicVirtualMethodInPublicClass()
@@ -503,13 +507,6 @@ public class C
 }",
                 // Diagnostics for both the virtual in C, and the virtual new method in D.
                 GetCSharpResultAt(5, 35, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C.float", "float"));
-        }
-
-        // TODO: Other member types? what else can be virtual? what can be in an interface?
-
-        private DiagnosticResult[] GetCSharpMemberResultAt(int v1, int v2, string v3)
-        {
-            throw new NotImplementedException();
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

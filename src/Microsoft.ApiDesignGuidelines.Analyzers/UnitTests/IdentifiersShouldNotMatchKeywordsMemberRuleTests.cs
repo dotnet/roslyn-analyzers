@@ -14,7 +14,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     public partial class IdentifiersShouldNotMatchKeywordsTests : DiagnosticAnalyzerTestBase
     {
         [Fact]
-        public void CSharpDiagnosticForCaseSensitiveKeywordNamedPublicVirtualMethodInPublicClass()
+        public void CSharpDiagnosticForKeywordNamedPublicVirtualMethodInPublicClass()
         {
             VerifyCSharp(@"
 public class C
@@ -25,7 +25,7 @@ public class C
         }
 
         [Fact]
-        public void BasicDiagnosticForCaseSensitiveKeywordNamedPublicVirtualMethodInPublicClass()
+        public void BasicDiagnosticForKeywordNamedPublicVirtualMethodInPublicClass()
         {
             VerifyBasic(@"
 Public Class C
@@ -103,7 +103,7 @@ End Class",
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForInternalMethod()
+        public void CSharpNoDiagnosticForKeywordNamedInternalVirtualMethodInPublicClass()
         {
             VerifyCSharp(@"
 public class C
@@ -113,7 +113,7 @@ public class C
         }
 
         [Fact]
-        public void BasicNoDiagnosticForInternalMethod()
+        public void BasicNoDiagnosticForKeywordNamedInternalVirtualMethodInPublicClass()
         {
             VerifyBasic(@"
 Public Class C
@@ -123,7 +123,7 @@ End Class");
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForNonVirtualMethod()
+        public void CSharpNoDiagnosticForKeywordNamedPublicNonVirtualMethodInPublicClass()
         {
             VerifyCSharp(@"
 public class C
@@ -133,7 +133,7 @@ public class C
         }
 
         [Fact]
-        public void BasicNoDiagnosticForNonVirtualMethod()
+        public void BasicNoDiagnosticForKeywordNamedPublicNonVirtualMethodInPublicClass()
         {
             VerifyBasic(@"
 Public Class C
@@ -143,7 +143,7 @@ End Class");
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForNonKeywordNamedMethod()
+        public void CSharpNoDiagnosticForNonKeywordNamedPublicVirtualMethodInPublicClass()
         {
             VerifyCSharp(@"
 public class C
@@ -153,7 +153,7 @@ public class C
         }
 
         [Fact]
-        public void BasicNoDiagnosticForNonKeywordNamedMethod()
+        public void BasicNoDiagnosticForNonKeywordNamedPublicVirtualMethodInPublicClass()
         {
             VerifyBasic(@"
 Public Class C
@@ -163,7 +163,7 @@ End Class");
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForKeywordNamedMethodInInternalClass()
+        public void CSharpNoDiagnosticForKeywordNamedVirtualMethodInInternalClass()
         {
             VerifyCSharp(@"
 internal class C
@@ -173,7 +173,7 @@ internal class C
         }
 
         [Fact]
-        public void BasicNoDiagnosticForKeywordNamedMethodInInternalClass()
+        public void BasicNoDiagnosticForKeywordNamedVirtualMethodInInternalClass()
         {
             VerifyBasic(@"
 Friend Class C
@@ -183,7 +183,7 @@ End Class");
         }
 
         [Fact]
-        public void CSharpDiagnosticForKeywordNamedMethodOfPublicInterface()
+        public void CSharpDiagnosticForKeywordNamedMethodInPublicInterface()
         {
             VerifyCSharp(@"
 public interface I
@@ -194,7 +194,7 @@ public interface I
         }
 
         [Fact]
-        public void BasicDiagnosticForKeywordNamedMethodOfPublicInterface()
+        public void BasicDiagnosticForKeywordNamedMethodInPublicInterface()
         {
             VerifyBasic(@"
 Public Interface I
@@ -423,7 +423,7 @@ End Class",
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForNewMethod()
+        public void CSharpNoDiagnosticForKeywordNamedNewMethodInPublicClass()
         {
             VerifyCSharp(@"
 public class C
@@ -440,7 +440,7 @@ public class D : C
         }
 
         [Fact]
-        public void BasicNoDiagnosticForNewMethod()
+        public void BasicNoDiagnosticForKeywordNamedNewMethodInPublicClass()
         {
             VerifyBasic(@"
 Public Class C
@@ -469,7 +469,7 @@ public class C
 
 public class D : C
 {
-    public new virtual void @for() {}
+    public virtual new void @for() {}
 }",
                 // Diagnostics for both the virtual in C, and the virtual new method in D.
                 GetCSharpResultAt(4, 25, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C.for()", "for"),

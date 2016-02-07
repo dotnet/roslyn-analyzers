@@ -72,27 +72,65 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            analysisContext.RegisterSymbolAction(
-                context =>
+            analysisContext.RegisterSymbolAction(AnalyzeMemberRule,
+                SymbolKind.Event, SymbolKind.Method, SymbolKind.Property);
+
+            analysisContext.RegisterSymbolAction(AnalyzeMemberParameterRule,
+                SymbolKind.Method);
+        }
+
+        private void AnalyzeMemberRule(SymbolAnalysisContext context)
+        {
+            ISymbol symbol = context.Symbol;
+            if (symbol.GetResultantVisibility() != SymbolVisibility.Public)
+            {
+                return;
+            }
+
+            string matchingKeyword;
+            if (!IsKeyword(symbol.Name, out matchingKeyword))
+            {
+                return;
+            }
+
+            // IsAbstract returns true for both abstract class members and interface members.
+            if (symbol.IsVirtual || symbol.IsAbstract)
+            {
+                context.ReportDiagnostic(
+                    symbol.CreateDiagnostic(
+                        MemberRule,
+                        FormatSymbolName(symbol),
+                        matchingKeyword));
+            }
+        }
+
+        private void AnalyzeMemberParameterRule(SymbolAnalysisContext context)
+        {
+            var method = (IMethodSymbol)context.Symbol;
+            if (method.GetResultantVisibility() != SymbolVisibility.Public)
+            {
+                return;
+            }
+
+            // IsAbstract returns true for both abstract class members and interface members.
+            if (!method.IsVirtual && !method.IsAbstract)
+            {
+                return;
+            }
+
+            foreach (var parameter in method.Parameters)
+            {
+                string matchingKeyword;
+                if (IsKeyword(parameter.Name, out matchingKeyword))
                 {
-                    ISymbol symbol = context.Symbol;
-                    if (symbol.GetResultantVisibility() != SymbolVisibility.Public)
-                    {
-                        return;
-                    }
-
-                    string matchingKeyword;
-                    if (!IsKeyword(symbol.Name, out matchingKeyword))
-                    {
-                        return;
-                    }
-
-                    // IsAbstract returns true for both abstract class members and interface members.
-                    if (symbol.IsVirtual || symbol.IsAbstract)
-                    {
-                        context.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, FormatSymbolName(symbol), matchingKeyword));
-                    }
-                }, SymbolKind.Event, SymbolKind.Method, SymbolKind.Property);
+                    context.ReportDiagnostic(
+                        parameter.CreateDiagnostic(
+                            MemberParameterRule,
+                            FormatSymbolName(method),
+                            parameter.Name,
+                            matchingKeyword));
+                }
+            }
         }
 
         private bool IsKeyword(string name, out string keyword)

@@ -348,5 +348,35 @@ End Class",
                 GetBasicResultAt(3, 30, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberParameterRule, "C.F(Integer)", "int", "int"),
                 GetBasicResultAt(10, 38, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberParameterRule, "D.F(Integer)", "int", "int"));
         }
+
+        [Fact]
+        public void CSharpDiagnosticForKeywordNamedParameterOfVirtualPublicIndexerInPublicClass()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public virtual int this[int @int]
+    {
+        get { return 0; }
+    }
+}",
+                // TODO: FxCop doesn't mention the "get", but the formatting we use displays the "get" for
+                // C# (but not for VB, as shown in the next test).
+                GetCSharpResultAt(4, 33, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberParameterRule, "C.this[int].get", "int", "int"));
+        }
+
+        [Fact]
+        public void BasicDiagnosticForKeywordNamedParameterOfVirtualPublicParameterizedPropertyInPublicClass()
+        {
+            VerifyBasic(@"
+Public Class C
+    Public Overridable ReadOnly Property P([int] As Integer) As Integer
+        Get
+            Return 0
+        End Get
+    End Property
+End Class",
+                GetBasicResultAt(3, 44, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberParameterRule, "C.P(Integer)", "int", "int"));
+        }
     }
 }

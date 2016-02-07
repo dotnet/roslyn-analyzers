@@ -509,6 +509,63 @@ public class C
                 GetCSharpResultAt(5, 35, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C.float", "float"));
         }
 
+        // These tests are just to verify that the formatting of the displayed member name
+        // is consistent with FxCop, for the case where the class is in a namespace.
+        [Fact]
+        public void CSharpDiagnosticForVirtualPublicMethodInPublicClassInNamespace()
+        {
+            VerifyCSharp(@"
+namespace N
+{
+    public class C
+    {
+        public virtual void @for() {}
+    }
+}",
+                // Don't include the namespace name.
+                GetCSharpResultAt(6, 29, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C.for()", "for"));
+        }
+
+        [Fact]
+        public void BasicDiagnosticForVirtualPublicMethodInPublicClassInNamespace()
+        {
+            VerifyBasic(@"
+Namespace N
+    Public Class C
+        Public Overridable Sub [for]()
+        End Sub
+    End Class
+End Namespace",
+                // Don't include the namespace name.
+                GetBasicResultAt(4, 32, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C.for()", "for"));
+        }
+
+        // These tests are just to verify that the formatting of the displayed member name
+        // is consistent with FxCop, for the case where the class is generic.
+        [Fact]
+        public void CSharpDiagnosticForVirtualPublicMethodInPublicGenericClass()
+        {
+            VerifyCSharp(@"
+public class C<T> where T : class
+{
+    public virtual void @for() {}
+}",
+                // Include the type parameter name but not the constraint.
+                GetCSharpResultAt(4, 25, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C<T>.for()", "for"));
+        }
+
+        [Fact]
+        public void BasicDiagnosticForVirtualPublicMethodInPublicGenericClass()
+        {
+            VerifyBasic(@"
+Public Class C(Of T As Class)
+    Public Overridable Sub [for]()
+    End Sub
+End Class",
+                // Include the type parameter name but not the constraint.
+                GetBasicResultAt(3, 28, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C(Of T).for()", "for"));
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new IdentifiersShouldNotMatchKeywordsAnalyzer();

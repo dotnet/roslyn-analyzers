@@ -223,6 +223,36 @@ namespace Desktop.Analyzers
         }
 
         /// <summary>
+        /// Get non-empty class or method name which encloses the current syntax node
+        /// </summary>
+        /// <param name="current">Current syntax not to examine</param>
+        /// <param name="model">The semantic model</param>
+        /// <returns></returns>
+        public static string GetNonEmptyParentName(SyntaxNode current, SemanticModel model)
+        {
+            while (current.Parent != null)
+            {
+                var parent = current.Parent;
+                ISymbol sym = parent.GetDeclaredOrReferencedSymbol(model);
+
+                if (sym != null &&
+                    !string.IsNullOrEmpty(sym.Name)
+                    && (
+                        sym.Kind == SymbolKind.Method ||
+                        sym.Kind == SymbolKind.NamedType
+                       )
+                )
+                {
+                    return sym.Name;
+                }
+
+                current = parent;
+            }
+
+            return String.Empty;
+        }
+
+        /// <summary>
         /// Gets the version of the target .NET framework of the compilation.
         /// </summary>                          
         /// <returns>

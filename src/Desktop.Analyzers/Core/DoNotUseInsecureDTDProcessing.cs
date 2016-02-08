@@ -185,7 +185,7 @@ namespace Desktop.Analyzers
                                 node.GetLocation(), 
                                 SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                     nameof(DesktopAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage),
-                                    DiagnosticHelpers.GetMeaningfulParentName(node, model), 
+                                    SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model), 
                                 method.Name)
                             )
                         );
@@ -296,7 +296,7 @@ namespace Desktop.Analyzers
                                 node.GetLocation(),
                                 SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                     nameof(DesktopAnalyzersResources.XmlTextReaderConstructedWithNoSecureResolutionMessage),
-                                    DiagnosticHelpers.GetMeaningfulParentName(node, model)
+                                    SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model)
                                 )
                             );
                             context.ReportDiagnostic(diag);
@@ -315,7 +315,7 @@ namespace Desktop.Analyzers
                                 node.GetLocation(),
                                 SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                     nameof(DesktopAnalyzersResources.XmlReaderCreateWrongOverloadMessage),
-                                    DiagnosticHelpers.GetMeaningfulParentName(node, model)
+                                    SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model)
                                 )
                             )
                         );
@@ -333,7 +333,7 @@ namespace Desktop.Analyzers
                                 node.GetLocation(),
                                 SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                     nameof(DesktopAnalyzersResources.XmlReaderCreateInsecureInputMessage),
-                                    DiagnosticHelpers.GetMeaningfulParentName(node, model)
+                                    SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model)
                                 )
                             );
                             context.ReportDiagnostic(diag);
@@ -393,7 +393,7 @@ namespace Desktop.Analyzers
                             node.GetLocation(),
                             SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                 nameof(DesktopAnalyzersResources.DoNotUseSetInnerXmlMessage),
-                                DiagnosticHelpers.GetMeaningfulParentName(node, semanticModel)
+                                SecurityDiagnosticHelpers.GetNonEmptyParentName(node, semanticModel)
                             )
                         )
                     );
@@ -407,7 +407,7 @@ namespace Desktop.Analyzers
                             node.GetLocation(),
                             SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                 nameof(DesktopAnalyzersResources.ReviewDtdProcessingPropertiesMessage),
-                                DiagnosticHelpers.GetMeaningfulParentName(node, semanticModel)
+                                SecurityDiagnosticHelpers.GetNonEmptyParentName(node, semanticModel)
                             )
                         )
                     );

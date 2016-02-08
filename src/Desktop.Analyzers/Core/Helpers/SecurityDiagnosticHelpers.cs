@@ -11,13 +11,13 @@ namespace Desktop.Analyzers
         public static bool IsXslCompiledTransformLoad(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
             return method != null
-                && method.MatchMethod(xmlTypes.XslCompiledTransform, SecurityMemberNames.Load);
+                && method.MatchMethodByName(xmlTypes.XslCompiledTransform, SecurityMemberNames.Load);
         }
 
         public static bool IsXmlDocumentCtorDerived(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
             return method != null &&
-                   method.MatchMethodDerived(xmlTypes.XmlDocument, WellKnownMemberNames.InstanceConstructorName);
+                   method.MatchMethodDerivedByName(xmlTypes.XmlDocument, WellKnownMemberNames.InstanceConstructorName);
         }
 
         public static bool IsXmlDocumentXmlResolverPropertyDerived(ISymbol symbol, CompilationSecurityTypes xmlTypes)
@@ -33,13 +33,13 @@ namespace Desktop.Analyzers
         public static bool IsXmlTextReaderCtor(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
             return method != null 
-                && method.MatchMethod(xmlTypes.XmlTextReader, WellKnownMemberNames.InstanceConstructorName);
+                && method.MatchMethodByName(xmlTypes.XmlTextReader, WellKnownMemberNames.InstanceConstructorName);
         }
 
         public static bool IsXmlTextReaderCtorDerived(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
             return method != null
-                && method.MatchMethodDerived(xmlTypes.XmlTextReader, WellKnownMemberNames.InstanceConstructorName);
+                && method.MatchMethodDerivedByName(xmlTypes.XmlTextReader, WellKnownMemberNames.InstanceConstructorName);
         }
 
         public static bool IsXmlTextReaderXmlResolverPropertyDerived(ISymbol symbol, CompilationSecurityTypes xmlTypes)
@@ -65,13 +65,13 @@ namespace Desktop.Analyzers
         public static bool IsXmlReaderCreate(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
             return method != null
-                && method.MatchMethod(xmlTypes.XmlReader, SecurityMemberNames.Create);
+                && method.MatchMethodByName(xmlTypes.XmlReader, SecurityMemberNames.Create);
         }
 
         public static bool IsXmlReaderSettingsCtor(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
             return method != null 
-                && method.MatchMethod(xmlTypes.XmlReaderSettings, WellKnownMemberNames.InstanceConstructorName);
+                && method.MatchMethodByName(xmlTypes.XmlReaderSettings, WellKnownMemberNames.InstanceConstructorName);
         }
 
         public static bool IsXmlReaderSettingsXmlResolverProperty(ISymbol symbol, CompilationSecurityTypes xmlTypes)
@@ -92,7 +92,7 @@ namespace Desktop.Analyzers
         public static bool IsXsltSettingsCtor(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
             return method != null 
-                && method.MatchMethod(xmlTypes.XsltSettings, WellKnownMemberNames.InstanceConstructorName);
+                && method.MatchMethodByName(xmlTypes.XsltSettings, WellKnownMemberNames.InstanceConstructorName);
         }
 
         public static bool IsXsltSettingsTrustedXsltProperty(ISymbol symbol, CompilationSecurityTypes xmlTypes)
@@ -169,7 +169,7 @@ namespace Desktop.Analyzers
             if (symbol != null && symbol.Kind == SymbolKind.Property)
             {
                 IPropertySymbol property = (IPropertySymbol)symbol;
-                return property.MatchProperty(namedType, propertyName);
+                return property.MatchPropertyByName(namedType, propertyName);
             }
 
             return false;
@@ -180,7 +180,7 @@ namespace Desktop.Analyzers
             if (symbol != null && symbol.Kind == SymbolKind.Property)
             {
                 IPropertySymbol property = (IPropertySymbol)symbol;
-                return property.MatchPropertyDerived(namedType, propertyName);
+                return property.MatchPropertyDerivedByName(namedType, propertyName);
             }
 
             return false;

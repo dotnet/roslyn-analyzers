@@ -108,66 +108,44 @@ namespace Analyzer.Utilities
             return visibility;
         }
 
-        public static bool MatchMemberDerived(this ISymbol member, INamedTypeSymbol type, string name)
+        public static bool MatchMemberDerivedByName(this ISymbol member, INamedTypeSymbol type, string name)
         {
             return member != null && member.ContainingType.DerivesFrom(type) && member.MetadataName == name;
         }
 
-        public static bool MatchMethodDerived(this ISymbol member, INamedTypeSymbol type, string name)
+        public static bool MatchMethodDerivedByName(this ISymbol member, INamedTypeSymbol type, string name)
         {
-            return member != null && member.Kind == SymbolKind.Method && member.MatchMemberDerived(type, name);
+            return member != null && member.Kind == SymbolKind.Method && member.MatchMemberDerivedByName(type, name);
         }
 
-        public static bool MatchMethod(this ISymbol member, INamedTypeSymbol type, string name)
+        public static bool MatchMethodByName(this ISymbol member, INamedTypeSymbol type, string name)
         {
-            return member != null && member.Kind == SymbolKind.Method && member.MatchMember(type, name);
+            return member != null && member.Kind == SymbolKind.Method && member.MatchMemberByName(type, name);
         }
 
-        public static bool MatchPropertyDerived(this ISymbol member, INamedTypeSymbol type, string name)
+        public static bool MatchPropertyDerivedByName(this ISymbol member, INamedTypeSymbol type, string name)
         {
-            return member != null && member.Kind == SymbolKind.Property && member.MatchMemberDerived(type, name);
+            return member != null && member.Kind == SymbolKind.Property && member.MatchMemberDerivedByName(type, name);
         }
 
-        public static bool MatchFieldDerived(this ISymbol member, INamedTypeSymbol type, string name)
+        public static bool MatchFieldDerivedByName(this ISymbol member, INamedTypeSymbol type, string name)
         {
-            return member != null && member.Kind == SymbolKind.Field && member.MatchMemberDerived(type, name);
+            return member != null && member.Kind == SymbolKind.Field && member.MatchMemberDerivedByName(type, name);
         }
 
-        public static bool MatchMember(this ISymbol member, INamedTypeSymbol type, string name)
+        public static bool MatchMemberByName(this ISymbol member, INamedTypeSymbol type, string name)
         {
             return member != null && member.ContainingType == type && member.MetadataName == name;
         }
 
-        public static bool MatchProperty(this ISymbol member, INamedTypeSymbol type, string name)
+        public static bool MatchPropertyByName(this ISymbol member, INamedTypeSymbol type, string name)
         {
-            return member != null && member.Kind == SymbolKind.Property && member.MatchMember(type, name);
+            return member != null && member.Kind == SymbolKind.Property && member.MatchMemberByName(type, name);
         }
 
-        public static bool MatchField(this ISymbol member, INamedTypeSymbol type, string name)
+        public static bool MatchFieldByName(this ISymbol member, INamedTypeSymbol type, string name)
         {
-            return member != null && member.Kind == SymbolKind.Field && member.MatchMember(type, name);
-        }
-
-        public static ITypeSymbol GetVariableSymbolType(this ISymbol symbol)
-        {
-            if (symbol == null)
-            {
-                return null;
-            }
-            SymbolKind kind = symbol.Kind;
-            switch (kind)
-            {
-                case SymbolKind.Field:
-                    return ((IFieldSymbol)symbol).Type;
-                case SymbolKind.Local:
-                    return ((ILocalSymbol)symbol).Type;
-                case SymbolKind.Parameter:
-                    return ((IParameterSymbol)symbol).Type;
-                case SymbolKind.Property:
-                    return ((IPropertySymbol)symbol).Type;
-                default:
-                    return null;
-            }
+            return member != null && member.Kind == SymbolKind.Field && member.MatchMemberByName(type, name);
         }
     }
 

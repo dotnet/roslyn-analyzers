@@ -166,15 +166,15 @@ namespace Desktop.Analyzers
                 }
 
                 CompilationSecurityTypes xmlTypes = this._xmlTypes;
-                if (method.MatchMethodDerived(xmlTypes.XmlDocument, SecurityMemberNames.Load) ||                                    //FxCop CA3056
-                    method.MatchMethodDerived(xmlTypes.XmlDocument, SecurityMemberNames.LoadXml) ||                                 //FxCop CA3057
-                    method.MatchMethodDerived(xmlTypes.XPathDocument, WellKnownMemberNames.InstanceConstructorName) ||         //FxCop CA3059
-                    method.MatchMethodDerived(xmlTypes.XmlSchema, SecurityMemberNames.Read) ||                                      //FxCop CA3060
-                    method.MatchMethodDerived(xmlTypes.DataSet, SecurityMemberNames.ReadXml) ||                                     //FxCop CA3063
-                    method.MatchMethodDerived(xmlTypes.DataSet, SecurityMemberNames.ReadXmlSchema) ||                               //FxCop CA3064
-                    method.MatchMethodDerived(xmlTypes.XmlSerializer, SecurityMemberNames.Deserialize) ||                           //FxCop CA3070
-                    method.MatchMethodDerived(xmlTypes.DataTable, SecurityMemberNames.ReadXml) ||                                   //FxCop CA3071
-                    method.MatchMethodDerived(xmlTypes.DataTable, SecurityMemberNames.ReadXmlSchema))                               //FxCop CA3072
+                if (method.MatchMethodDerivedByName(xmlTypes.XmlDocument, SecurityMemberNames.Load) ||                                    //FxCop CA3056
+                    method.MatchMethodDerivedByName(xmlTypes.XmlDocument, SecurityMemberNames.LoadXml) ||                                 //FxCop CA3057
+                    method.MatchMethodDerivedByName(xmlTypes.XPathDocument, WellKnownMemberNames.InstanceConstructorName) ||         //FxCop CA3059
+                    method.MatchMethodDerivedByName(xmlTypes.XmlSchema, SecurityMemberNames.Read) ||                                      //FxCop CA3060
+                    method.MatchMethodDerivedByName(xmlTypes.DataSet, SecurityMemberNames.ReadXml) ||                                     //FxCop CA3063
+                    method.MatchMethodDerivedByName(xmlTypes.DataSet, SecurityMemberNames.ReadXmlSchema) ||                               //FxCop CA3064
+                    method.MatchMethodDerivedByName(xmlTypes.XmlSerializer, SecurityMemberNames.Deserialize) ||                           //FxCop CA3070
+                    method.MatchMethodDerivedByName(xmlTypes.DataTable, SecurityMemberNames.ReadXml) ||                                   //FxCop CA3071
+                    method.MatchMethodDerivedByName(xmlTypes.DataTable, SecurityMemberNames.ReadXmlSchema))                               //FxCop CA3072
                 {
                     if (SecurityDiagnosticHelpers.HasXmlReaderParameter(method, xmlTypes) < 0)
                     {
@@ -192,7 +192,7 @@ namespace Desktop.Analyzers
                     }
                 }
                 // We assume the design of derived type are secure, per Rule CA9003
-                else if (method.MatchMethod(xmlTypes.XmlDocument, WellKnownMemberNames.InstanceConstructorName))
+                else if (method.MatchMethodByName(xmlTypes.XmlDocument, WellKnownMemberNames.InstanceConstructorName))
                 {
                     if (IsObjectConstructionForTemporaryObject(node))   // REVIEW: may be hard to check
                     {
@@ -233,7 +233,7 @@ namespace Desktop.Analyzers
                     }
                 }
                 // We assume the design of derived type are secure, per Rule CA9003                    
-                else if (method.MatchMethod(xmlTypes.XmlTextReader, WellKnownMemberNames.InstanceConstructorName))
+                else if (method.MatchMethodByName(xmlTypes.XmlTextReader, WellKnownMemberNames.InstanceConstructorName))
                 {
                     if (IsObjectConstructionForTemporaryObject(node))   // REVIEW: may be hard to check
                     {
@@ -269,7 +269,7 @@ namespace Desktop.Analyzers
                             }
                             else if (SecurityDiagnosticHelpers.IsXmlTextReaderDtdProcessingProperty(symArgLhs, xmlTypes))
                             {
-                                if (SyntaxNodeHelper.GetSymbol(argRhs, model).MatchField(xmlTypes.DtdProcessing, SecurityMemberNames.Parse))
+                                if (SyntaxNodeHelper.GetSymbol(argRhs, model).MatchFieldByName(xmlTypes.DtdProcessing, SecurityMemberNames.Parse))
                                 {
                                     // Generate a warning whenever the XmlTextReader.DtdProcessing property is set to DtdProcessing.Parse
                                     Diagnostic diag = Diagnostic.Create(
@@ -303,7 +303,7 @@ namespace Desktop.Analyzers
                         }
                     }
                 }
-                else if (method.MatchMethodDerived(xmlTypes.XmlReader, SecurityMemberNames.Create))
+                else if (method.MatchMethodDerivedByName(xmlTypes.XmlReader, SecurityMemberNames.Create))
                 {
                     int xmlReaderSettingsIndex = SecurityDiagnosticHelpers.HasXmlReaderSettingsParameter(method, xmlTypes);
                     if (xmlReaderSettingsIndex < 0)     //FxCop CA3053:XmlReaderCreateWrongOverload
@@ -384,7 +384,7 @@ namespace Desktop.Analyzers
                     return;
                 }
 
-                if (property.MatchPropertyDerived(this._xmlTypes.XmlDocument, SecurityMemberNames.InnerXml))                                       //FxCop CA3058
+                if (property.MatchPropertyDerivedByName(this._xmlTypes.XmlDocument, SecurityMemberNames.InnerXml))                                       //FxCop CA3058
                 {
                     DiagnosticDescriptor rule = RuleDoNotUseInsecureDTDProcessing;
                     context.ReportDiagnostic(
@@ -398,7 +398,7 @@ namespace Desktop.Analyzers
                         )
                     );
                 }
-                else if (property.MatchPropertyDerived(this._xmlTypes.DataViewManager, SecurityMemberNames.DataViewSettingCollectionString))   //FxCop CA3065
+                else if (property.MatchPropertyDerivedByName(this._xmlTypes.DataViewManager, SecurityMemberNames.DataViewSettingCollectionString))   //FxCop CA3065
                 {
                     DiagnosticDescriptor rule = RuleDoNotUseInsecureDTDProcessing ;
                     context.ReportDiagnostic(
@@ -574,7 +574,7 @@ namespace Desktop.Analyzers
                         else if (SecurityDiagnosticHelpers.IsXmlTextReaderDtdProcessingPropertyDerived(SyntaxNodeHelper.GetSymbol(argLhs, model), xmlTypes))
                         {
                             env.IsDtdProcessingSet = true;
-                            env.IsDtdProcessingDisabled = !SyntaxNodeHelper.GetSymbol(argRhs, model).MatchField(xmlTypes.DtdProcessing, SecurityMemberNames.Parse);
+                            env.IsDtdProcessingDisabled = !SyntaxNodeHelper.GetSymbol(argRhs, model).MatchFieldByName(xmlTypes.DtdProcessing, SecurityMemberNames.Parse);
                         }
                     }
                     // if the XmlResolver or Dtdprocessing property is explicitly set when created, and is to an insecure value, generate a warning
@@ -651,7 +651,7 @@ namespace Desktop.Analyzers
                             }
                         }
                         else if (isXmlTextReaderDtdProcessingProperty &&
-                                 !SyntaxNodeHelper.GetSymbol(rhs, model).MatchField(xmlTypes.DtdProcessing, SecurityMemberNames.Parse))
+                                 !SyntaxNodeHelper.GetSymbol(rhs, model).MatchFieldByName(xmlTypes.DtdProcessing, SecurityMemberNames.Parse))
                         {
                             if (env != null)
                             {
@@ -720,7 +720,7 @@ namespace Desktop.Analyzers
                         else if (SecurityDiagnosticHelpers.IsXmlReaderSettingsDtdProcessingProperty(argLhsSymbol, xmlTypes))
                         {
                             // since the default is always Prohibit, we only need update if it is set to Parse
-                            if (SyntaxNodeHelper.GetSymbol(argRhs, model).MatchField(xmlTypes.DtdProcessing, SecurityMemberNames.Parse))
+                            if (SyntaxNodeHelper.GetSymbol(argRhs, model).MatchFieldByName(xmlTypes.DtdProcessing, SecurityMemberNames.Parse))
                             {
                                 env.IsDtdProcessingDisabled = false;
                             }
@@ -773,7 +773,7 @@ namespace Desktop.Analyzers
                         }
                         else if (isXmlReaderSettingsDtdProcessingProperty)
                         {
-                            env.IsDtdProcessingDisabled = !SyntaxNodeHelper.GetSymbol(rhs, model).MatchField(xmlTypes.DtdProcessing, SecurityMemberNames.Parse);
+                            env.IsDtdProcessingDisabled = !SyntaxNodeHelper.GetSymbol(rhs, model).MatchFieldByName(xmlTypes.DtdProcessing, SecurityMemberNames.Parse);
                         }
                         else
                         {

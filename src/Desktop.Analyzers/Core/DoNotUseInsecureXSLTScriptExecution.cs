@@ -147,7 +147,7 @@ namespace Desktop.Analyzers
                             var message = SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                 isSetInBlock ? nameof(DesktopAnalyzersResources.XslCompiledTransformLoadInsecureConstructedMessage) :
                                     nameof(DesktopAnalyzersResources.XslCompiledTransformLoadInsecureInputMessage),
-                                DiagnosticHelpers.GetMeaningfulParentName(node, model)
+                                SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model)
                             );
 
                             context.ReportDiagnostic(

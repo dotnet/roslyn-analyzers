@@ -155,11 +155,6 @@ namespace Analyzer.Utilities
             return typeSymbol.Accept(MinimalAccessibilityVisitor.Instance);
         }
         
-        public static bool IsTypeDeclaredInExpectedAssembly(ITypeSymbol typeSymbol, string assemblyName)
-        {
-            return typeSymbol.ContainingAssembly.Identity.Name.Equals(assemblyName, StringComparison.Ordinal);
-        }
-        
         private class MinimalAccessibilityVisitor : SymbolVisitor<Accessibility>
         {
             public static readonly SymbolVisitor<Accessibility> Instance = new MinimalAccessibilityVisitor();

@@ -164,7 +164,7 @@ namespace Desktop.Analyzers
                             rule,
                             SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                 nameof(DesktopAnalyzersResources.XmlDocumentDerivedClassConstructorNoSecureXmlResolverMessage),
-                                DiagnosticHelpers.GetMeaningfulParentName(node, model)
+                                SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model)
                             )
                         )
                     );
@@ -269,7 +269,7 @@ namespace Desktop.Analyzers
                             },
                             (n) =>
                             {
-                                return !SyntaxNodeHelper.GetSymbol(n, model).MatchField(this._xmlTypes.DtdProcessing, SecurityMemberNames.Parse);
+                                return !SyntaxNodeHelper.GetSymbol(n, model).MatchFieldByName(this._xmlTypes.DtdProcessing, SecurityMemberNames.Parse);
                             },
                             out isTargetProperty);
 
@@ -286,7 +286,7 @@ namespace Desktop.Analyzers
                         rule, 
                         SecurityDiagnosticHelpers.GetLocalizableResourceString(
                             nameof(DesktopAnalyzersResources.XmlTextReaderDerivedClassConstructorNoSecureSettingsMessage),
-                            DiagnosticHelpers.GetMeaningfulParentName(node, model)
+                            SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model)
                         )
                     )
                 );
@@ -365,7 +365,7 @@ namespace Desktop.Analyzers
                             },
                             (n) =>
                             {
-                                return SyntaxNodeHelper.GetSymbol(n, model).MatchField(this._xmlTypes.DtdProcessing, SecurityMemberNames.Parse);
+                                return SyntaxNodeHelper.GetSymbol(n, model).MatchFieldByName(this._xmlTypes.DtdProcessing, SecurityMemberNames.Parse);
                             },
                             out isTargetProperty);
 

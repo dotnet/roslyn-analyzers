@@ -99,29 +99,5 @@ namespace Analyzer.Utilities
             // For other language constructs
             return symbol.Name;
         }
-
-        public static string GetMeaningfulParentName(SyntaxNode current, SemanticModel model)
-        {
-            while (current.Parent != null)
-            {
-                var parent = current.Parent;
-                ISymbol sym = parent.GetDeclaredOrReferencedSymbol(model);
-
-                if (sym != null &&
-                    !string.IsNullOrEmpty(sym.Name)
-                    && (
-                        sym.Kind == SymbolKind.Method ||
-                        sym.Kind == SymbolKind.NamedType
-                       )
-                )
-                {
-                    return sym.Name;
-                }
-
-                current = parent;
-            }
-
-            return String.Empty;
-        }
     }
 }

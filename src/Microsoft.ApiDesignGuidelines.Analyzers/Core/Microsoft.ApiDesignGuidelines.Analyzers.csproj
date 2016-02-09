@@ -136,6 +136,7 @@
     <Compile Include="MarkAttributesWithAttributeUsage.cs" />
     <Compile Include="DefineAccessorsForAttributeArguments.cs" />
     <Compile Include="DefineAccessorsForAttributeArguments.Fixer.cs" />
+    <Compile Include="UseIntegralOrStringArgumentForIndexers.cs" />
     <Compile Include="UsePropertiesWhereAppropriate.cs" />
     <Compile Include="UsePropertiesWhereAppropriate.Fixer.cs" />
     <Compile Include="InterfaceMethodsShouldBeCallableByChildTypes.cs" />
@@ -172,7 +173,6 @@
     <Compile Include="ImplementStandardExceptionConstructors.cs" />
     <Compile Include="ImplementStandardExceptionConstructors.Fixer.cs" />
     <Compile Include="NestedTypesShouldNotBeVisible.cs" />
-    <Compile Include="NestedTypesShouldNotBeVisible.Fixer.cs" />
     <Compile Include="AvoidEmptyInterfaces.cs" />
     <Compile Include="AvoidEmptyInterfaces.Fixer.cs" />
     <Compile Include="ProvideObsoleteAttributeMessage.cs" />
@@ -194,19 +194,16 @@
     <Compile Include="ExceptionsShouldBePublic.cs" />
     <Compile Include="ExceptionsShouldBePublic.Fixer.cs" />
     <Compile Include="DoNotRaiseExceptionsInUnexpectedLocations.cs" />
-    <Compile Include="DoNotRaiseExceptionsInUnexpectedLocations.Fixer.cs" />
     <Compile Include="IdentifiersShouldNotContainUnderscores.cs" />
     <Compile Include="IdentifiersShouldNotContainUnderscores.Fixer.cs" />
     <Compile Include="IdentifiersShouldHaveCorrectSuffix.cs" />
     <Compile Include="IdentifiersShouldHaveCorrectSuffix.Fixer.cs" />
     <Compile Include="IdentifiersShouldNotHaveIncorrectSuffix.cs" />
     <Compile Include="IdentifiersShouldNotHaveIncorrectSuffix.Fixer.cs" />
-    <Compile Include="FlagsEnumsShouldHavePluralNames.cs" />
-    <Compile Include="FlagsEnumsShouldHavePluralNames.Fixer.cs" />
+    <Compile Include="EnumsShouldHavePluralNames.cs" />
+    <Compile Include="EnumsShouldHavePluralNames.Fixer.cs" />
     <Compile Include="IdentifiersShouldNotMatchKeywords.cs" />
     <Compile Include="IdentifiersShouldNotMatchKeywords.Fixer.cs" />
-    <Compile Include="OnlyFlagsEnumsShouldHavePluralNames.cs" />
-    <Compile Include="OnlyFlagsEnumsShouldHavePluralNames.Fixer.cs" />
     <Compile Include="PropertyNamesShouldNotMatchGetMethods.cs" />
     <Compile Include="PropertyNamesShouldNotMatchGetMethods.Fixer.cs" />
     <Compile Include="TypeNamesShouldNotMatchNamespaces.cs" />
@@ -218,7 +215,6 @@
     <Compile Include="OverrideEqualsAndOperatorEqualsOnValueTypes.cs" />
     <Compile Include="OverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.cs" />
     <Compile Include="PropertiesShouldNotReturnArrays.cs" />
-    <Compile Include="PropertiesShouldNotReturnArrays.Fixer.cs" />
     <Compile Include="AssembliesShouldHaveValidStrongNames.cs" />
     <Compile Include="AssembliesShouldHaveValidStrongNames.Fixer.cs" />
     <Compile Include="OverrideGetHashCodeOnOverridingEquals.Fixer.cs" />

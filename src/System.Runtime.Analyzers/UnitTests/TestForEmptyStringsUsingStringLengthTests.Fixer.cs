@@ -12,12 +12,12 @@ namespace System.Runtime.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicTestForEmptyStringsUsingStringLengthAnalyzer();
+            return new TestForEmptyStringsUsingStringLengthAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpTestForEmptyStringsUsingStringLengthAnalyzer();
+            return new TestForEmptyStringsUsingStringLengthAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

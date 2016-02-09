@@ -62,13 +62,13 @@ namespace Analyzer.Utilities
         public static bool OverridesEquals(this INamedTypeSymbol symbol)
         {
             // Does the symbol override Object.Equals?
-            return symbol.GetMembers(WellKnownMemberNames.ObjectEquals).OfType<IMethodSymbol>().Where(m => IsEqualsOverride(m)).Any();
+            return symbol.GetMembers(WellKnownMemberNames.ObjectEquals).OfType<IMethodSymbol>().Where(m => m.IsEqualsOverride()).Any();
         }
 
         public static bool OverridesGetHashCode(this INamedTypeSymbol symbol)
         {
             // Does the symbol override Object.GetHashCode?
-            return symbol.GetMembers(WellKnownMemberNames.ObjectGetHashCode).OfType<IMethodSymbol>().Where(m => IsGetHashCodeOverride(m)).Any();
+            return symbol.GetMembers(WellKnownMemberNames.ObjectGetHashCode).OfType<IMethodSymbol>().Where(m => m.IsGetHashCodeOverride()).Any();
         }
 
         public static bool HasFinalizer(this INamedTypeSymbol symbol)

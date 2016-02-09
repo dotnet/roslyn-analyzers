@@ -7,13 +7,13 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace System.Resources.Analyzers
+namespace Microsoft.ApiDesignGuidelines.Analyzers
 {                                 
     /// <summary>
-    /// CA1824: Mark assemblies with NeutralResourcesLanguageAttribute
+    /// CA1714: Flags enums should have plural names
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
-    public sealed class CSharpMarkAssembliesWithNeutralResourcesLanguageFixer : MarkAssembliesWithNeutralResourcesLanguageFixer
+    public sealed class CSharpEnumsShouldHavePluralNamesFixer : EnumsShouldHavePluralNamesFixer
     { 
         
     }

@@ -14,11 +14,11 @@ using Microsoft.CodeAnalysis.Editing;
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {                              
     /// <summary>
-    /// CA1034: Nested types should not be visible
+    /// CA1714: Flags enums should have plural names
     /// </summary>
-    public abstract class NestedTypesShouldNotBeVisibleFixer : CodeFixProvider
+    public abstract class EnumsShouldHavePluralNamesFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(NestedTypesShouldNotBeVisibleAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, EnumsShouldHavePluralNamesAnalyzer.RuleId_NoPlural);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

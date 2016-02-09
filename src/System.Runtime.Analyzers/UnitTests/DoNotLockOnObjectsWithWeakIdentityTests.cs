@@ -11,12 +11,12 @@ namespace System.Runtime.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicDoNotLockOnObjectsWithWeakIdentityAnalyzer();
+            return new DoNotLockOnObjectsWithWeakIdentityAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpDoNotLockOnObjectsWithWeakIdentityAnalyzer();
+            return new DoNotLockOnObjectsWithWeakIdentityAnalyzer();
         }
 
         [Fact]

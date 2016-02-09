@@ -93,8 +93,18 @@ namespace Analyzer.Utilities
             }
         }
 
-        public static bool DerivesFrom(this INamedTypeSymbol symbol, INamedTypeSymbol candidateBaseType)
+        public static bool DerivesFrom(this ITypeSymbol symbol, INamedTypeSymbol candidateBaseType, bool baseTypesOnly = false)
         {
+            if (candidateBaseType == null)
+            {
+                return false;
+            }
+
+            if (!baseTypesOnly && symbol.AllInterfaces.Contains(candidateBaseType ))
+            {
+                return true;
+            }
+
             while (symbol != null)
             {
                 if (symbol.Equals(candidateBaseType))
@@ -144,7 +154,7 @@ namespace Analyzer.Utilities
         {
             return typeSymbol.Accept(MinimalAccessibilityVisitor.Instance);
         }
-
+        
         private class MinimalAccessibilityVisitor : SymbolVisitor<Accessibility>
         {
             public static readonly SymbolVisitor<Accessibility> Instance = new MinimalAccessibilityVisitor();

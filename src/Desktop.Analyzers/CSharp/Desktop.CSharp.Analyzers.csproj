@@ -100,8 +100,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CSharpDoNotUseInsecureDTDProcessing.cs" />
     <Compile Include="CSharpDoNotCatchCorruptedStateExceptions.cs" />
     <Compile Include="CSharpDoNotUseInsecureCyrptographicAlgorithms.cs" />
+    <Compile Include="Helpers\SyntaxNodeHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CSharpSpecifyMessageBoxOptions.cs" />
     <Compile Include="CSharpSpecifyMessageBoxOptions.Fixer.cs" />

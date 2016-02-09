@@ -107,6 +107,46 @@ namespace Analyzer.Utilities
 
             return visibility;
         }
+
+        public static bool MatchMemberDerivedByName(this ISymbol member, INamedTypeSymbol type, string name)
+        {
+            return member != null && member.ContainingType.DerivesFrom(type) && member.MetadataName == name;
+        }
+
+        public static bool MatchMethodDerivedByName(this ISymbol member, INamedTypeSymbol type, string name)
+        {
+            return member != null && member.Kind == SymbolKind.Method && member.MatchMemberDerivedByName(type, name);
+        }
+
+        public static bool MatchMethodByName(this ISymbol member, INamedTypeSymbol type, string name)
+        {
+            return member != null && member.Kind == SymbolKind.Method && member.MatchMemberByName(type, name);
+        }
+
+        public static bool MatchPropertyDerivedByName(this ISymbol member, INamedTypeSymbol type, string name)
+        {
+            return member != null && member.Kind == SymbolKind.Property && member.MatchMemberDerivedByName(type, name);
+        }
+
+        public static bool MatchFieldDerivedByName(this ISymbol member, INamedTypeSymbol type, string name)
+        {
+            return member != null && member.Kind == SymbolKind.Field && member.MatchMemberDerivedByName(type, name);
+        }
+
+        public static bool MatchMemberByName(this ISymbol member, INamedTypeSymbol type, string name)
+        {
+            return member != null && member.ContainingType == type && member.MetadataName == name;
+        }
+
+        public static bool MatchPropertyByName(this ISymbol member, INamedTypeSymbol type, string name)
+        {
+            return member != null && member.Kind == SymbolKind.Property && member.MatchMemberByName(type, name);
+        }
+
+        public static bool MatchFieldByName(this ISymbol member, INamedTypeSymbol type, string name)
+        {
+            return member != null && member.Kind == SymbolKind.Field && member.MatchMemberByName(type, name);
+        }
     }
 
     public enum SymbolVisibility

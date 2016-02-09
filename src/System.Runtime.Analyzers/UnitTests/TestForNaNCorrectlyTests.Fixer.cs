@@ -12,12 +12,12 @@ namespace System.Runtime.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicTestForNaNCorrectlyAnalyzer();
+            return new TestForNaNCorrectlyAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpTestForNaNCorrectlyAnalyzer();
+            return new TestForNaNCorrectlyAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

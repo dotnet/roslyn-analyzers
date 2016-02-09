@@ -29,6 +29,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
         private static readonly MetadataReference s_workspacesReference = MetadataReference.CreateFromAssemblyInternal(typeof(Workspace).Assembly);
         private static readonly MetadataReference s_immutableCollectionsReference = MetadataReference.CreateFromAssemblyInternal(typeof(ImmutableArray<int>).Assembly);
         private static readonly MetadataReference s_systemDiagnosticsDebugReference = MetadataReference.CreateFromAssemblyInternal(typeof(System.Diagnostics.Debug).Assembly);
+        private static readonly MetadataReference s_systemDataReference = MetadataReference.CreateFromAssemblyInternal(typeof(System.Data.DataSet).Assembly);
         private static readonly CompilationOptions s_CSharpDefaultOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
         private static readonly CompilationOptions s_visualBasicDefaultOptions = new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
 
@@ -227,6 +228,11 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
         protected void VerifyBasic(string[] sources, params DiagnosticResult[] expected)
         {
+            VerifyBasic(sources.ToFileAndSource(), expected);
+        }
+
+        protected void VerifyBasic(FileAndSource[] sources, params DiagnosticResult[] expected)
+        {
             Verify(sources, LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), expected);
         }
 
@@ -236,6 +242,11 @@ namespace Microsoft.CodeAnalysis.UnitTests
         }
 
         protected void VerifyCSharp(string[] sources, params DiagnosticResult[] expected)
+        {
+            VerifyCSharp(sources.ToFileAndSource(), expected);
+        }
+
+        protected void VerifyCSharp(FileAndSource[] sources, params DiagnosticResult[] expected)
         {
             Verify(sources, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), expected);
         }
@@ -247,15 +258,30 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
         protected void Verify(string[] sources, string language, DiagnosticAnalyzer analyzer, params DiagnosticResult[] expected)
         {
+            Verify(sources.ToFileAndSource(), language, analyzer, expected);
+        }
+
+        protected void Verify(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, params DiagnosticResult[] expected)
+        {
             GetSortedDiagnostics(sources, language, analyzer).Verify(analyzer, expected);
         }
 
         protected void Verify(string[] sources, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference, params DiagnosticResult[] expected)
         {
+            Verify(sources.ToFileAndSource(), language, analyzer, addLanguageSpecificCodeAnalysisReference, expected);
+        }
+
+        protected void Verify(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference, params DiagnosticResult[] expected)
+        {
             GetSortedDiagnostics(sources, language, analyzer, addLanguageSpecificCodeAnalysisReference).Verify(analyzer, expected);
         }
 
         protected static Diagnostic[] GetSortedDiagnostics(string[] sources, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference = true)
+        {
+            return GetSortedDiagnostics(sources.ToFileAndSource(), language, analyzer, addLanguageSpecificCodeAnalysisReference);
+        }
+
+        protected static Diagnostic[] GetSortedDiagnostics(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference = true)
         {
             var documentsAndUseSpan = GetDocumentsAndSpans(sources, language, addLanguageSpecificCodeAnalysisReference);
             var documents = documentsAndUseSpan.Item1;
@@ -265,6 +291,11 @@ namespace Microsoft.CodeAnalysis.UnitTests
         }
 
         protected static Tuple<Document[], bool, TextSpan?[]> GetDocumentsAndSpans(string[] sources, string language, bool addLanguageSpecificCodeAnalysisReference = true)
+        {
+            return GetDocumentsAndSpans(sources.ToFileAndSource(), language, addLanguageSpecificCodeAnalysisReference);
+        }
+
+        protected static Tuple<Document[], bool, TextSpan?[]> GetDocumentsAndSpans(FileAndSource[] sources, string language, bool addLanguageSpecificCodeAnalysisReference = true)
         {
             Assert.True(language == LanguageNames.CSharp || language == LanguageNames.VisualBasic, "Unsupported language");
 
@@ -278,9 +309,9 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 string source;
                 int? pos;
                 TextSpan? span;
-                MarkupTestFile.GetPositionAndSpan(sources[i], out source, out pos, out span);
+                MarkupTestFile.GetPositionAndSpan(sources[i].Source, out source, out pos, out span);
 
-                sources[i] = source;
+                sources[i].Source = source;
                 spans[i] = span;
 
                 if (span != null)
@@ -303,12 +334,16 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
         protected static Project CreateProject(string[] sources, string language = LanguageNames.CSharp, bool addLanguageSpecificCodeAnalysisReference = true, Solution addToSolution = null)
         {
+            return CreateProject(sources.ToFileAndSource(), language, addLanguageSpecificCodeAnalysisReference, addToSolution);
+        }
+
+        protected static Project CreateProject(FileAndSource[] sources, string language = LanguageNames.CSharp, bool addLanguageSpecificCodeAnalysisReference = true, Solution addToSolution = null)
+        {
             string fileNamePrefix = DefaultFilePathPrefix;
             string fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;
             var options = language == LanguageNames.CSharp ? s_CSharpDefaultOptions : s_visualBasicDefaultOptions;
 
             var projectId = ProjectId.CreateNewId(debugName: TestProjectName);
-
 
             var solution = (addToSolution ?? new AdhocWorkspace().CurrentSolution)
                 .AddProject(projectId, TestProjectName, TestProjectName, language)
@@ -327,6 +362,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 .AddMetadataReference(projectId, s_immutableCollectionsReference)
                 .AddMetadataReference(projectId, s_workspacesReference)
                 .AddMetadataReference(projectId, s_systemDiagnosticsDebugReference)
+                .AddMetadataReference(projectId, s_systemDataReference)
                 .WithProjectCompilationOptions(projectId, options);
 
             if (addLanguageSpecificCodeAnalysisReference)
@@ -340,10 +376,9 @@ namespace Microsoft.CodeAnalysis.UnitTests
             int count = 0;
             foreach (var source in sources)
             {
-                var newFileName = fileNamePrefix + count + "." + fileExt;
+                var newFileName = source.FilePath ?? fileNamePrefix + count++ + "." + fileExt;
                 var documentId = DocumentId.CreateNewId(projectId, debugName: newFileName);
-                solution = solution.AddDocument(documentId, newFileName, SourceText.From(source));
-                count++;
+                solution = solution.AddDocument(documentId, newFileName, SourceText.From(source.Source));
             }
 
             return solution.GetProject(projectId);
@@ -444,6 +479,12 @@ namespace Microsoft.CodeAnalysis.UnitTests
         protected static Diagnostic[] GetSortedDiagnostics(IEnumerable<Diagnostic> diagnostics)
         {
             return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
+        }
+
+        public struct FileAndSource
+        {
+            public string FilePath { get; set; }
+            public string Source { get; set; }
         }
     }
 }

@@ -955,4 +955,25 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="OverrideObjectEqualsTitle" xml:space="preserve">
     <value>Override Object.Equals(object) when implementing IEquatable&lt;T&gt;</value>
   </data>
+  <data name="UseIntegralOrStringArgumentForIndexersDescription" xml:space="preserve">
+    <value>Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the Object type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.</value>
+  </data>
+  <data name="UseIntegralOrStringArgumentForIndexersMessage" xml:space="preserve">
+    <value>Use Integral Or String Argument For Indexers</value>
+  </data>
+  <data name="UseIntegralOrStringArgumentForIndexersTitle" xml:space="preserve">
+    <value>Use Integral Or String Argument For Indexers</value>
+  </data>
+  <data name="DoNotDirectlyAwaitATaskDescription" xml:space="preserve">
+    <value>While authoring a library where the consumer is not known and when there is no need for a SynchronizationContext,  consider using ConfigureAwait(false). Otherwise, the consumers of the library may face deadlocks by consuming the asynchronous methods in a blocking fashion.</value>
+  </data>
+  <data name="DoNotDirectlyAwaitATaskMessage" xml:space="preserve">
+    <value>Do not directly await a Task without calling ConfigureAwait</value>
+  </data>
+  <data name="DoNotDirectlyAwaitATaskTitle" xml:space="preserve">
+    <value>Do not directly await a Task</value>
+  </data>
+  <data name="AppendConfigureAwaitFalse" xml:space="preserve">
+    <value>Append .ConfigureAwait(false)</value>
+  </data>
 </root>

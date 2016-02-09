@@ -44,7 +44,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                         return;
                     }
 
-                    if (!IsFinalizer(method))
+                    if (!method.IsFinalizer())
                     {
                         return;
                     }
@@ -56,33 +56,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                 });
             });
         }
-
-        private static bool IsFinalizer(IMethodSymbol method)
-        {
-            if (method.MethodKind == MethodKind.Destructor)
-            {
-                return true; // for C#
-            }
-
-            if (method.Name != "Finalize" || method.Parameters.Length != 0 || !method.ReturnsVoid)
-            {
-                return false;
-            }
-
-            var overridden = method.OverriddenMethod;
-            if (overridden == null)
-            {
-                return false;
-            }
-
-            for (var o = overridden.OverriddenMethod; o != null; o = o.OverriddenMethod)
-            {
-                overridden = o;
-            }
-
-            return overridden.ContainingType.SpecialType == SpecialType.System_Object; // it is object.Finalize
-        }
-
+        
         private bool IsEmptyFinalizer(ImmutableArray<IOperation> operationBlocks, ISymbol conditionalAttributeSymbol)
         {
             if (operationBlocks != null && operationBlocks.Length == 1)

@@ -11,7 +11,7 @@ Imports Desktop.Analyzers.Common
 
 Namespace Desktop.Analyzers
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
-    Public Class BasicDoNotUseInsecureXSLTScriptExecutionAnalyzer
+    Public NotInheritable Class BasicDoNotUseInsecureXSLTScriptExecutionAnalyzer
         Inherits DoNotUseInsecureXSLTScriptExecutionAnalyzer(Of SyntaxKind)
         Protected Overrides Function GetAnalyzer(context As CodeBlockStartAnalysisContext(Of SyntaxKind), types As CompilationSecurityTypes) As Analyzer
             Dim analyzer As New Analyzer(types, BasicSyntaxNodeHelper.DefaultInstance)

@@ -161,8 +161,7 @@ namespace Desktop.Analyzers
                     }
                 }
             }
-
-
+            
             private void AnalyzeNodeForXsltSettings(SyntaxNodeAnalysisContext context)
             {
                 SyntaxNode node = context.Node;

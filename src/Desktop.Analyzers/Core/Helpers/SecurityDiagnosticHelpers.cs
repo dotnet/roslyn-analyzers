@@ -1,12 +1,12 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
+using Analyzer.Utilities;
 
 namespace Desktop.Analyzers
 {
-    class SecurityDiagnosticHelpers
+    public class SecurityDiagnosticHelpers
     {
         public static bool IsXslCompiledTransformLoad(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {

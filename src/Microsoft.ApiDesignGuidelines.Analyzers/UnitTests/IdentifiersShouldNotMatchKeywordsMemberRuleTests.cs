@@ -395,6 +395,42 @@ End Class",
                 // Diagnostic for the virtual in C, but none for the override in D.
                 GetBasicResultAt(3, 28, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C.internal()", "internal"));
         }
+
+        [Fact]
+        public void CSharpNoDiagnosticForSealedOverrideOfKeywordNamedPublicVirtualMethodOfPublicClass()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public virtual void @internal() {}
+}
+
+public class D : C
+{
+    public sealed override sealed void @internal() {}
+}",
+                // Diagnostic for the virtual in C, but none for the sealed override in D.
+                GetCSharpResultAt(4, 25, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C.internal()", "internal"));
+        }
+
+        [Fact]
+        public void BasicNoDiagnosticForSealedOverrideOfKeywordNamedPublicVirtualMethodOfPublicClass()
+        {
+            VerifyBasic(@"
+Public Class C
+    Public Overridable Sub [internal]()
+    End Sub
+End Class
+
+Public Class D
+    Inherits C
+    Public NotInheritable Overrides Sub [internal]()
+    End Sub
+End Class",
+                // Diagnostic for the virtual in C, but none for the sealed override in D.
+                GetBasicResultAt(3, 28, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C.internal()", "internal"));
+        }
+
         [Fact]
         public void CSharpDiagnosticForEachOverloadOfCaseSensitiveKeywordNamedPublicVirtualMethodInPublicClass()
         {

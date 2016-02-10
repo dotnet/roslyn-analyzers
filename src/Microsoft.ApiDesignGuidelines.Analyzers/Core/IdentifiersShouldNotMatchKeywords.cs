@@ -238,10 +238,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             "while",
             // Listed as a keywords in Microsoft.CodeAnalysis.CSharp.SyntaxKind, but
             // omitted, at least for now, for compatibility with FxCop:
-            //"arglist", (Shouldn't this be "__arglist"?)
-            //"makeref",
-            //"reftype",
-            //"refvalue",
+            //"__arglist",
+            //"__makeref",
+            //"__reftype",
+            //"__refvalue",
             //"stackalloc",
 
             // C++

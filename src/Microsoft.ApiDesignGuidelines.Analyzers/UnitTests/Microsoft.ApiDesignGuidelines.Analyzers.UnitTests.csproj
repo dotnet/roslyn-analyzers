@@ -248,7 +248,8 @@
     <Compile Include="IdentifiersShouldNotHaveIncorrectSuffixTests.Fixer.cs" />
     <Compile Include="EnumsShouldHavePluralNamesTests.cs" />
     <Compile Include="EnumsShouldHavePluralNamesTests.Fixer.cs" />
-    <Compile Include="IdentifiersShouldNotMatchKeywordsTests.cs" />
+    <Compile Include="IdentifiersShouldNotMatchKeywordsMemberParameterRuleTests.cs" />
+    <Compile Include="IdentifiersShouldNotMatchKeywordsMemberRuleTests.cs" />
     <Compile Include="IdentifiersShouldNotMatchKeywordsTests.Fixer.cs" />
     <Compile Include="PropertyNamesShouldNotMatchGetMethodsTests.cs" />
     <Compile Include="PropertyNamesShouldNotMatchGetMethodsTests.Fixer.cs" />

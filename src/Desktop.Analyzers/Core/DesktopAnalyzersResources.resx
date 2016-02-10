@@ -414,6 +414,7 @@
   <data name="DoNotUseInsecureDTDProcessingGenericMessage" xml:space="preserve">
     <value>{0}</value>
     <comment>CA3075</comment>
+  </data>
   <data name="InsecureXsltScriptProcessingMessage" xml:space="preserve">
     <value>Insecure XSLT script processing.</value>
     <comment>CA3076</comment>

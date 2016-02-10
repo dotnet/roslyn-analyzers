@@ -215,11 +215,11 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}.
+        ///   Looks up a localized string similar to Insecure DTD Processing.
         /// </summary>
-        internal static string DoNotUseInsecureDTDProcessingGenericMessage {
+        internal static string DoNotUseDtdProcessingOverloads {
             get {
-                return ResourceManager.GetString("DoNotUseInsecureDTDProcessingGenericMessage", resourceCulture);
+                return ResourceManager.GetString("DoNotUseDtdProcessingOverloads", resourceCulture);
             }
         }
         
@@ -227,7 +227,6 @@ namespace Desktop.Analyzers {
         ///   Looks up a localized string similar to {0} uses unsafe overload of &apos;{1}&apos; method.
         /// </summary>
         internal static string DoNotUseDtdProcessingOverloadsMessage {
-        internal static string DoNotUseInsecureXSLTScriptExecutionDescription {
             get {
                 return ResourceManager.GetString("DoNotUseDtdProcessingOverloadsMessage", resourceCulture);
             }
@@ -239,7 +238,6 @@ namespace Desktop.Analyzers {
         internal static string DoNotUseInsecureDTDProcessingDescription {
             get {
                 return ResourceManager.GetString("DoNotUseInsecureDTDProcessingDescription", resourceCulture);
-                return ResourceManager.GetString("DoNotUseInsecureXSLTScriptExecutionDescription", resourceCulture);
             }
         }
         
@@ -249,6 +247,15 @@ namespace Desktop.Analyzers {
         internal static string DoNotUseInsecureDTDProcessingGenericMessage {
             get {
                 return ResourceManager.GetString("DoNotUseInsecureDTDProcessingGenericMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which on an untrusted XSL input may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argurment with null or an XmlSecureResolver instance. This message may be suppressed [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DoNotUseInsecureXSLTScriptExecutionDescription {
+            get {
+                return ResourceManager.GetString("DoNotUseInsecureXSLTScriptExecutionDescription", resourceCulture);
             }
         }
         
@@ -456,6 +463,15 @@ namespace Desktop.Analyzers {
         internal static string InsecureXmlDtdProcessing {
             get {
                 return ResourceManager.GetString("InsecureXmlDtdProcessing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insecure XSLT script processing..
+        /// </summary>
+        internal static string InsecureXsltScriptProcessingMessage {
+            get {
+                return ResourceManager.GetString("InsecureXsltScriptProcessingMessage", resourceCulture);
             }
         }
         
@@ -916,6 +932,24 @@ namespace Desktop.Analyzers {
         internal static string XmlTextReaderSetInsecureResolutionMessage {
             get {
                 return ResourceManager.GetString("XmlTextReaderSetInsecureResolutionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to In {0} an insecure combination of XsltSettings and XmlResolver instances are provided to XslCompiledTransfor.Load as arguments..
+        /// </summary>
+        internal static string XslCompiledTransformLoadInsecureConstructedMessage {
+            get {
+                return ResourceManager.GetString("XslCompiledTransformLoadInsecureConstructedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to In {0} an insecure combination of XsltSettings and XmlResolver instances are provided to XslCompiledTransfor.Load as arguments..
+        /// </summary>
+        internal static string XslCompiledTransformLoadInsecureInputMessage {
+            get {
+                return ResourceManager.GetString("XslCompiledTransformLoadInsecureInputMessage", resourceCulture);
             }
         }
     }

@@ -95,6 +95,7 @@
     <None Include="uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DoNotUseInsecureDTDProcessing.cs" />
     <Compile Include="DoNotUseInsecureXSLTScriptExecution.cs" />
     <Compile Include="DesktopAnalyzersResources1.Designer.cs">
       <AutoGen>True</AutoGen>

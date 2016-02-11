@@ -4,6 +4,10 @@ using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 {
+    /// <summary>
+    /// Contains those unit tests for the IdentifiersShouldNotMatchKeywords analyzer that
+    /// pertain to the TypeRule, which applies to the names of types.
+    /// </summary>
     public partial class IdentifiersShouldNotMatchKeywordsTests
     {
         [Fact]

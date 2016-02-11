@@ -151,6 +151,8 @@
     <Compile Include="EnumWithFlagsAttributeTests.Fixer.cs" />
     <Compile Include="EquatableAnalyzerTests.cs" />
     <Compile Include="IdentifiersShouldNotContainTypeNamesTests.cs" />
+    <Compile Include="IdentifiersShouldNotMatchKeywordsTests.cs" />
+    <Compile Include="IdentifiersShouldNotMatchKeywordsTypeRuleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AvoidAsyncVoidTests.cs" />
     <Compile Include="AvoidAsyncVoidTests.Fixer.cs" />

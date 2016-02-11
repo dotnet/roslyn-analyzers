@@ -72,11 +72,33 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.RegisterSymbolAction(AnalyzeTypeRule,
+                SymbolKind.NamedType);
+
             analysisContext.RegisterSymbolAction(AnalyzeMemberRule,
                 SymbolKind.Event, SymbolKind.Method, SymbolKind.Property);
 
             analysisContext.RegisterSymbolAction(AnalyzeMemberParameterRule,
                 SymbolKind.Method);
+        }
+
+        private void AnalyzeTypeRule(SymbolAnalysisContext context)
+        {
+            INamedTypeSymbol type = (INamedTypeSymbol)context.Symbol;
+            if (type.GetResultantVisibility() != SymbolVisibility.Public)
+            {
+                return;
+            }
+
+            string matchingKeyword;
+            if (IsKeyword(type.Name, out matchingKeyword))
+            { 
+                context.ReportDiagnostic(
+                    type.CreateDiagnostic(
+                        TypeRule,
+                        type.Name,
+                        matchingKeyword));
+            }
         }
 
         private void AnalyzeMemberRule(SymbolAnalysisContext context)

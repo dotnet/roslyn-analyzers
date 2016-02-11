@@ -1,8 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
@@ -11,7 +8,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     /// Contains those unit tests for the IdentifiersShouldNotMatchKeywords analyzer that
     /// pertain to the MemberRule, which applies to the names of type members.
     /// </summary>
-    public partial class IdentifiersShouldNotMatchKeywordsTests : DiagnosticAnalyzerTestBase
+    public partial class IdentifiersShouldNotMatchKeywordsTests
     {
         [Fact]
         public void CSharpDiagnosticForKeywordNamedPublicVirtualMethodInPublicClass()
@@ -69,7 +66,7 @@ public class C
         }
 
         [Fact]
-        public void BasicDiagnosticForCaseInsensitiveKeywordPublicVirtualNamedMethodInPublicClass()
+        public void BasicDiagnosticForCaseInsensitiveKeywordNamedPublicVirtualMethodInPublicClass()
         {
             VerifyBasic(@"
 Public Class C
@@ -600,16 +597,6 @@ Public Class C(Of T As Class)
 End Class",
                 // Include the type parameter name but not the constraint.
                 GetBasicResultAt(3, 28, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C(Of T).for()", "for"));
-        }
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new IdentifiersShouldNotMatchKeywordsAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new IdentifiersShouldNotMatchKeywordsAnalyzer();
         }
     }
 }

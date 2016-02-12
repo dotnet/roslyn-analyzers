@@ -140,7 +140,6 @@
     <Compile Include="CSharpImplementStandardExceptionConstructors.cs" />
     <Compile Include="CSharpAvoidEmptyInterfaces.cs" />
     <Compile Include="CSharpAvoidEmptyInterfaces.Fixer.cs" />
-    <Compile Include="CSharpProvideObsoleteAttributeMessage.cs" />
     <Compile Include="CSharpProvideObsoleteAttributeMessage.Fixer.cs" />
     <Compile Include="CSharpPropertiesShouldNotBeWriteOnly.cs" />
     <Compile Include="CSharpPropertiesShouldNotBeWriteOnly.Fixer.cs" />

@@ -2170,7 +2170,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Provide ObsoleteAttribute message.
+        ///   Looks up a localized string similar to Provide a message for the ObsoleteAttribute that marks {0} as Obsolete.
         /// </summary>
         internal static string ProvideObsoleteAttributeMessageMessage {
             get {

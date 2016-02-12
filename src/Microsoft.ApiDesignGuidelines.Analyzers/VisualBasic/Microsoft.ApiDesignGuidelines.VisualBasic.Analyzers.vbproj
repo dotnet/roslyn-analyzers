@@ -140,7 +140,6 @@
     <Compile Include="BasicImplementStandardExceptionConstructors.vb" />
     <Compile Include="BasicAvoidEmptyInterfaces.vb" />
     <Compile Include="BasicAvoidEmptyInterfaces.Fixer.vb" />
-    <Compile Include="BasicProvideObsoleteAttributeMessage.vb" />
     <Compile Include="BasicProvideObsoleteAttributeMessage.Fixer.vb" />
     <Compile Include="BasicPropertiesShouldNotBeWriteOnly.vb" />
     <Compile Include="BasicPropertiesShouldNotBeWriteOnly.Fixer.vb" />

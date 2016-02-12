@@ -575,7 +575,7 @@ Names of parameters and members are better used to communicate their meaning tha
     <value>A type or member is marked by using a System.ObsoleteAttribute attribute that does not have its ObsoleteAttribute.Message property specified. When a type or member that is marked by using ObsoleteAttribute is compiled, the Message property of the attribute is displayed. This gives the user information about the obsolete type or member.</value>
   </data>
   <data name="ProvideObsoleteAttributeMessageMessage" xml:space="preserve">
-    <value>Provide ObsoleteAttribute message</value>
+    <value>Provide a message for the ObsoleteAttribute that marks {0} as Obsolete</value>
   </data>
   <data name="PropertiesShouldNotBeWriteOnlyTitle" xml:space="preserve">
     <value>Properties should not be write only</value>

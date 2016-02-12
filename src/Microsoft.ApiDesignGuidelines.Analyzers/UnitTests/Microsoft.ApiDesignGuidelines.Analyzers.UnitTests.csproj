@@ -151,6 +151,7 @@
     <Compile Include="EnumWithFlagsAttributeTests.Fixer.cs" />
     <Compile Include="EquatableAnalyzerTests.cs" />
     <Compile Include="IdentifiersShouldNotContainTypeNamesTests.cs" />
+    <Compile Include="IdentifiersShouldNotMatchKeywordsNamespaceRuleTests.cs" />
     <Compile Include="IdentifiersShouldNotMatchKeywordsTests.cs" />
     <Compile Include="IdentifiersShouldNotMatchKeywordsTypeRuleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -68,10 +70,37 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              helpLinkUri: HelpLinkUri,
                                                                              customTags: s_customTags);
 
+        // Define the format in which this rule displays member names. The format is chosen to be
+        // consistent with FxCop's display format for this rule.
+        private static readonly SymbolDisplayFormat s_memberDisplayFormat =
+            // This format omits the namespace.
+            SymbolDisplayFormat.CSharpShortErrorMessageFormat
+                // Turn off the EscapeKeywordIdentifiers flag (which is on by default), so that
+                // a method named "@for" is displayed as "for".
+                // Turn on the UseSpecialTypes flat (which is off by default), so that parameter
+                // names of "special" types such as Int32 are displayed as their language alias,
+                // such as int for C# and Integer for VB.
+                .WithMiscellaneousOptions(SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
+
+        // Define the format in which this rule displays namespace names. The format is chosen to be
+        // consistent with FxCop's display format for this rule.
+        private static readonly SymbolDisplayFormat s_namespaceDisplayFormat =
+            SymbolDisplayFormat.CSharpErrorMessageFormat
+                // Turn off the EscapeKeywordIdentifiers flag (which is on by default), so that
+                // a method named "@for" is displayed as "for"
+                .WithMiscellaneousOptions(SymbolDisplayMiscellaneousOptions.None);
+
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(MemberParameterRule, MemberRule, TypeRule, NamespaceRule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            var keywordNamedNamespaces = new HashSet<string>();
+
+            analysisContext.RegisterSymbolAction(
+                context => AnalyzeNamespaceRule(context, keywordNamedNamespaces),
+                SymbolKind.NamedType);
+
             analysisContext.RegisterSymbolAction(AnalyzeTypeRule,
                 SymbolKind.NamedType);
 
@@ -80,6 +109,58 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             analysisContext.RegisterSymbolAction(AnalyzeMemberParameterRule,
                 SymbolKind.Method);
+        }
+
+        private void AnalyzeNamespaceRule(SymbolAnalysisContext context, HashSet<string> keywordNamedNamespaces)
+        {
+            INamedTypeSymbol type = (INamedTypeSymbol)context.Symbol;
+
+            // Don't complain about a namespace unless it contains at least one public type.
+            if (type.GetResultantVisibility() != SymbolVisibility.Public)
+            {
+                return;
+            }
+
+            INamespaceSymbol containingNamespace = type.ContainingNamespace;
+            if (containingNamespace.IsGlobalNamespace)
+            {
+                return;
+            }
+
+            string namespaceDisplayString = containingNamespace.ToDisplayString(s_namespaceDisplayFormat);
+            if (keywordNamedNamespaces.Contains(namespaceDisplayString))
+            {
+                // We've already reported a diagnostic for this namespace.
+                return;
+            }
+
+            IEnumerable<string> namespaceNameComponents = containingNamespace.ToDisplayParts(s_namespaceDisplayFormat)
+                .Where(dp => dp.Kind == SymbolDisplayPartKind.NamespaceName)
+                .Select(dp => dp.ToString());
+
+            bool foundKeyword = false;
+            foreach (string component in namespaceNameComponents)
+            {
+                string matchingKeyword;
+                if (IsKeyword(component, out matchingKeyword))
+                {
+                    foundKeyword = true;
+
+                    // Don't report the diagnostic at a specific location. See
+                    // dotnet/roslyn#8643.
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            NamespaceRule,
+                            Location.None,
+                            namespaceDisplayString,
+                            matchingKeyword));
+                }
+            }
+
+            if (foundKeyword)
+            {
+                keywordNamedNamespaces.Add(namespaceDisplayString);
+            }
         }
 
         private void AnalyzeTypeRule(SymbolAnalysisContext context)
@@ -96,7 +177,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 context.ReportDiagnostic(
                     type.CreateDiagnostic(
                         TypeRule,
-                        FormatSymbolName(type),
+                        FormatMemberName(type),
                         matchingKeyword));
             }
         }
@@ -121,7 +202,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 context.ReportDiagnostic(
                     symbol.CreateDiagnostic(
                         MemberRule,
-                        FormatSymbolName(symbol),
+                        FormatMemberName(symbol),
                         matchingKeyword));
             }
         }
@@ -148,7 +229,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     context.ReportDiagnostic(
                         parameter.CreateDiagnostic(
                             MemberParameterRule,
-                            FormatSymbolName(method),
+                            FormatMemberName(method),
                             parameter.Name,
                             matchingKeyword));
                 }
@@ -165,18 +246,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return _caseInsensitiveKeywords.TryGetKey(name, out keyword);
         }
 
-        // Format the symbol name in a way consistent with FxCop's display for this rule.
-        private static string FormatSymbolName(ISymbol symbol)
+        // Format member names in a way consistent with FxCop's display for this rule.
+        private static string FormatMemberName(ISymbol member)
         {
-            return symbol.ToDisplayString(
-                // This format omits the namespace.
-                SymbolDisplayFormat.CSharpShortErrorMessageFormat
-                    // Turn off the EscapeKeywordIdentifiers flag (which is on by default), so that
-                    // a method named "@for" is displayed as "for".
-                    // Turn on the UseSpecialTypes flat (which is off by default), so that parameter
-                    // names of "special" types such as Int32 are displayed as their language alias,
-                    // such as int for C# and Integer for VB.
-                    .WithMiscellaneousOptions(SymbolDisplayMiscellaneousOptions.UseSpecialTypes));
+            return member.ToDisplayString(s_memberDisplayFormat);
         }
 
         private readonly ImmutableHashSet<string> _caseSensitiveKeywords = new string[]

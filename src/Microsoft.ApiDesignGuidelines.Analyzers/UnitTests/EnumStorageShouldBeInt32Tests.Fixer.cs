@@ -10,12 +10,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicEnumStorageShouldBeInt32Analyzer();
+            return new EnumStorageShouldBeInt32Analyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpEnumStorageShouldBeInt32Analyzer();
+            return new EnumStorageShouldBeInt32Analyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
@@ -27,5 +27,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         {
             return new CSharpEnumStorageShouldBeInt32Fixer();
         }
+
+        #region CSharpUnitTests
+
+        #endregion
+
+        #region BasicUnitTests
+
+        #endregion
     }
 }

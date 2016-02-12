@@ -147,6 +147,30 @@ namespace Analyzer.Utilities
         {
             return member != null && member.Kind == SymbolKind.Field && member.MatchMemberByName(type, name);
         }
+
+        // Define the format in for displaying member names. The format is chosen to be consistent
+        // consistent with FxCop's display format.
+        private static readonly SymbolDisplayFormat s_memberDisplayFormat =
+            // This format omits the namespace.
+            SymbolDisplayFormat.CSharpShortErrorMessageFormat
+                // Turn off the EscapeKeywordIdentifiers flag (which is on by default), so that
+                // a method named "@for" is displayed as "for".
+                // Turn on the UseSpecialTypes flat (which is off by default), so that parameter
+                // names of "special" types such as Int32 are displayed as their language alias,
+                // such as int for C# and Integer for VB.
+                .WithMiscellaneousOptions(SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
+
+        /// <summary>
+        /// Format member names in a way consistent with FxCop's display format.
+        /// </summary>
+        /// <param name="member"></param>
+        /// <returns>
+        /// A string representing the name of the member in a format consistent with FxCop.
+        /// </returns>
+        public static string FormatMemberName(this ISymbol member)
+        {
+            return member.ToDisplayString(s_memberDisplayFormat);
+        }
     }
 
     public enum SymbolVisibility

@@ -114,6 +114,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private void AnalyzeNamespaceRule(SymbolAnalysisContext context, HashSet<string> keywordNamedNamespaces)
         {
             INamedTypeSymbol type = (INamedTypeSymbol)context.Symbol;
+
+            // Don't complain about a namespace unless it contains at least one public type.
             if (type.GetResultantVisibility() != SymbolVisibility.Public)
             {
                 return;
@@ -128,6 +130,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             string namespaceDisplayString = containingNamespace.ToDisplayString(s_namespaceDisplayFormat);
             if (keywordNamedNamespaces.Contains(namespaceDisplayString))
             {
+                // We've already reported a diagnostic for this namespace.
                 return;
             }
 
@@ -143,7 +146,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 {
                     foundKeyword = true;
 
-                    // Don't report the diagnostic at a specific location. 
+                    // Don't report the diagnostic at a specific location. See
+                    // dotnet/roslyn#8643.
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             NamespaceRule,
@@ -246,12 +250,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static string FormatMemberName(ISymbol member)
         {
             return member.ToDisplayString(s_memberDisplayFormat);
-        }
-
-        // Format namespace names in a way consistent with FxCop's display for this rule.
-        private static string FormatNamespaceName(INamespaceSymbol @namespace)
-        {
-            return @namespace.ToDisplayString(s_namespaceDisplayFormat);
         }
 
         private ImmutableHashSet<string> s_caseSensitiveKeywords = new string[]

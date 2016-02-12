@@ -1,10 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
-using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
@@ -43,7 +40,7 @@ class C1 : ApplicationException
 {
 }
 ";
-            var expected = new[]
+            DiagnosticResult[] expected = new[]
             {
                 GetCSharpApplicationExceptionResultAt(4, 7, "C1", "System.ApplicationException")
             };
@@ -61,7 +58,7 @@ class C1 : XmlDocument
 {
 }
 ";
-            var expected = new[]
+            DiagnosticResult[] expected = new[]
             {
                 GetCSharpXmlDocumentResultAt(4, 7, "C1", "System.Xml.XmlDocument")
             };
@@ -98,7 +95,7 @@ class C5 : SortedList
 class C6 : Stack
 {
 }";
-            var expected = new[]
+            DiagnosticResult[] expected = new[]
             {
                 GetCSharpCollectionBaseResultAt(4, 7, "C1", "System.Collections.CollectionBase"),
                 GetCSharpDictionaryBaseResultAt(8, 7, "C2", "System.Collections.DictionaryBase"),
@@ -136,7 +133,7 @@ Public Class C1
 End Class
 
 ";
-            var expected = new[]
+            DiagnosticResult[] expected = new[]
             {
                 GetBasicApplicationExceptionResultAt(4, 14, "C1", "System.ApplicationException")
             };
@@ -155,7 +152,7 @@ Public Class C1
 
 End Class
 ";
-            var expected = new[]
+            DiagnosticResult[] expected = new[]
             {
                 GetBasicXmlDocumentResultAt(4, 14, "C1", "System.Xml.XmlDocument")
             };
@@ -199,7 +196,7 @@ Public Class C6
 
 End Class
 ";
-            var expected = new[]
+            DiagnosticResult[] expected = new[]
             {
                 GetBasicCollectionBaseResultAt(4, 14, "C1", "System.Collections.CollectionBase"),
                 GetBasicDictionaryBaseResultAt(9, 14, "C2", "System.Collections.DictionaryBase"),
@@ -214,97 +211,97 @@ End Class
 
         private static DiagnosticResult GetCSharpCollectionBaseResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            var message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase, declaredTypeName, badBaseTypeName);
+            string message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase, declaredTypeName, badBaseTypeName);
             return GetCSharpResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetBasicCollectionBaseResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            var message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase, declaredTypeName, badBaseTypeName);
+            string message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase, declaredTypeName, badBaseTypeName);
             return GetBasicResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCSharpDictionaryBaseResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            var message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsDictionaryBase, declaredTypeName, badBaseTypeName);
+            string message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsDictionaryBase, declaredTypeName, badBaseTypeName);
             return GetCSharpResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetBasicDictionaryBaseResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            var message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsDictionaryBase, declaredTypeName, badBaseTypeName);
+            string message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsDictionaryBase, declaredTypeName, badBaseTypeName);
             return GetBasicResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCSharpQueueResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            var message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsQueue, declaredTypeName, badBaseTypeName);
+            string message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsQueue, declaredTypeName, badBaseTypeName);
             return GetCSharpResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetBasicQueueResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            var message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsQueue, declaredTypeName, badBaseTypeName);
+            string message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsQueue, declaredTypeName, badBaseTypeName);
             return GetBasicResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCSharpReadOnlyCollectionResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            var message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsReadOnlyCollectionBase, declaredTypeName, badBaseTypeName);
+            string message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsReadOnlyCollectionBase, declaredTypeName, badBaseTypeName);
             return GetCSharpResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetBasicReadOnlyCollectionBaseResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            var message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsReadOnlyCollectionBase, declaredTypeName, badBaseTypeName);
+            string message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsReadOnlyCollectionBase, declaredTypeName, badBaseTypeName);
             return GetBasicResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCSharpSortedListResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            var message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsSortedList, declaredTypeName, badBaseTypeName);
+            string message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsSortedList, declaredTypeName, badBaseTypeName);
             return GetCSharpResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetBasicSortedListResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            var message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsSortedList, declaredTypeName, badBaseTypeName);
+            string message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsSortedList, declaredTypeName, badBaseTypeName);
             return GetBasicResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCSharpStackResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            var message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsStack, declaredTypeName, badBaseTypeName);
+            string message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsStack, declaredTypeName, badBaseTypeName);
             return GetCSharpResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetBasicStackResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            var message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsStack, declaredTypeName, badBaseTypeName);
+            string message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsStack, declaredTypeName, badBaseTypeName);
             return GetBasicResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCSharpApplicationExceptionResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            var message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException, declaredTypeName, badBaseTypeName);
+            string message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException, declaredTypeName, badBaseTypeName);
             return GetCSharpResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetBasicApplicationExceptionResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            var message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException, declaredTypeName, badBaseTypeName);
+            string message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException, declaredTypeName, badBaseTypeName);
             return GetBasicResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCSharpXmlDocumentResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            var message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemXmlXmlDocument, declaredTypeName, badBaseTypeName);
+            string message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemXmlXmlDocument, declaredTypeName, badBaseTypeName);
             return GetCSharpResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetBasicXmlDocumentResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            var message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemXmlXmlDocument, declaredTypeName, badBaseTypeName);
+            string message = string.Format(DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemXmlXmlDocument, declaredTypeName, badBaseTypeName);
             return GetBasicResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
         }
     }

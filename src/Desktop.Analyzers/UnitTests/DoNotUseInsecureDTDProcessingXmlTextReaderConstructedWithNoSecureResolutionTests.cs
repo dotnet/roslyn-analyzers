@@ -1,24 +1,22 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
-using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
     public partial class DoNotUseInsecureDTDProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private static readonly string CA3075XmlTextReaderConstructedWithNoSecureResolutionMessage = DesktopAnalyzersResources.XmlTextReaderConstructedWithNoSecureResolutionMessage;
+        private static readonly string s_CA3075XmlTextReaderConstructedWithNoSecureResolutionMessage = DesktopAnalyzersResources.XmlTextReaderConstructedWithNoSecureResolutionMessage;
 
         private DiagnosticResult GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(int line, int column, string name)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(CA3075XmlTextReaderConstructedWithNoSecureResolutionMessage, name));
+            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(s_CA3075XmlTextReaderConstructedWithNoSecureResolutionMessage, name));
         }
 
         private DiagnosticResult GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(int line, int column, string name)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(CA3075XmlTextReaderConstructedWithNoSecureResolutionMessage, name));
+            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(s_CA3075XmlTextReaderConstructedWithNoSecureResolutionMessage, name));
         }
 
         [Fact]

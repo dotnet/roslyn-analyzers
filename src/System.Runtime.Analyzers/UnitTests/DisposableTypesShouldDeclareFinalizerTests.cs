@@ -510,7 +510,7 @@ End Class
 
         private static DiagnosticResult GetExpectedDiagnostic(string language, int line, int column)
         {
-            var fileName = language == LanguageNames.CSharp ? "Test0.cs" : "Test0.vb";
+            string fileName = language == LanguageNames.CSharp ? "Test0.cs" : "Test0.vb";
             return new DiagnosticResult
             {
                 Id = DisposableTypesShouldDeclareFinalizerAnalyzer.RuleId,

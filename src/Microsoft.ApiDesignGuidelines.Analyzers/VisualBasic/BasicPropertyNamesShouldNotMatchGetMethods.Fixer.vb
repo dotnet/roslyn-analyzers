@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA1721: Property names should not match get methods
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicPropertyNamesShouldNotMatchGetMethodsFixer
-        Inherits PropertyNamesShouldNotMatchGetMethodsFixer 
+        Inherits PropertyNamesShouldNotMatchGetMethodsFixer
 
     End Class
 End Namespace

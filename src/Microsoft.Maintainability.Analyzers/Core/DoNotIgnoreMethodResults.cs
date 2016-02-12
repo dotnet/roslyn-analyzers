@@ -72,13 +72,13 @@ namespace Microsoft.Maintainability.Analyzers
 
                 osContext.RegisterOperationAction(opContext =>
                 {
-                    var expression = ((IExpressionStatement)opContext.Operation).Expression;
+                    IExpression expression = ((IExpressionStatement)opContext.Operation).Expression;
                     string messageFormat = null;
                     string targetMethodName = null;
                     switch (expression.Kind)
                     {
                         case OperationKind.ObjectCreationExpression:
-                            var ctor = ((IObjectCreationExpression)expression).Constructor;
+                            IMethodSymbol ctor = ((IObjectCreationExpression)expression).Constructor;
                             if (ctor != null)
                             {
                                 messageFormat = MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessageObjectCreation;
@@ -87,8 +87,8 @@ namespace Microsoft.Maintainability.Analyzers
                             break;
 
                         case OperationKind.InvocationExpression:
-                            var invocationExpression = ((IInvocationExpression)expression);
-                            var targetMethod = invocationExpression.TargetMethod;
+                            IInvocationExpression invocationExpression = ((IInvocationExpression)expression);
+                            IMethodSymbol targetMethod = invocationExpression.TargetMethod;
                             if (targetMethod == null)
                             {
                                 break;
@@ -113,8 +113,8 @@ namespace Microsoft.Maintainability.Analyzers
 
                     if (messageFormat != null)
                     {
-                        var message = string.Format(messageFormat, method.Name, targetMethodName);
-                        var diagnostic = Diagnostic.Create(Rule, expression.Syntax.GetLocation(), message);
+                        string message = string.Format(messageFormat, method.Name, targetMethodName);
+                        Diagnostic diagnostic = Diagnostic.Create(Rule, expression.Syntax.GetLocation(), message);
                         opContext.ReportDiagnostic(diagnostic);
                     }
                 }, OperationKind.ExpressionStatement);

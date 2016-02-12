@@ -45,7 +45,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(MissingConstructorRule);
-        private INamedTypeSymbol exceptionType;
+        private INamedTypeSymbol _exceptionType;
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -59,33 +59,31 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private void AnalyzeCompilationSymbol(CompilationStartAnalysisContext context)
         {
-            exceptionType = context.Compilation.GetTypeByMetadataName("System.Exception");
+            _exceptionType = context.Compilation.GetTypeByMetadataName("System.Exception");
             // Analyze named types 
             context.RegisterSymbolAction(symbolContext =>
             {
                 AnalyzeSymbol(symbolContext);
-
             }, SymbolKind.NamedType);
-
         }
         private void AnalyzeSymbol(SymbolAnalysisContext context)
         {
             var namedTypeSymbol = context.Symbol as INamedTypeSymbol;
 
             //Check if type derives from Exception type
-            if (namedTypeSymbol.BaseType == exceptionType)
+            if (namedTypeSymbol.BaseType == _exceptionType)
             {
                 //Get the list of constructors
-                var constructors = namedTypeSymbol.Constructors;
+                ImmutableArray<IMethodSymbol> constructors = namedTypeSymbol.Constructors;
 
                 //Set flags for the 3 different constructos, that is being searched for
                 var defaultConstructorFound = false; //flag for default constructor
                 var secondConstructorFound = false; //flag for constructor with string type parameter
                 var thirdConstructorFound = false; //flag for constructor with string and exception type parameter
 
-                foreach (var ctor in constructors)
+                foreach (IMethodSymbol ctor in constructors)
                 {
-                    var parameters = ctor.GetParameters();
+                    ImmutableArray<IParameterSymbol> parameters = ctor.GetParameters();
 
                     //case 1: Default constructor - no parameters
                     if (parameters.Length == 0)
@@ -99,7 +97,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     }
                     //case 3: Constructor with string type and exception type parameter
                     else if (parameters.Length == 2 && parameters[0].Type.SpecialType == SpecialType.System_String &&
-                            parameters[1].Type == exceptionType)
+                            parameters[1].Type == _exceptionType)
                     {
                         thirdConstructorFound = true;
                     }
@@ -131,11 +129,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private void BuildDiagnostic(SymbolAnalysisContext context, INamedTypeSymbol namedTypeSymbol, MissingCtorSignature missingCtorSignature, string constructorSignature)
         {
             //store MissingCtorSignature enum type into dictionary, to set diagnostic property. This is needed because Diagnostic is immutable
-            var builder = ImmutableDictionary.CreateBuilder<string, string>();
+            ImmutableDictionary<string, string>.Builder builder = ImmutableDictionary.CreateBuilder<string, string>();
             builder.Add("Signature", missingCtorSignature.ToString());
 
             //create dignostic and store signature into diagnostic property for fixer
-            var diagnostic = namedTypeSymbol.Locations.CreateDiagnostic(MissingConstructorRule, builder.ToImmutableDictionary(), namedTypeSymbol.Name, constructorSignature);
+            Diagnostic diagnostic = namedTypeSymbol.Locations.CreateDiagnostic(MissingConstructorRule, builder.ToImmutableDictionary(), namedTypeSymbol.Name, constructorSignature);
 
             //report diagnostic
             context.ReportDiagnostic(diagnostic);

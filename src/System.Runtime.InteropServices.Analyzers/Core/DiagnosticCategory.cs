@@ -3,5 +3,5 @@
 namespace System.Runtime.InteropServices.Analyzers
 {
     internal static class DiagnosticCategory
-    {        public static readonly string Globalization = SystemRuntimeInteropServicesAnalyzersResources.CategoryGlobalization;        public static readonly string Interoperability = SystemRuntimeInteropServicesAnalyzersResources.CategoryInteroperability;        public static readonly string Portability = SystemRuntimeInteropServicesAnalyzersResources.CategoryPortability;        public static readonly string Reliability = SystemRuntimeInteropServicesAnalyzersResources.CategoryReliability;        public static readonly string Usage = SystemRuntimeInteropServicesAnalyzersResources.CategoryUsage;}
+    { public static readonly string Globalization = SystemRuntimeInteropServicesAnalyzersResources.CategoryGlobalization; public static readonly string Interoperability = SystemRuntimeInteropServicesAnalyzersResources.CategoryInteroperability; public static readonly string Portability = SystemRuntimeInteropServicesAnalyzersResources.CategoryPortability; public static readonly string Reliability = SystemRuntimeInteropServicesAnalyzersResources.CategoryReliability; public static readonly string Usage = SystemRuntimeInteropServicesAnalyzersResources.CategoryUsage; }
 }

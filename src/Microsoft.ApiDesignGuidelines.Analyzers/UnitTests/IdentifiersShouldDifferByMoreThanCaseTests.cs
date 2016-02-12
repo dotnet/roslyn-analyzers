@@ -5,7 +5,6 @@ using System.Linq;
 using Microsoft.ApiDesignGuidelines.Analyzers;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
-using Roslyn.Utilities;
 using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.UnitTests
@@ -328,7 +327,7 @@ public class C
     public int Γ;
 }
 ",
-            GetCA1708CSharpResultAt(Member, GetSymbolDisplayString("C.γ", "C.Γ"), 2, 14));
+            GetCA1708CSharpResultAt(Member, GetSymbolDisplayString("C.\u03B3", "C.\u0393"), 2, 14));
         }
 
         [Fact]

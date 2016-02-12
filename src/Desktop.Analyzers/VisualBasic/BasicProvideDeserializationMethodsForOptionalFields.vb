@@ -5,7 +5,7 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Desktop.Analyzers   
+Namespace Desktop.Analyzers
     ''' <summary>
     ''' CA2239: Provide deserialization methods for optional fields
     ''' </summary>

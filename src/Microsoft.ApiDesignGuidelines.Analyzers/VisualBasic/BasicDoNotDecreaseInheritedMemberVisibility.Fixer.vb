@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA2222: Do not decrease inherited member visibility
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicDoNotDecreaseInheritedMemberVisibilityFixer
-        Inherits DoNotDecreaseInheritedMemberVisibilityFixer 
+        Inherits DoNotDecreaseInheritedMemberVisibilityFixer
 
     End Class
 End Namespace

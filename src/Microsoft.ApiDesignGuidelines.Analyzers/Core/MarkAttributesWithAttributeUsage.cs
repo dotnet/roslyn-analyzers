@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -35,8 +34,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                var attributeType = WellKnownTypes.Attribute(compilationContext.Compilation);
-                var attributeUsageAttributeType = WellKnownTypes.AttributeUsageAttribute(compilationContext.Compilation);
+                INamedTypeSymbol attributeType = WellKnownTypes.Attribute(compilationContext.Compilation);
+                INamedTypeSymbol attributeUsageAttributeType = WellKnownTypes.AttributeUsageAttribute(compilationContext.Compilation);
                 if (attributeType == null || attributeUsageAttributeType == null)
                 {
                     return;
@@ -57,7 +56,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
-            var hasAttributeUsageAttribute = symbol.GetAttributes().Any(attribute => attribute.AttributeClass == attributeUsageAttributeType);
+            bool hasAttributeUsageAttribute = symbol.GetAttributes().Any(attribute => attribute.AttributeClass == attributeUsageAttributeType);
             if (!hasAttributeUsageAttribute)
             {
                 addDiagnostic(symbol.CreateDiagnostic(Rule, symbol.Name));

@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 
 using Microsoft.CodeAnalysis;
@@ -26,7 +25,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             { }
 
             protected override bool IsDisposableFieldCreation(SyntaxNode node, SemanticModel model, HashSet<ISymbol> disposableFields, CancellationToken cancellationToken)
-            { 
+            {
                 if (node is AssignmentExpressionSyntax)
                 {
                     var assignment = (AssignmentExpressionSyntax)node;
@@ -34,13 +33,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         disposableFields.Contains(model.GetSymbolInfo(assignment.Left, cancellationToken).Symbol))
                     {
                         return true;
-                    }    
+                    }
                 }
                 else if (node is FieldDeclarationSyntax)
                 {
-                    var fieldDecl = ((FieldDeclarationSyntax)node).Declaration;
-                    foreach (var fieldInit in fieldDecl.Variables)
-                    {                                               
+                    VariableDeclarationSyntax fieldDecl = ((FieldDeclarationSyntax)node).Declaration;
+                    foreach (VariableDeclaratorSyntax fieldInit in fieldDecl.Variables)
+                    {
                         if (fieldInit.Initializer?.Value is ObjectCreationExpressionSyntax &&
                             disposableFields.Contains(model.GetDeclaredSymbol(fieldInit, cancellationToken)))
                         {

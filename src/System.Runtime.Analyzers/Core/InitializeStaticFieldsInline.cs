@@ -49,7 +49,7 @@ namespace System.Runtime.Analyzers
 
         protected abstract bool InitialiesStaticField(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken);
         protected abstract TLanguageKindEnum AssignmentNodeKind { get; }
-        
+
         public override void Initialize(AnalysisContext analysisContext)
         {
             analysisContext.RegisterCodeBlockStartAction<TLanguageKindEnum>(codeBlockStartContext =>
@@ -76,7 +76,7 @@ namespace System.Runtime.Analyzers
                     if (initializesStaticField)
                     {
                         DiagnosticDescriptor descriptor = methodSym.ContainingType.IsReferenceType ? CA1810Rule : CA2207Rule;
-                        var diagnostic = Diagnostic.Create(descriptor, methodSym.Locations[0], methodSym.ContainingType.Name);
+                        Diagnostic diagnostic = Diagnostic.Create(descriptor, methodSym.Locations[0], methodSym.ContainingType.Name);
                         codeBlockEndContext.ReportDiagnostic(diagnostic);
                     }
                 });

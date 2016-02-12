@@ -120,5 +120,29 @@ End Namespace
 ",
                 GetBasicResultAt(3, 17, IdentifiersShouldNotMatchKeywordsAnalyzer.TypeRule, "Enum", "Enum"));
         }
+
+        [Fact]
+        public void CSharpDiagnosticForKeywordNamedProtectedTypeNestedInPublicClass()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    protected class @protected {}
+}
+",
+                GetCSharpResultAt(4, 21, IdentifiersShouldNotMatchKeywordsAnalyzer.TypeRule, "C.protected", "protected"));
+        }
+
+        [Fact]
+        public void BasicDiagnosticForKeywordNamedProtectedTypeNestedInPublicClass()
+        {
+            VerifyBasic(@"
+Public Class C
+    Protected Class [Protected]
+    End Class
+End Class
+",
+                GetBasicResultAt(3, 21, IdentifiersShouldNotMatchKeywordsAnalyzer.TypeRule, "C.Protected", "Protected"));
+        }
     }
 }

@@ -5,7 +5,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Semantics;
-using System;
 
 namespace Microsoft.QualityGuidelines.Analyzers
 {
@@ -59,7 +58,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
         private void AnalyzeOperation(OperationAnalysisContext context, INamedTypeSymbol containingType)
         {
             var operation = context.Operation as IInvocationExpression;
-            var method = operation.TargetMethod;
+            IMethodSymbol method = operation.TargetMethod;
             if (method != null &&
                 (method.IsAbstract || method.IsVirtual) &&
                 method.ContainingType == containingType)
@@ -78,7 +77,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                 return true;
             }
 
-            var containingType = m.ContainingType;
+            INamedTypeSymbol containingType = m.ContainingType;
             if (containingType == null)
             {
                 return true;

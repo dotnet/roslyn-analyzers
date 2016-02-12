@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.Maintainability.Analyzers     
+Namespace Microsoft.Maintainability.Analyzers
     ''' <summary>
     ''' CA1801: Review unused parameters
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicReviewUnusedParametersFixer
-        Inherits ReviewUnusedParametersFixer 
+        Inherits ReviewUnusedParametersFixer
 
     End Class
 End Namespace

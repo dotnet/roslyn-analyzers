@@ -37,7 +37,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             analysisContext.RegisterCompilationStartAction(context =>
             {
-                var taskTypes = GetTaskTypes(context.Compilation);
+                ImmutableArray<INamedTypeSymbol> taskTypes = GetTaskTypes(context.Compilation);
                 if (taskTypes.Any(t => t == null))
                 {
                     return;
@@ -52,7 +52,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             IAwaitExpression awaitExpression = context.Operation as IAwaitExpression;
 
             // Get the type of the expression being awaited and check it's a task type.
-            var typeOfAwaitedExpression = awaitExpression?.Upon?.ResultType;
+            ITypeSymbol typeOfAwaitedExpression = awaitExpression?.Upon?.ResultType;
             if (typeOfAwaitedExpression != null && taskTypes.Contains(typeOfAwaitedExpression.OriginalDefinition))
             {
                 context.ReportDiagnostic(awaitExpression.Upon.Syntax.CreateDiagnostic(Rule));
@@ -61,8 +61,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private static ImmutableArray<INamedTypeSymbol> GetTaskTypes(Compilation compilation)
         {
-            var taskType = compilation.GetTypeByMetadataName("System.Threading.Tasks.Task");
-            var taskOfTType = compilation.GetTypeByMetadataName("System.Threading.Tasks.Task`1");
+            INamedTypeSymbol taskType = compilation.GetTypeByMetadataName("System.Threading.Tasks.Task");
+            INamedTypeSymbol taskOfTType = compilation.GetTypeByMetadataName("System.Threading.Tasks.Task`1");
 
             return ImmutableArray.Create(taskType, taskOfTType);
         }

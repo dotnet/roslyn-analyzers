@@ -1,4 +1,6 @@
-﻿using Microsoft.CodeAnalysis;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
@@ -6,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
 
 namespace TestHelper
 {
@@ -16,19 +17,19 @@ namespace TestHelper
     /// </summary>
     public abstract partial class DiagnosticVerifier
     {
-        private static readonly MetadataReference CorlibReference = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
-        private static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location);
-        private static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
-        private static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location);
-        private static readonly MetadataReference SystemCollectionsImmutableReference = MetadataReference.CreateFromFile(typeof(ImmutableArray).Assembly.Location); 
-        private static readonly MetadataReference RuntimeReference = MetadataReference.CreateFromFile(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(typeof(object).Assembly.Location), "System.Runtime.dll"));
+        private static readonly MetadataReference s_corlibReference = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
+        private static readonly MetadataReference s_systemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location);
+        private static readonly MetadataReference s_CSharpSymbolsReference = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
+        private static readonly MetadataReference s_codeAnalysisReference = MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location);
+        private static readonly MetadataReference s_systemCollectionsImmutableReference = MetadataReference.CreateFromFile(typeof(ImmutableArray).Assembly.Location);
+        private static readonly MetadataReference s_runtimeReference = MetadataReference.CreateFromFile(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(typeof(object).Assembly.Location), "System.Runtime.dll"));
 
-        internal static string DefaultFilePathPrefix = "Test";
-        internal static string CSharpDefaultFileExt = "cs";
-        internal static string VisualBasicDefaultExt = "vb";
-        internal static string CSharpDefaultFilePath = DefaultFilePathPrefix + 0 + "." + CSharpDefaultFileExt;
-        internal static string TestProjectName = "TestProject";
-        internal static string VisualBasicDefaultFilePath = DefaultFilePathPrefix + 0 + "." + VisualBasicDefaultExt;
+        internal static readonly string DefaultFilePathPrefix = "Test";
+        internal static readonly string CSharpDefaultFileExt = "cs";
+        internal static readonly string VisualBasicDefaultExt = "vb";
+        internal static readonly string CSharpDefaultFilePath = DefaultFilePathPrefix + 0 + "." + CSharpDefaultFileExt;
+        internal static readonly string TestProjectName = "TestProject";
+        internal static readonly string VisualBasicDefaultFilePath = DefaultFilePathPrefix + 0 + "." + VisualBasicDefaultExt;
 
         #region  Get Diagnostics
 
@@ -55,17 +56,17 @@ namespace TestHelper
         protected static Diagnostic[] GetSortedDiagnosticsFromDocuments(DiagnosticAnalyzer analyzer, Document[] documents)
         {
             var projects = new HashSet<Project>();
-            foreach (var document in documents)
+            foreach (Document document in documents)
             {
                 projects.Add(document.Project);
             }
 
             var diagnostics = new List<Diagnostic>();
-            foreach (var project in projects)
+            foreach (Project project in projects)
             {
-                var compilationWithAnalyzers = project.GetCompilationAsync().Result.WithAnalyzers(ImmutableArray.Create(analyzer));
-                var diags = compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().Result;
-                foreach (var diag in diags)
+                CompilationWithAnalyzers compilationWithAnalyzers = project.GetCompilationAsync().Result.WithAnalyzers(ImmutableArray.Create(analyzer));
+                ImmutableArray<Diagnostic> diags = compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().Result;
+                foreach (Diagnostic diag in diags)
                 {
                     if (diag.Location == Location.None || diag.Location.IsInMetadata)
                     {
@@ -75,8 +76,8 @@ namespace TestHelper
                     {
                         for (int i = 0; i < documents.Length; i++)
                         {
-                            var document = documents[i];
-                            var tree = document.GetSyntaxTreeAsync().Result;
+                            Document document = documents[i];
+                            SyntaxTree tree = document.GetSyntaxTreeAsync().Result;
                             if (tree == diag.Location.SourceTree)
                             {
                                 diagnostics.Add(diag);
@@ -86,7 +87,7 @@ namespace TestHelper
                 }
             }
 
-            var results = SortDiagnostics(diagnostics);
+            Diagnostic[] results = SortDiagnostics(diagnostics);
             diagnostics.Clear();
             return results;
         }
@@ -122,8 +123,8 @@ namespace TestHelper
                 string fileName = language == LanguageNames.CSharp ? "Test" + i + ".cs" : "Test" + i + ".vb";
             }
 
-            var project = CreateProject(sources, language);
-            var documents = project.Documents.ToArray();
+            Project project = CreateProject(sources, language);
+            Document[] documents = project.Documents.ToArray();
 
             if (sources.Length != documents.Length)
             {
@@ -155,23 +156,23 @@ namespace TestHelper
             string fileNamePrefix = DefaultFilePathPrefix;
             string fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;
 
-            var projectId = ProjectId.CreateNewId(debugName: TestProjectName);
+            ProjectId projectId = ProjectId.CreateNewId(debugName: TestProjectName);
 
-            var solution = new AdhocWorkspace()
+            Solution solution = new AdhocWorkspace()
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, language)
-                .AddMetadataReference(projectId, CorlibReference)
-                .AddMetadataReference(projectId, SystemCoreReference)
-                .AddMetadataReference(projectId, CSharpSymbolsReference)
-                .AddMetadataReference(projectId, CodeAnalysisReference)
-                .AddMetadataReference(projectId, SystemCollectionsImmutableReference)
-                .AddMetadataReference(projectId, RuntimeReference);
+                .AddMetadataReference(projectId, s_corlibReference)
+                .AddMetadataReference(projectId, s_systemCoreReference)
+                .AddMetadataReference(projectId, s_CSharpSymbolsReference)
+                .AddMetadataReference(projectId, s_codeAnalysisReference)
+                .AddMetadataReference(projectId, s_systemCollectionsImmutableReference)
+                .AddMetadataReference(projectId, s_runtimeReference);
 
             int count = 0;
-            foreach (var source in sources)
+            foreach (string source in sources)
             {
-                var newFileName = fileNamePrefix + count + "." + fileExt;
-                var documentId = DocumentId.CreateNewId(projectId, debugName: newFileName);
+                string newFileName = fileNamePrefix + count + "." + fileExt;
+                DocumentId documentId = DocumentId.CreateNewId(projectId, debugName: newFileName);
                 solution = solution.AddDocument(documentId, newFileName, SourceText.From(source));
                 count++;
             }

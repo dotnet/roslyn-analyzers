@@ -5,7 +5,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Semantics;
-using System;
 using System.Linq;
 
 namespace Microsoft.QualityGuidelines.Analyzers
@@ -34,7 +33,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
         {
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                var conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(compilationContext.Compilation);
+                INamedTypeSymbol conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(compilationContext.Compilation);
 
                 compilationContext.RegisterOperationBlockAction(context =>
                 {
@@ -56,7 +55,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                 });
             });
         }
-        
+
         private bool IsEmptyFinalizer(ImmutableArray<IOperation> operationBlocks, ISymbol conditionalAttributeSymbol)
         {
             if (operationBlocks != null && operationBlocks.Length == 1)
@@ -75,19 +74,19 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
                 if (block.Statements.Length == 1)
                 {
-                    var statement = block.Statements[0];
+                    IStatement statement = block.Statements[0];
 
                     // Just a throw statement.
                     if (statement.Kind == OperationKind.ThrowStatement)
                     {
                         return true;
                     }
-                    
-                    if (statement.Kind == OperationKind.ExpressionStatement && 
-                        ((IExpressionStatement)statement).Expression.Kind ==  OperationKind.InvocationExpression)
+
+                    if (statement.Kind == OperationKind.ExpressionStatement &&
+                        ((IExpressionStatement)statement).Expression.Kind == OperationKind.InvocationExpression)
                     {
                         var invocation = ((IExpressionStatement)statement).Expression as IInvocationExpression;
-                        var method = invocation.TargetMethod;
+                        IMethodSymbol method = invocation.TargetMethod;
 
                         if (method.GetAttributes().Any(n => n.AttributeClass.Equals(conditionalAttributeSymbol)))
                         {

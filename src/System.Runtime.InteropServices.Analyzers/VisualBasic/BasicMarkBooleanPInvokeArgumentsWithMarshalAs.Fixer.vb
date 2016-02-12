@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace System.Runtime.InteropServices.Analyzers     
+Namespace System.Runtime.InteropServices.Analyzers
     ''' <summary>
     ''' CA1414: Mark boolean PInvoke arguments with MarshalAs
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicMarkBooleanPInvokeArgumentsWithMarshalAsFixer
-        Inherits MarkBooleanPInvokeArgumentsWithMarshalAsFixer 
+        Inherits MarkBooleanPInvokeArgumentsWithMarshalAsFixer
 
     End Class
 End Namespace

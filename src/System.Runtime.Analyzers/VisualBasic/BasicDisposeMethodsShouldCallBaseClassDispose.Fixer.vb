@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace System.Runtime.Analyzers     
+Namespace System.Runtime.Analyzers
     ''' <summary>
     ''' CA2215: Dispose Methods Should Call Base Class Dispose
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicDisposeMethodsShouldCallBaseClassDisposeFixer
-        Inherits DisposeMethodsShouldCallBaseClassDisposeFixer 
+        Inherits DisposeMethodsShouldCallBaseClassDisposeFixer
 
     End Class
 End Namespace

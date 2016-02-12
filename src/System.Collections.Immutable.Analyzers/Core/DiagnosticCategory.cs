@@ -3,5 +3,5 @@
 namespace System.Collections.Immutable.Analyzers
 {
     internal static class DiagnosticCategory
-    {        public static readonly string Reliability = SystemCollectionsImmutableAnalyzersResources.CategoryReliability;}
+    { public static readonly string Reliability = SystemCollectionsImmutableAnalyzersResources.CategoryReliability; }
 }

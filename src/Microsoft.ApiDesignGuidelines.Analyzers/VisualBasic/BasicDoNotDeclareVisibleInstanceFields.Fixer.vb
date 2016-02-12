@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA1051: Do not declare visible instance fields
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicDoNotDeclareVisibleInstanceFieldsFixer
-        Inherits DoNotDeclareVisibleInstanceFieldsFixer 
+        Inherits DoNotDeclareVisibleInstanceFieldsFixer
 
     End Class
 End Namespace

@@ -22,10 +22,10 @@ namespace System.Runtime.Analyzers
         internal const string RuleId = "CA1820";
         private const string StringEmptyFieldName = "Empty";
 
-        private static LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.TestForEmptyStringsUsingStringLengthTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.TestForEmptyStringsUsingStringLengthMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.TestForEmptyStringsUsingStringLengthDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.TestForEmptyStringsUsingStringLengthTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.TestForEmptyStringsUsingStringLengthMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.TestForEmptyStringsUsingStringLengthDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly DiagnosticDescriptor s_rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Performance,
@@ -36,7 +36,7 @@ namespace System.Runtime.Analyzers
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
 
-        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(s_rule);
 
         public sealed override void Initialize(AnalysisContext context) => context.RegisterOperationAction(AnalyzeNode, OperationKind.InvocationExpression, OperationKind.BinaryOperatorExpression);
 
@@ -62,12 +62,12 @@ namespace System.Runtime.Analyzers
             var invocationOperation = (IInvocationExpression)context.Operation;
             if (invocationOperation.ArgumentsInSourceOrder.Length > 0)
             {
-                var methodSymbol = invocationOperation.TargetMethod;
+                IMethodSymbol methodSymbol = invocationOperation.TargetMethod;
                 if (methodSymbol != null &&
                     IsStringEqualsMethod(methodSymbol) &&
                     HasAnEmptyStringArgument(invocationOperation))
                 {
-                    context.ReportDiagnostic(invocationOperation.Syntax.CreateDiagnostic(Rule));
+                    context.ReportDiagnostic(invocationOperation.Syntax.CreateDiagnostic(s_rule));
                 }
             }
         }
@@ -85,10 +85,10 @@ namespace System.Runtime.Analyzers
             {
                 return;
             }
-            
+
             if (IsEmptyString(binaryOperation.Left) || IsEmptyString(binaryOperation.Right))
             {
-                context.ReportDiagnostic(binaryOperation.Syntax.CreateDiagnostic(Rule));
+                context.ReportDiagnostic(binaryOperation.Syntax.CreateDiagnostic(s_rule));
             }
         }
 
@@ -98,7 +98,7 @@ namespace System.Runtime.Analyzers
         /// </summary>
         private static bool IsStringEqualsMethod(IMethodSymbol methodSymbol)
         {
-            return string.Equals(methodSymbol.Name, WellKnownMemberNames.ObjectEquals, StringComparison.Ordinal) && 
+            return string.Equals(methodSymbol.Name, WellKnownMemberNames.ObjectEquals, StringComparison.Ordinal) &&
                    methodSymbol.ContainingType.SpecialType == SpecialType.System_String;
         }
 
@@ -113,7 +113,7 @@ namespace System.Runtime.Analyzers
                 return false;
             }
 
-            var constantValueOpt = expression.ConstantValue;
+            Optional<object> constantValueOpt = expression.ConstantValue;
             if (constantValueOpt.HasValue)
             {
                 return (constantValueOpt.Value as string)?.Length == 0;
@@ -121,7 +121,7 @@ namespace System.Runtime.Analyzers
 
             if (expression.Kind == OperationKind.FieldReferenceExpression)
             {
-                var field = ((IFieldReferenceExpression)expression).Field;
+                IFieldSymbol field = ((IFieldReferenceExpression)expression).Field;
                 return string.Equals(field.Name, StringEmptyFieldName) &&
                     field.Type.SpecialType == SpecialType.System_String;
             }

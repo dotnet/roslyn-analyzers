@@ -5,11 +5,11 @@ using Microsoft.CodeAnalysis;
 namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
 {
     public static class SecurityTypes
-    {  
+    {
         public static INamedTypeSymbol MD5(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName("System.Security.Cryptography.MD5");
-        } 
+        }
         public static INamedTypeSymbol SHA1(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName("System.Security.Cryptography.SHA1");

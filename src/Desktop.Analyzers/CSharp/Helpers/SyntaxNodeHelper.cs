@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,12 +11,12 @@ namespace Desktop.Analyzers.Common
 {
     public sealed class CSharpSyntaxNodeHelper : SyntaxNodeHelper
     {
-        private static CSharpSyntaxNodeHelper instance = new CSharpSyntaxNodeHelper();
+        private static readonly CSharpSyntaxNodeHelper s_instance = new CSharpSyntaxNodeHelper();
 
-        public static CSharpSyntaxNodeHelper Default { get { return instance; } }
+        public static CSharpSyntaxNodeHelper Default { get { return s_instance; } }
 
         private CSharpSyntaxNodeHelper()
-        {}
+        { }
 
         public override ITypeSymbol GetClassDeclarationTypeSymbol(SyntaxNode node, SemanticModel semanticModel)
         {
@@ -136,7 +135,7 @@ namespace Desktop.Analyzers.Common
                 SyntaxKind kind = node.Kind();
                 if (kind == SyntaxKind.InvocationExpression)
                 {
-                    var callExpr = ((InvocationExpressionSyntax)node).Expression;
+                    ExpressionSyntax callExpr = ((InvocationExpressionSyntax)node).Expression;
                     return GetMemberAccessNameNode(callExpr) ?? callExpr;
                 }
                 else if (kind == SyntaxKind.ObjectCreationExpression)
@@ -193,7 +192,7 @@ namespace Desktop.Analyzers.Common
 
         public override IEnumerable<SyntaxNode> GetObjectInitializerExpressionNodes(SyntaxNode node)
         {
-            var empty = Enumerable.Empty<SyntaxNode>();
+            IEnumerable<SyntaxNode> empty = Enumerable.Empty<SyntaxNode>();
             if (node == null)
             {
                 return empty;
@@ -215,7 +214,7 @@ namespace Desktop.Analyzers.Common
         }
 
         public override bool IsMethodInvocationNode(SyntaxNode node)
-        { 
+        {
             if (node == null)
             {
                 return false;
@@ -228,7 +227,7 @@ namespace Desktop.Analyzers.Common
         {
             ISymbol symbol = GetReferencedSymbol(node, semanticModel);
 
-            if(symbol != null && symbol.Kind == SymbolKind.Method)
+            if (symbol != null && symbol.Kind == SymbolKind.Method)
             {
                 return (IMethodSymbol)symbol;
             }
@@ -277,7 +276,7 @@ namespace Desktop.Analyzers.Common
 
         public override IEnumerable<SyntaxNode> GetDescendantAssignmentExpressionNodes(SyntaxNode node)
         {
-            var empty = Enumerable.Empty<SyntaxNode>();
+            IEnumerable<SyntaxNode> empty = Enumerable.Empty<SyntaxNode>();
             if (node == null)
             {
                 return empty;
@@ -288,7 +287,7 @@ namespace Desktop.Analyzers.Common
 
         public override IEnumerable<SyntaxNode> GetDescendantMemberAccessExpressionNodes(SyntaxNode node)
         {
-            var empty = Enumerable.Empty<SyntaxNode>();
+            IEnumerable<SyntaxNode> empty = Enumerable.Empty<SyntaxNode>();
             if (node == null)
             {
                 return empty;

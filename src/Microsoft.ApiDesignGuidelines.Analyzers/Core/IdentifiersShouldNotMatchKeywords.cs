@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -25,53 +27,80 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotMatchKeywordsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
         // Properties common to all DiagnosticDescriptors for this rule:
-        private static readonly string Category = DiagnosticCategory.Naming;
+        private static readonly string s_category = DiagnosticCategory.Naming;
         private const DiagnosticSeverity Severity = DiagnosticSeverity.Warning;
         private const bool IsEnabledByDefault = true;
         private const string HelpLinkUri = "https://msdn.microsoft.com/en-us/library/ms182248.aspx";
-        private static readonly string[] CustomTags = new[] { WellKnownDiagnosticTags.Telemetry };
+        private static readonly string[] s_customTags = new[] { WellKnownDiagnosticTags.Telemetry };
 
         internal static DiagnosticDescriptor MemberParameterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageMemberParameter,
-                                                                             Category,
+                                                                             s_category,
                                                                              Severity,
                                                                              isEnabledByDefault: IsEnabledByDefault,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: CustomTags);
+                                                                             customTags: s_customTags);
         internal static DiagnosticDescriptor MemberRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageMember,
-                                                                             Category,
+                                                                             s_category,
                                                                              Severity,
                                                                              isEnabledByDefault: IsEnabledByDefault,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: CustomTags);
+                                                                             customTags: s_customTags);
         internal static DiagnosticDescriptor TypeRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageType,
-                                                                             Category,
+                                                                             s_category,
                                                                              Severity,
                                                                              isEnabledByDefault: IsEnabledByDefault,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: CustomTags);
+                                                                             customTags: s_customTags);
         internal static DiagnosticDescriptor NamespaceRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageNamespace,
-                                                                             Category,
+                                                                             s_category,
                                                                              Severity,
                                                                              isEnabledByDefault: IsEnabledByDefault,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: CustomTags);
+                                                                             customTags: s_customTags);
+
+        // Define the format in which this rule displays member names. The format is chosen to be
+        // consistent with FxCop's display format for this rule.
+        private static readonly SymbolDisplayFormat s_memberDisplayFormat =
+            // This format omits the namespace.
+            SymbolDisplayFormat.CSharpShortErrorMessageFormat
+                // Turn off the EscapeKeywordIdentifiers flag (which is on by default), so that
+                // a method named "@for" is displayed as "for".
+                // Turn on the UseSpecialTypes flat (which is off by default), so that parameter
+                // names of "special" types such as Int32 are displayed as their language alias,
+                // such as int for C# and Integer for VB.
+                .WithMiscellaneousOptions(SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
+
+        // Define the format in which this rule displays namespace names. The format is chosen to be
+        // consistent with FxCop's display format for this rule.
+        private static readonly SymbolDisplayFormat s_namespaceDisplayFormat =
+            SymbolDisplayFormat.CSharpErrorMessageFormat
+                // Turn off the EscapeKeywordIdentifiers flag (which is on by default), so that
+                // a method named "@for" is displayed as "for"
+                .WithMiscellaneousOptions(SymbolDisplayMiscellaneousOptions.None);
+
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(MemberParameterRule, MemberRule, TypeRule, NamespaceRule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            var keywordNamedNamespaces = new HashSet<string>();
+
+            analysisContext.RegisterSymbolAction(
+                context => AnalyzeNamespaceRule(context, keywordNamedNamespaces),
+                SymbolKind.NamedType);
+
             analysisContext.RegisterSymbolAction(AnalyzeTypeRule,
                 SymbolKind.NamedType);
 
@@ -80,6 +109,58 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             analysisContext.RegisterSymbolAction(AnalyzeMemberParameterRule,
                 SymbolKind.Method);
+        }
+
+        private void AnalyzeNamespaceRule(SymbolAnalysisContext context, HashSet<string> keywordNamedNamespaces)
+        {
+            INamedTypeSymbol type = (INamedTypeSymbol)context.Symbol;
+
+            // Don't complain about a namespace unless it contains at least one public type.
+            if (type.GetResultantVisibility() != SymbolVisibility.Public)
+            {
+                return;
+            }
+
+            INamespaceSymbol containingNamespace = type.ContainingNamespace;
+            if (containingNamespace.IsGlobalNamespace)
+            {
+                return;
+            }
+
+            string namespaceDisplayString = containingNamespace.ToDisplayString(s_namespaceDisplayFormat);
+            if (keywordNamedNamespaces.Contains(namespaceDisplayString))
+            {
+                // We've already reported a diagnostic for this namespace.
+                return;
+            }
+
+            IEnumerable<string> namespaceNameComponents = containingNamespace.ToDisplayParts(s_namespaceDisplayFormat)
+                .Where(dp => dp.Kind == SymbolDisplayPartKind.NamespaceName)
+                .Select(dp => dp.ToString());
+
+            bool foundKeyword = false;
+            foreach (string component in namespaceNameComponents)
+            {
+                string matchingKeyword;
+                if (IsKeyword(component, out matchingKeyword))
+                {
+                    foundKeyword = true;
+
+                    // Don't report the diagnostic at a specific location. See
+                    // dotnet/roslyn#8643.
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            NamespaceRule,
+                            Location.None,
+                            namespaceDisplayString,
+                            matchingKeyword));
+                }
+            }
+
+            if (foundKeyword)
+            {
+                keywordNamedNamespaces.Add(namespaceDisplayString);
+            }
         }
 
         private void AnalyzeTypeRule(SymbolAnalysisContext context)
@@ -92,11 +173,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             string matchingKeyword;
             if (IsKeyword(type.Name, out matchingKeyword))
-            { 
+            {
                 context.ReportDiagnostic(
                     type.CreateDiagnostic(
                         TypeRule,
-                        type.Name,
+                        FormatMemberName(type),
                         matchingKeyword));
             }
         }
@@ -121,7 +202,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 context.ReportDiagnostic(
                     symbol.CreateDiagnostic(
                         MemberRule,
-                        FormatSymbolName(symbol),
+                        FormatMemberName(symbol),
                         matchingKeyword));
             }
         }
@@ -140,7 +221,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
-            foreach (var parameter in method.Parameters)
+            foreach (IParameterSymbol parameter in method.Parameters)
             {
                 string matchingKeyword;
                 if (IsKeyword(parameter.Name, out matchingKeyword))
@@ -148,7 +229,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     context.ReportDiagnostic(
                         parameter.CreateDiagnostic(
                             MemberParameterRule,
-                            FormatSymbolName(method),
+                            FormatMemberName(method),
                             parameter.Name,
                             matchingKeyword));
                 }
@@ -157,29 +238,21 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private bool IsKeyword(string name, out string keyword)
         {
-            if (s_caseSensitiveKeywords.TryGetValue(name, out keyword))
+            if (_caseSensitiveKeywords.TryGetValue(name, out keyword))
             {
                 return true;
             }
 
-            return s_caseInsensitiveKeywords.TryGetKey(name, out keyword);
+            return _caseInsensitiveKeywords.TryGetKey(name, out keyword);
         }
 
-        // Format the symbol name in a way consistent with FxCop's display for this rule.
-        private static string FormatSymbolName(ISymbol symbol)
+        // Format member names in a way consistent with FxCop's display for this rule.
+        private static string FormatMemberName(ISymbol member)
         {
-            return symbol.ToDisplayString(
-                // This format omits the namespace.
-                SymbolDisplayFormat.CSharpShortErrorMessageFormat
-                    // Turn off the EscapeKeywordIdentifiers flag (which is on by default), so that
-                    // a method named "@for" is displayed as "for".
-                    // Turn on the UseSpecialTypes flat (which is off by default), so that parameter
-                    // names of "special" types such as Int32 are displayed as their language alias,
-                    // such as int for C# and Integer for VB.
-                    .WithMiscellaneousOptions(SymbolDisplayMiscellaneousOptions.UseSpecialTypes));
+            return member.ToDisplayString(s_memberDisplayFormat);
         }
 
-        private ImmutableHashSet<string> s_caseSensitiveKeywords = new string[]
+        private readonly ImmutableHashSet<string> _caseSensitiveKeywords = new string[]
         {
             // C#
             "abstract",
@@ -436,7 +509,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             "xor_eq"
         }.ToImmutableHashSet(StringComparer.Ordinal);
 
-        private ImmutableDictionary<string, string> s_caseInsensitiveKeywords = new string[]
+        private readonly ImmutableDictionary<string, string> _caseInsensitiveKeywords = new string[]
         {
             "AddHandler",
             "AddressOf",

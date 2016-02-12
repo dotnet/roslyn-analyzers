@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Desktop.Analyzers     
+Namespace Desktop.Analyzers
     ''' <summary>
     ''' CA2240: Implement ISerializable correctly
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicImplementISerializableCorrectlyFixer
-        Inherits ImplementISerializableCorrectlyFixer 
+        Inherits ImplementISerializableCorrectlyFixer
 
     End Class
 End Namespace

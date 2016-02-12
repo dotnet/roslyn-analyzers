@@ -16,25 +16,25 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     {
         internal const string RuleId = "CA1010";
 
-        private static readonly LocalizableString s_localizableTitle = 
+        private static readonly LocalizableString s_localizableTitle =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceTitle), 
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, 
+                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceTitle),
+                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
                 typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage = 
+        private static readonly LocalizableString s_localizableMessage =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceMessage), 
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, 
+                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceMessage),
+                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
                 typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableDescription = 
+        private static readonly LocalizableString s_localizableDescription =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceDescription), 
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, 
+                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceDescription),
+                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
                 typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
-        internal static DiagnosticDescriptor Rule = 
+        internal static DiagnosticDescriptor Rule =
             new DiagnosticDescriptor(
                 RuleId,
                 s_localizableTitle,
@@ -53,24 +53,24 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             analysisContext.RegisterCompilationStartAction(
                (context) =>
                {
-                   var iCollectionType = WellKnownTypes.ICollection(context.Compilation);
-                   var genericICollectionType = WellKnownTypes.GenericICollection(context.Compilation);
-                   var iEnumerableType = WellKnownTypes.IEnumerable(context.Compilation);
-                   var genericIEnumerableType = WellKnownTypes.GenericIEnumerable(context.Compilation);
-                   var iListType = WellKnownTypes.IList(context.Compilation);
-                   var genericIListType = WellKnownTypes.GenericIList(context.Compilation);
+                   INamedTypeSymbol iCollectionType = WellKnownTypes.ICollection(context.Compilation);
+                   INamedTypeSymbol genericICollectionType = WellKnownTypes.GenericICollection(context.Compilation);
+                   INamedTypeSymbol iEnumerableType = WellKnownTypes.IEnumerable(context.Compilation);
+                   INamedTypeSymbol genericIEnumerableType = WellKnownTypes.GenericIEnumerable(context.Compilation);
+                   INamedTypeSymbol iListType = WellKnownTypes.IList(context.Compilation);
+                   INamedTypeSymbol genericIListType = WellKnownTypes.GenericIList(context.Compilation);
 
                    if (iCollectionType == null && genericICollectionType == null &&
                        iEnumerableType == null && genericIEnumerableType == null &&
-                       iListType == null && genericIListType == null )
+                       iListType == null && genericIListType == null)
                    {
                        return;
                    }
 
-                   context.RegisterSymbolAction(c => AnalyzeSymbol(c, 
+                   context.RegisterSymbolAction(c => AnalyzeSymbol(c,
                                                 iCollectionType, genericICollectionType,
                                                 iEnumerableType, genericIEnumerableType,
-                                                iListType, genericIListType), 
+                                                iListType, genericIListType),
                                                 SymbolKind.NamedType);
                });
         }
@@ -81,9 +81,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                    INamedTypeSymbol iListType, INamedTypeSymbol gListType)
         {
             var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
-            var allInterfaces = namedTypeSymbol.AllInterfaces.Select(t => t.OriginalDefinition);
+            System.Collections.Generic.IEnumerable<INamedTypeSymbol> allInterfaces = namedTypeSymbol.AllInterfaces.Select(t => t.OriginalDefinition);
 
-            foreach (var @interface in allInterfaces)
+            foreach (INamedTypeSymbol @interface in allInterfaces)
             {
                 if ((@interface.Equals(iCollectionType) && !allInterfaces.Contains(gCollectionType)) ||
                      (@interface.Equals(iEnumerableType) && !allInterfaces.Contains(gEnumerableType)) ||

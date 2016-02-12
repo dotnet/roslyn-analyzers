@@ -25,8 +25,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var expression = root.FindNode(context.Span);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode expression = root.FindNode(context.Span);
 
             if (expression != null)
             {
@@ -41,11 +41,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             // Rewrite the expression to include a .ConfigureAwait() after it. We reattach trailing trivia to the end.
             // This is especially important for VB, as the end-of-line may be in the trivia
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            var generator = editor.Generator;
-            var memberAccess = generator.MemberAccessExpression(expression.WithoutTrailingTrivia(), "ConfigureAwait");
-            var falseLiteral = generator.FalseLiteralExpression();
-            var invocation = generator.InvocationExpression(memberAccess, falseLiteral);
+            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            SyntaxGenerator generator = editor.Generator;
+            SyntaxNode memberAccess = generator.MemberAccessExpression(expression.WithoutTrailingTrivia(), "ConfigureAwait");
+            SyntaxNode falseLiteral = generator.FalseLiteralExpression();
+            SyntaxNode invocation = generator.InvocationExpression(memberAccess, falseLiteral);
             invocation = invocation.WithLeadingTrivia(expression.GetLeadingTrivia()).WithTrailingTrivia(expression.GetTrailingTrivia());
 
             editor.ReplaceNode(expression, invocation);

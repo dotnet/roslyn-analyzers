@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' Async002: Async Method Names Should End in Async
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicAsyncMethodNamesShouldEndInAsyncFixer
-        Inherits AsyncMethodNamesShouldEndInAsyncFixer 
+        Inherits AsyncMethodNamesShouldEndInAsyncFixer
 
     End Class
 End Namespace

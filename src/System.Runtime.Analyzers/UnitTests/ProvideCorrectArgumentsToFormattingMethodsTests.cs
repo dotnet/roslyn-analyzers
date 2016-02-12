@@ -300,7 +300,7 @@ Public Class C
         Dim s = Console.WriteLine(""{0} {1} {2} {3}"", new object[] {1, 2, 3, 4, 5})
     End Sub
 End Class
-", 
+",
             GetCA2241BasicResultAt(6, 17),
             GetCA2241BasicResultAt(7, 17),
             GetCA2241BasicResultAt(8, 17));
@@ -333,7 +333,7 @@ public class C
 
         #endregion
 
-        internal static string CA2241Name = "CA2241";
+        internal static readonly string CA2241Name = "CA2241";
 
         private static DiagnosticResult GetCA2241CSharpResultAt(int line, int column)
         {

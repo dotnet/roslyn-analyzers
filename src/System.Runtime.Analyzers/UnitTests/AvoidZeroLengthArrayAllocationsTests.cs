@@ -21,8 +21,8 @@ namespace System.Runtime.Analyzers.UnitTests
         /// </summary>
         private static bool IsArrayEmptyDefined()
         {
-            var assembly = typeof(object).Assembly;
-            var type = assembly.GetType("System.Array");
+            Assembly assembly = typeof(object).Assembly;
+            Type type = assembly.GetType("System.Array");
             return type.GetMethod("Empty", BindingFlags.Public | BindingFlags.Static) != null;
         }
 
@@ -77,7 +77,7 @@ class C
         List<int> list1 = new List<int>() { }          // no
     }
 }";
-            var arrayEmptySource = IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
+            string arrayEmptySource = IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
 
             VerifyCSharp(badSource + arrayEmptySource, new[]
             {
@@ -152,7 +152,7 @@ Class C
     End Sub
 End Class";
 
-            var arrayEmptySource = IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
+            string arrayEmptySource = IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
 
             VerifyBasic(badSource + arrayEmptySource, new[]
             {

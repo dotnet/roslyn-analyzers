@@ -119,7 +119,7 @@ namespace Desktop.Analyzers
         public static INamedTypeSymbol DSASignatureFormatter(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName("System.Security.Cryptography.DSASignatureFormatter");
-        }          
+        }
 
         public static INamedTypeSymbol HMACMD5(Compilation compilation)
         {

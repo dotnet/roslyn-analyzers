@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 
 namespace ApiReview.Analyzers
-{                   
+{
     /// <summary>
     /// CA2001: Avoid calling problematic methods
     /// </summary>
@@ -14,7 +14,7 @@ namespace ApiReview.Analyzers
         internal const string RuleId = "CA2001";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(ApiReviewAnalyzersResources.AvoidCallingProblematicMethodsTitle), ApiReviewAnalyzersResources.ResourceManager, typeof(ApiReviewAnalyzersResources));
-        
+
         private static readonly LocalizableString s_localizableMessageSystemGCCollect = new LocalizableResourceString(nameof(ApiReviewAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemGCCollect), ApiReviewAnalyzersResources.ResourceManager, typeof(ApiReviewAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageSystemThreadingThreadResume = new LocalizableResourceString(nameof(ApiReviewAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemThreadingThreadResume), ApiReviewAnalyzersResources.ResourceManager, typeof(ApiReviewAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageSystemThreadingThreadSuspend = new LocalizableResourceString(nameof(ApiReviewAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemThreadingThreadSuspend), ApiReviewAnalyzersResources.ResourceManager, typeof(ApiReviewAnalyzersResources));
@@ -26,7 +26,7 @@ namespace ApiReview.Analyzers
         private static readonly LocalizableString s_localizableMessageSystemReflectionAssemblyLoadFile = new LocalizableResourceString(nameof(ApiReviewAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemReflectionAssemblyLoadFile), ApiReviewAnalyzersResources.ResourceManager, typeof(ApiReviewAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageSystemReflectionAssemblyLoadWithPartialName = new LocalizableResourceString(nameof(ApiReviewAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemReflectionAssemblyLoadWithPartialName), ApiReviewAnalyzersResources.ResourceManager, typeof(ApiReviewAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(ApiReviewAnalyzersResources.AvoidCallingProblematicMethodsDescription), ApiReviewAnalyzersResources.ResourceManager, typeof(ApiReviewAnalyzersResources));
-        
+
         internal static DiagnosticDescriptor SystemGCCollectRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageSystemGCCollect,
@@ -121,8 +121,7 @@ namespace ApiReview.Analyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(SystemGCCollectRule, SystemThreadingThreadResumeRule, SystemThreadingThreadSuspendRule, SystemTypeInvokeMemberRule, CoInitializeSecurityRule, CoSetProxyBlanketRule, SystemRuntimeInteropServicesSafeHandleDangerousGetHandleRule, SystemReflectionAssemblyLoadFromRule, SystemReflectionAssemblyLoadFileRule, SystemReflectionAssemblyLoadWithPartialNameRule);
 
         public override void Initialize(AnalysisContext analysisContext)
-        { 
-            
+        {
         }
     }
 }

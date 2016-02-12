@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace System.Runtime.InteropServices.Analyzers
-{                   
+{
     /// <summary>
     /// CA1414: Mark boolean PInvoke arguments with MarshalAs
     /// </summary>
@@ -14,11 +14,11 @@ namespace System.Runtime.InteropServices.Analyzers
         internal const string RuleId = "CA1414";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.MarkBooleanPInvokeArgumentsWithMarshalAsTitle), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
-        
+
         private static readonly LocalizableString s_localizableMessageDefault = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.MarkBooleanPInvokeArgumentsWithMarshalAsMessageDefault), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageReturn = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.MarkBooleanPInvokeArgumentsWithMarshalAsMessageReturn), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.MarkBooleanPInvokeArgumentsWithMarshalAsDescription), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
-        
+
         internal static DiagnosticDescriptor DefaultRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageDefault,
@@ -42,7 +42,6 @@ namespace System.Runtime.InteropServices.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            
         }
     }
 }

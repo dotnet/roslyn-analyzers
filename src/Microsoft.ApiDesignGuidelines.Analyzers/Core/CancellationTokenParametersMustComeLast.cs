@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
@@ -34,7 +33,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                var cancellationTokenType = compilationContext.Compilation.GetTypeByMetadataName("System.Threading.CancellationToken");
+                INamedTypeSymbol cancellationTokenType = compilationContext.Compilation.GetTypeByMetadataName("System.Threading.CancellationToken");
                 if (cancellationTokenType != null)
                 {
                     compilationContext.RegisterSymbolAction(symbolContext =>
@@ -46,7 +45,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                             return;
                         }
 
-                        var last = methodSymbol.Parameters.Length - 1;
+                        int last = methodSymbol.Parameters.Length - 1;
                         if (last >= 0 && methodSymbol.Parameters[last].IsParams)
                         {
                             last--;
@@ -78,7 +77,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                         for (int i = last; i >= 0; i--)
                         {
-                            var parameterType = methodSymbol.Parameters[i].Type;
+                            ITypeSymbol parameterType = methodSymbol.Parameters[i].Type;
                             if (parameterType.Equals(cancellationTokenType)
                                 && i != last)
                             {
@@ -98,9 +97,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             // This is an approximation, because another class could derive from this one
             // and rely on methodSymbol implementing one of *it's* interfaces methods, but
             // it's good enough.
-            foreach (var interfaceSymbol in methodSymbol.ContainingType.AllInterfaces)
+            foreach (INamedTypeSymbol interfaceSymbol in methodSymbol.ContainingType.AllInterfaces)
             {
-                foreach (var interfaceMethod in interfaceSymbol.GetMembers().Where(m => m.Kind == SymbolKind.Method))
+                foreach (ISymbol interfaceMethod in interfaceSymbol.GetMembers().Where(m => m.Kind == SymbolKind.Method))
                 {
                     if (methodSymbol.ContainingType.FindImplementationForInterfaceMember(interfaceMethod)?.Equals(methodSymbol) ?? false)
                     {

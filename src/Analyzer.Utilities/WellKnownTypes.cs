@@ -13,7 +13,6 @@ namespace Analyzer.Utilities
 
         public static INamedTypeSymbol GenericICollection(Compilation compilation)
         {
-
             return compilation.GetTypeByMetadataName("System.Collections.Generic.ICollection`1");
         }
 

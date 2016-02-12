@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
@@ -33,12 +32,12 @@ namespace Microsoft.CodeAnalysis.UnitTests
         private static readonly CompilationOptions s_CSharpDefaultOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
         private static readonly CompilationOptions s_visualBasicDefaultOptions = new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
 
-        internal static string DefaultFilePathPrefix = "Test";
-        internal static string CSharpDefaultFileExt = "cs";
-        internal static string VisualBasicDefaultExt = "vb";
-        internal static string CSharpDefaultFilePath = DefaultFilePathPrefix + 0 + "." + CSharpDefaultFileExt;
-        internal static string VisualBasicDefaultFilePath = DefaultFilePathPrefix + 0 + "." + VisualBasicDefaultExt;
-        internal static string TestProjectName = "TestProject";
+        internal static readonly string DefaultFilePathPrefix = "Test";
+        internal static readonly string CSharpDefaultFileExt = "cs";
+        internal static readonly string VisualBasicDefaultExt = "vb";
+        internal static readonly string CSharpDefaultFilePath = DefaultFilePathPrefix + 0 + "." + CSharpDefaultFileExt;
+        internal static readonly string VisualBasicDefaultFilePath = DefaultFilePathPrefix + 0 + "." + VisualBasicDefaultExt;
+        internal static readonly string TestProjectName = "TestProject";
 
         protected abstract DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer();
         protected abstract DiagnosticAnalyzer GetBasicDiagnosticAnalyzer();
@@ -177,9 +176,9 @@ namespace Microsoft.CodeAnalysis.UnitTests
         {
             var builder = new List<DiagnosticResultLocation>();
 
-            foreach (var str in locationStrings)
+            foreach (string str in locationStrings)
             {
-                var tokens = str.Split('(', ',', ')');
+                string[] tokens = str.Split('(', ',', ')');
                 Assert.True(tokens.Length == 4, "Location string must be of the format 'FileName.cs(line,column)' or just 'line,column' to use " + defaultPath + " as the file name.");
 
                 string path = tokens[0] == "" ? defaultPath : tokens[0];
@@ -283,10 +282,10 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
         protected static Diagnostic[] GetSortedDiagnostics(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference = true)
         {
-            var documentsAndUseSpan = GetDocumentsAndSpans(sources, language, addLanguageSpecificCodeAnalysisReference);
-            var documents = documentsAndUseSpan.Item1;
-            var useSpans = documentsAndUseSpan.Item2;
-            var spans = documentsAndUseSpan.Item3;
+            Tuple<Document[], bool, TextSpan?[]> documentsAndUseSpan = GetDocumentsAndSpans(sources, language, addLanguageSpecificCodeAnalysisReference);
+            Document[] documents = documentsAndUseSpan.Item1;
+            bool useSpans = documentsAndUseSpan.Item2;
+            TextSpan?[] spans = documentsAndUseSpan.Item3;
             return GetSortedDiagnostics(analyzer, documents, useSpans ? spans : null);
         }
 
@@ -320,8 +319,8 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 }
             }
 
-            var project = CreateProject(sources, language, addLanguageSpecificCodeAnalysisReference);
-            var documents = project.Documents.ToArray();
+            Project project = CreateProject(sources, language, addLanguageSpecificCodeAnalysisReference);
+            Document[] documents = project.Documents.ToArray();
             Assert.Equal(sources.Length, documents.Length);
 
             return Tuple.Create(documents, useSpans, spans);
@@ -341,11 +340,11 @@ namespace Microsoft.CodeAnalysis.UnitTests
         {
             string fileNamePrefix = DefaultFilePathPrefix;
             string fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;
-            var options = language == LanguageNames.CSharp ? s_CSharpDefaultOptions : s_visualBasicDefaultOptions;
+            CompilationOptions options = language == LanguageNames.CSharp ? s_CSharpDefaultOptions : s_visualBasicDefaultOptions;
 
-            var projectId = ProjectId.CreateNewId(debugName: TestProjectName);
+            ProjectId projectId = ProjectId.CreateNewId(debugName: TestProjectName);
 
-            var solution = (addToSolution ?? new AdhocWorkspace().CurrentSolution)
+            Solution solution = (addToSolution ?? new AdhocWorkspace().CurrentSolution)
                 .AddProject(projectId, TestProjectName, TestProjectName, language)
                 .AddMetadataReference(projectId, s_corlibReference)
                 .AddMetadataReference(projectId, s_systemCoreReference)
@@ -367,17 +366,17 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
             if (addLanguageSpecificCodeAnalysisReference)
             {
-                var symbolsReference = language == LanguageNames.CSharp ? s_CSharpSymbolsReference : s_visualBasicSymbolsReference;
-                var project = solution.GetProject(projectId);
+                MetadataReference symbolsReference = language == LanguageNames.CSharp ? s_CSharpSymbolsReference : s_visualBasicSymbolsReference;
+                Project project = solution.GetProject(projectId);
                 project = project.AddMetadataReference(symbolsReference);
                 solution = project.Solution;
             }
 
             int count = 0;
-            foreach (var source in sources)
+            foreach (FileAndSource source in sources)
             {
-                var newFileName = source.FilePath ?? fileNamePrefix + count++ + "." + fileExt;
-                var documentId = DocumentId.CreateNewId(projectId, debugName: newFileName);
+                string newFileName = source.FilePath ?? fileNamePrefix + count++ + "." + fileExt;
+                DocumentId documentId = DocumentId.CreateNewId(projectId, debugName: newFileName);
                 solution = solution.AddDocument(documentId, newFileName, SourceText.From(source.Source));
             }
 
@@ -392,18 +391,18 @@ namespace Microsoft.CodeAnalysis.UnitTests
         protected static Diagnostic[] GetSortedDiagnostics(DiagnosticAnalyzer analyzer, Document[] documents, TextSpan?[] spans = null)
         {
             var projects = new HashSet<Project>();
-            foreach (var document in documents)
+            foreach (Document document in documents)
             {
                 projects.Add(document.Project);
             }
 
-            var diagnostics = DiagnosticBag.GetInstance();
-            foreach (var project in projects)
+            DiagnosticBag diagnostics = DiagnosticBag.GetInstance();
+            foreach (Project project in projects)
             {
-                var compilation = project.GetCompilationAsync().Result;
+                Compilation compilation = project.GetCompilationAsync().Result;
                 compilation = EnableAnalyzer(analyzer, compilation);
 
-                var diags = compilation.GetAnalyzerDiagnostics(new[] { analyzer });
+                ImmutableArray<Diagnostic> diags = compilation.GetAnalyzerDiagnostics(new[] { analyzer });
                 if (spans == null)
                 {
                     diagnostics.AddRange(diags);
@@ -411,7 +410,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 else
                 {
                     Debug.Assert(spans.Length == documents.Length);
-                    foreach (var diag in diags)
+                    foreach (Diagnostic diag in diags)
                     {
                         if (diag.Location == Location.None || diag.Location.IsInMetadata)
                         {
@@ -421,11 +420,11 @@ namespace Microsoft.CodeAnalysis.UnitTests
                         {
                             for (int i = 0; i < documents.Length; i++)
                             {
-                                var document = documents[i];
-                                var tree = document.GetSyntaxTreeAsync().Result;
+                                Document document = documents[i];
+                                SyntaxTree tree = document.GetSyntaxTreeAsync().Result;
                                 if (tree == diag.Location.SourceTree)
                                 {
-                                    var span = spans[i];
+                                    TextSpan? span = spans[i];
                                     if (span == null || span.Value.Contains(diag.Location.SourceSpan))
                                     {
                                         diagnostics.Add(diag);
@@ -437,7 +436,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 }
             }
 
-            var results = GetSortedDiagnostics(diagnostics.AsEnumerable());
+            Diagnostic[] results = GetSortedDiagnostics(diagnostics.AsEnumerable());
             diagnostics.Free();
             return results;
         }
@@ -458,12 +457,12 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
         protected static void AnalyzeDocumentCore(DiagnosticAnalyzer analyzer, Document document, Action<Diagnostic> addDiagnostic, TextSpan? span = null, Action<Exception, DiagnosticAnalyzer, Diagnostic> onAnalyzerException = null, bool logAnalyzerExceptionAsDiagnostics = true)
         {
-            var semanticModel = document.GetSemanticModelAsync().Result;
-            var compilation = semanticModel.Compilation;
+            SemanticModel semanticModel = document.GetSemanticModelAsync().Result;
+            Compilation compilation = semanticModel.Compilation;
             compilation = EnableAnalyzer(analyzer, compilation);
 
-            var diagnostics = compilation.GetAnalyzerDiagnostics(new[] { analyzer }, onAnalyzerException: onAnalyzerException, logAnalyzerExceptionAsDiagnostics: logAnalyzerExceptionAsDiagnostics);
-            foreach (var diagnostic in diagnostics)
+            ImmutableArray<Diagnostic> diagnostics = compilation.GetAnalyzerDiagnostics(new[] { analyzer }, onAnalyzerException: onAnalyzerException, logAnalyzerExceptionAsDiagnostics: logAnalyzerExceptionAsDiagnostics);
+            foreach (Diagnostic diagnostic in diagnostics)
             {
                 if (!span.HasValue ||
                     diagnostic.Location == Location.None ||

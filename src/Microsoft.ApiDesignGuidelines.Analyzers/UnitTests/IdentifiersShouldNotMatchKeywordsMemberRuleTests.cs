@@ -530,6 +530,33 @@ End Class",
         }
 
         [Fact]
+        public void CSharpDiagnosticForKeywordNamedProtectedVirtualMethodInProtectedTypeNestedInPublicClass()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    protected class D
+    {
+        protected virtual void @protected() {}
+    }
+}",
+                GetCSharpResultAt(6, 32, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C.D.protected()", "protected"));
+        }
+
+        [Fact]
+        public void BasicDiagnosticForKeywordNamedProtectedVirtualMethodInProtectedTypeNestedInPublicClass()
+        {
+            VerifyBasic(@"
+Public Class C
+    Protected Class D
+        Protected Overridable Sub [Protected]()
+        End Sub
+    End Class
+End Class",
+                GetBasicResultAt(4, 35, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C.D.Protected()", "Protected"));
+        }
+
+        [Fact]
         public void CSharpDiagnosticForKeywordNamedPublicVirtualEventInPublicClass()
         {
             VerifyCSharp(@"

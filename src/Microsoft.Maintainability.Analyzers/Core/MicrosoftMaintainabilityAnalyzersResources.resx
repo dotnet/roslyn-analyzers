@@ -117,7 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-
   <data name="VariableNamesShouldNotMatchFieldNamesTitle" xml:space="preserve">
     <value>Variable names should not match field names</value>
   </data>
@@ -173,7 +172,7 @@
     <value>An instance of an assembly-level type is not created by code in the assembly.</value>
   </data>
   <data name="AvoidUninstantiatedInternalClassesMessage" xml:space="preserve">
-    <value>Avoid uninstantiated internal classes</value>
+    <value>{0} is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it static (Shared in Visual Basic).</value>
   </data>
   <data name="AvoidUnusedPrivateFieldsTitle" xml:space="preserve">
     <value>Avoid unused private fields</value>

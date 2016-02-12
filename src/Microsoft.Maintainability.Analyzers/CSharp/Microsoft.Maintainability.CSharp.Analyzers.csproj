@@ -108,7 +108,6 @@
     <Compile Include="CSharpReviewUnusedParameters.Fixer.cs" />
     <Compile Include="CSharpRemoveUnusedLocals.cs" />
     <Compile Include="CSharpRemoveUnusedLocals.Fixer.cs" />
-    <Compile Include="CSharpAvoidUninstantiatedInternalClasses.cs" />
     <Compile Include="CSharpAvoidUninstantiatedInternalClasses.Fixer.cs" />
   </ItemGroup>
   <ImportGroup Label="Targets">

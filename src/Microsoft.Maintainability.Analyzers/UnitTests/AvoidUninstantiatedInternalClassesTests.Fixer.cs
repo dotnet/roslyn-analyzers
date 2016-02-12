@@ -10,12 +10,12 @@ namespace Microsoft.Maintainability.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicAvoidUninstantiatedInternalClassesAnalyzer();
+            return new AvoidUninstantiatedInternalClassesAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpAvoidUninstantiatedInternalClassesAnalyzer();
+            return new AvoidUninstantiatedInternalClassesAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

@@ -1,15 +1,20 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Semantics;
 
 namespace Microsoft.Maintainability.Analyzers
 {
     /// <summary>
     /// CA1812: Avoid uninstantiated internal classes
     /// </summary>
-    public abstract class AvoidUninstantiatedInternalClassesAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class AvoidUninstantiatedInternalClassesAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1812";
 
@@ -23,15 +28,53 @@ namespace Microsoft.Maintainability.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182265.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.RegisterCompilationStartAction(startContext =>
+            {
+                var instantiatedTypes = new List<INamedTypeSymbol>();
+                var internalTypes = new List<INamedTypeSymbol>();
+
+                startContext.RegisterOperationAction(context =>
+                {
+                    IObjectCreationExpression expr = (IObjectCreationExpression)context.Operation;
+                    var namedType = expr.ResultType as INamedTypeSymbol;
+                    if (namedType != null)
+                    {
+                        instantiatedTypes.Add(namedType);
+                    }
+                }, OperationKind.ObjectCreationExpression);
+
+                startContext.RegisterSymbolAction(context =>
+                {
+                    INamedTypeSymbol type = (INamedTypeSymbol)context.Symbol;
+                    if (type.GetResultantVisibility() != SymbolVisibility.Public
+                        && type.TypeKind == TypeKind.Class
+                        && !type.IsStatic
+                        && !type.IsAbstract)
+                    {
+                        internalTypes.Add(type);
+                    }
+                }, SymbolKind.NamedType);
+
+                startContext.RegisterCompilationEndAction(context =>
+                {
+                    IEnumerable<INamedTypeSymbol> uninstantiatedInternalTypes =
+                        internalTypes.Except(instantiatedTypes);
+
+                    foreach (INamedTypeSymbol type in uninstantiatedInternalTypes)
+                    {
+                        context.ReportDiagnostic(type.CreateDiagnostic(Rule, type.FormatMemberName()));
+                    }
+                });
+            });
         }
     }
 }

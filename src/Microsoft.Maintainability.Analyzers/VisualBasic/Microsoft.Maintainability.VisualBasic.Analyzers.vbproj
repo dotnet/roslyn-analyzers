@@ -105,7 +105,6 @@
     <Compile Include="BasicReviewUnusedParameters.Fixer.vb" />
     <Compile Include="BasicRemoveUnusedLocals.vb" />
     <Compile Include="BasicRemoveUnusedLocals.Fixer.vb" />
-    <Compile Include="BasicAvoidUninstantiatedInternalClasses.vb" />
     <Compile Include="BasicAvoidUninstantiatedInternalClasses.Fixer.vb" />
   </ItemGroup>
   <ImportGroup Label="Targets">

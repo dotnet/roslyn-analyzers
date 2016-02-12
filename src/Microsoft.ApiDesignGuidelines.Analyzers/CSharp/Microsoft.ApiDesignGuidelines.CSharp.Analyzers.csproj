@@ -25,6 +25,12 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </PropertyGroup>
+  <PropertyGroup>
+    <DelaySign>false</DelaySign>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
       <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
@@ -132,7 +138,6 @@
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.cs" />
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.Fixer.cs" />
     <Compile Include="CSharpCollectionsShouldImplementGenericInterface.Fixer.cs" />
-    <Compile Include="CSharpEnumStorageShouldBeInt32.cs" />
     <Compile Include="CSharpEnumStorageShouldBeInt32.Fixer.cs" />
     <Compile Include="CSharpUseEventsWhereAppropriate.cs" />
     <Compile Include="CSharpUseEventsWhereAppropriate.Fixer.cs" />

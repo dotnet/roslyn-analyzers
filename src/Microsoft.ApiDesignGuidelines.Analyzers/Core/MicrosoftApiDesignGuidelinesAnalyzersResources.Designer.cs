@@ -776,18 +776,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         /// <summary>
         ///   Looks up a localized string similar to If possible, make the underlying type of {0} System.Int32 instead of {1}..
         /// </summary>
-        internal static string EnumStorageShouldBeInt32MessageNotInt32 {
+        internal static string EnumStorageShouldBeInt32Message {
             get {
-                return ResourceManager.GetString("EnumStorageShouldBeInt32MessageNotInt32", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to If possible, make the underlying type of {0} Int32 instead of {1}. Otherwise consider Byte, Int16, or Int64..
-        /// </summary>
-        internal static string EnumStorageShouldBeInt32MessageNotIntegral {
-            get {
-                return ResourceManager.GetString("EnumStorageShouldBeInt32MessageNotIntegral", resourceCulture);
+                return ResourceManager.GetString("EnumStorageShouldBeInt32Message", resourceCulture);
             }
         }
         

@@ -520,11 +520,8 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="EnumStorageShouldBeInt32Description" xml:space="preserve">
     <value>An enumeration is a value type that defines a set of related named constants. By default, the System.Int32 data type is used to store the constant value. Although you can change this underlying type, it is not required or recommended for most scenarios.</value>
   </data>
-  <data name="EnumStorageShouldBeInt32MessageNotInt32" xml:space="preserve">
+  <data name="EnumStorageShouldBeInt32Message" xml:space="preserve">
     <value>If possible, make the underlying type of {0} System.Int32 instead of {1}.</value>
-  </data>
-  <data name="EnumStorageShouldBeInt32MessageNotIntegral" xml:space="preserve">
-    <value>If possible, make the underlying type of {0} Int32 instead of {1}. Otherwise consider Byte, Int16, or Int64.</value>
   </data>
   <data name="UseEventsWhereAppropriateTitle" xml:space="preserve">
     <value>Use events where appropriate</value>

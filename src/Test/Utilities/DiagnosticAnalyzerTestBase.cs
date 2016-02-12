@@ -82,7 +82,6 @@ namespace Microsoft.CodeAnalysis.UnitTests
             }
         }
 
-
         protected static DiagnosticResult GetGlobalResult(string id, string message)
         {
             return new DiagnosticResult

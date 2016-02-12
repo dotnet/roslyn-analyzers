@@ -10,9 +10,12 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CodeActions;
+using System.Diagnostics;
+using Analyzer.Utilities;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
-{                              
+{
     /// <summary>
     /// CA2226: Operators should have symmetrical overloads
     /// </summary>
@@ -26,11 +29,24 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
-        {                              
-            // This is to get rid of warning CS1998, please remove when implementing this analyzer
-            await new Task(() => { });
-            throw new NotImplementedException();
+        public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
+        {
+            context.RegisterCodeFix(CodeAction.Create(MicrosoftApiDesignGuidelinesAnalyzersResources.Generate_missing_operators,
+                c => CreateChangedDocument(context.Document, c), nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.Generate_missing_operators)),
+                context.Diagnostics.First());
+            return Task.FromResult(true);
+        }
+
+        private async Task<Document> CreateChangedDocument(CodeFixContext context, CancellationToken cancellationToken)
+        {
+            var document = context.Document;
+            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            var containingOperator = semanticModel.GetEnclosingSymbol(context.Diagnostics.First().Location.SourceSpan.Start, cancellationToken);
+
+            Debug.Assert(containingOperator.IsUserDefinedOperator());
+
+            var generator = SyntaxGenerator.GetGenerator(document);
+
         }
     }
 }

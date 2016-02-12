@@ -96,7 +96,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 context.ReportDiagnostic(
                     type.CreateDiagnostic(
                         TypeRule,
-                        type.Name,
+                        FormatSymbolName(type),
                         matchingKeyword));
             }
         }

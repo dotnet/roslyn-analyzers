@@ -378,5 +378,32 @@ Public Class C
 End Class",
                 GetBasicResultAt(3, 44, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberParameterRule, "C.P(Integer)", "int", "int"));
         }
+
+        [Fact]
+        public void CSharpDiagnosticForKeywordNamedParameterOfProtectedVirtualMethodInProtectedTypeNestedInPublicClass()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    protected class D
+    {
+        protected virtual void F(int @int) {}
+    }
+}",
+                GetCSharpResultAt(6, 38, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberParameterRule, "C.D.F(int)", "int", "int"));
+        }
+
+        [Fact]
+        public void BasicDiagnosticForKeywordNamedParameterOfProtectedVirtualMethodInProtectedTypeNestedInPublicClass()
+        {
+            VerifyBasic(@"
+Public Class C
+    Protected Class D
+        Protected Overridable Sub F([iNtEgEr] As Integer)
+        End Sub
+    End Class
+End Class",
+                GetBasicResultAt(4, 37, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberParameterRule, "C.D.F(Integer)", "iNtEgEr", "Integer"));
+        }
     }
 }

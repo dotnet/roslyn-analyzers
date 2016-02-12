@@ -4,9 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Roslyn.Utilities;
 using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 
@@ -83,13 +81,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                var flagsAttribute = WellKnownTypes.FlagsAttribute(compilationContext.Compilation);
+                INamedTypeSymbol flagsAttribute = WellKnownTypes.FlagsAttribute(compilationContext.Compilation);
                 if (flagsAttribute == null)
                 {
                     return;
                 }
 
-                compilationContext.RegisterSymbolAction(symbolContext=> AnalyzeSymbol(symbolContext, flagsAttribute), SymbolKind.NamedType);
+                compilationContext.RegisterSymbolAction(symbolContext => AnalyzeSymbol(symbolContext, flagsAttribute), SymbolKind.NamedType);
             });
         }
 
@@ -102,7 +100,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
 
 
-            var zeroValuedFields = GetZeroValuedFields(symbol).ToImmutableArray();
+            ImmutableArray<IFieldSymbol> zeroValuedFields = GetZeroValuedFields(symbol).ToImmutableArray();
 
             bool hasFlagsAttribute = symbol.GetAttributes().Any(a => a.AttributeClass == flagsAttribute);
             if (hasFlagsAttribute)
@@ -152,7 +150,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         internal static IEnumerable<IFieldSymbol> GetZeroValuedFields(INamedTypeSymbol enumType)
         {
-            var specialType = enumType.EnumUnderlyingType.SpecialType;
+            SpecialType specialType = enumType.EnumUnderlyingType.SpecialType;
             foreach (IFieldSymbol field in enumType.GetMembers().Where(m => m.Kind == SymbolKind.Field))
             {
                 if (field.HasConstantValue && IsZeroValueConstant(field.ConstantValue, specialType))

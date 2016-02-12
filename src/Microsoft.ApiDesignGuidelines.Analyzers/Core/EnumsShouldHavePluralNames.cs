@@ -92,7 +92,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                var flagsAttribute = WellKnownTypes.FlagsAttribute(compilationContext.Compilation);
+                INamedTypeSymbol flagsAttribute = WellKnownTypes.FlagsAttribute(compilationContext.Compilation);
                 if (flagsAttribute == null)
                 {
                     return;
@@ -100,7 +100,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                 compilationContext.RegisterSymbolAction(symbolContext => AnalyzeSymbol(symbolContext, flagsAttribute), SymbolKind.NamedType);
             });
-
         }
 
         private static void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol flagsAttribute)
@@ -129,4 +128,4 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         }
     }
 }
-    
+

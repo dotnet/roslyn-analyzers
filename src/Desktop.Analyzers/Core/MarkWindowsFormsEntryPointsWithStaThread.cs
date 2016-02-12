@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 
 namespace Desktop.Analyzers
-{                   
+{
     /// <summary>
     /// CA2232: Mark Windows Forms entry points with STAThread
     /// </summary>
@@ -15,10 +15,10 @@ namespace Desktop.Analyzers
         internal const string RuleId = "CA2232";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(DesktopAnalyzersResources.MarkWindowsFormsEntryPointsWithStaThreadTitle), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
-        
+
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(DesktopAnalyzersResources.MarkWindowsFormsEntryPointsWithStaThreadMessage), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(DesktopAnalyzersResources.MarkWindowsFormsEntryPointsWithStaThreadDescription), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
-        
+
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
@@ -32,8 +32,7 @@ namespace Desktop.Analyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext analysisContext)
-        { 
-            
+        {
         }
     }
 }

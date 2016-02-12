@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA1815: Override equals and operator equals on value types
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicOverrideEqualsAndOperatorEqualsOnValueTypesFixer
-        Inherits OverrideEqualsAndOperatorEqualsOnValueTypesFixer 
+        Inherits OverrideEqualsAndOperatorEqualsOnValueTypesFixer
 
     End Class
 End Namespace

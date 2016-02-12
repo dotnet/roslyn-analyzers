@@ -14,15 +14,14 @@ namespace Desktop.Analyzers
     {
         protected override Analyzer GetAnalyzer(CompilationSecurityTypes compilationTypes, ISymbol owningSymbol, SyntaxNode codeBlock)
         {
-            return new CSharpAnalyzer(compilationTypes, owningSymbol, codeBlock);        
-        } 
+            return new CSharpAnalyzer(compilationTypes, owningSymbol, codeBlock);
+        }
 
         private sealed class CSharpAnalyzer : Analyzer
         {
-            
             public CSharpAnalyzer(CompilationSecurityTypes compilationTypes, ISymbol owningSymbol, SyntaxNode codeBlock)
                 : base(compilationTypes, owningSymbol, codeBlock)
-            {}
+            { }
 
             public override SyntaxKind CatchClauseKind
             {
@@ -43,7 +42,7 @@ namespace Desktop.Analyzers
             protected override ISymbol GetExceptionTypeSymbolFromCatchClause(CatchClauseSyntax catchNode, SemanticModel model)
             {
                 Debug.Assert(catchNode != null);
-                var typeDeclNode = catchNode.Declaration;
+                CatchDeclarationSyntax typeDeclNode = catchNode.Declaration;
                 return typeDeclNode == null ? TypesOfInterest.SystemObject : typeDeclNode.Type.GetDeclaredOrReferencedSymbol(model);
             }
 

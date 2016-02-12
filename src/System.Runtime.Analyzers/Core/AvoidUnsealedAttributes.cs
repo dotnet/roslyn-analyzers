@@ -35,7 +35,7 @@ namespace System.Runtime.Analyzers
         {
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                var attributeType = WellKnownTypes.Attribute(compilationContext.Compilation);
+                INamedTypeSymbol attributeType = WellKnownTypes.Attribute(compilationContext.Compilation);
                 if (attributeType == null)
                 {
                     return;

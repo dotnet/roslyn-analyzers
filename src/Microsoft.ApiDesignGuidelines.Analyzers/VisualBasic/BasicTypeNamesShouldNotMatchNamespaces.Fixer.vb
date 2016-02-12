@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA1724: Type names should not match namespaces
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicTypeNamesShouldNotMatchNamespacesFixer
-        Inherits TypeNamesShouldNotMatchNamespacesFixer 
+        Inherits TypeNamesShouldNotMatchNamespacesFixer
 
     End Class
 End Namespace

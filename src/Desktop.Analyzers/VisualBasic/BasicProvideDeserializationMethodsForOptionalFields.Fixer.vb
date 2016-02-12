@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Desktop.Analyzers     
+Namespace Desktop.Analyzers
     ''' <summary>
     ''' CA2239: Provide deserialization methods for optional fields
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicProvideDeserializationMethodsForOptionalFieldsFixer
-        Inherits ProvideDeserializationMethodsForOptionalFieldsFixer 
+        Inherits ProvideDeserializationMethodsForOptionalFieldsFixer
 
     End Class
 End Namespace

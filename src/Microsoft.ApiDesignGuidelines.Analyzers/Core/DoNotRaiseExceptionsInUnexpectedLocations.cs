@@ -61,15 +61,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             analysisContext.RegisterCompilationStartAction(compilationStartContext =>
             {
-                var compilation = compilationStartContext.Compilation;
-                var exceptionType = WellKnownTypes.Exception(compilation);
+                Compilation compilation = compilationStartContext.Compilation;
+                INamedTypeSymbol exceptionType = WellKnownTypes.Exception(compilation);
                 if (exceptionType == null)
                 {
                     return;
                 }
 
                 // Get a list of interesting categories of methods to analyze.
-                var methodCategories = GetMethodCategories(compilation);
+                List<MethodCategory> methodCategories = GetMethodCategories(compilation);
 
                 compilationStartContext.RegisterOperationBlockStartAction(operationBlockContext =>
                 {
@@ -81,7 +81,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                     // Find out if this given method is one of the interesting categories of methods.
                     // For eg: certain Equals methods or certain accessors etc.
-                    var methodCategory = methodCategories.FirstOrDefault(l => l.IsMatch(methodSymbol, compilation));
+                    MethodCategory methodCategory = methodCategories.FirstOrDefault(l => l.IsMatch(methodSymbol, compilation));
                     if (methodCategory == null)
                     {
                         return;
@@ -115,12 +115,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             /// <summary>
             /// Function used to determine whether a given method symbol falls into this category.
             /// </summary>
-            private readonly Func<IMethodSymbol, Compilation, bool> matchFunction;
+            private readonly Func<IMethodSymbol, Compilation, bool> _matchFunction;
 
             /// <summary>
             /// Determines if we should analyze non-public methods of a given type.
             /// </summary>
-            private readonly bool analyzeOnlyPublicMethods;
+            private readonly bool _analyzeOnlyPublicMethods;
 
             /// <summary>
             /// The rule that should be fired if there is an exception in this kind of method.
@@ -135,8 +135,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             public MethodCategory(Func<IMethodSymbol, Compilation, bool> matchFunction, bool analyzeOnlyPublicMethods, DiagnosticDescriptor rule, params ITypeSymbol[] allowedExceptionTypes)
             {
-                this.matchFunction = matchFunction;
-                this.analyzeOnlyPublicMethods = analyzeOnlyPublicMethods;
+                _matchFunction = matchFunction;
+                _analyzeOnlyPublicMethods = analyzeOnlyPublicMethods;
                 this.Rule = rule;
                 AllowedExceptions = allowedExceptionTypes.ToImmutableHashSet();
             }
@@ -148,13 +148,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 // If we are supposed to analyze only public methods get the resultant visibility
                 // i.e public method inside an internal class is not considered public.
-                if (analyzeOnlyPublicMethods &&
+                if (_analyzeOnlyPublicMethods &&
                     method.GetResultantVisibility() != SymbolVisibility.Public)
                 {
                     return false;
                 }
 
-                return matchFunction(method, compilation);
+                return _matchFunction(method, compilation);
             }
         }
 
@@ -226,7 +226,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             return method.IsEqualsOverride() || IsEqualsInterfaceImplementation(method, compilation);
         }
-        
+
         /// <summary>
         /// Checks if a given method implements IEqualityComparer.Equals or IEquatable.Equals.
         /// </summary>
@@ -243,7 +243,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 // Substitute the type of the first parameter of Equals in the generic interface and then check if that
                 // interface method is implemented by the given method.
-                var iEqualityComparer = WellKnownTypes.GenericIEqualityComparer(compilation);
+                INamedTypeSymbol iEqualityComparer = WellKnownTypes.GenericIEqualityComparer(compilation);
                 if (method.IsImplementationOfInterfaceMethod(method.Parameters.First().Type, iEqualityComparer, WellKnownMemberNames.ObjectEquals))
                 {
                     return true;
@@ -251,7 +251,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                 // Substitute the type of the first parameter of Equals in the generic interface and then check if that
                 // interface method is implemented by the given method.
-                var iEquatable = WellKnownTypes.GenericIEquatable(compilation);
+                INamedTypeSymbol iEquatable = WellKnownTypes.GenericIEquatable(compilation);
                 if (method.IsImplementationOfInterfaceMethod(method.Parameters.First().Type, iEquatable, WellKnownMemberNames.ObjectEquals))
                 {
                     return true;
@@ -278,19 +278,18 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 // Substitute the type of the first parameter of Equals in the generic interface and then check if that
                 // interface method is implemented by the given method.
-                var iEqualityComparer = WellKnownTypes.GenericIEqualityComparer(compilation);
+                INamedTypeSymbol iEqualityComparer = WellKnownTypes.GenericIEqualityComparer(compilation);
                 if (method.IsImplementationOfInterfaceMethod(method.Parameters.First().Type, iEqualityComparer, WellKnownMemberNames.ObjectGetHashCode))
                 {
                     return true;
                 }
 
 
-                var iHashCodeProvider = WellKnownTypes.IHashCodeProvider(compilation);
+                INamedTypeSymbol iHashCodeProvider = WellKnownTypes.IHashCodeProvider(compilation);
                 if (method.IsImplementationOfInterfaceMethod(null, iHashCodeProvider, WellKnownMemberNames.ObjectGetHashCode))
                 {
                     return true;
                 }
-
             }
 
             return false;

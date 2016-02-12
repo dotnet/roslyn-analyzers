@@ -25,8 +25,8 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var node = root.FindNode(context.Span);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode node = root.FindNode(context.Span);
 
             if (node == null)
             {
@@ -34,7 +34,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
             }
 
             // We cannot have multiple overlapping diagnostics of this id.
-            var diagnostic = context.Diagnostics.Single();
+            Diagnostic diagnostic = context.Diagnostics.Single();
             context.RegisterCodeFix(new MyCodeAction(MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers,
                              async ct => await RemoveFinalizer(context.Document, node, ct).ConfigureAwait(false)),
                         diagnostic);
@@ -43,7 +43,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
         private async Task<Document> RemoveFinalizer(Document document, SyntaxNode node, CancellationToken cancellationToken)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
 
             // Get the declaration so that we step up to the methodblocksyntax and not the methodstatementsyntax for VB.
             node = editor.Generator.GetDeclaration(node);

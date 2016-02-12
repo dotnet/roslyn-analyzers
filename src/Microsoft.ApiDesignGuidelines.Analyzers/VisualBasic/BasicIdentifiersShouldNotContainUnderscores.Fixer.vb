@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA1707: Identifiers should not contain underscores
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicIdentifiersShouldNotContainUnderscoresFixer
-        Inherits IdentifiersShouldNotContainUnderscoresFixer 
+        Inherits IdentifiersShouldNotContainUnderscoresFixer
 
     End Class
 End Namespace

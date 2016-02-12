@@ -1,26 +1,24 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
-using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
     public partial class DoNotUseInsecureDTDProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private static readonly string CA3075XmlReaderCreateWrongOverloadMessage = DesktopAnalyzersResources.XmlReaderCreateWrongOverloadMessage;
+        private static readonly string s_CA3075XmlReaderCreateWrongOverloadMessage = DesktopAnalyzersResources.XmlReaderCreateWrongOverloadMessage;
 
         private DiagnosticResult GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(int line, int column, string name)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(CA3075XmlReaderCreateWrongOverloadMessage, name));
+            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(s_CA3075XmlReaderCreateWrongOverloadMessage, name));
         }
 
         private DiagnosticResult GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(int line, int column, string name)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(CA3075XmlReaderCreateWrongOverloadMessage, name));
+            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(s_CA3075XmlReaderCreateWrongOverloadMessage, name));
         }
-        
+
         [Fact]
         public void UseXmlReaderCreateWrongOverloadShouldGenerateDiagnostic()
         {

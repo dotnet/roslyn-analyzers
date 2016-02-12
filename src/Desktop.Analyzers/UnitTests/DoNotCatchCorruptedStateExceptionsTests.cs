@@ -2,7 +2,7 @@
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
-using Xunit;                 
+using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
@@ -706,7 +706,7 @@ namespace Desktop.Analyzers.UnitTests
             );
         }
 
-  
+
         [Fact]
         public void CA2153TestCatchExceptionInNestedClassMethodwithInnerHpcseAndOuterSecurityCriticalAttributes()
         {

@@ -269,10 +269,10 @@ class E : ControlBase
     }
 }
 ";
-            var document = CreateDocument(source, LanguageNames.CSharp);
-            var project = document.Project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(System.Web.UI.Control).Assembly.Location));
+            Document document = CreateDocument(source, LanguageNames.CSharp);
+            Project project = document.Project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(System.Web.UI.Control).Assembly.Location));
             project = project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(System.Windows.Forms.Control).Assembly.Location));
-            var analyzer = GetCSharpDiagnosticAnalyzer();
+            DiagnosticAnalyzer analyzer = GetCSharpDiagnosticAnalyzer();
             GetSortedDiagnostics(analyzer, project.Documents.Single()).Verify(analyzer);
         }
 
@@ -311,10 +311,10 @@ Class E
     End Sub
 End Class
 ";
-            var document = CreateDocument(source, LanguageNames.VisualBasic);
-            var project = document.Project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(System.Web.UI.Control).Assembly.Location));
+            Document document = CreateDocument(source, LanguageNames.VisualBasic);
+            Project project = document.Project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(System.Web.UI.Control).Assembly.Location));
             project = project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(System.Windows.Forms.Control).Assembly.Location));
-            var analyzer = GetBasicDiagnosticAnalyzer();
+            DiagnosticAnalyzer analyzer = GetBasicDiagnosticAnalyzer();
             GetSortedDiagnostics(analyzer, project.Documents.Single()).Verify(analyzer);
         }
 
@@ -359,8 +359,8 @@ End Class
 ");
         }
 
-        internal static string CA2214Name = DoNotCallOverridableMethodsInConstructorsAnalyzer.RuleId;
-        internal static string CA2214Message = MicrosoftQualityGuidelinesAnalyzersResources.DoNotCallOverridableMethodsInConstructors;
+        internal static readonly string CA2214Name = DoNotCallOverridableMethodsInConstructorsAnalyzer.RuleId;
+        internal static readonly string CA2214Message = MicrosoftQualityGuidelinesAnalyzersResources.DoNotCallOverridableMethodsInConstructors;
 
         private static DiagnosticResult GetCA2214CSharpResultAt(int line, int column)
         {

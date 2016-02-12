@@ -1,11 +1,9 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
 using Microsoft.QualityGuidelines.Analyzers;
 using Roslyn.Diagnostics.Test.Utilities;
-using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.QualityGuidelines.UnitTests
@@ -378,8 +376,8 @@ End Class
                 GetCA1821BasicResultAt(6, 29));
         }
 
-        internal static string CA1821Name = RemoveEmptyFinalizersAnalyzer.RuleId;
-        internal static string CA1821Message = MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers;
+        internal static readonly string CA1821Name = RemoveEmptyFinalizersAnalyzer.RuleId;
+        internal static readonly string CA1821Message = MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers;
 
         private static DiagnosticResult GetCA1821CSharpResultAt(int line, int column)
         {

@@ -24,10 +24,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         public void CSharp_EnumsShouldZeroValueFlagsRename()
         {
             // In enum '{0}', change the name of '{1}' to 'None'.
-            var expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E", "A");
-            var expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E2", "A2");
-            var expectedMessage3 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E3", "A3");
-            var expectedMessage4 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E4", "A4");
+            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E", "A");
+            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E2", "A2");
+            string expectedMessage3 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E3", "A3");
+            string expectedMessage4 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E4", "A4");
 
             var code = @"
 [System.Flags]
@@ -75,8 +75,8 @@ public enum NoZeroValuedField
         public void CSharp_EnumsShouldZeroValueFlagsMultipleZero()
         {
             // Remove all members that have the value zero from {0} except for one member that is named 'None'.
-            var expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E");
-            var expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E2");
+            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E");
+            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E2");
 
             var code = @"// Some comment
 [System.Flags]
@@ -101,8 +101,8 @@ internal enum E2
         public void CSharp_EnumsShouldZeroValueFlagsMultipleZeroWithScope()
         {
             // Remove all members that have the value zero from {0} except for one member that is named 'None'.
-            var expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E");
-            var expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E2");
+            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E");
+            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E2");
 
             var code = @"// Some comment
 [System.Flags]
@@ -126,8 +126,8 @@ internal enum E2
         public void CSharp_EnumsShouldZeroValueNotFlagsNoZeroValue()
         {
             // Add a member to {0} that has a value of zero with a suggested name of 'None'.
-            var expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E");
-            var expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E2");
+            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E");
+            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E2");
 
             var code = @"
 private enum E
@@ -162,8 +162,8 @@ internal enum E4
         public void CSharp_EnumsShouldZeroValueNotFlagsNoZeroValueWithScope()
         {
             // Add a member to {0} that has a value of zero with a suggested name of 'None'.
-            var expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E");
-            var expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E2");
+            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E");
+            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E2");
 
             var code = @"
 class C
@@ -200,10 +200,10 @@ class C
         public void VisualBasic_EnumsShouldZeroValueFlagsRename()
         {
             // In enum '{0}', change the name of '{1}' to 'None'.
-            var expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E", "A");
-            var expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E2", "A2");
-            var expectedMessage3 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E3", "A3");
-            var expectedMessage4 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E4", "A4");
+            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E", "A");
+            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E2", "A2");
+            string expectedMessage3 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E3", "A3");
+            string expectedMessage4 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E4", "A4");
 
             var code = @"
 <System.Flags>
@@ -240,10 +240,10 @@ End Enum
         public void VisualBasic_EnumsShouldZeroValueFlagsRenameScope()
         {
             // In enum '{0}', change the name of '{1}' to 'None'.
-            var expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E", "A");
-            var expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E2", "A2");
-            var expectedMessage3 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E3", "A3");
-            var expectedMessage4 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E4", "A4");
+            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E", "A");
+            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E2", "A2");
+            string expectedMessage3 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E3", "A3");
+            string expectedMessage4 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E4", "A4");
 
             var code = @"
 <System.Flags>
@@ -280,10 +280,10 @@ End Enum
         public void VisualBasic_EnumsShouldZeroValueFlagsRename_AttributeListHasTrivia()
         {
             // In enum '{0}', change the name of '{1}' to 'None'.
-            var expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E", "A");
-            var expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E2", "A2");
-            var expectedMessage3 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E3", "A3");
-            var expectedMessage4 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E4", "A4");
+            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E", "A");
+            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E2", "A2");
+            string expectedMessage3 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E3", "A3");
+            string expectedMessage4 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E4", "A4");
 
             var code = @"
 <System.Flags> _
@@ -320,9 +320,9 @@ End Enum
         public void VisualBasic_EnumsShouldZeroValueFlagsMultipleZero()
         {
             // Remove all members that have the value zero from {0} except for one member that is named 'None'.
-            var expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E");
-            var expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E2");
-            var expectedMessage3 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E3");
+            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E");
+            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E2");
+            string expectedMessage3 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E3");
 
             var code = @"
 <System.Flags>
@@ -353,8 +353,8 @@ End Enum";
         public void VisualBasic_EnumsShouldZeroValueNotFlagsNoZeroValue()
         {
             // Add a member to {0} that has a value of zero with a suggested name of 'None'.
-            var expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E");
-            var expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E2");
+            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E");
+            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E2");
 
             var code = @"
 Private Enum E
@@ -386,8 +386,8 @@ End Enum
         public void VisualBasic_EnumsShouldZeroValueNotFlagsNoZeroValueWithScope()
         {
             // Add a member to {0} that has a value of zero with a suggested name of 'None'.
-            var expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E");
-            var expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E2");
+            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E");
+            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E2");
 
             var code = @"
 Private Enum E

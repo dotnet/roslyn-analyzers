@@ -30,9 +30,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var generator = context.Document.Project?.LanguageServices?.GetService<SyntaxGenerator>();
+            SemanticModel semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxGenerator generator = context.Document.Project?.LanguageServices?.GetService<SyntaxGenerator>();
             if (semanticModel != null && generator != null)
             {
                 context.RegisterCodeFix(new MyCodeAction(ct => Fix(context, root, generator, semanticModel, ct)), context.Diagnostics.First());
@@ -41,22 +41,22 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private static async Task<Document> Fix(CodeFixContext context, SyntaxNode root, SyntaxGenerator generator, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            var node = root.FindNode(context.Span);
-            var diagnostic = context.Diagnostics.First();
+            SyntaxNode node = root.FindNode(context.Span);
+            Diagnostic diagnostic = context.Diagnostics.First();
             switch (diagnostic.Properties[OperatorOverloadsHaveNamedAlternatesAnalyzer.DiagnosticKindText])
             {
                 case OperatorOverloadsHaveNamedAlternatesAnalyzer.AddAlternateText:
-                    var methodDeclaration = generator.GetDeclaration(node, DeclarationKind.Operator) ?? generator.GetDeclaration(node, DeclarationKind.ConversionOperator);
+                    SyntaxNode methodDeclaration = generator.GetDeclaration(node, DeclarationKind.Operator) ?? generator.GetDeclaration(node, DeclarationKind.ConversionOperator);
                     var operatorOverloadSymbol = (IMethodSymbol)semanticModel.GetDeclaredSymbol(methodDeclaration, cancellationToken);
-                    var typeSymbol = operatorOverloadSymbol.ContainingType;
+                    INamedTypeSymbol typeSymbol = operatorOverloadSymbol.ContainingType;
 
                     // For C# the following `typeDeclarationSyntax` and `typeDeclaration` nodes are identical, but for VB they're different so in
                     // an effort to keep this as language-agnostic as possible, the heavy-handed approach is used.
-                    var typeDeclarationSyntax = typeSymbol.DeclaringSyntaxReferences.First().GetSyntax(cancellationToken);
-                    var typeDeclaration = generator.GetDeclaration(typeDeclarationSyntax, DeclarationKind.Class);
+                    SyntaxNode typeDeclarationSyntax = typeSymbol.DeclaringSyntaxReferences.First().GetSyntax(cancellationToken);
+                    SyntaxNode typeDeclaration = generator.GetDeclaration(typeDeclarationSyntax, DeclarationKind.Class);
 
                     SyntaxNode addedMember;
-                    var bodyStatements = ImmutableArray.Create(
+                    ImmutableArray<SyntaxNode> bodyStatements = ImmutableArray.Create(
                         generator.ThrowStatement(generator.ObjectCreationExpression(semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException"))));
                     if (OperatorOverloadsHaveNamedAlternatesAnalyzer.IsPropertyExpected(operatorOverloadSymbol.Name))
                     {
@@ -71,7 +71,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     else
                     {
                         // add a method
-                        var expectedSignature = GetExpectedMethodSignature(operatorOverloadSymbol, semanticModel.Compilation);
+                        ExpectedMethodSignature expectedSignature = GetExpectedMethodSignature(operatorOverloadSymbol, semanticModel.Compilation);
                         addedMember = generator.MethodDeclaration(
                             name: expectedSignature.Name,
                             parameters: expectedSignature.Parameters.Select(p => generator.ParameterDeclaration(p.Item1, generator.TypeExpression(p.Item2))),
@@ -81,16 +81,16 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                             statements: bodyStatements);
                     }
 
-                    var newTypeDeclaration = generator.AddMembers(typeDeclaration, addedMember);
+                    SyntaxNode newTypeDeclaration = generator.AddMembers(typeDeclaration, addedMember);
                     return context.Document.WithSyntaxRoot(root.ReplaceNode(typeDeclaration, newTypeDeclaration));
                 case OperatorOverloadsHaveNamedAlternatesAnalyzer.FixVisibilityText:
-                    var badVisibilityNode = generator.GetDeclaration(node, DeclarationKind.Method) ?? generator.GetDeclaration(node, DeclarationKind.Property);
-                    var badVisibilitySymbol = semanticModel.GetDeclaredSymbol(badVisibilityNode, cancellationToken);
-                    var symbolEditor = SymbolEditor.Create(context.Document);
-                    var newSymbol = await symbolEditor.EditOneDeclarationAsync(badVisibilitySymbol,
+                    SyntaxNode badVisibilityNode = generator.GetDeclaration(node, DeclarationKind.Method) ?? generator.GetDeclaration(node, DeclarationKind.Property);
+                    ISymbol badVisibilitySymbol = semanticModel.GetDeclaredSymbol(badVisibilityNode, cancellationToken);
+                    SymbolEditor symbolEditor = SymbolEditor.Create(context.Document);
+                    ISymbol newSymbol = await symbolEditor.EditOneDeclarationAsync(badVisibilitySymbol,
                         (documentEditor, syntaxNode) => documentEditor.SetAccessibility(badVisibilityNode, Accessibility.Public));
-                    var newDocument = symbolEditor.GetChangedDocuments().Single();
-                    var newRoot = await newDocument.GetSyntaxRootAsync(cancellationToken);
+                    Document newDocument = symbolEditor.GetChangedDocuments().Single();
+                    SyntaxNode newRoot = await newDocument.GetSyntaxRootAsync(cancellationToken);
                     return context.Document.WithSyntaxRoot(newRoot);
                 default:
                     return context.Document;
@@ -100,8 +100,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static ExpectedMethodSignature GetExpectedMethodSignature(IMethodSymbol operatorOverloadSymbol, Compilation compilation)
         {
             var containingType = (ITypeSymbol)operatorOverloadSymbol.ContainingType;
-            var returnType = operatorOverloadSymbol.ReturnType;
-            var expectedName = OperatorOverloadsHaveNamedAlternatesAnalyzer.GetExpectedAlternateMethodGroup(operatorOverloadSymbol.Name, returnType).AlternateMethod1;
+            ITypeSymbol returnType = operatorOverloadSymbol.ReturnType;
+            string expectedName = OperatorOverloadsHaveNamedAlternatesAnalyzer.GetExpectedAlternateMethodGroup(operatorOverloadSymbol.Name, returnType).AlternateMethod1;
             switch (operatorOverloadSymbol.Name)
             {
                 case "op_GreaterThan":
@@ -109,7 +109,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 case "op_LessThan":
                 case "op_LessThanOrEqual":
                     // e.g., public int CompareTo(MyClass other)
-                    var intType = compilation.GetSpecialType(SpecialType.System_Int32);
+                    INamedTypeSymbol intType = compilation.GetSpecialType(SpecialType.System_Int32);
                     return new ExpectedMethodSignature(expectedName, intType, ImmutableArray.Create(Tuple.Create("other", containingType)), isStatic: false);
                 case "op_Decrement":
                 case "op_Increment":

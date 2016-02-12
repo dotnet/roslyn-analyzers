@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.QualityGuidelines.Analyzers     
+Namespace Microsoft.QualityGuidelines.Analyzers
     ''' <summary>
     ''' CA1822: Mark members as static
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicMarkMembersAsStaticFixer
-        Inherits MarkMembersAsStaticFixer 
+        Inherits MarkMembersAsStaticFixer
 
     End Class
 End Namespace

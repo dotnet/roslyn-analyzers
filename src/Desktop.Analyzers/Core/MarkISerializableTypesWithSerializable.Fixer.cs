@@ -23,16 +23,16 @@ namespace Desktop.Analyzers
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var generator = SyntaxGenerator.GetGenerator(context.Document);
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var node = root.FindNode(context.Span);
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(context.Document);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode node = root.FindNode(context.Span);
             node = generator.GetDeclaration(node);
             if (node == null)
             {
                 return;
             }
 
-            var diagnostic = context.Diagnostics.Single();
+            Diagnostic diagnostic = context.Diagnostics.Single();
             context.RegisterCodeFix(new MyCodeAction(DesktopAnalyzersResources.AddSerializableAttributeCodeActionTitle,
                                         async ct => await AddSerializableAttribute(context.Document, node, ct).ConfigureAwait(false)),
                                     diagnostic);
@@ -40,8 +40,8 @@ namespace Desktop.Analyzers
 
         private async Task<Document> AddSerializableAttribute(Document document, SyntaxNode node, CancellationToken cancellationToken)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            var attr = editor.Generator.Attribute(editor.Generator.TypeExpression(WellKnownTypes.SerializableAttribute(editor.SemanticModel.Compilation)));
+            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            SyntaxNode attr = editor.Generator.Attribute(editor.Generator.TypeExpression(WellKnownTypes.SerializableAttribute(editor.SemanticModel.Compilation)));
             editor.AddAttribute(node, attr);
             return editor.GetChangedDocument();
         }

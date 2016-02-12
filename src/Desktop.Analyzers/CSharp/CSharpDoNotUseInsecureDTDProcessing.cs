@@ -6,7 +6,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Desktop.Analyzers.Common;
-using Analyzer.Utilities;
 
 namespace Desktop.Analyzers
 {
@@ -22,7 +21,7 @@ namespace Desktop.Analyzers
                 SyntaxKind.ObjectCreationExpression,
                 SyntaxKind.SimpleAssignmentExpression,
                 SyntaxKind.VariableDeclarator);
-            context.RegisterCodeBlockEndAction(analyzer.AnalyzeCodeBlockEnd);  
+            context.RegisterCodeBlockEndAction(analyzer.AnalyzeCodeBlockEnd);
         }
 
         private class CSharpAnalyzer : Analyzer
@@ -30,7 +29,7 @@ namespace Desktop.Analyzers
             public CSharpAnalyzer(CompilationSecurityTypes types, CSharpSyntaxNodeHelper helper, Version frameworkVersion) :
                 base(types, helper, frameworkVersion)
             { }
-             
+
             protected override bool IsObjectConstructionForTemporaryObject(SyntaxNode node)
             {
                 if (node == null)
@@ -42,7 +41,7 @@ namespace Desktop.Analyzers
                 if (kind != SyntaxKind.ObjectCreationExpression)
                 {
                     return false;
-                }                       
+                }
 
                 foreach (SyntaxNode ancestor in node.Ancestors())
                 {
@@ -50,10 +49,10 @@ namespace Desktop.Analyzers
                     if (k == SyntaxKind.SimpleAssignmentExpression || k == SyntaxKind.VariableDeclarator)
                     {
                         return false;
-                    }   
+                    }
                 }
 
-                return true;  
+                return true;
             }
         }
     }

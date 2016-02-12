@@ -5,7 +5,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Semantics;
-using System.Linq;
 
 namespace System.Runtime.Analyzers
 {
@@ -44,14 +43,14 @@ namespace System.Runtime.Analyzers
                 {
                     var invocation = (IInvocationExpression)operationContext.Operation;
 
-                    var info = formatInfo.TryGet(invocation.TargetMethod);
+                    StringFormatInfo.Info info = formatInfo.TryGet(invocation.TargetMethod);
                     if (info == null || invocation.ArgumentsInParameterOrder.Length <= info.FormatStringIndex)
                     {
                         // not a target method
                         return;
                     }
 
-                    var formatStringArgument = invocation.ArgumentsInParameterOrder[info.FormatStringIndex];
+                    IArgument formatStringArgument = invocation.ArgumentsInParameterOrder[info.FormatStringIndex];
                     if (!object.Equals(formatStringArgument?.Value?.ResultType, formatInfo.String) ||
                         !(formatStringArgument?.Value?.ConstantValue.Value is string))
                     {
@@ -60,7 +59,7 @@ namespace System.Runtime.Analyzers
                     }
 
                     var stringFormat = (string)formatStringArgument.Value.ConstantValue.Value;
-                    var expectedStringFormatArgumentCount = GetFormattingArguments(stringFormat);
+                    int expectedStringFormatArgumentCount = GetFormattingArguments(stringFormat);
 
                     // explict parameter case
                     if (info.ExpectedStringFormatArgumentCount >= 0)
@@ -85,7 +84,7 @@ namespace System.Runtime.Analyzers
                     }
 
                     // params case
-                    var paramsArgument = invocation.ArgumentsInParameterOrder[info.FormatStringIndex + 1];
+                    IArgument paramsArgument = invocation.ArgumentsInParameterOrder[info.FormatStringIndex + 1];
                     if (paramsArgument.ArgumentKind != ArgumentKind.ParamArray)
                     {
                         // wrong format
@@ -102,7 +101,7 @@ namespace System.Runtime.Analyzers
                     }
 
                     // compiler generating object array for params case
-                    var intializer = arrayCreation.Initializer;
+                    IArrayInitializer intializer = arrayCreation.Initializer;
                     if (intializer == null)
                     {
                         // unsupported format
@@ -110,7 +109,7 @@ namespace System.Runtime.Analyzers
                     }
 
                     // REVIEW: "ElementValues" is a bit confusing where I need to double dot those to get number of elements
-                    var actualArgumentCount = intializer.ElementValues.Length;
+                    int actualArgumentCount = intializer.ElementValues.Length;
                     if (actualArgumentCount != expectedStringFormatArgumentCount)
                     {
                         operationContext.ReportDiagnostic(operationContext.Operation.Syntax.CreateDiagnostic(Rule));
@@ -128,14 +127,14 @@ namespace System.Runtime.Analyzers
             var count = 0;
 
             var pos = 0;
-            var len = format.Length;
+            int len = format.Length;
             var ch = '\x0';
 
             // main loop
             while (true)
             {
-                var p = pos;
-                var i = pos;
+                int p = pos;
+                int i = pos;
 
                 // loop to find starting "{"
                 while (pos < len)
@@ -318,13 +317,13 @@ namespace System.Runtime.Analyzers
 
             public StringFormatInfo(Compilation compilation)
             {
-                var builder = ImmutableDictionary.CreateBuilder<IMethodSymbol, Info>();
+                ImmutableDictionary<IMethodSymbol, Info>.Builder builder = ImmutableDictionary.CreateBuilder<IMethodSymbol, Info>();
 
-                var console = WellKnownTypes.Console(compilation);
+                INamedTypeSymbol console = WellKnownTypes.Console(compilation);
                 AddStringFormatMap(builder, console, "Write");
                 AddStringFormatMap(builder, console, "WriteLine");
 
-                var @string = WellKnownTypes.String(compilation);
+                INamedTypeSymbol @string = WellKnownTypes.String(compilation);
                 AddStringFormatMap(builder, @string, "Format");
 
                 _map = builder.ToImmutable();
@@ -354,16 +353,16 @@ namespace System.Runtime.Analyzers
                     return;
                 }
 
-                foreach (var method in type.GetMembers(methodName).OfType<IMethodSymbol>())
+                foreach (IMethodSymbol method in type.GetMembers(methodName).OfType<IMethodSymbol>())
                 {
-                    var formatIndex = FindParameterIndexOfName(method.Parameters, Format);
+                    int formatIndex = FindParameterIndexOfName(method.Parameters, Format);
                     if (formatIndex < 0 || formatIndex == method.Parameters.Length - 1)
                     {
                         // no valid format string
                         continue;
                     }
 
-                    var expectedArguments = GetExpectedNumberOfArguments(method.Parameters, formatIndex);
+                    int expectedArguments = GetExpectedNumberOfArguments(method.Parameters, formatIndex);
                     builder.Add(method, new Info(formatIndex, expectedArguments));
                 }
             }
@@ -371,7 +370,7 @@ namespace System.Runtime.Analyzers
             private int GetExpectedNumberOfArguments(ImmutableArray<IParameterSymbol> parameters, int formatIndex)
             {
                 // check params
-                var nextParameter = parameters[formatIndex + 1];
+                IParameterSymbol nextParameter = parameters[formatIndex + 1];
                 if (nextParameter.IsParams)
                 {
                     return -1;

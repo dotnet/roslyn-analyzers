@@ -9,7 +9,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.CSharp;
 using Analyzer.Utilities;
 using System.Composition;
 using System.Collections.Generic;
@@ -42,10 +41,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var title = MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementStandardExceptionConstructorsTitle;
+            string title = MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementStandardExceptionConstructorsTitle;
 
             // Get syntax root node
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
             // Register fixer - pass in the collection of diagnostics, since there could be more than one for this diagnostic due to more than one of the required constructors missing
             context.RegisterCodeFix(CodeAction.Create(title, c => AddConstructorsAsync(context.Document, context.Diagnostics, root, c), equivalenceKey: title), context.Diagnostics.First());
@@ -53,16 +52,16 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private async Task<Document> AddConstructorsAsync(Document document, IEnumerable<Diagnostic> diagnostics, SyntaxNode root, CancellationToken cancellationToken)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            var generator = editor.Generator;
-            var model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            SyntaxGenerator generator = editor.Generator;
+            SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-            var diagnosticSpan = diagnostics.First().Location.SourceSpan; // All the diagnostics are reported at the same location -- the name of the declared class -- so it doesn't matter which one we pick
-            var node = root.FindNode(diagnosticSpan);
-            var targetNode = editor.Generator.GetDeclaration(node, DeclarationKind.Class);
+            CodeAnalysis.Text.TextSpan diagnosticSpan = diagnostics.First().Location.SourceSpan; // All the diagnostics are reported at the same location -- the name of the declared class -- so it doesn't matter which one we pick
+            SyntaxNode node = root.FindNode(diagnosticSpan);
+            SyntaxNode targetNode = editor.Generator.GetDeclaration(node, DeclarationKind.Class);
             var typeSymbol = model.GetDeclaredSymbol(targetNode) as INamedTypeSymbol;
 
-            foreach (var diagnostic in diagnostics)
+            foreach (Diagnostic diagnostic in diagnostics)
             {
                 var missingCtorSignature = (ImplementStandardExceptionConstructorsAnalyzer.MissingCtorSignature)Enum.Parse(typeof(ImplementStandardExceptionConstructorsAnalyzer.MissingCtorSignature), diagnostic.Properties["Signature"]);
 
@@ -70,12 +69,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 {
                     case ImplementStandardExceptionConstructorsAnalyzer.MissingCtorSignature.CtorWithNoParameter:
                         // Add missing CtorWithNoParameter
-                        var newConstructorNode1 = generator.ConstructorDeclaration(typeSymbol.Name, accessibility: Accessibility.Public);
+                        SyntaxNode newConstructorNode1 = generator.ConstructorDeclaration(typeSymbol.Name, accessibility: Accessibility.Public);
                         editor.AddMember(targetNode, newConstructorNode1);
                         break;
                     case ImplementStandardExceptionConstructorsAnalyzer.MissingCtorSignature.CtorWithStringParameter:
                         // Add missing CtorWithStringParameter 
-                        var newConstructorNode2 = generator.ConstructorDeclaration(
+                        SyntaxNode newConstructorNode2 = generator.ConstructorDeclaration(
                                                     containingTypeName: typeSymbol.Name,
                                                     parameters: new[]
                                                     {
@@ -90,7 +89,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         break;
                     case ImplementStandardExceptionConstructorsAnalyzer.MissingCtorSignature.CtorWithStringAndExceptionParameters:
                         // Add missing CtorWithStringAndExceptionParameters 
-                        var newConstructorNode3 = generator.ConstructorDeclaration(
+                        SyntaxNode newConstructorNode3 = generator.ConstructorDeclaration(
                                                     containingTypeName: typeSymbol.Name,
                                                     parameters: new[]
                                                     {

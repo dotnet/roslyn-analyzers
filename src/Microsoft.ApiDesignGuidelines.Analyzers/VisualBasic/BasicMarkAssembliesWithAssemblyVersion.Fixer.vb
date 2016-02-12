@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA1016: Mark assemblies with assembly version
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicMarkAssembliesWithAssemblyVersionFixer
-        Inherits MarkAssembliesWithAssemblyVersionFixer 
+        Inherits MarkAssembliesWithAssemblyVersionFixer
 
     End Class
 End Namespace

@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
-{                   
+{
     /// <summary>
     /// CA1000: Do not declare static members on generic types
     /// </summary>
@@ -36,7 +36,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             analysisContext.RegisterSymbolAction(
                 symbolAnalysisContext =>
                 {
-                    var symbol = symbolAnalysisContext.Symbol;
+                    ISymbol symbol = symbolAnalysisContext.Symbol;
                     if (!symbol.ContainingType.IsGenericType ||
                         symbol.DeclaredAccessibility != Accessibility.Public ||
                         !symbol.IsStatic)
@@ -55,7 +55,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     }
 
                     symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(Rule, symbol.Name));
-
                 }, SymbolKind.Method, SymbolKind.Property);
         }
     }

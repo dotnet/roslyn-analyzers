@@ -52,7 +52,7 @@ namespace Desktop.Analyzers
                                             helpLinkUri: uri,
                                             customTags: WellKnownDiagnosticTags.Telemetry);
         }
-        
+
         public override void Initialize(AnalysisContext analysisContext)
         {
             analysisContext.RegisterCompilationStartAction(
@@ -70,7 +70,7 @@ namespace Desktop.Analyzers
         {
             return types.DES != null
                 || types.DSA != null
-                || types.DSASignatureFormatter != null 
+                || types.DSASignatureFormatter != null
                 || types.HMACMD5 != null
                 || types.RC2 != null
                 || types.TripleDES != null
@@ -80,11 +80,11 @@ namespace Desktop.Analyzers
 
         protected class Analyzer
         {
-            private CompilationSecurityTypes _cryptTypes; 
+            private readonly CompilationSecurityTypes _cryptTypes;
 
             public Analyzer(CompilationSecurityTypes cryptTypes)
             {
-                _cryptTypes = cryptTypes; 
+                _cryptTypes = cryptTypes;
             }
 
             public void AnalyzeNode(SyntaxNodeAnalysisContext context)
@@ -105,12 +105,12 @@ namespace Desktop.Analyzers
                 string owningParentName = string.Empty;
                 SyntaxNode cur = node;
 
-                while(cur.Parent != null)
+                while (cur.Parent != null)
                 {
-                    var pNode = cur.Parent;
+                    SyntaxNode pNode = cur.Parent;
                     ISymbol sym = pNode.GetDeclaredOrReferencedSymbol(model);
 
-                    if(sym != null &&
+                    if (sym != null &&
                         !string.IsNullOrEmpty(sym.Name)
                         && (
                             sym.Kind == SymbolKind.Method ||
@@ -126,10 +126,10 @@ namespace Desktop.Analyzers
                 }
 
                 messageArgs[0] = owningParentName;
-                
+
                 if (type.DerivesFrom(_cryptTypes.DES))
                 {
-                    rule = DoNotUseBrokenCryptographicRule;                    
+                    rule = DoNotUseBrokenCryptographicRule;
                     messageArgs[1] = _cryptTypes.DES.Name;
                 }
                 else if ((method.ContainingType.DerivesFrom(_cryptTypes.DSA) && method.MetadataName == SecurityMemberNames.CreateSignature) ||

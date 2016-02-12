@@ -31,7 +31,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182180.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
-        private static readonly SpecialType[] allowedTypes = new SpecialType[] {
+        private static readonly SpecialType[] s_allowedTypes = new SpecialType[] {
                         SpecialType.System_String,
                         SpecialType.System_Int16,
                         SpecialType.System_Int32,
@@ -46,8 +46,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Property );
-
+            analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Property);
         }
 
         private void AnalyzeSymbol(SymbolAnalysisContext context)
@@ -57,8 +56,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 if (symbol.GetParameters().Length == 1)
                 {
-                    var paramType = symbol.GetParameters()[0].Type;
-                    if (!allowedTypes.Contains(paramType.SpecialType))
+                    ITypeSymbol paramType = symbol.GetParameters()[0].Type;
+                    if (!s_allowedTypes.Contains(paramType.SpecialType))
                     {
                         context.ReportDiagnostic(symbol.CreateDiagnostic(Rule));
                     }

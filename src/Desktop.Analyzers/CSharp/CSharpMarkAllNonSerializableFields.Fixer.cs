@@ -12,7 +12,7 @@ namespace Desktop.Analyzers
     {
         protected override SyntaxNode GetFieldDeclarationNode(SyntaxNode node)
         {
-            var fieldNode = node;
+            SyntaxNode fieldNode = node;
             while (fieldNode != null && fieldNode.Kind() != SyntaxKind.FieldDeclaration)
             {
                 fieldNode = fieldNode.Parent;

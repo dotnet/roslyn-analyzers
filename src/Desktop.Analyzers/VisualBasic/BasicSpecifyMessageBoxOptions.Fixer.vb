@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Desktop.Analyzers     
+Namespace Desktop.Analyzers
     ''' <summary>
     ''' CA1300: Specify MessageBoxOptions
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicSpecifyMessageBoxOptionsFixer
-        Inherits SpecifyMessageBoxOptionsFixer 
+        Inherits SpecifyMessageBoxOptionsFixer
 
     End Class
 End Namespace

@@ -11,7 +11,6 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Shared.Extensions;
-using Roslyn.Utilities;
 using Microsoft.CodeAnalysis;
 
 namespace Desktop.Analyzers
@@ -26,17 +25,17 @@ namespace Desktop.Analyzers
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var node = root.FindNode(context.Span);
-            var model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            var symbol = model.GetDeclaredSymbol(node, context.CancellationToken);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode node = root.FindNode(context.Span);
+            SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            ISymbol symbol = model.GetDeclaredSymbol(node, context.CancellationToken);
 
             if (symbol == null)
             {
                 return;
             }
 
-            var diagnostic = context.Diagnostics.Single();
+            Diagnostic diagnostic = context.Diagnostics.Single();
 
             // There was no constructor and so the diagnostic was on the type. Generate a serialization ctor.
             if (symbol.Kind == SymbolKind.NamedType)
@@ -58,14 +57,14 @@ namespace Desktop.Analyzers
 
         private async Task<Document> GenerateConstructor(Document document, SyntaxNode node, ISymbol symbol, CancellationToken cancellationToken)
         {
-            var editor = SymbolEditor.Create(document);
+            SymbolEditor editor = SymbolEditor.Create(document);
             var typeSymbol = symbol as INamedTypeSymbol;
 
             await editor.EditOneDeclarationAsync(typeSymbol, node.GetLocation(), (docEditor, declaration) =>
             {
-                var generator = docEditor.Generator;
-                var throwStatement = generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException")));
-                var ctorDecl = generator.ConstructorDeclaration(
+                SyntaxGenerator generator = docEditor.Generator;
+                SyntaxNode throwStatement = generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException")));
+                SyntaxNode ctorDecl = generator.ConstructorDeclaration(
                                     typeSymbol.Name,
                                     new[]
                                     {
@@ -83,14 +82,14 @@ namespace Desktop.Analyzers
 
         private async Task<Document> SetAccessibility(Document document, SyntaxNode node, ISymbol symbol, CancellationToken cancellationToken)
         {
-            var editor = SymbolEditor.Create(document);
+            SymbolEditor editor = SymbolEditor.Create(document);
             var methodSymbol = symbol as IMethodSymbol;
 
             // This would be constructor and can have only one definition.
             Debug.Assert(methodSymbol.IsConstructor() && methodSymbol.DeclaringSyntaxReferences.Count() == 1);
             await editor.EditOneDeclarationAsync(methodSymbol, (docEditor, declaration) =>
             {
-                var newAccessibility = methodSymbol.ContainingType.IsSealed ? Accessibility.Private : Accessibility.Protected;
+                Accessibility newAccessibility = methodSymbol.ContainingType.IsSealed ? Accessibility.Private : Accessibility.Protected;
                 docEditor.SetAccessibility(declaration, newAccessibility);
             }, cancellationToken).ConfigureAwait(false);
 

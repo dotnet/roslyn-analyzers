@@ -169,7 +169,6 @@ Public Class Class1
 End Class
 ",
     GetCA1810BasicDefaultResultAt(4, 13, "Class1"));
-
         }
 
         [Fact]
@@ -197,7 +196,6 @@ Public Structure Struct1
 End Structure
 ",
     GetCA2207BasicDefaultResultAt(4, 13, "Struct1"));
-
         }
 
         [Fact]
@@ -226,7 +224,6 @@ Public Class Class1
 	End Sub
 End Class",
     GetCA1810BasicDefaultResultAt(4, 13, "Class1"));
-
         }
 
         [Fact]
@@ -255,7 +252,6 @@ Public Structure Struct1
 	End Sub
 End Structure",
     GetCA2207BasicDefaultResultAt(4, 13, "Struct1"));
-
         }
 
         #endregion
@@ -274,25 +270,25 @@ End Structure",
 
         private static DiagnosticResult GetCA1810CSharpDefaultResultAt(int line, int column, string typeName)
         {
-            var message = string.Format(SystemRuntimeAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
+            string message = string.Format(SystemRuntimeAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
             return GetCSharpResultAt(line, column, CSharpInitializeStaticFieldsInlineAnalyzer.CA1810RuleId, message);
         }
 
         private static DiagnosticResult GetCA1810BasicDefaultResultAt(int line, int column, string typeName)
         {
-            var message = string.Format(SystemRuntimeAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
+            string message = string.Format(SystemRuntimeAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
             return GetBasicResultAt(line, column, BasicInitializeStaticFieldsInlineAnalyzer.CA1810RuleId, message);
         }
 
         private static DiagnosticResult GetCA2207CSharpDefaultResultAt(int line, int column, string typeName)
         {
-            var message = string.Format(SystemRuntimeAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
+            string message = string.Format(SystemRuntimeAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
             return GetCSharpResultAt(line, column, CSharpInitializeStaticFieldsInlineAnalyzer.CA2207RuleId, message);
         }
 
         private static DiagnosticResult GetCA2207BasicDefaultResultAt(int line, int column, string typeName)
         {
-            var message = string.Format(SystemRuntimeAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
+            string message = string.Format(SystemRuntimeAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
             return GetBasicResultAt(line, column, BasicInitializeStaticFieldsInlineAnalyzer.CA2207RuleId, message);
         }
 

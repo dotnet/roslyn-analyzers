@@ -311,7 +311,7 @@ struct C : B
             string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "B");
             string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "C");
             VerifyCSharp(code,
-                GetCSharpResultAt( 4, 8, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage1),
+                GetCSharpResultAt(4, 8, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage1),
                 GetCSharpResultAt(12, 8, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage2));
         }
 

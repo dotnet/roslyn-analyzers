@@ -1,24 +1,22 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
-using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
     public partial class DoNotUseInsecureDTDProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private readonly string CA3075DataViewConnectionStringMessage = DesktopAnalyzersResources.ReviewDtdProcessingPropertiesMessage;
+        private readonly string _CA3075DataViewConnectionStringMessage = DesktopAnalyzersResources.ReviewDtdProcessingPropertiesMessage;
 
         private DiagnosticResult GetCA3075DataViewCSharpResultAt(int line, int column, string name)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(CA3075DataViewConnectionStringMessage, name));
+            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(_CA3075DataViewConnectionStringMessage, name));
         }
 
         private DiagnosticResult GetCA3075DataViewBasicResultAt(int line, int column, string name)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(CA3075DataViewConnectionStringMessage, name));
+            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(_CA3075DataViewConnectionStringMessage, name));
         }
 
         [Fact]
@@ -692,7 +690,5 @@ End Class",
                 GetCA3075DataViewBasicResultAt(10, 5, "TestClass")
             );
         }
-
-        
     }
 }

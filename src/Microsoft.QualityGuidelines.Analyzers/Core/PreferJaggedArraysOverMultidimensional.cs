@@ -81,7 +81,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
         {
             var property = (IPropertySymbol)context.Symbol;
 
-            // If it's an override then don't report it as it can only be fixed in the base type.
+            // If its an override then don't report it as it can only be fixed in the base type.
             if (!property.IsOverride)
             {
                 if (IsMultiDimensionalArray(property.Type))
@@ -97,8 +97,8 @@ namespace Microsoft.QualityGuidelines.Analyzers
         {
             var method = (IMethodSymbol)context.Symbol;
 
-            // If it's an override then don't report it as it can only be fixed in the base type.
-            // If it's a getter\setter then we will report on the property instead so skip analyzing the method.
+            // If its an override then don't report it as it can only be fixed in the base type.
+            // If its a getter\setter then we will report on the property instead so skip analyzing the method.
             if (!method.IsOverride && method.AssociatedSymbol == null)
             {
                 if (IsMultiDimensionalArray(method.ReturnType))
@@ -132,7 +132,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
         }
 
         /// <summary>
-        /// Check if the given type or any of it's inner element types is a multi dimensional array
+        /// Check if the given type or any of its inner element types is a multi dimensional array
         /// </summary>
         private static bool IsMultiDimensionalArray(ITypeSymbol type)
         {

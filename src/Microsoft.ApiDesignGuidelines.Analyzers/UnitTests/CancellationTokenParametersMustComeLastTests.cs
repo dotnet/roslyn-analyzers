@@ -215,7 +215,7 @@ class T : I
 
             VerifyCSharp(test, expected);
         }
-        
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new CancellationTokenParametersMustComeLastAnalyzer();

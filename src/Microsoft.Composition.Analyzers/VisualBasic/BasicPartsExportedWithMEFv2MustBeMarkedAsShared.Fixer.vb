@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.Composition.Analyzers     
+Namespace Microsoft.Composition.Analyzers
     ''' <summary>
     ''' RS0023: Parts exported with MEFv2 must be marked as Shared
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicPartsExportedWithMEFv2MustBeMarkedAsSharedFixer
-        Inherits PartsExportedWithMEFv2MustBeMarkedAsSharedFixer 
+        Inherits PartsExportedWithMEFv2MustBeMarkedAsSharedFixer
 
     End Class
 End Namespace

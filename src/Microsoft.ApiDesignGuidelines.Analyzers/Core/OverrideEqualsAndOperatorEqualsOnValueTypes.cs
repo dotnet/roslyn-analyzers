@@ -26,7 +26,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static readonly bool s_isEnabledByDefault = true;
         private static readonly string s_helpLinkUri = "https://msdn.microsoft.com/en-us/library/ms182276.aspx";
         private static readonly string s_customTags = WellKnownDiagnosticTags.Telemetry;
-        
+
         internal static DiagnosticDescriptor EqualsRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageEquals,

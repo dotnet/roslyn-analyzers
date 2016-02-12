@@ -11,7 +11,7 @@ namespace Desktop.Analyzers.UnitTests
     {
         private const string CA3075RuleId = DoNotUseInsecureDTDProcessingAnalyzer<SyntaxKind>.RuleId;
 
-        private readonly string CA3075LoadXmlMessage = DesktopAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage;
+        private readonly string _CA3075LoadXmlMessage = DesktopAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage;
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
@@ -25,12 +25,12 @@ namespace Desktop.Analyzers.UnitTests
 
         private DiagnosticResult GetCA3075LoadXmlCSharpResultAt(int line, int column, string name)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(CA3075LoadXmlMessage, name, "LoadXml"));
+            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, name, "LoadXml"));
         }
 
         private DiagnosticResult GetCA3075LoadXmlBasicResultAt(int line, int column, string name)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(CA3075LoadXmlMessage, name, "LoadXml"));
+            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, name, "LoadXml"));
         }
 
         [Fact]

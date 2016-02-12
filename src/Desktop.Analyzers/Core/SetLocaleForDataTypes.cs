@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 
 namespace Desktop.Analyzers
-{                   
+{
     /// <summary>
     /// CA1306: Set locale for data types
     /// </summary>
@@ -15,10 +15,10 @@ namespace Desktop.Analyzers
         internal const string RuleId = "CA1306";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(DesktopAnalyzersResources.SetLocaleForDataTypesTitle), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
-        
+
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(DesktopAnalyzersResources.SetLocaleForDataTypesMessage), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(DesktopAnalyzersResources.SetLocaleForDataTypesDescription), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
-        
+
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
@@ -32,8 +32,7 @@ namespace Desktop.Analyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext analysisContext)
-        { 
-            
+        {
         }
     }
 }

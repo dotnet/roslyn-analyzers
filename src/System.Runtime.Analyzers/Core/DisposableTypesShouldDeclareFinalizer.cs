@@ -19,10 +19,10 @@ namespace System.Runtime.Analyzers
         internal const string RuleId = "CA2216";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DisposableTypesShouldDeclareFinalizerTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        
+
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DisposableTypesShouldDeclareFinalizerMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DisposableTypesShouldDeclareFinalizerDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        
+
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
@@ -40,9 +40,9 @@ namespace System.Runtime.Analyzers
             analysisContext.RegisterCompilationStartAction(
                 compilationStartAnalysisContext =>
                 {
-                    var compilation = compilationStartAnalysisContext.Compilation;
+                    Compilation compilation = compilationStartAnalysisContext.Compilation;
 
-                    INamedTypeSymbol[] nativeResourceTypes = new []
+                    INamedTypeSymbol[] nativeResourceTypes = new[]
                     {
                         WellKnownTypes.IntPtr(compilation),
                         WellKnownTypes.UIntPtr(compilation),

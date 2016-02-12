@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.QualityGuidelines.Analyzers     
+Namespace Microsoft.QualityGuidelines.Analyzers
     ''' <summary>
     ''' CA1802: Use literals where appropriate
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicUseLiteralsWhereAppropriateFixer
-        Inherits UseLiteralsWhereAppropriateFixer 
+        Inherits UseLiteralsWhereAppropriateFixer
 
     End Class
 End Namespace

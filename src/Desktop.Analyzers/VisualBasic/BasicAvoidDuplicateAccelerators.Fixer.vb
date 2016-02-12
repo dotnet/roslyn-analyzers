@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Desktop.Analyzers     
+Namespace Desktop.Analyzers
     ''' <summary>
     ''' CA1301: Avoid duplicate accelerators
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicAvoidDuplicateAcceleratorsFixer
-        Inherits AvoidDuplicateAcceleratorsFixer 
+        Inherits AvoidDuplicateAcceleratorsFixer
 
     End Class
 End Namespace

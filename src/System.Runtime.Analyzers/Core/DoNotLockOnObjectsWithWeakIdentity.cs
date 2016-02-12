@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
@@ -41,23 +40,22 @@ namespace System.Runtime.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            analysisContext.RegisterCompilationStartAction(compilationStartContext => 
+            analysisContext.RegisterCompilationStartAction(compilationStartContext =>
             {
-                var compilation = compilationStartContext.Compilation;
+                Compilation compilation = compilationStartContext.Compilation;
                 compilationStartContext.RegisterOperationAction(context =>
                 {
                     var lockStatement = (ILockStatement)context.Operation;
-                    var type = lockStatement?.Locked?.ResultType;
+                    ITypeSymbol type = lockStatement?.Locked?.ResultType;
                     if (type != null && TypeHasWeakIdentity(type, compilation))
                     {
                         context.ReportDiagnostic(lockStatement.Locked.Syntax.CreateDiagnostic(Rule, type.ToDisplayString()));
                     }
                 },
                 OperationKind.LockStatement);
-
             });
         }
-        
+
         private bool TypeHasWeakIdentity(ITypeSymbol type, Compilation compilation)
         {
             switch (type.TypeKind)

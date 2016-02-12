@@ -575,7 +575,8 @@ End Class
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndBaseClassCSharp() {
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndBaseClassCSharp()
+        {
             VerifyCSharp(@"
 public class C23Base
 {

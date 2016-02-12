@@ -18,7 +18,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
         private void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
             var throwStatement = (ThrowStatementSyntax)context.Node;
-            var expr = throwStatement.Expression;
+            ExpressionSyntax expr = throwStatement.Expression;
             if (expr == null)
             {
                 return;

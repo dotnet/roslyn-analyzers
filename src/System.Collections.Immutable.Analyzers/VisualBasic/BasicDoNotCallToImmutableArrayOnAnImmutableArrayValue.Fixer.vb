@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace System.Collections.Immutable.Analyzers     
+Namespace System.Collections.Immutable.Analyzers
     ''' <summary>
     ''' RS0012: Do not call ToImmutableArray on an ImmutableArray value
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicDoNotCallToImmutableArrayOnAnImmutableArrayValueFixer
-        Inherits DoNotCallToImmutableArrayOnAnImmutableArrayValueFixer 
+        Inherits DoNotCallToImmutableArrayOnAnImmutableArrayValueFixer
 
     End Class
 End Namespace

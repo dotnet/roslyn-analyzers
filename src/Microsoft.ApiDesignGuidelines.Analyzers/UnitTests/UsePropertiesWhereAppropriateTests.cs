@@ -339,7 +339,7 @@ End Class
             GetCA1024BasicResultAt(17, 24, "GetFileNameProtected"));
         }
 
-        internal static string CA1024Name = "CA1024";
+        internal static readonly string CA1024Name = "CA1024";
 
         private static DiagnosticResult GetCA1024CSharpResultAt(int line, int column, string methodName)
         {

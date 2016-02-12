@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Desktop.Analyzers     
+Namespace Desktop.Analyzers
     ''' <summary>
     ''' CA2212: Do not mark serviced components with WebMethod
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicDoNotMarkServicedComponentsWithWebMethodFixer
-        Inherits DoNotMarkServicedComponentsWithWebMethodFixer 
+        Inherits DoNotMarkServicedComponentsWithWebMethodFixer
 
     End Class
 End Namespace

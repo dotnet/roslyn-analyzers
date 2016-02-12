@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Diagnostics;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -56,8 +55,8 @@ namespace System.Runtime.Analyzers
                         {
                             operationBlockStartContext.RegisterOperationAction(
                                 operationContext => AnalyzeObjectCreation(
-                                    operationContext, 
-                                    operationBlockStartContext.OwningSymbol, 
+                                    operationContext,
+                                    operationBlockStartContext.OwningSymbol,
                                     argumentExceptionType),
                                 OperationKind.ObjectCreationExpression);
                         });
@@ -65,7 +64,7 @@ namespace System.Runtime.Analyzers
         }
 
         private void AnalyzeObjectCreation(
-            OperationAnalysisContext context, 
+            OperationAnalysisContext context,
             ISymbol owningSymbol,
             ITypeSymbol argumentExceptionType)
         {
@@ -74,7 +73,7 @@ namespace System.Runtime.Analyzers
             {
                 return;
             }
-          
+
             if (creation.ConstructorArguments.Length == 0)
             {
                 if (HasMessageOrParameterNameConstructor(creation.ResultType))
@@ -85,7 +84,7 @@ namespace System.Runtime.Analyzers
             }
             else
             {
-                foreach (var argument in creation.ConstructorArguments)
+                foreach (IArgument argument in creation.ConstructorArguments)
                 {
                     if (argument.Parameter.Type.SpecialType != SpecialType.System_String)
                     {
@@ -147,14 +146,14 @@ namespace System.Runtime.Analyzers
 
         private static bool HasMessageOrParameterNameConstructor(ITypeSymbol type)
         {
-            foreach (var member in type.GetMembers())
+            foreach (ISymbol member in type.GetMembers())
             {
                 if (!member.IsConstructor())
                 {
                     continue;
                 }
 
-                foreach (var parameter in member.GetParameters())
+                foreach (IParameterSymbol parameter in member.GetParameters())
                 {
                     if (parameter.Type.SpecialType == SpecialType.System_String
                         && (IsMessage(parameter) || IsParameterName(parameter)))
@@ -169,7 +168,7 @@ namespace System.Runtime.Analyzers
 
         private static bool MatchesParameter(ISymbol symbol, string stringArgumentValue)
         {
-            foreach (var parameter in symbol.GetParameters())
+            foreach (IParameterSymbol parameter in symbol.GetParameters())
             {
                 if (parameter.Name == stringArgumentValue)
                 {

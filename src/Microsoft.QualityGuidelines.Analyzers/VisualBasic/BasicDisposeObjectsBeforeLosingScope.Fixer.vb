@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.QualityGuidelines.Analyzers     
+Namespace Microsoft.QualityGuidelines.Analyzers
     ''' <summary>
     ''' CA2000: Dispose Objects Before Losing Scope
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicDisposeObjectsBeforeLosingScopeFixer
-        Inherits DisposeObjectsBeforeLosingScopeFixer 
+        Inherits DisposeObjectsBeforeLosingScopeFixer
 
     End Class
 End Namespace

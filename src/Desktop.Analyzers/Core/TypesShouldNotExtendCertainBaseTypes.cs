@@ -52,7 +52,7 @@ namespace Desktop.Analyzers
 
         private void AnalyzeCompilationStart(CompilationStartAnalysisContext context)
         {
-            var badBaseTypes = s_badBaseTypesToMessage.Keys
+            ImmutableHashSet<INamedTypeSymbol> badBaseTypes = s_badBaseTypesToMessage.Keys
                                 .Select(bt => context.Compilation.GetTypeByMetadataName(bt))
                                 .Where(bt => bt != null)
                                 .ToImmutableHashSet();
@@ -65,10 +65,10 @@ namespace Desktop.Analyzers
 
                         if (badBaseTypes.Contains(namedTypeSymbol.BaseType))
                         {
-                            var baseTypeName = namedTypeSymbol.BaseType.ToDisplayString();
+                            string baseTypeName = namedTypeSymbol.BaseType.ToDisplayString();
                             Debug.Assert(s_badBaseTypesToMessage.ContainsKey(baseTypeName));
-                            var message = string.Format(s_badBaseTypesToMessage[baseTypeName], namedTypeSymbol.ToDisplayString(), baseTypeName);
-                            var diagnostic = Diagnostic.Create(Rule, namedTypeSymbol.Locations.First(), namedTypeSymbol.Locations.Skip(1), message);
+                            string message = string.Format(s_badBaseTypesToMessage[baseTypeName], namedTypeSymbol.ToDisplayString(), baseTypeName);
+                            Diagnostic diagnostic = Diagnostic.Create(Rule, namedTypeSymbol.Locations.First(), namedTypeSymbol.Locations.Skip(1), message);
                             saContext.ReportDiagnostic(diagnostic);
                         }
                     }

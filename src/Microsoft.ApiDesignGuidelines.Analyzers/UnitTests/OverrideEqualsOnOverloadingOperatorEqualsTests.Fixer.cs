@@ -36,8 +36,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         public void CS0660()
         {
             VerifyFix(
-                LanguageNames.CSharp, 
-                DummyCS0660Analyzer.Instance, 
+                LanguageNames.CSharp,
+                DummyCS0660Analyzer.Instance,
                 GetCSharpCodeFixProvider(),
                 @"
 class C
@@ -57,8 +57,8 @@ class C
         throw new System.NotImplementedException();
     }
 }
-", 
-                codeFixIndex: null, 
+",
+                codeFixIndex: null,
                 allowNewCompilerDiagnostics: true);
         }
 
@@ -167,23 +167,23 @@ End Class
         {
             public static readonly DiagnosticAnalyzer Instance = new DummyCS0660Analyzer();
 
-            private static readonly DiagnosticDescriptor descriptor = 
+            private static readonly DiagnosticDescriptor s_descriptor =
                 new DiagnosticDescriptor(
-                    "CS0660", 
-                    "title", 
-                    "message", 
-                    "category", 
-                    DiagnosticSeverity.Warning, 
+                    "CS0660",
+                    "title",
+                    "message",
+                    "category",
+                    DiagnosticSeverity.Warning,
                     isEnabledByDefault: true);
 
             private DummyCS0660Analyzer() { }
 
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(descriptor);
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(s_descriptor);
 
             public override void Initialize(AnalysisContext context)
             {
                 context.RegisterSymbolAction(symbolContext =>
-                        symbolContext.ReportDiagnostic(Diagnostic.Create(descriptor, symbolContext.Symbol.Locations[0])),
+                        symbolContext.ReportDiagnostic(Diagnostic.Create(s_descriptor, symbolContext.Symbol.Locations[0])),
                     SymbolKind.NamedType);
             }
         }

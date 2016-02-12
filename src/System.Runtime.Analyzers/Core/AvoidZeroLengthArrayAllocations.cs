@@ -70,7 +70,7 @@ namespace System.Runtime.Analyzers
 
             if (arrayCreationExpression.DimensionSizes.Length == 1)
             {
-                var dimensionSize = arrayCreationExpression.DimensionSizes[0];
+                IExpression dimensionSize = arrayCreationExpression.DimensionSizes[0];
 
                 if (dimensionSize.ConstantValue.HasValue && (int)dimensionSize.ConstantValue.Value == 0)
                 {

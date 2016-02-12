@@ -42,11 +42,11 @@ namespace System.Runtime.Analyzers
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
-                    var stringComparisonType = context.Compilation.GetTypeByMetadataName(StringComparisonTypeName);
+                    INamedTypeSymbol stringComparisonType = context.Compilation.GetTypeByMetadataName(StringComparisonTypeName);
                     if (stringComparisonType != null)
                     {
                         context.RegisterOperationAction(operationContext => AnalyzeOperation(operationContext, stringComparisonType),
-                                                        OperationKind.InvocationExpression, 
+                                                        OperationKind.InvocationExpression,
                                                         OperationKind.BinaryOperatorExpression);
                     }
                 });
@@ -54,7 +54,7 @@ namespace System.Runtime.Analyzers
 
         private void AnalyzeOperation(OperationAnalysisContext context, INamedTypeSymbol stringComparisonType)
         {
-            var kind = context.Operation.Kind;
+            OperationKind kind = context.Operation.Kind;
             if (kind == OperationKind.InvocationExpression)
             {
                 AnalyzeInvocationExpression((IInvocationExpression)context.Operation, stringComparisonType, context.ReportDiagnostic);
@@ -67,8 +67,8 @@ namespace System.Runtime.Analyzers
 
         private void AnalyzeInvocationExpression(IInvocationExpression operation, INamedTypeSymbol stringComparisonType, Action<Diagnostic> reportDiagnostic)
         {
-            var methodSymbol = operation.TargetMethod;
-            if (methodSymbol != null && 
+            IMethodSymbol methodSymbol = operation.TargetMethod;
+            if (methodSymbol != null &&
                 methodSymbol.ContainingType.SpecialType == SpecialType.System_String &&
                 IsEqualsOrCompare(methodSymbol.Name))
             {
@@ -79,10 +79,10 @@ namespace System.Runtime.Analyzers
                 }
                 else
                 {
-                    var lastArgument = operation.ArgumentsInSourceOrder.Last();
+                    IArgument lastArgument = operation.ArgumentsInSourceOrder.Last();
                     if (lastArgument.Value.Kind == OperationKind.FieldReferenceExpression)
                     {
-                        var fieldSymbol = ((IFieldReferenceExpression)lastArgument.Value).Field;
+                        IFieldSymbol fieldSymbol = ((IFieldReferenceExpression)lastArgument.Value).Field;
                         if (fieldSymbol != null &&
                             fieldSymbol.ContainingType.Equals(stringComparisonType) &&
                             !IsOrdinalOrOrdinalIgnoreCase(fieldSymbol.Name))
@@ -103,7 +103,7 @@ namespace System.Runtime.Analyzers
                 if ((operation.Left.ConstantValue.HasValue && operation.Left.ConstantValue.Value == null) ||
                     (operation.Right.ConstantValue.HasValue && operation.Right.ConstantValue.Value == null))
                 {
-                    return; 
+                    return;
                 }
                 reportDiagnostic(Diagnostic.Create(Rule, GetOperatorTokenLocation(operation.Syntax)));
             }

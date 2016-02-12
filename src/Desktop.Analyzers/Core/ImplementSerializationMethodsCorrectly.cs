@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 
 namespace Desktop.Analyzers
-{                   
+{
     /// <summary>
     /// CA2238: Implement serialization methods correctly
     /// </summary>
@@ -15,14 +15,14 @@ namespace Desktop.Analyzers
         internal const string RuleId = "CA2238";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(DesktopAnalyzersResources.ImplementSerializationMethodsCorrectlyTitle), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
-        
+
         private static readonly LocalizableString s_localizableMessageVisibility = new LocalizableResourceString(nameof(DesktopAnalyzersResources.ImplementSerializationMethodsCorrectlyMessageVisibility), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageReturnType = new LocalizableResourceString(nameof(DesktopAnalyzersResources.ImplementSerializationMethodsCorrectlyMessageReturnType), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageParameters = new LocalizableResourceString(nameof(DesktopAnalyzersResources.ImplementSerializationMethodsCorrectlyMessageParameters), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageGeneric = new LocalizableResourceString(nameof(DesktopAnalyzersResources.ImplementSerializationMethodsCorrectlyMessageGeneric), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageStatic = new LocalizableResourceString(nameof(DesktopAnalyzersResources.ImplementSerializationMethodsCorrectlyMessageStatic), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(DesktopAnalyzersResources.ImplementSerializationMethodsCorrectlyDescription), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
-        
+
         internal static DiagnosticDescriptor VisibilityRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageVisibility,
@@ -72,8 +72,7 @@ namespace Desktop.Analyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(VisibilityRule, ReturnTypeRule, ParametersRule, GenericRule, StaticRule);
 
         public override void Initialize(AnalysisContext analysisContext)
-        { 
-            
+        {
         }
     }
 }

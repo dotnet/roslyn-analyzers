@@ -1,9 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
-using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
@@ -66,7 +64,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 	                    End Property
                         End Class",
                         GetBasicResultAt(3, 38, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
-
         }
 
         [Fact]
@@ -77,7 +74,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                         public class TestClass :IEnumerable
                         {
                             public int Count => 0;
-                        }", 
+                        }",
                         GetCSharpResultAt(3, 38, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
 
             VerifyBasic(@"
@@ -101,7 +98,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                         public class TestClass :IList
                         {
                            public int Count => 0;
-                        }", 
+                        }",
                         GetCSharpResultAt(3, 38, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
 
             VerifyBasic(@"
@@ -251,7 +248,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                     public class IntCollection :BaseClass
                         {
                             public int Count => 0;
-                        }", 
+                        }",
                         GetCSharpResultAt(4, 34, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()),
                         GetCSharpResultAt(8, 34, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString())
                         );

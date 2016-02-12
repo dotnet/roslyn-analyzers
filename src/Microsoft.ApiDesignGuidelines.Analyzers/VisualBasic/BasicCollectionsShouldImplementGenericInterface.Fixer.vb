@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA1010: Collections should implement generic interface
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicCollectionsShouldImplementGenericInterfaceFixer
-        Inherits CollectionsShouldImplementGenericInterfaceFixer 
+        Inherits CollectionsShouldImplementGenericInterfaceFixer
 
     End Class
 End Namespace

@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA2234: Pass system uri objects instead of strings
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicPassSystemUriObjectsInsteadOfStringsFixer
-        Inherits PassSystemUriObjectsInsteadOfStringsFixer 
+        Inherits PassSystemUriObjectsInsteadOfStringsFixer
 
     End Class
 End Namespace

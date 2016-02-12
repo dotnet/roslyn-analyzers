@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Roslyn.Utilities;
@@ -42,13 +41,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private void AnalyzeCompilation(CompilationAnalysisContext context)
         {
-            var globalNamespaces = context.Compilation.GlobalNamespace.GetNamespaceMembers()
+            IEnumerable<INamespaceSymbol> globalNamespaces = context.Compilation.GlobalNamespace.GetNamespaceMembers()
                 .Where(item => item.ContainingAssembly == context.Compilation.Assembly);
 
-            var globalTypes = context.Compilation.GlobalNamespace.GetTypeMembers().Where(item =>
+            IEnumerable<INamedTypeSymbol> globalTypes = context.Compilation.GlobalNamespace.GetTypeMembers().Where(item =>
                     item.ContainingAssembly == context.Compilation.Assembly &&
                     IsExternallyVisible(item));
-            
+
             CheckTypeNames(globalTypes, context.ReportDiagnostic);
             CheckNamespaceMembers(globalNamespaces, context.Compilation, context.ReportDiagnostic);
         }
@@ -66,7 +65,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
 
             // Get externally visible members in the given type
-            var members = namedTypeSymbol.GetMembers().Where(item => !item.IsAccessorMethod() && IsExternallyVisible(item));
+            IEnumerable<ISymbol> members = namedTypeSymbol.GetMembers().Where(item => !item.IsAccessorMethod() && IsExternallyVisible(item));
 
             if (members.Any())
             {
@@ -81,10 +80,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private void CheckNamespaceMembers(IEnumerable<INamespaceSymbol> namespaces, Compilation compilation, Action<Diagnostic> addDiagnostic)
         {
             HashSet<INamespaceSymbol> excludedNamespaces = new HashSet<INamespaceSymbol>();
-            foreach (var @namespace in namespaces)
+            foreach (INamespaceSymbol @namespace in namespaces)
             {
                 // Get all the potentially externally visible types in the namespace
-                var typeMembers = @namespace.GetTypeMembers().Where(item =>
+                IEnumerable<INamedTypeSymbol> typeMembers = @namespace.GetTypeMembers().Where(item =>
                     item.ContainingAssembly == compilation.Assembly &&
                     IsExternallyVisible(item));
 
@@ -98,7 +97,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     excludedNamespaces.Add(@namespace);
                 }
 
-                var namespaceMembers = @namespace.GetNamespaceMembers();
+                IEnumerable<INamespaceSymbol> namespaceMembers = @namespace.GetNamespaceMembers();
                 if (namespaceMembers.Any())
                 {
                     CheckNamespaceMembers(namespaceMembers, compilation, addDiagnostic);
@@ -120,7 +119,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static void CheckTypeMembers(IEnumerable<ISymbol> members, Action<Diagnostic> addDiagnostic)
         {
             // Remove constructors, indexers, operators and destructors for name check
-            var membersForNameCheck = members.Where(item => !item.IsConstructor() && !item.IsDestructor() && !item.IsIndexer() && !item.IsUserDefinedOperator());
+            IEnumerable<ISymbol> membersForNameCheck = members.Where(item => !item.IsConstructor() && !item.IsDestructor() && !item.IsIndexer() && !item.IsUserDefinedOperator());
             if (membersForNameCheck.Any())
             {
                 CheckMemberNames(membersForNameCheck, addDiagnostic);
@@ -129,10 +128,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private static void CheckParameterMembers(IEnumerable<ISymbol> members, Action<Diagnostic> addDiagnostic)
         {
-            var violatingMembers = members
+            IEnumerable<ISymbol> violatingMembers = members
                 .Where(item => item.ContainingType.DelegateInvokeMethod == null && HasViolatingParameters(item));
 
-            var violatingDelegates = members.Select(item =>
+            IEnumerable<ISymbol> violatingDelegates = members.Select(item =>
             {
                 var typeSymbol = item as INamedTypeSymbol;
                 if (typeSymbol != null &&
@@ -147,7 +146,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
             }).WhereNotNull();
 
-            foreach (var symbol in violatingMembers.Concat(violatingDelegates))
+            foreach (ISymbol symbol in violatingMembers.Concat(violatingDelegates))
             {
                 addDiagnostic(symbol.CreateDiagnostic(Rule, Parameter, symbol.ToDisplayString()));
             }
@@ -163,18 +162,18 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
-            var parameterList = parameters.GroupBy((item) => item.Name, StringComparer.OrdinalIgnoreCase).Where((group) => group.Count() > 1);
+            IEnumerable<IGrouping<string, IParameterSymbol>> parameterList = parameters.GroupBy((item) => item.Name, StringComparer.OrdinalIgnoreCase).Where((group) => group.Count() > 1);
 
-            foreach (var group in parameterList)
+            foreach (IGrouping<string, IParameterSymbol> group in parameterList)
             {
-                var symbol = group.First().ContainingSymbol;
+                ISymbol symbol = group.First().ContainingSymbol;
                 addDiagnostic(symbol.CreateDiagnostic(Rule, Parameter, symbol.ToDisplayString()));
             }
         }
 
         private static bool HasViolatingParameters(ISymbol symbol)
         {
-            var parameters = symbol.GetParameters();
+            ImmutableArray<IParameterSymbol> parameters = symbol.GetParameters();
 
             // If there is only one parameter, then return an empty collection
             if (!parameters.Skip(1).Any())
@@ -193,12 +192,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
-            var overloadedMembers = members.Where((item) => !item.IsType()).GroupBy((item) => item.Name).Where((group) => group.Count() > 1).SelectMany((group) => group.Skip(1));
-            var memberList = members.Where((item) => !overloadedMembers.Contains(item)).GroupBy((item) => DiagnosticHelpers.GetMemberName(item), StringComparer.OrdinalIgnoreCase).Where((group) => group.Count() > 1);
+            IEnumerable<ISymbol> overloadedMembers = members.Where((item) => !item.IsType()).GroupBy((item) => item.Name).Where((group) => group.Count() > 1).SelectMany((group) => group.Skip(1));
+            IEnumerable<IGrouping<string, ISymbol>> memberList = members.Where((item) => !overloadedMembers.Contains(item)).GroupBy((item) => DiagnosticHelpers.GetMemberName(item), StringComparer.OrdinalIgnoreCase).Where((group) => group.Count() > 1);
 
-            foreach (var group in memberList)
+            foreach (IGrouping<string, ISymbol> group in memberList)
             {
-                var symbol = group.First().ContainingSymbol;
+                ISymbol symbol = group.First().ContainingSymbol;
                 addDiagnostic(symbol.CreateDiagnostic(Rule, Member, GetSymbolDisplayString(group)));
             }
         }
@@ -211,10 +210,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
-            var typeList = types.GroupBy((item) => DiagnosticHelpers.GetMemberName(item), StringComparer.OrdinalIgnoreCase)
+            IEnumerable<IGrouping<string, ITypeSymbol>> typeList = types.GroupBy((item) => DiagnosticHelpers.GetMemberName(item), StringComparer.OrdinalIgnoreCase)
                 .Where((group) => group.Count() > 1);
 
-            foreach (var group in typeList)
+            foreach (IGrouping<string, ITypeSymbol> group in typeList)
             {
                 addDiagnostic(Diagnostic.Create(Rule, Location.None, Type, GetSymbolDisplayString(group)));
             }
@@ -228,9 +227,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
-            var namespaceList = namespaces.GroupBy((item) => item.ToDisplayString(), StringComparer.OrdinalIgnoreCase).Where((group) => group.Count() > 1);
+            IEnumerable<IGrouping<string, INamespaceSymbol>> namespaceList = namespaces.GroupBy((item) => item.ToDisplayString(), StringComparer.OrdinalIgnoreCase).Where((group) => group.Count() > 1);
 
-            foreach (var group in namespaceList)
+            foreach (IGrouping<string, INamespaceSymbol> group in namespaceList)
             {
                 addDiagnostic(Diagnostic.Create(Rule, Location.None, Namespace, GetSymbolDisplayString(group)));
             }
@@ -247,7 +246,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public static bool IsExternallyVisible(ISymbol symbol)
         {
-            var visibility = symbol.GetResultantVisibility();
+            SymbolVisibility visibility = symbol.GetResultantVisibility();
             return visibility == SymbolVisibility.Public || visibility == SymbolVisibility.Internal;
         }
 

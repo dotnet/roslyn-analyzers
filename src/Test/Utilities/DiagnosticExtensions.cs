@@ -3,12 +3,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Test.Utilities;
 using Roslyn.Test.Utilities;
 using Roslyn.Utilities;
@@ -67,11 +65,11 @@ namespace Microsoft.CodeAnalysis
                 throw new ArgumentException("Must specify expected errors.", "expected");
             }
 
-            var unmatched = actual.Select(d => new DiagnosticDescription(d, errorCodeOnly)).ToList();
+            List<DiagnosticDescription> unmatched = actual.Select(d => new DiagnosticDescription(d, errorCodeOnly)).ToList();
 
             // Try to match each of the 'expected' errors to one of the 'actual' ones.
             // If any of the expected errors don't appear, fail test.
-            foreach (var d in expected)
+            foreach (DiagnosticDescription d in expected)
             {
                 int index = unmatched.IndexOf(d);
                 if (index > -1)
@@ -94,7 +92,7 @@ namespace Microsoft.CodeAnalysis
         public static TCompilation VerifyDiagnostics<TCompilation>(this TCompilation c, params DiagnosticDescription[] expected)
             where TCompilation : Compilation
         {
-            var diagnostics = c.GetDiagnostics();
+            ImmutableArray<Diagnostic> diagnostics = c.GetDiagnostics();
             diagnostics.Verify(expected);
             return c;
         }
@@ -146,7 +144,7 @@ namespace Microsoft.CodeAnalysis
                 out ImmutableArray<Diagnostic> diagnostics)
             where TCompilation : Compilation
         {
-            var analyzersArray = analyzers.ToImmutableArray();
+            ImmutableArray<DiagnosticAnalyzer> analyzersArray = analyzers.ToImmutableArray();
 
             var exceptionDiagnostics = new ConcurrentSet<Diagnostic>();
 
@@ -167,8 +165,8 @@ namespace Microsoft.CodeAnalysis
             }
 
             Compilation newCompilation;
-            var driver = AnalyzerDriver.CreateAndAttachToCompilation(c, analyzersArray, options, AnalyzerManager.Instance, onAnalyzerException, false, out newCompilation, CancellationToken.None);
-            var discarded = newCompilation.GetDiagnostics();
+            AnalyzerDriver driver = AnalyzerDriver.CreateAndAttachToCompilation(c, analyzersArray, options, AnalyzerManager.Instance, onAnalyzerException, false, out newCompilation, CancellationToken.None);
+            ImmutableArray<Diagnostic> discarded = newCompilation.GetDiagnostics();
             diagnostics = driver.GetDiagnosticsAsync(newCompilation).Result.AddRange(exceptionDiagnostics);
 
             return (TCompilation)newCompilation; // note this is a new compilation

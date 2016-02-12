@@ -10,7 +10,7 @@ namespace Analyzer.Utilities
     {
         public static IEnumerable<INamedTypeSymbol> GetBaseTypesAndThis(this INamedTypeSymbol type)
         {
-            var current = type;
+            INamedTypeSymbol current = type;
             while (current != null)
             {
                 yield return current;
@@ -94,13 +94,13 @@ namespace Analyzer.Utilities
                 return false;
             }
 
-            var overridden = method.OverriddenMethod;
+            IMethodSymbol overridden = method.OverriddenMethod;
             if (overridden == null)
             {
                 return false;
             }
 
-            for (var o = overridden.OverriddenMethod; o != null; o = o.OverriddenMethod)
+            for (IMethodSymbol o = overridden.OverriddenMethod; o != null; o = o.OverriddenMethod)
             {
                 overridden = o;
             }
@@ -127,7 +127,7 @@ namespace Analyzer.Utilities
 
         private static bool IsObjectMethodOverride(IMethodSymbol method)
         {
-            var overriddenMethod = method.OverriddenMethod;
+            IMethodSymbol overriddenMethod = method.OverriddenMethod;
             while (overriddenMethod != null)
             {
                 if (overriddenMethod.ContainingType.SpecialType == SpecialType.System_Object)

@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA2211: Non-constant fields should not be visible
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicNonConstantFieldsShouldNotBeVisibleFixer
-        Inherits NonConstantFieldsShouldNotBeVisibleFixer 
+        Inherits NonConstantFieldsShouldNotBeVisibleFixer
 
     End Class
 End Namespace

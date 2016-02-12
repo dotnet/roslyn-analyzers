@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
-{                   
+{
     /// <summary>
     /// CA1034: Nested types should not be visible
     /// </summary>
@@ -17,36 +17,36 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         internal const string RuleId = "CA1034";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.NestedTypesShouldNotBeVisibleTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        
+
         private static readonly LocalizableString s_localizableMessageDefault = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.NestedTypesShouldNotBeVisibleMessageDefault), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageVisualBasicModule = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.NestedTypesShouldNotBeVisibleMessageVisualBasicModule), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.NestedTypesShouldNotBeVisibleDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
         // Properties common to the descriptors defined by this analyzer.
-        private static readonly string Category = DiagnosticCategory.Design;
+        private static readonly string s_category = DiagnosticCategory.Design;
         private const DiagnosticSeverity Severity = DiagnosticSeverity.Warning;
         private const bool IsEnabledByDefault = true;
         private const string HelpLinkUrl = "https://msdn.microsoft.com/en-us/library/ms182162.aspx";
-        private static readonly string[] CustomTags = { WellKnownDiagnosticTags.Telemetry };
+        private static readonly string[] s_customTags = { WellKnownDiagnosticTags.Telemetry };
 
         internal static DiagnosticDescriptor DefaultRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageDefault,
-                                                                             Category,
+                                                                             s_category,
                                                                              Severity,
                                                                              IsEnabledByDefault,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUrl,
-                                                                             customTags: CustomTags);
+                                                                             customTags: s_customTags);
         internal static DiagnosticDescriptor VisualBasicModuleRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageVisualBasicModule,
-                                                                             Category,
+                                                                             s_category,
                                                                              Severity,
                                                                              IsEnabledByDefault,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUrl,
-                                                                             customTags: CustomTags);
+                                                                             customTags: s_customTags);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, VisualBasicModuleRule);
 
@@ -55,11 +55,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             analysisContext.RegisterCompilationStartAction(
                 compilationStartContext =>
                 {
-                    var compilation = compilationStartContext.Compilation;
+                    Compilation compilation = compilationStartContext.Compilation;
 
                     INamedTypeSymbol enumeratorType = compilation.GetTypeByMetadataName("System.Collections.IEnumerator");
                     INamedTypeSymbol dataSetType = compilation.GetTypeByMetadataName("System.Data.DataSet");
-                    INamedTypeSymbol dataTableType  = compilation.GetTypeByMetadataName("System.Data.DataTable");
+                    INamedTypeSymbol dataTableType = compilation.GetTypeByMetadataName("System.Data.DataTable");
                     INamedTypeSymbol dataRowType = compilation.GetTypeByMetadataName("System.Data.DataRow");
 
                     compilationStartContext.RegisterSymbolAction(
@@ -131,7 +131,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return false;
             }
 
-            var nestedTypeBases = nestedType.GetBaseTypes().ToList();
+            System.Collections.Generic.List<INamedTypeSymbol> nestedTypeBases = nestedType.GetBaseTypes().ToList();
 
             return nestedTypeBases.Contains(dataTableType) || nestedTypeBases.Contains(dataRowType);
         }

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Roslyn.Utilities;
 using Xunit;
@@ -29,8 +28,8 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
             for (int i = 0; i < expectedResults.Length; i++)
             {
-                var actual = actualResults.ElementAt(i);
-                var expected = expectedResults[i];
+                Diagnostic actual = actualResults.ElementAt(i);
+                DiagnosticResult expected = expectedResults[i];
 
                 if (expected.Line == -1 && expected.Column == -1)
                 {
@@ -44,7 +43,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 else
                 {
                     VerifyDiagnosticLocation(analyzer, actual, actual.Location, expected.Locations.First());
-                    var additionalLocations = actual.AdditionalLocations.ToArray();
+                    Location[] additionalLocations = actual.AdditionalLocations.ToArray();
 
                     if (additionalLocations.Length != expected.Locations.Length - 1)
                     {
@@ -85,13 +84,13 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
         private static void VerifyDiagnosticLocation(DiagnosticAnalyzer analyzer, Diagnostic diagnostic, Location actual, DiagnosticResultLocation expected)
         {
-            var actualSpan = actual.GetLineSpan();
+            FileLinePositionSpan actualSpan = actual.GetLineSpan();
 
             Assert.True(actualSpan.Path == expected.Path || (actualSpan.Path != null && actualSpan.Path.Contains("Test0.") && expected.Path.Contains("Test.")),
                 string.Format("Expected diagnostic to be in file \"{0}\" was actually in file \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
                     expected.Path, actualSpan.Path, FormatDiagnostics(analyzer, diagnostic)));
 
-            var actualLinePosition = actualSpan.StartLinePosition;
+            Text.LinePosition actualLinePosition = actualSpan.StartLinePosition;
 
             // Only check line position if there is an actual line in the real diagnostic
             if (actualLinePosition.Line > 0)
@@ -123,17 +122,17 @@ namespace Microsoft.CodeAnalysis.UnitTests
             {
                 builder.AppendLine("// " + diagnostics[i].ToString());
 
-                var analyzerType = analyzer.GetType();
-                var ruleFields = analyzerType
+                Type analyzerType = analyzer.GetType();
+                IEnumerable<FieldInfo> ruleFields = analyzerType
                     .GetFields(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy)
                     .Where(f => f.IsStatic && f.FieldType == typeof(DiagnosticDescriptor));
 
-                foreach (var field in ruleFields)
+                foreach (FieldInfo field in ruleFields)
                 {
                     var rule = field.GetValue(null) as DiagnosticDescriptor;
                     if (rule != null && rule.Id == diagnostics[i].Id)
                     {
-                        var location = diagnostics[i].Location;
+                        Location location = diagnostics[i].Location;
                         if (location == Location.None)
                         {
                             builder.AppendFormat("GetGlobalResult({0}.{1})", analyzerType.Name, field.Name);
@@ -144,7 +143,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
                                 string.Format("Test base does not currently handle diagnostics in metadata locations. Diagnostic in metadata:\r\n", diagnostics[i]));
 
                             string resultMethodName = GetResultMethodName(diagnostics[i]);
-                            var linePosition = diagnostics[i].Location.GetLineSpan().StartLinePosition;
+                            Text.LinePosition linePosition = diagnostics[i].Location.GetLineSpan().StartLinePosition;
 
                             builder.AppendFormat("{0}({1}, {2}, {3}.{4})",
                                 resultMethodName,

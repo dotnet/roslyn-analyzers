@@ -44,7 +44,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 	                        End Enum
                         End Class
                         ");
-
         }
 
         [Fact]
@@ -74,7 +73,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                         End Class
                         ",
                         GetBasicResultAt(3, 39, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717.MessageFormat.ToString()));
-
         }
         [Fact]
         public void CA1714_CA1717__Test_EnumWithNoFlags_PluralName_UpperCase()
@@ -103,7 +101,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                         End Class
                         ",
                         GetBasicResultAt(3, 39, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717.MessageFormat.ToString()));
-
         }
 
         [Fact]
@@ -133,9 +130,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 	                    End Enum
                         End Class",
                             GetBasicResultAt(4, 35, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1714.MessageFormat.ToString()));
-
         }
-        
+
         [Fact]
         public void CA1714_CA1717_Test_EnumWithFlags_PluralName()
         {
@@ -161,8 +157,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 		                    Tuesday = 2
 	                    End Enum
                         End Class");
-
-
         }
 
         [Fact]
@@ -190,8 +184,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 		                    Tuesday = 2
 	                    End Enum
                         End Class");
-
-
         }
 
         [Fact]
@@ -250,7 +242,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                         End Enum
                         End Class",
                             GetBasicResultAt(4, 38, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1714.MessageFormat.ToString()));
-
         }
 
         [Fact]

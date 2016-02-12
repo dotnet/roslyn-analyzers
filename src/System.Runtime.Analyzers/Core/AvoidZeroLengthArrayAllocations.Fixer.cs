@@ -26,8 +26,8 @@ namespace System.Runtime.Analyzers
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var nodeToFix = root.FindNode(context.Span);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode nodeToFix = root.FindNode(context.Span);
             if (nodeToFix == null)
             {
                 return;
@@ -40,20 +40,20 @@ namespace System.Runtime.Analyzers
 
         private async Task<Document> ConvertToArrayEmpty(Document document, SyntaxNode nodeToFix, CancellationToken cancellationToken)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
 
-            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            var generator = editor.Generator;
+            SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            SyntaxGenerator generator = editor.Generator;
 
-            var variableDecl = generator.GetDeclaration(nodeToFix, DeclarationKind.Variable);
-            var typeNode = generator.GetType(variableDecl);
+            SyntaxNode variableDecl = generator.GetDeclaration(nodeToFix, DeclarationKind.Variable);
+            SyntaxNode typeNode = generator.GetType(variableDecl);
 
             var type = semanticModel.GetTypeInfo(typeNode, cancellationToken).Type as IArrayTypeSymbol;
-            var arrayTypeSymbol = semanticModel.Compilation.GetTypeByMetadataName(AvoidZeroLengthArrayAllocationsAnalyzer.ArrayTypeName);
+            INamedTypeSymbol arrayTypeSymbol = semanticModel.Compilation.GetTypeByMetadataName(AvoidZeroLengthArrayAllocationsAnalyzer.ArrayTypeName);
 
-            var arrayEmptyName = generator.QualifiedName(generator.TypeExpression(arrayTypeSymbol),
+            SyntaxNode arrayEmptyName = generator.QualifiedName(generator.TypeExpression(arrayTypeSymbol),
                                                          generator.GenericName(AvoidZeroLengthArrayAllocationsAnalyzer.ArrayEmptyMethodName, type.ElementType));
-            var arrayEmptyInvocation = generator.InvocationExpression(arrayEmptyName);
+            SyntaxNode arrayEmptyInvocation = generator.InvocationExpression(arrayEmptyName);
             arrayEmptyInvocation = arrayEmptyInvocation.WithLeadingTrivia(nodeToFix.GetLeadingTrivia()).WithTrailingTrivia(nodeToFix.GetTrailingTrivia());
             editor.ReplaceNode(nodeToFix, arrayEmptyInvocation);
             return editor.GetChangedDocument();

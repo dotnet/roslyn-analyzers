@@ -1,24 +1,22 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
-using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
     public partial class DoNotUseInsecureDTDProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private static readonly string CA3075XmlReaderCreateUsingInsecureConstructedXmlReaderSettingsMessage = DesktopAnalyzersResources.XmlReaderCreateInsecureConstructedMessage;
+        private static readonly string s_CA3075XmlReaderCreateUsingInsecureConstructedXmlReaderSettingsMessage = DesktopAnalyzersResources.XmlReaderCreateInsecureConstructedMessage;
 
         private DiagnosticResult GetCA3075XmlReaderCreateUsingInsecureConstructedXmlReaderSettingsCSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, CA3075XmlReaderCreateUsingInsecureConstructedXmlReaderSettingsMessage);
+            return GetCSharpResultAt(line, column, CA3075RuleId, s_CA3075XmlReaderCreateUsingInsecureConstructedXmlReaderSettingsMessage);
         }
 
         private DiagnosticResult GetCA3075XmlReaderCreateUsingInsecureConstructedXmlReaderSettingsBasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, CA3075XmlReaderCreateUsingInsecureConstructedXmlReaderSettingsMessage);
+            return GetBasicResultAt(line, column, CA3075RuleId, s_CA3075XmlReaderCreateUsingInsecureConstructedXmlReaderSettingsMessage);
         }
 
         [Fact]
@@ -40,7 +38,7 @@ namespace TestNamespace
 }
 "
             );
-            
+
             VerifyBasic(@"
 Imports System.Xml
 
@@ -88,7 +86,7 @@ Namespace TestNamespace
     End Class
 End Namespace");
         }
-        
+
         [Fact]
         public void XmlReaderSettingsSetDtdProcessingToParseInInitializerTargetFx452ShouldNotGenerateDiagnostic()
         {

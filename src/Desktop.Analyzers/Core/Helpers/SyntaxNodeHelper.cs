@@ -1,4 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 
@@ -21,7 +22,7 @@ namespace Desktop.Analyzers.Common
         public abstract SyntaxNode GetAssignmentLeftNode(SyntaxNode node);
         public abstract SyntaxNode GetAssignmentRightNode(SyntaxNode node);
         public abstract SyntaxNode GetMemberAccessExpressionNode(SyntaxNode node);
-        public abstract SyntaxNode GetMemberAccessNameNode(SyntaxNode node); 
+        public abstract SyntaxNode GetMemberAccessNameNode(SyntaxNode node);
         public abstract SyntaxNode GetCallTargetNode(SyntaxNode node);
         public abstract SyntaxNode GetInvocationExpressionNode(SyntaxNode node);
         public abstract SyntaxNode GetDefaultValueForAnOptionalParameter(SyntaxNode declNode, int paramIndex);
@@ -72,7 +73,7 @@ namespace Desktop.Analyzers.Common
         }
 
         public abstract IMethodSymbol GetCalleeMethodSymbol(SyntaxNode node, SemanticModel semanticModel);
-        
+
         public static IEnumerable<IMethodSymbol> GetCandidateCalleeMethodSymbols(SyntaxNode node, SemanticModel semanticModel)
         {
             foreach (ISymbol symbol in GetCandidateReferencedSymbols(node, semanticModel))
@@ -86,7 +87,7 @@ namespace Desktop.Analyzers.Common
 
         public IEnumerable<IMethodSymbol> GetCalleeMethodSymbols(SyntaxNode node, SemanticModel semanticModel)
         {
-            IMethodSymbol symbol = GetCalleeMethodSymbol(node, semanticModel); 
+            IMethodSymbol symbol = GetCalleeMethodSymbol(node, semanticModel);
             if (symbol != null)
             {
                 return new List<IMethodSymbol>() { symbol };
@@ -158,7 +159,7 @@ namespace Desktop.Analyzers.Common
             {
                 return false;
             }
-            var value = model.GetConstantValue(node);
+            Optional<object> value = model.GetConstantValue(node);
             return value.HasValue && value.Value == null;
         }
 
@@ -168,9 +169,9 @@ namespace Desktop.Analyzers.Common
             {
                 return false;
             }
-            var value = model.GetConstantValue(node);
-            return value.HasValue && 
-                   value.Value is int && 
+            Optional<object> value = model.GetConstantValue(node);
+            return value.HasValue &&
+                   value.Value is int &&
                    (int)value.Value == 0;
         }
 
@@ -180,7 +181,7 @@ namespace Desktop.Analyzers.Common
             {
                 return false;
             }
-            var value = model.GetConstantValue(node);
+            Optional<object> value = model.GetConstantValue(node);
             return value.HasValue &&
                    value.Value is bool &&
                    (bool)value.Value == false;

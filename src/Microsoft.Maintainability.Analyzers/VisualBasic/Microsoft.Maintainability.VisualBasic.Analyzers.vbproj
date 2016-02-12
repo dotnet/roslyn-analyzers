@@ -101,7 +101,6 @@
   <ItemGroup>
     <Compile Include="BasicVariableNamesShouldNotMatchFieldNames.vb" />
     <Compile Include="BasicVariableNamesShouldNotMatchFieldNames.Fixer.vb" />
-    <Compile Include="BasicReviewUnusedParameters.vb" />
     <Compile Include="BasicReviewUnusedParameters.Fixer.vb" />
     <Compile Include="BasicRemoveUnusedLocals.vb" />
     <Compile Include="BasicRemoveUnusedLocals.Fixer.vb" />

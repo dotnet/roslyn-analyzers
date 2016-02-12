@@ -12,12 +12,12 @@ namespace Microsoft.Maintainability.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicReviewUnusedParametersAnalyzer();
+            return new ReviewUnusedParametersAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpReviewUnusedParametersAnalyzer();
+            return new ReviewUnusedParametersAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

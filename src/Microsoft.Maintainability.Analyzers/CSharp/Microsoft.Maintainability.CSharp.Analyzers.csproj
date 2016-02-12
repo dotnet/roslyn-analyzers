@@ -104,7 +104,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CSharpVariableNamesShouldNotMatchFieldNames.cs" />
     <Compile Include="CSharpVariableNamesShouldNotMatchFieldNames.Fixer.cs" />
-    <Compile Include="CSharpReviewUnusedParameters.cs" />
     <Compile Include="CSharpReviewUnusedParameters.Fixer.cs" />
     <Compile Include="CSharpRemoveUnusedLocals.cs" />
     <Compile Include="CSharpRemoveUnusedLocals.Fixer.cs" />

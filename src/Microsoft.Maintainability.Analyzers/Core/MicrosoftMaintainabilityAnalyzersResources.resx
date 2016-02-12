@@ -137,7 +137,7 @@
     <value>A method signature includes a parameter that is not used in the method body.</value>
   </data>
   <data name="ReviewUnusedParametersMessage" xml:space="preserve">
-    <value>Review unused parameters</value>
+    <value>Parameter {0} of method {1} is never used. Remove the parameter or use it in the method body.</value>
   </data>
   <data name="RemoveUnusedLocalsTitle" xml:space="preserve">
     <value>Remove unused locals</value>

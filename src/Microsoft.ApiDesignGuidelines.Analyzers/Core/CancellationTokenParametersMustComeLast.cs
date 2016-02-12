@@ -40,9 +40,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     compilationContext.RegisterSymbolAction(symbolContext =>
                     {
                         var methodSymbol = (IMethodSymbol)symbolContext.Symbol;
-                        if (methodSymbol.IsOverride
-                            || methodSymbol.ExplicitInterfaceImplementations.Any()
-                            || ImplementsAnInterfaceMethodImplicitly(methodSymbol))
+                        if (methodSymbol.IsOverride ||
+                            methodSymbol.IsImplementationOfAnyInterfaceMethod())
                         {
                             return;
                         }

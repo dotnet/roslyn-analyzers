@@ -147,6 +147,26 @@ namespace Analyzer.Utilities
             return compilation.GetTypeByMetadataName("System.Runtime.Serialization.StreamingContext");
         }
 
+        public static INamedTypeSymbol OnDeserializingAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Runtime.Serialization.OnDeserializingAttribute");
+        }
+
+        public static INamedTypeSymbol OnDeserializedAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Runtime.Serialization.OnDeserializedAttribute");
+        }
+
+        public static INamedTypeSymbol OnSerializingAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Runtime.Serialization.OnSerializingAttribute");
+        }
+
+        public static INamedTypeSymbol OnSerializedAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Runtime.Serialization.OnSerializedAttribute");
+        }
+
         public static INamedTypeSymbol SerializableAttribute(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName("System.SerializableAttribute");

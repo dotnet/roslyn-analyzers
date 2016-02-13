@@ -104,7 +104,6 @@
     <Compile Include="BasicUseLiteralsWhereAppropriate.Fixer.vb" />
     <Compile Include="BasicDoNotInitializeUnnecessarily.vb" />
     <Compile Include="BasicDoNotInitializeUnnecessarily.Fixer.vb" />
-    <Compile Include="BasicPreferJaggedArraysOverMultidimensional.vb" />
     <Compile Include="BasicPreferJaggedArraysOverMultidimensional.Fixer.vb" />
     <Compile Include="BasicMarkMembersAsStatic.vb" />
     <Compile Include="BasicMarkMembersAsStatic.Fixer.vb" />

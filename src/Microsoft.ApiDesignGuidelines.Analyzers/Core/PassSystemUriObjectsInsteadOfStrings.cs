@@ -123,7 +123,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
 
                 // now do cheap string check whether those string parameter contains uri word list we are looking for.
-                if (!CheckStringParametersQucik(stringParameters, cancellationToken))
+                if (!CheckStringParametersQuick(stringParameters, cancellationToken))
                 {
                     // no string parameter that contains what we are looking for.
                     return false;
@@ -156,7 +156,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return false;
             }
 
-            private bool CheckStringParametersQucik(IEnumerable<IParameterSymbol> stringParameters, CancellationToken cancellationToken)
+            private bool CheckStringParametersQuick(IEnumerable<IParameterSymbol> stringParameters, CancellationToken cancellationToken)
             {
                 foreach (var parameter in stringParameters)
                 {

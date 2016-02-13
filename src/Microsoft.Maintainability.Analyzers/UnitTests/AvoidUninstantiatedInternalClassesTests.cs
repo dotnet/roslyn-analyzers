@@ -79,11 +79,11 @@ public class D
         public void BasicNoDiagnosticForInstantiatedInternalClass()
         {
             VerifyBasic(@"
-Friend Class B
+Friend Class C
 End Class
 
 Public Class D
-     Private _b As New B
+     Private _c As New C
 End Class
 ");
         }
@@ -169,6 +169,135 @@ internal abstract class A { }
         {
             VerifyBasic(@"
 Friend MustInherit Class A
+End Class
+");
+        }
+
+        [Fact]
+        public void CSharpNoDiagnosticForAttributeClass()
+        {
+            VerifyCSharp(@"
+using System;
+
+internal class MyAttribute: Attribute {}
+internal class MyOtherAttribute: MyAttribute {}
+");
+        }
+
+        [Fact]
+        public void BasicNoDiagnosticForAttributeClass()
+        {
+            VerifyBasic(@"
+Imports System
+
+Friend Class MyAttribute
+    Inherits Attribute
+End Class
+
+Friend Class MyOtherAttribute
+    Inherits MyAttribute
+End Class
+");
+        }
+
+        [Fact]
+        public void CSharpNoDiagnosticForTypeContainingAssemblyEntryPointReturningVoid()
+        {
+            VerifyCSharp(@"
+internal class C
+{
+    private static void Main() {}
+}");
+        }
+
+        [Fact]
+        public void BasicNoDiagnosticForTypeContainingAssemblyEntryPointReturningVoid()
+        {
+            VerifyBasic(@"
+Friend Class C
+    Private Shared Sub Main()
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public void CSharpNoDiagnosticForTypeContainingAssemblyEntryPointReturningInt()
+        {
+            VerifyCSharp(@"
+internal class C
+{
+    private static int Main() { return 1; }
+}");
+        }
+
+        [Fact]
+        public void BasicNoDiagnosticForTypeContainingAssemblyEntryPointReturningInt()
+        {
+            VerifyBasic(@"
+Friend Class C
+    Private Shared Function Main() As Integer
+        Return 1
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public void CSharpDiagnosticForMainMethodWithWrongReturnType()
+        {
+            VerifyCSharp(@"
+internal class C
+{
+    private static string Main() { return ""; }
+}",
+                GetCSharpResultAt(2, 16, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
+        }
+
+        [Fact]
+        public void BasicDiagnosticForMainMethodWithWrongReturnType()
+        {
+            VerifyBasic(@"
+Friend Class C
+    Private Shared Function Main() As String
+        Return ""
+    End Sub
+End Class
+",
+                GetBasicResultAt(2, 14, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
+        }
+
+        [Fact]
+        public void CSharpDiagnosticIfMainMethodIsNotStatic()
+        {
+            VerifyCSharp(@"
+internal class C
+{
+    private void Main() {}
+}
+",
+                GetCSharpResultAt(2, 16, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
+        }
+
+        [Fact]
+        public void BasicDiagnosticIfMainMethodIsNotStatic()
+        {
+            VerifyBasic(@"
+Friend Class C
+    Private Sub Main()
+    End Sub
+End Class
+",
+                GetBasicResultAt(2, 14, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
+        }
+
+        [Fact]
+        public void BasicNoDiagnosticIfMainMethodIsDifferentlyCased()
+        {
+            VerifyBasic(@"
+Friend Class C
+    Private Shared Sub mAiN()
+    End Sub
 End Class
 ");
         }

@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -76,36 +77,73 @@ namespace Analyzer.Utilities
             return symbol.GetMembers()
                 .Where(m => m.Kind == SymbolKind.Method)
                 .Cast<IMethodSymbol>()
-                .Any(IsFinalizer);
+                .Any(m => m.IsFinalizer());
         }
 
-        // TODO: Once @srivatsn merges his analyzer for CA1065 (in which he extracted the IsFinalizer
-        // method from RemoveEmptyFinalizers.cs and placed it in IMethodSymbolExtensions.cs), we
-        // should remove this copy of that method.
-        private static bool IsFinalizer(IMethodSymbol method)
+        private static bool s_firstCallToIsUnused = true;
+        private static INamedTypeSymbol s_attributeSymbol;
+
+        public static bool IsUnused(this INamedTypeSymbol symbol, Compilation compilation)
         {
-            if (method.MethodKind == MethodKind.Destructor)
+            if (s_firstCallToIsUnused)
             {
-                return true; // for C#
+                s_attributeSymbol = compilation.GetTypeByMetadataName("System.Attribute");
             }
 
-            if (method.Name != "Finalize" || method.Parameters.Length != 0 || !method.ReturnsVoid)
-            {
-                return false;
-            }
-
-            IMethodSymbol overridden = method.OverriddenMethod;
-            if (overridden == null)
+            // Attributes are not instantiated in IL but are created by reflection.
+            if (symbol.Inherits(s_attributeSymbol))
             {
                 return false;
             }
 
-            for (IMethodSymbol o = overridden.OverriddenMethod; o != null; o = o.OverriddenMethod)
+            // The type containing the assembly's entry point is OK.
+            if (symbol.ContainsEntryPoint(compilation))
             {
-                overridden = o;
+                return false;
             }
 
-            return overridden.ContainingType.SpecialType == SpecialType.System_Object; // it is object.Finalize
+            return symbol.TypeKind == TypeKind.Class
+                    && !symbol.IsStatic
+                    && !symbol.IsAbstract;
+        }
+
+        private static bool ContainsEntryPoint(this INamedTypeSymbol symbol, Compilation compilation)
+        {
+            // TODO: Handle the case where Compilation.Options.MainTypeName matches this type.
+            // TODO: Test: can't have type parameters.
+            // TODO: Main in nested class? If allowed, what name does it have?
+            // TODO: Test that parameter is array of int.
+            return symbol.GetMembers("Main")
+                .Where(m => m is IMethodSymbol)
+                .Cast<IMethodSymbol>()
+                .Any(IsEntryPoint);
+        }
+
+        private static bool IsEntryPoint(IMethodSymbol method)
+        {
+            if (!method.IsStatic)
+            {
+                return false;
+            }
+
+            if (method.ReturnType.SpecialType != SpecialType.System_Int32 && !method.ReturnsVoid)
+            {
+                return false;
+            }
+
+            if (method.Parameters.Count() == 0)
+            {
+                return true;
+            }
+
+            if (method.Parameters.Count() > 1)
+            {
+                return false;
+            }
+
+            ITypeSymbol parameterType = method.Parameters.Single().Type;
+
+            return true;
         }
 
         private static bool IsEqualsOverride(IMethodSymbol method)

@@ -109,6 +109,7 @@
     <Compile Include="BasicDonTPassAsyncLambdasAsVoidReturningDelegateTypes.Fixer.vb" />
     <Compile Include="BasicDonTStoreAsyncLambdasAsVoidReturningDelegateTypes.vb" />
     <Compile Include="BasicDonTStoreAsyncLambdasAsVoidReturningDelegateTypes.Fixer.vb" />
+    <Compile Include="BasicPassSystemUriObjectsInsteadOfStrings.vb" />
     <Compile Include="BasicPropagateCancellationTokensWhenPossible.vb" />
     <Compile Include="BasicPropagateCancellationTokensWhenPossible.Fixer.vb" />
     <Compile Include="BasicDonTMixBlockingAndAsync.vb" />
@@ -130,8 +131,6 @@
     <Compile Include="BasicDoNotDecreaseInheritedMemberVisibility.Fixer.vb" />
     <Compile Include="BasicOperatorsShouldHaveSymmetricalOverloads.vb" />
     <Compile Include="BasicOperatorsShouldHaveSymmetricalOverloads.Fixer.vb" />
-    <Compile Include="BasicPassSystemUriObjectsInsteadOfStrings.vb" />
-    <Compile Include="BasicPassSystemUriObjectsInsteadOfStrings.Fixer.vb" />
     <Compile Include="BasicCollectionsShouldImplementGenericInterface.Fixer.vb" />
     <Compile Include="BasicEnumStorageShouldBeInt32.vb" />
     <Compile Include="BasicEnumStorageShouldBeInt32.Fixer.vb" />

@@ -39,9 +39,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     compilationContext.RegisterSymbolAction(symbolContext =>
                     {
                         var methodSymbol = (IMethodSymbol)symbolContext.Symbol;
-                        if (methodSymbol.IsOverride
-                            || methodSymbol.ExplicitInterfaceImplementations.Any()
-                            || ImplementsAnInterfaceMethodImplicitly(methodSymbol))
+                        if (methodSymbol.IsOverride ||
+                            methodSymbol.IsImplementationOfAnyInterfaceMethod())
                         {
                             return;
                         }
@@ -91,25 +90,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     SymbolKind.Method);
                 }
             });
-        }
-
-        private bool ImplementsAnInterfaceMethodImplicitly(IMethodSymbol methodSymbol)
-        {
-            // This is an approximation, because another class could derive from this one
-            // and rely on methodSymbol implementing one of *it's* interfaces methods, but
-            // it's good enough.
-            foreach (INamedTypeSymbol interfaceSymbol in methodSymbol.ContainingType.AllInterfaces)
-            {
-                foreach (ISymbol interfaceMethod in interfaceSymbol.GetMembers().Where(m => m.Kind == SymbolKind.Method))
-                {
-                    if (methodSymbol.ContainingType.FindImplementationForInterfaceMember(interfaceMethod)?.Equals(methodSymbol) ?? false)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
         }
     }
 }

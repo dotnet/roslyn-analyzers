@@ -46,7 +46,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             analysisContext.RegisterCompilationStartAction(c =>
             {
-                var analyzer = new Analyzer(c.Compilation, GetInvocationExpression);
+                var @string = WellKnownTypes.String(c.Compilation);
+                var uri = WellKnownTypes.Uri(c.Compilation);
+                if (@string == null || uri == null)
+                {
+                    // we don't have required types
+                    return;
+                }
+
+                var analyzer = new Analyzer(c.Compilation, @string, uri, GetInvocationExpression);
                 c.RegisterOperationAction(analyzer.Analyze, OperationKind.InvocationExpression);
             });
         }
@@ -64,12 +72,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             private readonly Func<SyntaxNode, SyntaxNode> _expressionGetter;
 #pragma warning restore RS1008
 
-            public Analyzer(Compilation compilation, Func<SyntaxNode, SyntaxNode> expressionGetter)
+            public Analyzer(
+                Compilation compilation,
+                INamedTypeSymbol @string,
+                INamedTypeSymbol uri,
+                Func<SyntaxNode, SyntaxNode> expressionGetter)
             {
                 _compilation = compilation;
-                _string = WellKnownTypes.String(compilation);
-                _uri = WellKnownTypes.Uri(compilation);
-
+                _string = @string;
+                _uri = uri;
                 _expressionGetter = expressionGetter;
             }
 

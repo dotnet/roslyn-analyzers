@@ -279,6 +279,62 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
+        public void CA2234NoWarningForSelf()
+        {
+            VerifyCSharp(@"
+    using System;
+
+    public class A : IComparable
+    {
+        public static Method()
+        {
+            Method(""test"", null);
+        }
+
+        public static Method(string firstUri, Uri lastUri) { }
+    }
+");
+        }
+
+        [Fact]
+        public void CA2234NoWarningForSelf2()
+        {
+            VerifyCSharp(@"
+    using System;
+
+    public class A : IComparable
+    {
+        public static Method()
+        {
+            Method(""test"", null);
+        }
+
+        public static Method(string firstUri, Uri lastUri) { }
+        public static Method(int other) { }
+    }
+");
+        }
+
+        [Fact]
+        public void CA2234WarningWithMultipleUri()
+        {
+            VerifyCSharp(@"
+    using System;
+
+    public class A : IComparable
+    {
+        public static Method()
+        {
+            Method(""test"", null);
+        }
+
+        public static Method(string firstUri, Uri lastUrl) { }
+        public static Method(Uri uri) { }
+    }
+", GetCA2234CSharpResultAt(8, 13));
+        }
+
+        [Fact]
         public void CA2234WarningVB()
         {
             // since VB and C# shares almost all code except to get method overload group expression

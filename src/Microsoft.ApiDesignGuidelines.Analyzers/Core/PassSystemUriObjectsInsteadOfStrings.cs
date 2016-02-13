@@ -63,7 +63,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private struct Analyzer
         {
-            private static readonly string[] uriWords = new string[] { "uri", "urn", "url" };
+            private static readonly ImmutableHashSet<string> s_uriWords = ImmutableHashSet.Create(StringComparer.OrdinalIgnoreCase, "uri", "urn", "url");
 
 #pragma warning disable RS1008 // this type will be created per compilation
             private readonly Compilation _compilation;
@@ -141,7 +141,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
 
                 // now we make sure we actually have overloads that contains uri type parameter
-                if (!CheckOverloads(model, node, cancellationToken))
+                if (!CheckOverloads(model, method, node, cancellationToken))
                 {
                     // no overload that contains uri as parameter
                     return false;
@@ -151,12 +151,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return CheckStringParametersSlow(stringParameters, cancellationToken);
             }
 
-            private bool CheckOverloads(SemanticModel model, SyntaxNode node, CancellationToken cancellationToken)
+            private bool CheckOverloads(SemanticModel model, IMethodSymbol self, SyntaxNode node, CancellationToken cancellationToken)
             {
                 var uriType = _uri;
                 foreach (var overload in model.GetMemberGroup(node, cancellationToken).OfType<IMethodSymbol>())
                 {
                     cancellationToken.ThrowIfCancellationRequested();
+
+                    if (self.Equals(overload))
+                    {
+                        continue;
+                    }
 
                     if (overload.Parameters.Any(p => p.Type?.Equals(uriType) == true))
                     {
@@ -182,7 +187,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             private static bool CheckStringParameter(IParameterSymbol parameter, CancellationToken cancellationToken)
             {
-                foreach (var word in uriWords)
+                foreach (var word in s_uriWords)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -210,15 +215,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     var parser = new WordParser(parameter.Name, WordParserOptions.SplitCompoundWords);
                     while ((word = parser.NextWord()) != null)
                     {
-                        foreach (var uriWord in uriWords)
+                        if (s_uriWords.Contains(word))
                         {
-                            cancellationToken.ThrowIfCancellationRequested();
-
-                            // we found uri word in parameter words.
-                            if (string.Equals(uriWord, word, StringComparison.OrdinalIgnoreCase))
-                            {
-                                return true;
-                            }
+                            return true;
                         }
                     }
                 }

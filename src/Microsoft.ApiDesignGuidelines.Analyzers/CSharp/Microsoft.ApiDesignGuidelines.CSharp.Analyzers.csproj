@@ -162,7 +162,6 @@
     <Compile Include="CSharpEnumsShouldHavePluralNames.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldNotMatchKeywords.Fixer.cs" />
     <Compile Include="CSharpPropertyNamesShouldNotMatchGetMethods.Fixer.cs" />
-    <Compile Include="CSharpTypeNamesShouldNotMatchNamespaces.cs" />
     <Compile Include="CSharpTypeNamesShouldNotMatchNamespaces.Fixer.cs" />
     <Compile Include="CSharpParameterNamesShouldMatchBaseDeclaration.cs" />
     <Compile Include="CSharpParameterNamesShouldMatchBaseDeclaration.Fixer.cs" />

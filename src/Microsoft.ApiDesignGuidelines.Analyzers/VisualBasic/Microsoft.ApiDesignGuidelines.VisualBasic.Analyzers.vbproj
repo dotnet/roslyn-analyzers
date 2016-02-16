@@ -162,7 +162,6 @@
     <Compile Include="BasicEnumsShouldHavePluralNames.Fixer.vb" />
     <Compile Include="BasicIdentifiersShouldNotMatchKeywords.Fixer.vb" />
     <Compile Include="BasicPropertyNamesShouldNotMatchGetMethods.Fixer.vb" />
-    <Compile Include="BasicTypeNamesShouldNotMatchNamespaces.vb" />
     <Compile Include="BasicTypeNamesShouldNotMatchNamespaces.Fixer.vb" />
     <Compile Include="BasicParameterNamesShouldMatchBaseDeclaration.vb" />
     <Compile Include="BasicParameterNamesShouldMatchBaseDeclaration.Fixer.vb" />

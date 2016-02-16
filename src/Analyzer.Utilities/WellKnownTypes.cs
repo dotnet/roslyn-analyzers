@@ -231,6 +231,11 @@ namespace Analyzer.Utilities
             return compilation.GetTypeByMetadataName("System.EventArgs");
         }
 
+        public static INamedTypeSymbol Uri(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Uri");
+        }
+
         public static INamedTypeSymbol ComVisibleAttribute(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName("System.Runtime.InteropServices.ComVisibleAttribute");

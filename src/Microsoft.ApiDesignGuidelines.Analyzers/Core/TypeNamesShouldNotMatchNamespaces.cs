@@ -45,20 +45,21 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, SystemRule);
 
-        private static object s_obj = new object();
+        private static object s_lock = new object();
         private static ImmutableDictionary<string, string> s_wellKnownSystemNamespaceTable;
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
             analysisContext.RegisterCompilationStartAction(
                 compilationStartAnalysisContext =>
                 {
                     var namedTypesInCompilation = new ConcurrentBag<INamedTypeSymbol>();
 
                     compilationStartAnalysisContext.RegisterSymbolAction(
-                        SymbolAnalysisContext =>
+                        symbolAnalysisContext =>
                         {
-                            var namedType = (INamedTypeSymbol)SymbolAnalysisContext.Symbol;
+                            var namedType = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
                             namedTypesInCompilation.Add(namedType);
                         }, SymbolKind.NamedType);
 
@@ -69,9 +70,20 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                             var compilation = compilationAnalysisContext.Compilation;
                             AddNamespacesFromCompilation(namespaceNamesInCompilation, compilation.GlobalNamespace);
 
-                            // The entries are added in the sorted order so that the diagnostic message is always deterministic
-                            var namespaceTableForCompilation = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                            UpdateNamespaceTable(namespaceTableForCompilation, namespaceNamesInCompilation.ToImmutableSortedSet());
+                            /* We construct a dictionary whose keys are all the components of all the namespace names in the compilation,
+                             * and whose values are the namespace names of which the components are a part. For example, if the compilation
+                             * includes namespaces A.B and C.D, the dictionary will map "A" to "A", "B" to "A.B", "C" to "C", and "D" to "C.D".
+                             * When the analyzer encounters a type name that appears in a dictionary, it will emit a diagnostic, for instance,
+                             * "Type name "D" conflicts with namespace name "C.D"".
+
+                             * A component can occur in more than one namespace (for example, you might have namespaces "A" and "A.B".).
+                             * In that case, we have to choose one namespace to report the diagnostic on. We want to make sure that this is
+                             * deterministic (we don't want to complain about "A" in one compilation, and about "A.B" in the next).
+                             * By calling ToImmutableSortedSet on the list of namespace names in the compilation, we ensure that
+                             * we'll always construct the dictionary with the same set of keys.
+                             */
+                            var namespaceComponentToNamespaceNameDictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                            UpdateNamespaceTable(namespaceComponentToNamespaceNameDictionary, namespaceNamesInCompilation.ToImmutableSortedSet());
 
                             InitializeWellKnownSystemNamespaceTable();
                             foreach (var symbol in namedTypesInCompilation)
@@ -81,9 +93,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                 {
                                     compilationAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(SystemRule, symbolName, s_wellKnownSystemNamespaceTable[symbolName]));
                                 }
-                                else if (namespaceTableForCompilation.ContainsKey(symbolName))
+                                else if (namespaceComponentToNamespaceNameDictionary.ContainsKey(symbolName))
                                 {
-                                    compilationAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(DefaultRule, symbolName, namespaceTableForCompilation[symbolName]));
+                                    compilationAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(DefaultRule, symbolName, namespaceComponentToNamespaceNameDictionary[symbolName]));
                                 }
                             }
                         });
@@ -104,7 +116,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             if (s_wellKnownSystemNamespaceTable == null)
             {
-                lock(s_obj)
+                lock(s_lock)
                 {
                     if (s_wellKnownSystemNamespaceTable == null)
                     {

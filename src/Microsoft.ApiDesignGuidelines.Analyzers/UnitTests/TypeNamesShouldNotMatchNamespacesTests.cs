@@ -76,6 +76,21 @@ public class Sdk
         }
 
         [Fact]
+        public void CA1724CSharpDeterministicDiagnosticOnA()
+        {
+            VerifyCSharp(@"
+namespace A.B
+{
+}
+
+namespace D
+{
+    public class A {}
+}",
+            CSharpDefaultResultAt(8, 18, "A", "A"));
+        }
+
+        [Fact]
         public void CA1724VisualBasicValidName()
         {
             VerifyBasic(@"

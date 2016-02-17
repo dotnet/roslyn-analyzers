@@ -51,7 +51,7 @@ namespace System.Runtime.Analyzers
                     }
 
                     IArgument formatStringArgument = invocation.ArgumentsInParameterOrder[info.FormatStringIndex];
-                    if (!object.Equals(formatStringArgument?.Value?.ResultType, formatInfo.String) ||
+                    if (!object.Equals(formatStringArgument?.Value?.Type, formatInfo.String) ||
                         !(formatStringArgument?.Value?.ConstantValue.Value is string))
                     {
                         // wrong argument

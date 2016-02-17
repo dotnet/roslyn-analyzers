@@ -46,10 +46,10 @@ namespace System.Runtime.Analyzers
                 compilationStartContext.RegisterOperationAction(context =>
                 {
                     var lockStatement = (ILockStatement)context.Operation;
-                    ITypeSymbol type = lockStatement?.Locked?.ResultType;
+                    ITypeSymbol type = lockStatement?.LockedObject?.Type;
                     if (type != null && TypeHasWeakIdentity(type, compilation))
                     {
-                        context.ReportDiagnostic(lockStatement.Locked.Syntax.CreateDiagnostic(Rule, type.ToDisplayString()));
+                        context.ReportDiagnostic(lockStatement.LockedObject.Syntax.CreateDiagnostic(Rule, type.ToDisplayString()));
                     }
                 },
                 OperationKind.LockStatement);

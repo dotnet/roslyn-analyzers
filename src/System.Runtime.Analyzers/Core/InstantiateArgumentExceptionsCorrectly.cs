@@ -69,22 +69,22 @@ namespace System.Runtime.Analyzers
             ITypeSymbol argumentExceptionType)
         {
             var creation = (IObjectCreationExpression)context.Operation;
-            if (!creation.ResultType.Inherits(argumentExceptionType))
+            if (!creation.Type.Inherits(argumentExceptionType))
             {
                 return;
             }
 
-            if (creation.ConstructorArguments.Length == 0)
+            if (creation.ArgumentsInParameterOrder.Length == 0)
             {
-                if (HasMessageOrParameterNameConstructor(creation.ResultType))
+                if (HasMessageOrParameterNameConstructor(creation.Type))
                 {
                     // Call the {0} constructor that contains a message and/ or paramName parameter
-                    ReportDiagnostic(context, s_localizableMessageNoArguments, creation.ResultType);
+                    ReportDiagnostic(context, s_localizableMessageNoArguments, creation.Type);
                 }
             }
             else
             {
-                foreach (IArgument argument in creation.ConstructorArguments)
+                foreach (IArgument argument in creation.ArgumentsInParameterOrder)
                 {
                     if (argument.Parameter.Type.SpecialType != SpecialType.System_String)
                     {
@@ -97,7 +97,7 @@ namespace System.Runtime.Analyzers
                         continue;
                     }
 
-                    CheckArgument(owningSymbol, creation.ResultType, argument.Parameter, value, context);
+                    CheckArgument(owningSymbol, creation.Type, argument.Parameter, value, context);
                 }
             }
         }

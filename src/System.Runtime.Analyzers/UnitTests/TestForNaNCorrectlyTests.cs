@@ -232,7 +232,7 @@ End Class
             VerifyBasic(code, GetBasicResultAt(4, 16));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8114")]
+        [Fact]
         public void CSharpNoDiagnosticForComparisonWithBadExpression()
         {
             var code = @"

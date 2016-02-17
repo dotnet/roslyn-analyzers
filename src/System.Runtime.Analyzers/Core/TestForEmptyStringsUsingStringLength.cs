@@ -86,7 +86,7 @@ namespace System.Runtime.Analyzers
                 return;
             }
 
-            if (IsEmptyString(binaryOperation.Left) || IsEmptyString(binaryOperation.Right))
+            if (IsEmptyString(binaryOperation.LeftOperand) || IsEmptyString(binaryOperation.RightOperand))
             {
                 context.ReportDiagnostic(binaryOperation.Syntax.CreateDiagnostic(s_rule));
             }
@@ -106,7 +106,7 @@ namespace System.Runtime.Analyzers
         /// Checks if the given expression something that evaluates to a constant string
         /// or the string.Empty field
         /// </summary>
-        private static bool IsEmptyString(IExpression expression)
+        private static bool IsEmptyString(IOperation expression)
         {
             if (expression == null)
             {

@@ -27,7 +27,7 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb264491.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
@@ -55,7 +55,7 @@ namespace System.Runtime.Analyzers
                         return;
                     }
 
-                    if (IsNan(binaryOperatorExpression.Left) || IsNan(binaryOperatorExpression.Right))
+                    if (IsNan(binaryOperatorExpression.LeftOperand) || IsNan(binaryOperatorExpression.RightOperand))
                     {
                         operationAnalysisContext.ReportDiagnostic(
                             binaryOperatorExpression.Syntax.CreateDiagnostic(Rule));
@@ -64,7 +64,7 @@ namespace System.Runtime.Analyzers
                 OperationKind.BinaryOperatorExpression);
         }
 
-        private static bool IsNan(IExpression expr)
+        private static bool IsNan(IOperation expr)
         {
             if (expr == null ||
                 !expr.ConstantValue.HasValue)

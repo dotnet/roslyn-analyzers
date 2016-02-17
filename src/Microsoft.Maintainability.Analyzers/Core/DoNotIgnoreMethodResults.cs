@@ -72,7 +72,7 @@ namespace Microsoft.Maintainability.Analyzers
 
                 osContext.RegisterOperationAction(opContext =>
                 {
-                    IExpression expression = ((IExpressionStatement)opContext.Operation).Expression;
+                    IOperation expression = ((IExpressionStatement)opContext.Operation).Expression;
                     string messageFormat = null;
                     string targetMethodName = null;
                     switch (expression.Kind)

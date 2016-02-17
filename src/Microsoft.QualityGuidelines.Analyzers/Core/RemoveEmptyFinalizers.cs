@@ -74,7 +74,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
                 if (block.Statements.Length == 1)
                 {
-                    IStatement statement = block.Statements[0];
+                    IOperation statement = block.Statements[0];
 
                     // Just a throw statement.
                     if (statement.Kind == OperationKind.ThrowStatement)

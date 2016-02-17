@@ -210,7 +210,6 @@
     <Compile Include="OverloadOperatorEqualsOnOverridingValueTypeEqualsTests.cs" />
     <Compile Include="OverloadOperatorEqualsOnOverridingValueTypeEqualsTests.Fixer.cs" />
     <Compile Include="PassSystemUriObjectsInsteadOfStringsTests.cs" />
-    <Compile Include="PassSystemUriObjectsInsteadOfStringsTests.Fixer.cs" />
     <Compile Include="CancellationTokenParametersMustComeLastTests.cs" />
     <Compile Include="DoNotDeclareStaticMembersOnGenericTypesTests.cs" />
     <Compile Include="CollectionsShouldImplementGenericInterfaceTests.cs" />

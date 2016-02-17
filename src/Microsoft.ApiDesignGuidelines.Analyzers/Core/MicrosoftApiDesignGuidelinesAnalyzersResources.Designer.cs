@@ -2026,7 +2026,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pass system uri objects instead of strings.
+        ///   Looks up a localized string similar to Modify &apos;{0}&apos; to call &apos;{1}&apos; instead of &apos;{2}&apos;..
         /// </summary>
         internal static string PassSystemUriObjectsInsteadOfStringsMessage {
             get {
@@ -2170,7 +2170,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Provide ObsoleteAttribute message.
+        ///   Looks up a localized string similar to Provide a message for the ObsoleteAttribute that marks {0} as Obsolete.
         /// </summary>
         internal static string ProvideObsoleteAttributeMessageMessage {
             get {

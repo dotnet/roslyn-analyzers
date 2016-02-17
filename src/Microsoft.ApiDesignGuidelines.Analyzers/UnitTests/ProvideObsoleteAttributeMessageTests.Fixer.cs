@@ -10,12 +10,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicProvideObsoleteAttributeMessageAnalyzer();
+            return new ProvideObsoleteAttributeMessageAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpProvideObsoleteAttributeMessageAnalyzer();
+            return new ProvideObsoleteAttributeMessageAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

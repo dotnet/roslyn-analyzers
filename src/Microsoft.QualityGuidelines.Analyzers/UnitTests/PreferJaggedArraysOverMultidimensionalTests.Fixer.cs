@@ -10,12 +10,12 @@ namespace Microsoft.QualityGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicPreferJaggedArraysOverMultidimensionalAnalyzer();
+            return new PreferJaggedArraysOverMultidimensionalAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpPreferJaggedArraysOverMultidimensionalAnalyzer();
+            return new PreferJaggedArraysOverMultidimensionalAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

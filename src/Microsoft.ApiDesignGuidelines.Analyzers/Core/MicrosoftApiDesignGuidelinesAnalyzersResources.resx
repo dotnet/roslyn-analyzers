@@ -976,4 +976,14 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="AppendConfigureAwaitFalse" xml:space="preserve">
     <value>Append .ConfigureAwait(false)</value>
   </data>
+  <data name="DeclareEventHandlersCorrectlyDescription" xml:space="preserve">
+    <value>Event handler methods take two parameters. The first is of type System.Object and is named 'sender'. This is the object that raised the event. The second parameter is of type System.EventArgs and is named 'e'. This is the data that is associated with the event. For example, if the event is raised whenever a file is opened, the event data typically contains the name of the file.
+Event handler methods should not return a value. In the C# programming language, this is indicated by the return type void. An event handler can invoke multiple methods in multiple objects. If the methods were allowed to return a value, multiple return values would occur for each event, and only the value of the last method that was invoked would be available.</value>
+  </data>
+  <data name="DeclareEventHandlersCorrectlyMessage" xml:space="preserve">
+    <value>A delegate that handles a public or protected event {0} does not have the correct signature, return type, or parameter names.</value>
+  </data>
+  <data name="DeclareEventHandlersCorrectlyTitle" xml:space="preserve">
+    <value>Declare event handlers correctly</value>
+  </data>
 </root>

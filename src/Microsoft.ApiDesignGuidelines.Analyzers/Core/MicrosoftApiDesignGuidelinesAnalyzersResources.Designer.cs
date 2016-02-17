@@ -351,6 +351,34 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Event handler methods take two parameters. The first is of type System.Object and is named &apos;sender&apos;. This is the object that raised the event. The second parameter is of type System.EventArgs and is named &apos;e&apos;. This is the data that is associated with the event. For example, if the event is raised whenever a file is opened, the event data typically contains the name of the file.
+        ///Event handler methods should not return a value. In the C# programming language, this is indicated by the return type void. An eve [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DeclareEventHandlersCorrectlyDescription {
+            get {
+                return ResourceManager.GetString("DeclareEventHandlersCorrectlyDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A delegate that handles a public or protected event {0} does not have the correct signature, return type, or parameter names..
+        /// </summary>
+        internal static string DeclareEventHandlersCorrectlyMessage {
+            get {
+                return ResourceManager.GetString("DeclareEventHandlersCorrectlyMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Declare event handlers correctly.
+        /// </summary>
+        internal static string DeclareEventHandlersCorrectlyTitle {
+            get {
+                return ResourceManager.GetString("DeclareEventHandlersCorrectlyTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Types are declared in namespaces to prevent name collisions and as a way to organize related types in an object hierarchy..
         /// </summary>
         internal static string DeclareTypesInNamespacesDescription {

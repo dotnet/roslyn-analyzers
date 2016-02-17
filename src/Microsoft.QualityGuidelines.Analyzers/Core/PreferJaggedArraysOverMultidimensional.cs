@@ -114,9 +114,9 @@ namespace Microsoft.QualityGuidelines.Analyzers
         {
             var arrayCreationExpression = (IArrayCreationExpression)context.Operation;
 
-            if (IsMultiDimensionalArray(arrayCreationExpression.ResultType))
+            if (IsMultiDimensionalArray(arrayCreationExpression.Type))
             {
-                context.ReportDiagnostic(arrayCreationExpression.Syntax.CreateDiagnostic(BodyRule, owningSymbol.Name, arrayCreationExpression.ResultType));
+                context.ReportDiagnostic(arrayCreationExpression.Syntax.CreateDiagnostic(BodyRule, owningSymbol.Name, arrayCreationExpression.Type));
             }
         }
 

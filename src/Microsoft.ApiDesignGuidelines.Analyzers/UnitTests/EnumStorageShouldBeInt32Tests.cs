@@ -72,7 +72,7 @@ namespace Test
     }
 }
 ",
-    GetCA1028CSharpResultAt(line: 5, column: 17, enumIdentifier: "TestEnum1", underlyingType: "long"));
+            GetCSharpResultAt(5, 17, EnumStorageShouldBeInt32Analyzer.Rule, "TestEnum1", "long"));
         }
 
         [Fact]
@@ -89,7 +89,7 @@ namespace Test
     }
 }
 ",
-    GetCA1028CSharpResultAt(line: 5, column: 17, enumIdentifier: "TestEnum2", underlyingType: "sbyte"));
+            GetCSharpResultAt(5, 17, EnumStorageShouldBeInt32Analyzer.Rule, "TestEnum2", "sbyte"));
         }
 
         [Fact]
@@ -106,7 +106,7 @@ namespace Test
     }
 }
 ",
-    GetCA1028CSharpResultAt(line: 5, column: 17, enumIdentifier: "TestEnum3", underlyingType: "ushort"));
+            GetCSharpResultAt(5, 17, EnumStorageShouldBeInt32Analyzer.Rule, "TestEnum3", "ushort"));
         }
         #endregion
 
@@ -158,7 +158,7 @@ Public Module Module1
     End Sub
 End Module
 ",
-    GetCA1028BasicResultAt(line: 4, column: 17, enumIdentifier: "TestEnum1", underlyingType: "Long"));
+            GetBasicResultAt(4, 17, EnumStorageShouldBeInt32Analyzer.Rule, "TestEnum1", "Long"));
         }
 
         [Fact]
@@ -175,7 +175,7 @@ Public Module Module1
     End Sub
 End Module
 ",
-    GetCA1028BasicResultAt(line: 4, column: 17, enumIdentifier: "TestEnum2", underlyingType: "Byte"));
+            GetBasicResultAt(4, 17, EnumStorageShouldBeInt32Analyzer.Rule, "TestEnum2", "Byte"));
         }
 
         [Fact]
@@ -192,26 +192,8 @@ Public Module Module1
     End Sub
 End Module
 ",
-    GetCA1028BasicResultAt(line: 4, column: 17, enumIdentifier: "TestEnum3", underlyingType: "UShort"));
+            GetBasicResultAt(4, 17, EnumStorageShouldBeInt32Analyzer.Rule, "TestEnum3", "UShort"));
         }
         #endregion
-
-        #region Helpers
-
-        private static DiagnosticResult GetCA1028CSharpResultAt(int line, int column, string enumIdentifier, string underlyingType)
-        {
-            // Format - Make the underlying type of {0} System.Int32 instead of {1}.
-            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumStorageShouldBeInt32Message, enumIdentifier, underlyingType);
-            return GetCSharpResultAt(line, column, EnumStorageShouldBeInt32Analyzer.RuleId, message);
-        }
-
-        private static DiagnosticResult GetCA1028BasicResultAt(int line, int column, string enumIdentifier, string underlyingType)
-        {
-            // Format - Make the underlying type of {0} System.Int32 instead of {1}.
-            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumStorageShouldBeInt32Message, enumIdentifier, underlyingType);
-            return GetBasicResultAt(line, column, EnumStorageShouldBeInt32Analyzer.RuleId, message);
-        }
-        #endregion
-
     }
 }

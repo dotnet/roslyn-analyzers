@@ -101,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CSharpPassSystemUriObjectsInsteadOfStrings.cs" />
+    <Compile Include="CSharpEnumStorageShouldBeInt32.Fixer.cs" />
     <Compile Include="CSharpStaticHolderTypes.Fixer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CSharpAvoidAsyncVoid.cs" />
@@ -132,8 +133,6 @@
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.cs" />
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.Fixer.cs" />
     <Compile Include="CSharpCollectionsShouldImplementGenericInterface.Fixer.cs" />
-    <Compile Include="CSharpEnumStorageShouldBeInt32.cs" />
-    <Compile Include="CSharpEnumStorageShouldBeInt32.Fixer.cs" />
     <Compile Include="CSharpUseEventsWhereAppropriate.cs" />
     <Compile Include="CSharpUseEventsWhereAppropriate.Fixer.cs" />
     <Compile Include="CSharpImplementStandardExceptionConstructors.cs" />

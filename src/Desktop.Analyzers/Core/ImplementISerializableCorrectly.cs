@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 
 namespace Desktop.Analyzers
-{                   
+{
     /// <summary>
     /// CA2240: Implement ISerializable correctly
     /// </summary>
@@ -15,12 +15,12 @@ namespace Desktop.Analyzers
         internal const string RuleId = "CA2240";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(DesktopAnalyzersResources.ImplementISerializableCorrectlyTitle), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
-        
+
         private static readonly LocalizableString s_localizableMessageDefault = new LocalizableResourceString(nameof(DesktopAnalyzersResources.ImplementISerializableCorrectlyMessageDefault), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageMakeVisible = new LocalizableResourceString(nameof(DesktopAnalyzersResources.ImplementISerializableCorrectlyMessageMakeVisible), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageMakeOverridable = new LocalizableResourceString(nameof(DesktopAnalyzersResources.ImplementISerializableCorrectlyMessageMakeOverridable), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(DesktopAnalyzersResources.ImplementISerializableCorrectlyDescription), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
-        
+
         internal static DiagnosticDescriptor DefaultRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageDefault,
@@ -52,8 +52,7 @@ namespace Desktop.Analyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, MakeVisibleRule, MakeOverridableRule);
 
         public override void Initialize(AnalysisContext analysisContext)
-        { 
-            
+        {
         }
     }
 }

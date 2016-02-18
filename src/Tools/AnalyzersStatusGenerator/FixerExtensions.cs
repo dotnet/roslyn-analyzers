@@ -32,13 +32,13 @@ namespace AnalyzersStatusGenerator
                 Assembly analyzerAssembly = analyzerFileReference.GetAssembly();
                 typeInfos = analyzerAssembly.DefinedTypes;
 
-                foreach (var typeInfo in typeInfos)
+                foreach (TypeInfo typeInfo in typeInfos)
                 {
                     if (typeInfo.IsSubclassOf(typeof(CodeFixProvider)))
                     {
                         try
                         {
-                            var attribute = typeInfo.GetCustomAttribute<ExportCodeFixProviderAttribute>();
+                            ExportCodeFixProviderAttribute attribute = typeInfo.GetCustomAttribute<ExportCodeFixProviderAttribute>();
                             if (attribute != null)
                             {
                                 builder = builder ?? ImmutableArray.CreateBuilder<CodeFixProvider>();
@@ -68,13 +68,13 @@ namespace AnalyzersStatusGenerator
         /// </summary>
         private static bool HasImplementation(CodeFixProvider fixer)
         {
-            var method = fixer.GetType().GetTypeInfo().GetMethod("RegisterCodeFixesAsync");
-            var stateMachineAttr = method?.GetCustomAttribute<AsyncStateMachineAttribute>();
-            var moveNextMethod = stateMachineAttr?.StateMachineType.GetTypeInfo().GetDeclaredMethod("MoveNext");
+            MethodInfo method = fixer.GetType().GetTypeInfo().GetMethod("RegisterCodeFixesAsync");
+            AsyncStateMachineAttribute stateMachineAttr = method?.GetCustomAttribute<AsyncStateMachineAttribute>();
+            MethodInfo moveNextMethod = stateMachineAttr?.StateMachineType.GetTypeInfo().GetDeclaredMethod("MoveNext");
             if (moveNextMethod != null)
             {
-                var body = moveNextMethod.GetMethodBody();
-                var ilInstructionCount = body?.GetILAsByteArray()?.Count();
+                MethodBody body = moveNextMethod.GetMethodBody();
+                int? ilInstructionCount = body?.GetILAsByteArray()?.Count();
                 return ilInstructionCount != 177;
             }
 

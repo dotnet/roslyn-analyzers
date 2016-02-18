@@ -1,7 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -30,17 +28,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var node = root.FindNode(context.Span);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode node = root.FindNode(context.Span);
 
-            var diagnostic = context.Diagnostics.Single();
+            Diagnostic diagnostic = context.Diagnostics.Single();
 
             // create one equivalence key value for all actions produced by this fixer 
             // i.e. Fix All fixes every occurrence of this diagnostic
-            var equivalenceKey = nameof(ExceptionsShouldBePublicFixer);
+            string equivalenceKey = nameof(ExceptionsShouldBePublicFixer);
 
-            var action = CodeAction.Create(
-                MicrosoftApiDesignGuidelinesAnalyzersResources.MakeExceptionPublic, 
+            CodeAction action = CodeAction.Create(
+                MicrosoftApiDesignGuidelinesAnalyzersResources.MakeExceptionPublic,
                 c => MakePublic(context.Document, node, context.CancellationToken),
                 equivalenceKey);
 

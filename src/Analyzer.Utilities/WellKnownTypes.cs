@@ -13,7 +13,6 @@ namespace Analyzer.Utilities
 
         public static INamedTypeSymbol GenericICollection(Compilation compilation)
         {
-
             return compilation.GetTypeByMetadataName("System.Collections.Generic.ICollection`1");
         }
 
@@ -147,6 +146,26 @@ namespace Analyzer.Utilities
             return compilation.GetTypeByMetadataName("System.Runtime.Serialization.StreamingContext");
         }
 
+        public static INamedTypeSymbol OnDeserializingAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Runtime.Serialization.OnDeserializingAttribute");
+        }
+
+        public static INamedTypeSymbol OnDeserializedAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Runtime.Serialization.OnDeserializedAttribute");
+        }
+
+        public static INamedTypeSymbol OnSerializingAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Runtime.Serialization.OnSerializingAttribute");
+        }
+
+        public static INamedTypeSymbol OnSerializedAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Runtime.Serialization.OnSerializedAttribute");
+        }
+
         public static INamedTypeSymbol SerializableAttribute(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName("System.SerializableAttribute");
@@ -210,6 +229,11 @@ namespace Analyzer.Utilities
         public static INamedTypeSymbol EventArgs(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName("System.EventArgs");
+        }
+
+        public static INamedTypeSymbol Uri(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Uri");
         }
 
         public static INamedTypeSymbol ComVisibleAttribute(Compilation compilation)

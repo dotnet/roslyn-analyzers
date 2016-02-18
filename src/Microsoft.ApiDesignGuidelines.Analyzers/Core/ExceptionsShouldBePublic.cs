@@ -5,7 +5,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using System.Collections.Generic;
-using System;
 using System.Linq;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
@@ -19,10 +18,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         internal const string RuleId = "CA1064";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ExceptionsShouldBePublicTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        
+
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ExceptionsShouldBePublicMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ExceptionsShouldBePublicDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        
+
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
@@ -50,7 +49,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private void AnalyzeCompilationStart(CompilationStartAnalysisContext csContext)
         {
             // Get named type symbols for targetted exception types
-            var exceptionTypes = s_exceptionTypeNames
+            ImmutableHashSet<INamedTypeSymbol> exceptionTypes = s_exceptionTypeNames
                 .Select(name => csContext.Compilation.GetTypeByMetadataName(name))
                 .Where(t => t != null)
                 .ToImmutableHashSet();

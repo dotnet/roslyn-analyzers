@@ -18,12 +18,12 @@ namespace System.Runtime.Analyzers
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var syntaxFactoryService = SyntaxGenerator.GetGenerator(context.Document);
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var node = root.FindNode(context.Span);
+            SyntaxGenerator syntaxFactoryService = SyntaxGenerator.GetGenerator(context.Document);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode node = root.FindNode(context.Span);
 
             // We cannot have multiple overlapping diagnostics of this id.
-            var diagnostic = context.Diagnostics.Single();
+            Diagnostic diagnostic = context.Diagnostics.Single();
 
             if (IsInArgumentContext(node))
             {
@@ -62,12 +62,12 @@ namespace System.Runtime.Analyzers
 
         internal SyntaxNode CreateEqualsExpression(SyntaxGenerator syntaxFactoryService, SemanticModel model, SyntaxNode operand1, SyntaxNode operand2, bool isEquals)
         {
-            var stringType = model.Compilation.GetSpecialType(SpecialType.System_String);
-            var memberAccess = syntaxFactoryService.MemberAccessExpression(
+            INamedTypeSymbol stringType = model.Compilation.GetSpecialType(SpecialType.System_String);
+            SyntaxNode memberAccess = syntaxFactoryService.MemberAccessExpression(
                         syntaxFactoryService.TypeExpression(stringType),
                         syntaxFactoryService.IdentifierName(UseOrdinalStringComparisonAnalyzer.EqualsMethodName));
-            var ordinal = CreateOrdinalMemberAccess(syntaxFactoryService, model);
-            var invocation = syntaxFactoryService.InvocationExpression(
+            SyntaxNode ordinal = CreateOrdinalMemberAccess(syntaxFactoryService, model);
+            SyntaxNode invocation = syntaxFactoryService.InvocationExpression(
                 memberAccess,
                 operand1,
                 operand2.WithoutTrailingTrivia(),
@@ -85,7 +85,7 @@ namespace System.Runtime.Analyzers
 
         internal SyntaxNode CreateOrdinalMemberAccess(SyntaxGenerator syntaxFactoryService, SemanticModel model)
         {
-            var stringComparisonType = WellKnownTypes.StringComparison(model.Compilation);
+            INamedTypeSymbol stringComparisonType = WellKnownTypes.StringComparison(model.Compilation);
             return syntaxFactoryService.MemberAccessExpression(
                 syntaxFactoryService.TypeExpression(stringComparisonType),
                 syntaxFactoryService.IdentifierName(UseOrdinalStringComparisonAnalyzer.OrdinalText));
@@ -98,7 +98,7 @@ namespace System.Runtime.Analyzers
                 return false;
             }
 
-            var parameters = methodSymbol.Parameters;
+            ImmutableArray<IParameterSymbol> parameters = methodSymbol.Parameters;
             switch (methodSymbol.Name)
             {
                 case UseOrdinalStringComparisonAnalyzer.EqualsMethodName:

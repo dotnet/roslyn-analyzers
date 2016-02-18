@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' Async006: Don't Mix Blocking and Async
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicDonTMixBlockingAndAsyncFixer
-        Inherits DonTMixBlockingAndAsyncFixer 
+        Inherits DonTMixBlockingAndAsyncFixer
 
     End Class
 End Namespace

@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.QualityGuidelines.Analyzers     
+Namespace Microsoft.QualityGuidelines.Analyzers
     ''' <summary>
     ''' CA1814: Prefer jagged arrays over multidimensional
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicPreferJaggedArraysOverMultidimensionalFixer
-        Inherits PreferJaggedArraysOverMultidimensionalFixer 
+        Inherits PreferJaggedArraysOverMultidimensionalFixer
 
     End Class
 End Namespace

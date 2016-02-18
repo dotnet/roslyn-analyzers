@@ -51,8 +51,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
-                    var iCollectionType = WellKnownTypes.ICollection(context.Compilation);
-                    var arrayType = WellKnownTypes.Array(context.Compilation);
+                    INamedTypeSymbol iCollectionType = WellKnownTypes.ICollection(context.Compilation);
+                    INamedTypeSymbol arrayType = WellKnownTypes.Array(context.Compilation);
 
                     if (iCollectionType == null || arrayType == null)
                     {
@@ -68,7 +68,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             var property = (IPropertySymbol)context.Symbol;
 
             // check whether it has a public setter
-            var setter = property.SetMethod;
+            IMethodSymbol setter = property.SetMethod;
             if (setter == null || setter.DeclaredAccessibility != Accessibility.Public)
             {
                 return;

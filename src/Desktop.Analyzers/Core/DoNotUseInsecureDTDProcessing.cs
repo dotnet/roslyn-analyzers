@@ -25,13 +25,13 @@ namespace Desktop.Analyzers
                                                                                                                   SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDTDProcessingDescription)),
                                                                                                                   HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =ImmutableArray.Create(RuleDoNotUseInsecureDTDProcessing);
+        private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics = ImmutableArray.Create(RuleDoNotUseInsecureDTDProcessing);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return DoNotUseInsecureDTDProcessingAnalyzer<TLanguageKindEnum>.supportedDiagnostics;
+                return DoNotUseInsecureDTDProcessingAnalyzer<TLanguageKindEnum>.s_supportedDiagnostics;
             }
         }
 
@@ -40,7 +40,7 @@ namespace Desktop.Analyzers
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
-                    var compilation = context.Compilation;
+                    Compilation compilation = context.Compilation;
                     var xmlTypes = new CompilationSecurityTypes(compilation);
                     if (ReferencesAnyTargetType(xmlTypes))
                     {
@@ -86,7 +86,7 @@ namespace Desktop.Analyzers
                                             description: description,
                                             helpLinkUri: helpLink,
                                             customTags: WellKnownDiagnosticTags.Telemetry);
-        }    
+        }
 
         protected abstract void RegisterAnalyzer(CodeBlockStartAnalysisContext<TLanguageKindEnum> context, CompilationSecurityTypes types, Version targetFrameworkVersion);
 
@@ -111,7 +111,7 @@ namespace Desktop.Analyzers
             }
             public void AnalyzeCodeBlockEnd(CodeBlockAnalysisContext context)
             {
-                foreach (var p in this._xmlDocumentEnvironments)
+                foreach (KeyValuePair<ISymbol, XmlDocumentEnvironment> p in _xmlDocumentEnvironments)
                 {
                     XmlDocumentEnvironment env = p.Value;
                     if (!(env.IsXmlResolverSet | env.IsSecureResolver))
@@ -127,7 +127,7 @@ namespace Desktop.Analyzers
                 }
 
 
-                foreach (var p in this._xmlTextReaderEnvironments)
+                foreach (KeyValuePair<ISymbol, XmlTextReaderEnvironment> p in _xmlTextReaderEnvironments)
                 {
                     XmlTextReaderEnvironment env = p.Value;
                     if (!(env.IsXmlResolverSet | env.IsSecureResolver) ||
@@ -139,7 +139,7 @@ namespace Desktop.Analyzers
                             SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                 nameof(DesktopAnalyzersResources.XmlTextReaderConstructedWithNoSecureResolutionMessage),
                                 env.EnclosingConstructSymbol.Name));
-                        
+
                         context.ReportDiagnostic(diag);
                     }
                 }
@@ -165,7 +165,7 @@ namespace Desktop.Analyzers
                     return;
                 }
 
-                CompilationSecurityTypes xmlTypes = this._xmlTypes;
+                CompilationSecurityTypes xmlTypes = _xmlTypes;
                 if (method.MatchMethodDerivedByName(xmlTypes.XmlDocument, SecurityMemberNames.Load) ||                                    //FxCop CA3056
                     method.MatchMethodDerivedByName(xmlTypes.XmlDocument, SecurityMemberNames.LoadXml) ||                                 //FxCop CA3057
                     method.MatchMethodDerivedByName(xmlTypes.XPathDocument, WellKnownMemberNames.InstanceConstructorName) ||         //FxCop CA3059
@@ -181,11 +181,11 @@ namespace Desktop.Analyzers
                         DiagnosticDescriptor rule = RuleDoNotUseInsecureDTDProcessing;
                         context.ReportDiagnostic(
                             Diagnostic.Create(
-                                rule, 
-                                node.GetLocation(), 
+                                rule,
+                                node.GetLocation(),
                                 SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                     nameof(DesktopAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage),
-                                    SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model), 
+                                    SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model),
                                 method.Name)
                             )
                         );
@@ -198,10 +198,10 @@ namespace Desktop.Analyzers
                     {
                         bool isXmlDocumentSecureResolver = false;
 
-                        foreach (SyntaxNode arg in this._syntaxNodeHelper.GetObjectInitializerExpressionNodes(node))
+                        foreach (SyntaxNode arg in _syntaxNodeHelper.GetObjectInitializerExpressionNodes(node))
                         {
-                            var argLhs = this._syntaxNodeHelper.GetAssignmentLeftNode(arg);
-                            var argRhs = this._syntaxNodeHelper.GetAssignmentRightNode(arg);
+                            SyntaxNode argLhs = _syntaxNodeHelper.GetAssignmentLeftNode(arg);
+                            SyntaxNode argRhs = _syntaxNodeHelper.GetAssignmentRightNode(arg);
 
                             if (SecurityDiagnosticHelpers.IsXmlDocumentXmlResolverProperty(SyntaxNodeHelper.GetSymbol(argLhs, model), xmlTypes))
                             {
@@ -240,11 +240,11 @@ namespace Desktop.Analyzers
                         bool isXmlTextReaderSecureResolver, isXmlTextReaderDtdProcessingDisabled;
                         isXmlTextReaderSecureResolver = isXmlTextReaderDtdProcessingDisabled = false;
 
-                        foreach (SyntaxNode arg in this._syntaxNodeHelper.GetObjectInitializerExpressionNodes(node))
+                        foreach (SyntaxNode arg in _syntaxNodeHelper.GetObjectInitializerExpressionNodes(node))
                         {
-                            var argLhs = this._syntaxNodeHelper.GetAssignmentLeftNode(arg);
-                            var argRhs = this._syntaxNodeHelper.GetAssignmentRightNode(arg);
-                            var symArgLhs = SyntaxNodeHelper.GetSymbol(argLhs, model);
+                            SyntaxNode argLhs = _syntaxNodeHelper.GetAssignmentLeftNode(arg);
+                            SyntaxNode argRhs = _syntaxNodeHelper.GetAssignmentRightNode(arg);
+                            ISymbol symArgLhs = SyntaxNodeHelper.GetSymbol(argLhs, model);
                             if (SecurityDiagnosticHelpers.IsXmlTextReaderXmlResolverProperty(symArgLhs, xmlTypes))
                             {
                                 if (!(SyntaxNodeHelper.NodeHasConstantValueNull(argRhs, model) ||
@@ -322,10 +322,10 @@ namespace Desktop.Analyzers
                     }
                     else
                     {
-                        SyntaxNode settingsNode = this._syntaxNodeHelper.GetInvocationArgumentExpressionNodes(node).ElementAt(xmlReaderSettingsIndex);
+                        SyntaxNode settingsNode = _syntaxNodeHelper.GetInvocationArgumentExpressionNodes(node).ElementAt(xmlReaderSettingsIndex);
                         ISymbol settingsSymbol = SyntaxNodeHelper.GetSymbol(settingsNode, model);
                         XmlReaderSettingsEnvironment env = null;
-                        if (!this._xmlReaderSettingsEnvironments.TryGetValue(settingsSymbol, out env))
+                        if (!_xmlReaderSettingsEnvironments.TryGetValue(settingsSymbol, out env))
                         {
                             // symbol for settings is not found => passed in without any change => assume insecure
                             Diagnostic diag = Diagnostic.Create(
@@ -372,7 +372,7 @@ namespace Desktop.Analyzers
                 SyntaxNode node = context.Node;
                 SemanticModel semanticModel = context.SemanticModel;
 
-                var lhs = _syntaxNodeHelper.GetAssignmentLeftNode(node);
+                SyntaxNode lhs = _syntaxNodeHelper.GetAssignmentLeftNode(node);
                 if (lhs == null)
                 {
                     return;
@@ -384,12 +384,12 @@ namespace Desktop.Analyzers
                     return;
                 }
 
-                if (property.MatchPropertyDerivedByName(this._xmlTypes.XmlDocument, SecurityMemberNames.InnerXml))                                       //FxCop CA3058
+                if (property.MatchPropertyDerivedByName(_xmlTypes.XmlDocument, SecurityMemberNames.InnerXml))                                       //FxCop CA3058
                 {
                     DiagnosticDescriptor rule = RuleDoNotUseInsecureDTDProcessing;
                     context.ReportDiagnostic(
                         Diagnostic.Create(
-                            rule, 
+                            rule,
                             node.GetLocation(),
                             SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                 nameof(DesktopAnalyzersResources.DoNotUseSetInnerXmlMessage),
@@ -398,12 +398,12 @@ namespace Desktop.Analyzers
                         )
                     );
                 }
-                else if (property.MatchPropertyDerivedByName(this._xmlTypes.DataViewManager, SecurityMemberNames.DataViewSettingCollectionString))   //FxCop CA3065
+                else if (property.MatchPropertyDerivedByName(_xmlTypes.DataViewManager, SecurityMemberNames.DataViewSettingCollectionString))   //FxCop CA3065
                 {
-                    DiagnosticDescriptor rule = RuleDoNotUseInsecureDTDProcessing ;
+                    DiagnosticDescriptor rule = RuleDoNotUseInsecureDTDProcessing;
                     context.ReportDiagnostic(
                         Diagnostic.Create(
-                            rule, 
+                            rule,
                             node.GetLocation(),
                             SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                 nameof(DesktopAnalyzersResources.ReviewDtdProcessingPropertiesMessage),
@@ -419,10 +419,10 @@ namespace Desktop.Analyzers
                 SyntaxNode node = context.Node;
                 SemanticModel model = context.SemanticModel;
 
-                node = this._syntaxNodeHelper.GetVariableDeclaratorOfAFieldDeclarationNode(node) ?? node;
+                node = _syntaxNodeHelper.GetVariableDeclaratorOfAFieldDeclarationNode(node) ?? node;
 
-                SyntaxNode lhs = this._syntaxNodeHelper.GetAssignmentLeftNode(node);
-                SyntaxNode rhs = this._syntaxNodeHelper.GetAssignmentRightNode(node);
+                SyntaxNode lhs = _syntaxNodeHelper.GetAssignmentLeftNode(node);
+                SyntaxNode rhs = _syntaxNodeHelper.GetAssignmentRightNode(node);
 
                 if (lhs == null || rhs == null)
                 {
@@ -435,7 +435,7 @@ namespace Desktop.Analyzers
                     return;
                 }
 
-                CompilationSecurityTypes xmlTypes = this._xmlTypes;
+                CompilationSecurityTypes xmlTypes = _xmlTypes;
                 IMethodSymbol rhsMethodSymbol = _syntaxNodeHelper.GetCalleeMethodSymbol(rhs, model);
                 if (SecurityDiagnosticHelpers.IsXmlDocumentCtorDerived(rhsMethodSymbol, xmlTypes))
                 {
@@ -446,10 +446,10 @@ namespace Desktop.Analyzers
                         env.IsSecureResolver = true;
                     }
 
-                    foreach (SyntaxNode arg in this._syntaxNodeHelper.GetObjectInitializerExpressionNodes(rhs))
+                    foreach (SyntaxNode arg in _syntaxNodeHelper.GetObjectInitializerExpressionNodes(rhs))
                     {
-                        var argLhs = this._syntaxNodeHelper.GetAssignmentLeftNode(arg);
-                        var argRhs = this._syntaxNodeHelper.GetAssignmentRightNode(arg);
+                        SyntaxNode argLhs = _syntaxNodeHelper.GetAssignmentLeftNode(arg);
+                        SyntaxNode argRhs = _syntaxNodeHelper.GetAssignmentRightNode(arg);
 
                         if (SecurityDiagnosticHelpers.IsXmlDocumentXmlResolverPropertyDerived(SyntaxNodeHelper.GetSymbol(argLhs, model), xmlTypes))
                         {
@@ -469,13 +469,13 @@ namespace Desktop.Analyzers
                     if (!env.IsXmlResolverSet | env.IsSecureResolver)
                     {
                         env.XmlDocumentDefinition = node;
-                        env.EnclosingConstructSymbol = this._syntaxNodeHelper.GetEnclosingConstructSymbol(node, model);
-                        this._xmlDocumentEnvironments[lhsSymbol] = env;
+                        env.EnclosingConstructSymbol = _syntaxNodeHelper.GetEnclosingConstructSymbol(node, model);
+                        _xmlDocumentEnvironments[lhsSymbol] = env;
                     }
                 }
                 else if (SecurityDiagnosticHelpers.IsXmlDocumentXmlResolverPropertyDerived(lhsSymbol, xmlTypes))
                 {
-                    SyntaxNode lhsExpressionNode = this._syntaxNodeHelper.GetMemberAccessExpressionNode(lhs) ?? lhs;
+                    SyntaxNode lhsExpressionNode = _syntaxNodeHelper.GetMemberAccessExpressionNode(lhs) ?? lhs;
                     if (lhsExpressionNode == null)
                     {
                         return;
@@ -488,9 +488,9 @@ namespace Desktop.Analyzers
                     }
 
                     XmlDocumentEnvironment env = null;
-                    this._xmlDocumentEnvironments.TryGetValue(lhsExpressionSymbol, out env);
+                    _xmlDocumentEnvironments.TryGetValue(lhsExpressionSymbol, out env);
 
-                    var rhsType = model.GetTypeInfo(rhs).Type;
+                    ITypeSymbol rhsType = model.GetTypeInfo(rhs).Type;
                     // if XmlDocument was constructed in the same code block with default values.
                     if (env != null)
                     {
@@ -528,10 +528,10 @@ namespace Desktop.Analyzers
                 SyntaxNode node = context.Node;
                 SemanticModel model = context.SemanticModel;
 
-                node = this._syntaxNodeHelper.GetVariableDeclaratorOfAFieldDeclarationNode(node) ?? node;
+                node = _syntaxNodeHelper.GetVariableDeclaratorOfAFieldDeclarationNode(node) ?? node;
 
-                SyntaxNode lhs = this._syntaxNodeHelper.GetAssignmentLeftNode(node);
-                SyntaxNode rhs = this._syntaxNodeHelper.GetAssignmentRightNode(node);
+                SyntaxNode lhs = _syntaxNodeHelper.GetAssignmentLeftNode(node);
+                SyntaxNode rhs = _syntaxNodeHelper.GetAssignmentRightNode(node);
 
                 if (lhs == null || rhs == null)
                 {
@@ -544,14 +544,14 @@ namespace Desktop.Analyzers
                     return;
                 }
 
-                CompilationSecurityTypes xmlTypes = this._xmlTypes;
+                CompilationSecurityTypes xmlTypes = _xmlTypes;
                 IMethodSymbol rhsMethodSymbol = _syntaxNodeHelper.GetCalleeMethodSymbol(rhs, model);
                 if (SecurityDiagnosticHelpers.IsXmlTextReaderCtorDerived(rhsMethodSymbol, xmlTypes))
                 {
                     XmlTextReaderEnvironment env = null;
-                    if (!this._xmlTextReaderEnvironments.TryGetValue(lhsSymbol, out env))
+                    if (!_xmlTextReaderEnvironments.TryGetValue(lhsSymbol, out env))
                     {
-                        env = new XmlTextReaderEnvironment(this._isFrameworkSecure);
+                        env = new XmlTextReaderEnvironment(_isFrameworkSecure);
                     }
 
                     if (rhsMethodSymbol.ContainingType != xmlTypes.XmlTextReader)
@@ -560,10 +560,10 @@ namespace Desktop.Analyzers
                         env.IsSecureResolver = true;
                     }
 
-                    foreach (SyntaxNode arg in this._syntaxNodeHelper.GetObjectInitializerExpressionNodes(rhs))
+                    foreach (SyntaxNode arg in _syntaxNodeHelper.GetObjectInitializerExpressionNodes(rhs))
                     {
-                        var argLhs = this._syntaxNodeHelper.GetAssignmentLeftNode(arg);
-                        var argRhs = this._syntaxNodeHelper.GetAssignmentRightNode(arg);
+                        SyntaxNode argLhs = _syntaxNodeHelper.GetAssignmentLeftNode(arg);
+                        SyntaxNode argRhs = _syntaxNodeHelper.GetAssignmentRightNode(arg);
 
                         if (SecurityDiagnosticHelpers.IsXmlTextReaderXmlResolverPropertyDerived(SyntaxNodeHelper.GetSymbol(argLhs, model), xmlTypes))
                         {
@@ -595,8 +595,8 @@ namespace Desktop.Analyzers
                     else if (!(env.IsDtdProcessingSet & env.IsXmlResolverSet) && (rhsMethodSymbol.ContainingType == xmlTypes.XmlTextReader))
                     {
                         env.XmlTextReaderDefinition = node;
-                        env.EnclosingConstructSymbol = this._syntaxNodeHelper.GetEnclosingConstructSymbol(node, model);
-                        this._xmlTextReaderEnvironments[lhsSymbol] = env;
+                        env.EnclosingConstructSymbol = _syntaxNodeHelper.GetEnclosingConstructSymbol(node, model);
+                        _xmlTextReaderEnvironments[lhsSymbol] = env;
                     }
                 }
                 else if (lhsSymbol.Kind == SymbolKind.Property)
@@ -611,7 +611,7 @@ namespace Desktop.Analyzers
                         //      var doc = new XmlTextReader(path){XmlResolver = new XmlUrlResolver()};
                         // therefore we only need to check property setting in the form of:
                         //      xmlTextReaderObject.XmlResolver = new XmlUrlResolver();
-                        SyntaxNode lhsExpressionNode = this._syntaxNodeHelper.GetMemberAccessExpressionNode(lhs);
+                        SyntaxNode lhsExpressionNode = _syntaxNodeHelper.GetMemberAccessExpressionNode(lhs);
                         if (lhsExpressionNode == null)
                         {
                             return;
@@ -624,9 +624,9 @@ namespace Desktop.Analyzers
                         }
 
                         XmlTextReaderEnvironment env = null;
-                        this._xmlTextReaderEnvironments.TryGetValue(lhsExpressionSymbol, out env);
+                        _xmlTextReaderEnvironments.TryGetValue(lhsExpressionSymbol, out env);
 
-                        var rhsType = model.GetTypeInfo(rhs).Type;
+                        ITypeSymbol rhsType = model.GetTypeInfo(rhs).Type;
 
                         // if the XmlTextReader object was constructed with default values
                         if (env != null)
@@ -681,8 +681,8 @@ namespace Desktop.Analyzers
                 SyntaxNode node = context.Node;
                 SemanticModel model = context.SemanticModel;
 
-                SyntaxNode lhs = this._syntaxNodeHelper.GetAssignmentLeftNode(node);
-                SyntaxNode rhs = this._syntaxNodeHelper.GetAssignmentRightNode(node);
+                SyntaxNode lhs = _syntaxNodeHelper.GetAssignmentLeftNode(node);
+                SyntaxNode rhs = _syntaxNodeHelper.GetAssignmentRightNode(node);
 
                 if (lhs == null || rhs == null)
                 {
@@ -695,22 +695,22 @@ namespace Desktop.Analyzers
                     return;
                 }
 
-                CompilationSecurityTypes xmlTypes = this._xmlTypes;
+                CompilationSecurityTypes xmlTypes = _xmlTypes;
                 IMethodSymbol rhsMethodSymbol = _syntaxNodeHelper.GetCalleeMethodSymbol(rhs, model);
                 if (SecurityDiagnosticHelpers.IsXmlReaderSettingsCtor(rhsMethodSymbol, xmlTypes))
                 {
-                    XmlReaderSettingsEnvironment env = new XmlReaderSettingsEnvironment(this._isFrameworkSecure);
-                    this._xmlReaderSettingsEnvironments[lhsSymbol] = env;
+                    XmlReaderSettingsEnvironment env = new XmlReaderSettingsEnvironment(_isFrameworkSecure);
+                    _xmlReaderSettingsEnvironments[lhsSymbol] = env;
 
                     env.XmlReaderSettingsDefinition = node;
-                    env.EnclosingConstructSymbol = this._syntaxNodeHelper.GetEnclosingConstructSymbol(node, model);
+                    env.EnclosingConstructSymbol = _syntaxNodeHelper.GetEnclosingConstructSymbol(node, model);
 
-                    foreach (SyntaxNode arg in this._syntaxNodeHelper.GetObjectInitializerExpressionNodes(rhs))
+                    foreach (SyntaxNode arg in _syntaxNodeHelper.GetObjectInitializerExpressionNodes(rhs))
                     {
-                        var argLhs = this._syntaxNodeHelper.GetAssignmentLeftNode(arg);
-                        var argRhs = this._syntaxNodeHelper.GetAssignmentRightNode(arg);
+                        SyntaxNode argLhs = _syntaxNodeHelper.GetAssignmentLeftNode(arg);
+                        SyntaxNode argRhs = _syntaxNodeHelper.GetAssignmentRightNode(arg);
 
-                        var argLhsSymbol = SyntaxNodeHelper.GetSymbol(argLhs, model);
+                        ISymbol argLhsSymbol = SyntaxNodeHelper.GetSymbol(argLhs, model);
 
                         if (SecurityDiagnosticHelpers.IsXmlReaderSettingsXmlResolverProperty(argLhsSymbol, xmlTypes))
                         {
@@ -744,7 +744,7 @@ namespace Desktop.Analyzers
                         isXmlReaderSettingsDtdProcessingProperty |
                         isXmlReaderSettingsMaxCharactersFromEntitiesProperty)
                     {
-                        SyntaxNode lhsExpressionNode = this._syntaxNodeHelper.GetMemberAccessExpressionNode(lhs);
+                        SyntaxNode lhsExpressionNode = _syntaxNodeHelper.GetMemberAccessExpressionNode(lhs);
                         if (lhsExpressionNode == null)
                         {
                             return;
@@ -757,14 +757,14 @@ namespace Desktop.Analyzers
                         }
 
                         XmlReaderSettingsEnvironment env = null;
-                        if (!this._xmlReaderSettingsEnvironments.TryGetValue(lhsExpressionSymbol, out env))
+                        if (!_xmlReaderSettingsEnvironments.TryGetValue(lhsExpressionSymbol, out env))
                         {
                             // env.IsConstructedInCodeBlock is false
                             env = new XmlReaderSettingsEnvironment();
-                            this._xmlReaderSettingsEnvironments[lhsExpressionSymbol] = env;
+                            _xmlReaderSettingsEnvironments[lhsExpressionSymbol] = env;
                         }
 
-                        var rhsType = model.GetTypeInfo(rhs).Type;
+                        ITypeSymbol rhsType = model.GetTypeInfo(rhs).Type;
 
                         if (isXmlReaderSettingsXmlResolverProperty)
                         {
@@ -818,7 +818,7 @@ namespace Desktop.Analyzers
                 internal bool IsDtdProcessingDisabled;
                 internal bool IsMaxCharactersFromEntitiesLimited;
                 internal bool IsSecureResolver;
-                internal bool IsConstructedInCodeBlock;
+                internal readonly bool IsConstructedInCodeBlock;
 
                 // this constructor is used for keep track of XmlReaderSettings not created in the code block
                 internal XmlReaderSettingsEnvironment() { }

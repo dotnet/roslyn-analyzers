@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 
 namespace System.Runtime.Analyzers
-{                   
+{
     /// <summary>
     /// CA1601: Do not use timers that prevent power state changes
     /// </summary>
@@ -15,10 +15,10 @@ namespace System.Runtime.Analyzers
         internal const string RuleId = "CA1601";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotUseTimersThatPreventPowerStateChangesTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        
+
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotUseTimersThatPreventPowerStateChangesMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotUseTimersThatPreventPowerStateChangesDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        
+
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
@@ -32,8 +32,7 @@ namespace System.Runtime.Analyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext analysisContext)
-        { 
-            
+        {
         }
     }
 }

@@ -10,7 +10,6 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
 {
     public abstract class DoNotUseInsecureCryptographicAlgorithmsAnalyzer : DiagnosticAnalyzer
     {
-
         internal const string DoNotUseWeakCryptographicRuleId = "CA5350";
         internal const string DoNotUseBrokenCryptographicRuleId = "CA5351";
 
@@ -23,14 +22,14 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
         internal static DiagnosticDescriptor DoNotUseMD5SpecificRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographicRuleId,
                                                                                           s_localizableDoNotUseMD5Title,
                                                                                           s_localizableDoNotUseMD5Description);
-        
+
         internal static DiagnosticDescriptor DoNotUseSHA1SpecificRule = CreateDiagnosticDescriptor(DoNotUseWeakCryptographicRuleId,
                                                                                            s_localizableDoNotUseSHA1Title,
                                                                                            s_localizableDoNotUseSHA1Description);
-         
+
         protected abstract Analyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes cryptTypes);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics = ImmutableArray.Create(DoNotUseMD5SpecificRule, 
+        private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics = ImmutableArray.Create(DoNotUseMD5SpecificRule,
                                                                                                                     DoNotUseSHA1SpecificRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -64,18 +63,18 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
 
         private static bool ReferencesAnyTargetType(CompilationSecurityTypes types)
         {
-            return types.MD5 != null 
+            return types.MD5 != null
                 || types.SHA1 != null
                 || types.HMACSHA1 != null;
         }
 
         protected class Analyzer
         {
-            private CompilationSecurityTypes _cryptTypes; 
+            private readonly CompilationSecurityTypes _cryptTypes;
 
             public Analyzer(CompilationSecurityTypes cryptTypes)
             {
-                _cryptTypes = cryptTypes; 
+                _cryptTypes = cryptTypes;
             }
 
             public void AnalyzeNode(SyntaxNodeAnalysisContext context)
@@ -96,7 +95,7 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
                 if (type.DerivesFrom(_cryptTypes.MD5))
                 {
                     rule = DoNotUseMD5SpecificRule;
-                } 
+                }
                 else if (type.DerivesFrom(_cryptTypes.SHA1) ||
                          type.DerivesFrom(_cryptTypes.HMACSHA1))
                 {
@@ -107,7 +106,7 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
                 {
                     context.ReportDiagnostic(Diagnostic.Create(rule, node.GetLocation()));
                 }
-            } 
+            }
         }
     }
 }

@@ -23,17 +23,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var generator = SyntaxGenerator.GetGenerator(context.Document);
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(context.Document);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            var declaration = root.FindNode(context.Span);
+            SyntaxNode declaration = root.FindNode(context.Span);
             declaration = generator.GetDeclaration(declaration);
             if (declaration == null)
             {
                 return;
             }
 
-            var model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
             var typeSymbol = model.GetDeclaredSymbol(declaration) as INamedTypeSymbol;
             if (typeSymbol == null)
             {
@@ -41,7 +41,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
 
             // We cannot have multiple overlapping diagnostics of this id.
-            var diagnostic = context.Diagnostics.Single();
+            Diagnostic diagnostic = context.Diagnostics.Single();
 
             context.RegisterCodeFix(new MyCodeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle,
                                                      async ct => await ImplementOperatorEquals(context.Document, declaration, typeSymbol, ct).ConfigureAwait(false)),
@@ -51,18 +51,18 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private async Task<Document> ImplementOperatorEquals(Document document, SyntaxNode declaration, INamedTypeSymbol typeSymbol, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            var generator = editor.Generator;
+            SyntaxGenerator generator = editor.Generator;
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.EqualityOperatorName))
             {
-                var equalityOperator = generator.ComparisonOperatorDeclaration(OperatorKind.Equality, typeSymbol);
+                SyntaxNode equalityOperator = generator.ComparisonOperatorDeclaration(OperatorKind.Equality, typeSymbol);
 
                 editor.AddMember(declaration, equalityOperator);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.InequalityOperatorName))
             {
-                var inequalityOperator = generator.ComparisonOperatorDeclaration(OperatorKind.Inequality, typeSymbol);
+                SyntaxNode inequalityOperator = generator.ComparisonOperatorDeclaration(OperatorKind.Inequality, typeSymbol);
 
                 editor.AddMember(declaration, inequalityOperator);
             }

@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace System.Runtime.Analyzers     
+Namespace System.Runtime.Analyzers
     ''' <summary>
     ''' CA1601: Do not use timers that prevent power state changes
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicDoNotUseTimersThatPreventPowerStateChangesFixer
-        Inherits DoNotUseTimersThatPreventPowerStateChangesFixer 
+        Inherits DoNotUseTimersThatPreventPowerStateChangesFixer
 
     End Class
 End Namespace

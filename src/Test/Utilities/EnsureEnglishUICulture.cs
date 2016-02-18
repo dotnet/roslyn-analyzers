@@ -13,7 +13,7 @@ namespace Roslyn.Test.Utilities
         {
             get
             {
-                var currentUICultureName = Thread.CurrentThread.CurrentUICulture.Name;
+                string currentUICultureName = Thread.CurrentThread.CurrentUICulture.Name;
                 if (currentUICultureName.Length == 0 || currentUICultureName.StartsWith("en", StringComparison.OrdinalIgnoreCase))
                 {
                     return null;
@@ -30,7 +30,7 @@ namespace Roslyn.Test.Utilities
         public EnsureEnglishUICulture()
         {
             _threadId = Thread.CurrentThread.ManagedThreadId;
-            var preferred = PreferredOrNull;
+            CultureInfo preferred = PreferredOrNull;
 
             if (preferred != null)
             {

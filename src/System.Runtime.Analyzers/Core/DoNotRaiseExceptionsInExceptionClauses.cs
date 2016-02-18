@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 
 namespace System.Runtime.Analyzers
-{                   
+{
     /// <summary>
     /// CA2219: Do not raise exceptions in exception clauses
     /// </summary>
@@ -15,12 +15,12 @@ namespace System.Runtime.Analyzers
         internal const string RuleId = "CA2219";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        
+
         private static readonly LocalizableString s_localizableMessageFinally = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesMessageFinally), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageFilter = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesMessageFilter), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageFault = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesMessageFault), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        
+
         internal static DiagnosticDescriptor FinallyRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageFinally,
@@ -52,8 +52,7 @@ namespace System.Runtime.Analyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(FinallyRule, FilterRule, FaultRule);
 
         public override void Initialize(AnalysisContext analysisContext)
-        { 
-            
+        {
         }
     }
 }

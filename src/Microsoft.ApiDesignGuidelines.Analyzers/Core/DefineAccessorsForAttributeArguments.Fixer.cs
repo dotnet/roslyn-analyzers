@@ -20,19 +20,19 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var generator = SyntaxGenerator.GetGenerator(context.Document);
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var node = root.FindNode(context.Span);
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(context.Document);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode node = root.FindNode(context.Span);
 
             // We cannot have multiple overlapping diagnostics of this id.
-            var diagnostic = context.Diagnostics.Single();
+            Diagnostic diagnostic = context.Diagnostics.Single();
             string fixCase;
             if (diagnostic.Properties.TryGetValue("case", out fixCase))
             {
                 switch (fixCase)
                 {
                     case DefineAccessorsForAttributeArgumentsAnalyzer.AddAccessorCase:
-                        var parameter = generator.GetDeclaration(node, DeclarationKind.Parameter);
+                        SyntaxNode parameter = generator.GetDeclaration(node, DeclarationKind.Parameter);
                         if (parameter != null)
                         {
                             context.RegisterCodeFix(new MyCodeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.CreatePropertyAccessorForParameter,
@@ -42,7 +42,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         return;
 
                     case DefineAccessorsForAttributeArgumentsAnalyzer.MakePublicCase:
-                        var property = generator.GetDeclaration(node, DeclarationKind.Property);
+                        SyntaxNode property = generator.GetDeclaration(node, DeclarationKind.Property);
                         if (property != null)
                         {
                             context.RegisterCodeFix(new MyCodeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.MakeGetterPublic,
@@ -66,7 +66,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private async Task<Document> AddAccessor(Document document, SyntaxNode parameter, CancellationToken cancellationToken)
         {
             SymbolEditor symbolEditor = SymbolEditor.Create(document);
-            var model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
             var parameterSymbol = model.GetDeclaredSymbol(parameter, cancellationToken) as IParameterSymbol;
             if (parameterSymbol == null)
@@ -75,10 +75,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
 
             // Make the first character uppercase since we are generating a property.
-            var propName = char.ToUpper(parameterSymbol.Name[0]).ToString() + parameterSymbol.Name.Substring(1);
+            string propName = char.ToUpper(parameterSymbol.Name[0]).ToString() + parameterSymbol.Name.Substring(1);
 
-            var typeSymbol = parameterSymbol.ContainingType;
-            var propertySymbol = typeSymbol.GetMembers(propName).Where(m => m.Kind == SymbolKind.Property).FirstOrDefault();
+            INamedTypeSymbol typeSymbol = parameterSymbol.ContainingType;
+            ISymbol propertySymbol = typeSymbol.GetMembers(propName).Where(m => m.Kind == SymbolKind.Property).FirstOrDefault();
 
             // Add a new property
             if (propertySymbol == null)
@@ -87,7 +87,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                            parameter.GetLocation(), // edit the partial declaration that has this parameter symbol.
                                                            (editor, typeDeclaration) =>
                                                            {
-                                                               var newProperty = editor.Generator.PropertyDeclaration(propName,
+                                                               SyntaxNode newProperty = editor.Generator.PropertyDeclaration(propName,
                                                                                                                       editor.Generator.TypeExpression(parameterSymbol.Type),
                                                                                                                       Accessibility.Public,
                                                                                                                       DeclarationModifiers.ReadOnly);
@@ -117,17 +117,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             editor.SetAccessibility(getMethod, Accessibility.NotApplicable);
 
             // If the containing property is not public, make it so
-            var propertyAccessibility = editor.Generator.GetAccessibility(property);
+            Accessibility propertyAccessibility = editor.Generator.GetAccessibility(property);
             if (propertyAccessibility != Accessibility.Public)
             {
                 editor.SetAccessibility(property, Accessibility.Public);
 
                 // Having just made the property public, if it has a setter with no Accessibility set, then we've just made the setter public. 
                 // Instead restore the setter's original accessibility so that we don't fire a violation with the generated code.
-                var setter = editor.Generator.GetAccessor(property, DeclarationKind.SetAccessor);
+                SyntaxNode setter = editor.Generator.GetAccessor(property, DeclarationKind.SetAccessor);
                 if (setter != null)
                 {
-                    var setterAccessibility = editor.Generator.GetAccessibility(setter);
+                    Accessibility setterAccessibility = editor.Generator.GetAccessibility(setter);
                     if (setterAccessibility == Accessibility.NotApplicable)
                     {
                         editor.SetAccessibility(setter, propertyAccessibility);

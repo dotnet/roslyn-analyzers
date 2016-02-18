@@ -5,7 +5,7 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.Composition.Analyzers   
+Namespace Microsoft.Composition.Analyzers
     ''' <summary>
     ''' RS0006: Do not mix attributes from different versions of MEF
     ''' </summary>

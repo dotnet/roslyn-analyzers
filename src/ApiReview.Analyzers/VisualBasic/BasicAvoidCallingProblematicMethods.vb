@@ -5,7 +5,7 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace ApiReview.Analyzers   
+Namespace ApiReview.Analyzers
     ''' <summary>
     ''' CA2001: Avoid calling problematic methods
     ''' </summary>

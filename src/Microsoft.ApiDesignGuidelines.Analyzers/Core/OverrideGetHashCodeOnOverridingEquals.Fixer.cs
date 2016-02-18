@@ -24,9 +24,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            var typeDeclaration = root.FindNode(context.Span);
+            SyntaxNode typeDeclaration = root.FindNode(context.Span);
             typeDeclaration = SyntaxGenerator.GetGenerator(context.Document).GetDeclaration(typeDeclaration);
             if (typeDeclaration == null)
             {
@@ -36,7 +36,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             // CONSIDER: Do we need to confirm that System.Object.GetHashCode isn't shadowed in a base type?
 
             // We cannot have multiple overlapping diagnostics of this id.
-            var diagnostic = context.Diagnostics.Single();
+            Diagnostic diagnostic = context.Diagnostics.Single();
 
             context.RegisterCodeFix(
                 new MyCodeAction(
@@ -47,10 +47,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private async Task<Document> OverrideObjectGetHashCode(Document document, SyntaxNode typeDeclaration, CancellationToken cancellationToken)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            var generator = editor.Generator;
+            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            SyntaxGenerator generator = editor.Generator;
 
-            var methodDeclaration = generator.GetHashCodeOverrideDeclaration();
+            SyntaxNode methodDeclaration = generator.GetHashCodeOverrideDeclaration();
 
             editor.AddMember(typeDeclaration, methodDeclaration);
             return editor.GetChangedDocument();

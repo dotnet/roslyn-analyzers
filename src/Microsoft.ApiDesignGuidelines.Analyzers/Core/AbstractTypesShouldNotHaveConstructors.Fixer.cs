@@ -22,11 +22,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var node = root.FindNode(context.Span);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode node = root.FindNode(context.Span);
 
             // We cannot have multiple overlapping diagnostics of this id.
-            var diagnostic = context.Diagnostics.Single();
+            Diagnostic diagnostic = context.Diagnostics.Single();
 
             context.RegisterCodeFix(new DocumentChangeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.AbstractTypesShouldNotHavePublicConstructorsCodeFix,
                                         async ct => await ChangeAccessibilityCodeFix(context.Document, root, node, ct).ConfigureAwait(false)),
@@ -40,11 +40,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private async Task<Document> ChangeAccessibilityCodeFix(Document document, SyntaxNode root, SyntaxNode nodeToFix, CancellationToken cancellationToken)
         {
-            var model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             var classSymbol = (INamedTypeSymbol)model.GetDeclaredSymbol(nodeToFix, cancellationToken);
-            var instanceConstructors = classSymbol.InstanceConstructors.Where(t => t.DeclaredAccessibility == Accessibility.Public).Select(t => GetDeclaration(t)).Where(d => d != null).ToList();
-            var generator = SyntaxGenerator.GetGenerator(document);
-            var newRoot = root.ReplaceNodes(instanceConstructors, (original, rewritten) => generator.WithAccessibility(original, Accessibility.Protected));
+            System.Collections.Generic.List<SyntaxNode> instanceConstructors = classSymbol.InstanceConstructors.Where(t => t.DeclaredAccessibility == Accessibility.Public).Select(t => GetDeclaration(t)).Where(d => d != null).ToList();
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            SyntaxNode newRoot = root.ReplaceNodes(instanceConstructors, (original, rewritten) => generator.WithAccessibility(original, Accessibility.Protected));
             return document.WithSyntaxRoot(newRoot);
         }
     }

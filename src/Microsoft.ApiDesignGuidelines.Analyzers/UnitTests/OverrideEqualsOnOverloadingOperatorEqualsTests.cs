@@ -2,9 +2,7 @@
 
 using System;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
-using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests

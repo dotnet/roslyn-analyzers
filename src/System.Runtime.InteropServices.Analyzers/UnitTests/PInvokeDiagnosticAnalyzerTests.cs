@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 
@@ -11,8 +10,8 @@ namespace System.Runtime.InteropServices.Analyzers.UnitTests
     {
         #region Verifiers 
 
-        private static readonly string CA1401RuleText = SystemRuntimeInteropServicesAnalyzersResources.PInvokesShouldNotBeVisibleMessage;
-        private static readonly string CA2101RuleText = SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle;
+        private static readonly string s_CA1401RuleText = SystemRuntimeInteropServicesAnalyzersResources.PInvokesShouldNotBeVisibleMessage;
+        private static readonly string s_CA2101RuleText = SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle;
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
@@ -26,22 +25,22 @@ namespace System.Runtime.InteropServices.Analyzers.UnitTests
 
         private static DiagnosticResult CSharpResult1401(int line, int column, string typeName)
         {
-            return GetCSharpResultAt(line, column, PInvokeDiagnosticAnalyzer.RuleCA1401Id, string.Format(CA1401RuleText, typeName));
+            return GetCSharpResultAt(line, column, PInvokeDiagnosticAnalyzer.RuleCA1401Id, string.Format(s_CA1401RuleText, typeName));
         }
 
         private static DiagnosticResult BasicResult1401(int line, int column, string typeName)
         {
-            return GetBasicResultAt(line, column, PInvokeDiagnosticAnalyzer.RuleCA1401Id, string.Format(CA1401RuleText, typeName));
+            return GetBasicResultAt(line, column, PInvokeDiagnosticAnalyzer.RuleCA1401Id, string.Format(s_CA1401RuleText, typeName));
         }
 
         private static DiagnosticResult CSharpResult2101(int line, int column)
         {
-            return GetCSharpResultAt(line, column, PInvokeDiagnosticAnalyzer.RuleCA2101Id, CA2101RuleText);
+            return GetCSharpResultAt(line, column, PInvokeDiagnosticAnalyzer.RuleCA2101Id, s_CA2101RuleText);
         }
 
         private static DiagnosticResult BasicResult2101(int line, int column)
         {
-            return GetBasicResultAt(line, column, PInvokeDiagnosticAnalyzer.RuleCA2101Id, CA2101RuleText);
+            return GetBasicResultAt(line, column, PInvokeDiagnosticAnalyzer.RuleCA2101Id, s_CA2101RuleText);
         }
 
         #endregion

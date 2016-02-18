@@ -1,6 +1,7 @@
-﻿using System.Linq;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+using System.Linq;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Semantics;
 
 namespace Analyzer.Utilities
 {
@@ -25,9 +26,9 @@ namespace Analyzer.Utilities
         /// </summary>
         public static bool IsGetHashCodeOverride(this IMethodSymbol method)
         {
-            return method != null && 
+            return method != null &&
                    method.IsOverride &&
-                   method.Name == WellKnownMemberNames.ObjectGetHashCode &&  
+                   method.Name == WellKnownMemberNames.ObjectGetHashCode &&
                    method.ReturnType.SpecialType == SpecialType.System_Int32 &&
                    method.Parameters.Length == 0 &&
                    IsObjectMethodOverride(method);
@@ -51,7 +52,7 @@ namespace Analyzer.Utilities
         /// </summary>
         private static bool IsObjectMethodOverride(IMethodSymbol method)
         {
-            var overriddenMethod = method.OverriddenMethod;
+            IMethodSymbol overriddenMethod = method.OverriddenMethod;
             while (overriddenMethod != null)
             {
                 if (overriddenMethod.ContainingType.SpecialType == SpecialType.System_Object)
@@ -80,35 +81,62 @@ namespace Analyzer.Utilities
                 return false;
             }
 
-            var overridden = method.OverriddenMethod;
+            IMethodSymbol overridden = method.OverriddenMethod;
             if (overridden == null)
             {
                 return false;
             }
 
-            for (var o = overridden.OverriddenMethod; o != null; o = o.OverriddenMethod)
+            for (IMethodSymbol o = overridden.OverriddenMethod; o != null; o = o.OverriddenMethod)
             {
                 overridden = o;
             }
 
             return overridden.ContainingType.SpecialType == SpecialType.System_Object; // it is object.Finalize
         }
-        
+
         /// <summary>
         /// Checks if the given method is an implementation of the given interface method 
         /// Substituted with the given typeargument.
         /// </summary>
         public static bool IsImplementationOfInterfaceMethod(this IMethodSymbol method, ITypeSymbol typeArgument, INamedTypeSymbol interfaceType, string interfaceMethodName)
         {
-            var constructedInterface = typeArgument != null ? interfaceType?.Construct(typeArgument) : interfaceType;
+            INamedTypeSymbol constructedInterface = typeArgument != null ? interfaceType?.Construct(typeArgument) : interfaceType;
             var interfaceMethod = constructedInterface?.GetMembers(interfaceMethodName).Single() as IMethodSymbol;
 
-            if (interfaceMethod != null && method.Equals(method.ContainingType.FindImplementationForInterfaceMember(interfaceMethod)))
+            return IsInterfaceMethodImplementation(method, interfaceMethod);
+        }
+
+        /// <summary>
+        /// Checks if the given method implements any interface method, implicitly or explicitly.
+        /// </summary>
+        public static bool IsImplementationOfAnyInterfaceMethod(this IMethodSymbol method)
+        {
+            if (method.ExplicitInterfaceImplementations.Length > 0)
             {
                 return true;
             }
 
+            // This is an approximation, because another class could derive from this one
+            // and rely on methodSymbol implementing one of *it's* interfaces methods, but
+            // it's good enough.
+            foreach (var interfaceSymbol in method.ContainingType.AllInterfaces)
+            {
+                foreach (var interfaceMethod in interfaceSymbol.GetMembers().OfType<IMethodSymbol>())
+                {
+                    if (IsInterfaceMethodImplementation(method, interfaceMethod))
+                    {
+                        return true;
+                    }
+                }
+            }
+
             return false;
+        }
+
+        private static bool IsInterfaceMethodImplementation(IMethodSymbol method, IMethodSymbol interfaceMethod)
+        {
+            return interfaceMethod != null && method.Equals(method.ContainingType.FindImplementationForInterfaceMember(interfaceMethod));
         }
 
         /// <summary>
@@ -125,8 +153,8 @@ namespace Analyzer.Utilities
             {
                 // Identify the implementor of IDisposable.Dispose in the given method's containing type and check
                 // if it is the given method.
-                var iDisposable = WellKnownTypes.IDisposable(compilation);
-                if (method.IsImplementationOfInterfaceMethod(null, iDisposable, "Dispose"))                
+                INamedTypeSymbol iDisposable = WellKnownTypes.IDisposable(compilation);
+                if (method.IsImplementationOfInterfaceMethod(null, iDisposable, "Dispose"))
                 {
                     return true;
                 }

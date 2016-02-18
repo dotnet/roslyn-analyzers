@@ -2,9 +2,7 @@
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
-using Xunit;
 
 namespace Microsoft.QualityGuidelines.Analyzers.UnitTests
 {
@@ -12,12 +10,12 @@ namespace Microsoft.QualityGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicPreferJaggedArraysOverMultidimensionalAnalyzer();
+            return new PreferJaggedArraysOverMultidimensionalAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpPreferJaggedArraysOverMultidimensionalAnalyzer();
+            return new PreferJaggedArraysOverMultidimensionalAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

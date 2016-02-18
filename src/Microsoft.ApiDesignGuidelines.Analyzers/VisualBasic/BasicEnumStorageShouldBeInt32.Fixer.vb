@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA1028: Enum Storage should be Int32
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicEnumStorageShouldBeInt32Fixer
-        Inherits EnumStorageShouldBeInt32Fixer 
+        Inherits EnumStorageShouldBeInt32Fixer
 
     End Class
 End Namespace

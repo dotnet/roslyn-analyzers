@@ -1,25 +1,22 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
-using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
     public partial class DoNotUseInsecureDTDProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private static readonly string CA3075XmlDocumentWithNoSecureResolverMessage = DesktopAnalyzersResources.XmlDocumentWithNoSecureResolverMessage;
+        private static readonly string s_CA3075XmlDocumentWithNoSecureResolverMessage = DesktopAnalyzersResources.XmlDocumentWithNoSecureResolverMessage;
 
         private DiagnosticResult GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(int line, int column, string name)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(CA3075XmlDocumentWithNoSecureResolverMessage, name));
+            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(s_CA3075XmlDocumentWithNoSecureResolverMessage, name));
         }
 
         private DiagnosticResult GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(int line, int column, string name)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(CA3075XmlDocumentWithNoSecureResolverMessage, name));
+            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(s_CA3075XmlDocumentWithNoSecureResolverMessage, name));
         }
 
 

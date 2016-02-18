@@ -138,7 +138,7 @@ namespace Desktop.Analyzers
             return symbol == xmlTypes.XmlReaderSettings;                                
         }
 
-        public static  int HasXmlResolverParameter(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
+        public static int HasXmlResolverParameter(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
             return HasSpecifiedParameter(method, xmlTypes, IsXmlResolverType);
         }
@@ -195,7 +195,7 @@ namespace Desktop.Analyzers
             }     
             for (int i = 0; i < method.Parameters.Length; i++)
             {
-                var parameter = method.Parameters[i].Type;
+                ITypeSymbol parameter = method.Parameters[i].Type;
                 if (func(parameter, xmlTypes))
                 {
                     index = i;
@@ -218,7 +218,7 @@ namespace Desktop.Analyzers
             {
                 return null;
             }
-            var typeSymbol = compilation.GetTypeByMetadataName(typeName);
+            INamedTypeSymbol typeSymbol = compilation.GetTypeByMetadataName(typeName);
             return typeSymbol?.ContainingAssembly.Identity.Name.Equals(assemblyName, StringComparison.Ordinal);
         }
 
@@ -232,7 +232,7 @@ namespace Desktop.Analyzers
         {
             while (current.Parent != null)
             {
-                var parent = current.Parent;
+                SyntaxNode parent = current.Parent;
                 ISymbol sym = parent.GetDeclaredOrReferencedSymbol(model);
 
                 if (sym != null &&
@@ -272,7 +272,7 @@ namespace Desktop.Analyzers
                 return null;
             }
 
-            var mscorlibAssembly = compilation.GetTypeByMetadataName("System.String").ContainingAssembly;
+            IAssemblySymbol mscorlibAssembly = compilation.GetTypeByMetadataName("System.String").ContainingAssembly;
             if (mscorlibAssembly.Identity.Version.Major < 4)
             {
                 return mscorlibAssembly.Identity.Version;

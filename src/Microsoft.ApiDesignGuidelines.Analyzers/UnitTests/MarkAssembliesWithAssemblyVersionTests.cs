@@ -2,7 +2,6 @@
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 
@@ -154,7 +153,7 @@ using System.Reflection;
         private static readonly string s_number = "CA1016";
         private static readonly string s_message = MicrosoftApiDesignGuidelinesAnalyzersResources.MarkAssembliesWithAssemblyVersionMessage;
 
-        private static DiagnosticResult s_diagnostic = new DiagnosticResult
+        private static readonly DiagnosticResult s_diagnostic = new DiagnosticResult
         {
             Id = s_number,
             Severity = DiagnosticSeverity.Warning,

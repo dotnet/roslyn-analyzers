@@ -10,7 +10,7 @@ Namespace Desktop.Analyzers.Common
     Public NotInheritable Class BasicSyntaxNodeHelper
         Inherits SyntaxNodeHelper
 
-        Shared s_defaultInstance As BasicSyntaxNodeHelper = New BasicSyntaxNodeHelper()
+        Private Shared s_defaultInstance As BasicSyntaxNodeHelper = New BasicSyntaxNodeHelper()
 
         Public Shared ReadOnly Property DefaultInstance As BasicSyntaxNodeHelper
             Get

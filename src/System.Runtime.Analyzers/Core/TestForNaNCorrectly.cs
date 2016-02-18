@@ -18,10 +18,10 @@ namespace System.Runtime.Analyzers
         internal const string RuleId = "CA2242";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.TestForNaNCorrectlyTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        
+
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.TestForNaNCorrectlyMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.TestForNaNCorrectlyDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        
+
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
@@ -34,7 +34,7 @@ namespace System.Runtime.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        private readonly BinaryOperationKind[] s_comparisonOperators = new BinaryOperationKind[]
+        private readonly BinaryOperationKind[] _comparisonOperators = new BinaryOperationKind[]
         {
             BinaryOperationKind.FloatingEquals,
             BinaryOperationKind.FloatingGreaterThan,
@@ -50,12 +50,12 @@ namespace System.Runtime.Analyzers
                 operationAnalysisContext =>
                 {
                     var binaryOperatorExpression = (IBinaryOperatorExpression)operationAnalysisContext.Operation;
-                    if (!s_comparisonOperators.Contains(binaryOperatorExpression.BinaryOperationKind))
+                    if (!_comparisonOperators.Contains(binaryOperatorExpression.BinaryOperationKind))
                     {
                         return;
                     }
 
-                    if (IsNan(binaryOperatorExpression.Left) || IsNan(binaryOperatorExpression.Right))
+                    if (IsNan(binaryOperatorExpression.LeftOperand) || IsNan(binaryOperatorExpression.RightOperand))
                     {
                         operationAnalysisContext.ReportDiagnostic(
                             binaryOperatorExpression.Syntax.CreateDiagnostic(Rule));
@@ -64,7 +64,7 @@ namespace System.Runtime.Analyzers
                 OperationKind.BinaryOperatorExpression);
         }
 
-        private static bool IsNan(IExpression expr)
+        private static bool IsNan(IOperation expr)
         {
             if (expr == null ||
                 !expr.ConstantValue.HasValue)

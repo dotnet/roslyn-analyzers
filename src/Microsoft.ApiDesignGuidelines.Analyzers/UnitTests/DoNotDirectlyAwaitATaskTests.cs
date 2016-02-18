@@ -1,9 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
-using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
@@ -147,7 +145,7 @@ public class C
     }
 }
 ";
-            VerifyCSharp(code, 
+            VerifyCSharp(code,
                 GetCSharpResultAt(9, 15),
                 GetCSharpResultAt(9, 21),
                 GetCSharpResultAt(10, 15),
@@ -169,7 +167,7 @@ Public Class C
     End Function
 End Class
 ";
-            VerifyBasic(code, 
+            VerifyBasic(code,
                 GetBasicResultAt(7, 15),
                 GetBasicResultAt(7, 21),
                 GetBasicResultAt(8, 15),
@@ -195,7 +193,7 @@ public class C
     public Task<int> GetTask() { throw new NotImplementedException(); }
 }
 ";
-            VerifyCSharp(code, 
+            VerifyCSharp(code,
                 GetCSharpResultAt(9, 28),
                 GetCSharpResultAt(10, 47),
                 GetCSharpResultAt(11, 33));
@@ -219,7 +217,7 @@ Public Class C
     End Function
 End Class
 ";
-            VerifyBasic(code, 
+            VerifyBasic(code,
                 GetBasicResultAt(7, 39),
                 GetBasicResultAt(8, 69),
                 GetBasicResultAt(9, 33));

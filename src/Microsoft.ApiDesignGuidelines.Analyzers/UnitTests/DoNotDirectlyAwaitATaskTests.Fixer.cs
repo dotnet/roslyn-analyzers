@@ -2,7 +2,6 @@
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 
@@ -58,7 +57,6 @@ public class C
 }
 ";
             VerifyCSharpFix(code, fixedCode);
-
         }
 
         [Fact]
@@ -116,7 +114,6 @@ public class C
 }
 ";
             VerifyCSharpFix(code, fixedCode);
-
         }
 
         [Fact]

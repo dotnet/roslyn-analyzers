@@ -32,9 +32,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public async override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var nodeToFix = root.FindNode(context.Span);
+            SemanticModel semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode nodeToFix = root.FindNode(context.Span);
             if (nodeToFix == null)
             {
                 return;
@@ -46,20 +46,20 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
-            var generator = SyntaxGenerator.GetGenerator(context.Document);
-            var declaration = generator.GetDeclaration(nodeToFix);
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(context.Document);
+            SyntaxNode declaration = generator.GetDeclaration(nodeToFix);
             if (declaration == null)
             {
                 return;
             }
 
-            var candidateToIncreaseVisibility = GetExistingNonVisibleAlternate(methodSymbol);
+            IMethodSymbol candidateToIncreaseVisibility = GetExistingNonVisibleAlternate(methodSymbol);
             if (candidateToIncreaseVisibility != null)
             {
-                var symbolToChange = candidateToIncreaseVisibility.IsAccessorMethod() ? candidateToIncreaseVisibility.AssociatedSymbol : candidateToIncreaseVisibility;
+                ISymbol symbolToChange = candidateToIncreaseVisibility.IsAccessorMethod() ? candidateToIncreaseVisibility.AssociatedSymbol : candidateToIncreaseVisibility;
                 if (symbolToChange != null)
                 {
-                    var title = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix1, symbolToChange.Name);
+                    string title = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix1, symbolToChange.Name);
 
                     context.RegisterCodeFix(new MyCodeAction(title,
                          async ct => await MakeProtected(context.Document, symbolToChange, ct).ConfigureAwait(false),
@@ -69,10 +69,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
             else
             {
-                var symbolToChange = methodSymbol.IsAccessorMethod() ? methodSymbol.AssociatedSymbol : methodSymbol;
+                ISymbol symbolToChange = methodSymbol.IsAccessorMethod() ? methodSymbol.AssociatedSymbol : methodSymbol;
                 if (symbolToChange != null)
                 {
-                    var title = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix2, symbolToChange.Name);
+                    string title = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix2, symbolToChange.Name);
 
                     context.RegisterCodeFix(new MyCodeAction(title,
                          async ct => await ChangeToPublicInterfaceImplementation(context.Document, symbolToChange, ct).ConfigureAwait(false),
@@ -89,11 +89,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private static IMethodSymbol GetExistingNonVisibleAlternate(IMethodSymbol methodSymbol)
         {
-            foreach (var interfaceMethod in methodSymbol.ExplicitInterfaceImplementations)
+            foreach (IMethodSymbol interfaceMethod in methodSymbol.ExplicitInterfaceImplementations)
             {
-                foreach (var type in methodSymbol.ContainingType.GetBaseTypesAndThis())
+                foreach (INamedTypeSymbol type in methodSymbol.ContainingType.GetBaseTypesAndThis())
                 {
-                    var candidate = type.GetMembers(interfaceMethod.Name).OfType<IMethodSymbol>().FirstOrDefault(m => !m.Equals(methodSymbol));
+                    IMethodSymbol candidate = type.GetMembers(interfaceMethod.Name).OfType<IMethodSymbol>().FirstOrDefault(m => !m.Equals(methodSymbol));
                     if (candidate != null)
                     {
                         return candidate;
@@ -106,7 +106,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private async Task<Document> MakeProtected(Document document, ISymbol symbolToChange, CancellationToken cancellationToken)
         {
-            var editor = SymbolEditor.Create(document);
+            SymbolEditor editor = SymbolEditor.Create(document);
 
             await editor.EditAllDeclarationsAsync(symbolToChange, (docEditor, declaration) =>
             {
@@ -118,9 +118,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private async Task<Document> ChangeToPublicInterfaceImplementation(Document document, ISymbol symbolToChange, CancellationToken cancellationToken)
         {
-            var editor = SymbolEditor.Create(document);
+            SymbolEditor editor = SymbolEditor.Create(document);
 
-            var explicitImplementations = GetExplicitImplementations(symbolToChange);
+            IEnumerable<ISymbol> explicitImplementations = GetExplicitImplementations(symbolToChange);
             if (explicitImplementations == null)
             {
                 return document;
@@ -128,10 +128,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             await editor.EditAllDeclarationsAsync(symbolToChange, (docEditor, declaration) =>
             {
-                var newDeclaration = declaration;
-                foreach (var implementedMember in explicitImplementations)
+                SyntaxNode newDeclaration = declaration;
+                foreach (ISymbol implementedMember in explicitImplementations)
                 {
-                    var interfaceTypeNode = docEditor.Generator.TypeExpression(implementedMember.ContainingType);
+                    SyntaxNode interfaceTypeNode = docEditor.Generator.TypeExpression(implementedMember.ContainingType);
                     newDeclaration = docEditor.Generator.AsPublicInterfaceImplementation(newDeclaration, interfaceTypeNode);
                 }
 
@@ -166,11 +166,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private async Task<Document> MakeContainingTypeSealed(Document document, IMethodSymbol methodSymbol, CancellationToken cancellationToken)
         {
-            var editor = SymbolEditor.Create(document);
+            SymbolEditor editor = SymbolEditor.Create(document);
 
             await editor.EditAllDeclarationsAsync(methodSymbol.ContainingType, (docEditor, declaration) =>
             {
-                var modifiers = docEditor.Generator.GetModifiers(declaration);
+                DeclarationModifiers modifiers = docEditor.Generator.GetModifiers(declaration);
                 docEditor.SetModifiers(declaration, modifiers + DeclarationModifiers.Sealed);
             }, cancellationToken).ConfigureAwait(false);
 

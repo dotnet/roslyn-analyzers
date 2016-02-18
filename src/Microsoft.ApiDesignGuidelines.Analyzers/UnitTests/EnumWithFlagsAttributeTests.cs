@@ -1,9 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
-using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
@@ -22,13 +20,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         private static string GetCSharpCode_EnumWithFlagsAttributes(string code, bool hasFlags)
         {
-            var stringToReplace = hasFlags ? "[System.Flags]" : "";
+            string stringToReplace = hasFlags ? "[System.Flags]" : "";
             return string.Format(code, stringToReplace);
         }
 
         private static string GetBasicCode_EnumWithFlagsAttributes(string code, bool hasFlags)
         {
-            var stringToReplace = hasFlags ? "<System.Flags>" : "";
+            string stringToReplace = hasFlags ? "<System.Flags>" : "";
             return string.Format(code, stringToReplace);
         }
 
@@ -54,13 +52,13 @@ public enum HexFlagsEnumClass
 }}";
 
             // Verify CA1027: Mark enums with FlagsAttribute
-            var codeWithoutFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: false);
+            string codeWithoutFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: false);
             VerifyCSharp(codeWithoutFlags,
                 GetCA1027CSharpResultAt(2, 13, "SimpleFlagsEnumClass"),
                 GetCA1027CSharpResultAt(11, 13, "HexFlagsEnumClass"));
 
             // Verify no CA2217: Do not mark enums with FlagsAttribute
-            var codeWithFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: true);
+            string codeWithFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: true);
             VerifyCSharp(codeWithFlags);
         }
 
@@ -86,7 +84,7 @@ public enum SimpleFlagsEnumClass
 }}|]";
 
             // Verify CA1027: Mark enums with FlagsAttribute
-            var codeWithoutFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: false);
+            string codeWithoutFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: false);
             VerifyCSharp(codeWithoutFlags,
                 GetCA1027CSharpResultAt(11, 13, "HexFlagsEnumClass"));
         }
@@ -111,13 +109,13 @@ Public Enum HexFlagsEnumClass
 End Enum";
 
             // Verify CA1027: Mark enums with FlagsAttribute
-            var codeWithoutFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: false);
+            string codeWithoutFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: false);
             VerifyBasic(codeWithoutFlags,
                 GetCA1027BasicResultAt(2, 13, "SimpleFlagsEnumClass"),
                 GetCA1027BasicResultAt(10, 13, "HexFlagsEnumClass"));
 
             // Verify no CA2217: Do not mark enums with FlagsAttribute
-            var codeWithFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: true);
+            string codeWithFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: true);
             VerifyBasic(codeWithFlags);
         }
 
@@ -141,11 +139,11 @@ End Enum
 End Enum|]";
 
             // Verify CA1027: Mark enums with FlagsAttribute
-            var codeWithoutFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: false);
+            string codeWithoutFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: false);
             VerifyBasic(codeWithoutFlags,
                 GetCA1027BasicResultAt(10, 13, "HexFlagsEnumClass"));
         }
-                                    
+
         [Fact]
         public void CSharp_EnumWithFlagsAttributes_DuplicateValues()
         {
@@ -162,12 +160,12 @@ public enum DuplicateValuesEnumClass
 ";
 
             // Verify CA1027: Mark enums with FlagsAttribute
-            var codeWithoutFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: false);
+            string codeWithoutFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: false);
             VerifyCSharp(codeWithoutFlags,
                 GetCA1027CSharpResultAt(2, 13, "DuplicateValuesEnumClass"));
 
             // Verify no CA2217: Do not mark enums with FlagsAttribute
-            var codeWithFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: true);
+            string codeWithFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: true);
             VerifyCSharp(codeWithFlags);
         }
 
@@ -186,12 +184,12 @@ End Enum
 ";
 
             // Verify CA1027: Mark enums with FlagsAttribute
-            var codeWithoutFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: false);
+            string codeWithoutFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: false);
             VerifyBasic(codeWithoutFlags,
                 GetCA1027BasicResultAt(2, 13, "DuplicateValuesEnumClass"));
 
             // Verify no CA2217: Do not mark enums with FlagsAttribute
-            var codeWithFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: true);
+            string codeWithFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: true);
             VerifyBasic(codeWithFlags);
         }
 
@@ -229,11 +227,11 @@ public enum AnotherTestValue
 }}";
 
             // Verify no CA1027: Mark enums with FlagsAttribute
-            var codeWithoutFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: false);
+            string codeWithoutFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: false);
             VerifyCSharp(codeWithoutFlags);
 
             // Verify CA2217: Do not mark enums with FlagsAttribute
-            var codeWithFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: true);
+            string codeWithFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: true);
             VerifyCSharp(codeWithFlags,
                 GetCA2217CSharpResultAt(3, 13, "MissingPowerOfTwoEnumClass", "8"),
                 GetCA2217CSharpResultAt(13, 13, "MultipleMissingPowerOfTwoEnumClass", "8, 16"),
@@ -272,11 +270,11 @@ End Enum
 ";
 
             // Verify no CA1027: Mark enums with FlagsAttribute
-            var codeWithoutFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: false);
+            string codeWithoutFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: false);
             VerifyBasic(codeWithoutFlags);
 
             // Verify CA2217: Do not mark enums with FlagsAttribute
-            var codeWithFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: true);
+            string codeWithFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: true);
             VerifyBasic(codeWithFlags,
                 GetCA2217BasicResultAt(3, 13, "MissingPowerOfTwoEnumClass", "8"),
                 GetCA2217BasicResultAt(12, 13, "MultipleMissingPowerOfTwoEnumClass", "8, 16"),
@@ -329,11 +327,11 @@ public enum ShortUnderlyingType: short
 }}";
 
             // Verify no CA1027: Mark enums with FlagsAttribute
-            var codeWithoutFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: false);
+            string codeWithoutFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: false);
             VerifyCSharp(codeWithoutFlags);
 
             // Verify no CA2217: Do not mark enums with FlagsAttribute
-            var codeWithFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: true);
+            string codeWithFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: true);
             VerifyCSharp(codeWithFlags);
         }
 
@@ -380,11 +378,11 @@ End Enum
 ";
 
             // Verify no CA1027: Mark enums with FlagsAttribute
-            var codeWithoutFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: false);
+            string codeWithoutFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: false);
             VerifyBasic(codeWithoutFlags);
 
             // Verify no CA2217: Do not mark enums with FlagsAttribute
-            var codeWithFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: true);
+            string codeWithFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: true);
             VerifyBasic(codeWithFlags);
         }
 
@@ -424,11 +422,11 @@ public enum LabelsClass
 }}";
 
             // Verify no CA1027: Mark enums with FlagsAttribute
-            var codeWithoutFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: false);
+            string codeWithoutFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: false);
             VerifyCSharp(codeWithoutFlags);
 
             // Verify CA2217: Do not mark enums with FlagsAttribute
-            var codeWithFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: true);
+            string codeWithFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: true);
             VerifyCSharp(codeWithFlags,
                 GetCA2217CSharpResultAt(3, 13, "NonSimpleFlagEnumClass", "4, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576, 2097152, 4194304, 8388608, 16777216, 33554432, 67108864, 134217728, 268435456, 536870912, 1073741824, 2147483648, 4294967296, 8589934592, 17179869184, 34359738368, 68719476736, 137438953472, 274877906944, 549755813888, 1099511627776, 2199023255552, 4398046511104, 8796093022208, 17592186044416, 35184372088832, 70368744177664, 140737488355328, 281474976710656, 562949953421312, 1125899906842624, 2251799813685248, 4503599627370496, 9007199254740992, 18014398509481984, 36028797018963968, 72057594037927936, 144115188075855872, 288230376151711744, 576460752303423488, 1152921504606846976, 2305843009213693952, 4611686018427387904, 9223372036854775808"),
                 GetCA2217CSharpResultAt(14, 13, "BitValuesClass", "4"),
@@ -469,11 +467,11 @@ End Enum
 ";
 
             // Verify no CA1027: Mark enums with FlagsAttribute
-            var codeWithoutFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: false);
+            string codeWithoutFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: false);
             VerifyBasic(codeWithoutFlags);
 
             // Verify CA2217: Do not mark enums with FlagsAttribute
-            var codeWithFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: true);
+            string codeWithFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: true);
             VerifyBasic(codeWithFlags,
                 GetCA2217BasicResultAt(3, 13, "NonSimpleFlagEnumClass", "4, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576, 2097152, 4194304, 8388608, 16777216, 33554432, 67108864, 134217728, 268435456, 536870912, 1073741824, 2147483648, 4294967296, 8589934592, 17179869184, 34359738368, 68719476736, 137438953472, 274877906944, 549755813888, 1099511627776, 2199023255552, 4398046511104, 8796093022208, 17592186044416, 35184372088832, 70368744177664, 140737488355328, 281474976710656, 562949953421312, 1125899906842624, 2251799813685248, 4503599627370496, 9007199254740992, 18014398509481984, 36028797018963968, 72057594037927936, 144115188075855872, 288230376151711744, 576460752303423488, 1152921504606846976, 2305843009213693952, 4611686018427387904, 9223372036854775808"),
                 GetCA2217BasicResultAt(13, 13, "BitValuesClass", "4"),

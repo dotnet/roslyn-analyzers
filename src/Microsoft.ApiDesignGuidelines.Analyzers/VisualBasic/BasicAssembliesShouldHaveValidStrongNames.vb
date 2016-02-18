@@ -5,7 +5,7 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers   
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA2210: Assemblies should have valid strong names
     ''' </summary>

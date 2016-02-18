@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA1060: Move pinvokes to native methods class
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicMovePInvokesToNativeMethodsClassFixer
-        Inherits MovePInvokesToNativeMethodsClassFixer 
+        Inherits MovePInvokesToNativeMethodsClassFixer
 
     End Class
 End Namespace

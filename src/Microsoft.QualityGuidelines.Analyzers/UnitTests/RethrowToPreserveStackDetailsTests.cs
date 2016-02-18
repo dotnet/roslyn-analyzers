@@ -363,8 +363,8 @@ End Class",
            GetCA2200BasicResultAt(12, 17));
         }
 
-        internal static string CA2200Name = "CA2200";
-        internal static string CA2200Message = MicrosoftQualityGuidelinesAnalyzersResources.RethrowToPreserveStackDetailsMessage;
+        internal static readonly string CA2200Name = "CA2200";
+        internal static readonly string CA2200Message = MicrosoftQualityGuidelinesAnalyzersResources.RethrowToPreserveStackDetailsMessage;
 
         private static DiagnosticResult GetCA2200BasicResultAt(int line, int column)
         {

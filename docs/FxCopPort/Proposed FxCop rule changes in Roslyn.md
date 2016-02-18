@@ -11,6 +11,8 @@ Nonetheless, the porting effort raises questions about certain implementation ch
 To be clear: In the first release of the FxCop analyzer equivalents, their behavior will be identical to FxCop as far as possible.
 We would make changes only in subsequent releases.
 
+In addition to implementation details of the analyzers we have decided to port, there will be some feedback from the community regarding the rules we have decided _not_ to port. We will track that here as well, and consider this feedback as we revisit our decisions about rules to cut.
+
 ## CA1034: Nested types should not be visible
 
 The .NET Framework Design Guidelines for [nested types](https://msdn.microsoft.com/en-us/library/ms229027(v=vs.110).aspx) specifically mentions enumerations:
@@ -35,7 +37,7 @@ and will discourage others from emulating it.
 
 ## CA1716: Identifiers should not match keywords
 
-@sharwell made the following suggestions:
+* @sharwell made the following suggestions:
 
 > 1. The rule is defined according to "reserved identifiers". I believe it makes sense to expand this to include context-sensitive keywords where the identifier is visible in that context. For example, this rule should report a field named value as a violation because fields are visible in property setters, but it should not report a violation for a parameter or local variable named value because they can never be visible in the same scope where value is a keyword.
 >
@@ -54,3 +56,21 @@ With regard to item #2, the [MSDN documentation](https://msdn.microsoft.com/en-u
 > * C++/CLI
 
 ... and of course the Roslyn replacements would only apply to the Roslyn languages C# and VB.
+
+* @nguerrera: Consider adding `stackalloc` to the list of C# keywords we check.
+
+* @nguerrera, @lgolding, @srivatsn: Why did FxCop CA1716 limit itself to virtual/interface members? The error message says
+that it will be hard to implement a virtual method if you name it with a keyword. But it's just as hard to _invoke_ it.
+Why shouldn't all publicly visible methods follow this rule?
+
+## CA1812: Avoid uninstantiated internal classes
+
+* @mavasani suggests:
+
+> ... you probably want to ignore types with the MEF export attributes - they wouldn't have an explicit instantiation. And Roslyn code is full of such types.
+
+## CA2213: Disposable fields should be disposed
+
+We decided not to port this because of a high false positive rate, and our opinion that it was not of high value. We have had the following pushback on this decision:
+
+> @stilgarSCA: :-1: on this decision. Despite the fact that this causes a lot of false positives, I think it's worth keeping the rule for the correctly identified issues. End users always have the option of disabling rules for which they find no value.

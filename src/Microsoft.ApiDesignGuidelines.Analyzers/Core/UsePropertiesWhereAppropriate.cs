@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Linq;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
@@ -67,9 +66,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 {
                     return;
                 }
-                
+
                 bool hasInvocations = false;
-                context.RegisterOperationAction(operationContext => 
+                context.RegisterOperationAction(operationContext =>
                 {
                     hasInvocations = true;
                 }, OperationKind.InvocationExpression);

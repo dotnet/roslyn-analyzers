@@ -25,23 +25,23 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
-            var flagsAttributeType = WellKnownTypes.FlagsAttribute(model.Compilation);
+            INamedTypeSymbol flagsAttributeType = WellKnownTypes.FlagsAttribute(model.Compilation);
             if (flagsAttributeType == null)
             {
                 return;
             }
 
             // We cannot have multiple overlapping diagnostics of this id.
-            var diagnostic = context.Diagnostics.Single();
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var node = root.FindNode(context.Span);
+            Diagnostic diagnostic = context.Diagnostics.Single();
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode node = root.FindNode(context.Span);
 
             ISymbol declaredSymbol = model.GetDeclaredSymbol(node, context.CancellationToken);
             Debug.Assert(declaredSymbol != null);
 
-            foreach (var customTag in diagnostic.Descriptor.CustomTags)
+            foreach (string customTag in diagnostic.Descriptor.CustomTags)
             {
                 switch (customTag)
                 {
@@ -64,7 +64,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
             }
         }
-        
+
         private static SyntaxNode GetDeclaration(ISymbol symbol)
         {
             return (symbol.DeclaringSyntaxReferences.Length > 0) ? symbol.DeclaringSyntaxReferences[0].GetSyntax() : null;
@@ -72,7 +72,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private SyntaxNode GetExplicitlyAssignedField(IFieldSymbol originalField, SyntaxNode declaration, SyntaxGenerator generator)
         {
-            var originalInitializer = generator.GetExpression(declaration);
+            SyntaxNode originalInitializer = generator.GetExpression(declaration);
             if (originalInitializer != null || !originalField.HasConstantValue)
             {
                 return declaration;
@@ -83,7 +83,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private async Task<Document> GetUpdatedDocumentForRuleNameRenameAsync(Document document, IFieldSymbol field, CancellationToken cancellationToken)
         {
-            var newSolution = await CodeAnalysis.Rename.Renamer.RenameSymbolAsync(document.Project.Solution, field, "None", null, cancellationToken).ConfigureAwait(false);
+            Solution newSolution = await CodeAnalysis.Rename.Renamer.RenameSymbolAsync(document.Project.Solution, field, "None", null, cancellationToken).ConfigureAwait(false);
             return newSolution.GetDocument(document.Id);
         }
 
@@ -91,16 +91,16 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             // Diagnostic: Remove all members that have the value zero from '{0}' except for one member that is named 'None'.
             // Fix: Remove all members that have the value zero except for one member that is named 'None'.
-            var editor = SymbolEditor.Create(document);
+            SymbolEditor editor = SymbolEditor.Create(document);
 
             bool needsNewZeroValuedNoneField = true;
-            var set = EnumsShouldHaveZeroValueAnalyzer.GetZeroValuedFields(enumType).ToSet();
+            ISet<IFieldSymbol> set = EnumsShouldHaveZeroValueAnalyzer.GetZeroValuedFields(enumType).ToSet();
 
             bool makeNextFieldExplicit = false;
             foreach (IFieldSymbol field in enumType.GetMembers().Where(m => m.Kind == SymbolKind.Field))
             {
-                var isZeroValued = set.Contains(field);
-                var isZeroValuedNamedNone = isZeroValued && EnumsShouldHaveZeroValueAnalyzer.IsMemberNamedNone(field);
+                bool isZeroValued = set.Contains(field);
+                bool isZeroValuedNamedNone = isZeroValued && EnumsShouldHaveZeroValueAnalyzer.IsMemberNamedNone(field);
 
                 if (!isZeroValued || isZeroValuedNamedNone)
                 {
@@ -132,7 +132,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private async Task<Document> ApplyRuleNameNoZeroValueAsync(Document document, INamedTypeSymbol enumType, CancellationToken cancellationToken)
         {
-            var editor = SymbolEditor.Create(document);
+            SymbolEditor editor = SymbolEditor.Create(document);
 
             // remove any non-zero member named 'None'
             foreach (IFieldSymbol field in enumType.GetMembers().Where(m => m.Kind == SymbolKind.Field))
@@ -157,9 +157,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private Document GetUpdatedDocumentWithFix(Document document, SyntaxNode root, SyntaxNode nodeToFix, IList<SyntaxNode> newFields, CancellationToken cancellationToken)
         {
             nodeToFix = GetParentNodeOrSelfToFix(nodeToFix);
-            var g = SyntaxGenerator.GetGenerator(document);
-            var newEnumSyntax = g.AddMembers(nodeToFix, newFields);
-            var newRoot = root.ReplaceNode(nodeToFix, newEnumSyntax);
+            SyntaxGenerator g = SyntaxGenerator.GetGenerator(document);
+            SyntaxNode newEnumSyntax = g.AddMembers(nodeToFix, newFields);
+            SyntaxNode newRoot = root.ReplaceNode(nodeToFix, newEnumSyntax);
             return document.WithSyntaxRoot(newRoot);
         }
     }

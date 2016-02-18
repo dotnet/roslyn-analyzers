@@ -39,8 +39,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                var comparableType = WellKnownTypes.IComparable(compilationContext.Compilation);
-                var genericComparableType = WellKnownTypes.GenericIComparable(compilationContext.Compilation);
+                INamedTypeSymbol comparableType = WellKnownTypes.IComparable(compilationContext.Compilation);
+                INamedTypeSymbol genericComparableType = WellKnownTypes.GenericIComparable(compilationContext.Compilation);
 
                 // Even if one of them is available, we should continue analysis.
                 if (comparableType == null && genericComparableType == null)

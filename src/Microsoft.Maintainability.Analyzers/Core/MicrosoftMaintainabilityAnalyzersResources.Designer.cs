@@ -224,7 +224,7 @@ namespace Microsoft.Maintainability.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Review unused parameters.
+        ///   Looks up a localized string similar to Parameter {0} of method {1} is never used. Remove the parameter or use it in the method body..
         /// </summary>
         internal static string ReviewUnusedParametersMessage {
             get {

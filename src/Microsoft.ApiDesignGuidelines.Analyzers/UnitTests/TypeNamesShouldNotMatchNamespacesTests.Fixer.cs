@@ -10,12 +10,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicTypeNamesShouldNotMatchNamespacesAnalyzer();
+            return new TypeNamesShouldNotMatchNamespacesAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpTypeNamesShouldNotMatchNamespacesAnalyzer();
+            return new TypeNamesShouldNotMatchNamespacesAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

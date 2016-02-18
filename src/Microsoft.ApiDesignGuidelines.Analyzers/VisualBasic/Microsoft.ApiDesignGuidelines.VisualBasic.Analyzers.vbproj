@@ -24,12 +24,6 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </PropertyGroup>
-  <PropertyGroup>
-    <DelaySign>false</DelaySign>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
       <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
@@ -116,6 +110,7 @@
     <Compile Include="BasicDonTStoreAsyncLambdasAsVoidReturningDelegateTypes.vb" />
     <Compile Include="BasicDonTStoreAsyncLambdasAsVoidReturningDelegateTypes.Fixer.vb" />
     <Compile Include="BasicPassSystemUriObjectsInsteadOfStrings.vb" />
+    <Compile Include="BasicEnumStorageShouldBeInt32.Fixer.vb" />
     <Compile Include="BasicPropagateCancellationTokensWhenPossible.vb" />
     <Compile Include="BasicPropagateCancellationTokensWhenPossible.Fixer.vb" />
     <Compile Include="BasicDonTMixBlockingAndAsync.vb" />
@@ -138,7 +133,6 @@
     <Compile Include="BasicOperatorsShouldHaveSymmetricalOverloads.vb" />
     <Compile Include="BasicOperatorsShouldHaveSymmetricalOverloads.Fixer.vb" />
     <Compile Include="BasicCollectionsShouldImplementGenericInterface.Fixer.vb" />
-    <Compile Include="BasicEnumStorageShouldBeInt32.Fixer.vb" />
     <Compile Include="BasicUseEventsWhereAppropriate.vb" />
     <Compile Include="BasicUseEventsWhereAppropriate.Fixer.vb" />
     <Compile Include="BasicImplementStandardExceptionConstructors.vb" />

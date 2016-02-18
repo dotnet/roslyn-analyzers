@@ -50,13 +50,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             var symbol = (INamedTypeSymbol)context.Symbol;
 
-            // If not enum type exit
             if (symbol.TypeKind != TypeKind.Enum)
             {
                 return;
             }
 
-            // If enum is Int32 then exit
             var underlyingType = symbol.EnumUnderlyingType.SpecialType;
             if (underlyingType == SpecialType.System_Int32)
             {
@@ -75,11 +73,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 return;
             }
-            else //Report diagnostic
-            {
-                var diagnostic = Diagnostic.Create(NotInt32Rule, symbol.Locations[0], symbol.Name, symbol.EnumUnderlyingType.ToString());
-                context.ReportDiagnostic(diagnostic);
-            }
+            
+            //Report diagnostic
+            var diagnostic = Diagnostic.Create(NotInt32Rule, symbol.Locations[0], symbol.Name, symbol.EnumUnderlyingType.ToString());
+            context.ReportDiagnostic(diagnostic);
+
         }
     }
 }

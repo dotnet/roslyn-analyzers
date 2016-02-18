@@ -83,13 +83,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             var typeSymbol = methodSymbol.ContainingSymbol as ITypeSymbol;
             if (typeSymbol != null && (methodSymbol.MethodKind == MethodKind.UserDefinedOperator || methodSymbol.MethodKind == MethodKind.Conversion))
             {
-                var operatorName = methodSymbol.Name;
+                string operatorName = methodSymbol.Name;
                 if (IsPropertyExpected(operatorName) && operatorName != OpFalseText)
                 {
                     // don't report a diagnostic on the `op_False` method because then the user would see two diagnostics for what is really one error
                     // special-case looking for `IsTrue` instance property
                     // named properties can't be overloaded so there will only ever be 0 or 1
-                    var property = typeSymbol.GetMembers(IsTrueText).OfType<IPropertySymbol>().SingleOrDefault();
+                    IPropertySymbol property = typeSymbol.GetMembers(IsTrueText).OfType<IPropertySymbol>().SingleOrDefault();
                     if (property == null || property.Type.SpecialType != SpecialType.System_Boolean)
                     {
                         symbolContext.ReportDiagnostic(CreateDiagnostic(PropertyRule, GetSymbolLocation(methodSymbol), AddAlternateText, IsTrueText, operatorName));
@@ -101,7 +101,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
                 else
                 {
-                    var expectedGroup = GetExpectedAlternateMethodGroup(operatorName, methodSymbol.ReturnType);
+                    ExpectedAlternateMethodGroup expectedGroup = GetExpectedAlternateMethodGroup(operatorName, methodSymbol.ReturnType);
                     if (expectedGroup == null)
                     {
                         // no alternate methods required
@@ -115,7 +115,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         unmatchedMethods.Add(expectedGroup.AlternateMethod2);
                     }
 
-                    foreach (var candidateMethod in typeSymbol.GetMembers().OfType<IMethodSymbol>())
+                    foreach (IMethodSymbol candidateMethod in typeSymbol.GetMembers().OfType<IMethodSymbol>())
                     {
                         if (candidateMethod.Name == expectedGroup.AlternateMethod1 || candidateMethod.Name == expectedGroup.AlternateMethod2)
                         {
@@ -133,7 +133,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     else
                     {
                         // either we found at least one method that should be public or we didn't find anything
-                        var notPublicMethod = matchedMethods.FirstOrDefault(m => !m.IsPublic());
+                        IMethodSymbol notPublicMethod = matchedMethods.FirstOrDefault(m => !m.IsPublic());
                         if (notPublicMethod != null)
                         {
                             // report error for improper visibility directly on the method itself

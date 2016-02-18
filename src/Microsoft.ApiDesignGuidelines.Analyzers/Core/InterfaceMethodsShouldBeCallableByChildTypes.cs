@@ -46,7 +46,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                var iDisposableTypeSymbol = WellKnownTypes.IDisposable(compilationContext.Compilation);
+                INamedTypeSymbol iDisposableTypeSymbol = WellKnownTypes.IDisposable(compilationContext.Compilation);
                 compilationContext.RegisterOperationBlockAction(operationBlockContext => AnalyzeOperationBlock(operationBlockContext, iDisposableTypeSymbol));
             });
         }
@@ -99,7 +99,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
 
             var hasPublicInterfaceImplementation = false;
-            foreach (var interfaceMethod in method.ExplicitInterfaceImplementations)
+            foreach (IMethodSymbol interfaceMethod in method.ExplicitInterfaceImplementations)
             {
                 // If any one of the explicitly implemented interface methods has a visible alternate, then effectively, they all do.
                 if (HasVisibleAlternate(method.ContainingType, interfaceMethod, iDisposableTypeSymbol))
@@ -120,9 +120,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private static bool HasVisibleAlternate(INamedTypeSymbol namedType, IMethodSymbol interfaceMethod, INamedTypeSymbol iDisposableTypeSymbol)
         {
-            foreach (var type in namedType.GetBaseTypesAndThis())
+            foreach (INamedTypeSymbol type in namedType.GetBaseTypesAndThis())
             {
-                foreach (var method in type.GetMembers(interfaceMethod.Name).OfType<IMethodSymbol>())
+                foreach (IMethodSymbol method in type.GetMembers(interfaceMethod.Name).OfType<IMethodSymbol>())
                 {
                     if (method.GetResultantVisibility() == SymbolVisibility.Public)
                     {
@@ -141,7 +141,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private static void ReportDiagnostic(OperationBlockAnalysisContext context, params object[] messageArgs)
         {
-            var diagnostic = context.OwningSymbol.CreateDiagnostic(Rule, messageArgs);
+            Diagnostic diagnostic = context.OwningSymbol.CreateDiagnostic(Rule, messageArgs);
             context.ReportDiagnostic(diagnostic);
         }
     }

@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace XmlDocumentationComments.Analyzers     
+Namespace XmlDocumentationComments.Analyzers
     ''' <summary>
     ''' RS0010: Avoid using cref tags with a prefix
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicAvoidUsingCrefTagsWithAPrefixFixer
-        Inherits AvoidUsingCrefTagsWithAPrefixFixer 
+        Inherits AvoidUsingCrefTagsWithAPrefixFixer
 
     End Class
 End Namespace

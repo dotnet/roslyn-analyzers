@@ -28,7 +28,7 @@
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Common.1.2.0-beta1-20160114-02\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Common.1.2.0-beta1-20160218-01\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.CSharp">
@@ -36,7 +36,7 @@
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.0-beta1-20160114-02\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.0-beta1-20160218-01\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Collections.Immutable, Version=1.1.37.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -95,6 +95,8 @@
     <None Include="uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DoNotDirectlyAwaitATask.cs" />
+    <Compile Include="DoNotDirectlyAwaitATask.Fixer.cs" />
     <Compile Include="EnumWithFlagsAttribute.cs" />
     <Compile Include="EnumWithFlagsAttribute.Fixer.cs" />
     <Compile Include="EquatableAnalyzer.cs" />
@@ -134,6 +136,7 @@
     <Compile Include="MarkAttributesWithAttributeUsage.cs" />
     <Compile Include="DefineAccessorsForAttributeArguments.cs" />
     <Compile Include="DefineAccessorsForAttributeArguments.Fixer.cs" />
+    <Compile Include="UseIntegralOrStringArgumentForIndexers.cs" />
     <Compile Include="UsePropertiesWhereAppropriate.cs" />
     <Compile Include="UsePropertiesWhereAppropriate.Fixer.cs" />
     <Compile Include="InterfaceMethodsShouldBeCallableByChildTypes.cs" />
@@ -158,10 +161,8 @@
     <Compile Include="OverloadOperatorEqualsOnOverridingValueTypeEquals.cs" />
     <Compile Include="OverloadOperatorEqualsOnOverridingValueTypeEquals.Fixer.cs" />
     <Compile Include="PassSystemUriObjectsInsteadOfStrings.cs" />
-    <Compile Include="PassSystemUriObjectsInsteadOfStrings.Fixer.cs" />
     <Compile Include="CancellationTokenParametersMustComeLast.cs" />
     <Compile Include="DoNotDeclareStaticMembersOnGenericTypes.cs" />
-    <Compile Include="DoNotDeclareStaticMembersOnGenericTypes.Fixer.cs" />
     <Compile Include="CollectionsShouldImplementGenericInterface.cs" />
     <Compile Include="CollectionsShouldImplementGenericInterface.Fixer.cs" />
     <Compile Include="EnumStorageShouldBeInt32.cs" />
@@ -171,7 +172,6 @@
     <Compile Include="ImplementStandardExceptionConstructors.cs" />
     <Compile Include="ImplementStandardExceptionConstructors.Fixer.cs" />
     <Compile Include="NestedTypesShouldNotBeVisible.cs" />
-    <Compile Include="NestedTypesShouldNotBeVisible.Fixer.cs" />
     <Compile Include="AvoidEmptyInterfaces.cs" />
     <Compile Include="AvoidEmptyInterfaces.Fixer.cs" />
     <Compile Include="ProvideObsoleteAttributeMessage.cs" />
@@ -193,19 +193,16 @@
     <Compile Include="ExceptionsShouldBePublic.cs" />
     <Compile Include="ExceptionsShouldBePublic.Fixer.cs" />
     <Compile Include="DoNotRaiseExceptionsInUnexpectedLocations.cs" />
-    <Compile Include="DoNotRaiseExceptionsInUnexpectedLocations.Fixer.cs" />
     <Compile Include="IdentifiersShouldNotContainUnderscores.cs" />
     <Compile Include="IdentifiersShouldNotContainUnderscores.Fixer.cs" />
     <Compile Include="IdentifiersShouldHaveCorrectSuffix.cs" />
     <Compile Include="IdentifiersShouldHaveCorrectSuffix.Fixer.cs" />
     <Compile Include="IdentifiersShouldNotHaveIncorrectSuffix.cs" />
     <Compile Include="IdentifiersShouldNotHaveIncorrectSuffix.Fixer.cs" />
-    <Compile Include="FlagsEnumsShouldHavePluralNames.cs" />
-    <Compile Include="FlagsEnumsShouldHavePluralNames.Fixer.cs" />
+    <Compile Include="EnumsShouldHavePluralNames.cs" />
+    <Compile Include="EnumsShouldHavePluralNames.Fixer.cs" />
     <Compile Include="IdentifiersShouldNotMatchKeywords.cs" />
     <Compile Include="IdentifiersShouldNotMatchKeywords.Fixer.cs" />
-    <Compile Include="OnlyFlagsEnumsShouldHavePluralNames.cs" />
-    <Compile Include="OnlyFlagsEnumsShouldHavePluralNames.Fixer.cs" />
     <Compile Include="PropertyNamesShouldNotMatchGetMethods.cs" />
     <Compile Include="PropertyNamesShouldNotMatchGetMethods.Fixer.cs" />
     <Compile Include="TypeNamesShouldNotMatchNamespaces.cs" />
@@ -217,7 +214,6 @@
     <Compile Include="OverrideEqualsAndOperatorEqualsOnValueTypes.cs" />
     <Compile Include="OverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.cs" />
     <Compile Include="PropertiesShouldNotReturnArrays.cs" />
-    <Compile Include="PropertiesShouldNotReturnArrays.Fixer.cs" />
     <Compile Include="AssembliesShouldHaveValidStrongNames.cs" />
     <Compile Include="AssembliesShouldHaveValidStrongNames.Fixer.cs" />
     <Compile Include="OverrideGetHashCodeOnOverridingEquals.Fixer.cs" />

@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA1044: Properties should not be write only
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicPropertiesShouldNotBeWriteOnlyFixer
-        Inherits PropertiesShouldNotBeWriteOnlyFixer 
+        Inherits PropertiesShouldNotBeWriteOnlyFixer
 
     End Class
 End Namespace

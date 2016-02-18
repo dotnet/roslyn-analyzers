@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities
@@ -14,7 +13,6 @@ namespace Analyzer.Utilities
 
         public static INamedTypeSymbol GenericICollection(Compilation compilation)
         {
-           
             return compilation.GetTypeByMetadataName("System.Collections.Generic.ICollection`1");
         }
 
@@ -148,6 +146,26 @@ namespace Analyzer.Utilities
             return compilation.GetTypeByMetadataName("System.Runtime.Serialization.StreamingContext");
         }
 
+        public static INamedTypeSymbol OnDeserializingAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Runtime.Serialization.OnDeserializingAttribute");
+        }
+
+        public static INamedTypeSymbol OnDeserializedAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Runtime.Serialization.OnDeserializedAttribute");
+        }
+
+        public static INamedTypeSymbol OnSerializingAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Runtime.Serialization.OnSerializingAttribute");
+        }
+
+        public static INamedTypeSymbol OnSerializedAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Runtime.Serialization.OnSerializedAttribute");
+        }
+
         public static INamedTypeSymbol SerializableAttribute(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName("System.SerializableAttribute");
@@ -213,9 +231,24 @@ namespace Analyzer.Utilities
             return compilation.GetTypeByMetadataName("System.EventArgs");
         }
 
+        public static INamedTypeSymbol Uri(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Uri");
+        }
+
         public static INamedTypeSymbol ComVisibleAttribute(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName("System.Runtime.InteropServices.ComVisibleAttribute");
+        }
+
+        public static INamedTypeSymbol NeutralResourcesLanguageAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Resources.NeutralResourcesLanguageAttribute");
+        }
+
+        public static INamedTypeSymbol GeneratedCodeAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.CodeDom.Compiler.GeneratedCodeAttribute");
         }
 
         public static INamedTypeSymbol Console(Compilation compilation)
@@ -231,6 +264,61 @@ namespace Analyzer.Utilities
         public static INamedTypeSymbol Object(Compilation compilation)
         {
             return compilation.GetSpecialType(SpecialType.System_Object);
+        }
+
+        public static INamedTypeSymbol Exception(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Exception");
+        }
+
+        public static INamedTypeSymbol InvalidOperationException(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.InvalidOperationException");
+        }
+
+        public static INamedTypeSymbol ArgumentException(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.ArgumentException");
+        }
+
+        public static INamedTypeSymbol NotSupportedException(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.NotSupportedException");
+        }
+
+        public static INamedTypeSymbol KeyNotFoundException(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.KeyNotFoundException");
+        }
+
+        public static INamedTypeSymbol GenericIEqualityComparer(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Collections.Generic.IEqualityComparer`1");
+        }
+
+        public static INamedTypeSymbol GenericIEquatable(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.IEquatable`1");
+        }
+
+        public static INamedTypeSymbol IHashCodeProvider(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Collections.IHashCodeProvider");
+        }
+
+        public static INamedTypeSymbol IntPtr(Compilation compilation)
+        {
+            return compilation.GetSpecialType(SpecialType.System_IntPtr);
+        }
+
+        public static INamedTypeSymbol UIntPtr(Compilation compilation)
+        {
+            return compilation.GetSpecialType(SpecialType.System_UIntPtr);
+        }
+
+        public static INamedTypeSymbol HandleRef(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Runtime.InteropServices.HandleRef");
         }
     }
 }

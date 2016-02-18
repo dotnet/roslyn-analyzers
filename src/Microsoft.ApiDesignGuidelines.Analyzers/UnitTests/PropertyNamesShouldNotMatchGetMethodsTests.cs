@@ -1,9 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
-using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
@@ -196,26 +194,26 @@ End Class
         private static DiagnosticResult GetCA1721CSharpDeclaringTypeResultAt(int line, int column, string identifierName, string typeName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, typeName);
+            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, typeName);
             return GetCSharpResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
         }
         private static DiagnosticResult GetCA1721CSharpBaseTypeResultAt(int line, int column, string identifierName, string typeName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, typeName);
+            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, typeName);
             return GetCSharpResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1721BasicDeclaringTypeResultAt(int line, int column, string identifierName, string typeName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, typeName);
+            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, typeName);
             return GetBasicResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
         }
         private static DiagnosticResult GetCA1721BasicBaseTypeResultAt(int line, int column, string identifierName, string typeName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, typeName);
+            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, typeName);
             return GetBasicResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
         }
         #endregion

@@ -64,7 +64,7 @@ namespace Analyzer.Utilities
         public static SymbolVisibility GetResultantVisibility(this ISymbol symbol)
         {
             // Start by assuming it's visible.
-            var visibility = SymbolVisibility.Public;
+            SymbolVisibility visibility = SymbolVisibility.Public;
 
             switch (symbol.Kind)
             {

@@ -52,37 +52,37 @@
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Common.1.2.0-beta1-20160114-02\lib\net45\Microsoft.CodeAnalysis.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Common.1.2.0-beta1-20160218-01\lib\net45\Microsoft.CodeAnalysis.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.1.2.0-beta1-20160114-02\lib\net45\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.1.2.0-beta1-20160218-01\lib\net45\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.1.2.0-beta1-20160114-02\lib\net45\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.1.2.0-beta1-20160218-01\lib\net45\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.VisualBasic, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.VisualBasic.1.2.0-beta1-20160114-02\lib\net45\Microsoft.CodeAnalysis.VisualBasic.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.VisualBasic.1.2.0-beta1-20160218-01\lib\net45\Microsoft.CodeAnalysis.VisualBasic.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.VisualBasic.Workspaces.1.2.0-beta1-20160114-02\lib\net45\Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.VisualBasic.Workspaces.1.2.0-beta1-20160218-01\lib\net45\Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.0-beta1-20160114-02\lib\net45\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.0-beta1-20160218-01\lib\net45\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Workspaces.Desktop, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.0-beta1-20160114-02\lib\net45\Microsoft.CodeAnalysis.Workspaces.Desktop.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.0-beta1-20160218-01\lib\net45\Microsoft.CodeAnalysis.Workspaces.Desktop.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -145,10 +145,15 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DoNotDirectlyAwaitATaskTests.cs" />
+    <Compile Include="DoNotDirectlyAwaitATaskTests.Fixer.cs" />
     <Compile Include="EnumWithFlagsAttributeTests.cs" />
     <Compile Include="EnumWithFlagsAttributeTests.Fixer.cs" />
     <Compile Include="EquatableAnalyzerTests.cs" />
     <Compile Include="IdentifiersShouldNotContainTypeNamesTests.cs" />
+    <Compile Include="IdentifiersShouldNotMatchKeywordsNamespaceRuleTests.cs" />
+    <Compile Include="IdentifiersShouldNotMatchKeywordsTests.cs" />
+    <Compile Include="IdentifiersShouldNotMatchKeywordsTypeRuleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AvoidAsyncVoidTests.cs" />
     <Compile Include="AvoidAsyncVoidTests.Fixer.cs" />
@@ -181,6 +186,7 @@
     <Compile Include="MarkAttributesWithAttributeUsageTests.cs" />
     <Compile Include="DefineAccessorsForAttributeArgumentsTests.cs" />
     <Compile Include="DefineAccessorsForAttributeArgumentsTests.Fixer.cs" />
+    <Compile Include="UseIntegralOrStringArgumentForIndexersTests.cs" />
     <Compile Include="UsePropertiesWhereAppropriateTests.cs" />
     <Compile Include="UsePropertiesWhereAppropriateTests.Fixer.cs" />
     <Compile Include="InterfaceMethodsShouldBeCallableByChildTypesTests.cs" />
@@ -204,10 +210,8 @@
     <Compile Include="OverloadOperatorEqualsOnOverridingValueTypeEqualsTests.cs" />
     <Compile Include="OverloadOperatorEqualsOnOverridingValueTypeEqualsTests.Fixer.cs" />
     <Compile Include="PassSystemUriObjectsInsteadOfStringsTests.cs" />
-    <Compile Include="PassSystemUriObjectsInsteadOfStringsTests.Fixer.cs" />
     <Compile Include="CancellationTokenParametersMustComeLastTests.cs" />
     <Compile Include="DoNotDeclareStaticMembersOnGenericTypesTests.cs" />
-    <Compile Include="DoNotDeclareStaticMembersOnGenericTypesTests.Fixer.cs" />
     <Compile Include="CollectionsShouldImplementGenericInterfaceTests.cs" />
     <Compile Include="CollectionsShouldImplementGenericInterfaceTests.Fixer.cs" />
     <Compile Include="EnumStorageShouldBeInt32Tests.cs" />
@@ -217,7 +221,6 @@
     <Compile Include="ImplementStandardExceptionConstructorsTests.cs" />
     <Compile Include="ImplementStandardExceptionConstructorsTests.Fixer.cs" />
     <Compile Include="NestedTypesShouldNotBeVisibleTests.cs" />
-    <Compile Include="NestedTypesShouldNotBeVisibleTests.Fixer.cs" />
     <Compile Include="AvoidEmptyInterfacesTests.cs" />
     <Compile Include="AvoidEmptyInterfacesTests.Fixer.cs" />
     <Compile Include="ProvideObsoleteAttributeMessageTests.cs" />
@@ -239,19 +242,17 @@
     <Compile Include="ExceptionsShouldBePublicTests.cs" />
     <Compile Include="ExceptionsShouldBePublicTests.Fixer.cs" />
     <Compile Include="DoNotRaiseExceptionsInUnexpectedLocationsTests.cs" />
-    <Compile Include="DoNotRaiseExceptionsInUnexpectedLocationsTests.Fixer.cs" />
     <Compile Include="IdentifiersShouldNotContainUnderscoresTests.cs" />
     <Compile Include="IdentifiersShouldNotContainUnderscoresTests.Fixer.cs" />
     <Compile Include="IdentifiersShouldHaveCorrectSuffixTests.cs" />
     <Compile Include="IdentifiersShouldHaveCorrectSuffixTests.Fixer.cs" />
     <Compile Include="IdentifiersShouldNotHaveIncorrectSuffixTests.cs" />
     <Compile Include="IdentifiersShouldNotHaveIncorrectSuffixTests.Fixer.cs" />
-    <Compile Include="FlagsEnumsShouldHavePluralNamesTests.cs" />
-    <Compile Include="FlagsEnumsShouldHavePluralNamesTests.Fixer.cs" />
-    <Compile Include="IdentifiersShouldNotMatchKeywordsTests.cs" />
+    <Compile Include="EnumsShouldHavePluralNamesTests.cs" />
+    <Compile Include="EnumsShouldHavePluralNamesTests.Fixer.cs" />
+    <Compile Include="IdentifiersShouldNotMatchKeywordsMemberParameterRuleTests.cs" />
+    <Compile Include="IdentifiersShouldNotMatchKeywordsMemberRuleTests.cs" />
     <Compile Include="IdentifiersShouldNotMatchKeywordsTests.Fixer.cs" />
-    <Compile Include="OnlyFlagsEnumsShouldHavePluralNamesTests.cs" />
-    <Compile Include="OnlyFlagsEnumsShouldHavePluralNamesTests.Fixer.cs" />
     <Compile Include="PropertyNamesShouldNotMatchGetMethodsTests.cs" />
     <Compile Include="PropertyNamesShouldNotMatchGetMethodsTests.Fixer.cs" />
     <Compile Include="TypeNamesShouldNotMatchNamespacesTests.cs" />
@@ -263,7 +264,6 @@
     <Compile Include="OverrideEqualsAndOperatorEqualsOnValueTypesTests.cs" />
     <Compile Include="OverrideEqualsAndOperatorEqualsOnValueTypesTests.Fixer.cs" />
     <Compile Include="PropertiesShouldNotReturnArraysTests.cs" />
-    <Compile Include="PropertiesShouldNotReturnArraysTests.Fixer.cs" />
     <Compile Include="AssembliesShouldHaveValidStrongNamesTests.cs" />
     <Compile Include="AssembliesShouldHaveValidStrongNamesTests.Fixer.cs" />
     <Compile Include="OverrideGetHashCodeOnOverridingEqualsTests.cs" />

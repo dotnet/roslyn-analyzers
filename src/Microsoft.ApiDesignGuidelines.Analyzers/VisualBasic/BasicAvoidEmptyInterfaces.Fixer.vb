@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA1040: Avoid empty interfaces
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicAvoidEmptyInterfacesFixer
-        Inherits AvoidEmptyInterfacesFixer 
+        Inherits AvoidEmptyInterfacesFixer
 
     End Class
 End Namespace

@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Desktop.Analyzers     
+Namespace Desktop.Analyzers
     ''' <summary>
     ''' CA2236: Call base class methods on ISerializable types
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicCallBaseClassMethodsOnISerializableTypesFixer
-        Inherits CallBaseClassMethodsOnISerializableTypesFixer 
+        Inherits CallBaseClassMethodsOnISerializableTypesFixer
 
     End Class
 End Namespace

@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Desktop.Analyzers     
+Namespace Desktop.Analyzers
     ''' <summary>
     ''' CA1058: Types should not extend certain base types
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicTypesShouldNotExtendCertainBaseTypesFixer
-        Inherits TypesShouldNotExtendCertainBaseTypesFixer 
+        Inherits TypesShouldNotExtendCertainBaseTypesFixer
 
     End Class
 End Namespace

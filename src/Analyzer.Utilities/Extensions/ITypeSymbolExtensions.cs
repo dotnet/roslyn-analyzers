@@ -58,7 +58,7 @@ namespace Analyzer.Utilities
                     return false;
 
                 case TypeKind.Interface:
-                    foreach (var i in type.AllInterfaces)
+                    foreach (INamedTypeSymbol i in type.AllInterfaces)
                     {
                         if (i.Equals(possibleBase))
                         {
@@ -75,7 +75,7 @@ namespace Analyzer.Utilities
 
         public static IEnumerable<INamedTypeSymbol> GetBaseTypes(this ITypeSymbol type)
         {
-            var current = type.BaseType;
+            INamedTypeSymbol current = type.BaseType;
             while (current != null)
             {
                 yield return current;
@@ -85,7 +85,7 @@ namespace Analyzer.Utilities
 
         public static IEnumerable<ITypeSymbol> GetBaseTypesAndThis(this ITypeSymbol type)
         {
-            var current = type;
+            ITypeSymbol current = type;
             while (current != null)
             {
                 yield return current;
@@ -181,9 +181,9 @@ namespace Analyzer.Utilities
 
             public override Accessibility VisitNamedType(INamedTypeSymbol symbol)
             {
-                var accessibility = symbol.DeclaredAccessibility;
+                Accessibility accessibility = symbol.DeclaredAccessibility;
 
-                foreach (var arg in symbol.TypeArguments)
+                foreach (ITypeSymbol arg in symbol.TypeArguments)
                 {
                     accessibility = CommonAccessibilityUtilities.Minimum(accessibility, arg.Accept(this));
                 }

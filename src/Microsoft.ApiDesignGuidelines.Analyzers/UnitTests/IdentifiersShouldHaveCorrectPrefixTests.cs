@@ -2,7 +2,6 @@
 
 using Microsoft.ApiDesignGuidelines.Analyzers;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 
@@ -68,9 +67,9 @@ public interface IAmAnInterface
 }
 ",
                 GetCA1715CSharpResultAt(2, 18, CA1715InterfaceMessage, "Controller"),
-                GetCA1715CSharpResultAt(7, 18, CA1715InterfaceMessage, "日本語"),
+                GetCA1715CSharpResultAt(7, 18, CA1715InterfaceMessage, "\u65E5\u672C\u8A9E"),
                 GetCA1715CSharpResultAt(12, 18, CA1715InterfaceMessage, "_Controller"),
-                GetCA1715CSharpResultAt(17, 18, CA1715InterfaceMessage, "_日本語"),
+                GetCA1715CSharpResultAt(17, 18, CA1715InterfaceMessage, "_\u65E5\u672C\u8A9E"),
                 GetCA1715CSharpResultAt(22, 18, CA1715InterfaceMessage, "Internet"),
                 GetCA1715CSharpResultAt(27, 18, CA1715InterfaceMessage, "Iinternet"),
                 GetCA1715CSharpResultAt(34, 22, CA1715InterfaceMessage, "Controller"));
@@ -147,7 +146,7 @@ public class Class6<TTypeParameter>
 }
 ",
                 GetCA1715CSharpResultAt(4, 25, CA1715TypeParameterMessage, "V"),
-                GetCA1715CSharpResultAt(8, 32, CA1715TypeParameterMessage, "本語"),
+                GetCA1715CSharpResultAt(8, 32, CA1715TypeParameterMessage, "\u672C\u8A9E"),
                 GetCA1715CSharpResultAt(12, 31, CA1715TypeParameterMessage, "V"),
                 GetCA1715CSharpResultAt(14, 21, CA1715TypeParameterMessage, "V"),
                 GetCA1715CSharpResultAt(18, 24, CA1715TypeParameterMessage, "V"),
@@ -206,9 +205,9 @@ Public Interface IAmAnInterface
 End Interface
 ",
                 GetCA1715BasicResultAt(2, 18, CA1715InterfaceMessage, "Controller"),
-                GetCA1715BasicResultAt(6, 18, CA1715InterfaceMessage, "日本語"),
+                GetCA1715BasicResultAt(6, 18, CA1715InterfaceMessage, "\u65E5\u672C\u8A9E"),
                 GetCA1715BasicResultAt(10, 18, CA1715InterfaceMessage, "_Controller"),
-                GetCA1715BasicResultAt(14, 18, CA1715InterfaceMessage, "_日本語"),
+                GetCA1715BasicResultAt(14, 18, CA1715InterfaceMessage, "_\u65E5\u672C\u8A9E"),
                 GetCA1715BasicResultAt(18, 18, CA1715InterfaceMessage, "Internet"),
                 GetCA1715BasicResultAt(22, 18, CA1715InterfaceMessage, "Iinternet"),
                 GetCA1715BasicResultAt(27, 22, CA1715InterfaceMessage, "Controller"));
@@ -271,7 +270,7 @@ Public Class Class6(Of TTypeParameter)
 End Class
 ",
                 GetCA1715BasicResultAt(4, 28, CA1715TypeParameterMessage, "V"),
-                GetCA1715BasicResultAt(7, 35, CA1715TypeParameterMessage, "本語"),
+                GetCA1715BasicResultAt(7, 35, CA1715TypeParameterMessage, "\u672C\u8A9E"),
                 GetCA1715BasicResultAt(10, 33, CA1715TypeParameterMessage, "V"),
                 GetCA1715BasicResultAt(12, 24, CA1715TypeParameterMessage, "V"),
                 GetCA1715BasicResultAt(15, 27, CA1715TypeParameterMessage, "V"),
@@ -291,8 +290,8 @@ End Class
                 GetCA1715BasicResultAt(46, 30, CA1715TypeParameterMessage, "_V"));
         }
 
-        internal static string CA1715InterfaceMessage = MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectPrefixMessageInterface;
-        internal static string CA1715TypeParameterMessage = MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectPrefixMessageTypeParameter;
+        internal static readonly string CA1715InterfaceMessage = MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectPrefixMessageInterface;
+        internal static readonly string CA1715TypeParameterMessage = MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectPrefixMessageTypeParameter;
 
         private static DiagnosticResult GetCA1715CSharpResultAt(int line, int column, string message, string name)
         {

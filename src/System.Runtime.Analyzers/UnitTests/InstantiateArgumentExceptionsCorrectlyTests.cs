@@ -33,7 +33,7 @@ namespace System.Runtime.Analyzers.UnitTests
                     {
                         throw new System.ArgumentException();
                     }
-                }", 
+                }",
                 GetCSharpExpectedResult(6, 31, s_noArguments, "System.ArgumentException"));
 
             VerifyBasic(@"
@@ -55,7 +55,7 @@ namespace System.Runtime.Analyzers.UnitTests
                     {
                         throw new System.ArgumentNullException("""");
                     }
-                }", 
+                }",
                 GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Class.Test(string)", "", "paramName", "System.ArgumentNullException"));
 
             VerifyBasic(@"
@@ -77,7 +77,7 @@ namespace System.Runtime.Analyzers.UnitTests
                     {
                         throw new System.ArgumentNullException("" "");
                     }
-                }", 
+                }",
                 GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Class.Test(string)", " ", "paramName", "System.ArgumentNullException"));
 
             VerifyBasic(@"
@@ -123,7 +123,7 @@ namespace System.Runtime.Analyzers.UnitTests
                     {
                         throw new System.ArgumentException(""first"");
                     }
-                }", 
+                }",
                 GetCSharpExpectedResult(6, 31, s_incorrectMessage, "Class.Test(string)", "first", "message", "System.ArgumentException"));
 
             VerifyBasic(@"
@@ -172,13 +172,13 @@ namespace System.Runtime.Analyzers.UnitTests
                 }",
                 GetCSharpExpectedResult(6, 31, s_noArguments, "System.ArgumentNullException"));
 
-           VerifyBasic(@"
+            VerifyBasic(@"
                 Public Class MyClass
                     Public Sub Test(Dim first As String)
                         Throw New System.ArgumentNullException()
                     End Sub
                 End Class",
-                GetBasicExpectedResult(4, 31, s_noArguments, "System.ArgumentNullException"));
+                 GetBasicExpectedResult(4, 31, s_noArguments, "System.ArgumentNullException"));
         }
 
         [Fact]
@@ -368,7 +368,7 @@ namespace System.Runtime.Analyzers.UnitTests
                     }
                 }");
 
-             VerifyBasic(@"
+            VerifyBasic(@"
                Public Class MyClass
                    Public Sub Test(Dim first As String)
                        Throw New System.ArgumentException(""first is incorrect"")
@@ -388,7 +388,7 @@ namespace System.Runtime.Analyzers.UnitTests
                     }
                 }");
 
-             VerifyBasic(@"
+            VerifyBasic(@"
                Public Class MyClass
                    Public Sub Test(Dim first As String)
                        Throw New System.ArgumentException(""first is incorrect"", ""first"")
@@ -540,13 +540,13 @@ namespace System.Runtime.Analyzers.UnitTests
 
         private static DiagnosticResult GetCSharpExpectedResult(int line, int column, string format, params string[] args)
         {
-            var message = string.Format(format, args);
+            string message = string.Format(format, args);
             return GetCSharpResultAt(line, column, s_ruleId, message);
         }
 
         private static DiagnosticResult GetBasicExpectedResult(int line, int column, string format, params string[] args)
         {
-            var message = string.Format(format, args);
+            string message = string.Format(format, args);
             return GetBasicResultAt(line, column, s_ruleId, message);
         }
     }

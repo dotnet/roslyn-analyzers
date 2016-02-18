@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
@@ -53,8 +52,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private void InitializeCore(CompilationStartAnalysisContext context)
         {
-            var objectType = context.Compilation.GetSpecialType(SpecialType.System_Object);
-            var equatableType = context.Compilation.GetTypeByMetadataName(IEquatableMetadataName);
+            INamedTypeSymbol objectType = context.Compilation.GetSpecialType(SpecialType.System_Object);
+            INamedTypeSymbol equatableType = context.Compilation.GetTypeByMetadataName(IEquatableMetadataName);
             if (objectType != null && equatableType != null)
             {
                 context.RegisterSymbolAction(c => AnalyzeSymbol(c, objectType, equatableType), SymbolKind.NamedType);
@@ -69,14 +68,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
-            var overridesObjectEquals = namedType.OverridesEquals();
+            bool overridesObjectEquals = namedType.OverridesEquals();
 
-            var constructedEquatable = equatableType.Construct(namedType);
-            var implementation = namedType
+            INamedTypeSymbol constructedEquatable = equatableType.Construct(namedType);
+            INamedTypeSymbol implementation = namedType
                 .Interfaces
                 .Where(x => x.Equals(constructedEquatable))
                 .FirstOrDefault();
-            var implementsEquatable = implementation != null;
+            bool implementsEquatable = implementation != null;
 
             if (overridesObjectEquals && !implementsEquatable && namedType.TypeKind == TypeKind.Struct)
             {

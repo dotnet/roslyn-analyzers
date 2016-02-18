@@ -5,7 +5,7 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.QualityGuidelines.Analyzers   
+Namespace Microsoft.QualityGuidelines.Analyzers
     ''' <summary>
     ''' CA2119: Seal methods that satisfy private interfaces
     ''' </summary>

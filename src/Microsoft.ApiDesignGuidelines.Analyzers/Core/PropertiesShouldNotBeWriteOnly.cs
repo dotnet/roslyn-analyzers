@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
-{                   
+{
     /// <summary>
     /// CA1044: Properties should not be write only
     /// </summary>
@@ -15,11 +15,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         internal const string RuleId = "CA1044";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertiesShouldNotBeWriteOnlyTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        
+
         private static readonly LocalizableString s_localizableMessageAddGetter = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertiesShouldNotBeWriteOnlyMessageAddGetter), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageMakeMoreAccessible = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertiesShouldNotBeWriteOnlyMessageMakeMoreAccessible), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertiesShouldNotBeWriteOnlyDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        
+
         internal static DiagnosticDescriptor AddGetterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageAddGetter,
@@ -43,7 +43,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            
         }
     }
 }

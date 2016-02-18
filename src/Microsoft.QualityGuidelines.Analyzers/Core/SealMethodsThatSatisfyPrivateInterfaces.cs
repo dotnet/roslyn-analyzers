@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.QualityGuidelines.Analyzers
-{                   
+{
     /// <summary>
     /// CA2119: Seal methods that satisfy private interfaces
     /// </summary>
@@ -15,10 +15,10 @@ namespace Microsoft.QualityGuidelines.Analyzers
         internal const string RuleId = "CA2119";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.SealMethodsThatSatisfyPrivateInterfacesTitle), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
-        
+
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.SealMethodsThatSatisfyPrivateInterfacesMessage), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.SealMethodsThatSatisfyPrivateInterfacesDescription), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
-        
+
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
@@ -33,7 +33,6 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            
         }
     }
 }

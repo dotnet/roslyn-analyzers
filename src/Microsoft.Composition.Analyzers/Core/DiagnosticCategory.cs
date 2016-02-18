@@ -3,5 +3,5 @@
 namespace Microsoft.Composition.Analyzers
 {
     internal static class DiagnosticCategory
-    {        public static readonly string Reliability = MicrosoftCompositionAnalyzersResources.CategoryReliability;}
+    { public static readonly string Reliability = MicrosoftCompositionAnalyzersResources.CategoryReliability; }
 }

@@ -3,5 +3,5 @@
 namespace System.Threading.Tasks.Analyzers
 {
     internal static class DiagnosticCategory
-    {        public static readonly string Reliability = SystemThreadingTasksAnalyzersResources.CategoryReliability;}
+    { public static readonly string Reliability = SystemThreadingTasksAnalyzersResources.CategoryReliability; }
 }

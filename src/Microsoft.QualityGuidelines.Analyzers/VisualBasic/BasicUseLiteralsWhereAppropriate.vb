@@ -5,7 +5,7 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.QualityGuidelines.Analyzers   
+Namespace Microsoft.QualityGuidelines.Analyzers
     ''' <summary>
     ''' CA1802: Use literals where appropriate
     ''' </summary>

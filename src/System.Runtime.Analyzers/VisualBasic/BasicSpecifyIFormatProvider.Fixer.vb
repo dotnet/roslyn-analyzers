@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace System.Runtime.Analyzers     
+Namespace System.Runtime.Analyzers
     ''' <summary>
     ''' CA1305: Specify IFormatProvider
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicSpecifyIFormatProviderFixer
-        Inherits SpecifyIFormatProviderFixer 
+        Inherits SpecifyIFormatProviderFixer
 
     End Class
 End Namespace

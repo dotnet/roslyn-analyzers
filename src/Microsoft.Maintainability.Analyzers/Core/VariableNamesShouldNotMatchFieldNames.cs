@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.Maintainability.Analyzers
-{                   
+{
     /// <summary>
     /// CA1500: Variable names should not match field names
     /// </summary>
@@ -14,11 +14,11 @@ namespace Microsoft.Maintainability.Analyzers
         internal const string RuleId = "CA1500";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.VariableNamesShouldNotMatchFieldNamesTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
-        
+
         private static readonly LocalizableString s_localizableMessageLocal = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.VariableNamesShouldNotMatchFieldNamesMessageLocal), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageParameter = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.VariableNamesShouldNotMatchFieldNamesMessageParameter), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.VariableNamesShouldNotMatchFieldNamesDescription), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
-        
+
         internal static DiagnosticDescriptor LocalRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageLocal,
@@ -42,7 +42,6 @@ namespace Microsoft.Maintainability.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            
         }
     }
 }

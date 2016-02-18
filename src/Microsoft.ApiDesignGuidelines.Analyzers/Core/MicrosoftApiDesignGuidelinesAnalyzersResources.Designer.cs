@@ -108,6 +108,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Append .ConfigureAwait(false).
+        /// </summary>
+        internal static string AppendConfigureAwaitFalse {
+            get {
+                return ResourceManager.GetString("AppendConfigureAwaitFalse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The strong name protects clients from unknowingly loading an assembly that has been tampered with. Assemblies without strong names should not be deployed outside very limited scenarios. If you share or distribute assemblies that are not correctly signed, the assembly can be tampered with, the common language runtime might not load the assembly, or the user might have to disable verification on his or her computer..
         /// </summary>
         internal static string AssembliesShouldHaveValidStrongNamesDescription {
@@ -491,6 +500,33 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         internal static string DoNotDecreaseInheritedMemberVisibilityTitle {
             get {
                 return ResourceManager.GetString("DoNotDecreaseInheritedMemberVisibilityTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to While authoring a library where the consumer is not known and when there is no need for a SynchronizationContext,  consider using ConfigureAwait(false). Otherwise, the consumers of the library may face deadlocks by consuming the asynchronous methods in a blocking fashion..
+        /// </summary>
+        internal static string DoNotDirectlyAwaitATaskDescription {
+            get {
+                return ResourceManager.GetString("DoNotDirectlyAwaitATaskDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not directly await a Task without calling ConfigureAwait.
+        /// </summary>
+        internal static string DoNotDirectlyAwaitATaskMessage {
+            get {
+                return ResourceManager.GetString("DoNotDirectlyAwaitATaskMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not directly await a Task.
+        /// </summary>
+        internal static string DoNotDirectlyAwaitATaskTitle {
+            get {
+                return ResourceManager.GetString("DoNotDirectlyAwaitATaskTitle", resourceCulture);
             }
         }
         
@@ -1990,7 +2026,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pass system uri objects instead of strings.
+        ///   Looks up a localized string similar to Modify &apos;{0}&apos; to call &apos;{1}&apos; instead of &apos;{2}&apos;..
         /// </summary>
         internal static string PassSystemUriObjectsInsteadOfStringsMessage {
             get {
@@ -2134,7 +2170,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Provide ObsoleteAttribute message.
+        ///   Looks up a localized string similar to Provide a message for the ObsoleteAttribute that marks {0} as Obsolete.
         /// </summary>
         internal static string ProvideObsoleteAttributeMessageMessage {
             get {
@@ -2382,6 +2418,33 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         internal static string UseGenericEventHandlerInstancesTitle {
             get {
                 return ResourceManager.GetString("UseGenericEventHandlerInstancesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the Object type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method..
+        /// </summary>
+        internal static string UseIntegralOrStringArgumentForIndexersDescription {
+            get {
+                return ResourceManager.GetString("UseIntegralOrStringArgumentForIndexersDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use Integral Or String Argument For Indexers.
+        /// </summary>
+        internal static string UseIntegralOrStringArgumentForIndexersMessage {
+            get {
+                return ResourceManager.GetString("UseIntegralOrStringArgumentForIndexersMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use Integral Or String Argument For Indexers.
+        /// </summary>
+        internal static string UseIntegralOrStringArgumentForIndexersTitle {
+            get {
+                return ResourceManager.GetString("UseIntegralOrStringArgumentForIndexersTitle", resourceCulture);
             }
         }
         

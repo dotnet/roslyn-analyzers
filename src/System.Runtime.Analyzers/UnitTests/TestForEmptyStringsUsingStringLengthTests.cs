@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 
@@ -13,22 +12,22 @@ namespace System.Runtime.Analyzers.UnitTests
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpTestForEmptyStringsUsingStringLengthAnalyzer();
+            return new TestForEmptyStringsUsingStringLengthAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicTestForEmptyStringsUsingStringLengthAnalyzer();
+            return new TestForEmptyStringsUsingStringLengthAnalyzer();
         }
 
         private static DiagnosticResult CSharpResult(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CSharpTestForEmptyStringsUsingStringLengthAnalyzer.RuleId, SystemRuntimeAnalyzersResources.TestForEmptyStringsUsingStringLengthMessage);
+            return GetCSharpResultAt(line, column, TestForEmptyStringsUsingStringLengthAnalyzer.RuleId, SystemRuntimeAnalyzersResources.TestForEmptyStringsUsingStringLengthMessage);
         }
 
         private static DiagnosticResult BasicResult(int line, int column)
         {
-            return GetBasicResultAt(line, column, BasicTestForEmptyStringsUsingStringLengthAnalyzer.RuleId, SystemRuntimeAnalyzersResources.TestForEmptyStringsUsingStringLengthMessage);
+            return GetBasicResultAt(line, column, TestForEmptyStringsUsingStringLengthAnalyzer.RuleId, SystemRuntimeAnalyzersResources.TestForEmptyStringsUsingStringLengthMessage);
         }
 
         #endregion

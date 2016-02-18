@@ -5,7 +5,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Semantics;
-using System;
 using System.Linq;
 
 namespace Microsoft.QualityGuidelines.Analyzers
@@ -34,7 +33,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
         {
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                var conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(compilationContext.Compilation);
+                INamedTypeSymbol conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(compilationContext.Compilation);
 
                 compilationContext.RegisterOperationBlockAction(context =>
                 {
@@ -44,7 +43,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                         return;
                     }
 
-                    if (!IsFinalizer(method))
+                    if (!method.IsFinalizer())
                     {
                         return;
                     }
@@ -55,32 +54,6 @@ namespace Microsoft.QualityGuidelines.Analyzers
                     }
                 });
             });
-        }
-
-        private static bool IsFinalizer(IMethodSymbol method)
-        {
-            if (method.MethodKind == MethodKind.Destructor)
-            {
-                return true; // for C#
-            }
-
-            if (method.Name != "Finalize" || method.Parameters.Length != 0 || !method.ReturnsVoid)
-            {
-                return false;
-            }
-
-            var overridden = method.OverriddenMethod;
-            if (overridden == null)
-            {
-                return false;
-            }
-
-            for (var o = overridden.OverriddenMethod; o != null; o = o.OverriddenMethod)
-            {
-                overridden = o;
-            }
-
-            return overridden.ContainingType.SpecialType == SpecialType.System_Object; // it is object.Finalize
         }
 
         private bool IsEmptyFinalizer(ImmutableArray<IOperation> operationBlocks, ISymbol conditionalAttributeSymbol)
@@ -101,19 +74,19 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
                 if (block.Statements.Length == 1)
                 {
-                    var statement = block.Statements[0];
+                    IOperation statement = block.Statements[0];
 
                     // Just a throw statement.
                     if (statement.Kind == OperationKind.ThrowStatement)
                     {
                         return true;
                     }
-                    
-                    if (statement.Kind == OperationKind.ExpressionStatement && 
-                        ((IExpressionStatement)statement).Expression.Kind ==  OperationKind.InvocationExpression)
+
+                    if (statement.Kind == OperationKind.ExpressionStatement &&
+                        ((IExpressionStatement)statement).Expression.Kind == OperationKind.InvocationExpression)
                     {
                         var invocation = ((IExpressionStatement)statement).Expression as IInvocationExpression;
-                        var method = invocation.TargetMethod;
+                        IMethodSymbol method = invocation.TargetMethod;
 
                         if (method.GetAttributes().Any(n => n.AttributeClass.Equals(conditionalAttributeSymbol)))
                         {

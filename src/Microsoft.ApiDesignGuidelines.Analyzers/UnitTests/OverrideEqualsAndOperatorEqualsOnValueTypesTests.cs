@@ -17,7 +17,7 @@ public struct A
 {
 }",
                 GetCSharpOverrideEqualsDiagnostic(2, 15, "A"),
-                GetCSharpOperatorEqualsDiagnostic(2,15, "A"));
+                GetCSharpOperatorEqualsDiagnostic(2, 15, "A"));
         }
 
         [Fact]
@@ -189,7 +189,7 @@ End Structure
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new  OverrideEqualsAndOperatorEqualsOnValueTypesAnalyzer();
+            return new OverrideEqualsAndOperatorEqualsOnValueTypesAnalyzer();
         }
 
         private static DiagnosticResult GetCSharpOverrideEqualsDiagnostic(int line, int column, string typeName)
@@ -214,7 +214,7 @@ End Structure
 
         private static DiagnosticResult GetExpectedDiagnostic(string language, int line, int column, string typeName, string messageFormat)
         {
-            var fileName = language == LanguageNames.CSharp ? "Test0.cs" : "Test0.vb";
+            string fileName = language == LanguageNames.CSharp ? "Test0.cs" : "Test0.vb";
             return new DiagnosticResult
             {
                 Id = OverrideEqualsAndOperatorEqualsOnValueTypesAnalyzer.RuleId,

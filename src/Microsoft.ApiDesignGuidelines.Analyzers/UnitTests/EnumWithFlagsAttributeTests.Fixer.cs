@@ -2,9 +2,7 @@
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
-using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
@@ -73,7 +71,7 @@ public enum HexFlagsEnumClass
             // Verify fixes for CA1027
             VerifyCSharpFix(code, expected);
         }
-                            
+
         [Fact]
         public void VisualBasic_EnumWithFlagsAttributes_SimpleCase()
         {
@@ -112,7 +110,7 @@ End Enum";
             // Verify fixes for CA1027
             VerifyBasicFix(code, expected);
         }
-                           
+
         [Fact]
         public void CSharp_EnumWithFlagsAttributes_DuplicateValues()
         {
@@ -144,7 +142,7 @@ public enum DuplicateValuesEnumClass
             // Verify fixes for CA1027
             VerifyCSharpFix(code, expected);
         }
-                             
+
         [Fact]
         public void VisualBasic_EnumWithFlagsAttributes_DuplicateValues()
         {

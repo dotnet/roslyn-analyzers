@@ -14,7 +14,7 @@ namespace Analyzer.Utilities
             DiagnosticDescriptor rule,
             params object[] args)
         {
-            foreach (var node in nodes)
+            foreach (SyntaxNode node in nodes)
             {
                 yield return node.CreateDiagnostic(rule, args);
             }
@@ -33,7 +33,7 @@ namespace Analyzer.Utilities
             DiagnosticDescriptor rule,
             params object[] args)
         {
-            foreach (var token in tokens)
+            foreach (SyntaxToken token in tokens)
             {
                 yield return token.CreateDiagnostic(rule, args);
             }
@@ -52,7 +52,7 @@ namespace Analyzer.Utilities
             DiagnosticDescriptor rule,
             params object[] args)
         {
-            foreach (var nodeOrToken in nodesOrTokens)
+            foreach (SyntaxNodeOrToken nodeOrToken in nodesOrTokens)
             {
                 yield return nodeOrToken.CreateDiagnostic(rule, args);
             }
@@ -71,7 +71,7 @@ namespace Analyzer.Utilities
             DiagnosticDescriptor rule,
             params object[] args)
         {
-            foreach (var symbol in symbols)
+            foreach (ISymbol symbol in symbols)
             {
                 yield return symbol.CreateDiagnostic(rule, args);
             }
@@ -103,7 +103,7 @@ namespace Analyzer.Utilities
             DiagnosticDescriptor rule,
             params object[] args)
         {
-            foreach (var locations in setOfLocations)
+            foreach (IEnumerable<Location> locations in setOfLocations)
             {
                 yield return locations.CreateDiagnostic(rule, args);
             }
@@ -123,7 +123,7 @@ namespace Analyzer.Utilities
             ImmutableDictionary<string, string> properties,
             params object[] args)
         {
-            var inSource = locations.Where(l => l.IsInSource);
+            IEnumerable<Location> inSource = locations.Where(l => l.IsInSource);
             if (!inSource.Any())
             {
                 return Diagnostic.Create(rule, null, args);

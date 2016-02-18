@@ -11,9 +11,7 @@ using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
-using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Text;
-using Roslyn.Utilities;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
@@ -29,17 +27,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
-            var flagsAttributeType = WellKnownTypes.FlagsAttribute(model.Compilation);
+            INamedTypeSymbol flagsAttributeType = WellKnownTypes.FlagsAttribute(model.Compilation);
             if (flagsAttributeType == null)
             {
                 return;
             }
 
             // We cannot have multiple overlapping diagnostics of this id.
-            var diagnostic = context.Diagnostics.Single();
-            var fixTitle = diagnostic.Id == EnumWithFlagsAttributeAnalyzer.RuleIdMarkEnumsWithFlags ?
+            Diagnostic diagnostic = context.Diagnostics.Single();
+            string fixTitle = diagnostic.Id == EnumWithFlagsAttributeAnalyzer.RuleIdMarkEnumsWithFlags ?
                                                     MicrosoftApiDesignGuidelinesAnalyzersResources.MarkEnumsWithFlagsCodeFix :
                                                     MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsCodeFix;
             context.RegisterCodeFix(new MyCodeAction(fixTitle,
@@ -49,12 +47,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private async Task<Document> AddOrRemoveFlagsAttribute(Document document, TextSpan span, string diagnosticId, INamedTypeSymbol flagsAttributeType, CancellationToken cancellationToken)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var node = root.FindNode(span);
+            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            SyntaxNode node = root.FindNode(span);
 
-            var model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            var newEnumBlockSyntax = diagnosticId == EnumWithFlagsAttributeAnalyzer.RuleIdMarkEnumsWithFlags ?
+            SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            SyntaxNode newEnumBlockSyntax = diagnosticId == EnumWithFlagsAttributeAnalyzer.RuleIdMarkEnumsWithFlags ?
                 AddFlagsAttribute(editor.Generator, node, flagsAttributeType) :
                 RemoveFlagsAttribute(editor.Generator, model, node, flagsAttributeType, cancellationToken);
 
@@ -72,8 +70,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             var enumType = model.GetDeclaredSymbol(enumTypeSyntax, cancellationToken) as INamedTypeSymbol;
             Debug.Assert(enumType != null);
 
-            var flagsAttribute = enumType.GetAttributes().First(a => a.AttributeClass == flagsAttributeType);
-            var attributeNode = flagsAttribute.ApplicationSyntaxReference.GetSyntax(cancellationToken);
+            AttributeData flagsAttribute = enumType.GetAttributes().First(a => a.AttributeClass == flagsAttributeType);
+            SyntaxNode attributeNode = flagsAttribute.ApplicationSyntaxReference.GetSyntax(cancellationToken);
 
             return generator.RemoveNode(enumTypeSyntax, attributeNode);
         }

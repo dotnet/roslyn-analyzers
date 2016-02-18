@@ -4,11 +4,10 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
-using System;
 using System.Linq;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
-{                   
+{
     /// <summary>
     /// CA1040: Avoid empty interfaces
     /// </summary>
@@ -17,10 +16,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         internal const string RuleId = "CA1040";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.AvoidEmptyInterfacesTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        
+
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.AvoidEmptyInterfacesMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.AvoidEmptyInterfacesDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        
+
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,

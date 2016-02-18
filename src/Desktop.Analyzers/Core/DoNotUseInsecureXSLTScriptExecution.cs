@@ -65,7 +65,7 @@ namespace Desktop.Analyzers
 
         protected abstract Analyzer GetAnalyzer(CodeBlockStartAnalysisContext<TLanguageKindEnum> context, CompilationSecurityTypes types);
 
-        protected class Analyzer
+        protected sealed class Analyzer
         {
             private readonly CompilationSecurityTypes _xmlTypes;
             private readonly SyntaxNodeHelper _syntaxNodeHelper;

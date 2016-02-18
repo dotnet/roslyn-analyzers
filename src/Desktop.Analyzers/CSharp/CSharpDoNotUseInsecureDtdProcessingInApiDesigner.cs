@@ -10,7 +10,7 @@ using Desktop.Analyzers.Common;
 namespace Desktop.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CSharpDoNotUseInsecureDtdProcessingInApiDesignAnalyzer : DoNotUseInsecureDtdProcessingInApiDesignAnalyzer
+    public sealed class CSharpDoNotUseInsecureDtdProcessingInApiDesignAnalyzer : DoNotUseInsecureDtdProcessingInApiDesignAnalyzer
     {
         protected override Analyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes types, Version targetFrameworkVersion)
         {

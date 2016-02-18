@@ -76,7 +76,7 @@ namespace Desktop.Analyzers
 
         protected abstract Analyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes types, Version targetFrameworkVersion);
 
-        protected class Analyzer
+        protected sealed class Analyzer
         {
             // .NET frameworks >= 4.5.2 have secure default settings for XmlTextReader:
             //      DtdProcessing is enabled with null resolver

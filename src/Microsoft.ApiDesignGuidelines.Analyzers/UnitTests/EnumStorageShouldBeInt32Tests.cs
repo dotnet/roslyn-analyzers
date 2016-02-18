@@ -155,8 +155,6 @@ Public Module Module1
         Value1 = 1
         Value2 = 2
     End Enum
-    Sub Main()
-    End Sub
 End Module
 ",
             GetBasicResultAt(4, 17, EnumStorageShouldBeInt32Analyzer.Rule, "TestEnum1", "Long"));
@@ -172,8 +170,6 @@ Public Module Module1
         Value1 = 1
         Value2 = 2
     End Enum
-    Sub Main()
-    End Sub
 End Module
 ",
             GetBasicResultAt(4, 17, EnumStorageShouldBeInt32Analyzer.Rule, "TestEnum2", "Byte"));
@@ -189,8 +185,6 @@ Public Module Module1
         Value1 = 1
         Value2 = 2
     End Enum
-    Sub Main()
-    End Sub
 End Module
 ",
             GetBasicResultAt(4, 17, EnumStorageShouldBeInt32Analyzer.Rule, "TestEnum3", "UShort"));

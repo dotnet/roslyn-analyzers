@@ -62,6 +62,93 @@ End Class
 
         [Fact]
         [WorkItem(459, "https://github.com/dotnet/roslyn-analyzers/issues/459")]
+        public void NoDiagnosticDelegateTest()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class NeatCode
+{
+    // Used parameter methods
+    public void UsedParameterMethod1(Action a)
+    {
+        a();
+    }
+
+    public void UsedParameterMethod2(Action a1, Action a2)
+    {
+        try
+        {
+            a1();
+        }
+        catch(Exception)
+        {
+            a2();
+        }
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Public Class NeatCode
+	' Used parameter methods
+	Public Sub UsedParameterMethod1(a As Action)
+		a()
+	End Sub
+
+	Public Sub UsedParameterMethod2(a1 As Action, a2 As Action)
+		Try
+			a1()
+		Catch generatedExceptionName As Exception
+			a2()
+		End Try
+	End Sub
+End Class
+");
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8884")]
+        [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
+        public void NoDiagnosticDelegateTest2_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class NeatCode
+{
+    // Used parameter methods
+    public void UsedParameterMethod1(Action a)
+    {
+        Action a2 = new Action(() =>
+        {
+            a();
+        });
+    }
+");
+        }
+
+        [Fact]
+        [WorkItem(459, "https://github.com/dotnet/roslyn-analyzers/issues/459")]
+        public void NoDiagnosticDelegateTest2_VB()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class NeatCode
+	' Used parameter methods
+	Public Sub UsedParameterMethod1(a As Action)
+		Dim a2 As New Action(Sub() 
+		                         a()
+                             End Sub)
+	End Sub
+End Class
+");
+        }
+
+        [Fact]
+        [WorkItem(459, "https://github.com/dotnet/roslyn-analyzers/issues/459")]
         public void NoDiagnosticSpecialCasesTest()
         {
             VerifyCSharp(@"

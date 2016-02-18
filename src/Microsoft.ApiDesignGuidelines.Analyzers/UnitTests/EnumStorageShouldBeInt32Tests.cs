@@ -53,16 +53,13 @@ namespace Test
                 Value2 = 2
             }
         }
-        public static void Main()
-        {
-        }
     }
 }
  ");
         }
 
         [Fact]
-        public void CSharp_CA1028_Diagnostic1()
+        public void CSharp_CA1028_DiagnosticForInt64WithNoFlags()
         {
             VerifyCSharp(@"
 using System;
@@ -79,7 +76,7 @@ namespace Test
         }
 
         [Fact]
-        public void CSharp_CA1028_Diagnostic2()
+        public void CSharp_CA1028_DiagnosticForSByte()
         {
             VerifyCSharp(@"
 using System;
@@ -96,7 +93,7 @@ namespace Test
         }
 
         [Fact]
-        public void CSharp_CA1028_Diagnostic3()
+        public void CSharp_CA1028_DiagnosticForUShort()
         {
             VerifyCSharp(@"
 using System;
@@ -143,14 +140,12 @@ Public Module Module1
             End Enum
         End Class
     End Class
-    Sub Main()
-    End Sub
 End Module
  ");
         }
 
         [Fact]
-        public void Basic_CA1028_Diagnostic1()
+        public void Basic_CA1028_DiagnosticForInt64WithNoFlags()
         {
             VerifyBasic(@"
 Imports System
@@ -167,7 +162,7 @@ End Module
         }
 
         [Fact]
-        public void Basic_CA1028_Diagnostic2()
+        public void Basic_CA1028_DiagnosticForByte()
         {
             VerifyBasic(@"
 Imports System
@@ -184,7 +179,7 @@ End Module
         }
 
         [Fact]
-        public void Basic_CA1028_Diagnostic3()
+        public void Basic_CA1028_DiagnosticForUShort()
         {
             VerifyBasic(@"
 Imports System

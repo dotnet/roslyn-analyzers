@@ -74,10 +74,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
             
-            //Report diagnostic
-            var diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], symbol.Name, symbol.EnumUnderlyingType.ToString());
-            context.ReportDiagnostic(diagnostic);
-
+            context.ReportDiagnostic(symbol.CreateDiagnostic(Rule, symbol.Name, symbol.EnumUnderlyingType));
         }
     }
 }

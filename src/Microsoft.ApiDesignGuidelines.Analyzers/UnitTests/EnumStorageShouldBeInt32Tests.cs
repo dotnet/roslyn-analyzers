@@ -2,6 +2,7 @@
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
+using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 {

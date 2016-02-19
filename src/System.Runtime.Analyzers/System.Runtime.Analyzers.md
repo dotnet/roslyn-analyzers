@@ -38,6 +38,12 @@ Severity: Warning
 
 Help: [https://msdn.microsoft.com/library/ms182279.aspx](https://msdn.microsoft.com/library/ms182279.aspx)
 
+### CA1825: Avoid zero-length array allocations. ###
+
+Category: Performance
+
+Severity: Warning
+
 ### CA2002: Do not lock on objects with weak identity ###
 
 Category: Reliability
@@ -76,6 +82,16 @@ Severity: Warning
 
 Help: [https://msdn.microsoft.com/en-us/library/ms182347.aspx](https://msdn.microsoft.com/en-us/library/ms182347.aspx)
 
+### CA2216: Disposable types should declare finalizer ###
+
+A type that implements System.IDisposable and has fields that suggest the use of unmanaged resources does not implement a finalizer, as described by Object.Finalize.
+
+Category: Usage
+
+Severity: Warning
+
+Help: [https://msdn.microsoft.com/en-us/library/ms182329.aspx](https://msdn.microsoft.com/en-us/library/ms182329.aspx)
+
 ### CA2241: Provide correct arguments to formatting methods ###
 
 The format argument that is passed to System.String.Format does not contain a format item that corresponds to each object argument, or vice versa.
@@ -85,3 +101,13 @@ Category: Usage
 Severity: Warning
 
 Help: [https://msdn.microsoft.com/en-us/library/ms182361.aspx](https://msdn.microsoft.com/en-us/library/ms182361.aspx)
+
+### CA2242: Test for NaN correctly ###
+
+This expression tests a value against Single.Nan or Double.Nan. Use Single.IsNan(Single) or Double.IsNan(Double) to test the value.
+
+Category: Usage
+
+Severity: Warning
+
+Help: [https://msdn.microsoft.com/en-us/library/bb264491.aspx](https://msdn.microsoft.com/en-us/library/bb264491.aspx)

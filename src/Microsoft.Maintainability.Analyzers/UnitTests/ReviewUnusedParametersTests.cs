@@ -147,6 +147,83 @@ End Class
 ");
         }
 
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8884")]
+        [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
+        public void NoDiagnosticUsingTest_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+
+class C
+{
+    void F(int x, IDisposable o)
+    {
+        using (o)
+        {
+            int y = x;
+        }
+    }
+}
+");
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8884")]
+        [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
+        public void NoDiagnosticUsingTest_VB()
+        {
+            VerifyBasic(@"
+Imports System
+
+Class C
+	Private Sub F(x As Integer, o As IDisposable)
+		Using o
+			Dim y As Integer = x
+		End Using
+	End Sub
+End Class
+");
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8884")]
+        [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
+        public void NoDiagnosticLinqTest_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Linq;
+using System.Reflection;
+
+class C
+{
+    private object F(Assembly assembly)
+    {
+        var type = (from t in assembly.GetTypes()
+                    select t.Attributes).FirstOrDefault();
+        return type;
+    }
+}
+");
+        }
+
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8884")]
+        [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
+        public void NoDiagnosticLinqTest_VB()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.Linq
+Imports System.Reflection
+
+Class C
+    Private Function F(assembly As Assembly) As Object
+        Dim type = (From t In assembly.DefinedTypes() Select t.Attributes).FirstOrDefault()
+        Return type
+    End Function
+End Class
+");
+        }
+
         [Fact]
         [WorkItem(459, "https://github.com/dotnet/roslyn-analyzers/issues/459")]
         public void NoDiagnosticSpecialCasesTest()

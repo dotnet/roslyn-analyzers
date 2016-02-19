@@ -1,3 +1,13 @@
+### CA1814: Prefer jagged arrays over multidimensional ###
+
+A jagged array is an array whose elements are arrays. The arrays that make up the elements can be of different sizes, leading to less wasted space for some sets of data.
+
+Category: Performance
+
+Severity: Warning
+
+Help: [https://msdn.microsoft.com/en-us/library/ms182277.aspx](https://msdn.microsoft.com/en-us/library/ms182277.aspx)
+
 ### CA1821: Remove empty Finalizers ###
 
 Finalizers should be avoided where possible, to avoid the additional performance overhead involved in tracking object lifetime.

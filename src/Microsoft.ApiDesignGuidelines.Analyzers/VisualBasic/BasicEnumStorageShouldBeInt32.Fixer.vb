@@ -1,10 +1,8 @@
-' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. 
 
 Imports System.Composition
-Imports System.Linq
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
-Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
 Namespace Microsoft.ApiDesignGuidelines.Analyzers
@@ -15,5 +13,11 @@ Namespace Microsoft.ApiDesignGuidelines.Analyzers
     Public NotInheritable Class BasicEnumStorageShouldBeInt32Fixer
         Inherits EnumStorageShouldBeInt32Fixer
 
+        Protected Overrides Function GetTargetNode(node As SyntaxNode) As SyntaxNode
+            Dim enumDecl = DirectCast(node, EnumBlockSyntax).EnumStatement
+            Dim asClause = DirectCast(enumDecl.UnderlyingType, SimpleAsClauseSyntax)
+            Return asClause.Type
+        End Function
     End Class
 End Namespace
+

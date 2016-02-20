@@ -144,10 +144,7 @@ namespace Analyzer.Utilities
         /// </summary>
         public static bool IsDisposeImplementation(this IMethodSymbol method, Compilation compilation)
         {
-            if (method.Name != "Dispose")
-            {
-                return false;
-            }
+            // Note: Do not check for method name, because Visual Basic uses user-defined name for interface method implementation
 
             if (method.ReturnType.SpecialType == SpecialType.System_Void && method.Parameters.Length == 0)
             {

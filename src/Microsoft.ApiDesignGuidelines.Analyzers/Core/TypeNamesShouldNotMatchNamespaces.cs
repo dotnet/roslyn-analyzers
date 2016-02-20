@@ -45,7 +45,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, SystemRule);
 
-        private static object s_lock = new object();
+        private static readonly object s_lock = new object();
         private static ImmutableDictionary<string, string> s_wellKnownSystemNamespaceTable;
 
         public override void Initialize(AnalysisContext analysisContext)
@@ -67,7 +67,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         compilationAnalysisContext =>
                         {
                             var namespaceNamesInCompilation = new ConcurrentBag<string>();
-                            var compilation = compilationAnalysisContext.Compilation;
+                            Compilation compilation = compilationAnalysisContext.Compilation;
                             AddNamespacesFromCompilation(namespaceNamesInCompilation, compilation.GlobalNamespace);
 
                             /* We construct a dictionary whose keys are all the components of all the namespace names in the compilation,
@@ -86,9 +86,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                             UpdateNamespaceTable(namespaceComponentToNamespaceNameDictionary, namespaceNamesInCompilation.ToImmutableSortedSet());
 
                             InitializeWellKnownSystemNamespaceTable();
-                            foreach (var symbol in namedTypesInCompilation)
+                            foreach (INamedTypeSymbol symbol in namedTypesInCompilation)
                             {
-                                var symbolName = symbol.Name;
+                                string symbolName = symbol.Name;
                                 if (s_wellKnownSystemNamespaceTable.ContainsKey(symbolName))
                                 {
                                     compilationAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(SystemRule, symbolName, s_wellKnownSystemNamespaceTable[symbolName]));
@@ -106,7 +106,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             namespaceNamesInCompilation.Add(@namespace.ToDisplayString());
 
-            foreach (var namespaceMember in @namespace.GetNamespaceMembers())
+            foreach (INamespaceSymbol namespaceMember in @namespace.GetNamespaceMembers())
             {
                 AddNamespacesFromCompilation(namespaceNamesInCompilation, namespaceMember);
             }
@@ -116,12 +116,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             if (s_wellKnownSystemNamespaceTable == null)
             {
-                lock(s_lock)
+                lock (s_lock)
                 {
                     if (s_wellKnownSystemNamespaceTable == null)
                     {
-
-#region List of Well known System Namespaces
+                        #region List of Well known System Namespaces
                         var wellKnownSystemNamespaces = new List<string>
                                 {
                                     "Microsoft.CSharp",
@@ -241,7 +240,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                     "System.Xml.XPath",
                                     "System.Xml.Xsl"
                                 };
-#endregion
+                        #endregion
 
                         var wellKnownSystemNamespaceTable = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                         UpdateNamespaceTable(wellKnownSystemNamespaceTable, wellKnownSystemNamespaces);

@@ -39,18 +39,18 @@ namespace Microsoft.Maintainability.Analyzers
         {
             context.RegisterCompilationStartAction(compilationStartContext =>
             {
-                var eventsArgSymbol = compilationStartContext.Compilation.GetTypeByMetadataName("System.EventArgs");
+                INamedTypeSymbol eventsArgSymbol = compilationStartContext.Compilation.GetTypeByMetadataName("System.EventArgs");
 
                 // Ignore conditional methods (FxCop compat - One conditional will often call another conditional method as its only use of a parameter)
-                var conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(compilationStartContext.Compilation);
+                INamedTypeSymbol conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(compilationStartContext.Compilation);
 
                 // Ignore methods with special serialization attributes (FxCop compat - All serialization methods need to take 'StreamingContext')
-                var onDeserializingAttribute = WellKnownTypes.OnDeserializingAttribute(compilationStartContext.Compilation);
-                var onDeserializedAttribute = WellKnownTypes.OnDeserializedAttribute(compilationStartContext.Compilation);
-                var onSerializingAttribute = WellKnownTypes.OnSerializingAttribute(compilationStartContext.Compilation);
-                var onSerializedAttribute = WellKnownTypes.OnSerializedAttribute(compilationStartContext.Compilation);
+                INamedTypeSymbol onDeserializingAttribute = WellKnownTypes.OnDeserializingAttribute(compilationStartContext.Compilation);
+                INamedTypeSymbol onDeserializedAttribute = WellKnownTypes.OnDeserializedAttribute(compilationStartContext.Compilation);
+                INamedTypeSymbol onSerializingAttribute = WellKnownTypes.OnSerializingAttribute(compilationStartContext.Compilation);
+                INamedTypeSymbol onSerializedAttribute = WellKnownTypes.OnSerializedAttribute(compilationStartContext.Compilation);
 
-                var attributeSetForMethodsToIgnore = ImmutableHashSet.Create(conditionalAttributeSymbol, onDeserializedAttribute, onDeserializingAttribute, onSerializedAttribute, onSerializingAttribute);
+                ImmutableHashSet<INamedTypeSymbol> attributeSetForMethodsToIgnore = ImmutableHashSet.Create(conditionalAttributeSymbol, onDeserializedAttribute, onDeserializingAttribute, onSerializedAttribute, onSerializingAttribute);
 
                 compilationStartContext.RegisterOperationBlockStartAction(startOperationBlockContext =>
                 {
@@ -134,7 +134,7 @@ namespace Microsoft.Maintainability.Analyzers
                 }
 
                 // Mark this parameter as used.
-                var parameter = ((IParameterReferenceExpression)context.Operation).Parameter;
+                IParameterSymbol parameter = ((IParameterReferenceExpression)context.Operation).Parameter;
                 _unusedParameters.Remove(parameter);
             }
 
@@ -145,9 +145,9 @@ namespace Microsoft.Maintainability.Analyzers
             public void OperationBlockEndAction(OperationBlockAnalysisContext context)
             {
                 // Report diagnostics for unused parameters.
-                foreach (var parameter in _unusedParameters)
+                foreach (IParameterSymbol parameter in _unusedParameters)
                 {
-                    var diagnostic = Diagnostic.Create(Rule, parameter.Locations[0], parameter.Name, parameter.ContainingSymbol.Name);
+                    Diagnostic diagnostic = Diagnostic.Create(Rule, parameter.Locations[0], parameter.Name, parameter.ContainingSymbol.Name);
                     context.ReportDiagnostic(diagnostic);
                 }
             }

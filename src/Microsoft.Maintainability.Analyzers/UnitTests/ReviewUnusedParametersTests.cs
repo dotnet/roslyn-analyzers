@@ -531,7 +531,6 @@ End Class
       GetBasicUnusedParameterResultAt(21, 44, "param1", "UnusedRefParamMethod"),
       // Test0.vb(24,43): warning CA1801: Parameter param1 of method UnusedErrorTypeParamMethod is never used. Remove the parameter or use it in the method body.
       GetBasicUnusedParameterResultAt(24, 43, "param1", "UnusedErrorTypeParamMethod"));
-
         }
 
         #endregion
@@ -550,13 +549,13 @@ End Class
 
         private static DiagnosticResult GetCSharpUnusedParameterResultAt(int line, int column, string parameterName, string methodName)
         {
-            var message = string.Format(MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName);
+            string message = string.Format(MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName);
             return GetCSharpResultAt(line, column, ReviewUnusedParametersAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetBasicUnusedParameterResultAt(int line, int column, string parameterName, string methodName)
         {
-            var message = string.Format(MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName);
+            string message = string.Format(MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName);
             return GetBasicResultAt(line, column, ReviewUnusedParametersAnalyzer.RuleId, message);
         }
 

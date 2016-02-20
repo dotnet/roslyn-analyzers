@@ -120,9 +120,9 @@ namespace Analyzer.Utilities
             // This is an approximation, because another class could derive from this one
             // and rely on methodSymbol implementing one of *it's* interfaces methods, but
             // it's good enough.
-            foreach (var interfaceSymbol in method.ContainingType.AllInterfaces)
+            foreach (INamedTypeSymbol interfaceSymbol in method.ContainingType.AllInterfaces)
             {
-                foreach (var interfaceMethod in interfaceSymbol.GetMembers().OfType<IMethodSymbol>())
+                foreach (IMethodSymbol interfaceMethod in interfaceSymbol.GetMembers().OfType<IMethodSymbol>())
                 {
                     if (IsInterfaceMethodImplementation(method, interfaceMethod))
                     {

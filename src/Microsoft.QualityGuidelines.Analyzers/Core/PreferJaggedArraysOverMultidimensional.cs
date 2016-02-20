@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
@@ -122,7 +121,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
         private static void AnalyzeParameters(SymbolAnalysisContext context, ImmutableArray<IParameterSymbol> parameters)
         {
-            foreach (var parameter in parameters)
+            foreach (IParameterSymbol parameter in parameters)
             {
                 if (IsMultiDimensionalArray(parameter.Type))
                 {
@@ -139,7 +138,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
             while (type.TypeKind == TypeKind.Array)
             {
                 var arrayType = (IArrayTypeSymbol)type;
-                
+
                 if (arrayType.Rank > 1)
                 {
                     return true;

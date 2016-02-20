@@ -96,7 +96,8 @@ public class C : IDisposable
     }
 }  
 ",
-            GetCA1063CSharpDisposeSignatureResultAt(6, 22, "C", "System.IDisposable.Dispose"));
+            GetCA1063CSharpDisposeSignatureResultAt(6, 22, "C", "System.IDisposable.Dispose"),
+            GetCA1063CSharpRenameDisposeResultAt(6, 22, "C", "System.IDisposable.Dispose"));
         }
 
         [Fact]
@@ -249,7 +250,7 @@ End Class
         }
 
         [Fact]
-        public void Basic_CA1063_DisposeSignature_Diagnostic_DisposeNotPublic()
+        public void Basic_CA1063_DisposeSignature_Diagnostic_DisposeProtected()
         {
             VerifyBasic(@"
 Imports System
@@ -257,7 +258,7 @@ Imports System
 Public Class C
     Implements IDisposable
 
-    Private Sub D() Implements IDisposable.Dispose
+    Protected Sub Dispose() Implements IDisposable.Dispose
         Dispose(True)
         GC.SuppressFinalize(Me)
     End Sub
@@ -272,7 +273,65 @@ Public Class C
 
 End Class
 ",
-            GetCA1063BasicDisposeSignatureResultAt(7, 17, "C", "D"));
+            GetCA1063BasicDisposeSignatureResultAt(7, 19, "C", "Dispose"));
+        }
+
+        [Fact]
+        public void Basic_CA1063_DisposeSignature_Diagnostic_DisposePrivate()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class C
+    Implements IDisposable
+
+    Private Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+
+    Protected Overridable Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class
+",
+            GetCA1063BasicDisposeSignatureResultAt(7, 17, "C", "Dispose"));
+        }
+
+        #endregion
+
+        #region VB RenameDispose Unit Test
+
+        [Fact]
+        public void Basic_CA1063_RenameDispose_Diagnostic_DisposeNamedD()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class C
+    Implements IDisposable
+
+    Public Sub D() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+
+    Protected Overridable Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class
+",
+            GetCA1063BasicRenameDisposeResultAt(7, 16, "C", "D"));
         }
 
         #endregion
@@ -290,6 +349,19 @@ End Class
             string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeSignature, typeName + "." + disposeMethod);
             return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
+
+        private static DiagnosticResult GetCA1063CSharpRenameDisposeResultAt(int line, int column, string typeName, string disposeMethod)
+        {
+            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageRenameDispose, typeName + "." + disposeMethod);
+            return GetCSharpResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetCA1063BasicRenameDisposeResultAt(int line, int column, string typeName, string disposeMethod)
+        {
+            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageRenameDispose, typeName + "." + disposeMethod);
+            return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
+        }
+
         #endregion
     }
 }

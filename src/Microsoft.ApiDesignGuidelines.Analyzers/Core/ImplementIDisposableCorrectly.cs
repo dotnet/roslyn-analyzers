@@ -72,7 +72,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor DisposeBoolSignatureRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -134,6 +134,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         /// </summary>
         private class Analyzer
         {
+            private const string DisposeMethodName = "Dispose";
+
             private Compilation compilation;
             private INamedTypeSymbol disposableType;
 
@@ -158,7 +160,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         var disposeMethod = FindDisposeMethod(type);
                         if (disposeMethod != null)
                         {
-                            CheckDisposeSignature(disposeMethod, type, context);
+                            CheckDisposeSignatureRule(disposeMethod, type, context);
+                            CheckRenameDisposeRule(disposeMethod, type, context);
                         }
                     }
                 }
@@ -167,12 +170,23 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             /// <summary>
             /// Checks rule: Ensure that {0} is declared as public and sealed.
             /// </summary>
-            private static void CheckDisposeSignature(IMethodSymbol method, INamedTypeSymbol type, SymbolAnalysisContext context)
+            private static void CheckDisposeSignatureRule(IMethodSymbol method, INamedTypeSymbol type, SymbolAnalysisContext context)
             {
                 if (!method.IsPublic() ||
                     method.IsAbstract || method.IsVirtual || (method.IsOverride && !method.IsSealed))
                 {
                     context.ReportDiagnostic(method.CreateDiagnostic(DisposeSignatureRule, $"{type.Name}.{method.Name}"));
+                }
+            }
+
+            /// <summary>
+            /// Checks rule: Rename {0} to 'Dispose' and ensure that it is declared as public and sealed.
+            /// </summary>
+            private void CheckRenameDisposeRule(IMethodSymbol method, INamedTypeSymbol type, SymbolAnalysisContext context)
+            {
+                if (method.Name != DisposeMethodName)
+                {
+                    context.ReportDiagnostic(method.CreateDiagnostic(RenameDisposeRule, $"{type.Name}.{method.Name}"));
                 }
             }
 

@@ -14,6 +14,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     public abstract class ImplementIDisposableCorrectlyAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1063";
+
         private const string HelpLinkUri = "https://msdn.microsoft.com/library/ms244737.aspx";
         private const string DisposeMethodName = "Dispose";
 
@@ -46,7 +47,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor DisposeOverrideRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -187,6 +188,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         {
                             CheckDisposeOverrideRule(method, type, context);
                         }
+
+                        CheckFinalizeOverrideRule(type, context);
                     }
                 }
             }
@@ -246,6 +249,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     {
                         context.ReportDiagnostic(method.CreateDiagnostic(DisposeOverrideRule, $"{type.Name}.{method.Name}"));
                     }
+                }
+            }
+
+            /// <summary>
+            /// Checks rule: Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false.
+            /// </summary>
+            private void CheckFinalizeOverrideRule(INamedTypeSymbol type, SymbolAnalysisContext context)
+            {
+                if (type.HasFinalizer())
+                {
+                    context.ReportDiagnostic(type.CreateDiagnostic(FinalizeOverrideRule, type.Name));
                 }
             }
 

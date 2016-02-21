@@ -108,6 +108,7 @@ public class B : IDisposable
 }|]
 ",
             GetCA1063CSharpIDisposableReimplementationResultAt(11, 14, "C"),
+            GetCA1063CSharpFinalizeOverrideResultAt(11, 14, "C"),
             GetCA1063CSharpDisposeSignatureResultAt(13, 26, "C", "Dispose"),
             GetCA1063CSharpDisposeOverrideResultAt(13, 26, "C", "Dispose"));
         }
@@ -150,7 +151,8 @@ public class B : IDisposable
     }
 }|]
 ",
-            GetCA1063CSharpIDisposableReimplementationResultAt(16, 14, "C"));
+            GetCA1063CSharpIDisposableReimplementationResultAt(16, 14, "C"),
+            GetCA1063CSharpFinalizeOverrideResultAt(16, 14, "C"));
         }
 
         [Fact]
@@ -322,7 +324,7 @@ public class B : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    ~C()
+    ~B()
     {
         Dispose(false);
     }
@@ -356,7 +358,7 @@ public class A : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    ~C()
+    ~A()
     {
         Dispose(false);
     }
@@ -382,6 +384,108 @@ public class B : A
 }|]
 ",
             GetCA1063CSharpDisposeOverrideResultAt(31, 26, "C", "Dispose"));
+        }
+
+        #endregion
+
+        #region CSharp FinilizeOverride Unit Tests
+
+        [Fact]
+        public void CSharp_CA1063_FinilizeOverride_Diagnostic_SimpleFinalizeOverride()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class B : IDisposable
+{
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~B()
+    {
+        Dispose(false);
+    }
+
+    protected virtual Dispose(bool disposing)
+    {
+    }
+}
+
+[|public class C : B
+{
+    ~C()
+    {
+    }
+}|]
+",
+            GetCA1063CSharpFinalizeOverrideResultAt(22, 14, "C"));
+        }
+
+        [Fact]
+        public void CSharp_CA1063_FinilizeOverride_Diagnostic_DoubleFinalizeOverride()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class A : IDisposable
+{
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~A()
+    {
+        Dispose(false);
+    }
+
+    protected virtual Dispose(bool disposing)
+    {
+    }
+}
+
+public class B : A
+{
+    ~B()
+    {
+    }
+}
+
+[|public class C : B
+{
+    ~C()
+    {
+    }
+}|]
+",
+            GetCA1063CSharpFinalizeOverrideResultAt(29, 14, "C"));
+        }
+
+        [Fact]
+        public void CSharp_CA1063_FinilizeOverride_Diagnostic_FinalizeNotInBaseType()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class B : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+[|public class C : B
+{
+    ~C()
+    {
+    }
+}|]
+",
+            GetCA1063CSharpFinalizeOverrideResultAt(11, 14, "C"));
         }
 
         #endregion
@@ -476,6 +580,7 @@ End Class
 End Class|]
 ",
             GetCA1063BasicIDisposableReimplementationResultAt(11, 14, "C"),
+            GetCA1063BasicFinalizeOverrideResultAt(11, 14, "C"),
             GetCA1063BasicDisposeSignatureResultAt(15, 26, "C", "Dispose"),
             GetCA1063BasicDisposeOverrideResultAt(15, 26, "C", "Dispose"));
         }
@@ -520,7 +625,8 @@ End Class
 
 End Class|]
 ",
-            GetCA1063BasicIDisposableReimplementationResultAt(17, 14, "C"));
+            GetCA1063BasicIDisposableReimplementationResultAt(17, 14, "C"),
+            GetCA1063BasicFinalizeOverrideResultAt(17, 14, "C"));
         }
 
         [Fact]
@@ -863,6 +969,112 @@ End Class|]
 
         #endregion
 
+        #region VB FinilizeOverride Unit Tests
+
+        [Fact]
+        public void Basic_CA1063_FinilizeOverride_Diagnostic_SimpleFinalizeOverride()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class B
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+
+    Protected Overridable Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class
+
+[|Public Class C
+    Inherits B
+
+    Protected Overrides Sub Finalize()
+        MyBase.Finalize()
+    End Sub
+End Class|]
+",
+            GetCA1063BasicFinalizeOverrideResultAt(22, 14, "C"));
+        }
+
+        [Fact]
+        public void Basic_CA1063_FinilizeOverride_Diagnostic_DoubleFinalizeOverride()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class A
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+
+    Protected Overridable Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class
+
+Public Class B
+    Inherits A
+
+    Protected Overrides Sub Finalize()
+        MyBase.Finalize()
+    End Sub
+End Class
+
+[|Public Class C
+    Inherits B
+
+    Protected Overrides Sub Finalize()
+        MyBase.Finalize()
+    End Sub
+End Class|]
+",
+            GetCA1063BasicFinalizeOverrideResultAt(30, 14, "C"));
+        }
+
+        [Fact]
+        public void Basic_CA1063_FinilizeOverride_Diagnostic_FinalizeNotInBaseType()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class B
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+[|Public Class C
+    Inherits B
+
+    Protected Overrides Sub Finalize()
+        MyBase.Finalize()
+    End Sub
+End Class|]
+",
+            GetCA1063BasicFinalizeOverrideResultAt(11, 14, "C"));
+        }
+
+        #endregion
+
         #region Helpers
 
         private static DiagnosticResult GetCA1063CSharpIDisposableReimplementationResultAt(int line, int column, string typeName)
@@ -910,6 +1122,18 @@ End Class|]
         private static DiagnosticResult GetCA1063BasicDisposeOverrideResultAt(int line, int column, string typeName, string method)
         {
             string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeOverride, typeName + "." + method);
+            return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetCA1063CSharpFinalizeOverrideResultAt(int line, int column, string typeName)
+        {
+            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeOverride, typeName);
+            return GetCSharpResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetCA1063BasicFinalizeOverrideResultAt(int line, int column, string typeName)
+        {
+            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeOverride, typeName);
             return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 

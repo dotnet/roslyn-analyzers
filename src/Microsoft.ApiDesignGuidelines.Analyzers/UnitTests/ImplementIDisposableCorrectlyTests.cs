@@ -18,7 +18,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             return new CSharpImplementIDisposableCorrectlyAnalyzer();
         }
 
-        #region CSharp DisposeSignature Unit Tests
+        #region CSharp Unit Tests
 
         [Fact]
         public void CSharp_CA1063_DisposeSignature_NoDiagnostic_GoodDisposablePattern()
@@ -71,6 +71,115 @@ public class C
 }  
 ");
         }
+
+        #endregion
+
+        #region CSharp IDisposableReimplementation Unit Tests
+
+        [Fact]
+        public void CSharp_CA1063_IDisposableReimplementation_Diagnostic_ReimplementingIDisposable()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class B : IDisposable
+{
+    public virtual void Dispose()
+    {
+    }
+}
+
+[|public class C : B, IDisposable
+{
+    public override void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~C()
+    {
+        Dispose(false);
+    }
+
+    protected virtual Dispose(bool disposing)
+    {
+    }
+}|]
+",
+            GetCA1063CSharpIDisposableReimplementationResultAt(11, 14, "C"),
+            GetCA1063CSharpDisposeSignatureResultAt(13, 26, "C", "Dispose"));
+        }
+
+        [Fact]
+        public void CSharp_CA1063_IDisposableReimplementation_Diagnostic_ImplementingInterfaceInheritedFromIDisposable()
+        {
+            VerifyCSharp(@"
+using System;
+
+public interface ITest : IDisposable
+{
+    void int Test { get; set; }
+}
+
+public class B : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+[|public class C : B, ITest
+{
+    public int Test { get; set; }
+
+    public new void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~C()
+    {
+        Dispose(false);
+    }
+
+    protected virtual Dispose(bool disposing)
+    {
+    }
+}|]
+",
+            GetCA1063CSharpIDisposableReimplementationResultAt(16, 14, "C"));
+        }
+
+        [Fact]
+        public void CSharp_CA1063_IDisposableReimplementation_NoDiagnostic_ImplementingInheritedInterfaceWithNoDisposeReimplementation()
+        {
+            VerifyCSharp(@"
+using System;
+
+public interface ITest : IDisposable
+{
+    void int Test { get; set; }
+}
+
+public class B : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+[|public class C : B, ITest
+{
+    public int Test { get; set; }
+}|]
+");
+        }
+
+        #endregion
+
+        #region CSharp DisposeSignature Unit Tests
 
         [Fact]
         public void CSharp_CA1063_DisposeSignature_Diagnostic_DisposeNotPublic()
@@ -196,7 +305,7 @@ public class C : B, IDisposable
 
         #endregion
 
-        #region VB DisposeSignature Unit Test
+        #region VB Unit Tests
 
         [Fact]
         public void Basic_CA1063_DisposeSignature_NoDiagnostic_GoodDisposablePattern()
@@ -232,7 +341,7 @@ Imports System
 
 Public Class C
 
-    Public Sub Dispose() Implements IDisposable.Dispose
+    Public Sub Dispose()
         Dispose(True)
         GC.SuppressFinalize(Me)
     End Sub
@@ -248,6 +357,122 @@ Public Class C
 End Class
 ");
         }
+
+        #endregion
+
+        #region VB IDisposableReimplementation Unit Tests
+
+        [Fact]
+        public void Basic_CA1063_IDisposableReimplementation_Diagnostic_ReimplementingIDisposable()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class B
+    Implements IDisposable
+
+    Public Overridable Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+[|Public Class C
+    Inherits B
+    Implements IDisposable
+
+    Public Overrides Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+
+    Protected Overridable Overloads Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class|]
+",
+            GetCA1063BasicIDisposableReimplementationResultAt(11, 14, "C"),
+            GetCA1063BasicDisposeSignatureResultAt(15, 26, "C", "Dispose"));
+        }
+
+        [Fact]
+        public void Basic_CA1063_IDisposableReimplementation_Diagnostic_ImplementingInterfaceInheritedFromIDisposable()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Interface ITest
+    Inherits IDisposable
+
+    Property Test As Integer
+End Interface
+
+Public Class B
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+[|Public Class C
+    Inherits B
+    Implements ITest
+
+    Public Property Test As Integer
+
+    Public Shadows Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+
+    Protected Overridable Overloads Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class|]
+",
+            GetCA1063BasicIDisposableReimplementationResultAt(17, 14, "C"));
+        }
+
+        [Fact]
+        public void Basic_CA1063_IDisposableReimplementation_Diagnostic_ImplementingInheritedInterfaceWithNoDisposeReimplementation()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Interface ITest
+    Inherits IDisposable
+
+    Property Test As Integer
+End Interface
+
+Public Class B
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+[|Public NotInheritable Class C
+    Inherits B
+    Implements ITest
+
+    Public Property Test As Integer
+
+End Class|]
+");
+        }
+
+        #endregion
+
+        #region VB DisposeSignature Unit Tests
 
         [Fact]
         public void Basic_CA1063_DisposeSignature_Diagnostic_DisposeProtected()
@@ -305,7 +530,7 @@ End Class
 
         #endregion
 
-        #region VB RenameDispose Unit Test
+        #region VB RenameDispose Unit Tests
 
         [Fact]
         public void Basic_CA1063_RenameDispose_Diagnostic_DisposeNamedD()
@@ -337,6 +562,18 @@ End Class
         #endregion
 
         #region Helpers
+
+        private static DiagnosticResult GetCA1063CSharpIDisposableReimplementationResultAt(int line, int column, string typeName)
+        {
+            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageIDisposableReimplementation, typeName);
+            return GetCSharpResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetCA1063BasicIDisposableReimplementationResultAt(int line, int column, string typeName)
+        {
+            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageIDisposableReimplementation, typeName);
+            return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
+        }
 
         private static DiagnosticResult GetCA1063CSharpDisposeSignatureResultAt(int line, int column, string typeName, string disposeMethod)
         {

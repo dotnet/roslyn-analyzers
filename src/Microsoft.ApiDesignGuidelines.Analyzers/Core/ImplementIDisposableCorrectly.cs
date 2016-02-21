@@ -15,6 +15,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     {
         internal const string RuleId = "CA1063";
         private const string HelpLinkUri = "https://msdn.microsoft.com/library/ms244737.aspx";
+        private const string DisposeMethodName = "Dispose";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
@@ -36,7 +37,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor FinalizeOverrideRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -124,7 +125,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         return;
                     }
 
-                    var analyzer = new Analyzer(context.Compilation, disposableType);
+                    var disposeInterfaceMethod = disposableType.GetMembers(DisposeMethodName).Single() as IMethodSymbol;
+                    if (disposeInterfaceMethod == null)
+                    {
+                        return;
+                    }
+
+                    var analyzer = new Analyzer(context.Compilation, disposableType, disposeInterfaceMethod);
                     analyzer.Initialize(context);
                 });
         }
@@ -134,15 +141,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         /// </summary>
         private class Analyzer
         {
-            private const string DisposeMethodName = "Dispose";
-
             private Compilation compilation;
             private INamedTypeSymbol disposableType;
+            private IMethodSymbol disposeInterfaceMethod;
 
-            public Analyzer(Compilation compilation, INamedTypeSymbol disposableType)
+            public Analyzer(Compilation compilation, INamedTypeSymbol disposableType, IMethodSymbol disposeInterfaceMethod)
             {
                 this.compilation = compilation;
                 this.disposableType = disposableType;
+                this.disposeInterfaceMethod = disposeInterfaceMethod;
             }
 
             public void Initialize(CompilationStartAnalysisContext context)
@@ -160,10 +167,29 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         var disposeMethod = FindDisposeMethod(type);
                         if (disposeMethod != null)
                         {
+                            // This is difference from FxCop implementation
+                            // IDisposable Reimplementation Rule is violated only if type re-implements Dispose method, not just interface
+                            // For example see unit tests:
+                            // CSharp_CA1063_IDisposableReimplementation_NoDiagnostic_ImplementingInheritedInterfaceWithNoDisposeReimplementation
+                            // Basic_CA1063_IDisposableReimplementation_Diagnostic_ImplementingInheritedInterfaceWithNoDisposeReimplementation
+                            CheckIDisposableReimplementationRule(type, context);
+
                             CheckDisposeSignatureRule(disposeMethod, type, context);
                             CheckRenameDisposeRule(disposeMethod, type, context);
                         }
                     }
+                }
+            }
+
+            /// <summary>
+            /// Check rule: Remove IDisposable from the list of interfaces implemented by {0} and override the base class Dispose implementation instead.
+            /// </summary>
+            private void CheckIDisposableReimplementationRule(INamedTypeSymbol type, SymbolAnalysisContext context)
+            {
+                var baseType = type.BaseType;
+                if (baseType != null && baseType.AllInterfaces.Contains(disposableType))
+                {
+                    context.ReportDiagnostic(type.CreateDiagnostic(IDisposableReimplementationRule, type.Name));
                 }
             }
 
@@ -201,10 +227,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             /// <summary>
             /// Returns method that implements IDisposable.Dispose operation.
+            /// Only direct implementation is taken into account, implementation in base type is ignored.
             /// </summary>
             private IMethodSymbol FindDisposeMethod(INamedTypeSymbol type)
             {
-                return type.GetMembers().OfType<IMethodSymbol>().FirstOrDefault(m => m.IsDisposeImplementation(compilation));
+                var disposeMethod = type.FindImplementationForInterfaceMember(disposeInterfaceMethod) as IMethodSymbol;
+                if (disposeMethod != null && disposeMethod.ContainingType == type)
+                {
+                    return disposeMethod;
+                }
+
+                return null;
             }
         }
     }

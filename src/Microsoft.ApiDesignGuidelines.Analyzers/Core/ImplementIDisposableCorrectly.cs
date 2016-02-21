@@ -110,7 +110,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(IDisposableReimplementationRule, FinalizeOverrideRule, DisposeOverrideRule, DisposeSignatureRule, RenameDisposeRule, DisposeBoolSignatureRule, DisposeImplementationRule, FinalizeImplementationRule, ProvideDisposeBoolRule);
@@ -179,6 +179,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                             CheckDisposeSignatureRule(disposeMethod, type, context);
                             CheckRenameDisposeRule(disposeMethod, type, context);
+
+                            if (!type.IsSealed)
+                            {
+                                var disposeBoolMethod = FindDisposeBoolMethod(type);
+                                if (disposeBoolMethod == null)
+                                {
+                                    CheckProvideDisposeBoolRule(type, context);
+                                }
+                            }
                         }
                     }
 
@@ -264,6 +273,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
 
             /// <summary>
+            /// Checks rule: Provide an overridable implementation of Dispose(bool) on {0} or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.
+            /// </summary>
+            private void CheckProvideDisposeBoolRule(INamedTypeSymbol type, SymbolAnalysisContext context)
+            {
+                context.ReportDiagnostic(type.CreateDiagnostic(ProvideDisposeBoolRule, type.Name));
+            }
+
+            /// <summary>
             /// Checks if type implements IDisposable interface or an interface inherited from IDisposable.
             /// Only direct implementation is taken into account, implementation in base type is ignored.
             /// </summary>
@@ -290,6 +307,26 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 if (disposeMethod != null && disposeMethod.ContainingType == type)
                 {
                     return disposeMethod;
+                }
+
+                return null;
+            }
+
+            /// <summary>
+            /// Returns method: void Dispose(bool)
+            /// </summary>
+            private IMethodSymbol FindDisposeBoolMethod(INamedTypeSymbol type)
+            {
+                foreach (var method in type.GetMembers(DisposeMethodName).OfType<IMethodSymbol>())
+                {
+                    if (method.MethodKind == MethodKind.Ordinary && method.ReturnsVoid && method.Parameters.Length == 1)
+                    {
+                        var parameter = method.Parameters[0];
+                        if (parameter.Type != null && parameter.Type.SpecialType == SpecialType.System_Boolean && parameter.RefKind == RefKind.None)
+                        {
+                            return method;
+                        }
+                    }
                 }
 
                 return null;

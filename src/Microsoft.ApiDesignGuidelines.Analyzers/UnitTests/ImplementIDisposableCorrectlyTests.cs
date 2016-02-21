@@ -490,6 +490,49 @@ public class B : IDisposable
 
         #endregion
 
+        #region CSharp ProvideDisposeBool Unit Tests
+
+        [Fact]
+        public void CSharp_CA1063_ProvideDisposeBoole_Diagnostic_MissingDisposeBool()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IDisposable
+{
+    public void Dispose()
+    {
+    }
+
+    ~C()
+    {
+    }
+}
+",
+            GetCA1063CSharpProvideDisposeBoolResultAt(4, 14, "C"));
+        }
+
+        [Fact]
+        public void CSharp_CA1063_ProvideDisposeBoole_NoDiagnostic_SealedClassAndMissingDisposeBool()
+        {
+            VerifyCSharp(@"
+using System;
+
+public sealed class C : IDisposable
+{
+    public void Dispose()
+    {
+    }
+
+    ~C()
+    {
+    }
+}
+");
+        }
+
+        #endregion
+
         #region VB Unit Tests
 
         [Fact]
@@ -1075,6 +1118,47 @@ End Class|]
 
         #endregion
 
+        #region VB ProvideDisposeBool Unit Tests
+
+        [Fact]
+        public void Basic_CA1063_ProvideDisposeBool_Diagnostic_MissingDisposeBool()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class C
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+
+    Protected Overrides Sub Finalize()
+    End Sub
+End Class
+",
+            GetCA1063BasicProvideDisposeBoolResultAt(4, 14, "C"));
+        }
+
+        [Fact]
+        public void Basic_CA1063_ProvideDisposeBool_Diagnostic_SealedClassAndMissingDisposeBool()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public NotInheritable Class C
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+
+    Protected Overrides Sub Finalize()
+    End Sub
+End Class
+");
+        }
+
+        #endregion
+
         #region Helpers
 
         private static DiagnosticResult GetCA1063CSharpIDisposableReimplementationResultAt(int line, int column, string typeName)
@@ -1134,6 +1218,18 @@ End Class|]
         private static DiagnosticResult GetCA1063BasicFinalizeOverrideResultAt(int line, int column, string typeName)
         {
             string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeOverride, typeName);
+            return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetCA1063CSharpProvideDisposeBoolResultAt(int line, int column, string typeName)
+        {
+            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageProvideDisposeBool, typeName);
+            return GetCSharpResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetCA1063BasicProvideDisposeBoolResultAt(int line, int column, string typeName)
+        {
+            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageProvideDisposeBool, typeName);
             return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 

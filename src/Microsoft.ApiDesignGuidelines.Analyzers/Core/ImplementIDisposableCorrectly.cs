@@ -55,7 +55,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor DisposeSignatureRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -160,8 +160,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             private void AnalyzeSymbol(SymbolAnalysisContext context)
             {
                 var type = context.Symbol as INamedTypeSymbol;
-                if (type != null && type.IsType)
+                if (type != null && type.IsType && type.TypeKind == TypeKind.Class)
                 {
+                    var implementsDisposableInBaseType = ImplementsDisposableInBaseType(type);
+
                     if (ImplementsDisposableDirectly(type))
                     {
                         var disposeMethod = FindDisposeMethod(type);
@@ -172,10 +174,18 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                             // For example see unit tests:
                             // CSharp_CA1063_IDisposableReimplementation_NoDiagnostic_ImplementingInheritedInterfaceWithNoDisposeReimplementation
                             // Basic_CA1063_IDisposableReimplementation_Diagnostic_ImplementingInheritedInterfaceWithNoDisposeReimplementation
-                            CheckIDisposableReimplementationRule(type, context);
+                            CheckIDisposableReimplementationRule(type, context, implementsDisposableInBaseType);
 
                             CheckDisposeSignatureRule(disposeMethod, type, context);
                             CheckRenameDisposeRule(disposeMethod, type, context);
+                        }
+                    }
+
+                    if (implementsDisposableInBaseType)
+                    {
+                        foreach (var method in type.GetMembers().OfType<IMethodSymbol>())
+                        {
+                            CheckDisposeOverrideRule(method, type, context);
                         }
                     }
                 }
@@ -184,10 +194,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             /// <summary>
             /// Check rule: Remove IDisposable from the list of interfaces implemented by {0} and override the base class Dispose implementation instead.
             /// </summary>
-            private void CheckIDisposableReimplementationRule(INamedTypeSymbol type, SymbolAnalysisContext context)
+            private static void CheckIDisposableReimplementationRule(INamedTypeSymbol type, SymbolAnalysisContext context, bool implementsDisposableInBaseType)
             {
-                var baseType = type.BaseType;
-                if (baseType != null && baseType.AllInterfaces.Contains(disposableType))
+                if (implementsDisposableInBaseType)
                 {
                     context.ReportDiagnostic(type.CreateDiagnostic(IDisposableReimplementationRule, type.Name));
                 }
@@ -217,12 +226,44 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
 
             /// <summary>
+            /// Checks rule: Remove {0}, override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.
+            /// </summary>
+            private void CheckDisposeOverrideRule(IMethodSymbol method, INamedTypeSymbol type, SymbolAnalysisContext context)
+            {
+                if (method.MethodKind == MethodKind.Ordinary && method.IsOverride && method.ReturnsVoid && method.Parameters.Length == 0)
+                {
+                    var isDisposeOverride = false;
+                    for (var m = method.OverriddenMethod; m != null; m = m.OverriddenMethod)
+                    {
+                        if (m == FindDisposeMethod(m.ContainingType))
+                        {
+                            isDisposeOverride = true;
+                            break;
+                        }
+                    }
+
+                    if (isDisposeOverride)
+                    {
+                        context.ReportDiagnostic(method.CreateDiagnostic(DisposeOverrideRule, $"{type.Name}.{method.Name}"));
+                    }
+                }
+            }
+
+            /// <summary>
             /// Checks if type implements IDisposable interface or an interface inherited from IDisposable.
             /// Only direct implementation is taken into account, implementation in base type is ignored.
             /// </summary>
             private bool ImplementsDisposableDirectly(ITypeSymbol type)
             {
                 return type.Interfaces.Any(i => i.Inherits(disposableType));
+            }
+
+            /// <summary>
+            /// Checks if base type implements IDisposable interface directly or indirectly.
+            /// </summary>
+            private bool ImplementsDisposableInBaseType(ITypeSymbol type)
+            {
+                return type.BaseType != null && type.BaseType.AllInterfaces.Contains(disposableType);
             }
 
             /// <summary>

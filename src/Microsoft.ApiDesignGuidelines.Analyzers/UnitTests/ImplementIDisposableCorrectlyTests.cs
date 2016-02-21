@@ -533,6 +533,230 @@ public sealed class C : IDisposable
 
         #endregion
 
+        #region CSharp DisposeBoolSignature Unit Tests
+
+        [Fact]
+        public void CSharp_CA1063_DisposeBoolSignature_Diagnostic_DisposeBoolIsPublic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IDisposable
+{
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~C()
+    {
+        Dispose(false);
+    }
+
+    public virtual Dispose(bool disposing)
+    {
+    }
+}
+",
+            GetCA1063CSharpDisposeBoolSignatureResultAt(17, 20, "C", "Dispose"));
+        }
+
+        [Fact]
+        public void CSharp_CA1063_DisposeBoolSignature_Diagnostic_DisposeBoolIsProtectedInternal()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IDisposable
+{
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~C()
+    {
+        Dispose(false);
+    }
+
+    protected internal virtual Dispose(bool disposing)
+    {
+    }
+}
+",
+            GetCA1063CSharpDisposeBoolSignatureResultAt(17, 32, "C", "Dispose"));
+        }
+
+        [Fact]
+        public void CSharp_CA1063_DisposeBoolSignature_Diagnostic_DisposeBoolIsNotVirtual()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IDisposable
+{
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~C()
+    {
+        Dispose(false);
+    }
+
+    protected Dispose(bool disposing)
+    {
+    }
+}
+",
+            GetCA1063CSharpDisposeBoolSignatureResultAt(17, 15, "C", "Dispose"));
+        }
+
+        [Fact]
+        public void CSharp_CA1063_DisposeBoolSignature_Diagnostic_DisposeBoolIsSealedOverriden()
+        {
+            VerifyCSharp(@"
+using System;
+
+public abstract class B
+{
+    protected abstract Dispose(bool disposing);
+}
+
+public class C : B, IDisposable
+{
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~C()
+    {
+        Dispose(false);
+    }
+
+    protected sealed override Dispose(bool disposing)
+    {
+    }
+}
+",
+            GetCA1063CSharpDisposeBoolSignatureResultAt(22, 31, "C", "Dispose"));
+        }
+
+        [Fact]
+        public void CSharp_CA1063_DisposeBoolSignature_NoDiagnostic_DisposeBoolIsOverriden()
+        {
+            VerifyCSharp(@"
+using System;
+
+public abstract class B
+{
+    protected abstract Dispose(bool disposing);
+}
+
+public class C : B, IDisposable
+{
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~C()
+    {
+        Dispose(false);
+    }
+
+    protected override Dispose(bool disposing)
+    {
+    }
+}
+");
+        }
+
+        [Fact]
+        public void CSharp_CA1063_DisposeBoolSignature_NoDiagnostic_DisposeBoolIsAbstract()
+        {
+            VerifyCSharp(@"
+using System;
+
+public abstract class C : IDisposable
+{
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~C()
+    {
+        Dispose(false);
+    }
+
+    protected abstract Dispose(bool disposing)
+}
+");
+        }
+
+        [Fact]
+        public void CSharp_CA1063_DisposeBoolSignature_NoDiagnostic_DisposeBoolIsPublicAndClassIsSealed()
+        {
+            VerifyCSharp(@"
+using System;
+
+public sealed class C : IDisposable
+{
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~C()
+    {
+        Dispose(false);
+    }
+
+    public Dispose(bool disposing)
+    {
+    }
+}
+");
+        }
+
+        [Fact]
+        public void CSharp_CA1063_DisposeBoolSignature_NoDiagnostic_DisposeBoolIsPrivateAndClassIsSealed()
+        {
+            VerifyCSharp(@"
+using System;
+
+public sealed class C : IDisposable
+{
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~C()
+    {
+        Dispose(false);
+    }
+
+    private Dispose(bool disposing)
+    {
+    }
+}
+");
+        }
+
+        #endregion
+
         #region VB Unit Tests
 
         [Fact]
@@ -1159,6 +1383,229 @@ End Class
 
         #endregion
 
+        #region VB DisposeBoolSignature Unit Tests
+
+        [Fact]
+        public void Basic_CA1063_DisposeBoolSignature_Diagnostic_DisposeBoolIsPublic()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class C
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+
+    Public Overridable Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class
+",
+            GetCA1063BasicDisposeBoolSignatureResultAt(17, 28, "C", "Dispose"));
+        }
+
+        [Fact]
+        public void Basic_CA1063_DisposeBoolSignature_Diagnostic_DisposeBoolIsProtectedInternal()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class C
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+
+    Protected Friend Overridable Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class
+",
+            GetCA1063BasicDisposeBoolSignatureResultAt(17, 38, "C", "Dispose"));
+        }
+
+        [Fact]
+        public void Basic_CA1063_DisposeBoolSignature_Diagnostic_DisposeBoolIsNotVirtual()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class C
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+
+    Protected Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class
+",
+            GetCA1063BasicDisposeBoolSignatureResultAt(17, 19, "C", "Dispose"));
+        }
+
+        [Fact]
+        public void Basic_CA1063_DisposeBoolSignature_Diagnostic_DisposeBoolIsSealedOverriden()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public MustInherit Class B
+    Public MustOverride Sub Dispose(disposing As Boolean)
+End Class
+
+Public Class C
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+
+    Protected NotOverridable Overrides Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class
+",
+            GetCA1063BasicDisposeBoolSignatureResultAt(21, 44, "C", "Dispose"));
+        }
+
+        [Fact]
+        public void Basic_CA1063_DisposeBoolSignature_NoDiagnostic_DisposeBoolIsOverriden()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public MustInherit Class B
+    Public MustOverride Sub Dispose(disposing As Boolean)
+End Class
+
+Public Class C
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+
+    Protected Overrides Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class
+");
+        }
+
+        [Fact]
+        public void Basic_CA1063_DisposeBoolSignature_NoDiagnostic_DisposeBoolIsAbstract()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public MustInherit Class C
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+
+    Protected MustOverride Sub Dispose(disposing As Boolean)
+
+End Class
+");
+        }
+
+        [Fact]
+        public void Basic_CA1063_DisposeBoolSignature_NoDiagnostic_DisposeBoolIsPublicAndClassIsSealed()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public NotInheritable Class C
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+
+    Public Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class
+");
+        }
+
+        [Fact]
+        public void Basic_CA1063_DisposeBoolSignature_NoDiagnostic_DisposeBoolIsPrivateAndClassIsSealed()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public NotInheritable Class C
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+
+    Private Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class
+");
+        }
+
+        #endregion
+
         #region Helpers
 
         private static DiagnosticResult GetCA1063CSharpIDisposableReimplementationResultAt(int line, int column, string typeName)
@@ -1230,6 +1677,18 @@ End Class
         private static DiagnosticResult GetCA1063BasicProvideDisposeBoolResultAt(int line, int column, string typeName)
         {
             string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageProvideDisposeBool, typeName);
+            return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetCA1063CSharpDisposeBoolSignatureResultAt(int line, int column, string typeName, string disposeMethod)
+        {
+            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeBoolSignature, typeName + "." + disposeMethod);
+            return GetCSharpResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetCA1063BasicDisposeBoolSignatureResultAt(int line, int column, string typeName, string disposeMethod)
+        {
+            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeBoolSignature, typeName + "." + disposeMethod);
             return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 

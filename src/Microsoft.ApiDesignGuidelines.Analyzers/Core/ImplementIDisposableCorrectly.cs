@@ -83,7 +83,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor DisposeImplementationRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -183,7 +183,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                             if (!type.IsSealed)
                             {
                                 var disposeBoolMethod = FindDisposeBoolMethod(type);
-                                if (disposeBoolMethod == null)
+                                if (disposeBoolMethod != null)
+                                {
+                                    CheckDisposeBoolSignatureRule(disposeBoolMethod, type, context);
+                                }
+                                else
                                 {
                                     CheckProvideDisposeBoolRule(type, context);
                                 }
@@ -229,7 +233,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             /// <summary>
             /// Checks rule: Rename {0} to 'Dispose' and ensure that it is declared as public and sealed.
             /// </summary>
-            private void CheckRenameDisposeRule(IMethodSymbol method, INamedTypeSymbol type, SymbolAnalysisContext context)
+            private static void CheckRenameDisposeRule(IMethodSymbol method, INamedTypeSymbol type, SymbolAnalysisContext context)
             {
                 if (method.Name != DisposeMethodName)
                 {
@@ -264,7 +268,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             /// <summary>
             /// Checks rule: Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false.
             /// </summary>
-            private void CheckFinalizeOverrideRule(INamedTypeSymbol type, SymbolAnalysisContext context)
+            private static void CheckFinalizeOverrideRule(INamedTypeSymbol type, SymbolAnalysisContext context)
             {
                 if (type.HasFinalizer())
                 {
@@ -275,9 +279,21 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             /// <summary>
             /// Checks rule: Provide an overridable implementation of Dispose(bool) on {0} or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.
             /// </summary>
-            private void CheckProvideDisposeBoolRule(INamedTypeSymbol type, SymbolAnalysisContext context)
+            private static void CheckProvideDisposeBoolRule(INamedTypeSymbol type, SymbolAnalysisContext context)
             {
                 context.ReportDiagnostic(type.CreateDiagnostic(ProvideDisposeBoolRule, type.Name));
+            }
+
+            /// <summary>
+            /// Checks rule: Ensure that {0} is declared as protected, virtual, and unsealed.
+            /// </summary>
+            private static void CheckDisposeBoolSignatureRule(IMethodSymbol method, INamedTypeSymbol type, SymbolAnalysisContext context)
+            {
+                if (method.DeclaredAccessibility != Accessibility.Protected ||
+                    !(method.IsVirtual || method.IsAbstract || method.IsOverride) || method.IsSealed)
+                {
+                    context.ReportDiagnostic(method.CreateDiagnostic(DisposeBoolSignatureRule, $"{type.Name}.{method.Name}"));
+                }
             }
 
             /// <summary>
@@ -315,7 +331,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             /// <summary>
             /// Returns method: void Dispose(bool)
             /// </summary>
-            private IMethodSymbol FindDisposeBoolMethod(INamedTypeSymbol type)
+            private static IMethodSymbol FindDisposeBoolMethod(INamedTypeSymbol type)
             {
                 foreach (var method in type.GetMembers(DisposeMethodName).OfType<IMethodSymbol>())
                 {

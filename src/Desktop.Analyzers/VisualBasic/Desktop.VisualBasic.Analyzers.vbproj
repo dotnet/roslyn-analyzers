@@ -99,7 +99,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicDoNotUseInsecureDTDProcessing.vb" />
     <Compile Include="BasicDoNotCatchCorruptedStateExceptions.vb" />
     <Compile Include="BasicDoNotUseInsecureCryptographicAlgorithms.vb" />
     <Compile Include="BasicSpecifyMessageBoxOptions.vb" />

@@ -538,7 +538,7 @@ namespace TestNamespace
     }
 }
 ",
-                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(15, 29, "TestMethod")
+                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(15, 29)
             );
 
             VerifyBasic(@"
@@ -578,7 +578,7 @@ Namespace TestNamespace
         End Function
     End Class
 End Namespace",
-                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(10, 21, "TestMethod")
+                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(10, 21)
             );
         }
     }

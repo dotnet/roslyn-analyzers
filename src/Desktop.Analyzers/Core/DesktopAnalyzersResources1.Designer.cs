@@ -864,7 +864,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to In {0} an XmlDocument instance is created without setting its XmlResolver property to a secure value..
+        ///   Looks up a localized string similar to An XmlDocument instance is created without setting its XmlResolver property to a secure value..
         /// </summary>
         internal static string XmlDocumentWithNoSecureResolverMessage {
             get {

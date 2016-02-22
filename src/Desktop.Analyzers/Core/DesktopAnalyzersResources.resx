@@ -388,7 +388,7 @@
     <comment>CA3075</comment>
   </data>
   <data name="XmlDocumentWithNoSecureResolverMessage" xml:space="preserve">
-    <value>In {0} an XmlDocument instance is created without setting its XmlResolver property to a secure value.</value>
+    <value>An XmlDocument instance is created without setting its XmlResolver property to a secure value.</value>
     <comment>CA3075</comment>
   </data>
   <data name="XmlReaderCreateInsecureConstructedMessage" xml:space="preserve">

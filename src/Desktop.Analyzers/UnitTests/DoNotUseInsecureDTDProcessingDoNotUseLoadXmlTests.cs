@@ -2,25 +2,24 @@
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
-using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
     public partial class DoNotUseInsecureDTDProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private const string CA3075RuleId = DoNotUseInsecureDTDProcessingAnalyzer<SyntaxKind>.RuleId;
+        private const string CA3075RuleId = DoNotUseInsecureDTDProcessingAnalyzer.RuleId;
 
         private readonly string _CA3075LoadXmlMessage = DesktopAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage;
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicDoNotUseInsecureDTDProcessingAnalyzer();
+            return new DoNotUseInsecureDTDProcessingAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpDoNotUseInsecureDTDProcessingAnalyzer();
+            return new DoNotUseInsecureDTDProcessingAnalyzer();
         }
 
         private DiagnosticResult GetCA3075LoadXmlCSharpResultAt(int line, int column, string name)

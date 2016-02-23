@@ -378,7 +378,7 @@ namespace Desktop.Analyzers
                             _xmlDocumentEnvironments[variable] = env;
                         }
                     }
-                    else // Temp object
+                    else if(!isXmlDocumentSecureResolver) // Insecure temp object
                     {
                         Diagnostic diag = Diagnostic.Create(
                                             RuleDoNotUseInsecureDTDProcessing,

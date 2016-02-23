@@ -5,16 +5,16 @@ using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureDTDProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDTDProcessingAnalyzerIOperationLoadTests : DiagnosticAnalyzerTestBase
     {
-        private DiagnosticResult GetCA3075SchemaReadCSharpResultAt(int line, int column, string name)
+        private DiagnosticResult GetCA3075SchemaReadCSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, name, "Read"));
+            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, "Read"));
         }
 
-        private DiagnosticResult GetCA3075SchemaReadBasicResultAt(int line, int column, string name)
+        private DiagnosticResult GetCA3075SchemaReadBasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, name, "Read"));
+            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, "Read"));
         }
 
         [Fact]
@@ -35,7 +35,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075SchemaReadCSharpResultAt(12, 32, "TestMethod")
+                GetCA3075SchemaReadCSharpResultAt(12, 32)
             );
 
             VerifyBasic(@"
@@ -50,7 +50,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075SchemaReadBasicResultAt(9, 39, "TestMethod")
+                GetCA3075SchemaReadBasicResultAt(9, 39)
             );
         }
 
@@ -74,7 +74,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075SchemaReadCSharpResultAt(13, 32, "get_Test")
+                GetCA3075SchemaReadCSharpResultAt(13, 32)
             );
 
             VerifyBasic(@"
@@ -91,7 +91,7 @@ Class TestClass
         End Get
     End Property
 End Class",
-                GetCA3075SchemaReadBasicResultAt(10, 39, "get_Test")
+                GetCA3075SchemaReadBasicResultAt(10, 39)
             );
         }
 
@@ -122,7 +122,7 @@ public XmlSchema GetDoc
             }
         }
 }",
-                GetCA3075SchemaReadCSharpResultAt(17, 40, "set_GetDoc")
+                GetCA3075SchemaReadCSharpResultAt(17, 40)
             );
 
             VerifyBasic(@"
@@ -145,7 +145,7 @@ Class TestClass
         End Set
     End Property
 End Class",
-                GetCA3075SchemaReadBasicResultAt(13, 43, "set_GetDoc")
+                GetCA3075SchemaReadBasicResultAt(13, 43)
             );
         }
 
@@ -171,7 +171,7 @@ class TestClass
         finally { }
     }
 }",
-                GetCA3075SchemaReadCSharpResultAt(14, 32, "TestMethod")
+                GetCA3075SchemaReadCSharpResultAt(14, 32)
             );
 
             VerifyBasic(@"
@@ -190,7 +190,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075SchemaReadBasicResultAt(10, 39, "TestMethod")
+                GetCA3075SchemaReadBasicResultAt(10, 39)
             );
         }
 
@@ -216,7 +216,7 @@ using System.Xml.Schema;
             finally { }
         }
     }",
-                GetCA3075SchemaReadCSharpResultAt(15, 36, "TestMethod")
+                GetCA3075SchemaReadCSharpResultAt(15, 36)
             );
 
             VerifyBasic(@"
@@ -234,7 +234,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075SchemaReadBasicResultAt(11, 39, "TestMethod")
+                GetCA3075SchemaReadBasicResultAt(11, 39)
             );
         }
 
@@ -260,7 +260,7 @@ using System.Xml.Schema;
             }
         }
     }",
-                GetCA3075SchemaReadCSharpResultAt(16, 36, "TestMethod")
+                GetCA3075SchemaReadCSharpResultAt(16, 36)
             );
 
             VerifyBasic(@"
@@ -279,7 +279,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075SchemaReadBasicResultAt(13, 39, "TestMethod")
+                GetCA3075SchemaReadBasicResultAt(13, 39)
             );
         }
 
@@ -287,7 +287,7 @@ End Class",
         public void UseXmlSchemaReadWithoutXmlTextReaderInAsyncAwaitShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
- using System.Threading.Tasks;
+using System.Threading.Tasks;
 using System.Data;
 using System.IO;
 using System.Xml.Schema;
@@ -307,7 +307,7 @@ using System.Xml.Schema;
             await TestMethod();
         }
     }",
-                GetCA3075SchemaReadCSharpResultAt(13, 36, "Run")
+                GetCA3075SchemaReadCSharpResultAt(13, 36)
             );
 
             VerifyBasic(@"
@@ -316,7 +316,7 @@ Imports System.Data
 Imports System.IO
 Imports System.Xml.Schema
 Class TestClass
-    Private Function TestMethod() As Task
+    Private Async Function TestMethod() As Task
         Await Task.Run(Function() 
         Dim src = """"
         Dim tr As TextReader = New StreamReader(src)
@@ -329,7 +329,7 @@ End Function)
         Await TestMethod()
     End Sub
 End Class",
-                GetCA3075SchemaReadBasicResultAt(11, 35, "Run")
+                GetCA3075SchemaReadBasicResultAt(11, 35)
             );
         }
 
@@ -350,7 +350,7 @@ using System.Xml.Schema;
             XmlSchema schema = XmlSchema.Read(tr, null);
         };
     }",
-                GetCA3075SchemaReadCSharpResultAt(12, 32, "TestClass")
+                GetCA3075SchemaReadCSharpResultAt(12, 32)
             );
 
             VerifyBasic(@"
@@ -367,7 +367,7 @@ Class TestClass
 
 End Sub
 End Class",
-                GetCA3075SchemaReadBasicResultAt(11, 31, "TestClass")
+                GetCA3075SchemaReadBasicResultAt(11, 31)
             );
         }
 

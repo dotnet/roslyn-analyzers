@@ -376,7 +376,7 @@
     <comment>CA3075</comment>
   </data>
   <data name="DoNotUseSetInnerXmlMessage" xml:space="preserve">
-    <value>{0} uses the unsafe setter of InnerXml property of System.Xml.XmlDocument.</value>
+    <value>Uses the unsafe setter of InnerXml property of System.Xml.XmlDocument.</value>
     <comment>CA3075</comment>
   </data>
   <data name="InsecureXmlDtdProcessing" xml:space="preserve">

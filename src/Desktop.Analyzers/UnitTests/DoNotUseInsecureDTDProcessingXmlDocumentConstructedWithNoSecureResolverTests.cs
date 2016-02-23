@@ -6,19 +6,9 @@ using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureDTDProcessingAnalyzerIOperationTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDTDProcessingAnalyzerIOperationLoadTests : DiagnosticAnalyzerTestBase
     {
-        private const string CA3075RuleId = DoNotUseInsecureDTDProcessingAnalyzer.RuleId;
         private static readonly string s_CA3075XmlDocumentWithNoSecureResolverMessage = DesktopAnalyzersResources.XmlDocumentWithNoSecureResolverMessage;
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotUseInsecureDTDProcessingAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotUseInsecureDTDProcessingAnalyzer();
-        }
 
         private DiagnosticResult GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(int line, int column)
         {

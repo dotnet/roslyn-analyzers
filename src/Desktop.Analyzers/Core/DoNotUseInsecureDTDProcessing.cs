@@ -360,8 +360,10 @@ namespace Desktop.Analyzers
 
                                     return;
                                 }
-
-                                break; // Found XmlResolver property
+                            }
+                            else
+                            {
+                                AnalyzeSetProperties(context, propertyInitializer.InitializedProperty, propertyInitializer.Syntax.GetLocation());
                             }
                         }
                     }
@@ -480,11 +482,45 @@ namespace Desktop.Analyzers
                                 );
                         context.ReportDiagnostic(diag);
                     }
-                    
-                    if(env != null)
+
+                    if (env != null)
                     {
                         env.IsSecureResolver = isSecureResolver;
                     }
+                }
+                else
+                {
+                    AnalyzeSetProperties(context, propRef.Property, expression.Syntax.GetLocation());
+                }
+            }
+
+            private void AnalyzeSetProperties(OperationAnalysisContext context, IPropertySymbol property, Location location)
+            {
+                if (property.MatchPropertyDerivedByName(_xmlTypes.XmlDocument, SecurityMemberNames.InnerXml))                                       //FxCop CA3058
+                {
+                    DiagnosticDescriptor rule = RuleDoNotUseInsecureDTDProcessing;
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            rule,
+                            location,
+                            SecurityDiagnosticHelpers.GetLocalizableResourceString(
+                                nameof(DesktopAnalyzersResources.DoNotUseSetInnerXmlMessage)
+                            )
+                        )
+                    );
+                }
+                else if (property.MatchPropertyDerivedByName(_xmlTypes.DataViewManager, SecurityMemberNames.DataViewSettingCollectionString))   //FxCop CA3065
+                {
+                    DiagnosticDescriptor rule = RuleDoNotUseInsecureDTDProcessing;
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            rule,
+                            location,
+                            SecurityDiagnosticHelpers.GetLocalizableResourceString(
+                                nameof(DesktopAnalyzersResources.ReviewDtdProcessingPropertiesMessage)
+                            )
+                        )
+                    );
                 }
             }
 

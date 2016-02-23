@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 
@@ -7,7 +8,18 @@ namespace Desktop.Analyzers.UnitTests
 {
     public partial class DoNotUseInsecureDTDProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
     {
+        private const string CA3075RuleId = DoNotUseInsecureDTDProcessingAnalyzer.RuleId;
         private readonly string _CA3075LoadXmlMessage = DesktopAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage;
+
+        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        {
+            return new DoNotUseInsecureDTDProcessingAnalyzer();
+        }
+
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        {
+            return new DoNotUseInsecureDTDProcessingAnalyzer();
+        }
 
         private DiagnosticResult CA3075ReadXmlSchemaGetCSharpResultAt(int line, int column, string name)
         {

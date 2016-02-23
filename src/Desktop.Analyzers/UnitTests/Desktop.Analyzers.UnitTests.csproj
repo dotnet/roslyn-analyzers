@@ -150,10 +150,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DoNotUseInsecureDTDProcessingDoNotUseLoadXmlTests.cs" />
-    <None Include="DoNotUseInsecureDTDProcessingDoNotUseSetInnerXmlTests.cs" />
+    <Compile Include="DoNotUseInsecureDTDProcessingDoNotUseSetInnerXmlTests.cs" />
     <Compile Include="DoNotUseInsecureDTDProcessingReviewDataViewCollectionStringTests.cs" />
     <Compile Include="DoNotUseInsecureDTDProcessingUseXmlReaderForDataSetReadXmlSchemaTests.cs" />
-    <Compile Include="DoNotUseInsecureDTDProcessingUseXmlReaderForDataSetReadXmlTests.cs" />
+    <None Include="DoNotUseInsecureDTDProcessingUseXmlReaderForDataSetReadXmlTests.cs" />
     <Compile Include="DoNotUseInsecureDTDProcessingUseXmlReaderForDataTableReadXmlSchemaTests.cs" />
     <Compile Include="DoNotUseInsecureDTDProcessingUseXmlReaderForDataTableReadXmlTests.cs" />
     <Compile Include="DoNotUseInsecureDTDProcessingUseXmlReaderForDeserializeTests.cs" />

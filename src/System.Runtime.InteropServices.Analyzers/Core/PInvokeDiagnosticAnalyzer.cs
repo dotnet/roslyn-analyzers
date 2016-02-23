@@ -2,8 +2,11 @@
 
 using System.Collections.Immutable;
 using System.Linq;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+
+using Analyzer.Utilities;
 
 namespace System.Runtime.InteropServices.Analyzers
 {
@@ -120,7 +123,7 @@ namespace System.Runtime.InteropServices.Analyzers
                 // CA1401 - PInvoke methods should not be visible
                 if (methodSymbol.DeclaredAccessibility == Accessibility.Public || methodSymbol.DeclaredAccessibility == Accessibility.Protected)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(RuleCA1401, context.Symbol.Locations.First(l => l.IsInSource), methodSymbol.Name));
+                    context.ReportDiagnostic(context.Symbol.CreateDiagnostic(RuleCA1401, methodSymbol.Name));
                 }
 
                 // CA2101 - Specify marshalling for PInvoke string arguments

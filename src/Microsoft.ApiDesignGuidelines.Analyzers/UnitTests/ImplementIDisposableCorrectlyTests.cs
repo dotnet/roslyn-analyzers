@@ -114,6 +114,47 @@ public class B : IDisposable
         }
 
         [Fact]
+        public void CSharp_CA1063_IDisposableReimplementation_Diagnostic_ReimplementingIDisposableWithDeepInheritance()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class A : IDisposable
+{
+    public virtual void Dispose()
+    {
+    }
+}
+
+public class B : A
+{
+}
+
+[|public class C : B, IDisposable
+{
+    public override void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~C()
+    {
+        Dispose(false);
+    }
+
+    protected virtual Dispose(bool disposing)
+    {
+    }
+}|]
+",
+            GetCA1063CSharpIDisposableReimplementationResultAt(15, 14, "C"),
+            GetCA1063CSharpFinalizeOverrideResultAt(15, 14, "C"),
+            GetCA1063CSharpDisposeSignatureResultAt(17, 26, "C", "Dispose"),
+            GetCA1063CSharpDisposeOverrideResultAt(17, 26, "C", "Dispose"));
+        }
+
+        [Fact]
         public void CSharp_CA1063_IDisposableReimplementation_Diagnostic_ImplementingInterfaceInheritedFromIDisposable()
         {
             VerifyCSharp(@"
@@ -1041,6 +1082,48 @@ End Class|]
         }
 
         [Fact]
+        public void Basic_CA1063_IDisposableReimplementation_Diagnostic_ReimplementingIDisposableWithDeepInheritance()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class A
+    Implements IDisposable
+
+    Public Overridable Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+Public Class B
+    Inherits A
+End Class
+
+[|Public Class C
+    Inherits B
+    Implements IDisposable
+
+    Public Overrides Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+
+    Protected Overridable Overloads Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class|]
+",
+            GetCA1063BasicIDisposableReimplementationResultAt(15, 14, "C"),
+            GetCA1063BasicFinalizeOverrideResultAt(15, 14, "C"),
+            GetCA1063BasicDisposeSignatureResultAt(19, 26, "C", "Dispose"),
+            GetCA1063BasicDisposeOverrideResultAt(19, 26, "C", "Dispose"));
+        }
+
+        [Fact]
         public void Basic_CA1063_IDisposableReimplementation_Diagnostic_ImplementingInterfaceInheritedFromIDisposable()
         {
             VerifyBasic(@"
@@ -1795,7 +1878,7 @@ End Class
 
         #endregion
 
-        #region VB 
+        #region VB DisposeImplementation Unit Tests
 
         [Fact]
         public void Basic_CA1063_DisposeImplementation_Diagnostic_MissingCallDisposeBool()

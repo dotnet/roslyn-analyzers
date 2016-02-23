@@ -19,6 +19,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private const string HelpLinkUri = "https://msdn.microsoft.com/library/ms244737.aspx";
         private const string DisposeMethodName = "Dispose";
+        private const string GarbageCollectorTypeName = "System.GC";
+        private const string SuppressFinalizeMethodName = "SuppressFinalize";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
@@ -134,13 +136,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         return;
                     }
 
-                    var garbageCollectorType = context.Compilation.GetTypeByMetadataName("System.GC");
+                    var garbageCollectorType = context.Compilation.GetTypeByMetadataName(GarbageCollectorTypeName);
                     if (garbageCollectorType == null)
                     {
                         return;
                     }
 
-                    var suppressFinalizeMethod = garbageCollectorType.GetMembers("SuppressFinalize").Single() as IMethodSymbol;
+                    var suppressFinalizeMethod = garbageCollectorType.GetMembers(SuppressFinalizeMethodName).Single() as IMethodSymbol;
                     if (suppressFinalizeMethod == null)
                     {
                         return;
@@ -193,7 +195,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             private void AnalyzeNamedTypeSymbol(SymbolAnalysisContext context)
             {
                 var type = context.Symbol as INamedTypeSymbol;
-                if (type != null && type.IsType && type.TypeKind == TypeKind.Class)
+                if (type != null && type.TypeKind == TypeKind.Class)
                 {
                     var implementsDisposableInBaseType = ImplementsDisposableInBaseType(type);
 
@@ -252,7 +254,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 if (isFinalizerMethod || isDisposeMethod)
                 {
                     var type = method.ContainingType;
-                    if (type != null && type.IsType && type.TypeKind == TypeKind.Class &&
+                    if (type != null && type.TypeKind == TypeKind.Class &&
                         !type.IsSealed && type.DeclaredAccessibility != Accessibility.Private)
                     {
                         if (ImplementsDisposableDirectly(type))

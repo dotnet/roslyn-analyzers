@@ -1012,6 +1012,123 @@ public sealed class C : IDisposable
 
         #endregion
 
+        #region CSharp FinalizeImplementation Unit Tests
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        public void CSharp_CA1063_FinalizeImplementation_Diagnostic_MissingCallDisposeBool()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IDisposable
+{
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~C()
+    {
+    }
+
+    protected virtual Dispose(bool disposing)
+    {
+    }
+}
+",
+            GetCA1063CSharpDisposeImplementationResultAt(12, 5, "C", "Finalize"));
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        public void CSharp_CA1063_FinalizeImplementation_Diagnostic_CallDisposeWithTrueArgument()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IDisposable
+{
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~C()
+    {
+        Dispose(true);
+    }
+
+    protected virtual Dispose(bool disposing)
+    {
+    }
+}
+",
+            GetCA1063CSharpDisposeImplementationResultAt(12, 5, "C", "Finalize"));
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        public void CSharp_CA1063_FinalizeImplementation_Diagnostic_ConditionalStatement()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IDisposable
+{
+    private bool disposed;
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~C()
+    {
+        if (!disposed)
+        {
+            Dispose(false);
+        }
+    }
+
+    protected virtual Dispose(bool disposing)
+    {
+    }
+}
+",
+            GetCA1063CSharpDisposeImplementationResultAt(14, 5, "C", "Finalize"));
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        public void CSharp_CA1063_FinalizeImplementation_Diagnostic_CallDisposeBoolTwice()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IDisposable
+{
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~C()
+    {
+        Dispose(false);
+        Dispose(false);
+    }
+
+    protected virtual Dispose(bool disposing)
+    {
+    }
+}
+",
+            GetCA1063CSharpDisposeImplementationResultAt(12, 5, "C", "Finalize"));
+        }
+
+        #endregion
+
         #region VB Unit Tests
 
         [Fact]
@@ -2118,6 +2235,121 @@ Public NotInheritable Class C
 
 End Class
 ");
+        }
+
+        #endregion
+
+        #region VB FinalizeImplementation Unit Tests
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        public void Basic_CA1063_FinalizeImplementation_Diagnostic_MissingCallDisposeBool()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class C
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+    End Sub
+
+    Protected Overridable Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class
+",
+            GetCA1063BasicDisposeImplementationResultAt(15, 20, "C", "Finalize"));
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        public void Basic_CA1063_FinalizeImplementation_Diagnostic_CallDisposeWithTrueArgument()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class C
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(True)
+        MyBase.Finalize()
+    End Sub
+
+    Protected Overridable Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class
+",
+            GetCA1063BasicDisposeImplementationResultAt(15, 20, "C", "Finalize"));
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        public void Basic_CA1063_FinalizeImplementation_Diagnostic_ConditionalStatement()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class C
+    Implements IDisposable
+
+    Private disposed As Boolean
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        If Not disposed Then
+            Dispose(False)
+        End If
+        MyBase.Finalize()
+    End Sub
+
+    Protected Overridable Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class
+",
+            GetCA1063BasicDisposeImplementationResultAt(17, 20, "C", "Finalize"));
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        public void Basic_CA1063_FinalizeImplementation_Diagnostic_CallDisposeBoolTwice()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class C
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+
+    Protected Overridable Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class
+",
+            GetCA1063BasicDisposeImplementationResultAt(15, 20, "C", "Finalize"));
         }
 
         #endregion

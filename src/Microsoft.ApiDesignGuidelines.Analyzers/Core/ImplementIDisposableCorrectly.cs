@@ -1,9 +1,11 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Semantics;
 using Analyzer.Utilities;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
@@ -92,7 +94,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor FinalizeImplementationRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -101,7 +103,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor ProvideDisposeBoolRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -132,9 +134,36 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         return;
                     }
 
-                    var analyzer = new Analyzer(context.Compilation, disposableType, disposeInterfaceMethod);
+                    var garbageCollectorType = context.Compilation.GetTypeByMetadataName("System.GC");
+                    if (garbageCollectorType == null)
+                    {
+                        return;
+                    }
+
+                    var suppressFinalizeMethod = garbageCollectorType.GetMembers("SuppressFinalize").Single() as IMethodSymbol;
+                    if (suppressFinalizeMethod == null)
+                    {
+                        return;
+                    }
+
+                    var analyzer = new Analyzer(context.Compilation, disposableType, disposeInterfaceMethod, suppressFinalizeMethod);
                     analyzer.Initialize(context);
                 });
+        }
+
+        private static bool IsDisposeBoolMethod(IMethodSymbol method)
+        {
+            if (method.Name == DisposeMethodName && method.MethodKind == MethodKind.Ordinary &&
+                method.ReturnsVoid && method.Parameters.Length == 1)
+            {
+                var parameter = method.Parameters[0];
+                if (parameter.Type != null && parameter.Type.SpecialType == SpecialType.System_Boolean && parameter.RefKind == RefKind.None)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -142,23 +171,26 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         /// </summary>
         private class Analyzer
         {
-            private Compilation compilation;
-            private INamedTypeSymbol disposableType;
-            private IMethodSymbol disposeInterfaceMethod;
+            private readonly Compilation compilation;
+            private readonly INamedTypeSymbol disposableType;
+            private readonly IMethodSymbol disposeInterfaceMethod;
+            private readonly IMethodSymbol suppressFinalizeMethod;
 
-            public Analyzer(Compilation compilation, INamedTypeSymbol disposableType, IMethodSymbol disposeInterfaceMethod)
+            public Analyzer(Compilation compilation, INamedTypeSymbol disposableType, IMethodSymbol disposeInterfaceMethod, IMethodSymbol suppressFinalizeMethod)
             {
                 this.compilation = compilation;
                 this.disposableType = disposableType;
                 this.disposeInterfaceMethod = disposeInterfaceMethod;
+                this.suppressFinalizeMethod = suppressFinalizeMethod;
             }
 
             public void Initialize(CompilationStartAnalysisContext context)
             {
-                context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
+                context.RegisterSymbolAction(AnalyzeNamedTypeSymbol, SymbolKind.NamedType);
+                context.RegisterOperationBlockAction(AnalyzeOperationBlock);
             }
 
-            private void AnalyzeSymbol(SymbolAnalysisContext context)
+            private void AnalyzeNamedTypeSymbol(SymbolAnalysisContext context)
             {
                 var type = context.Symbol as INamedTypeSymbol;
                 if (type != null && type.IsType && type.TypeKind == TypeKind.Class)
@@ -180,7 +212,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                             CheckDisposeSignatureRule(disposeMethod, type, context);
                             CheckRenameDisposeRule(disposeMethod, type, context);
 
-                            if (!type.IsSealed)
+                            if (!type.IsSealed && type.DeclaredAccessibility != Accessibility.Private)
                             {
                                 var disposeBoolMethod = FindDisposeBoolMethod(type);
                                 if (disposeBoolMethod != null)
@@ -203,6 +235,44 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         }
 
                         CheckFinalizeOverrideRule(type, context);
+                    }
+                }
+            }
+
+            private void AnalyzeOperationBlock(OperationBlockAnalysisContext context)
+            {
+                var method = context.OwningSymbol as IMethodSymbol;
+                if (method == null)
+                {
+                    return;
+                }
+
+                var isFinalizerMethod = method.IsFinalizer();
+                var isDisposeMethod = method.Name == DisposeMethodName;
+                if (isFinalizerMethod || isDisposeMethod)
+                {
+                    var type = method.ContainingType;
+                    if (type != null && type.IsType && type.TypeKind == TypeKind.Class &&
+                        !type.IsSealed && type.DeclaredAccessibility != Accessibility.Private)
+                    {
+                        if (ImplementsDisposableDirectly(type))
+                        {
+                            var disposeMethod = FindDisposeMethod(type);
+                            if (disposeMethod != null)
+                            {
+                                if (method == disposeMethod)
+                                {
+                                    CheckDisposeImplementationRule(method, type, context.OperationBlocks, context);
+                                }
+                                else if (isFinalizerMethod)
+                                {
+                                    // Check implementation of finalizer only if the class explicitly implements IDisposable
+                                    // If class implements interface inherited from IDisposable and IDisposable is implemented in base class
+                                    // then implementation of finalizer is ignored
+                                    CheckFinalizeImplementationRule(method, type, context.OperationBlocks, context);
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -297,6 +367,26 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
 
             /// <summary>
+            /// Checks rule: Modify {0} so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.
+            /// </summary>
+            private void CheckDisposeImplementationRule(IMethodSymbol method, INamedTypeSymbol type, ImmutableArray<IOperation> operationBlocks, OperationBlockAnalysisContext context)
+            {
+                var validator = new DisposeImplementationValidator(suppressFinalizeMethod, type);
+                if (!validator.Validate(operationBlocks))
+                {
+                    context.ReportDiagnostic(method.CreateDiagnostic(DisposeImplementationRule, $"{type.Name}.{method.Name}"));
+                }
+            }
+
+            /// <summary>
+            /// Checks rule: Modify {0} so that it calls Dispose(false) and then returns.
+            /// </summary>
+            private static void CheckFinalizeImplementationRule(IMethodSymbol method, INamedTypeSymbol type, ImmutableArray<IOperation> operationBlocks, OperationBlockAnalysisContext context)
+            {
+                // TODO: Implement check of Finalize
+            }
+
+            /// <summary>
             /// Checks if type implements IDisposable interface or an interface inherited from IDisposable.
             /// Only direct implementation is taken into account, implementation in base type is ignored.
             /// </summary>
@@ -333,19 +423,182 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             /// </summary>
             private static IMethodSymbol FindDisposeBoolMethod(INamedTypeSymbol type)
             {
-                foreach (var method in type.GetMembers(DisposeMethodName).OfType<IMethodSymbol>())
+                return type.GetMembers(DisposeMethodName).OfType<IMethodSymbol>().FirstOrDefault(IsDisposeBoolMethod);
+            }
+        }
+
+        /// <summary>
+        /// Validates implementation of Dispose method. The method must call Dispose(true) and then GC.SuppressFinalize(this).
+        /// </summary>
+        private struct DisposeImplementationValidator
+        {
+            private readonly IMethodSymbol suppressFinalizeMethod;
+            private readonly INamedTypeSymbol type;
+            private bool callsDisposeBool;
+            private bool callsSuppressFinalize;
+
+            public DisposeImplementationValidator(IMethodSymbol suppressFinalizeMethod, INamedTypeSymbol type)
+            {
+                callsDisposeBool = false;
+                callsSuppressFinalize = false;
+                this.suppressFinalizeMethod = suppressFinalizeMethod;
+                this.type = type;
+            }
+
+            public bool Validate(ImmutableArray<IOperation> operations)
+            {
+                callsDisposeBool = false;
+                callsSuppressFinalize = false;
+
+                if (ValidateOperations(operations))
                 {
-                    if (method.MethodKind == MethodKind.Ordinary && method.ReturnsVoid && method.Parameters.Length == 1)
+                    return callsDisposeBool && callsSuppressFinalize;
+                }
+
+                return false;
+            }
+
+            private bool ValidateOperations(ImmutableArray<IOperation> operations)
+            {
+                foreach (var operation in operations)
+                {
+                    if (!ValidateOperation(operation))
                     {
-                        var parameter = method.Parameters[0];
-                        if (parameter.Type != null && parameter.Type.SpecialType == SpecialType.System_Boolean && parameter.RefKind == RefKind.None)
-                        {
-                            return method;
-                        }
+                        return false;
                     }
                 }
 
-                return null;
+                return true;
+            }
+
+            private bool ValidateOperation(IOperation operation)
+            {
+                switch (operation.Kind)
+                {
+                    case OperationKind.EmptyStatement:
+                    case OperationKind.LabelStatement:
+                        return true;
+                    case OperationKind.BlockStatement:
+                        var blockStatement = (IBlockStatement)operation;
+                        return ValidateOperations(blockStatement.Statements);
+                    case OperationKind.ExpressionStatement:
+                        var expressionStatement = (IExpressionStatement)operation;
+                        return ValidateExpression(expressionStatement);
+                    default:
+                        return false;
+                }
+            }
+
+            private bool ValidateExpression(IExpressionStatement expressionStatement)
+            {
+                if (expressionStatement.Expression == null || expressionStatement.Expression.Kind != OperationKind.InvocationExpression)
+                {
+                    return false;
+                }
+
+                var invocationExpression = (IInvocationExpression)expressionStatement.Expression;
+                if (!callsDisposeBool)
+                {
+                    var result = IsDisposeBoolCall(invocationExpression);
+                    if (result)
+                    {
+                        callsDisposeBool = true;
+                    }
+
+                    return result;
+                }
+                else if (!callsSuppressFinalize)
+                {
+                    var result = IsSuppressFinalizeCall(invocationExpression);
+                    if (result)
+                    {
+                        callsSuppressFinalize = true;
+                    }
+
+                    return result;
+                }
+
+                return false;
+            }
+
+            private bool IsDisposeBoolCall(IInvocationExpression invocationExpression)
+            {
+                if (invocationExpression.TargetMethod == null ||
+                    invocationExpression.TargetMethod.ContainingType != type ||
+                    !IsDisposeBoolMethod(invocationExpression.TargetMethod))
+                {
+                    return false;
+                }
+
+                if (invocationExpression.Instance.Kind != OperationKind.InstanceReferenceExpression)
+                {
+                    return false;
+                }
+
+                var instanceReferenceExpression = (IInstanceReferenceExpression)invocationExpression.Instance;
+                if (instanceReferenceExpression.InstanceReferenceKind != InstanceReferenceKind.Implicit &&
+                    instanceReferenceExpression.InstanceReferenceKind != InstanceReferenceKind.Explicit)
+                {
+                    return false;
+                }
+
+                if (invocationExpression.ArgumentsInParameterOrder.Length != 1)
+                {
+                    return false;
+                }
+
+                var argument = invocationExpression.ArgumentsInParameterOrder[0];
+                if (argument.Value.Kind != OperationKind.LiteralExpression)
+                {
+                    return false;
+                }
+
+                var literal = (ILiteralExpression)argument.Value;
+                if (!literal.ConstantValue.HasValue || !true.Equals(literal.ConstantValue.Value))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            private bool IsSuppressFinalizeCall(IInvocationExpression invocationExpression)
+            {
+                if (invocationExpression.TargetMethod != suppressFinalizeMethod)
+                {
+                    return false;
+                }
+
+                if (invocationExpression.ArgumentsInParameterOrder.Length != 1)
+                {
+                    return false;
+                }
+
+                var argumentValue = invocationExpression.ArgumentsInParameterOrder[0].Value;
+                if (argumentValue.Kind != OperationKind.ConversionExpression)
+                {
+                    return false;
+                }
+
+                var conversion = (IConversionExpression)argumentValue;
+                if (conversion.ConversionKind != ConversionKind.Cast && conversion.ConversionKind != ConversionKind.CSharp && conversion.ConversionKind != ConversionKind.Basic)
+                {
+                    return false;
+                }
+
+                if (conversion.Operand == null || conversion.Operand.Kind != OperationKind.InstanceReferenceExpression)
+                {
+                    return false;
+                }
+
+                var instanceReferenceExpression = (IInstanceReferenceExpression)conversion.Operand;
+                if (instanceReferenceExpression.InstanceReferenceKind != InstanceReferenceKind.Implicit &&
+                    instanceReferenceExpression.InstanceReferenceKind != InstanceReferenceKind.Explicit)
+                {
+                    return false;
+                }
+
+                return true;
             }
         }
     }

@@ -197,6 +197,32 @@ public class B : IDisposable
         }
 
         [Fact]
+        public void CSharp_CA1063_IDisposableReimplementation_Diagnostic_ReImplementingIDisposableWithNoDisposeMethod()
+        {
+            VerifyCSharp(@"
+using System;
+
+public interface ITest : IDisposable
+{
+    void int Test { get; set; }
+}
+
+public class B : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+[|public class C : B, ITest, IDisposable
+{
+    public int Test { get; set; }
+}|]
+",
+            GetCA1063CSharpIDisposableReimplementationResultAt(16, 14, "C"));
+        }
+
+        [Fact]
         public void CSharp_CA1063_IDisposableReimplementation_NoDiagnostic_ImplementingInheritedInterfaceWithNoDisposeReimplementation()
         {
             VerifyCSharp(@"
@@ -1168,7 +1194,38 @@ End Class|]
         }
 
         [Fact]
-        public void Basic_CA1063_IDisposableReimplementation_Diagnostic_ImplementingInheritedInterfaceWithNoDisposeReimplementation()
+        public void Basic_CA1063_IDisposableReimplementation_Diagnostic_ReImplementingIDisposableWithNoDisposeMethod()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Interface ITest
+    Inherits IDisposable
+
+    Property Test As Integer
+End Interface
+
+Public Class B
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+[|Public NotInheritable Class C
+    Inherits B
+    Implements ITest
+    Implements IDisposable
+
+    Public Property Test As Integer
+
+End Class|]
+",
+            GetCA1063BasicIDisposableReimplementationResultAt(17, 29, "C"));
+        }
+
+        [Fact]
+        public void Basic_CA1063_IDisposableReimplementation_NoDiagnostic_ImplementingInheritedInterfaceWithNoDisposeReimplementation()
         {
             VerifyBasic(@"
 Imports System

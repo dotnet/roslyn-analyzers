@@ -208,7 +208,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                             // IDisposable Reimplementation Rule is violated only if type re-implements Dispose method, not just interface
                             // For example see unit tests:
                             // CSharp_CA1063_IDisposableReimplementation_NoDiagnostic_ImplementingInheritedInterfaceWithNoDisposeReimplementation
-                            // Basic_CA1063_IDisposableReimplementation_Diagnostic_ImplementingInheritedInterfaceWithNoDisposeReimplementation
+                            // Basic_CA1063_IDisposableReimplementation_NoDiagnostic_ImplementingInheritedInterfaceWithNoDisposeReimplementation
                             CheckIDisposableReimplementationRule(type, context, implementsDisposableInBaseType);
 
                             CheckDisposeSignatureRule(disposeMethod, type, context);
@@ -226,6 +226,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                     CheckProvideDisposeBoolRule(type, context);
                                 }
                             }
+                        }
+                        else if (type.Interfaces.Contains(disposableType))
+                        {
+                            // Reports violation, when type mentions IDisposable as implemented interface,
+                            // even when Dispose method is not implemented, but inherited from base type
+                            // For example see unit test:
+                            // CSharp_CA1063_IDisposableReimplementation_Diagnostic_ReImplementingIDisposableWithNoDisposeMethod
+                            CheckIDisposableReimplementationRule(type, context, implementsDisposableInBaseType);
                         }
                     }
 

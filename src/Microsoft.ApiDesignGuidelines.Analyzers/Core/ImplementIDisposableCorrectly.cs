@@ -13,7 +13,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// CA1063: Implement IDisposable Correctly
     /// </summary>
-    public abstract class ImplementIDisposableCorrectlyAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class ImplementIDisposableCorrectlyAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1063";
 
@@ -442,8 +443,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         /// </summary>
         private struct DisposeImplementationValidator
         {
+            // this type will be created per compilation 
+            // this is actually a bug - https://github.com/dotnet/roslyn-analyzers/issues/845
+#pragma warning disable RS1008
             private readonly IMethodSymbol suppressFinalizeMethod;
             private readonly INamedTypeSymbol type;
+#pragma warning restore RS1008
             private bool callsDisposeBool;
             private bool callsSuppressFinalize;
 

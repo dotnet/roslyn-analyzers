@@ -10,12 +10,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicImplementIDisposableCorrectlyAnalyzer();
+            return new ImplementIDisposableCorrectlyAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpImplementIDisposableCorrectlyAnalyzer();
+            return new ImplementIDisposableCorrectlyAnalyzer();
         }
 
         #region CSharp Unit Tests

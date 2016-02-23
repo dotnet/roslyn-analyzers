@@ -224,7 +224,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} uses unsafe overload of &apos;{1}&apos; method.
+        ///   Looks up a localized string similar to Uses unsafe overload of &apos;{0}&apos; method.
         /// </summary>
         internal static string DoNotUseDtdProcessingOverloadsMessage {
             get {

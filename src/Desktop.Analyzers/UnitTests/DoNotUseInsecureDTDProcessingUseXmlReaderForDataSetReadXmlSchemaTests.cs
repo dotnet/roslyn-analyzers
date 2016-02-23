@@ -7,6 +7,8 @@ namespace Desktop.Analyzers.UnitTests
 {
     public partial class DoNotUseInsecureDTDProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
     {
+        private readonly string _CA3075LoadXmlMessage = DesktopAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage;
+
         private DiagnosticResult CA3075ReadXmlSchemaGetCSharpResultAt(int line, int column, string name)
         {
             return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, name, "ReadXmlSchema"));

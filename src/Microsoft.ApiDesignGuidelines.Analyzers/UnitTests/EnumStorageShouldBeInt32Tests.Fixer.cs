@@ -31,13 +31,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         #region CSharpUnitTests
         [Fact]
-        public void CSharp_CA1028_TestFixForEnumTypeIsLong()
+        public void CSharp_CA1028_TestFixForEnumTypeIsLongWithNoTrivia()
         {
             var code = @"
 using System;
 namespace Test
 {
-    public enum TestEnum1 : long
+    public enum TestEnum1: long
     {
         Value1 = 1,
         Value2 = 2
@@ -48,7 +48,7 @@ namespace Test
 using System;
 namespace Test
 {
-    public enum TestEnum1 : int
+    public enum TestEnum1
     {
         Value1 = 1,
         Value2 = 2
@@ -65,7 +65,7 @@ namespace Test
 using System;
 namespace Test
 {
-    public enum TestEnum1 : long // with trivia
+    public enum TestEnum1: long // with trivia
     {
         Value1 = 1,
         Value2 = 2
@@ -76,7 +76,7 @@ namespace Test
 using System;
 namespace Test
 {
-    public enum TestEnum1 : int // with trivia
+    public enum TestEnum1 // with trivia
     {
         Value1 = 1,
         Value2 = 2
@@ -90,7 +90,7 @@ namespace Test
         #region BasicUnitTests
 
         [Fact]
-        public void Basic_CA1028_TestFixForEnumTypeIsLong()
+        public void Basic_CA1028_TestFixForEnumTypeIsLongWithNoTrivia()
         {
             var code = @"
 Imports System
@@ -104,7 +104,7 @@ End Module
             var fix = @"
 Imports System
 Public Module Module1
-    Public Enum TestEnum1 As Integer
+    Public Enum TestEnum1 
         Value1 = 1
         Value2 = 2
     End Enum
@@ -128,7 +128,7 @@ End Module
             var fix = @"
 Imports System
 Public Module Module1
-    Public Enum TestEnum1 As Integer 'with trivia 
+    Public Enum TestEnum1  'with trivia 
         Value1 = 1
         Value2 = 2
     End Enum

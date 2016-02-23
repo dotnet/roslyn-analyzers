@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
     /// <summary> 
-    /// CA1028: Enum Storage should be Int32 
+    /// CA1028: Enum Storage should be Int32
     /// </summary> 
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpEnumStorageShouldBeInt32Fixer : EnumStorageShouldBeInt32Fixer

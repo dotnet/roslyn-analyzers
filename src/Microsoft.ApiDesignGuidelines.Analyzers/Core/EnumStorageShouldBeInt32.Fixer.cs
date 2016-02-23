@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
-using Microsoft.CodeAnalysis.CodeActions;
 using System.Collections.Immutable;
+using Analyzer.Utilities;
+using System;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
     /// <summary>
     /// CA1028: Enum Storage should be Int32
     /// </summary>
-
     public abstract class EnumStorageShouldBeInt32Fixer : CodeFixProvider
     {
         protected abstract SyntaxNode GetTargetNode (SyntaxNode node);
@@ -38,7 +38,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             var diagnostic = context.Diagnostics.Single();
 
             // Register fixer
-            context.RegisterCodeFix(CodeAction.Create(title, c => ChangeEnumTypeToInt32Async(context.Document, diagnostic, root, c), equivalenceKey: title), context.Diagnostics.First());
+            context.RegisterCodeFix(new MyCodeAction(title,
+                     c => ChangeEnumTypeToInt32Async(context.Document, diagnostic, root, c)), context.Diagnostics.First());
         }
 
         private async Task<Document> ChangeEnumTypeToInt32Async(Document document, Diagnostic diagnostic, SyntaxNode root, CancellationToken cancellationToken)
@@ -49,16 +50,23 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             // Find syntax node that declares the enum
             var diagnosticSpan = diagnostic.Location.SourceSpan;
             var node = root.FindNode(diagnosticSpan);
-            var enumDeclareNode = editor.Generator.GetDeclaration(node, DeclarationKind.Enum);
+            var enumDeclarationNode = generator.GetDeclaration(node, DeclarationKind.Enum);
 
             // Find the target syntax node to replace. Was not able to find a language neutral way of doing this. So using the language specific methods
-            var targetNode = GetTargetNode(enumDeclareNode);
+            var targetNode = GetTargetNode(enumDeclarationNode);
 
-            // Generate new syntax node and replace target node 
-            var newTargetNode = editor.Generator.TypeExpression(SpecialType.System_Int32).WithTriviaFrom(targetNode);
-            editor.ReplaceNode(targetNode, newTargetNode);
+            // Remove target node 
+            editor.RemoveNode(targetNode, SyntaxRemoveOptions.KeepLeadingTrivia | SyntaxRemoveOptions.KeepTrailingTrivia | SyntaxRemoveOptions.KeepExteriorTrivia | SyntaxRemoveOptions.KeepEndOfLine);
 
             return editor.GetChangedDocument();
          }
-     }
- }
+
+        private class MyCodeAction : DocumentChangeAction
+        {
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
+                : base(title, createChangedDocument)
+            {
+            }
+        }
+    }
+}

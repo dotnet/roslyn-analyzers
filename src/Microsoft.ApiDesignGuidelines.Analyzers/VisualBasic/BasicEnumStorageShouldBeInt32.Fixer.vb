@@ -16,7 +16,7 @@ Namespace Microsoft.ApiDesignGuidelines.Analyzers
         Protected Overrides Function GetTargetNode(node As SyntaxNode) As SyntaxNode
             Dim enumDecl = DirectCast(node, EnumBlockSyntax).EnumStatement
             Dim asClause = DirectCast(enumDecl.UnderlyingType, SimpleAsClauseSyntax)
-            Return asClause.Type
+            Return asClause
         End Function
     End Class
 End Namespace

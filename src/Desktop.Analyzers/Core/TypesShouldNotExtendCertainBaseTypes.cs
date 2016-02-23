@@ -63,7 +63,7 @@ namespace Desktop.Analyzers
                     {
                         var namedTypeSymbol = saContext.Symbol as INamedTypeSymbol;
 
-                        if (badBaseTypes.Contains(namedTypeSymbol.BaseType))
+                        if (namedTypeSymbol.BaseType != null && badBaseTypes.Contains(namedTypeSymbol.BaseType))
                         {
                             string baseTypeName = namedTypeSymbol.BaseType.ToDisplayString();
                             Debug.Assert(s_badBaseTypesToMessage.ContainsKey(baseTypeName));

@@ -189,7 +189,7 @@ End Namespace",
                 GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(6, 37)
             );
         }
-        /*
+        
         [Fact]
         public void XmlDocumentUseSecureResolverShouldNotGenerateDiagnostic()
         {
@@ -222,7 +222,7 @@ Namespace TestNamespace
 End Namespace"
             );
         }
-        */
+        
         [Fact]
         public void XmlDocumentSetSecureResolverInInitializerShouldNotGenerateDiagnostic()
         {
@@ -258,7 +258,7 @@ Namespace TestNamespace
 End Namespace"
             );
         }
-        /*
+        
         [Fact]
         public void XmlDocumentUseSecureResolverWithPermissionsShouldNotGenerateDiagnostic()
         {
@@ -311,7 +311,7 @@ Namespace TestNamespace
 End Namespace"
             );
         }
-        */
+        
         [Fact]
         public void XmlDocumentSetResolverToNullInTryClauseShouldNotGenerateDiagnostic()
         {
@@ -369,7 +369,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(10, 31)
+                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(10, 13)
             );
 
             VerifyBasic(@"
@@ -382,10 +382,10 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(7, 24)
+                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(7, 17)
             );
         }
-        /*
+        
         [Fact]
         public void XmlDocumentUseNonSecureResolverShouldGenerateDiagnostic()
         {
@@ -421,7 +421,7 @@ End Namespace",
                 GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(8, 13)
             );
         }
-
+        
         [Fact]
         public void XmlDocumentUseNonSecureResolverInTryClauseShouldGenerateDiagnostic()
         {
@@ -544,7 +544,7 @@ End Namespace",
                 GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(10, 13)
             );
         }
-
+        
         [Fact]
         public void XmlDocumentSetResolversInDifferentBlock()
         {
@@ -567,7 +567,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(11, 29)
+                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(11, 17)
             );
 
             VerifyBasic(@"
@@ -589,7 +589,7 @@ End Namespace",
                 GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(8, 21)
             );
         }
-
+        
         [Fact]
         public void XmlDocumentAsFieldSetResolverToInsecureResolverInOnlyMethodShouldGenerateDiagnostics()
         {
@@ -600,7 +600,7 @@ namespace TestNamespace
 {
     class TestClass
     {
-        public XmlDocument doc = new XmlDocument();  // warn
+        public XmlDocument doc = new XmlDocument();
 
         public void Method1()
         {
@@ -608,7 +608,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(8, 28),
+                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(8, 34),
                 GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(12, 13)
             );
 
@@ -624,11 +624,11 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(6, 16),
+                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(6, 37),
                 GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(9, 13)
             );
         }
-
+        
         [Fact]
         public void XmlDocumentAsFieldSetResolverToInsecureResolverInSomeMethodShouldGenerateDiagnostics()
         {
@@ -652,7 +652,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(8, 28),
+                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(8, 34),
                 GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(17, 13)
             );
 
@@ -673,11 +673,11 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(6, 16),
+                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(6, 37),
                 GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(13, 13)
             );
         }
-
+        
         [Fact]
         public void XmlDocumentAsFieldSetResolverToNullInSomeMethodShouldGenerateDiagnostics()
         {
@@ -701,7 +701,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(8, 28)
+                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(8, 34)
             );
 
             VerifyBasic(@"
@@ -720,10 +720,10 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(6, 16)
+                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(6, 37)
             );
         }
-
+        
         [Fact]
         public void XmlDocumentCreatedAsTempNotSetResolverShouldGenerateDiagnostics()
         {
@@ -763,7 +763,7 @@ End Namespace",
                 GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(8, 21)
             );
         }
-
+        
         [Fact]
         public void XmlDocumentDerivedTypeNotSetResolverShouldNotGenerateDiagnostics()
         {
@@ -810,7 +810,7 @@ End Namespace
 "
             );
         }
-        */
+        
         [Fact]
         public void XmlDocumentDerivedTypeWithNoSecureResolverShouldNotGenerateDiagnostic()
         {

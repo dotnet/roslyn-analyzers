@@ -106,7 +106,6 @@
     <Compile Include="Helpers\CompilationSecurityTypes.cs" />
     <Compile Include="Helpers\SecurityDiagnosticHelpers.cs" />
     <Compile Include="Helpers\SecurityTypes.cs" />
-    <Compile Include="Helpers\SyntaxNodeHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SecurityMemberNames.cs" />
     <Compile Include="SerializationDiagnosticAnalyzer.cs" />

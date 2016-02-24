@@ -38,6 +38,11 @@ The type `C` overrides `Object.Equals` but does not implement the interface `IEq
 
             return _c == otherC._c;
         }
+
+        public override int GetHashCode()
+        {
+            return _c.GetHashCode();
+        }
     }
 
 ## Example of how to fix
@@ -62,6 +67,11 @@ The type `C` now implements `IEquatable<T>`, and its override of `Object.Equals(
         {
             C otherC = other as C;
             return Equals(otherC);
+        }
+
+        public override int GetHashCode()
+        {
+            return _c.GetHashCode();
         }
 
         public bool Equals(C other)

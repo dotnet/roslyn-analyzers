@@ -37,14 +37,14 @@ The type `C` implements the interface `IEquatable<T>` but does not override `Obj
                 return false;
             }
 
-            return _c == otherC._c;
+            return _c == other._c;
         }
     }
 
 ## Example of how to fix
 
 ### Description
-The type `C` now implements `Object.Equals(object)`, which delegates to `IEquatable<T>.Equals(T)`.
+The type `C` now implements `Object.Equals(object)`, which delegates to `IEquatable<T>.Equals(T)`. (It also overrides `Object.GetHashCode()` to avoid CS0659, "C overrides Object.Equals(object o) but does not override Object.GetHashCode()".)
 
 ### Code
 
@@ -65,14 +65,19 @@ The type `C` now implements `Object.Equals(object)`, which delegates to `IEquata
             return Equals(otherC);
         }
 
+        public override int GetHashCode()
+        {
+            return _c.GetHashCode();
+        }
+
         public bool Equals(C other)
         {
-            if (otherC == null)
+            if (other == null)
             {
                 return false;
             }
 
-            return _c == otherC._c;
+            return _c == other._c;
         }
     }
 

@@ -7,7 +7,7 @@ A type implements the interface `IEquatable<T>` but does not override `Object.Eq
 When a type `T` implements the interface `IEquatable<T>`, it suggests to a user who sees a call to the `Equals` method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".
 
 ## How to fix violations
-Implement `Object.Equals(object)` to safely cast its argument to `T` and the call `IEquatable<T>.Equals(T)`.
+Implement `Object.Equals(object)` to safely cast its argument to `T` and then call `IEquatable<T>.Equals(T)`.
 
 ## When to suppress warnings
 There is no technical reason to suppress this warning.

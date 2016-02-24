@@ -359,7 +359,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(10, 13)
+                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(10, 31)
             );
 
             VerifyBasic(@"
@@ -372,7 +372,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(7, 17)
+                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(7, 24)
             );
         }
         
@@ -514,7 +514,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(14, 13)
+                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(14, 19)
             );
 
             VerifyBasic(@"
@@ -531,7 +531,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(10, 13)
+                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(10, 19)
             );
         }
         
@@ -557,7 +557,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(11, 17)
+                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(11, 35)
             );
 
             VerifyBasic(@"
@@ -576,7 +576,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(8, 21)
+                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(8, 28)
             );
         }
         

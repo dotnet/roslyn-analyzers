@@ -5,16 +5,16 @@ using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureDTDProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDTDProcessingAnalyzerIOperationLoadTests : DiagnosticAnalyzerTestBase
     {
-        private DiagnosticResult GetCA3075XPathDocumentCSharpResultAt(int line, int column, string name)
+        private DiagnosticResult GetCA3075XPathDocumentCSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, name, ".ctor"));
+            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, ".ctor"));
         }
 
-        private DiagnosticResult GetCA3075XPathDocumentBasicResultAt(int line, int column, string name)
+        private DiagnosticResult GetCA3075XPathDocumentBasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, name, ".ctor"));
+            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, ".ctor"));
         }
 
         [Fact]
@@ -35,7 +35,7 @@ namespace TestNamespace
     }
 }
 ",
-                GetCA3075XPathDocumentCSharpResultAt(11, 33, "TestMethod")
+                GetCA3075XPathDocumentCSharpResultAt(11, 33)
             );
 
             VerifyBasic(@"
@@ -49,7 +49,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075XPathDocumentBasicResultAt(8, 24, "TestMethod")
+                GetCA3075XPathDocumentBasicResultAt(8, 24)
             );
         }
 
@@ -71,7 +71,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075XPathDocumentCSharpResultAt(11, 33, "get_Test")
+                GetCA3075XPathDocumentCSharpResultAt(11, 33)
             );
 
             VerifyBasic(@"
@@ -86,7 +86,7 @@ Class TestClass
         End Get
     End Property
 End Class",
-                GetCA3075XPathDocumentBasicResultAt(8, 24, "get_Test")
+                GetCA3075XPathDocumentBasicResultAt(8, 24)
             );
         }
 
@@ -114,7 +114,7 @@ public XPathDocument GetDoc
             }
         }
 }",
-                GetCA3075XPathDocumentCSharpResultAt(14, 41, "set_GetDoc")
+                GetCA3075XPathDocumentCSharpResultAt(14, 41)
             );
 
             VerifyBasic(@"
@@ -134,7 +134,7 @@ Class TestClass
         End Set
     End Property
 End Class",
-                GetCA3075XPathDocumentBasicResultAt(10, 28, "set_GetDoc")
+                GetCA3075XPathDocumentBasicResultAt(10, 28)
             );
         }
 
@@ -158,7 +158,7 @@ End Class",
             finally { }
         }
     }",
-                GetCA3075XPathDocumentCSharpResultAt(12, 37, "TestMethod")
+                GetCA3075XPathDocumentCSharpResultAt(12, 37)
             );
 
             VerifyBasic(@"
@@ -175,7 +175,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075XPathDocumentBasicResultAt(8, 24, "TestMethod")
+                GetCA3075XPathDocumentBasicResultAt(8, 24)
             );
         }
 
@@ -199,7 +199,7 @@ End Class",
             finally { }
         }
     }",
-                GetCA3075XPathDocumentCSharpResultAt(13, 37, "TestMethod")
+                GetCA3075XPathDocumentCSharpResultAt(13, 37)
             );
 
             VerifyBasic(@"
@@ -215,7 +215,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075XPathDocumentBasicResultAt(9, 24, "TestMethod")
+                GetCA3075XPathDocumentBasicResultAt(9, 24)
             );
         }
 
@@ -239,7 +239,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075XPathDocumentCSharpResultAt(14, 33, "TestMethod")
+                GetCA3075XPathDocumentCSharpResultAt(14, 33)
             );
 
             VerifyBasic(@"
@@ -256,7 +256,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075XPathDocumentBasicResultAt(11, 24, "TestMethod")
+                GetCA3075XPathDocumentBasicResultAt(11, 24)
             );
         }
 
@@ -282,7 +282,7 @@ class TestClass
         await TestMethod();
     }
 }",
-                GetCA3075XPathDocumentCSharpResultAt(11, 33, "Run")
+                GetCA3075XPathDocumentCSharpResultAt(11, 33)
             );
 
             VerifyBasic(@"
@@ -290,7 +290,7 @@ Imports System.Threading.Tasks
 Imports System.Xml.XPath
 
 Class TestClass
-    Private Function TestMethod() As Task
+    Private Async Function TestMethod() As Task
         Await Task.Run(Function() 
         Dim xml = """"
         Dim doc As New XPathDocument(xml)
@@ -302,7 +302,7 @@ Class TestClass
         Await TestMethod()
     End Sub
 End Class",
-                GetCA3075XPathDocumentBasicResultAt(9, 20, "Run")
+                GetCA3075XPathDocumentBasicResultAt(9, 20)
             );
         }
 
@@ -321,7 +321,7 @@ class TestClass
         XPathDocument doc = new XPathDocument(xml);
     };
 }",
-                GetCA3075XPathDocumentCSharpResultAt(10, 29, "TestClass")
+                GetCA3075XPathDocumentCSharpResultAt(10, 29)
             );
 
             VerifyBasic(@"
@@ -336,7 +336,7 @@ Class TestClass
 
 End Sub
 End Class",
-                GetCA3075XPathDocumentBasicResultAt(9, 16, "TestClass")
+                GetCA3075XPathDocumentBasicResultAt(9, 16)
             );
         }
 

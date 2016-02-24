@@ -222,6 +222,13 @@ namespace Desktop.Analyzers
                     return;
                 }
 
+                AnalyzeMethodOverloads(context, method, invoke.ArgumentsInParameterOrder, invoke.Syntax.GetLocation());
+            }
+
+            private void AnalyzeMethodOverloads(OperationAnalysisContext context, IMethodSymbol method, ImmutableArray<IArgument> arguments, Location location)
+            {
+                SemanticModel model = context.Compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree);
+
                 if (method.MatchMethodDerivedByName(_xmlTypes.XmlDocument, SecurityMemberNames.Load) ||                                    //FxCop CA3056
                     method.MatchMethodDerivedByName(_xmlTypes.XmlDocument, SecurityMemberNames.LoadXml) ||                                 //FxCop CA3057
                     method.MatchMethodDerivedByName(_xmlTypes.XPathDocument, WellKnownMemberNames.InstanceConstructorName) ||         //FxCop CA3059
@@ -238,13 +245,82 @@ namespace Desktop.Analyzers
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 rule,
-                                invoke.Syntax.GetLocation(),
+                                location,
                                 SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                     nameof(DesktopAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage),
                                     method.Name
                                 )
                             )
                         );
+                    }
+                }
+                else if (method.MatchMethodDerivedByName(_xmlTypes.XmlReader, SecurityMemberNames.Create))
+                {
+                    int xmlReaderSettingsIndex = SecurityDiagnosticHelpers.HasXmlReaderSettingsParameter(method, _xmlTypes);
+
+                    if (xmlReaderSettingsIndex < 0)
+                    {
+                        DiagnosticDescriptor rule = RuleDoNotUseInsecureDTDProcessing;
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                rule,
+                                location,
+                                SecurityDiagnosticHelpers.GetLocalizableResourceString(
+                                    nameof(DesktopAnalyzersResources.XmlReaderCreateWrongOverloadMessage)
+                                )
+                            )
+                        );
+                    }
+                    else
+                    {
+
+                        IArgument arg = arguments[xmlReaderSettingsIndex];
+                        ISymbol settingsSymbol = arg.Value.Syntax.GetDeclaredOrReferencedSymbol(model);
+                        
+                        if(settingsSymbol == null)
+                        {
+                            return;
+                        }
+
+                        XmlReaderSettingsEnvironment env = null;
+
+                        if (!_xmlReaderSettingsEnvironments.TryGetValue(settingsSymbol, out env))
+                        {
+                            // symbol for settings is not found => passed in without any change => assume insecure
+                            Diagnostic diag = Diagnostic.Create(
+                                RuleDoNotUseInsecureDTDProcessing,
+                                location,
+                                SecurityDiagnosticHelpers.GetLocalizableResourceString(
+                                    nameof(DesktopAnalyzersResources.XmlReaderCreateInsecureInputMessage)
+                                )
+                            );
+                            context.ReportDiagnostic(diag);
+                        }
+                        else if (!env.IsDtdProcessingDisabled && !(env.IsSecureResolver & env.IsMaxCharactersFromEntitiesLimited))
+                        {
+                            Diagnostic diag;
+                            if (env.IsConstructedInCodeBlock)
+                            {
+                                diag = Diagnostic.Create(
+                                    RuleDoNotUseInsecureDTDProcessing,
+                                    location,
+                                    SecurityDiagnosticHelpers.GetLocalizableResourceString(
+                                        nameof(DesktopAnalyzersResources.XmlReaderCreateInsecureConstructedMessage)
+                                    )
+                                );
+                            }
+                            else
+                            {
+                                diag = Diagnostic.Create(
+                                    RuleDoNotUseInsecureDTDProcessing,
+                                    location,
+                                    SecurityDiagnosticHelpers.GetLocalizableResourceString(
+                                        nameof(DesktopAnalyzersResources.XmlReaderCreateInsecureInputMessage)
+                                    )
+                                );
+                            }
+                            context.ReportDiagnostic(diag);
+                        }
                     }
                 }
             }
@@ -280,13 +356,95 @@ namespace Desktop.Analyzers
 
                         if (valueOperation.Kind == OperationKind.ObjectCreationExpression)
                         {
-                            AnalyzeObjectCreationInternal(context, field, valueOperation, env);
+                            AnalyzeXmlDocumentObjectCreationInternal(context, field, valueOperation, env);
+                        }
+                    }
+                    else if (field.Type.DerivesFrom(_xmlTypes.XmlReaderSettings))
+                    {
+                        AnalyzeXmlReaderSettingsObjectCreationInternal(context, field, fieldInit.Value, null);
+                    }
+                }
+            }
+
+            private void AnalyzeXmlReaderSettingsObjectCreationInternal(OperationAnalysisContext context, ISymbol variable, IOperation value, XmlReaderSettingsEnvironment env)
+            {
+                IObjectCreationExpression objCreation = value as IObjectCreationExpression;
+
+                if (objCreation == null)
+                {
+                    return;
+                }
+
+                SyntaxNode node = objCreation.Syntax;
+
+                if (SecurityDiagnosticHelpers.IsXmlReaderSettingsCtor(objCreation.Constructor, _xmlTypes))
+                {
+                    XmlReaderSettingsEnvironment xmlReaderSettingsEnv = new XmlReaderSettingsEnvironment(_isFrameworkSecure);
+                    _xmlReaderSettingsEnvironments[variable] = xmlReaderSettingsEnv;
+
+                    env.XmlReaderSettingsDefinition = node;
+                    if (_objectCreationOperationsAnalyzed.Contains(objCreation))
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        _objectCreationOperationsAnalyzed.Add(objCreation);
+                    }
+
+                    foreach (ISymbolInitializer init in objCreation.MemberInitializers)
+                    {
+                        var prop = init as IPropertyInitializer;
+
+                        if (prop != null)
+                        {
+                            if (SecurityDiagnosticHelpers.IsXmlReaderSettingsXmlResolverProperty(
+                                    prop.InitializedProperty,
+                                    _xmlTypes)
+                                )
+                            {
+                                IConversionExpression operation = prop.Value as IConversionExpression;
+
+                                if (operation == null)
+                                {
+                                    return;
+                                }
+
+                                if (SecurityDiagnosticHelpers.IsXmlSecureResolverType(operation.Operand.Type, _xmlTypes))
+                                {
+                                    env.IsSecureResolver = true;
+                                }
+                                else if (operation.Operand as ILiteralExpression != null)
+                                {
+                                    ILiteralExpression literal = operation.Operand as ILiteralExpression;
+
+                                    if (literal.ConstantValue.HasValue && literal.ConstantValue.Value == null)
+                                    {
+                                        env.IsSecureResolver = true;
+                                    }
+                                }
+                            }
+                            else if (SecurityDiagnosticHelpers.IsXmlReaderSettingsDtdProcessingProperty(prop.InitializedProperty, _xmlTypes))
+                            {
+                                ILiteralExpression literal = prop.Value as ILiteralExpression;
+
+                                if (literal.ConstantValue.HasValue && literal.ConstantValue.Value.ToString() == SecurityMemberNames.Parse)
+                                {
+                                    env.IsDtdProcessingDisabled = false;
+                                }
+                            }
+                            else if (SecurityDiagnosticHelpers.IsXmlReaderSettingsMaxCharactersFromEntitiesProperty(prop.InitializedProperty, _xmlTypes))
+                            {
+                                ILiteralExpression literal = prop.Value as ILiteralExpression;
+
+                                env.IsMaxCharactersFromEntitiesLimited = literal.ConstantValue.HasValue && (int)literal.ConstantValue.Value == 0;
+                            }
                         }
                     }
                 }
             }
 
-            private void AnalyzeObjectCreationInternal(OperationAnalysisContext context, ISymbol variable, IOperation value, XmlDocumentEnvironment env)
+            private void AnalyzeXmlDocumentObjectCreationInternal(OperationAnalysisContext context, ISymbol variable, IOperation value, XmlDocumentEnvironment env)
             {
                 IObjectCreationExpression objCreation = value as IObjectCreationExpression;
 
@@ -342,7 +500,7 @@ namespace Desktop.Analyzers
                                         isXmlDocumentSecureResolver = true;
                                     }
                                 }
-                                else // Non secure resolvers?
+                                else // Non secure resolvers
                                 {
                                     IObjectCreationExpression objCreate = operation.Operand as IObjectCreationExpression;
 
@@ -368,7 +526,6 @@ namespace Desktop.Analyzers
                         }
                     }
 
-                    //////
                     if (env != null)
                     {
                         env.IsSecureResolver = isXmlDocumentSecureResolver;
@@ -390,6 +547,10 @@ namespace Desktop.Analyzers
                         context.ReportDiagnostic(diag);
                     }
                 }
+                else
+                {
+                    AnalyzeMethodOverloads(context, objCreation.Constructor, objCreation.ArgumentsInParameterOrder, objCreation.Syntax.GetLocation());
+                }
             }
 
             private void AnalyzeVariableDeclaration(OperationAnalysisContext context)
@@ -407,7 +568,7 @@ namespace Desktop.Analyzers
 
                         if (declare.InitialValue.Kind == OperationKind.ObjectCreationExpression)
                         {
-                            AnalyzeObjectCreationInternal(context, declare.Variable, declare.InitialValue, env);
+                            AnalyzeXmlDocumentObjectCreationInternal(context, declare.Variable, declare.InitialValue, env);
                         }
                     }
                 }
@@ -436,7 +597,7 @@ namespace Desktop.Analyzers
                         {
                             XmlDocumentEnvironment env = _xmlDocumentEnvironments[symbolAssignedTo];
                             env.XmlDocumentDefinition = expression.Syntax;
-                            AnalyzeObjectCreationInternal(context, symbolAssignedTo, expression.Value, env);
+                            AnalyzeXmlDocumentObjectCreationInternal(context, symbolAssignedTo, expression.Value, env);
                         }
                     }
 
@@ -526,14 +687,7 @@ namespace Desktop.Analyzers
 
             private void AnalyzeObjectCreationOperation(OperationAnalysisContext context)
             {
-                IObjectCreationExpression expression = context.Operation as IObjectCreationExpression;
-
-                if (expression == null)
-                {
-                    return;
-                }
-
-                AnalyzeObjectCreationInternal(context, null, expression, null);               
+                AnalyzeXmlDocumentObjectCreationInternal(context, null, context.Operation, null);               
             }
         }
 

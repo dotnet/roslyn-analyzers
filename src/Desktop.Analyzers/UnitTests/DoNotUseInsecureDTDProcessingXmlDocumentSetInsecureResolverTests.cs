@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureDTDProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDTDProcessingAnalyzerIOperationLoadTests : DiagnosticAnalyzerTestBase
     {
         [Fact]
         public void XmlDocumentNoCtorSetResolverToNullShouldNotGenerateDiagnostic()

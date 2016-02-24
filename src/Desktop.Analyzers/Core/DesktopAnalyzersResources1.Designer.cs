@@ -891,7 +891,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} uses an insecure overload of XmlReader.Create which does not accept an XmlReaderSettings argument. .
+        ///   Looks up a localized string similar to An insecure overload of XmlReader.Create which does not accept an XmlReaderSettings argument. .
         /// </summary>
         internal static string XmlReaderCreateWrongOverloadMessage {
             get {

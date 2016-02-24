@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureDTDProcessingAnalyzerIOperationLoadTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDTDProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
     {
         private readonly string _CA3075DataViewConnectionStringMessage = DesktopAnalyzersResources.ReviewDtdProcessingPropertiesMessage;
 

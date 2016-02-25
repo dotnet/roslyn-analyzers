@@ -79,6 +79,7 @@ namespace Desktop.Analyzers
 
         private class Analyzer
         {
+            #region Environment classes
             private class XmlDocumentEnvironment
             {
                 internal SyntaxNode XmlDocumentDefinition;
@@ -118,8 +119,8 @@ namespace Desktop.Analyzers
                 // this constructor is used for keep track of XmlReaderSettings craeted in the code block
                 internal XmlReaderSettingsEnvironment(bool isTargetFrameworkSecure)
                 {
-                    this.IsConstructedInCodeBlock = true;
-                    this.IsDtdProcessingDisabled = true;
+                    IsConstructedInCodeBlock = true;
+                    IsDtdProcessingDisabled = true;
                     // for .NET framework >= 4.5.2, the default value for XmlResolver property is null
                     if (isTargetFrameworkSecure)
                     {
@@ -128,6 +129,7 @@ namespace Desktop.Analyzers
                     }
                 }
             }
+            #endregion
 
             // .NET frameworks >= 4.5.2 have secure default settings
             private static readonly Version s_minSecureFxVersion = new Version(4, 5, 2);
@@ -360,260 +362,15 @@ namespace Desktop.Analyzers
 
                 if (SecurityDiagnosticHelpers.IsXmlDocumentCtorDerived(objCreation.Constructor, _xmlTypes))
                 {
-                    XmlDocumentEnvironment env = null;
-
-                    if (variable == null || !_xmlDocumentEnvironments.ContainsKey(variable))
-                    {
-                        env = new XmlDocumentEnvironment();
-                        env.IsSecureResolver = false;
-                        env.IsXmlResolverSet = false;
-                        env.XmlDocumentDefinition = value.Syntax;
-                    }
-                    else
-                    {
-                        env = _xmlDocumentEnvironments[variable];
-                        env.XmlDocumentDefinition = value.Syntax;
-                    }
-
-                    SyntaxNode node = objCreation.Syntax;
-                    bool isXmlDocumentSecureResolver = false;
-                                        
-                    if (objCreation.Constructor.ContainingType != _xmlTypes.XmlDocument)
-                    {
-                        isXmlDocumentSecureResolver = true;
-                    }
-                    
-                    foreach (ISymbolInitializer init in objCreation.MemberInitializers)
-                    {
-                        var prop = init as IPropertyInitializer;
-
-                        if (prop != null)
-                        {
-                            if (prop.InitializedProperty.MatchPropertyDerivedByName(_xmlTypes.XmlDocument, "XmlResolver"))
-                            {
-                                IConversionExpression operation = prop.Value as IConversionExpression;
-
-                                if (operation == null)
-                                {
-                                    return;
-                                }
-
-                                if (SecurityDiagnosticHelpers.IsXmlSecureResolverType(operation.Operand.Type, _xmlTypes))
-                                {
-                                    isXmlDocumentSecureResolver = true;
-                                }
-                                else if (operation.Operand as ILiteralExpression != null)
-                                {
-                                    ILiteralExpression literal = operation.Operand as ILiteralExpression;
-
-                                    if (literal.ConstantValue.HasValue && literal.ConstantValue.Value == null)
-                                    {
-                                        isXmlDocumentSecureResolver = true;
-                                    }
-                                }
-                                else // Non secure resolvers
-                                {
-                                    IObjectCreationExpression objCreate = operation.Operand as IObjectCreationExpression;
-
-                                    if (objCreate != null)
-                                    {
-                                        Diagnostic diag = Diagnostic.Create(
-                                            RuleDoNotUseInsecureDTDProcessing,
-                                            prop.Syntax.GetLocation(),
-                                            SecurityDiagnosticHelpers.GetLocalizableResourceString(
-                                                nameof(DesktopAnalyzersResources.XmlDocumentWithNoSecureResolverMessage)
-                                            )
-                                        );
-                                        context.ReportDiagnostic(diag);
-                                    }
-
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                AnalyzeSetProperties(context, prop.InitializedProperty, prop.Syntax.GetLocation());
-                            }
-                        }
-                    }
-
-                    if (env != null)
-                    {
-                        env.IsSecureResolver = isXmlDocumentSecureResolver;
-
-                        if (variable != null)
-                        {
-                            _xmlDocumentEnvironments[variable] = env;
-                        }
-                        else if (!env.IsSecureResolver) // Insecure temp object
-                        {
-                            Diagnostic diag = Diagnostic.Create(
-                                                RuleDoNotUseInsecureDTDProcessing,
-                                                node.GetLocation(),
-                                                SecurityDiagnosticHelpers.GetLocalizableResourceString(
-                                                    nameof(DesktopAnalyzersResources.XmlDocumentWithNoSecureResolverMessage)
-                                                )
-                                            );
-                            context.ReportDiagnostic(diag);
-                        }
-                    }
+                    AnalyzeObjectCreationForXmlDocument(context, variable, objCreation);
                 }
                 else if (SecurityDiagnosticHelpers.IsXmlTextReaderCtorDerived(objCreation.Constructor, _xmlTypes))
                 {
-                    XmlTextReaderEnvironment env = null;
-                    if (variable == null || !_xmlTextReaderEnvironments.TryGetValue(variable, out env))
-                    {
-                        env = new XmlTextReaderEnvironment(_isFrameworkSecure);
-                        env.XmlTextReaderDefinition = objCreation.Syntax;
-                    }
-
-                    if (objCreation.Constructor.ContainingType != _xmlTypes.XmlTextReader)
-                    {
-                        env.IsDtdProcessingDisabled = true;
-                        env.IsSecureResolver = true;
-                    }
-
-                    foreach (ISymbolInitializer init in objCreation.MemberInitializers)
-                    {
-                        var prop = init as IPropertyInitializer;
-
-                        if (prop != null)
-                        {
-                            IConversionExpression operation = prop.Value as IConversionExpression;
-
-                            if (operation != null && SecurityDiagnosticHelpers.IsXmlTextReaderXmlResolverPropertyDerived(prop.InitializedProperty, _xmlTypes))
-                            {
-                                env.IsXmlResolverSet = true;
-
-                                if (SecurityDiagnosticHelpers.IsXmlSecureResolverType(operation.Operand.Type, _xmlTypes))
-                                {
-                                    env.IsSecureResolver = true;
-                                }
-                                else if (operation.Operand as ILiteralExpression != null)
-                                {
-                                    ILiteralExpression literal = operation.Operand as ILiteralExpression;
-
-                                    if (literal.ConstantValue.HasValue && literal.ConstantValue.Value == null)
-                                    {
-                                        env.IsSecureResolver = true;
-                                    }
-                                }
-                                else
-                                {
-                                    env.IsSecureResolver = false;
-                                }
-                            }
-                            else if (SecurityDiagnosticHelpers.IsXmlTextReaderDtdProcessingPropertyDerived(prop.InitializedProperty, _xmlTypes))
-                            {
-                                env.IsDtdProcessingSet = true;
-                                IFieldReferenceExpression enumRef = prop.Value as IFieldReferenceExpression;
-                                env.IsDtdProcessingDisabled = enumRef != null && enumRef.ConstantValue.HasValue && (int)enumRef.ConstantValue.Value != 2;
-                            }
-                        }
-                    }
-
-                    // if the XmlResolver or Dtdprocessing property is explicitly set when created, and is to an insecure value, or a temp object, generate a warning
-                    if ((env.IsXmlResolverSet && !env.IsSecureResolver) ||
-                        (env.IsDtdProcessingSet && !env.IsDtdProcessingDisabled))
-                    {
-                        Diagnostic diag = Diagnostic.Create(
-                            RuleDoNotUseInsecureDTDProcessing,
-                            env.XmlTextReaderDefinition.GetLocation(),
-                            SecurityDiagnosticHelpers.GetLocalizableResourceString(
-                                nameof(DesktopAnalyzersResources.XmlTextReaderSetInsecureResolutionMessage)
-                            )
-                        );
-                        context.ReportDiagnostic(diag);
-                    }
-                    // if the XmlResolver or Dtdprocessing property is not explicitly set when constructed for XmlTextReader type, add env to the dictionary.
-                    else if (!(env.IsDtdProcessingSet && env.IsXmlResolverSet) && variable != null)
-                    {
-                        _xmlTextReaderEnvironments[variable] = env;
-                    }
-                    else if (!(env.IsDtdProcessingSet && env.IsXmlResolverSet) || !env.IsDtdProcessingDisabled)
-                    {
-                        Diagnostic diag = Diagnostic.Create(
-                            RuleDoNotUseInsecureDTDProcessing,
-                            env.XmlTextReaderDefinition.GetLocation(),
-                            SecurityDiagnosticHelpers.GetLocalizableResourceString(
-                                nameof(DesktopAnalyzersResources.XmlTextReaderConstructedWithNoSecureResolutionMessage)
-                            )
-                        );
-                        context.ReportDiagnostic(diag);
-                    }
+                    AnalyzeObjectCreationForXmlTextReader(context, variable, objCreation);
                 }
                 else if (SecurityDiagnosticHelpers.IsXmlReaderSettingsCtor(objCreation.Constructor, _xmlTypes))
                 {
-                    XmlReaderSettingsEnvironment xmlReaderSettingsEnv = new XmlReaderSettingsEnvironment(_isFrameworkSecure);
-
-                    if (variable != null)
-                    {
-                        _xmlReaderSettingsEnvironments[variable] = xmlReaderSettingsEnv;
-                    }
-
-                    xmlReaderSettingsEnv.XmlReaderSettingsDefinition = value.Syntax;
-                    foreach (ISymbolInitializer init in objCreation.MemberInitializers)
-                    {
-                        var prop = init as IPropertyInitializer;
-
-                        if (prop != null)
-                        {
-                            if (SecurityDiagnosticHelpers.IsXmlReaderSettingsXmlResolverProperty(
-                                    prop.InitializedProperty,
-                                    _xmlTypes)
-                                )
-                            {
-                                IConversionExpression operation = prop.Value as IConversionExpression;
-
-                                if (operation == null)
-                                {
-                                    return;
-                                }
-
-                                if (SecurityDiagnosticHelpers.IsXmlSecureResolverType(operation.Operand.Type, _xmlTypes))
-                                {
-                                    xmlReaderSettingsEnv.IsSecureResolver = true;
-                                }
-                                else if (operation.Operand as ILiteralExpression != null)
-                                {
-                                    ILiteralExpression literal = operation.Operand as ILiteralExpression;
-
-                                    if (literal.ConstantValue.HasValue && literal.ConstantValue.Value == null)
-                                    {
-                                        xmlReaderSettingsEnv.IsSecureResolver = true;
-                                    }
-                                }
-                            }
-                            else if (SecurityDiagnosticHelpers.IsXmlReaderSettingsDtdProcessingProperty(prop.InitializedProperty, _xmlTypes))
-                            {
-                                IFieldReferenceExpression enumRef = prop.Value as IFieldReferenceExpression;
-
-                                if (enumRef != null && enumRef.ConstantValue.HasValue && (int)enumRef.ConstantValue.Value == 2)
-                                {
-                                    xmlReaderSettingsEnv.IsDtdProcessingDisabled = false;
-                                }
-                            }
-                            else if (SecurityDiagnosticHelpers.IsXmlReaderSettingsMaxCharactersFromEntitiesProperty(prop.InitializedProperty, _xmlTypes))
-                            {
-                                ILiteralExpression literal = (prop.Value as IConversionExpression).Operand as ILiteralExpression;
-                                object constValue = literal.ConstantValue.Value;
-                                int constIntValue;
-                                if (constValue.GetType() == typeof(double))
-                                {
-                                    constIntValue = (int)Math.Floor((double)constValue);
-                                }
-                                else
-                                {
-                                    constIntValue = (int)constValue;
-                                }
-
-                                if (literal != null)
-                                {
-                                    xmlReaderSettingsEnv.IsMaxCharactersFromEntitiesLimited = literal.ConstantValue.HasValue && constIntValue != 0;
-                                }
-                            }
-                        }
-                    }
+                    AnalyzeObjectCreationForXmlReaderSettings(context, variable, objCreation);
                 }
                 else
                 {
@@ -621,10 +378,279 @@ namespace Desktop.Analyzers
                 }
             }
 
+            private void AnalyzeObjectCreationForXmlDocument(OperationAnalysisContext context, ISymbol variable, IObjectCreationExpression objCreation)
+            {
+                XmlDocumentEnvironment env = null;
+
+                if (variable == null || !_xmlDocumentEnvironments.ContainsKey(variable))
+                {
+                    env = new XmlDocumentEnvironment();
+                    env.IsSecureResolver = false;
+                    env.IsXmlResolverSet = false;
+                    env.XmlDocumentDefinition = objCreation.Syntax;
+                }
+                else
+                {
+                    env = _xmlDocumentEnvironments[variable];
+                    env.XmlDocumentDefinition = objCreation.Syntax;
+                }
+
+                SyntaxNode node = objCreation.Syntax;
+                bool isXmlDocumentSecureResolver = false;
+
+                if (objCreation.Constructor.ContainingType != _xmlTypes.XmlDocument)
+                {
+                    isXmlDocumentSecureResolver = true;
+                }
+
+                foreach (ISymbolInitializer init in objCreation.MemberInitializers)
+                {
+                    var prop = init as IPropertyInitializer;
+
+                    if (prop != null)
+                    {
+                        if (prop.InitializedProperty.MatchPropertyDerivedByName(_xmlTypes.XmlDocument, "XmlResolver"))
+                        {
+                            IConversionExpression operation = prop.Value as IConversionExpression;
+
+                            if (operation == null)
+                            {
+                                return;
+                            }
+
+                            if (SecurityDiagnosticHelpers.IsXmlSecureResolverType(operation.Operand.Type, _xmlTypes))
+                            {
+                                isXmlDocumentSecureResolver = true;
+                            }
+                            else if (SecurityDiagnosticHelpers.IsExpressionEqualsNull(operation.Operand))
+                            {
+                                isXmlDocumentSecureResolver = true;
+                            }
+                            else // Non secure resolvers
+                            {
+                                IObjectCreationExpression objCreate = operation.Operand as IObjectCreationExpression;
+
+                                if (objCreate != null)
+                                {
+                                    Diagnostic diag = Diagnostic.Create(
+                                        RuleDoNotUseInsecureDTDProcessing,
+                                        prop.Syntax.GetLocation(),
+                                        SecurityDiagnosticHelpers.GetLocalizableResourceString(
+                                            nameof(DesktopAnalyzersResources.XmlDocumentWithNoSecureResolverMessage)
+                                        )
+                                    );
+                                    context.ReportDiagnostic(diag);
+                                }
+
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            AnalyzeSetProperties(context, prop.InitializedProperty, prop.Syntax.GetLocation());
+                        }
+                    }
+                }
+
+                if (env != null)
+                {
+                    env.IsSecureResolver = isXmlDocumentSecureResolver;
+
+                    if (variable != null)
+                    {
+                        _xmlDocumentEnvironments[variable] = env;
+                    }
+                    else if (!env.IsSecureResolver) // Insecure temp object
+                    {
+                        Diagnostic diag = Diagnostic.Create(
+                                            RuleDoNotUseInsecureDTDProcessing,
+                                            node.GetLocation(),
+                                            SecurityDiagnosticHelpers.GetLocalizableResourceString(
+                                                nameof(DesktopAnalyzersResources.XmlDocumentWithNoSecureResolverMessage)
+                                            )
+                                        );
+                        context.ReportDiagnostic(diag);
+                    }
+                }
+            }
+
+            private void AnalyzeObjectCreationForXmlTextReader(OperationAnalysisContext context, ISymbol variable, IObjectCreationExpression objCreation)
+            {
+                XmlTextReaderEnvironment env = null;
+
+                if (variable == null || !_xmlTextReaderEnvironments.TryGetValue(variable, out env))
+                {
+                    env = new XmlTextReaderEnvironment(_isFrameworkSecure);
+                    env.XmlTextReaderDefinition = objCreation.Syntax;
+                }
+
+                if (objCreation.Constructor.ContainingType != _xmlTypes.XmlTextReader)
+                {
+                    env.IsDtdProcessingDisabled = true;
+                    env.IsSecureResolver = true;
+                }
+
+                foreach (ISymbolInitializer init in objCreation.MemberInitializers)
+                {
+                    var prop = init as IPropertyInitializer;
+
+                    if (prop != null)
+                    {
+                        IConversionExpression operation = prop.Value as IConversionExpression;
+
+                        if (operation != null && SecurityDiagnosticHelpers.IsXmlTextReaderXmlResolverPropertyDerived(prop.InitializedProperty, _xmlTypes))
+                        {
+                            env.IsXmlResolverSet = true;
+
+                            if (SecurityDiagnosticHelpers.IsXmlSecureResolverType(operation.Operand.Type, _xmlTypes))
+                            {
+                                env.IsSecureResolver = true;
+                            }
+                            else if (SecurityDiagnosticHelpers.IsExpressionEqualsNull(operation.Operand))
+                            {
+                                env.IsSecureResolver = true;
+                            }
+                            else
+                            {
+                                env.IsSecureResolver = false;
+                            }
+                        }
+                        else if (SecurityDiagnosticHelpers.IsXmlTextReaderDtdProcessingPropertyDerived(prop.InitializedProperty, _xmlTypes))
+                        {
+                            env.IsDtdProcessingSet = true;
+                            env.IsDtdProcessingDisabled = !SecurityDiagnosticHelpers.IsExpressionEqualsDtdProcessingParse(prop.Value);
+                        }
+                    }
+                }
+
+                // if the XmlResolver or Dtdprocessing property is explicitly set when created, and is to an insecure value, or a temp object, generate a warning
+                if ((env.IsXmlResolverSet && !env.IsSecureResolver) ||
+                    (env.IsDtdProcessingSet && !env.IsDtdProcessingDisabled))
+                {
+                    Diagnostic diag = Diagnostic.Create(
+                        RuleDoNotUseInsecureDTDProcessing,
+                        env.XmlTextReaderDefinition.GetLocation(),
+                        SecurityDiagnosticHelpers.GetLocalizableResourceString(
+                            nameof(DesktopAnalyzersResources.XmlTextReaderSetInsecureResolutionMessage)
+                        )
+                    );
+                    context.ReportDiagnostic(diag);
+                }
+                // if the XmlResolver or Dtdprocessing property is not explicitly set when constructed for XmlTextReader type, add env to the dictionary.
+                else if (!(env.IsDtdProcessingSet && env.IsXmlResolverSet) && variable != null)
+                {
+                    _xmlTextReaderEnvironments[variable] = env;
+                }
+                else if (!(env.IsDtdProcessingSet && env.IsXmlResolverSet) || !env.IsDtdProcessingDisabled)
+                {
+                    Diagnostic diag = Diagnostic.Create(
+                        RuleDoNotUseInsecureDTDProcessing,
+                        env.XmlTextReaderDefinition.GetLocation(),
+                        SecurityDiagnosticHelpers.GetLocalizableResourceString(
+                            nameof(DesktopAnalyzersResources.XmlTextReaderConstructedWithNoSecureResolutionMessage)
+                        )
+                    );
+                    context.ReportDiagnostic(diag);
+                }
+            }
+
+            private void AnalyzeObjectCreationForXmlReaderSettings(OperationAnalysisContext context, ISymbol variable, IObjectCreationExpression objCreation)
+            {
+                XmlReaderSettingsEnvironment xmlReaderSettingsEnv = new XmlReaderSettingsEnvironment(_isFrameworkSecure);
+
+                if (variable != null)
+                {
+                    _xmlReaderSettingsEnvironments[variable] = xmlReaderSettingsEnv;
+                }
+
+                xmlReaderSettingsEnv.XmlReaderSettingsDefinition = objCreation.Syntax;
+                foreach (ISymbolInitializer init in objCreation.MemberInitializers)
+                {
+                    var prop = init as IPropertyInitializer;
+
+                    if (prop != null)
+                    {
+                        if (SecurityDiagnosticHelpers.IsXmlReaderSettingsXmlResolverProperty(
+                                prop.InitializedProperty,
+                                _xmlTypes)
+                            )
+                        {
+                            IConversionExpression operation = prop.Value as IConversionExpression;
+
+                            if (operation == null)
+                            {
+                                return;
+                            }
+
+                            if (SecurityDiagnosticHelpers.IsXmlSecureResolverType(operation.Operand.Type, _xmlTypes))
+                            {
+                                xmlReaderSettingsEnv.IsSecureResolver = true;
+                            }
+                            else if (SecurityDiagnosticHelpers.IsExpressionEqualsNull(operation.Operand))
+                            {
+                                xmlReaderSettingsEnv.IsSecureResolver = true;
+                            }
+                        }
+                        else if (SecurityDiagnosticHelpers.IsXmlReaderSettingsDtdProcessingProperty(prop.InitializedProperty, _xmlTypes))
+                        {
+                            xmlReaderSettingsEnv.IsDtdProcessingDisabled = !SecurityDiagnosticHelpers.IsExpressionEqualsDtdProcessingParse(prop.Value);
+                        }
+                        else if (SecurityDiagnosticHelpers.IsXmlReaderSettingsMaxCharactersFromEntitiesProperty(prop.InitializedProperty, _xmlTypes))
+                        {
+                            xmlReaderSettingsEnv.IsMaxCharactersFromEntitiesLimited = !SecurityDiagnosticHelpers.IsExpressionEqualsIntZero(prop.Value);
+                        }
+                    }
+                }
+            }
+
             private void AnalyzeVariableDeclaration(OperationAnalysisContext context)
             {
                 IVariableDeclaration declare = context.Operation as IVariableDeclaration;
                 AnalyzeObjectCreationInternal(context, declare.Variable, declare.InitialValue);
+            }
+
+            private void AnalyzeXmlResolverPropertyAssignmentForXmlDocument(OperationAnalysisContext context, ISymbol assignedSymbol, IAssignmentExpression expression)
+            {
+                XmlDocumentEnvironment env = null;
+                bool isSecureResolver = false;
+
+                if (_xmlDocumentEnvironments.ContainsKey(assignedSymbol))
+                {
+                    env = _xmlDocumentEnvironments[assignedSymbol];
+                    env.IsXmlResolverSet = true;
+                }
+
+                IConversionExpression conv = expression.Value as IConversionExpression;
+
+                if (SecurityDiagnosticHelpers.IsXmlSecureResolverType(conv.Operand.Type, _xmlTypes))
+                {
+                    isSecureResolver = true;
+                }
+                else if (conv != null && conv.Operand as ILiteralExpression != null)
+                {
+                    ILiteralExpression literal = conv.Operand as ILiteralExpression;
+
+                    if (literal.ConstantValue.HasValue && literal.ConstantValue.Value == null)
+                    {
+                        isSecureResolver = true;
+                    }
+                }
+                else // Assign XmlDocument's XmlResolver to an insecure value
+                {
+                    Diagnostic diag = Diagnostic.Create(
+                                RuleDoNotUseInsecureDTDProcessing,
+                                context.Operation.Syntax.GetLocation(),
+                                SecurityDiagnosticHelpers.GetLocalizableResourceString(
+                                    nameof(DesktopAnalyzersResources.XmlDocumentWithNoSecureResolverMessage)
+                                )
+                            );
+                    context.ReportDiagnostic(diag);
+                }
+
+                if (env != null)
+                {
+                    env.IsSecureResolver = isSecureResolver;
+                }
             }
 
             private void AnalyzeAssignment(OperationAnalysisContext context)
@@ -655,53 +681,14 @@ namespace Desktop.Analyzers
 
                     if (propRef.Property.MatchPropertyByName(_xmlTypes.XmlDocument, "XmlResolver"))
                     {
-                        XmlDocumentEnvironment env = null;
-                        bool isSecureResolver = false;
-
-                        if (_xmlDocumentEnvironments.ContainsKey(assignedSymbol))
-                        {
-                            env = _xmlDocumentEnvironments[assignedSymbol];
-                            env.IsXmlResolverSet = true;
-                        }
-
-                        IConversionExpression conv = expression.Value as IConversionExpression;
-
-                        if (SecurityDiagnosticHelpers.IsXmlSecureResolverType(conv.Operand.Type, _xmlTypes))
-                        {
-                            isSecureResolver = true;
-                        }
-                        else if (conv != null && conv.Operand as ILiteralExpression != null)
-                        {
-                            ILiteralExpression literal = conv.Operand as ILiteralExpression;
-
-                            if (literal.ConstantValue.HasValue && literal.ConstantValue.Value == null)
-                            {
-                                isSecureResolver = true;
-                            }
-                        }
-                        else // Assign XmlDocument's XmlResolver to an insecure value
-                        {
-                            Diagnostic diag = Diagnostic.Create(
-                                        RuleDoNotUseInsecureDTDProcessing,
-                                        context.Operation.Syntax.GetLocation(),
-                                        SecurityDiagnosticHelpers.GetLocalizableResourceString(
-                                            nameof(DesktopAnalyzersResources.XmlDocumentWithNoSecureResolverMessage)
-                                        )
-                                    );
-                            context.ReportDiagnostic(diag);
-                        }
-
-                        if (env != null)
-                        {
-                            env.IsSecureResolver = isSecureResolver;
-                        }
+                        AnalyzeXmlResolverPropertyAssignmentForXmlDocument(context, assignedSymbol, expression);
                     }
                     else
                     {
                         bool isXmlTextReaderXmlResolverProperty = SecurityDiagnosticHelpers.IsXmlTextReaderXmlResolverPropertyDerived(propRef.Property, _xmlTypes);
                         bool isXmlTextReaderDtdProcessingProperty = !isXmlTextReaderXmlResolverProperty &&
                                                                   SecurityDiagnosticHelpers.IsXmlTextReaderDtdProcessingPropertyDerived(propRef.Property, _xmlTypes);
-                        if (isXmlTextReaderXmlResolverProperty | isXmlTextReaderDtdProcessingProperty)
+                        if (isXmlTextReaderXmlResolverProperty || isXmlTextReaderDtdProcessingProperty)
                         {
                             XmlTextReaderEnvironment env = null;
                             _xmlTextReaderEnvironments.TryGetValue(assignedSymbol, out env);
@@ -722,7 +709,6 @@ namespace Desktop.Analyzers
 
                             IConversionExpression conv = expression.Value as IConversionExpression;
                             ILiteralExpression literal = conv?.Operand as ILiteralExpression;
-                            IFieldReferenceExpression enumRef = expression.Value as IFieldReferenceExpression;
 
                             if (isXmlTextReaderXmlResolverProperty && SecurityDiagnosticHelpers.IsXmlSecureResolverType(conv.Operand.Type, _xmlTypes))
                             {
@@ -732,7 +718,7 @@ namespace Desktop.Analyzers
                             {
                                 env.IsSecureResolver = true;
                             }
-                            else if (isXmlTextReaderDtdProcessingProperty && enumRef != null && enumRef.ConstantValue.HasValue && (int)enumRef.ConstantValue.Value != 2)
+                            else if (isXmlTextReaderDtdProcessingProperty && !SecurityDiagnosticHelpers.IsExpressionEqualsDtdProcessingParse(expression.Value))
                             {
                                 env.IsDtdProcessingDisabled = true;
                             }

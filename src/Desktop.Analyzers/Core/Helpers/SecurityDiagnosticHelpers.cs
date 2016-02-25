@@ -3,6 +3,7 @@
 using System;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Semantics;
 
 namespace Desktop.Analyzers
 {
@@ -162,6 +163,30 @@ namespace Desktop.Analyzers
         public static int HasXmlReaderParameter(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
             return HasSpecifiedParameter(method, xmlTypes, IsXmlReaderType);
+        }
+
+        public static bool IsExpressionEqualsNull(IOperation operation)
+        {
+            ILiteralExpression literal = operation as ILiteralExpression;
+            return literal != null && literal.ConstantValue.HasValue && literal.ConstantValue.Value == null; 
+        }
+
+        public static bool IsExpressionEqualsDtdProcessingParse(IOperation operation)
+        {
+            IFieldReferenceExpression enumRef = operation as IFieldReferenceExpression;
+            return enumRef != null && enumRef.ConstantValue.HasValue && (int)enumRef.ConstantValue.Value == 2; // DtdProcessing.Parse
+        }
+
+        public static bool IsExpressionEqualsIntZero(IOperation operation)
+        {
+            ILiteralExpression literal = operation as ILiteralExpression;
+
+            if(literal == null || !literal.ConstantValue.HasValue)
+            {
+                return false;
+            }
+
+            return literal.ConstantValue.Value.Equals(0);
         }
 
         private static bool IsSpecifiedProperty(ISymbol symbol, INamedTypeSymbol namedType, string propertyName)

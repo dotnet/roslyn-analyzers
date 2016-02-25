@@ -1,0 +1,39 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.Net.RoslynDiagnostics</id>
+    <summary>Diagnostic Analyzers consumed by Roslyn.sln (https://github.com/dotnet/roslyn)</summary>
+    <description>
+      Analyzers built using the .NET Compiler Platform ("Roslyn") for Roslyn.sln.
+    </description>
+    <dependencies>
+      <dependency id="Roslyn.Diagnostics.Analyzers" version="$currentVersion$" />
+      <dependency id="Microsoft.ApiDesignGuidelines.Analyzers" version="$currentVersion$" />
+      <dependency id="Microsoft.CodeAnalysis.Analyzers" version="$currentVersion$" />
+      <dependency id="Microsoft.Composition.Analyzers" version="$currentVersion$" />
+      <dependency id="System.Collections.Immutable.Analyzers" version="$currentVersion$" />
+      <dependency id="System.Runtime.Analyzers" version="$currentVersion$" />
+      <dependency id="System.Runtime.InteropServices.Analyzers" version="$currentVersion$" />
+      <dependency id="System.Threading.Tasks.Analyzers" version="$currentVersion$" />
+      <dependency id="XmlDocumentationComments.Analyzers" version="$currentVersion$" />
+    </dependencies>
+    <language>en-US</language>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <version>$currentVersion$</version>
+    <authors>$authors$</authors>
+    <licenseUrl>$licenseUrl$</licenseUrl>
+    <projectUrl>$projectUrl$</projectUrl>
+    <releaseNotes>$releaseNotes$</releaseNotes>
+    <tags>$tags$ analyzers</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System" targetFramework="" />
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+    <file src="ThirdPartyNotices.rtf" target="" />
+    <file src="Microsoft.Net.RoslynDiagnostics.targets" target="build\Microsoft.Net.RoslynDiagnostics.targets" />
+    <file src="Rulesets\AnalyzerProjectRules.ruleset" target="build\Rulesets\AnalyzerProjectRules.ruleset" />
+    <file src="Rulesets\NonShippingProjectRules.ruleset" target="build\Rulesets\NonShippingProjectRules.ruleset" />
+    <file src="Rulesets\Roslyn.ruleset" target="build\Rulesets\Roslyn.ruleset" />
+  </files>
+</package>

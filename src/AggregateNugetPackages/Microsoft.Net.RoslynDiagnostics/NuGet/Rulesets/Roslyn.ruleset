@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="Common diagnostic rules for all Roslyn projects"
+         Description="This file contains diagnostic settings used by all Roslyn projects. Projects that need specific settings should have their own rule set files that Include this one, and then make the necessary adjustments." 
+         ToolsVersion="14.0">
+
+  <!-- First disable all rules and then explicitly enable the rules from packages that we care about. -->
+  <IncludeAll Action="None" />
+
+  <Rules AnalyzerId="Roslyn.Core" RuleNamespace="Roslyn.Core">
+    <Rule Id="AD0001" Action="Error" />
+  </Rules>
+
+  <Rules AnalyzerId="Roslyn.Diagnostic.Analyzers" RuleNamespace="Roslyn.Diagnostics.Analyzers">
+    <Rule Id="RS0001" Action="Default" />
+    <Rule Id="RS0002" Action="Default" />
+    <Rule Id="RS0004" Action="Default" />
+    <Rule Id="RS0005" Action="Default" />
+    <Rule Id="RS0013" Action="Default" />
+    <Rule Id="RS0016" Action="Default" />
+    <Rule Id="RS0017" Action="Default" />
+    <Rule Id="RS0019" Action="Default" />
+    <Rule Id="RS0022" Action="Default" />
+    <Rule Id="RS0024" Action="Default" />
+    <Rule Id="RS0025" Action="Default" />
+  </Rules>
+
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.Analyzers" RuleNamespace="Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers">
+    <Rule Id="RS1001" Action="Default" />
+    <Rule Id="RS1002" Action="Default" />
+    <Rule Id="RS1003" Action="Default" />
+    <Rule Id="RS1004" Action="Default" />
+    <Rule Id="RS1005" Action="Default" />
+    <Rule Id="RS1006" Action="Default" />
+    <Rule Id="RS1007" Action="Default" />
+    <Rule Id="RS1008" Action="Default" />
+    <Rule Id="RS1009" Action="Default" />
+    <Rule Id="RS1010" Action="Default" />
+    <Rule Id="RS1011" Action="Default" />
+    <Rule Id="RS1012" Action="Default" />
+    <Rule Id="RS1013" Action="Default" />
+    <Rule Id="RS1014" Action="Default" />
+  </Rules>
+
+  <Rules AnalyzerId="Microsoft.ApiDesignGuidelines.Analyzers" RuleNamespace="Microsoft.ApiDesignGuidelines.Analyzers">
+    <Rule Id="CA2007" Action="Default" />
+    <Rule Id="CA1067" Action="Default" />
+    <Rule Id="CA1815" Action="Default" />
+    <Rule Id="CA1068" Action="Default" />
+  </Rules>
+
+  <Rules AnalyzerId="Microsoft.Composition.Analyzers" RuleNamespace="Microsoft.Composition.Analyzers">
+    <Rule Id="RS0006" Action="Default" />
+    <Rule Id="RS0023" Action="Default" />
+  </Rules>
+
+  <Rules AnalyzerId="System.Runtime.Analyzers" RuleNamespace="System.Runtime.Analyzers">
+    <Rule Id="CA1825" Action="Default" />
+    <Rule Id="RS0014" Action="Default" />
+  </Rules>
+
+  <Rules AnalyzerId="XmlDocumentationComments.Analyzers" RuleNamespace="XmlDocumentationComments.Analyzers">
+    <Rule Id="RS0010" Action="Default" />
+  </Rules>
+
+  <Rules AnalyzerId="System.Collections.Immutable.Analyzers" RuleNamespace="System.Collections.Immutable.Analyzers">
+    <Rule Id="RS0012" Action="Default" />
+  </Rules>
+
+  <Rules AnalyzerId="System.Runtime.InteropServices.Analyzers" RuleNamespace="System.Runtime.InteropServices.Analyzers">
+    <Rule Id="RS0015" Action="Default" />
+  </Rules>
+
+  <Rules AnalyzerId="System.Threading.Tasks.Analyzers" RuleNamespace="System.Threading.Tasks.Analyzers">
+    <Rule Id="RS0018" Action="Default" />
+  </Rules>
+</RuleSet>

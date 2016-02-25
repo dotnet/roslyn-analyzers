@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA1055: Uri return values should not be strings
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicUriReturnValuesShouldNotBeStringsFixer
-        Inherits UriReturnValuesShouldNotBeStringsFixer 
+        Inherits UriReturnValuesShouldNotBeStringsFixer
 
     End Class
 End Namespace

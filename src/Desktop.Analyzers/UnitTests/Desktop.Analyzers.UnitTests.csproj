@@ -56,37 +56,37 @@
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Common.1.2.0-beta-20151118-02\lib\net45\Microsoft.CodeAnalysis.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Common.1.2.0-beta1-20160218-01\lib\net45\Microsoft.CodeAnalysis.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.1.2.0-beta-20151118-02\lib\net45\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.1.2.0-beta1-20160218-01\lib\net45\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.1.2.0-beta-20151118-02\lib\net45\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.1.2.0-beta1-20160218-01\lib\net45\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.VisualBasic, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.VisualBasic.1.2.0-beta-20151118-02\lib\net45\Microsoft.CodeAnalysis.VisualBasic.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.VisualBasic.1.2.0-beta1-20160218-01\lib\net45\Microsoft.CodeAnalysis.VisualBasic.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.VisualBasic.Workspaces.1.2.0-beta-20151118-02\lib\net45\Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.VisualBasic.Workspaces.1.2.0-beta1-20160218-01\lib\net45\Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.0-beta-20151118-02\lib\net45\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.0-beta1-20160218-01\lib\net45\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Workspaces.Desktop, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.0-beta-20151118-02\lib\net45\Microsoft.CodeAnalysis.Workspaces.Desktop.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.0-beta1-20160218-01\lib\net45\Microsoft.CodeAnalysis.Workspaces.Desktop.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -119,9 +119,9 @@
       <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Reflection.Metadata, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+    <Reference Include="System.Reflection.Metadata, Version=1.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\System.Reflection.Metadata.1.1.0\lib\dotnet5.2\System.Reflection.Metadata.dll</HintPath>
+      <HintPath>..\..\..\packages\System.Reflection.Metadata.1.2.0-rc2-23629\lib\dotnet5.2\System.Reflection.Metadata.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web" />
@@ -145,9 +145,28 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DoNotUseInsecureDTDProcessingDoNotUseLoadXmlTests.cs" />
+    <Compile Include="DoNotUseInsecureDTDProcessingDoNotUseSetInnerXmlTests.cs" />
+    <Compile Include="DoNotUseInsecureDTDProcessingReviewDataViewCollectionStringTests.cs" />
+    <Compile Include="DoNotUseInsecureDTDProcessingUseXmlReaderForDataSetReadXmlSchemaTests.cs" />
+    <Compile Include="DoNotUseInsecureDTDProcessingUseXmlReaderForDataSetReadXmlTests.cs" />
+    <Compile Include="DoNotUseInsecureDTDProcessingUseXmlReaderForDataTableReadXmlSchemaTests.cs" />
+    <Compile Include="DoNotUseInsecureDTDProcessingUseXmlReaderForDataTableReadXmlTests.cs" />
+    <Compile Include="DoNotUseInsecureDTDProcessingUseXmlReaderForDeserializeTests.cs" />
+    <Compile Include="DoNotUseInsecureDTDProcessingUseXmlReaderForLoadTests.cs" />
+    <Compile Include="DoNotUseInsecureDTDProcessingUseXmlReaderForSchemaReadTests.cs" />
+    <Compile Include="DoNotUseInsecureDTDProcessingUseXmlReaderForXPathDocumentTests.cs" />
+    <Compile Include="DoNotUseInsecureDTDProcessingXmlDocumentConstructedWithNoSecureResolverTests.cs" />
+    <Compile Include="DoNotUseInsecureDTDProcessingXmlDocumentSetInsecureResolverTests.cs" />
+    <Compile Include="DoNotUseInsecureDTDProcessingXmlReaderCreateUsingInsecureConstructedXmlReaderSettingsTests.cs" />
+    <Compile Include="DoNotUseInsecureDTDProcessingXmlReaderCreateWrongOverloadTests.cs" />
+    <Compile Include="DoNotUseInsecureDTDProcessingXmlTextReaderConstructedWithNoSecureResolutionTests.cs" />
+    <Compile Include="DoNotUseInsecureDTDProcessingXmlTextReaderSetInsecureResolutionTests.cs" />
+    <Compile Include="DoNotUseInsecureDTDProcessingCreateUsingInsecureInputXmlReaderSettingsTests.cs" />
     <Compile Include="DoNotCatchCorruptedStateExceptionsTests.cs" />
     <Compile Include="DoNotUseInsecureCryptographicAlgorithmsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -175,16 +194,6 @@
     <Compile Include="ProvideDeserializationMethodsForOptionalFieldsTests.Fixer.cs" />
     <Compile Include="ImplementISerializableCorrectlyTests.cs" />
     <Compile Include="ImplementISerializableCorrectlyTests.Fixer.cs" />
-    <Compile Include="UseXmlReaderForDataSetReadXmlTests.cs" />
-    <Compile Include="UseXmlReaderForDataSetReadXmlTests.Fixer.cs" />
-    <Compile Include="UseXmlReaderForDataSetReadXmlSchemaTests.cs" />
-    <Compile Include="UseXmlReaderForDataSetReadXmlSchemaTests.Fixer.cs" />
-    <Compile Include="ReviewDataViewCollectionStringTests.cs" />
-    <Compile Include="ReviewDataViewCollectionStringTests.Fixer.cs" />
-    <Compile Include="UseXmlReaderForDataTableReadXmlTests.cs" />
-    <Compile Include="UseXmlReaderForDataTableReadXmlTests.Fixer.cs" />
-    <Compile Include="UseXmlReaderForDataTableReadXmlSchemaTests.cs" />
-    <Compile Include="UseXmlReaderForDataTableReadXmlSchemaTests.Fixer.cs" />
     <Compile Include="TypesShouldNotExtendCertainBaseTypesTests.cs" />
     <Compile Include="TypesShouldNotExtendCertainBaseTypesTests.Fixer.cs" />
   </ItemGroup>

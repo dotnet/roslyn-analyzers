@@ -3,5 +3,5 @@
 namespace Microsoft.Maintainability.Analyzers
 {
     internal static class DiagnosticCategory
-    {        public static readonly string Maintainability = MicrosoftMaintainabilityAnalyzersResources.CategoryMaintainability;        public static readonly string Performance = MicrosoftMaintainabilityAnalyzersResources.CategoryPerformance;}
+    { public static readonly string Maintainability = MicrosoftMaintainabilityAnalyzersResources.CategoryMaintainability; public static readonly string Performance = MicrosoftMaintainabilityAnalyzersResources.CategoryPerformance; }
 }

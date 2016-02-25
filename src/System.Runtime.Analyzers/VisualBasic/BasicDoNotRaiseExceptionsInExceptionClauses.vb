@@ -5,7 +5,7 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace System.Runtime.Analyzers   
+Namespace System.Runtime.Analyzers
     ''' <summary>
     ''' CA2219: Do not raise exceptions in exception clauses
     ''' </summary>

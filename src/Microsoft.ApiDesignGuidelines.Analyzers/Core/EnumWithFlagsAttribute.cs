@@ -78,7 +78,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 symbol.TypeKind == TypeKind.Enum &&
                 symbol.DeclaredAccessibility == Accessibility.Public)
             {
-                var flagsAttributeType = WellKnownTypes.FlagsAttribute(compilation);
+                INamedTypeSymbol flagsAttributeType = WellKnownTypes.FlagsAttribute(compilation);
                 if (flagsAttributeType == null)
                 {
                     return;
@@ -96,7 +96,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         {
                             Debug.Assert(missingValues != null);
 
-                            var missingValuesString = missingValues.Select(v => v.ToString()).Aggregate((i, j) => i + ", " + j);
+                            string missingValuesString = missingValues.Select(v => v.ToString()).Aggregate((i, j) => i + ", " + j);
                             addDiagnostic(symbol.CreateDiagnostic(Rule2217, symbol.Name, missingValuesString));
                         }
                     }
@@ -119,7 +119,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             bool first = true;
             ulong previous = 0;
-            foreach (var element in list.OrderBy(t => t))
+            foreach (ulong element in list.OrderBy(t => t))
             {
                 if (first)
                 {
@@ -160,7 +160,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             ulong powersOfTwo = 0;
             bool foundNonPowerOfTwo = false;
 
-            foreach (var value in values)
+            foreach (ulong value in values)
             {
                 if (IsPowerOfTwo(value))
                 {

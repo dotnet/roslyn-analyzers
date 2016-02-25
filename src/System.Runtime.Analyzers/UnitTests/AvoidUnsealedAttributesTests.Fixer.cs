@@ -2,9 +2,7 @@
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
-using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace System.Runtime.Analyzers.UnitTests
@@ -15,7 +13,7 @@ namespace System.Runtime.Analyzers.UnitTests
         {
             return new AvoidUnsealedAttributesAnalyzer();
         }
-                          
+
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
             return new AvoidUnsealedAttributesFixer();
@@ -25,7 +23,7 @@ namespace System.Runtime.Analyzers.UnitTests
         {
             return new AvoidUnsealedAttributesAnalyzer();
         }
-                          
+
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new AvoidUnsealedAttributesFixer();

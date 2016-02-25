@@ -5,7 +5,7 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace System.Threading.Tasks.Analyzers   
+Namespace System.Threading.Tasks.Analyzers
     ''' <summary>
     ''' RS0018: Do not create tasks without passing a TaskScheduler
     ''' </summary>

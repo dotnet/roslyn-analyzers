@@ -2,9 +2,7 @@
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
-using Xunit;
 
 namespace Microsoft.Maintainability.Analyzers.UnitTests
 {
@@ -12,12 +10,12 @@ namespace Microsoft.Maintainability.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicReviewUnusedParametersAnalyzer();
+            return new ReviewUnusedParametersAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpReviewUnusedParametersAnalyzer();
+            return new ReviewUnusedParametersAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

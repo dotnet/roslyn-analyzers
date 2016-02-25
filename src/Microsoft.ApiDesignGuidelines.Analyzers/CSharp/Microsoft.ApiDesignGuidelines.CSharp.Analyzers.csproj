@@ -21,9 +21,15 @@
     <SemanticVersion>$(MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "></PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "></PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
+      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
+      <Name>Analyzer.Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\Microsoft.ApiDesignGuidelines.Analyzers.csproj">
       <Project>{9B5FFB24-D965-4CF1-8BB2-02C282193F4F}</Project>
       <Name>Microsoft.ApiDesignGuidelines.Analyzers</Name>
@@ -32,22 +38,22 @@
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Common.1.2.0-beta-20151118-02\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Common.1.2.0-beta1-20160218-01\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.1.2.0-beta-20151118-02\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.1.2.0-beta1-20160218-01\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.1.2.0-beta-20151118-02\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.1.2.0-beta1-20160218-01\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.0-beta-20151118-02\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.0-beta1-20160218-01\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Collections.Immutable, Version=1.1.37.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -80,9 +86,9 @@
       <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Reflection.Metadata, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+    <Reference Include="System.Reflection.Metadata, Version=1.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\System.Reflection.Metadata.1.1.0\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
+      <HintPath>..\..\..\packages\System.Reflection.Metadata.1.2.0-rc2-23629\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -90,9 +96,13 @@
     <Content Include="Microsoft.ApiDesignGuidelines.CSharp.Analyzers.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CSharpPassSystemUriObjectsInsteadOfStrings.cs" />
+    <Compile Include="CSharpEnumStorageShouldBeInt32.Fixer.cs" />
+    <Compile Include="CSharpStaticHolderTypes.Fixer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CSharpAvoidAsyncVoid.cs" />
     <Compile Include="CSharpAvoidAsyncVoid.Fixer.cs" />
@@ -110,61 +120,27 @@
     <Compile Include="CSharpUseGenericEventHandlerInstances.cs" />
     <Compile Include="CSharpUseGenericEventHandlerInstances.Fixer.cs" />
     <Compile Include="CSharpEnumsShouldHaveZeroValue.Fixer.cs" />
-    <Compile Include="CSharpAbstractTypesShouldNotHaveConstructors.cs" />
-    <Compile Include="CSharpAbstractTypesShouldNotHaveConstructors.Fixer.cs" />
     <Compile Include="CSharpMarkAssembliesWithClsCompliant.Fixer.cs" />
     <Compile Include="CSharpMarkAssembliesWithAssemblyVersion.Fixer.cs" />
     <Compile Include="CSharpDefineAccessorsForAttributeArguments.cs" />
-    <Compile Include="CSharpUsePropertiesWhereAppropriate.cs" />
     <Compile Include="CSharpUsePropertiesWhereAppropriate.Fixer.cs" />
-    <Compile Include="CSharpInterfaceMethodsShouldBeCallableByChildTypes.cs" />
-    <Compile Include="CSharpInterfaceMethodsShouldBeCallableByChildTypes.Fixer.cs" />
-    <Compile Include="CSharpOverrideMethodsOnComparableTypes.Fixer.cs" />
-    <Compile Include="CSharpStaticHolderTypesShouldBeSealed.cs" />
-    <Compile Include="CSharpStaticHolderTypesShouldBeSealed.Fixer.cs" />
-    <Compile Include="CSharpStaticHolderTypesShouldNotHaveConstructors.cs" />
-    <Compile Include="CSharpStaticHolderTypesShouldNotHaveConstructors.Fixer.cs" />
     <Compile Include="CSharpMovePInvokesToNativeMethodsClass.Fixer.cs" />
-    <Compile Include="CSharpIdentifiersShouldDifferByMoreThanCase.cs" />
-    <Compile Include="CSharpIdentifiersShouldDifferByMoreThanCase.Fixer.cs" />
-    <Compile Include="CSharpIdentifiersShouldHaveCorrectPrefix.cs" />
     <Compile Include="CSharpIdentifiersShouldHaveCorrectPrefix.Fixer.cs" />
     <Compile Include="CSharpNonConstantFieldsShouldNotBeVisible.cs" />
     <Compile Include="CSharpNonConstantFieldsShouldNotBeVisible.Fixer.cs" />
     <Compile Include="CSharpDoNotDecreaseInheritedMemberVisibility.cs" />
     <Compile Include="CSharpDoNotDecreaseInheritedMemberVisibility.Fixer.cs" />
-    <Compile Include="CSharpOperatorOverloadsHaveNamedAlternates.cs" />
-    <Compile Include="CSharpOperatorOverloadsHaveNamedAlternates.Fixer.cs" />
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.cs" />
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.Fixer.cs" />
-    <Compile Include="CSharpOverloadOperatorEqualsOnOverridingValueTypeEquals.Fixer.cs" />
-    <Compile Include="CSharpPassSystemUriObjectsInsteadOfStrings.cs" />
-    <Compile Include="CSharpPassSystemUriObjectsInsteadOfStrings.Fixer.cs" />
-    <Compile Include="CSharpImplementIEquatableWhenOverridingObjectEquals.cs" />
-    <Compile Include="CSharpImplementIEquatableWhenOverridingObjectEquals.Fixer.cs" />
-    <Compile Include="CSharpCancellationTokenParametersMustComeLast.cs" />
-    <Compile Include="CSharpCancellationTokenParametersMustComeLast.Fixer.cs" />
-    <Compile Include="CSharpConstructorMakeNoninheritableBaseClassInheritable.cs" />
-    <Compile Include="CSharpConstructorMakeNoninheritableBaseClassInheritable.Fixer.cs" />
-    <Compile Include="CSharpDoNotDeclareStaticMembersOnGenericTypes.cs" />
-    <Compile Include="CSharpDoNotDeclareStaticMembersOnGenericTypes.Fixer.cs" />
-    <Compile Include="CSharpCollectionsShouldImplementGenericInterface.cs" />
     <Compile Include="CSharpCollectionsShouldImplementGenericInterface.Fixer.cs" />
-    <Compile Include="CSharpEnumStorageShouldBeInt32.cs" />
-    <Compile Include="CSharpEnumStorageShouldBeInt32.Fixer.cs" />
     <Compile Include="CSharpUseEventsWhereAppropriate.cs" />
     <Compile Include="CSharpUseEventsWhereAppropriate.Fixer.cs" />
     <Compile Include="CSharpImplementStandardExceptionConstructors.cs" />
-    <Compile Include="CSharpImplementStandardExceptionConstructors.Fixer.cs" />
-    <Compile Include="CSharpNestedTypesShouldNotBeVisible.cs" />
-    <Compile Include="CSharpNestedTypesShouldNotBeVisible.Fixer.cs" />
     <Compile Include="CSharpAvoidEmptyInterfaces.cs" />
     <Compile Include="CSharpAvoidEmptyInterfaces.Fixer.cs" />
-    <Compile Include="CSharpProvideObsoleteAttributeMessage.cs" />
     <Compile Include="CSharpProvideObsoleteAttributeMessage.Fixer.cs" />
     <Compile Include="CSharpPropertiesShouldNotBeWriteOnly.cs" />
     <Compile Include="CSharpPropertiesShouldNotBeWriteOnly.Fixer.cs" />
-    <Compile Include="CSharpDeclareTypesInNamespaces.cs" />
     <Compile Include="CSharpDeclareTypesInNamespaces.Fixer.cs" />
     <Compile Include="CSharpDoNotDeclareVisibleInstanceFields.cs" />
     <Compile Include="CSharpDoNotDeclareVisibleInstanceFields.Fixer.cs" />
@@ -176,39 +152,24 @@
     <Compile Include="CSharpUriPropertiesShouldNotBeStrings.Fixer.cs" />
     <Compile Include="CSharpImplementIDisposableCorrectly.cs" />
     <Compile Include="CSharpImplementIDisposableCorrectly.Fixer.cs" />
-    <Compile Include="CSharpExceptionsShouldBePublic.cs" />
-    <Compile Include="CSharpExceptionsShouldBePublic.Fixer.cs" />
-    <Compile Include="CSharpDoNotRaiseExceptionsInUnexpectedLocations.cs" />
-    <Compile Include="CSharpDoNotRaiseExceptionsInUnexpectedLocations.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldNotContainUnderscores.cs" />
     <Compile Include="CSharpIdentifiersShouldNotContainUnderscores.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldHaveCorrectSuffix.cs" />
     <Compile Include="CSharpIdentifiersShouldHaveCorrectSuffix.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldNotHaveIncorrectSuffix.cs" />
     <Compile Include="CSharpIdentifiersShouldNotHaveIncorrectSuffix.Fixer.cs" />
-    <Compile Include="CSharpFlagsEnumsShouldHavePluralNames.cs" />
-    <Compile Include="CSharpFlagsEnumsShouldHavePluralNames.Fixer.cs" />
-    <Compile Include="CSharpIdentifiersShouldNotMatchKeywords.cs" />
+    <Compile Include="CSharpEnumsShouldHavePluralNames.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldNotMatchKeywords.Fixer.cs" />
-    <Compile Include="CSharpOnlyFlagsEnumsShouldHavePluralNames.cs" />
-    <Compile Include="CSharpOnlyFlagsEnumsShouldHavePluralNames.Fixer.cs" />
-    <Compile Include="CSharpPropertyNamesShouldNotMatchGetMethods.cs" />
     <Compile Include="CSharpPropertyNamesShouldNotMatchGetMethods.Fixer.cs" />
-    <Compile Include="CSharpTypeNamesShouldNotMatchNamespaces.cs" />
     <Compile Include="CSharpTypeNamesShouldNotMatchNamespaces.Fixer.cs" />
     <Compile Include="CSharpParameterNamesShouldMatchBaseDeclaration.cs" />
     <Compile Include="CSharpParameterNamesShouldMatchBaseDeclaration.Fixer.cs" />
     <Compile Include="CSharpUsePreferredTerms.cs" />
     <Compile Include="CSharpUsePreferredTerms.Fixer.cs" />
-    <Compile Include="CSharpOverrideEqualsAndOperatorEqualsOnValueTypes.cs" />
     <Compile Include="CSharpOverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.cs" />
-    <Compile Include="CSharpPropertiesShouldNotReturnArrays.cs" />
-    <Compile Include="CSharpPropertiesShouldNotReturnArrays.Fixer.cs" />
     <Compile Include="CSharpAssembliesShouldHaveValidStrongNames.cs" />
     <Compile Include="CSharpAssembliesShouldHaveValidStrongNames.Fixer.cs" />
-    <Compile Include="CSharpOverrideGetHashCodeOnOverridingEquals.cs" />
     <Compile Include="CSharpOverrideGetHashCodeOnOverridingEquals.Fixer.cs" />
-    <Compile Include="CSharpOverrideEqualsOnOverloadingOperatorEquals.cs" />
     <Compile Include="CSharpOverrideEqualsOnOverloadingOperatorEquals.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>

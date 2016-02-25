@@ -6,13 +6,13 @@ namespace Roslyn.Diagnostics.Test.Utilities
 {
     public class WorkItemAttribute : Attribute
     {
-        private int _id;
-        private string _source;
+        private readonly int _id;
+        private readonly string _source;
 
         public WorkItemAttribute(int id, string source)
         {
-            this._id = id;
-            this._source = source;
+            _id = id;
+            _source = source;
         }
     }
 }

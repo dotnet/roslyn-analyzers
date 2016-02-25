@@ -2,8 +2,6 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
-using System.Linq;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
@@ -50,11 +48,11 @@ namespace System.Runtime.Analyzers
                                                                                                     "System.Runtime.InteropServices.SEHException",
                                                                                                     "System.AccessViolationException");
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotRaiseReservedExceptionTypesTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));        
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotRaiseReservedExceptionTypesTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageTooGeneric = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotRaiseReservedExceptionTypesMessageTooGeneric), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageReserved = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotRaiseReservedExceptionTypesMessageReserved), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotRaiseReservedExceptionTypesDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        
+
         internal static DiagnosticDescriptor TooGenericRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageTooGeneric,
@@ -74,9 +72,9 @@ namespace System.Runtime.Analyzers
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182338.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
-        private static readonly SymbolDisplayFormat _symbolDisplayFormat = new SymbolDisplayFormat(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
+        private static readonly SymbolDisplayFormat s_symbolDisplayFormat = new SymbolDisplayFormat(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(TooGenericRule, ReservedRule); 
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(TooGenericRule, ReservedRule);
 
         public abstract TLanguageKindEnum ObjectCreationExpressionKind { get; }
 
@@ -84,12 +82,11 @@ namespace System.Runtime.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-                
             analysisContext.RegisterCompilationStartAction(
             compilationStartContext =>
             {
                 HashSet<INamedTypeSymbol> tooGenericExceptionSymbols = CreateSymbolSet(compilationStartContext.Compilation, s_tooGenericExceptions);
-                HashSet<INamedTypeSymbol> reservedExceptionSymbols = CreateSymbolSet(compilationStartContext.Compilation, s_reservedExceptions); ;             
+                HashSet<INamedTypeSymbol> reservedExceptionSymbols = CreateSymbolSet(compilationStartContext.Compilation, s_reservedExceptions); ;
 
                 if (tooGenericExceptionSymbols.Count == 0 && reservedExceptionSymbols.Count == 0)
                 {
@@ -102,15 +99,15 @@ namespace System.Runtime.Analyzers
                     Analyze(syntaxNodeContext, tooGenericExceptionSymbols, reservedExceptionSymbols);
                 },
                 ObjectCreationExpressionKind);
-            });    
+            });
         }
 
         private static HashSet<INamedTypeSymbol> CreateSymbolSet(Compilation compilation, IEnumerable<string> exceptionNames)
         {
-            HashSet< INamedTypeSymbol> set = null;
-            foreach (var exp in exceptionNames)
+            HashSet<INamedTypeSymbol> set = null;
+            foreach (string exp in exceptionNames)
             {
-                var symbol = compilation.GetTypeByMetadataName(exp);
+                INamedTypeSymbol symbol = compilation.GetTypeByMetadataName(exp);
                 if (symbol == null)
                 {
                     continue;
@@ -126,10 +123,10 @@ namespace System.Runtime.Analyzers
 
         private void Analyze(SyntaxNodeAnalysisContext context, HashSet<INamedTypeSymbol> tooGenericExceptionSymbols, HashSet<INamedTypeSymbol> reservedExceptionSymbols)
         {
-            var objectCreationNode = (TObjectCreationExpressionSyntax) context.Node;
-            var targetType = GetTypeSyntaxNode(objectCreationNode);
+            var objectCreationNode = (TObjectCreationExpressionSyntax)context.Node;
+            SyntaxNode targetType = GetTypeSyntaxNode(objectCreationNode);
 
-            var  typeSymbol = context.SemanticModel.GetSymbolInfo(targetType).Symbol as INamedTypeSymbol;
+            var typeSymbol = context.SemanticModel.GetSymbolInfo(targetType).Symbol as INamedTypeSymbol;
             // GetSymbolInfo().Symbol might return an error type symbol 
             if (typeSymbol == null)
             {
@@ -138,11 +135,11 @@ namespace System.Runtime.Analyzers
 
             if (tooGenericExceptionSymbols.Contains(typeSymbol))
             {
-                context.ReportDiagnostic(Diagnostic.Create(TooGenericRule, targetType.GetLocation(), typeSymbol.ToDisplayString(_symbolDisplayFormat)));
+                context.ReportDiagnostic(Diagnostic.Create(TooGenericRule, targetType.GetLocation(), typeSymbol.ToDisplayString(s_symbolDisplayFormat)));
             }
             else if (reservedExceptionSymbols.Contains(typeSymbol))
             {
-                context.ReportDiagnostic(Diagnostic.Create(ReservedRule, targetType.GetLocation(), typeSymbol.ToDisplayString(_symbolDisplayFormat)));
+                context.ReportDiagnostic(Diagnostic.Create(ReservedRule, targetType.GetLocation(), typeSymbol.ToDisplayString(s_symbolDisplayFormat)));
             }
         }
     }

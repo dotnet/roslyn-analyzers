@@ -3,5 +3,5 @@
 namespace System.Resources.Analyzers
 {
     internal static class DiagnosticCategory
-    {        public static readonly string Performance = SystemResourcesAnalyzersResources.CategoryPerformance;}
+    { public static readonly string Performance = SystemResourcesAnalyzersResources.CategoryPerformance; }
 }

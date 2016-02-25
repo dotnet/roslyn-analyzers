@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.Maintainability.Analyzers     
+Namespace Microsoft.Maintainability.Analyzers
     ''' <summary>
     ''' CA1500: Variable names should not match field names
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicVariableNamesShouldNotMatchFieldNamesFixer
-        Inherits VariableNamesShouldNotMatchFieldNamesFixer 
+        Inherits VariableNamesShouldNotMatchFieldNamesFixer
 
     End Class
 End Namespace

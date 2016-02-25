@@ -5,7 +5,7 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace System.Collections.Immutable.Analyzers   
+Namespace System.Collections.Immutable.Analyzers
     ''' <summary>
     ''' RS0012: Do not call ToImmutableArray on an ImmutableArray value
     ''' </summary>

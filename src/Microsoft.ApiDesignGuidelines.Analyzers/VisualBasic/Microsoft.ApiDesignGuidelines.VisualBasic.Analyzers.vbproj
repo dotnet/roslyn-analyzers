@@ -20,9 +20,15 @@
     <SemanticVersion>$(MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "></PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "></PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
+      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
+      <Name>Analyzer.Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\Microsoft.ApiDesignGuidelines.Analyzers.csproj">
       <Project>{9B5FFB24-D965-4CF1-8BB2-02C282193F4F}</Project>
       <Name>Microsoft.ApiDesignGuidelines.Analyzers</Name>
@@ -31,22 +37,22 @@
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Common.1.2.0-beta-20151118-02\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Common.1.2.0-beta1-20160218-01\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.VisualBasic, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.VisualBasic.1.2.0-beta-20151118-02\lib\portable-net45+win8\Microsoft.CodeAnalysis.VisualBasic.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.VisualBasic.1.2.0-beta1-20160218-01\lib\portable-net45+win8\Microsoft.CodeAnalysis.VisualBasic.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.VisualBasic.Workspaces.1.2.0-beta-20151118-02\lib\portable-net45+win8\Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.VisualBasic.Workspaces.1.2.0-beta1-20160218-01\lib\portable-net45+win8\Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.0-beta-20151118-02\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.0-beta1-20160218-01\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Collections.Immutable, Version=1.1.37.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -79,9 +85,9 @@
       <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Reflection.Metadata, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+    <Reference Include="System.Reflection.Metadata, Version=1.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\System.Reflection.Metadata.1.1.0\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
+      <HintPath>..\..\..\packages\System.Reflection.Metadata.1.2.0-rc2-23629\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -89,7 +95,10 @@
     <Content Include="Microsoft.ApiDesignGuidelines.VisualBasic.Analyzers.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="packages.config" />
+    <None Include="app.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicAvoidAsyncVoid.vb" />
@@ -100,69 +109,38 @@
     <Compile Include="BasicDonTPassAsyncLambdasAsVoidReturningDelegateTypes.Fixer.vb" />
     <Compile Include="BasicDonTStoreAsyncLambdasAsVoidReturningDelegateTypes.vb" />
     <Compile Include="BasicDonTStoreAsyncLambdasAsVoidReturningDelegateTypes.Fixer.vb" />
+    <Compile Include="BasicPassSystemUriObjectsInsteadOfStrings.vb" />
+    <Compile Include="BasicEnumStorageShouldBeInt32.Fixer.vb" />
     <Compile Include="BasicPropagateCancellationTokensWhenPossible.vb" />
     <Compile Include="BasicPropagateCancellationTokensWhenPossible.Fixer.vb" />
     <Compile Include="BasicDonTMixBlockingAndAsync.vb" />
     <Compile Include="BasicDonTMixBlockingAndAsync.Fixer.vb" />
+    <Compile Include="BasicStaticHolderTypes.Fixer.vb" />
     <Compile Include="BasicTypesThatOwnDisposableFieldsShouldBeDisposable.vb" />
     <Compile Include="BasicUseGenericEventHandlerInstances.vb" />
     <Compile Include="BasicUseGenericEventHandlerInstances.Fixer.vb" />
     <Compile Include="BasicEnumsShouldHaveZeroValue.Fixer.vb" />
-    <Compile Include="BasicAbstractTypesShouldNotHaveConstructors.vb" />
-    <Compile Include="BasicAbstractTypesShouldNotHaveConstructors.Fixer.vb" />
     <Compile Include="BasicMarkAssembliesWithClsCompliant.Fixer.vb" />
     <Compile Include="BasicMarkAssembliesWithAssemblyVersion.Fixer.vb" />
     <Compile Include="BasicDefineAccessorsForAttributeArguments.vb" />
-    <Compile Include="BasicUsePropertiesWhereAppropriate.vb" />
     <Compile Include="BasicUsePropertiesWhereAppropriate.Fixer.vb" />
-    <Compile Include="BasicInterfaceMethodsShouldBeCallableByChildTypes.vb" />
-    <Compile Include="BasicInterfaceMethodsShouldBeCallableByChildTypes.Fixer.vb" />
-    <Compile Include="BasicOverrideMethodsOnComparableTypes.Fixer.vb" />
-    <Compile Include="BasicStaticHolderTypesShouldBeSealed.vb" />
-    <Compile Include="BasicStaticHolderTypesShouldBeSealed.Fixer.vb" />
-    <Compile Include="BasicStaticHolderTypesShouldNotHaveConstructors.vb" />
-    <Compile Include="BasicStaticHolderTypesShouldNotHaveConstructors.Fixer.vb" />
     <Compile Include="BasicMovePInvokesToNativeMethodsClass.Fixer.vb" />
-    <Compile Include="BasicIdentifiersShouldDifferByMoreThanCase.vb" />
-    <Compile Include="BasicIdentifiersShouldDifferByMoreThanCase.Fixer.vb" />
-    <Compile Include="BasicIdentifiersShouldHaveCorrectPrefix.vb" />
     <Compile Include="BasicIdentifiersShouldHaveCorrectPrefix.Fixer.vb" />
     <Compile Include="BasicNonConstantFieldsShouldNotBeVisible.vb" />
     <Compile Include="BasicNonConstantFieldsShouldNotBeVisible.Fixer.vb" />
     <Compile Include="BasicDoNotDecreaseInheritedMemberVisibility.vb" />
     <Compile Include="BasicDoNotDecreaseInheritedMemberVisibility.Fixer.vb" />
-    <Compile Include="BasicOperatorOverloadsHaveNamedAlternates.vb" />
-    <Compile Include="BasicOperatorOverloadsHaveNamedAlternates.Fixer.vb" />
     <Compile Include="BasicOperatorsShouldHaveSymmetricalOverloads.vb" />
     <Compile Include="BasicOperatorsShouldHaveSymmetricalOverloads.Fixer.vb" />
-    <Compile Include="BasicOverloadOperatorEqualsOnOverridingValueTypeEquals.Fixer.vb" />
-    <Compile Include="BasicPassSystemUriObjectsInsteadOfStrings.vb" />
-    <Compile Include="BasicPassSystemUriObjectsInsteadOfStrings.Fixer.vb" />
-    <Compile Include="BasicImplementIEquatableWhenOverridingObjectEquals.vb" />
-    <Compile Include="BasicImplementIEquatableWhenOverridingObjectEquals.Fixer.vb" />
-    <Compile Include="BasicCancellationTokenParametersMustComeLast.vb" />
-    <Compile Include="BasicCancellationTokenParametersMustComeLast.Fixer.vb" />
-    <Compile Include="BasicConstructorMakeNoninheritableBaseClassInheritable.vb" />
-    <Compile Include="BasicConstructorMakeNoninheritableBaseClassInheritable.Fixer.vb" />
-    <Compile Include="BasicDoNotDeclareStaticMembersOnGenericTypes.vb" />
-    <Compile Include="BasicDoNotDeclareStaticMembersOnGenericTypes.Fixer.vb" />
-    <Compile Include="BasicCollectionsShouldImplementGenericInterface.vb" />
     <Compile Include="BasicCollectionsShouldImplementGenericInterface.Fixer.vb" />
-    <Compile Include="BasicEnumStorageShouldBeInt32.vb" />
-    <Compile Include="BasicEnumStorageShouldBeInt32.Fixer.vb" />
     <Compile Include="BasicUseEventsWhereAppropriate.vb" />
     <Compile Include="BasicUseEventsWhereAppropriate.Fixer.vb" />
     <Compile Include="BasicImplementStandardExceptionConstructors.vb" />
-    <Compile Include="BasicImplementStandardExceptionConstructors.Fixer.vb" />
-    <Compile Include="BasicNestedTypesShouldNotBeVisible.vb" />
-    <Compile Include="BasicNestedTypesShouldNotBeVisible.Fixer.vb" />
     <Compile Include="BasicAvoidEmptyInterfaces.vb" />
     <Compile Include="BasicAvoidEmptyInterfaces.Fixer.vb" />
-    <Compile Include="BasicProvideObsoleteAttributeMessage.vb" />
     <Compile Include="BasicProvideObsoleteAttributeMessage.Fixer.vb" />
     <Compile Include="BasicPropertiesShouldNotBeWriteOnly.vb" />
     <Compile Include="BasicPropertiesShouldNotBeWriteOnly.Fixer.vb" />
-    <Compile Include="BasicDeclareTypesInNamespaces.vb" />
     <Compile Include="BasicDeclareTypesInNamespaces.Fixer.vb" />
     <Compile Include="BasicDoNotDeclareVisibleInstanceFields.vb" />
     <Compile Include="BasicDoNotDeclareVisibleInstanceFields.Fixer.vb" />
@@ -174,40 +152,30 @@
     <Compile Include="BasicUriPropertiesShouldNotBeStrings.Fixer.vb" />
     <Compile Include="BasicImplementIDisposableCorrectly.vb" />
     <Compile Include="BasicImplementIDisposableCorrectly.Fixer.vb" />
-    <Compile Include="BasicExceptionsShouldBePublic.vb" />
-    <Compile Include="BasicExceptionsShouldBePublic.Fixer.vb" />
-    <Compile Include="BasicDoNotRaiseExceptionsInUnexpectedLocations.vb" />
-    <Compile Include="BasicDoNotRaiseExceptionsInUnexpectedLocations.Fixer.vb" />
     <Compile Include="BasicIdentifiersShouldNotContainUnderscores.vb" />
     <Compile Include="BasicIdentifiersShouldNotContainUnderscores.Fixer.vb" />
     <Compile Include="BasicIdentifiersShouldHaveCorrectSuffix.vb" />
     <Compile Include="BasicIdentifiersShouldHaveCorrectSuffix.Fixer.vb" />
     <Compile Include="BasicIdentifiersShouldNotHaveIncorrectSuffix.vb" />
     <Compile Include="BasicIdentifiersShouldNotHaveIncorrectSuffix.Fixer.vb" />
-    <Compile Include="BasicFlagsEnumsShouldHavePluralNames.vb" />
-    <Compile Include="BasicFlagsEnumsShouldHavePluralNames.Fixer.vb" />
-    <Compile Include="BasicIdentifiersShouldNotMatchKeywords.vb" />
+    <Compile Include="BasicEnumsShouldHavePluralNames.Fixer.vb" />
     <Compile Include="BasicIdentifiersShouldNotMatchKeywords.Fixer.vb" />
-    <Compile Include="BasicOnlyFlagsEnumsShouldHavePluralNames.vb" />
-    <Compile Include="BasicOnlyFlagsEnumsShouldHavePluralNames.Fixer.vb" />
-    <Compile Include="BasicPropertyNamesShouldNotMatchGetMethods.vb" />
     <Compile Include="BasicPropertyNamesShouldNotMatchGetMethods.Fixer.vb" />
-    <Compile Include="BasicTypeNamesShouldNotMatchNamespaces.vb" />
     <Compile Include="BasicTypeNamesShouldNotMatchNamespaces.Fixer.vb" />
     <Compile Include="BasicParameterNamesShouldMatchBaseDeclaration.vb" />
     <Compile Include="BasicParameterNamesShouldMatchBaseDeclaration.Fixer.vb" />
     <Compile Include="BasicUsePreferredTerms.vb" />
     <Compile Include="BasicUsePreferredTerms.Fixer.vb" />
-    <Compile Include="BasicOverrideEqualsAndOperatorEqualsOnValueTypes.vb" />
     <Compile Include="BasicOverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.vb" />
-    <Compile Include="BasicPropertiesShouldNotReturnArrays.vb" />
-    <Compile Include="BasicPropertiesShouldNotReturnArrays.Fixer.vb" />
     <Compile Include="BasicAssembliesShouldHaveValidStrongNames.vb" />
     <Compile Include="BasicAssembliesShouldHaveValidStrongNames.Fixer.vb" />
     <Compile Include="BasicOverrideGetHashCodeOnOverridingEquals.vb" />
     <Compile Include="BasicOverrideGetHashCodeOnOverridingEquals.Fixer.vb" />
     <Compile Include="BasicOverrideEqualsOnOverloadingOperatorEquals.vb" />
     <Compile Include="BasicOverrideEqualsOnOverloadingOperatorEquals.Fixer.vb" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleToTest Include="Microsoft.ApiDesignGuidelines.Analyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\vb\Microsoft.CodeAnalysis.Analyzers.dll" />

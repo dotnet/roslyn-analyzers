@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Desktop.Analyzers     
+Namespace Desktop.Analyzers
     ''' <summary>
     ''' CA2232: Mark Windows Forms entry points with STAThread
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicMarkWindowsFormsEntryPointsWithStaThreadFixer
-        Inherits MarkWindowsFormsEntryPointsWithStaThreadFixer 
+        Inherits MarkWindowsFormsEntryPointsWithStaThreadFixer
 
     End Class
 End Namespace

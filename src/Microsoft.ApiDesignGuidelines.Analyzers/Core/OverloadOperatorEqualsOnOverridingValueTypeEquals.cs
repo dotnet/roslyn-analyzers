@@ -2,8 +2,6 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Threading;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -43,16 +41,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private static void AnalyzeSymbol(INamedTypeSymbol namedTypeSymbol, Action<Diagnostic> addDiagnostic)
         {
-            if (namedTypeSymbol.IsValueType && namedTypeSymbol.DoesOverrideEquals() && !IsEqualityOperatorImplemented(namedTypeSymbol))
+            if (namedTypeSymbol.IsValueType && namedTypeSymbol.OverridesEquals() && !namedTypeSymbol.ImplementsEqualityOperators())
             {
                 addDiagnostic(namedTypeSymbol.CreateDiagnostic(Rule));
             }
-        }
-
-        private static bool IsEqualityOperatorImplemented(INamedTypeSymbol symbol)
-        {
-            return symbol.IsOperatorImplemented(WellKnownMemberNames.EqualityOperatorName) ||
-                   symbol.IsOperatorImplemented(WellKnownMemberNames.InequalityOperatorName);
         }
     }
 }

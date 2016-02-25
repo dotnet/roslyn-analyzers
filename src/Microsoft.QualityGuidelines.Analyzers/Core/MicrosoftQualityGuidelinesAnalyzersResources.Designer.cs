@@ -63,33 +63,6 @@ namespace Microsoft.QualityGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Performance.
-        /// </summary>
-        internal static string CategoryPerformance {
-            get {
-                return ResourceManager.GetString("CategoryPerformance", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Reliability.
-        /// </summary>
-        internal static string CategoryReliability {
-            get {
-                return ResourceManager.GetString("CategoryReliability", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Security.
-        /// </summary>
-        internal static string CategorySecurity {
-            get {
-                return ResourceManager.GetString("CategorySecurity", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Because an exceptional event might occur that will prevent the finalizer of an object from running, the object should be explicitly disposed before all references to it are out of scope..
         /// </summary>
         internal static string DisposeObjectsBeforeLosingScopeDescription {
@@ -113,6 +86,24 @@ namespace Microsoft.QualityGuidelines.Analyzers {
         internal static string DisposeObjectsBeforeLosingScopeTitle {
             get {
                 return ResourceManager.GetString("DisposeObjectsBeforeLosingScopeTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not call overridable methods in constructors.
+        /// </summary>
+        internal static string DoNotCallOverridableMethodsInConstructors {
+            get {
+                return ResourceManager.GetString("DoNotCallOverridableMethodsInConstructors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Virtual methods defined on the class should not be called from constructors. If a derived class has overridden the method, the derived class version will be called (before the derived class constructor is called)..
+        /// </summary>
+        internal static string DoNotCallOverridableMethodsInConstructorsDescription {
+            get {
+                return ResourceManager.GetString("DoNotCallOverridableMethodsInConstructorsDescription", resourceCulture);
             }
         }
         
@@ -212,6 +203,42 @@ namespace Microsoft.QualityGuidelines.Analyzers {
         internal static string PreferJaggedArraysOverMultidimensionalTitle {
             get {
                 return ResourceManager.GetString("PreferJaggedArraysOverMultidimensionalTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove empty Finalizers.
+        /// </summary>
+        internal static string RemoveEmptyFinalizers {
+            get {
+                return ResourceManager.GetString("RemoveEmptyFinalizers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Finalizers should be avoided where possible, to avoid the additional performance overhead involved in tracking object lifetime..
+        /// </summary>
+        internal static string RemoveEmptyFinalizersDescription {
+            get {
+                return ResourceManager.GetString("RemoveEmptyFinalizersDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Re-throwing caught exception changes stack information..
+        /// </summary>
+        internal static string RethrowToPreserveStackDetailsMessage {
+            get {
+                return ResourceManager.GetString("RethrowToPreserveStackDetailsMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rethrow to preserve stack details..
+        /// </summary>
+        internal static string RethrowToPreserveStackDetailsTitle {
+            get {
+                return ResourceManager.GetString("RethrowToPreserveStackDetailsTitle", resourceCulture);
             }
         }
         

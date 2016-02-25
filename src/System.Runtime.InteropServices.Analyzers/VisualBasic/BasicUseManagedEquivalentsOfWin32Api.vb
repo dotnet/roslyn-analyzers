@@ -5,7 +5,7 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace System.Runtime.InteropServices.Analyzers   
+Namespace System.Runtime.InteropServices.Analyzers
     ''' <summary>
     ''' CA2205: Use managed equivalents of win32 api
     ''' </summary>

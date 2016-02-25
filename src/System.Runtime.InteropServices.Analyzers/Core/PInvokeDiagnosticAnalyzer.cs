@@ -2,8 +2,11 @@
 
 using System.Collections.Immutable;
 using System.Linq;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+
+using Analyzer.Utilities;
 
 namespace System.Runtime.InteropServices.Analyzers
 {
@@ -13,9 +16,9 @@ namespace System.Runtime.InteropServices.Analyzers
         public const string RuleCA1401Id = "CA1401";
         public const string RuleCA2101Id = "CA2101";
 
-        private static LocalizableString s_localizableTitleCA1401 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.PInvokesShouldNotBeVisibleTitle), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
-        private static LocalizableString s_localizableMessageCA1401 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.PInvokesShouldNotBeVisibleMessage), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
-        private static LocalizableString s_localizableDescriptionCA1401 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.PInvokesShouldNotBeVisibleDescription), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitleCA1401 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.PInvokesShouldNotBeVisibleTitle), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageCA1401 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.PInvokesShouldNotBeVisibleMessage), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionCA1401 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.PInvokesShouldNotBeVisibleDescription), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
         internal static DiagnosticDescriptor RuleCA1401 = new DiagnosticDescriptor(RuleCA1401Id,
                                                                          s_localizableTitleCA1401,
                                                                          s_localizableMessageCA1401,
@@ -26,8 +29,8 @@ namespace System.Runtime.InteropServices.Analyzers
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182209.aspx",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
 
-        private static LocalizableString s_localizableMessageAndTitleCA2101 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
-        private static LocalizableString s_localizableDescriptionCA2101 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsDescription), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageAndTitleCA2101 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionCA2101 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsDescription), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
         internal static DiagnosticDescriptor RuleCA2101 = new DiagnosticDescriptor(RuleCA2101Id,
                                                                          s_localizableMessageAndTitleCA2101,
                                                                          s_localizableMessageAndTitleCA2101,
@@ -53,25 +56,25 @@ namespace System.Runtime.InteropServices.Analyzers
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
-                    var dllImportType = context.Compilation.GetTypeByMetadataName("System.Runtime.InteropServices.DllImportAttribute");
+                    INamedTypeSymbol dllImportType = context.Compilation.GetTypeByMetadataName("System.Runtime.InteropServices.DllImportAttribute");
                     if (dllImportType == null)
                     {
                         return;
                     }
 
-                    var marshalAsType = context.Compilation.GetTypeByMetadataName("System.Runtime.InteropServices.MarshalAsAttribute");
+                    INamedTypeSymbol marshalAsType = context.Compilation.GetTypeByMetadataName("System.Runtime.InteropServices.MarshalAsAttribute");
                     if (marshalAsType == null)
                     {
                         return;
                     }
 
-                    var stringBuilderType = context.Compilation.GetTypeByMetadataName("System.Text.StringBuilder");
+                    INamedTypeSymbol stringBuilderType = context.Compilation.GetTypeByMetadataName("System.Text.StringBuilder");
                     if (stringBuilderType == null)
                     {
                         return;
                     }
 
-                    var unmanagedType = context.Compilation.GetTypeByMetadataName("System.Runtime.InteropServices.UnmanagedType");
+                    INamedTypeSymbol unmanagedType = context.Compilation.GetTypeByMetadataName("System.Runtime.InteropServices.UnmanagedType");
                     if (unmanagedType == null)
                     {
                         return;
@@ -83,10 +86,10 @@ namespace System.Runtime.InteropServices.Analyzers
 
         private sealed class Analyzer
         {
-            private INamedTypeSymbol _dllImportType;
-            private INamedTypeSymbol _marshalAsType;
-            private INamedTypeSymbol _stringBuilderType;
-            private INamedTypeSymbol _unmanagedType;
+            private readonly INamedTypeSymbol _dllImportType;
+            private readonly INamedTypeSymbol _marshalAsType;
+            private readonly INamedTypeSymbol _stringBuilderType;
+            private readonly INamedTypeSymbol _unmanagedType;
 
             public Analyzer(
                 INamedTypeSymbol dllImportType,
@@ -108,31 +111,31 @@ namespace System.Runtime.InteropServices.Analyzers
                     return;
                 }
 
-                var dllImportData = methodSymbol.GetDllImportData();
+                DllImportData dllImportData = methodSymbol.GetDllImportData();
                 if (dllImportData == null)
                 {
                     return;
                 }
 
-                var dllAttribute = methodSymbol.GetAttributes().FirstOrDefault(attr => attr.AttributeClass.Equals(_dllImportType));
-                var defaultLocation = dllAttribute == null ? methodSymbol.Locations.FirstOrDefault() : GetAttributeLocation(dllAttribute);
+                AttributeData dllAttribute = methodSymbol.GetAttributes().FirstOrDefault(attr => attr.AttributeClass.Equals(_dllImportType));
+                Location defaultLocation = dllAttribute == null ? methodSymbol.Locations.FirstOrDefault() : GetAttributeLocation(dllAttribute);
 
                 // CA1401 - PInvoke methods should not be visible
                 if (methodSymbol.DeclaredAccessibility == Accessibility.Public || methodSymbol.DeclaredAccessibility == Accessibility.Protected)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(RuleCA1401, context.Symbol.Locations.First(l => l.IsInSource), methodSymbol.Name));
+                    context.ReportDiagnostic(context.Symbol.CreateDiagnostic(RuleCA1401, methodSymbol.Name));
                 }
 
                 // CA2101 - Specify marshalling for PInvoke string arguments
                 if (dllImportData.BestFitMapping != false)
                 {
                     bool appliedCA2101ToMethod = false;
-                    foreach (var parameter in methodSymbol.Parameters)
+                    foreach (IParameterSymbol parameter in methodSymbol.Parameters)
                     {
                         if (parameter.Type.SpecialType == SpecialType.System_String || parameter.Type.Equals(_stringBuilderType))
                         {
-                            var marshalAsAttribute = parameter.GetAttributes().FirstOrDefault(attr => attr.AttributeClass.Equals(_marshalAsType));
-                            var charSet = marshalAsAttribute == null
+                            AttributeData marshalAsAttribute = parameter.GetAttributes().FirstOrDefault(attr => attr.AttributeClass.Equals(_marshalAsType));
+                            CharSet? charSet = marshalAsAttribute == null
                                 ? dllImportData.CharacterSet
                                 : MarshalingToCharSet(GetParameterMarshaling(marshalAsAttribute));
 
@@ -142,7 +145,7 @@ namespace System.Runtime.InteropServices.Analyzers
                                 if (marshalAsAttribute != null)
                                 {
                                     // track the diagnostic on the [MarshalAs] attribute
-                                    var marshalAsLocation = GetAttributeLocation(marshalAsAttribute);
+                                    Location marshalAsLocation = GetAttributeLocation(marshalAsAttribute);
                                     context.ReportDiagnostic(Diagnostic.Create(RuleCA2101, marshalAsLocation));
                                 }
                                 else if (!appliedCA2101ToMethod)
@@ -168,7 +171,7 @@ namespace System.Runtime.InteropServices.Analyzers
             {
                 if (attributeData.ConstructorArguments.Length > 0)
                 {
-                    var argument = attributeData.ConstructorArguments.First();
+                    TypedConstant argument = attributeData.ConstructorArguments.First();
                     if (argument.Type.Equals(_unmanagedType))
                     {
                         return (UnmanagedType)argument.Value;

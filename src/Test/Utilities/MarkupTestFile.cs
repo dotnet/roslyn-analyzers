@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
 
@@ -65,7 +64,7 @@ namespace Roslyn.Test.Utilities
                 AddMatch(input, SpanEndString, currentIndexInInput, matches);
                 AddMatch(input, NamedSpanEndString, currentIndexInInput, matches);
 
-                var namedSpanStartMatch = s_namedSpanStartRegex.Match(input, currentIndexInInput);
+                Match namedSpanStartMatch = s_namedSpanStartRegex.Match(input, currentIndexInInput);
                 if (namedSpanStartMatch.Success)
                 {
                     matches.Add(Tuple.Create(namedSpanStartMatch.Index, namedSpanStartMatch.Value));
@@ -77,7 +76,7 @@ namespace Roslyn.Test.Utilities
                     break;
                 }
 
-                var orderedMatches = matches.OrderBy((t1, t2) => t1.Item1 - t2.Item1).ToList();
+                List<Tuple<int, string>> orderedMatches = matches.OrderBy((t1, t2) => t1.Item1 - t2.Item1).ToList();
                 if (orderedMatches.Count >= 2 &&
                     spanStartStack.Count > 0 &&
                     matches[0].Item1 == matches[1].Item1 - 1)
@@ -97,12 +96,12 @@ namespace Roslyn.Test.Utilities
                 }
 
                 // Order the matches by their index
-                var firstMatch = orderedMatches.First();
+                Tuple<int, string> firstMatch = orderedMatches.First();
 
-                var matchIndexInInput = firstMatch.Item1;
-                var matchString = firstMatch.Item2;
+                int matchIndexInInput = firstMatch.Item1;
+                string matchString = firstMatch.Item2;
 
-                var matchIndexInOutput = matchIndexInInput - inputOutputOffset;
+                int matchIndexInOutput = matchIndexInInput - inputOutputOffset;
                 outputBuilder.Append(input.Substring(currentIndexInInput, matchIndexInInput - currentIndexInInput));
 
                 currentIndexInInput = matchIndexInInput + matchString.Length;
@@ -138,7 +137,7 @@ namespace Roslyn.Test.Utilities
                         break;
 
                     case NamedSpanStartString:
-                        var name = namedSpanStartMatch.Groups[1].Value;
+                        string name = namedSpanStartMatch.Groups[1].Value;
                         spanStartStack.Push(Tuple.Create(matchIndexInOutput, name));
                         break;
 
@@ -188,15 +187,15 @@ namespace Roslyn.Test.Utilities
             IDictionary<string, IList<TextSpan>> spans,
             int finalIndex)
         {
-            var spanStartTuple = spanStartStack.Pop();
+            Tuple<int, string> spanStartTuple = spanStartStack.Pop();
 
-            var span = TextSpan.FromBounds(spanStartTuple.Item1, finalIndex);
+            TextSpan span = TextSpan.FromBounds(spanStartTuple.Item1, finalIndex);
             GetOrAdd(spans, spanStartTuple.Item2, _ => new List<TextSpan>()).Add(span);
         }
 
         private static void AddMatch(string input, string value, int currentIndex, List<Tuple<int, string>> matches)
         {
-            var index = input.IndexOf(value, currentIndex, StringComparison.Ordinal);
+            int index = input.IndexOf(value, currentIndex, StringComparison.Ordinal);
             if (index >= 0)
             {
                 matches.Add(Tuple.Create(index, value));

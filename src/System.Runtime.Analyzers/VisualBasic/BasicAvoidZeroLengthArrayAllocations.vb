@@ -5,7 +5,7 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace System.Runtime.Analyzers   
+Namespace System.Runtime.Analyzers
     ''' <summary>
     ''' RS0007: Avoid zero-length array allocations.
     ''' </summary>
@@ -13,5 +13,8 @@ Namespace System.Runtime.Analyzers
     Public NotInheritable Class BasicAvoidZeroLengthArrayAllocationsAnalyzer
         Inherits AvoidZeroLengthArrayAllocationsAnalyzer
 
+        Protected Overrides Function IsAttributeSyntax(node As SyntaxNode) As Boolean
+            Return TypeOf node Is AttributeSyntax
+        End Function
     End Class
 End Namespace

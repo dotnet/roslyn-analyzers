@@ -84,7 +84,7 @@ namespace Analyzer.Utilities
             return true;
         }
 
-        internal static string GetMemberName(ISymbol symbol)
+        public static string GetMemberName(ISymbol symbol)
         {
             // For Types
             if (symbol.Kind == SymbolKind.NamedType)

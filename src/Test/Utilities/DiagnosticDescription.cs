@@ -140,7 +140,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
                 }
                 else
                 {
-                    var args = d.Arguments;
+                    IReadOnlyList<object> args = d.Arguments;
                     if (args == null || args.Count == 0)
                     {
                         _arguments = null;
@@ -272,8 +272,8 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
                     return false;
 
                 // we'll compare the arguments as strings
-                var args1 = GetArgumentsAsStrings();
-                var args2 = d.GetArgumentsAsStrings();
+                IEnumerable<string> args1 = GetArgumentsAsStrings();
+                IEnumerable<string> args2 = d.GetArgumentsAsStrings();
                 if (_argumentOrderDoesNotMatter || d._argumentOrderDoesNotMatter)
                 {
                     if (args1.Count() != args2.Count() || !args1.SetEquals(args2))
@@ -340,7 +340,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
             if (_arguments != null)
             {
                 sb.Append(".WithArguments(");
-                var argumentStrings = GetArgumentsAsStrings().GetEnumerator();
+                IEnumerator<string> argumentStrings = GetArgumentsAsStrings().GetEnumerator();
                 for (int i = 0; argumentStrings.MoveNext(); i++)
                 {
                     sb.Append("\"");
@@ -383,7 +383,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
 
             const int CSharp = 1;
             const int VisualBasic = 2;
-            var language = actual.Any() && actual.First().Id.StartsWith("CS", StringComparison.Ordinal) ? CSharp : VisualBasic;
+            int language = actual.Any() && actual.First().Id.StartsWith("CS", StringComparison.Ordinal) ? CSharp : VisualBasic;
 
             if (language == CSharp)
             {
@@ -398,18 +398,18 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
             if (includeCompilerOutput)
             {
                 assertText.AppendLine("Compiler output:");
-                foreach (var d in actual)
+                foreach (Diagnostic d in actual)
                 {
                     Indent(assertText, 1);
                     assertText.AppendLine(d.ToString());
-                    var location = d.Location;
-                    var lineText = location.SourceTree.GetText().Lines.GetLineFromPosition(location.SourceSpan.Start).ToString();
+                    Location location = d.Location;
+                    string lineText = location.SourceTree.GetText().Lines.GetLineFromPosition(location.SourceSpan.Start).ToString();
                     assertText.AppendLine(lineText);
-                    var span = location.GetMappedLineSpan();
-                    var startPosition = span.StartLinePosition;
-                    var endPosition = span.EndLinePosition;
+                    FileLinePositionSpan span = location.GetMappedLineSpan();
+                    LinePosition startPosition = span.StartLinePosition;
+                    LinePosition endPosition = span.EndLinePosition;
                     assertText.Append(' ', startPosition.Character);
-                    var endCharacter = (startPosition.Line == endPosition.Line) ? endPosition.Character : lineText.Length;
+                    int endCharacter = (startPosition.Line == endPosition.Line) ? endPosition.Character : lineText.Length;
                     assertText.Append('~', endCharacter - startPosition.Character);
                     assertText.AppendLine();
                 }
@@ -421,7 +421,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
             var expectedText = new StringBuilder();
             for (i = 0; i < expected.Length; i++)
             {
-                var d = expected[i];
+                DiagnosticDescription d = expected[i];
 
                 AppendDiagnosticDescription(expectedText, d);
 
@@ -437,10 +437,10 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
             // write out the actual results as method calls (copy/paste this to update baseline)
             assertText.AppendLine("Actual:");
             var actualText = new StringBuilder();
-            var e = actual.GetEnumerator();
+            IEnumerator<Diagnostic> e = actual.GetEnumerator();
             for (i = 0; e.MoveNext(); i++)
             {
-                var d = e.Current;
+                Diagnostic d = e.Current;
                 string message = d.ToString();
                 if (Regex.Match(message, @"{\d+}").Success)
                 {
@@ -458,7 +458,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
                     Indent(assertText, 1);
                     assertText.Append("// ");
                     assertText.AppendLine(d.ToString());
-                    var l = d.Location;
+                    Location l = d.Location;
                     if (l.IsInSource)
                     {
                         Indent(assertText, 1);

@@ -72,7 +72,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Abstract types should not have constructors.
+        ///   Looks up a localized string similar to Abstract type {0} should not have constructors.
         /// </summary>
         internal static string AbstractTypesShouldNotHaveConstructorsMessage {
             get {
@@ -90,11 +90,29 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Change the accessibility of public constructors to protected..
+        /// </summary>
+        internal static string AbstractTypesShouldNotHavePublicConstructorsCodeFix {
+            get {
+                return ResourceManager.GetString("AbstractTypesShouldNotHavePublicConstructorsCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Because {0} exposes externally visible types, mark it with ComVisible(false) at the assembly level and then mark all types within the assembly that should be exposed to COM clients with ComVisible(true)..
         /// </summary>
         internal static string AddAssemblyLevelComVisibleFalse {
             get {
                 return ResourceManager.GetString("AddAssemblyLevelComVisibleFalse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Append .ConfigureAwait(false).
+        /// </summary>
+        internal static string AppendConfigureAwaitFalse {
+            get {
+                return ResourceManager.GetString("AppendConfigureAwaitFalse", resourceCulture);
             }
         }
         
@@ -216,16 +234,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #N/A.
-        /// </summary>
-        internal static string CancellationTokenParametersMustComeLastDescription {
-            get {
-                return ResourceManager.GetString("CancellationTokenParametersMustComeLastDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to CancellationToken parameters must come last.
+        ///   Looks up a localized string similar to Method &apos;{0}&apos; should take CancellationToken as the last parameter.
         /// </summary>
         internal static string CancellationTokenParametersMustComeLastMessage {
             get {
@@ -495,6 +504,33 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to While authoring a library where the consumer is not known and when there is no need for a SynchronizationContext,  consider using ConfigureAwait(false). Otherwise, the consumers of the library may face deadlocks by consuming the asynchronous methods in a blocking fashion..
+        /// </summary>
+        internal static string DoNotDirectlyAwaitATaskDescription {
+            get {
+                return ResourceManager.GetString("DoNotDirectlyAwaitATaskDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not directly await a Task without calling ConfigureAwait.
+        /// </summary>
+        internal static string DoNotDirectlyAwaitATaskMessage {
+            get {
+                return ResourceManager.GetString("DoNotDirectlyAwaitATaskMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not directly await a Task.
+        /// </summary>
+        internal static string DoNotDirectlyAwaitATaskTitle {
+            get {
+                return ResourceManager.GetString("DoNotDirectlyAwaitATaskTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove FlagsAttribute from enum..
         /// </summary>
         internal static string DoNotMarkEnumsWithFlagsCodeFix {
@@ -740,18 +776,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         /// <summary>
         ///   Looks up a localized string similar to If possible, make the underlying type of {0} System.Int32 instead of {1}..
         /// </summary>
-        internal static string EnumStorageShouldBeInt32MessageNotInt32 {
+        internal static string EnumStorageShouldBeInt32Message {
             get {
-                return ResourceManager.GetString("EnumStorageShouldBeInt32MessageNotInt32", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to If possible, make the underlying type of {0} Int32 instead of {1}. Otherwise consider Byte, Int16, or Int64..
-        /// </summary>
-        internal static string EnumStorageShouldBeInt32MessageNotIntegral {
-            get {
-                return ResourceManager.GetString("EnumStorageShouldBeInt32MessageNotIntegral", resourceCulture);
+                return ResourceManager.GetString("EnumStorageShouldBeInt32Message", resourceCulture);
             }
         }
         
@@ -828,38 +855,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change member names {0} and &apos;{1}&apos; so that they differ by more than case..
+        ///   Looks up a localized string similar to Names of &apos;{0}&apos; and &apos;{1}&apos; should differ by more than case..
         /// </summary>
-        internal static string IdentifiersShouldDifferByMoreThanCaseMessageMember {
+        internal static string IdentifiersShouldDifferByMoreThanCaseMessage {
             get {
-                return ResourceManager.GetString("IdentifiersShouldDifferByMoreThanCaseMessageMember", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change namespace names {0} and &apos;{1}&apos; so that they differ by more than case..
-        /// </summary>
-        internal static string IdentifiersShouldDifferByMoreThanCaseMessageNamespace {
-            get {
-                return ResourceManager.GetString("IdentifiersShouldDifferByMoreThanCaseMessageNamespace", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change parameter names {0} and &apos;{1}&apos; so that they differ by more than case..
-        /// </summary>
-        internal static string IdentifiersShouldDifferByMoreThanCaseMessageParameter {
-            get {
-                return ResourceManager.GetString("IdentifiersShouldDifferByMoreThanCaseMessageParameter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change type names {0} and &apos;{1}&apos; so that they differ by more than case..
-        /// </summary>
-        internal static string IdentifiersShouldDifferByMoreThanCaseMessageType {
-            get {
-                return ResourceManager.GetString("IdentifiersShouldDifferByMoreThanCaseMessageType", resourceCulture);
+                return ResourceManager.GetString("IdentifiersShouldDifferByMoreThanCaseMessage", resourceCulture);
             }
         }
         
@@ -891,20 +891,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to On method {0}, prefix generic type parameter name {1} with &apos;T&apos;..
+        ///   Looks up a localized string similar to Prefix generic type parameter name {0} with &apos;T&apos;..
         /// </summary>
-        internal static string IdentifiersShouldHaveCorrectPrefixMessageMethodTypeParameter {
+        internal static string IdentifiersShouldHaveCorrectPrefixMessageTypeParameter {
             get {
-                return ResourceManager.GetString("IdentifiersShouldHaveCorrectPrefixMessageMethodTypeParameter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to On type {0}, prefix generic type parameter name {1} with &apos;T&apos;..
-        /// </summary>
-        internal static string IdentifiersShouldHaveCorrectPrefixMessageTypeTypeParameter {
-            get {
-                return ResourceManager.GetString("IdentifiersShouldHaveCorrectPrefixMessageTypeTypeParameter", resourceCulture);
+                return ResourceManager.GetString("IdentifiersShouldHaveCorrectPrefixMessageTypeParameter", resourceCulture);
             }
         }
         
@@ -1297,15 +1288,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #N/A.
-        /// </summary>
-        internal static string ImplementIEquatableWhenOverridingObjectEqualsDescription {
-            get {
-                return ResourceManager.GetString("ImplementIEquatableWhenOverridingObjectEqualsDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Implement IEquatable when overriding Object.Equals.
         /// </summary>
         internal static string ImplementIEquatableWhenOverridingObjectEqualsMessage {
@@ -1315,7 +1297,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Implement IEquatable when overriding Object.Equals.
+        ///   Looks up a localized string similar to Type {0} should implement IEquatable&lt;T&gt; because it overrides Equals.
         /// </summary>
         internal static string ImplementIEquatableWhenOverridingObjectEqualsTitle {
             get {
@@ -1369,6 +1351,33 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Make &apos;{0}&apos; protected..
+        /// </summary>
+        internal static string InterfaceMethodsShouldBeCallableByChildTypesFix1 {
+            get {
+                return ResourceManager.GetString("InterfaceMethodsShouldBeCallableByChildTypesFix1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change &apos;{0}&apos; to a public interface implementation..
+        /// </summary>
+        internal static string InterfaceMethodsShouldBeCallableByChildTypesFix2 {
+            get {
+                return ResourceManager.GetString("InterfaceMethodsShouldBeCallableByChildTypesFix2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make the containing type &apos;{0}&apos; sealed..
+        /// </summary>
+        internal static string InterfaceMethodsShouldBeCallableByChildTypesFix3 {
+            get {
+                return ResourceManager.GetString("InterfaceMethodsShouldBeCallableByChildTypesFix3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Interface methods should be callable by child types.
         /// </summary>
         internal static string InterfaceMethodsShouldBeCallableByChildTypesMessage {
@@ -1383,6 +1392,24 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         internal static string InterfaceMethodsShouldBeCallableByChildTypesTitle {
             get {
                 return ResourceManager.GetString("InterfaceMethodsShouldBeCallableByChildTypesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make Class Static.
+        /// </summary>
+        internal static string MakeClassStatic {
+            get {
+                return ResourceManager.GetString("MakeClassStatic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make exception public.
+        /// </summary>
+        internal static string MakeExceptionPublic {
+            get {
+                return ResourceManager.GetString("MakeExceptionPublic", resourceCulture);
             }
         }
         
@@ -1828,6 +1855,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Override object.Equals.
+        /// </summary>
+        internal static string OverrideEqualsOnOverloadingOperatorEqualsCodeActionTitle {
+            get {
+                return ResourceManager.GetString("OverrideEqualsOnOverloadingOperatorEqualsCodeActionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A public type implements the equality operator but does not override Object.Equals..
         /// </summary>
         internal static string OverrideEqualsOnOverloadingOperatorEqualsDescription {
@@ -1851,6 +1887,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         internal static string OverrideEqualsOnOverloadingOperatorEqualsTitle {
             get {
                 return ResourceManager.GetString("OverrideEqualsOnOverloadingOperatorEqualsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Override object.GetHashCode.
+        /// </summary>
+        internal static string OverrideGetHashCodeOnOverridingEqualsCodeActionTitle {
+            get {
+                return ResourceManager.GetString("OverrideGetHashCodeOnOverridingEqualsCodeActionTitle", resourceCulture);
             }
         }
         
@@ -1918,6 +1963,24 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Type {0} should override Equals because it implements IEquatable&lt;T&gt;.
+        /// </summary>
+        internal static string OverrideObjectEqualsMessage {
+            get {
+                return ResourceManager.GetString("OverrideObjectEqualsMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Override Object.Equals(object) when implementing IEquatable&lt;T&gt;.
+        /// </summary>
+        internal static string OverrideObjectEqualsTitle {
+            get {
+                return ResourceManager.GetString("OverrideObjectEqualsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Consistent naming of parameters in an override hierarchy increases the usability of the method overrides. A parameter name in a derived method that differs from the name in the base declaration can cause confusion about whether the method is an override of the base method or a new overload of the method..
         /// </summary>
         internal static string ParameterNamesShouldMatchBaseDeclarationDescription {
@@ -1954,7 +2017,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pass system uri objects instead of strings.
+        ///   Looks up a localized string similar to Modify &apos;{0}&apos; to call &apos;{1}&apos; instead of &apos;{2}&apos;..
         /// </summary>
         internal static string PassSystemUriObjectsInsteadOfStringsMessage {
             get {
@@ -2071,20 +2134,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The property name {0} is confusing given the existence of inherited method {1}. Rename or remove this property..
+        ///   Looks up a localized string similar to The property name &apos;{0}&apos; is confusing given the existence of method &apos;{1}&apos;. Rename or remove one of these members..
         /// </summary>
-        internal static string PropertyNamesShouldNotMatchGetMethodsMessageBaseType {
+        internal static string PropertyNamesShouldNotMatchGetMethodsMessage {
             get {
-                return ResourceManager.GetString("PropertyNamesShouldNotMatchGetMethodsMessageBaseType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The property name {0} is confusing given the existence of method {1}. Rename or remove one of these members..
-        /// </summary>
-        internal static string PropertyNamesShouldNotMatchGetMethodsMessageSameType {
-            get {
-                return ResourceManager.GetString("PropertyNamesShouldNotMatchGetMethodsMessageSameType", resourceCulture);
+                return ResourceManager.GetString("PropertyNamesShouldNotMatchGetMethodsMessage", resourceCulture);
             }
         }
         
@@ -2107,7 +2161,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Provide ObsoleteAttribute message.
+        ///   Looks up a localized string similar to Provide a message for the ObsoleteAttribute that marks {0} as Obsolete.
         /// </summary>
         internal static string ProvideObsoleteAttributeMessageMessage {
             get {
@@ -2125,74 +2179,20 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A public or protected type contains only static members and is not declared by using the sealed (C# Reference) (NotInheritable) modifier. A type that is not meant to be inherited should be marked by using the sealed modifier to prevent its use as a base type..
+        ///   Looks up a localized string similar to Type &apos;{0}&apos; is a static holder type but is neither static nor NotInheritable.
         /// </summary>
-        internal static string StaticHolderTypesShouldBeSealedDescription {
+        internal static string StaticHolderTypeIsNotStatic {
             get {
-                return ResourceManager.GetString("StaticHolderTypesShouldBeSealedDescription", resourceCulture);
+                return ResourceManager.GetString("StaticHolderTypeIsNotStatic", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Because type {0} contains only &apos;static&apos; members, mark it as &apos;static&apos; to prevent consumers from inheriting from it..
+        ///   Looks up a localized string similar to Static holder types should be Static or NotInheritable.
         /// </summary>
-        internal static string StaticHolderTypesShouldBeSealedMessageCSharp20 {
+        internal static string StaticHolderTypesShouldBeStaticOrNotInheritable {
             get {
-                return ResourceManager.GetString("StaticHolderTypesShouldBeSealedMessageCSharp20", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Because type {0} contains only &apos;static&apos; (&apos;Shared&apos; in Visual Basic) members, mark it as &apos;sealed&apos; (&apos;NotInheritable&apos; in Visual Basic) to prevent consumers from inheriting from it..
-        /// </summary>
-        internal static string StaticHolderTypesShouldBeSealedMessageDefault {
-            get {
-                return ResourceManager.GetString("StaticHolderTypesShouldBeSealedMessageDefault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Static holder types should be sealed.
-        /// </summary>
-        internal static string StaticHolderTypesShouldBeSealedTitle {
-            get {
-                return ResourceManager.GetString("StaticHolderTypesShouldBeSealedTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A public or nested public type declares only static members and has a public or protected default constructor. The constructor is unnecessary because calling static members does not require an instance of the type. The string overload should call the uniform resource identifier (URI) overload by using the string argument for safety and security..
-        /// </summary>
-        internal static string StaticHolderTypesShouldNotHaveConstructorsDescription {
-            get {
-                return ResourceManager.GetString("StaticHolderTypesShouldNotHaveConstructorsDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Because type {0} contains only &apos;static&apos; members, mark it as &apos;static&apos; to prevent the compiler from adding a default public constructor..
-        /// </summary>
-        internal static string StaticHolderTypesShouldNotHaveConstructorsMessageCSharp20 {
-            get {
-                return ResourceManager.GetString("StaticHolderTypesShouldNotHaveConstructorsMessageCSharp20", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Because type {0} contains only &apos;static&apos; (&apos;Shared&apos; in Visual Basic) members, add a default private constructor to prevent the compiler from adding a default public constructor..
-        /// </summary>
-        internal static string StaticHolderTypesShouldNotHaveConstructorsMessageDefault {
-            get {
-                return ResourceManager.GetString("StaticHolderTypesShouldNotHaveConstructorsMessageDefault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Static holder types should not have constructors.
-        /// </summary>
-        internal static string StaticHolderTypesShouldNotHaveConstructorsTitle {
-            get {
-                return ResourceManager.GetString("StaticHolderTypesShouldNotHaveConstructorsTitle", resourceCulture);
+                return ResourceManager.GetString("StaticHolderTypesShouldBeStaticOrNotInheritable", resourceCulture);
             }
         }
         
@@ -2409,6 +2409,33 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         internal static string UseGenericEventHandlerInstancesTitle {
             get {
                 return ResourceManager.GetString("UseGenericEventHandlerInstancesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the Object type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method..
+        /// </summary>
+        internal static string UseIntegralOrStringArgumentForIndexersDescription {
+            get {
+                return ResourceManager.GetString("UseIntegralOrStringArgumentForIndexersDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use Integral Or String Argument For Indexers.
+        /// </summary>
+        internal static string UseIntegralOrStringArgumentForIndexersMessage {
+            get {
+                return ResourceManager.GetString("UseIntegralOrStringArgumentForIndexersMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use Integral Or String Argument For Indexers.
+        /// </summary>
+        internal static string UseIntegralOrStringArgumentForIndexersTitle {
+            get {
+                return ResourceManager.GetString("UseIntegralOrStringArgumentForIndexersTitle", resourceCulture);
             }
         }
         

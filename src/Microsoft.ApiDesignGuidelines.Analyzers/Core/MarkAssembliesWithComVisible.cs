@@ -55,13 +55,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             if (AssemblyHasPublicTypes(context.Compilation.Assembly))
             {
-                var comVisibleAttributeSymbol = WellKnownTypes.ComVisibleAttribute(context.Compilation);
+                INamedTypeSymbol comVisibleAttributeSymbol = WellKnownTypes.ComVisibleAttribute(context.Compilation);
                 if (comVisibleAttributeSymbol == null)
                 {
                     return;
                 }
 
-                var attributeInstance = context.Compilation.Assembly.GetAttributes().FirstOrDefault(a => a.AttributeClass.Equals(comVisibleAttributeSymbol));
+                AttributeData attributeInstance = context.Compilation.Assembly.GetAttributes().FirstOrDefault(a => a.AttributeClass.Equals(comVisibleAttributeSymbol));
 
                 if (attributeInstance != null)
                 {

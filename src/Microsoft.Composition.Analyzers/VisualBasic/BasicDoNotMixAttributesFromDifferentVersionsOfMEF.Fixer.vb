@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.Composition.Analyzers     
+Namespace Microsoft.Composition.Analyzers
     ''' <summary>
     ''' RS0006: Do not mix attributes from different versions of MEF
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicDoNotMixAttributesFromDifferentVersionsOfMEFFixer
-        Inherits DoNotMixAttributesFromDifferentVersionsOfMEFFixer 
+        Inherits DoNotMixAttributesFromDifferentVersionsOfMEFFixer
 
     End Class
 End Namespace

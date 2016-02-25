@@ -46,25 +46,25 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
-                    var eventHandler = WellKnownTypes.EventHandler(context.Compilation);
+                    INamedTypeSymbol eventHandler = WellKnownTypes.EventHandler(context.Compilation);
                     if (eventHandler == null)
                     {
                         return;
                     }
 
-                    var genericEventHandler = WellKnownTypes.GenericEventHandler(context.Compilation);
+                    INamedTypeSymbol genericEventHandler = WellKnownTypes.GenericEventHandler(context.Compilation);
                     if (genericEventHandler == null)
                     {
                         return;
                     }
 
-                    var eventArgs = WellKnownTypes.EventArgs(context.Compilation);
+                    INamedTypeSymbol eventArgs = WellKnownTypes.EventArgs(context.Compilation);
                     if (eventArgs == null)
                     {
                         return;
                     }
 
-                    var comSourceInterfacesAttribute = WellKnownTypes.ComSourceInterfaceAttribute(context.Compilation);
+                    INamedTypeSymbol comSourceInterfacesAttribute = WellKnownTypes.ComSourceInterfaceAttribute(context.Compilation);
                     if (comSourceInterfacesAttribute == null)
                     {
                         return;

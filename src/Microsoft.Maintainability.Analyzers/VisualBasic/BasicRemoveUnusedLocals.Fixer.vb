@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.Maintainability.Analyzers     
+Namespace Microsoft.Maintainability.Analyzers
     ''' <summary>
     ''' CA1804: Remove unused locals
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicRemoveUnusedLocalsFixer
-        Inherits RemoveUnusedLocalsFixer 
+        Inherits RemoveUnusedLocalsFixer
 
     End Class
 End Namespace

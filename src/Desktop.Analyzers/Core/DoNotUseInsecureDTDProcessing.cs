@@ -653,6 +653,54 @@ namespace Desktop.Analyzers
                 }
             }
 
+            private void AnalyzeXmlTextReaderProperties(OperationAnalysisContext context, ISymbol assignedSymbol, IAssignmentExpression expression, bool isXmlTextReaderXmlResolverProperty, bool isXmlTextReaderDtdProcessingProperty)
+            {
+                XmlTextReaderEnvironment env = null;
+                _xmlTextReaderEnvironments.TryGetValue(assignedSymbol, out env);
+
+                if (env == null)
+                {
+                    env = new XmlTextReaderEnvironment(_isFrameworkSecure);
+                }
+
+                if (isXmlTextReaderXmlResolverProperty)
+                {
+                    env.IsXmlResolverSet = true;
+                }
+                else
+                {
+                    env.IsDtdProcessingSet = true;
+                }
+
+                IConversionExpression conv = expression.Value as IConversionExpression;
+                ILiteralExpression literal = conv?.Operand as ILiteralExpression;
+
+                if (isXmlTextReaderXmlResolverProperty && SecurityDiagnosticHelpers.IsXmlSecureResolverType(conv.Operand.Type, _xmlTypes))
+                {
+                    env.IsSecureResolver = true;
+                }
+                else if (literal != null && literal.ConstantValue.HasValue && literal.ConstantValue.Value == null)
+                {
+                    env.IsSecureResolver = true;
+                }
+                else if (isXmlTextReaderDtdProcessingProperty && !SecurityDiagnosticHelpers.IsExpressionEqualsDtdProcessingParse(expression.Value))
+                {
+                    env.IsDtdProcessingDisabled = true;
+                }
+                else
+                {
+                    // Generate a warning whenever the XmlResolver or DtdProcessing property is set to an insecure value
+                    Diagnostic diag = Diagnostic.Create(
+                        RuleDoNotUseInsecureDTDProcessing,
+                        expression.Syntax.GetLocation(),
+                        SecurityDiagnosticHelpers.GetLocalizableResourceString(
+                            nameof(DesktopAnalyzersResources.XmlTextReaderSetInsecureResolutionMessage)
+                        )
+                    );
+                    context.ReportDiagnostic(diag);
+                }
+            }
+
             private void AnalyzeAssignment(OperationAnalysisContext context)
             {
                 IAssignmentExpression expression = context.Operation as IAssignmentExpression;
@@ -690,50 +738,7 @@ namespace Desktop.Analyzers
                                                                   SecurityDiagnosticHelpers.IsXmlTextReaderDtdProcessingPropertyDerived(propRef.Property, _xmlTypes);
                         if (isXmlTextReaderXmlResolverProperty || isXmlTextReaderDtdProcessingProperty)
                         {
-                            XmlTextReaderEnvironment env = null;
-                            _xmlTextReaderEnvironments.TryGetValue(assignedSymbol, out env);
-
-                            if(env == null)
-                            {
-                                env = new XmlTextReaderEnvironment(_isFrameworkSecure);
-                            }
-
-                            if (isXmlTextReaderXmlResolverProperty)
-                            {
-                                env.IsXmlResolverSet = true;
-                            }
-                            else
-                            {
-                                env.IsDtdProcessingSet = true;
-                            }
-
-                            IConversionExpression conv = expression.Value as IConversionExpression;
-                            ILiteralExpression literal = conv?.Operand as ILiteralExpression;
-
-                            if (isXmlTextReaderXmlResolverProperty && SecurityDiagnosticHelpers.IsXmlSecureResolverType(conv.Operand.Type, _xmlTypes))
-                            {
-                                env.IsSecureResolver = true;
-                            }
-                            else if (literal != null && literal.ConstantValue.HasValue && literal.ConstantValue.Value == null)
-                            {
-                                env.IsSecureResolver = true;
-                            }
-                            else if (isXmlTextReaderDtdProcessingProperty && !SecurityDiagnosticHelpers.IsExpressionEqualsDtdProcessingParse(expression.Value))
-                            {
-                                env.IsDtdProcessingDisabled = true;
-                            }
-                            else
-                            {
-                                // Generate a warning whenever the XmlResolver or DtdProcessing property is set to an insecure value
-                                Diagnostic diag = Diagnostic.Create(
-                                    RuleDoNotUseInsecureDTDProcessing,
-                                    expression.Syntax.GetLocation(),
-                                    SecurityDiagnosticHelpers.GetLocalizableResourceString(
-                                        nameof(DesktopAnalyzersResources.XmlTextReaderSetInsecureResolutionMessage)
-                                    )
-                                );
-                                context.ReportDiagnostic(diag);
-                            }
+                            AnalyzeXmlTextReaderProperties(context, assignedSymbol, expression, isXmlTextReaderXmlResolverProperty, isXmlTextReaderDtdProcessingProperty);
                         }
                         else
                         {

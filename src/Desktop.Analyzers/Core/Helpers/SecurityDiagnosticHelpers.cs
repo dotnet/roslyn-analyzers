@@ -22,7 +22,7 @@ namespace Desktop.Analyzers
 
         public static bool IsXmlDocumentXmlResolverPropertyDerived(ISymbol symbol, CompilationSecurityTypes xmlTypes)
         {
-            return IsSpecifiedPropertyDerived(symbol, xmlTypes.XmlDocument, SecurityMemberNames.XmlResolver);  
+            return IsSpecifiedPropertyDerived(symbol, xmlTypes.XmlDocument, SecurityMemberNames.XmlResolver);
         }
 
         public static bool IsXmlDocumentXmlResolverProperty(ISymbol symbol, CompilationSecurityTypes xmlTypes)

@@ -154,7 +154,7 @@ namespace Analyzer.Utilities
         {
             return typeSymbol.Accept(MinimalAccessibilityVisitor.Instance);
         }
-        
+
         private class MinimalAccessibilityVisitor : SymbolVisitor<Accessibility>
         {
             public static readonly SymbolVisitor<Accessibility> Instance = new MinimalAccessibilityVisitor();

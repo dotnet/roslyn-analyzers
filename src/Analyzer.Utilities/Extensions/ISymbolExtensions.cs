@@ -147,28 +147,6 @@ namespace Analyzer.Utilities
         {
             return member != null && member.Kind == SymbolKind.Field && member.MatchMemberByName(type, name);
         }
-
-        public static ITypeSymbol GetVariableSymbolType(this ISymbol symbol)
-        {
-            if (symbol == null)
-            {
-                return null;
-            }
-            SymbolKind kind = symbol.Kind;
-            switch (kind)
-            {
-                case SymbolKind.Field:
-                    return ((IFieldSymbol)symbol).Type;
-                case SymbolKind.Local:
-                    return ((ILocalSymbol)symbol).Type;
-                case SymbolKind.Parameter:
-                    return ((IParameterSymbol)symbol).Type;
-                case SymbolKind.Property:
-                    return ((IPropertySymbol)symbol).Type;
-                default:
-                    return null;
-            }
-        }
     }
 
     public enum SymbolVisibility

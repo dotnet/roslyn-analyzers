@@ -39,16 +39,17 @@ namespace Desktop.Analyzers
         private void RegisterAnalyzer(OperationBlockStartAnalysisContext context, CompilationSecurityTypes types, Version frameworkVersion)
         {
             var analyzer = new Analyzer(types, frameworkVersion);
-            context.RegisterOperationAction(analyzer.AnalyzeOperation,
-                                OperationKind.InvocationExpression,
-                                OperationKind.AssignmentExpression,
-                                OperationKind.VariableDeclaration,
-                                OperationKind.ObjectCreationExpression,
-                                OperationKind.FieldInitializerAtDeclaration
-                                );
+            context.RegisterOperationAction(
+                analyzer.AnalyzeOperation,
+                OperationKind.InvocationExpression,
+                OperationKind.AssignmentExpression,
+                OperationKind.VariableDeclaration,
+                OperationKind.ObjectCreationExpression,
+                OperationKind.FieldInitializerAtDeclaration
+            );
             context.RegisterOperationBlockEndAction(
                 analyzer.AnalyzeOperationBlock
-                );
+            );
         }
 
 
@@ -62,7 +63,6 @@ namespace Desktop.Analyzers
 
                     if (ReferencesAnyTargetType(_xmlTypes))
                     {
-                        // context.RegisterSemanticModelAction(semanticModel => { model = semanticModel.SemanticModel; });
                         Version version = SecurityDiagnosticHelpers.GetDotNetFrameworkVersion(compilation);
 
                         if (version != null)
@@ -428,9 +428,9 @@ namespace Desktop.Analyzers
                             }
                             else // Non secure resolvers
                             {
-                                IObjectCreationExpression objCreate = operation.Operand as IObjectCreationExpression;
+                                IObjectCreationExpression xmlResolverObjCreated = operation.Operand as IObjectCreationExpression;
 
-                                if (objCreate != null)
+                                if (xmlResolverObjCreated != null)
                                 {
                                     Diagnostic diag = Diagnostic.Create(
                                         RuleDoNotUseInsecureDTDProcessing,
@@ -447,7 +447,7 @@ namespace Desktop.Analyzers
                         }
                         else
                         {
-                            AnalyzeSetProperties(context, prop.InitializedProperty, prop.Syntax.GetLocation());
+                            AnalyzeNeverSetProperties(context, prop.InitializedProperty, prop.Syntax.GetLocation());
                         }
                     }
                 }
@@ -523,7 +523,7 @@ namespace Desktop.Analyzers
                     }
                 }
 
-                // if the XmlResolver or Dtdprocessing property is explicitly set when created, and is to an insecure value, or a temp object, generate a warning
+                // if the XmlResolver or Dtdprocessing property is explicitly set when created, and is to an insecure value, generate a warning
                 if ((env.IsXmlResolverSet && !env.IsSecureResolver) ||
                     (env.IsDtdProcessingSet && !env.IsDtdProcessingDisabled))
                 {
@@ -536,12 +536,13 @@ namespace Desktop.Analyzers
                     );
                     context.ReportDiagnostic(diag);
                 }
-                // if the XmlResolver or Dtdprocessing property is not explicitly set when constructed for XmlTextReader type, add env to the dictionary.
-                else if (!(env.IsDtdProcessingSet && env.IsXmlResolverSet) && variable != null)
+                // if the XmlResolver or Dtdprocessing property is not explicitly set when constructed for a non-temp XmlTextReader object, add env to the dictionary.
+                else if (variable != null && !(env.IsDtdProcessingSet && env.IsXmlResolverSet))
                 {
                     _xmlTextReaderEnvironments[variable] = env;
                 }
-                else if (!(env.IsDtdProcessingSet && env.IsXmlResolverSet) || !env.IsDtdProcessingDisabled)
+                // if the is not set or set to Parse for a temporary object, report right now.
+                else if (variable == null && !(env.IsDtdProcessingSet && env.IsXmlResolverSet && env.IsDtdProcessingDisabled && env.IsSecureResolver))
                 {
                     Diagnostic diag = Diagnostic.Create(
                         RuleDoNotUseInsecureDTDProcessing,
@@ -626,16 +627,11 @@ namespace Desktop.Analyzers
                 {
                     isSecureResolver = true;
                 }
-                else if (conv != null && conv.Operand as ILiteralExpression != null)
+                else if (conv != null && SecurityDiagnosticHelpers.IsExpressionEqualsNull(conv.Operand))
                 {
-                    ILiteralExpression literal = conv.Operand as ILiteralExpression;
-
-                    if (literal.ConstantValue.HasValue && literal.ConstantValue.Value == null)
-                    {
-                        isSecureResolver = true;
-                    }
+                    isSecureResolver = true;
                 }
-                else // Assign XmlDocument's XmlResolver to an insecure value
+                else // Assigning XmlDocument's XmlResolver to an insecure value
                 {
                     Diagnostic diag = Diagnostic.Create(
                                 RuleDoNotUseInsecureDTDProcessing,
@@ -673,19 +669,18 @@ namespace Desktop.Analyzers
                 }
 
                 IConversionExpression conv = expression.Value as IConversionExpression;
-                ILiteralExpression literal = conv?.Operand as ILiteralExpression;
-
-                if (isXmlTextReaderXmlResolverProperty && SecurityDiagnosticHelpers.IsXmlSecureResolverType(conv.Operand.Type, _xmlTypes))
+                
+                if (isXmlTextReaderXmlResolverProperty && conv != null && SecurityDiagnosticHelpers.IsXmlSecureResolverType(conv.Operand.Type, _xmlTypes))
                 {
                     env.IsSecureResolver = true;
                 }
-                else if (literal != null && literal.ConstantValue.HasValue && literal.ConstantValue.Value == null)
+                else if (isXmlTextReaderXmlResolverProperty && conv != null && SecurityDiagnosticHelpers.IsExpressionEqualsNull(conv.Operand))
                 {
                     env.IsSecureResolver = true;
                 }
-                else if (isXmlTextReaderDtdProcessingProperty && !SecurityDiagnosticHelpers.IsExpressionEqualsDtdProcessingParse(expression.Value))
+                else if (isXmlTextReaderDtdProcessingProperty && conv == null && !SecurityDiagnosticHelpers.IsExpressionEqualsDtdProcessingParse(expression.Value))
                 {
-                    env.IsDtdProcessingDisabled = true;
+                    env.IsDtdProcessingDisabled = !SecurityDiagnosticHelpers.IsExpressionEqualsDtdProcessingParse(expression.Value);
                 }
                 else
                 {
@@ -740,16 +735,55 @@ namespace Desktop.Analyzers
                         {
                             AnalyzeXmlTextReaderProperties(context, assignedSymbol, expression, isXmlTextReaderXmlResolverProperty, isXmlTextReaderDtdProcessingProperty);
                         }
+                        else if(SecurityDiagnosticHelpers.IsXmlReaderSettingsType(propRef.Instance.Type, _xmlTypes))
+                        {
+                            XmlReaderSettingsEnvironment env = null;
+                            
+                            if(!_xmlReaderSettingsEnvironments.TryGetValue(assignedSymbol, out env))
+                            {
+                                return;
+                            }
+
+                            IConversionExpression operation = expression.Value as IConversionExpression;
+
+                            if (operation == null)
+                            {
+                                return;
+                            }
+
+                            if (SecurityDiagnosticHelpers.IsXmlReaderSettingsXmlResolverProperty(
+                                propRef.Property,
+                                _xmlTypes)
+                            )
+                            {
+                                if (SecurityDiagnosticHelpers.IsXmlSecureResolverType(operation.Operand.Type, _xmlTypes))
+                                {
+                                    env.IsSecureResolver = true;
+                                }
+                                else if (SecurityDiagnosticHelpers.IsExpressionEqualsNull(operation.Operand))
+                                {
+                                    env.IsSecureResolver = true;
+                                }
+                            }
+                            else if (SecurityDiagnosticHelpers.IsXmlReaderSettingsDtdProcessingProperty(propRef.Property, _xmlTypes))
+                            {
+                                env.IsDtdProcessingDisabled = !SecurityDiagnosticHelpers.IsExpressionEqualsDtdProcessingParse(operation.Operand);
+                            }
+                            else if (SecurityDiagnosticHelpers.IsXmlReaderSettingsMaxCharactersFromEntitiesProperty(propRef.Property, _xmlTypes))
+                            {
+                                env.IsMaxCharactersFromEntitiesLimited = !SecurityDiagnosticHelpers.IsExpressionEqualsIntZero(operation.Operand);
+                            }
+                        }
                         else
                         {
-                            AnalyzeSetProperties(context, propRef.Property, expression.Syntax.GetLocation());
+                            AnalyzeNeverSetProperties(context, propRef.Property, expression.Syntax.GetLocation());
                         }
 
                     }
                 }
             }
 
-            private void AnalyzeSetProperties(OperationAnalysisContext context, IPropertySymbol property, Location location)
+            private void AnalyzeNeverSetProperties(OperationAnalysisContext context, IPropertySymbol property, Location location)
             {
                 if (property.MatchPropertyDerivedByName(_xmlTypes.XmlDocument, SecurityMemberNames.InnerXml))
                 {

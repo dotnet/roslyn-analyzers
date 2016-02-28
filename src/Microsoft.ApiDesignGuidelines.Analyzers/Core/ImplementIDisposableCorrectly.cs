@@ -1,12 +1,11 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using System.Linq;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Semantics;
-using Analyzer.Utilities;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
@@ -125,7 +124,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             analysisContext.RegisterCompilationStartAction(
                 context =>
                 {
-                    var disposableType = WellKnownTypes.IDisposable(context.Compilation);
+                    INamedTypeSymbol disposableType = WellKnownTypes.IDisposable(context.Compilation);
                     if (disposableType == null)
                     {
                         return;
@@ -137,7 +136,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         return;
                     }
 
-                    var garbageCollectorType = context.Compilation.GetTypeByMetadataName(GarbageCollectorTypeName);
+                    INamedTypeSymbol garbageCollectorType = context.Compilation.GetTypeByMetadataName(GarbageCollectorTypeName);
                     if (garbageCollectorType == null)
                     {
                         return;
@@ -159,7 +158,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             if (method.Name == DisposeMethodName && method.MethodKind == MethodKind.Ordinary &&
                 method.ReturnsVoid && method.Parameters.Length == 1)
             {
-                var parameter = method.Parameters[0];
+                IParameterSymbol parameter = method.Parameters[0];
                 if (parameter.Type != null && parameter.Type.SpecialType == SpecialType.System_Boolean && parameter.RefKind == RefKind.None)
                 {
                     return true;
@@ -174,17 +173,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         /// </summary>
         private class Analyzer
         {
-            private readonly Compilation compilation;
-            private readonly INamedTypeSymbol disposableType;
-            private readonly IMethodSymbol disposeInterfaceMethod;
-            private readonly IMethodSymbol suppressFinalizeMethod;
+            private readonly Compilation _compilation;
+            private readonly INamedTypeSymbol _disposableType;
+            private readonly IMethodSymbol _disposeInterfaceMethod;
+            private readonly IMethodSymbol _suppressFinalizeMethod;
 
             public Analyzer(Compilation compilation, INamedTypeSymbol disposableType, IMethodSymbol disposeInterfaceMethod, IMethodSymbol suppressFinalizeMethod)
             {
-                this.compilation = compilation;
-                this.disposableType = disposableType;
-                this.disposeInterfaceMethod = disposeInterfaceMethod;
-                this.suppressFinalizeMethod = suppressFinalizeMethod;
+                _compilation = compilation;
+                _disposableType = disposableType;
+                _disposeInterfaceMethod = disposeInterfaceMethod;
+                _suppressFinalizeMethod = suppressFinalizeMethod;
             }
 
             public void Initialize(CompilationStartAnalysisContext context)
@@ -198,11 +197,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 var type = context.Symbol as INamedTypeSymbol;
                 if (type != null && type.TypeKind == TypeKind.Class)
                 {
-                    var implementsDisposableInBaseType = ImplementsDisposableInBaseType(type);
+                    bool implementsDisposableInBaseType = ImplementsDisposableInBaseType(type);
 
                     if (ImplementsDisposableDirectly(type))
                     {
-                        var disposeMethod = FindDisposeMethod(type);
+                        IMethodSymbol disposeMethod = FindDisposeMethod(type);
                         if (disposeMethod != null)
                         {
                             // This is difference from FxCop implementation
@@ -217,7 +216,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                             if (!type.IsSealed && type.DeclaredAccessibility != Accessibility.Private)
                             {
-                                var disposeBoolMethod = FindDisposeBoolMethod(type);
+                                IMethodSymbol disposeBoolMethod = FindDisposeBoolMethod(type);
                                 if (disposeBoolMethod != null)
                                 {
                                     CheckDisposeBoolSignatureRule(disposeBoolMethod, type, context);
@@ -228,7 +227,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                 }
                             }
                         }
-                        else if (type.Interfaces.Contains(disposableType))
+                        else if (type.Interfaces.Contains(_disposableType))
                         {
                             // Reports violation, when type mentions IDisposable as implemented interface,
                             // even when Dispose method is not implemented, but inherited from base type
@@ -240,7 +239,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                     if (implementsDisposableInBaseType)
                     {
-                        foreach (var method in type.GetMembers().OfType<IMethodSymbol>())
+                        foreach (IMethodSymbol method in type.GetMembers().OfType<IMethodSymbol>())
                         {
                             CheckDisposeOverrideRule(method, type, context);
                         }
@@ -258,17 +257,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return;
                 }
 
-                var isFinalizerMethod = method.IsFinalizer();
-                var isDisposeMethod = method.Name == DisposeMethodName;
+                bool isFinalizerMethod = method.IsFinalizer();
+                bool isDisposeMethod = method.Name == DisposeMethodName;
                 if (isFinalizerMethod || isDisposeMethod)
                 {
-                    var type = method.ContainingType;
+                    INamedTypeSymbol type = method.ContainingType;
                     if (type != null && type.TypeKind == TypeKind.Class &&
                         !type.IsSealed && type.DeclaredAccessibility != Accessibility.Private)
                     {
                         if (ImplementsDisposableDirectly(type))
                         {
-                            var disposeMethod = FindDisposeMethod(type);
+                            IMethodSymbol disposeMethod = FindDisposeMethod(type);
                             if (disposeMethod != null)
                             {
                                 if (method == disposeMethod)
@@ -329,8 +328,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 if (method.MethodKind == MethodKind.Ordinary && method.IsOverride && method.ReturnsVoid && method.Parameters.Length == 0)
                 {
-                    var isDisposeOverride = false;
-                    for (var m = method.OverriddenMethod; m != null; m = m.OverriddenMethod)
+                    bool isDisposeOverride = false;
+                    for (IMethodSymbol m = method.OverriddenMethod; m != null; m = m.OverriddenMethod)
                     {
                         if (m == FindDisposeMethod(m.ContainingType))
                         {
@@ -382,7 +381,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             /// </summary>
             private void CheckDisposeImplementationRule(IMethodSymbol method, INamedTypeSymbol type, ImmutableArray<IOperation> operationBlocks, OperationBlockAnalysisContext context)
             {
-                var validator = new DisposeImplementationValidator(suppressFinalizeMethod, type);
+                var validator = new DisposeImplementationValidator(_suppressFinalizeMethod, type);
                 if (!validator.Validate(operationBlocks))
                 {
                     context.ReportDiagnostic(method.CreateDiagnostic(DisposeImplementationRule, $"{type.Name}.{method.Name}"));
@@ -403,7 +402,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             /// </summary>
             private bool ImplementsDisposableDirectly(ITypeSymbol type)
             {
-                return type.Interfaces.Any(i => i.Inherits(disposableType));
+                return type.Interfaces.Any(i => i.Inherits(_disposableType));
             }
 
             /// <summary>
@@ -411,7 +410,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             /// </summary>
             private bool ImplementsDisposableInBaseType(ITypeSymbol type)
             {
-                return type.BaseType != null && type.BaseType.AllInterfaces.Contains(disposableType);
+                return type.BaseType != null && type.BaseType.AllInterfaces.Contains(_disposableType);
             }
 
             /// <summary>
@@ -420,7 +419,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             /// </summary>
             private IMethodSymbol FindDisposeMethod(INamedTypeSymbol type)
             {
-                var disposeMethod = type.FindImplementationForInterfaceMember(disposeInterfaceMethod) as IMethodSymbol;
+                var disposeMethod = type.FindImplementationForInterfaceMember(_disposeInterfaceMethod) as IMethodSymbol;
                 if (disposeMethod != null && disposeMethod.ContainingType == type)
                 {
                     return disposeMethod;
@@ -446,28 +445,28 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             // this type will be created per compilation 
             // this is actually a bug - https://github.com/dotnet/roslyn-analyzers/issues/845
 #pragma warning disable RS1008
-            private readonly IMethodSymbol suppressFinalizeMethod;
-            private readonly INamedTypeSymbol type;
+            private readonly IMethodSymbol _suppressFinalizeMethod;
+            private readonly INamedTypeSymbol _type;
 #pragma warning restore RS1008
-            private bool callsDisposeBool;
-            private bool callsSuppressFinalize;
+            private bool _callsDisposeBool;
+            private bool _callsSuppressFinalize;
 
             public DisposeImplementationValidator(IMethodSymbol suppressFinalizeMethod, INamedTypeSymbol type)
             {
-                callsDisposeBool = false;
-                callsSuppressFinalize = false;
-                this.suppressFinalizeMethod = suppressFinalizeMethod;
-                this.type = type;
+                _callsDisposeBool = false;
+                _callsSuppressFinalize = false;
+                _suppressFinalizeMethod = suppressFinalizeMethod;
+                _type = type;
             }
 
             public bool Validate(ImmutableArray<IOperation> operations)
             {
-                callsDisposeBool = false;
-                callsSuppressFinalize = false;
+                _callsDisposeBool = false;
+                _callsSuppressFinalize = false;
 
                 if (ValidateOperations(operations))
                 {
-                    return callsDisposeBool && callsSuppressFinalize;
+                    return _callsDisposeBool && _callsSuppressFinalize;
                 }
 
                 return false;
@@ -475,7 +474,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             private bool ValidateOperations(ImmutableArray<IOperation> operations)
             {
-                foreach (var operation in operations)
+                foreach (IOperation operation in operations)
                 {
                     if (!ValidateOperation(operation))
                     {
@@ -512,22 +511,22 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
 
                 var invocationExpression = (IInvocationExpression)expressionStatement.Expression;
-                if (!callsDisposeBool)
+                if (!_callsDisposeBool)
                 {
-                    var result = IsDisposeBoolCall(invocationExpression);
+                    bool result = IsDisposeBoolCall(invocationExpression);
                     if (result)
                     {
-                        callsDisposeBool = true;
+                        _callsDisposeBool = true;
                     }
 
                     return result;
                 }
-                else if (!callsSuppressFinalize)
+                else if (!_callsSuppressFinalize)
                 {
-                    var result = IsSuppressFinalizeCall(invocationExpression);
+                    bool result = IsSuppressFinalizeCall(invocationExpression);
                     if (result)
                     {
-                        callsSuppressFinalize = true;
+                        _callsSuppressFinalize = true;
                     }
 
                     return result;
@@ -539,7 +538,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             private bool IsDisposeBoolCall(IInvocationExpression invocationExpression)
             {
                 if (invocationExpression.TargetMethod == null ||
-                    invocationExpression.TargetMethod.ContainingType != type ||
+                    invocationExpression.TargetMethod.ContainingType != _type ||
                     !IsDisposeBoolMethod(invocationExpression.TargetMethod))
                 {
                     return false;
@@ -562,7 +561,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return false;
                 }
 
-                var argument = invocationExpression.ArgumentsInParameterOrder[0];
+                IArgument argument = invocationExpression.ArgumentsInParameterOrder[0];
                 if (argument.Value.Kind != OperationKind.LiteralExpression)
                 {
                     return false;
@@ -579,7 +578,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             private bool IsSuppressFinalizeCall(IInvocationExpression invocationExpression)
             {
-                if (invocationExpression.TargetMethod != suppressFinalizeMethod)
+                if (invocationExpression.TargetMethod != _suppressFinalizeMethod)
                 {
                     return false;
                 }
@@ -589,7 +588,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return false;
                 }
 
-                var argumentValue = invocationExpression.ArgumentsInParameterOrder[0].Value;
+                IOperation argumentValue = invocationExpression.ArgumentsInParameterOrder[0].Value;
                 if (argumentValue.Kind != OperationKind.ConversionExpression)
                 {
                     return false;

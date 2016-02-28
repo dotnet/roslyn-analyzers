@@ -297,7 +297,7 @@ namespace Desktop.Analyzers
                             );
                             context.ReportDiagnostic(diag);
                         }
-                        else if (!env.IsDtdProcessingDisabled && !(env.IsSecureResolver & env.IsMaxCharactersFromEntitiesLimited))
+                        else if (!env.IsDtdProcessingDisabled && !(env.IsSecureResolver && env.IsMaxCharactersFromEntitiesLimited))
                         {
                             Diagnostic diag;
                             if (env.IsConstructedInCodeBlock)
@@ -741,37 +741,33 @@ namespace Desktop.Analyzers
                             
                             if(!_xmlReaderSettingsEnvironments.TryGetValue(assignedSymbol, out env))
                             {
-                                return;
+                                env = new XmlReaderSettingsEnvironment(_isFrameworkSecure);
+                                _xmlReaderSettingsEnvironments[assignedSymbol] = env;
                             }
 
-                            IConversionExpression operation = expression.Value as IConversionExpression;
+                            IConversionExpression conv = expression.Value as IConversionExpression;
 
-                            if (operation == null)
-                            {
-                                return;
-                            }
-
-                            if (SecurityDiagnosticHelpers.IsXmlReaderSettingsXmlResolverProperty(
+                            if (conv != null && SecurityDiagnosticHelpers.IsXmlReaderSettingsXmlResolverProperty(
                                 propRef.Property,
                                 _xmlTypes)
                             )
                             {
-                                if (SecurityDiagnosticHelpers.IsXmlSecureResolverType(operation.Operand.Type, _xmlTypes))
+                                if (SecurityDiagnosticHelpers.IsXmlSecureResolverType(conv.Operand.Type, _xmlTypes))
                                 {
                                     env.IsSecureResolver = true;
                                 }
-                                else if (SecurityDiagnosticHelpers.IsExpressionEqualsNull(operation.Operand))
+                                else if (SecurityDiagnosticHelpers.IsExpressionEqualsNull(conv.Operand))
                                 {
                                     env.IsSecureResolver = true;
                                 }
                             }
                             else if (SecurityDiagnosticHelpers.IsXmlReaderSettingsDtdProcessingProperty(propRef.Property, _xmlTypes))
                             {
-                                env.IsDtdProcessingDisabled = !SecurityDiagnosticHelpers.IsExpressionEqualsDtdProcessingParse(operation.Operand);
+                                env.IsDtdProcessingDisabled = !SecurityDiagnosticHelpers.IsExpressionEqualsDtdProcessingParse(expression.Value);
                             }
                             else if (SecurityDiagnosticHelpers.IsXmlReaderSettingsMaxCharactersFromEntitiesProperty(propRef.Property, _xmlTypes))
                             {
-                                env.IsMaxCharactersFromEntitiesLimited = !SecurityDiagnosticHelpers.IsExpressionEqualsIntZero(operation.Operand);
+                                env.IsMaxCharactersFromEntitiesLimited = !SecurityDiagnosticHelpers.IsExpressionEqualsIntZero(expression.Value);
                             }
                         }
                         else

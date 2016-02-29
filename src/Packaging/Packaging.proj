@@ -21,9 +21,11 @@
     <Project Include = "..\System.Resources.Analyzers\NuGet\System.Resources.Analyzers.NuGet.proj" />
 
     <Project Include = "..\Microsoft.CodeAnalysis.Analyzers\NuGet\CodeAnalysisDiagnosticAnalyzers.NuGet.proj" />
-    <Project Include = "..\FxCop\NuGet\FxCopAnalyzers.NuGet.proj" />
     <Project Include = "..\MetaCompilation\MetaCompilation\MetaCompilation.NuGet\MetaCompilation.NuGet.proj" />
 
+    <!-- Nuget packages which are aggregation of other core analyzer nuget packages -->
+    <Project Include = "..\AggregateNugetPackages\FxCop\NuGet\FxCopAnalyzers.NuGet.proj" />
+    <Project Include = "..\AggregateNugetPackages\Microsoft.Net.RoslynDiagnostics\NuGet\Microsoft.Net.RoslynDiagnostics.NuGet.proj" />
   </ItemGroup>
   <ImportGroup Label="Imports">
     <Import Project="..\..\build\Targets\Analyzers.Imports.targets" />

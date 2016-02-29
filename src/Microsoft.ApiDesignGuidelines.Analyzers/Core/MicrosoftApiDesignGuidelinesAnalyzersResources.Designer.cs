@@ -477,6 +477,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Increase visibility for &apos;{0}&apos;.
+        /// </summary>
+        internal static string DoNotDecreaseInheritedMemberVisibilityCodeFix {
+            get {
+                return ResourceManager.GetString("DoNotDecreaseInheritedMemberVisibilityCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You should not change the access modifier for inherited members. Changing an inherited member to private does not prevent callers from accessing the base class implementation of the method..
         /// </summary>
         internal static string DoNotDecreaseInheritedMemberVisibilityDescription {

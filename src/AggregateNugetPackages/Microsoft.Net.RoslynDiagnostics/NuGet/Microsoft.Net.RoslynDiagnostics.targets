@@ -1,7 +1,0 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <CodeAnalysisRuleSet Condition="'$(CodeAnalysisRuleSet)' == '' AND '$(NonShipping)' == 'true'">$(MSBuildThisFileDirectory)Rulesets\NonShippingProjectRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSet Condition="'$(CodeAnalysisRuleSet)' == '' AND '$(AnalyzerProject)' == 'true'">$(MSBuildThisFileDirectory)Rulesets\AnalyzerProjectRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSet Condition="'$(CodeAnalysisRuleSet)' == ''">$(MSBuildThisFileDirectory)Rulesets\Roslyn.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-</Project>

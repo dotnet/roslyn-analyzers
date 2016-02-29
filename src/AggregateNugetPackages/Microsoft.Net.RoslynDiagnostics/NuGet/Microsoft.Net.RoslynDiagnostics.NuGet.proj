@@ -11,9 +11,6 @@
 </PropertyGroup>
   <ItemGroup>
     <NuSpec Include=".\Microsoft.Net.RoslynDiagnostics.nuspec" />
-    <Content Include=".\Rulesets\AnalyzerProjectRules.ruleset" />
-    <Content Include=".\Rulesets\NonShippingProjectRules.ruleset" />
-    <Content Include=".\Rulesets\Roslyn.ruleset" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\..\build\Targets\Analyzers.Imports.targets" />

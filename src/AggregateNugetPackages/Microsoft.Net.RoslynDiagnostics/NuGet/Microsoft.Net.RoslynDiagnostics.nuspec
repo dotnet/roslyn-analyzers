@@ -31,9 +31,5 @@
   </metadata>
   <files>
     <file src="ThirdPartyNotices.rtf" target="" />
-    <file src="Microsoft.Net.RoslynDiagnostics.targets" target="build\Microsoft.Net.RoslynDiagnostics.targets" />
-    <file src="Rulesets\AnalyzerProjectRules.ruleset" target="build\Rulesets\AnalyzerProjectRules.ruleset" />
-    <file src="Rulesets\NonShippingProjectRules.ruleset" target="build\Rulesets\NonShippingProjectRules.ruleset" />
-    <file src="Rulesets\Roslyn.ruleset" target="build\Rulesets\Roslyn.ruleset" />
   </files>
 </package>

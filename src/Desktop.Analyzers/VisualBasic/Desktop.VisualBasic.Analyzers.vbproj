@@ -100,6 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicDoNotUseInsecureDTDProcessing.vb" />
+    <Compile Include="BasicDoNotUseInsecureDtdProcessingInApiDesign.vb" />
     <Compile Include="BasicDoNotCatchCorruptedStateExceptions.vb" />
     <Compile Include="BasicDoNotUseInsecureCryptographicAlgorithms.vb" />
     <Compile Include="BasicSpecifyMessageBoxOptions.vb" />
@@ -122,7 +123,7 @@
     <Compile Include="BasicImplementISerializableCorrectly.vb" />
     <Compile Include="BasicImplementISerializableCorrectly.Fixer.vb" />
     <Compile Include="BasicTypesShouldNotExtendCertainBaseTypes.Fixer.vb" />
-    <Compile Include="Helps\SyntaxNodeHelper.vb" />
+    <Compile Include="Helpers\SyntaxNodeHelper.vb" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\vb\Microsoft.CodeAnalysis.Analyzers.dll" />

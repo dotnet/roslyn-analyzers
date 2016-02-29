@@ -167,6 +167,12 @@
     <Compile Include="DoNotUseInsecureDTDProcessingXmlTextReaderConstructedWithNoSecureResolutionTests.cs" />
     <Compile Include="DoNotUseInsecureDTDProcessingXmlTextReaderSetInsecureResolutionTests.cs" />
     <Compile Include="DoNotUseInsecureDTDProcessingCreateUsingInsecureInputXmlReaderSettingsTests.cs" />
+    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesignXmlDocumentDerivedClassDesignConstructorNoSecureXmlResolverTests.cs" />
+    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesignXmlDocumentDerivedClassDesignNoConstructorTests.cs" />
+    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesignXmlDocumentDerivedClassDesignSetInsecureXmlResolverInMethodTests.cs" />
+    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesignXmlTextReaderDerivedClassDesignConstructorNoSecureSettingsTests.cs" />
+    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesignXmlTextReaderDerivedClassDesignNoConstructorTests.cs" />
+    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesignXmlTextReaderDerivedClassDesignSetInsecureSettingsInMethodTests.cs" />
     <Compile Include="DoNotCatchCorruptedStateExceptionsTests.cs" />
     <Compile Include="DoNotUseInsecureCryptographicAlgorithmsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

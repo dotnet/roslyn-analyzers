@@ -96,6 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DoNotUseInsecureDTDProcessing.cs" />
+    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesign.cs" />
     <Compile Include="DesktopAnalyzersResources1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

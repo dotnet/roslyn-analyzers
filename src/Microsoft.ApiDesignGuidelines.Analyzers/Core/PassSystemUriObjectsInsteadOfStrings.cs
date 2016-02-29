@@ -46,8 +46,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             analysisContext.RegisterCompilationStartAction(c =>
             {
-                var @string = WellKnownTypes.String(c.Compilation);
-                var uri = WellKnownTypes.Uri(c.Compilation);
+                INamedTypeSymbol @string = WellKnownTypes.String(c.Compilation);
+                INamedTypeSymbol uri = WellKnownTypes.Uri(c.Compilation);
                 if (@string == null || uri == null)
                 {
                     // we don't have required types
@@ -113,9 +113,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
 
                 var invocation = (IInvocationExpression)context.Operation;
-                var method = invocation.TargetMethod;
+                IMethodSymbol method = invocation.TargetMethod;
 
-                var node = _expressionGetter(context.Operation.Syntax);
+                SyntaxNode node = _expressionGetter(context.Operation.Syntax);
                 if (node == null)
                 {
                     // we don't have right expression node to check overloads
@@ -124,11 +124,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                 // REVIEW: why IOperation doesn't contain things like compilation and semantic model?
                 //         it seems wierd that I need to do this to get thsoe.
-                var model = _compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree);
+                SemanticModel model = _compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree);
 
                 // due to limitation of using "this" in lambda in struct
-                var stringType = _string;
-                var stringParameters = method.Parameters.Where(p => p.Type?.Equals(stringType) == true);
+                INamedTypeSymbol stringType = _string;
+                IEnumerable<IParameterSymbol> stringParameters = method.Parameters.Where(p => p.Type?.Equals(stringType) == true);
                 if (!stringParameters.Any())
                 {
                     // no string parameter. not interested.
@@ -153,7 +153,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 var indicesSet = new HashSet<int>(GetParameterIndices(method, GetStringParametersThatContainsUriWords(stringParameters, context.CancellationToken), context.CancellationToken));
 
                 // now we search exact match. this is exactly same behavior as old FxCop
-                foreach (var overload in model.GetMemberGroup(node, context.CancellationToken).OfType<IMethodSymbol>())
+                foreach (IMethodSymbol overload in model.GetMemberGroup(node, context.CancellationToken).OfType<IMethodSymbol>())
                 {
                     context.CancellationToken.ThrowIfCancellationRequested();
 
@@ -172,7 +172,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     // original FxCop implementation doesnt account for case where original method call contains 
                     // 2+ string uri parameters that has overload with matching uri parameters. original implementation works
                     // when there is exactly 1 parameter having matching uri overload. this implementation follow that.
-                    foreach (var index in indicesSet)
+                    foreach (int index in indicesSet)
                     {
                         // check other string uri parameters matches original type
                         if (!CheckParameterTypes(method, overload, indicesSet.Where(i => i != index), context.CancellationToken))
@@ -194,7 +194,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             private bool CheckParameterTypes(IMethodSymbol method, IMethodSymbol overload, IEnumerable<int> parameterIndices, CancellationToken cancellationToken)
             {
-                foreach (var index in parameterIndices)
+                foreach (int index in parameterIndices)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -225,8 +225,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             private bool CheckOverloadsContainUriParameters(SemanticModel model, IMethodSymbol method, SyntaxNode node, CancellationToken cancellationToken)
             {
-                var uriType = _uri;
-                foreach (var overload in model.GetMemberGroup(node, cancellationToken).OfType<IMethodSymbol>())
+                INamedTypeSymbol uriType = _uri;
+                foreach (IMethodSymbol overload in model.GetMemberGroup(node, cancellationToken).OfType<IMethodSymbol>())
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -246,7 +246,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             private bool CheckStringParametersContainUriWords(IEnumerable<IParameterSymbol> stringParameters, CancellationToken cancellationToken)
             {
-                foreach (var parameter in stringParameters)
+                foreach (IParameterSymbol parameter in stringParameters)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -261,7 +261,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             private static bool CheckStringParameterContainsUriWords(IParameterSymbol parameter, CancellationToken cancellationToken)
             {
-                foreach (var word in s_uriWords)
+                foreach (string word in s_uriWords)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -276,7 +276,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             private IEnumerable<IParameterSymbol> GetStringParametersThatContainsUriWords(IEnumerable<IParameterSymbol> stringParameters, CancellationToken cancellationToken)
             {
-                foreach (var parameter in stringParameters)
+                foreach (IParameterSymbol parameter in stringParameters)
                 {
                     if (parameter.Name == null || !CheckStringParameterContainsUriWords(parameter, cancellationToken))
                     {

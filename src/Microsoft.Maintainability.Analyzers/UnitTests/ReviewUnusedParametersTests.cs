@@ -62,6 +62,170 @@ End Class
 
         [Fact]
         [WorkItem(459, "https://github.com/dotnet/roslyn-analyzers/issues/459")]
+        public void NoDiagnosticDelegateTest()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class NeatCode
+{
+    // Used parameter methods
+    public void UsedParameterMethod1(Action a)
+    {
+        a();
+    }
+
+    public void UsedParameterMethod2(Action a1, Action a2)
+    {
+        try
+        {
+            a1();
+        }
+        catch(Exception)
+        {
+            a2();
+        }
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Public Class NeatCode
+	' Used parameter methods
+	Public Sub UsedParameterMethod1(a As Action)
+		a()
+	End Sub
+
+	Public Sub UsedParameterMethod2(a1 As Action, a2 As Action)
+		Try
+			a1()
+		Catch generatedExceptionName As Exception
+			a2()
+		End Try
+	End Sub
+End Class
+");
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8884")]
+        [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
+        public void NoDiagnosticDelegateTest2_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class NeatCode
+{
+    // Used parameter methods
+    public void UsedParameterMethod1(Action a)
+    {
+        Action a2 = new Action(() =>
+        {
+            a();
+        });
+    }
+");
+        }
+
+        [Fact]
+        [WorkItem(459, "https://github.com/dotnet/roslyn-analyzers/issues/459")]
+        public void NoDiagnosticDelegateTest2_VB()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class NeatCode
+	' Used parameter methods
+	Public Sub UsedParameterMethod1(a As Action)
+		Dim a2 As New Action(Sub() 
+		                         a()
+                             End Sub)
+	End Sub
+End Class
+");
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8884")]
+        [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
+        public void NoDiagnosticUsingTest_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+
+class C
+{
+    void F(int x, IDisposable o)
+    {
+        using (o)
+        {
+            int y = x;
+        }
+    }
+}
+");
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8884")]
+        [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
+        public void NoDiagnosticUsingTest_VB()
+        {
+            VerifyBasic(@"
+Imports System
+
+Class C
+	Private Sub F(x As Integer, o As IDisposable)
+		Using o
+			Dim y As Integer = x
+		End Using
+	End Sub
+End Class
+");
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8884")]
+        [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
+        public void NoDiagnosticLinqTest_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Linq;
+using System.Reflection;
+
+class C
+{
+    private object F(Assembly assembly)
+    {
+        var type = (from t in assembly.GetTypes()
+                    select t.Attributes).FirstOrDefault();
+        return type;
+    }
+}
+");
+        }
+
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8884")]
+        [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
+        public void NoDiagnosticLinqTest_VB()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.Linq
+Imports System.Reflection
+
+Class C
+    Private Function F(assembly As Assembly) As Object
+        Dim type = (From t In assembly.DefinedTypes() Select t.Attributes).FirstOrDefault()
+        Return type
+    End Function
+End Class
+");
+        }
+
+        [Fact]
+        [WorkItem(459, "https://github.com/dotnet/roslyn-analyzers/issues/459")]
         public void NoDiagnosticSpecialCasesTest()
         {
             VerifyCSharp(@"
@@ -367,7 +531,6 @@ End Class
       GetBasicUnusedParameterResultAt(21, 44, "param1", "UnusedRefParamMethod"),
       // Test0.vb(24,43): warning CA1801: Parameter param1 of method UnusedErrorTypeParamMethod is never used. Remove the parameter or use it in the method body.
       GetBasicUnusedParameterResultAt(24, 43, "param1", "UnusedErrorTypeParamMethod"));
-
         }
 
         #endregion
@@ -386,13 +549,13 @@ End Class
 
         private static DiagnosticResult GetCSharpUnusedParameterResultAt(int line, int column, string parameterName, string methodName)
         {
-            var message = string.Format(MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName);
+            string message = string.Format(MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName);
             return GetCSharpResultAt(line, column, ReviewUnusedParametersAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetBasicUnusedParameterResultAt(int line, int column, string parameterName, string methodName)
         {
-            var message = string.Format(MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName);
+            string message = string.Format(MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName);
             return GetBasicResultAt(line, column, ReviewUnusedParametersAnalyzer.RuleId, message);
         }
 

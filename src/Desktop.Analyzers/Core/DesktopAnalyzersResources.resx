@@ -415,6 +415,38 @@
     <value>{0}</value>
     <comment>CA3075</comment>
   </data>
+  <data name="InsecureDtdProcessingInApiDesign" xml:space="preserve">
+    <value>Insecure Processing in API Design, XmlDocument and XmlTextReader</value>
+    <comment>CA3077</comment>
+  </data>
+  <data name="DoNotUseInsecureDtdProcessingInApiDesignDescription" xml:space="preserve">
+    <value>Enabling DTD processing on all instances derived from XmlTextReader or  XmlDocument and using XmlUrlResolver for resolving external XML entities may lead to information disclosure. Ensure to set the XmlResolver property to null, create an instance of XmlSecureResolver when processing untrusted input, or use XmlReader.Create method with a secure XmlReaderSettings argument. Unless you need to enable it, ensure the DtdProcessing property is set to false. </value>
+    <comment>CA3077</comment>
+  </data>
+  <data name="XmlDocumentDerivedClassConstructorNoSecureXmlResolverMessage" xml:space="preserve">
+    <value>Constructor of XmlDocument derived class {0} implicitly uses insecure default value for DTD processing.</value>
+    <comment>CA3077</comment>
+  </data>
+  <data name="XmlDocumentDerivedClassNoConstructorMessage" xml:space="preserve">
+    <value>XmlDocument derived class {0} doesn't explictily define a constructor.</value>
+    <comment>CA3077</comment>
+  </data>
+  <data name="XmlDocumentDerivedClassSetInsecureXmlResolverInMethodMessage" xml:space="preserve">
+    <value>Method {0} of XmlDocument derived class sets XmlResolver property to an insecure value.</value>
+    <comment>CA3077</comment>
+  </data>
+  <data name="XmlTextReaderDerivedClassConstructorNoSecureSettingsMessage" xml:space="preserve">
+    <value>Constructor of XmlTextReader derived class {0} uses insecure default values for DTD processing.</value>
+    <comment>CA3077</comment>
+  </data>
+  <data name="XmlTextReaderDerivedClassNoConstructorMessage" xml:space="preserve">
+    <value>XmlTextReader derived class {0} doesn't explictily define a constructor.</value>
+    <comment>CA3077</comment>
+  </data>
+  <data name="XmlTextReaderDerivedClassSetInsecureSettingsInMethodMessage" xml:space="preserve">
+    <value>{0} method of XmlTextReader derived class sets XmlResolver and/or DtdProcessing property to insecure value.</value>
+    <comment>CA3077</comment>
+  </data>
   <data name="InsecureXsltScriptProcessingMessage" xml:space="preserve">
     <value>Insecure XSLT script processing.</value>
     <comment>CA3076</comment>
@@ -431,7 +463,52 @@
     <value>In {0} an insecure combination of XsltSettings and XmlResolver instances are provided to XslCompiledTransfor.Load as arguments.</value>
     <comment>CA3076</comment>
   </data>
-  <data name="DoNotUseInsecureDTDProcessingGenericMessage" xml:space="preserve">
-    <value>{0}</value>
+  <data name="InsecureDtdProcessingInApiDesign" xml:space="preserve">
+    <value>Insecure Processing in API Design, XmlDocument and XmlTextReader</value>
+    <comment>CA3077</comment>
+  </data>
+  <data name="DoNotUseInsecureDtdProcessingInApiDesignDescription" xml:space="preserve">
+    <value>Enabling DTD processing on all instances derived from XmlTextReader or  XmlDocument and using XmlUrlResolver for resolving external XML entities may lead to information disclosure. Ensure to set the XmlResolver property to null, create an instance of XmlSecureResolver when processing untrusted input, or use XmlReader.Create method with a secure XmlReaderSettings argument. Unless you need to enable it, ensure the DtdProcessing property is set to false. </value>
+    <comment>CA3077</comment>
+  </data>
+  <data name="XmlDocumentDerivedClassConstructorNoSecureXmlResolverMessage" xml:space="preserve">
+    <value>Constructor of XmlDocument derived class {0} implicitly uses insecure default value for DTD processing.</value>
+    <comment>CA3077</comment>
+  </data>
+  <data name="XmlDocumentDerivedClassNoConstructorMessage" xml:space="preserve">
+    <value>XmlDocument derived class {0} doesn't explictily define a constructor.</value>
+    <comment>CA3077</comment>
+  </data>
+  <data name="XmlDocumentDerivedClassSetInsecureXmlResolverInMethodMessage" xml:space="preserve">
+    <value>Method {0} of XmlDocument derived class sets XmlResolver property to an insecure value.</value>
+    <comment>CA3077</comment>
+  </data>
+  <data name="XmlTextReaderDerivedClassConstructorNoSecureSettingsMessage" xml:space="preserve">
+    <value>Constructor of XmlTextReader derived class {0} uses insecure default values for DTD processing.</value>
+    <comment>CA3077</comment>
+  </data>
+  <data name="XmlTextReaderDerivedClassNoConstructorMessage" xml:space="preserve">
+    <value>XmlTextReader derived class {0} doesn't explictily define a constructor.</value>
+    <comment>CA3077</comment>
+  </data>
+  <data name="XmlTextReaderDerivedClassSetInsecureSettingsInMethodMessage" xml:space="preserve">
+    <value>{0} method of XmlTextReader derived class sets XmlResolver and/or DtdProcessing property to insecure value.</value>
+    <comment>CA3077</comment>
+  </data>
+  <data name="InsecureXsltScriptProcessingMessage" xml:space="preserve">
+    <value>Insecure XSLT script processing.</value>
+    <comment>CA3076</comment>
+  </data>
+  <data name="DoNotUseInsecureXSLTScriptExecutionDescription" xml:space="preserve">
+    <value>Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which on an untrusted XSL input may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argurment with null or an XmlSecureResolver instance. This message may be suppressed if the input is known to be from a trusted source and external resource resolution from locations that are not known in advance must be supported.</value>
+    <comment>CA3076</comment>
+  </data>
+  <data name="XslCompiledTransformLoadInsecureConstructedMessage" xml:space="preserve">
+    <value>In {0} an insecure combination of XsltSettings and XmlResolver instances are provided to XslCompiledTransfor.Load as arguments.</value>
+    <comment>CA3076</comment>
+  </data>
+  <data name="XslCompiledTransformLoadInsecureInputMessage" xml:space="preserve">
+    <value>In {0} an insecure combination of XsltSettings and XmlResolver instances are provided to XslCompiledTransfor.Load as arguments.</value>
+    <comment>CA3076</comment>
   </data>
 </root>

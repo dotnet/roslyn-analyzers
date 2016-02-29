@@ -4,7 +4,6 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
-using System;
 using System.Linq;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
@@ -38,7 +37,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                var obsoleteAttributeType = compilationContext.Compilation.GetTypeByMetadataName("System.ObsoleteAttribute");
+                INamedTypeSymbol obsoleteAttributeType = compilationContext.Compilation.GetTypeByMetadataName("System.ObsoleteAttribute");
                 if (obsoleteAttributeType == null)
                 {
                     return;
@@ -55,8 +54,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol obsoleteAttributeType)
         {
-            var attributes = context.Symbol.GetAttributes();
-            foreach (var attribute in attributes)
+            ImmutableArray<AttributeData> attributes = context.Symbol.GetAttributes();
+            foreach (AttributeData attribute in attributes)
             {
                 if (attribute.AttributeClass.Equals(obsoleteAttributeType))
                 {
@@ -64,10 +63,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     // other constructors that take a message as the first param.
                     // If there are no arguments specificed or if the message argument is empty
                     // then report a diagnostic.
-                    if (attribute.ConstructorArguments.IsEmpty || 
+                    if (attribute.ConstructorArguments.IsEmpty ||
                         string.IsNullOrEmpty(attribute.ConstructorArguments.First().Value as string))
                     {
-                        var node = attribute.ApplicationSyntaxReference.GetSyntax();
+                        SyntaxNode node = attribute.ApplicationSyntaxReference.GetSyntax();
                         context.ReportDiagnostic(node.CreateDiagnostic(Rule, context.Symbol.Name));
                     }
                 }

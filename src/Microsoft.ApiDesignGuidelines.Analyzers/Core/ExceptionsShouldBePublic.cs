@@ -65,7 +65,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     if (symbol.IsPublic()) return;
 
                     // only report if base type matches 
-                    if (exceptionTypes.Contains(symbol.BaseType))
+                    if (symbol.BaseType != null && exceptionTypes.Contains(symbol.BaseType))
                     {
                         saContext.ReportDiagnostic(symbol.CreateDiagnostic(Rule));
                     }

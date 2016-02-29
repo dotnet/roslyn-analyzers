@@ -48,7 +48,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             if (symbol.GetMembers().Any(member => IsDllImport(member)) && !IsTypeNamedCorrectly(symbol.Name))
             {
-                addDiagnostic(Diagnostic.Create(Rule, symbol.Locations.First(l => l.IsInSource)));
+                addDiagnostic(symbol.CreateDiagnostic(Rule));
             }
         }
 

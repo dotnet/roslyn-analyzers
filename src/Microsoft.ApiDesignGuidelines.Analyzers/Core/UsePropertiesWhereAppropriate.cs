@@ -5,7 +5,6 @@ using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Semantics;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {

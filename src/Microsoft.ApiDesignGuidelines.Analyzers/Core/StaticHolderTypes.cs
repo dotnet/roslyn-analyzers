@@ -104,7 +104,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return false;
             }
 
-            if (symbol.BaseType.SpecialType != SpecialType.System_Object)
+            if (symbol.BaseType == null || symbol.BaseType.SpecialType != SpecialType.System_Object)
             {
                 return false;
             }

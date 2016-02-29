@@ -1288,6 +1288,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance..
+        /// </summary>
+        internal static string ImplementIEquatableWhenOverridingObjectEqualsDescription {
+            get {
+                return ResourceManager.GetString("ImplementIEquatableWhenOverridingObjectEqualsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Implement IEquatable when overriding Object.Equals.
         /// </summary>
         internal static string ImplementIEquatableWhenOverridingObjectEqualsMessage {
@@ -1959,6 +1968,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         internal static string OverrideMethodsOnComparableTypesTitle {
             get {
                 return ResourceManager.GetString("OverrideMethodsOnComparableTypesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the &quot;principle of least surprise&quot;..
+        /// </summary>
+        internal static string OverrideObjectEqualsDescription {
+            get {
+                return ResourceManager.GetString("OverrideObjectEqualsDescription", resourceCulture);
             }
         }
         

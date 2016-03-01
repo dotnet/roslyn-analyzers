@@ -32,7 +32,7 @@ The type `C` implements the interface `IEquatable<T>` but does not override `Obj
 
         public bool Equals(C other)
         {
-            if (other == null)
+            if ((object)other == null)
             {
                 return false;
             }
@@ -72,7 +72,7 @@ The type `C` now implements `Object.Equals(object)`, which delegates to `IEquata
 
         public bool Equals(C other)
         {
-            if (other == null)
+            if ((object)other == null)
             {
                 return false;
             }

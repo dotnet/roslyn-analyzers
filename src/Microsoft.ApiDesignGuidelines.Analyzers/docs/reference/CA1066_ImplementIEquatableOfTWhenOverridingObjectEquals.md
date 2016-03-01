@@ -31,7 +31,7 @@ The type `C` overrides `Object.Equals` but does not implement the interface `IEq
         public override bool Equals(object other)
         {
             C otherC = other as C;
-            if (otherC == null)
+            if ((object)otherC == null)
             {
                 return false;
             }
@@ -76,7 +76,7 @@ The type `C` now implements `IEquatable<T>`, and its override of `Object.Equals(
 
         public bool Equals(C other)
         {
-            if (other == null)
+            if ((object)other == null)
             {
                 return false;
             }

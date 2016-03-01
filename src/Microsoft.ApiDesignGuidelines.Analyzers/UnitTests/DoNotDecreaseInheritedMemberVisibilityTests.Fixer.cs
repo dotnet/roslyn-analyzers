@@ -36,23 +36,23 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 // Original Code                
 @"public class BaseClass
 {
-    public int MyField;
+    public int MyMethod() { return 5; }
 }
 
 public class DerivedClass : BaseClass
 {
-    private new int MyField;
+    private new int MyMethod() { return 11; }
 }",
 
 // Fixed Code
 @"public class BaseClass
 {
-    public int MyField;
+    public int MyMethod() { return 5; }
 }
 
 public class DerivedClass : BaseClass
 {
-    public new int MyField;
+    public new int MyMethod() { return 11; }
 }");
 
             VerifyCSharpFix(
@@ -75,7 +75,7 @@ public class DerivedClass : BaseClass
 
 public class DerivedClass : BaseClass
 {
-    public new int MyProperty { get; set; }
+    internal new int MyProperty { get; set; }
 }"
 );
 
@@ -175,23 +175,23 @@ public class DerivedClass : BaseClass
 // Original Code
 @"public class BaseClass
 {
-    public int MyProperty { protected get; set; }
+    public int MyProperty { get; protected set; }
 }
 
 public class DerivedClass : BaseClass
 {
-    internal new int MyProperty { get; private set; }
+    internal new int MyProperty { private get; set; }
 }",
 
 // Fixed Code
 @"public class BaseClass
 {
-    public int MyProperty { protected get; set; }
+    public int MyProperty { get; protected set; }
 }
 
 public class DerivedClass : BaseClass
 {
-    public new int MyProperty { get; set; }
+    internal new int MyProperty { get; set; }
 }");
 
             VerifyCSharpFix(
@@ -217,7 +217,7 @@ public class DerivedClass : BaseClass
 
 public class DerivedClass : BaseClass
 {
-    internal protected new event System.EventHandler MyEvent { add{} remove{} }
+    internal new event System.EventHandler MyEvent { add{} remove{} }
     protected internal int MyProperty { get; set; }
 }");
 
@@ -226,52 +226,6 @@ public class DerivedClass : BaseClass
         [Fact]
         public void BasicDecreaseMemberVisibility()
         {
-            VerifyBasicFix(
-// Original Code
-@"Public Class BaseClass
-    Public MyField As Integer
-End Class
-
-Public Class DerivedClass
-    Inherits BaseClass
-
-    Private Shadows MyField As Integer
-End Class",
-
-// Fixed Code
-@"Public Class BaseClass
-    Public MyField As Integer
-End Class
-
-Public Class DerivedClass
-    Inherits BaseClass
-
-    Public Shadows MyField As Integer
-End Class");
-
-            VerifyBasicFix(
-// Original Code
-@"Public Class BaseClass
-    Public ReadOnly Property MyProperty() As Integer
-End Class
-
-Public Class DerivedClass
-    Inherits BaseClass
-
-    Friend Shadows ReadOnly Property MyProperty() As Integer
-End Class",
-
-// Fixed Code
-@"Public Class BaseClass
-    Public ReadOnly Property MyProperty() As Integer
-End Class
-
-Public Class DerivedClass
-    Inherits BaseClass
-
-    Public Shadows ReadOnly Property MyProperty() As Integer
-End Class");
-
             VerifyBasicFix(
 // Original Code
 @"Public Class BaseClass
@@ -412,7 +366,7 @@ End Class
 
 Public Class DerivedClass
 	Inherits BaseClass
-	Friend Protected Shadows Custom Event MyEvent As System.EventHandler
+	Friend Shadows Custom Event MyEvent As System.EventHandler
 		AddHandler(ByVal value As System.EventHandler)
 		End AddHandler
 		RemoveHandler(ByVal value As System.EventHandler)
@@ -437,7 +391,7 @@ End Class");
 // Original Code
 @"public class BaseClass
 {
-    public int MyField;
+    public int MyMethod() { return 5; }
 }
 
 public class DerivedClass : BaseClass
@@ -446,13 +400,13 @@ public class DerivedClass : BaseClass
 
 public class DerivedDerivedClass : DerivedClass
 {
-    private new int MyField;
+    private new int MyMethod() { return 11; }
 }",
 
 // Fixed Code
 @"public class BaseClass
 {
-    public int MyField;
+    public int MyMethod() { return 5; }
 }
 
 public class DerivedClass : BaseClass
@@ -461,7 +415,7 @@ public class DerivedClass : BaseClass
 
 public class DerivedDerivedClass : DerivedClass
 {
-    public new int MyField;
+    public new int MyMethod() { return 11; }
 }");
 
             VerifyCSharpFix(
@@ -478,7 +432,7 @@ public class DerivedClass : BaseClass
 
 public class DerivedDerivedClass : DerivedClass
 {
-    internal new int MyProperty { private get; internal set; }
+    internal new int MyProperty { private get; set; }
 }",
 
 // Fixed Code
@@ -494,7 +448,7 @@ public class DerivedClass : BaseClass
 
 public class DerivedDerivedClass : DerivedClass
 {
-    public new int MyProperty { protected get; set; }
+    internal new int MyProperty { get; set; }
 }");
         }
     }

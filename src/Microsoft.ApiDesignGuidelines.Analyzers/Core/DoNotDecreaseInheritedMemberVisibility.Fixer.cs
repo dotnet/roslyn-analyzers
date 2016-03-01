@@ -33,6 +33,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             var model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
             var symbol = model.GetDeclaredSymbol(expression);
 
+            // An accessor without an explicit accessibility means that the parent property is actually the 
+            // offending symbol. Therefore, don't offer the code fix on the accessor level.
+            // Note that the declared accessibility on an accessor without an explicit accessibility will return that of the
+            // property it's within, so it's necessary to compare the accessor's accessibility with the property's
+            if (symbol.IsAccessorMethod() && symbol.DeclaredAccessibility == (symbol as IMethodSymbol)?.AssociatedSymbol?.DeclaredAccessibility)
+            {
+                return;
+            }
+
             if (expression != null)
             {
                 context.RegisterCodeFix(new MakeInheritedMemberVisibleCodeAction(
@@ -82,7 +91,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             if (declaration == null) return;
             var symbol = editor.SemanticModel.GetDeclaredSymbol(declaration);
             var property = (symbol as IMethodSymbol)?.AssociatedSymbol as IPropertySymbol;
-            if (property?.DeclaredAccessibility <= targetAccessibility)
+            if (property != null && IsMoreRestrictive(property.DeclaredAccessibility, targetAccessibility))
             {
                 // Can't explicitly set an accessor to a visibility greater than or equal to that of the containing property
                 editor.SetAccessibility(declaration, Accessibility.NotApplicable);
@@ -90,6 +99,26 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             else
             {
                 editor.SetAccessibility(declaration, targetAccessibility);
+            }
+        }
+
+        // Returns true if a1 is equal to or less visible than a2
+        private static bool IsMoreRestrictive(Accessibility a1, Accessibility a2)
+        {
+            switch (a2)
+            {
+                case Accessibility.Public:
+                    return true;
+                case Accessibility.ProtectedOrInternal:
+                    return a1 != Accessibility.Public;
+                case Accessibility.Protected:
+                    return a1 != Accessibility.Public && a1 != Accessibility.ProtectedOrInternal && a1 != Accessibility.ProtectedOrFriend;
+                case Accessibility.Internal:
+                    return a1 != Accessibility.Public && a1 != Accessibility.ProtectedOrInternal && a1 != Accessibility.ProtectedOrFriend && a1 != Accessibility.Protected;
+                case Accessibility.ProtectedAndInternal:
+                    return a1 != Accessibility.Public && a1 != Accessibility.ProtectedOrInternal && a1 != Accessibility.ProtectedOrFriend && a1 != Accessibility.Protected && a1 != Accessibility.Internal;
+                default:
+                    return false;
             }
         }
 

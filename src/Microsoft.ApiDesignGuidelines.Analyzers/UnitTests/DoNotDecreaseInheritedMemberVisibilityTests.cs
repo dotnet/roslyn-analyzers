@@ -24,12 +24,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyCSharp(
 @"public class BaseClass
 {
-    public int MyField;
+    public int MyMethod() { return 5; }
 }
 
 public class DerivedClass : BaseClass
 {
-    private new int MyField;
+    private new int MyMethod() { return 5; }
 }", GetCSharpCA2222RuleNameResultAt(8, 21));
 
             VerifyCSharp(
@@ -41,7 +41,7 @@ public class DerivedClass : BaseClass
 public class DerivedClass : BaseClass
 {
     internal new int MyProperty { get; set; }
-}", GetCSharpCA2222RuleNameResultAt(8, 22), GetCSharpCA2222RuleNameResultAt(8, 35), GetCSharpCA2222RuleNameResultAt(8, 40));
+}", GetCSharpCA2222RuleNameResultAt(8, 35), GetCSharpCA2222RuleNameResultAt(8, 40));
 
             VerifyCSharp(
 @"public class BaseClass
@@ -57,38 +57,18 @@ public class DerivedClass : BaseClass
             VerifyCSharp(
 @"public class BaseClass
 {
-    public void MyMethod() {}
+    protected internal void MyMethod() {}
 }
 
 public class DerivedClass : BaseClass
 {
-    private void MyMethod() {}
+    inernal void MyMethod() {}
 }", GetCSharpCA2222RuleNameResultAt(8, 18));
         }
 
         [Fact]
         public void DecreaseBasicMemberVisibility()
         {
-            VerifyBasic(
-@"Public Class BaseClass
-    Public MyField As Integer
-End Class
-
-Public Class DerivedClass
-    Inherits BaseClass
-    Private Shadows MyField As Integer
-End Class", GetBasicCA2222RuleNameResultAt(7, 21));
-
-            VerifyBasic(
-@"Public Class BaseClass
-    Public ReadOnly Property MyProperty() As Integer
-End Class
-
-Public Class DerivedClass
-    Inherits BaseClass
-    Friend Shadows ReadOnly Property MyProperty() As Integer
-End Class", GetBasicCA2222RuleNameResultAt(7, 38));
-
             VerifyBasic(
 @"Public Class BaseClass
     Public Property MyProperty() As Integer
@@ -134,12 +114,12 @@ End Class", GetBasicCA2222RuleNameResultAt(8, 27));
             VerifyCSharp(
 @"public class BaseClass
 {
-    internal int MyField;
+    internal void MyMethod() {}
 }
 
 public class DerivedClass : BaseClass
 {
-    public new int MyField;
+    public new void MyMethod() {}
 }");
         }
 
@@ -167,29 +147,20 @@ public class DerivedClass : BaseClass
         {
             VerifyBasic(
 @"Public Class BaseClass
-    Friend MyField As Integer
+    Private Sub MyMethod()
+    End Sub
 End Class
 
 Public Class DerivedClass
     Inherits BaseClass
-    Public Shadows MyField As Integer
+    Public Overloads Sub MyMethod()
+    End Sub
 End Class");
         }
 
         [Fact]
         public void SimilarCSharpVisibilities()
         {
-            VerifyCSharp(
-@"public class BaseClass
-{
-    internal int MyField;
-}
-
-public class DerivedClass : BaseClass
-{
-    private new int MyField;
-}");
-
             VerifyCSharp(
 @"public class BaseClass
 {
@@ -229,26 +200,6 @@ public class DerivedClass : BaseClass
         {
             VerifyBasic(
 @"Public Class BaseClass
-    Friend MyField As Integer
-End Class
-
-Public Class DerivedClass
-    Inherits BaseClass
-    Private Shadows MyField As Integer
-End Class");
-
-            VerifyBasic(
-@"Public Class BaseClass
-    Public ReadOnly Property MyProperty() As Integer
-End Class
-
-Public Class DerivedClass
-    Inherits BaseClass
-    Public Shadows ReadOnly Property MyProperty() As Integer
-End Class");
-
-            VerifyBasic(
-@"Public Class BaseClass
     Friend Sub MyMethod()
     End Sub
 End Class
@@ -278,7 +229,7 @@ End Class");
             VerifyCSharp(
 @"public class BaseClass
 {
-    public int MyProperty;
+    public int MyMethod() { return 5; }
 }
 
 public class DerivedClass : BaseClass
@@ -287,7 +238,7 @@ public class DerivedClass : BaseClass
 
 public class DerivedDerivedClass : DerivedClass
 {
-    private new int MyProperty;
+    private new int MyMethod() { return 11; }
 }", GetCSharpCA2222RuleNameResultAt(12, 21));
         }
 
@@ -297,13 +248,13 @@ public class DerivedDerivedClass : DerivedClass
             VerifyCSharp(
 @"public class BaseClass
 {
-    public int MyProperty;
+    public int MyProperty { get; set; }
     public void MyMethod();
 }
 
 public sealed class DerivedClass : BaseClass
 {
-    private new int MyProperty;
+    private new int MyProperty { get; set; }
     protected new void MyMethod();
 }");
         }

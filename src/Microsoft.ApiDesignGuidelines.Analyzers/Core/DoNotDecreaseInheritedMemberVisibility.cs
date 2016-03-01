@@ -36,7 +36,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         { 
-            analysisContext.RegisterSymbolAction(CheckForDecreasedVisibility, SymbolKind.Method, SymbolKind.Field, SymbolKind.Property, SymbolKind.Event);
+            // It may be interesting to flag field, property, and event symbols for this analyzer, but don't for now in order
+            // to maintain compatibility with the old FxCop CA2222 rule which only analyzed methods.
+            analysisContext.RegisterSymbolAction(CheckForDecreasedVisibility, SymbolKind.Method /*, SymbolKind.Field, SymbolKind.Property, SymbolKind.Event*/);
         }
 
         private void CheckForDecreasedVisibility(SymbolAnalysisContext context)

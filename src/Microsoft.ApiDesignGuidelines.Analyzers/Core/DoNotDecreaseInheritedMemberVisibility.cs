@@ -4,11 +4,10 @@ using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
-using System;
 using System.Linq;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
-{                   
+{
     /// <summary>
     /// CA2222: Do not decrease inherited member visibility
     /// </summary>
@@ -18,10 +17,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         internal const string RuleId = "CA2222";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDecreaseInheritedMemberVisibilityTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        
+
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDecreaseInheritedMemberVisibilityMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDecreaseInheritedMemberVisibilityDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        
+
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
@@ -35,7 +34,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext analysisContext)
-        { 
+        {
             // It may be interesting to flag field, property, and event symbols for this analyzer, but don't for now in order
             // to maintain compatibility with the old FxCop CA2222 rule which only analyzed methods.
             analysisContext.RegisterSymbolAction(CheckForDecreasedVisibility, SymbolKind.Method /*, SymbolKind.Field, SymbolKind.Property, SymbolKind.Event*/);
@@ -43,7 +42,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private void CheckForDecreasedVisibility(SymbolAnalysisContext context)
         {
-            var symbol = context.Symbol;
+            ISymbol symbol = context.Symbol;
 
             // Only look for methods hiding others (not overriding). Overriding with a different visibility is already a compiler error
             if (symbol.IsOverride)
@@ -64,15 +63,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
 
             // Find members on base types that share the member's name
-            var ancestorTypes = symbol?.ContainingType?.GetBaseTypes() ?? Enumerable.Empty<INamedTypeSymbol>();
-            var hiddenOrOverriddenMembers = ancestorTypes.SelectMany(t => t.GetMembers(symbol.Name));
+            System.Collections.Generic.IEnumerable<INamedTypeSymbol> ancestorTypes = symbol?.ContainingType?.GetBaseTypes() ?? Enumerable.Empty<INamedTypeSymbol>();
+            System.Collections.Generic.IEnumerable<ISymbol> hiddenOrOverriddenMembers = ancestorTypes.SelectMany(t => t.GetMembers(symbol.Name));
 
             if (hiddenOrOverriddenMembers.Any(IsVisibleOutsideAssembly))
             {
                 context.ReportDiagnostic(symbol.CreateDiagnostic(Rule));
             }
         }
-        
+
         private bool IsVisibleOutsideAssembly(ISymbol symbol)
         {
             // If the containing type is not visible, then neither is the contained symbol

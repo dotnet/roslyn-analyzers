@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
@@ -12,7 +11,7 @@ namespace Desktop.Analyzers.UnitTests
     {
         private const string CA3076RuleId = DoNotUseInsecureXSLTScriptExecutionAnalyzer<SyntaxKind>.RuleId;
 
-        private readonly string CA3076LoadInsecureInputMessage = DesktopAnalyzersResources.XslCompiledTransformLoadInsecureInputMessage;
+        private readonly string _CA3076LoadInsecureInputMessage = DesktopAnalyzersResources.XslCompiledTransformLoadInsecureInputMessage;
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
@@ -26,12 +25,12 @@ namespace Desktop.Analyzers.UnitTests
 
         private DiagnosticResult GetCA3076LoadCSharpResultAt(int line, int column, string name)
         {
-            return GetCSharpResultAt(line, column, CA3076RuleId, string.Format(CA3076LoadInsecureInputMessage, name));
+            return GetCSharpResultAt(line, column, CA3076RuleId, string.Format(_CA3076LoadInsecureInputMessage, name));
         }
 
         private DiagnosticResult GetCA3076LoadBasicResultAt(int line, int column, string name)
         {
-            return GetBasicResultAt(line, column, CA3076RuleId, string.Format(CA3076LoadInsecureInputMessage, name));
+            return GetBasicResultAt(line, column, CA3076RuleId, string.Format(_CA3076LoadInsecureInputMessage, name));
         }
 
         [Fact]
@@ -68,7 +67,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -113,7 +111,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -156,7 +153,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -200,7 +196,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -236,7 +231,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -280,7 +274,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -322,7 +315,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -365,7 +357,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -401,7 +392,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -445,7 +435,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -487,7 +476,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -530,7 +518,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -608,7 +595,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -685,7 +671,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -722,7 +707,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -761,7 +745,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -974,7 +957,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -1013,7 +995,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -1134,7 +1115,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -1171,7 +1151,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -1208,7 +1187,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]

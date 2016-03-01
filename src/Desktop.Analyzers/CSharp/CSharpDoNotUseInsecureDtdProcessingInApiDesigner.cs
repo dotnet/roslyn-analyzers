@@ -3,7 +3,7 @@
 using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;                         
+using Microsoft.CodeAnalysis.Diagnostics;
 
 using Desktop.Analyzers.Common;
 
@@ -15,7 +15,7 @@ namespace Desktop.Analyzers
         protected override Analyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes types, Version targetFrameworkVersion)
         {
             Analyzer analyzer = new Analyzer(types, CSharpSyntaxNodeHelper.Default, targetFrameworkVersion);
-            context.RegisterSyntaxNodeAction(analyzer.AnalyzeNode, SyntaxKind.MethodDeclaration, SyntaxKind.ConstructorDeclaration); 
+            context.RegisterSyntaxNodeAction(analyzer.AnalyzeNode, SyntaxKind.MethodDeclaration, SyntaxKind.ConstructorDeclaration);
 
             return analyzer;
         }

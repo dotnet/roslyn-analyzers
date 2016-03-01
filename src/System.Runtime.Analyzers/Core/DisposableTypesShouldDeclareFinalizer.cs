@@ -54,7 +54,7 @@ namespace System.Runtime.Analyzers
                         {
                             var assignment = (IAssignmentExpression)operationAnalysisContext.Operation;
 
-                            var target = assignment.Target;
+                            IOperation target = assignment.Target;
                             if (target == null)
                             {
                                 // This can happen if the left-hand side is an undefined symbol.

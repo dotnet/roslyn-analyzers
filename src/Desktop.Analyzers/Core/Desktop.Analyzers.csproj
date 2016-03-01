@@ -32,7 +32,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.CSharp">
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.1.0.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.1.2.0-beta1-20160218-01\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -97,6 +97,7 @@
   <ItemGroup>
     <Compile Include="DoNotUseInsecureDTDProcessing.cs" />
     <Compile Include="DoNotUseInsecureDtdProcessingInApiDesign.cs" />
+    <Compile Include="DoNotUseInsecureXSLTScriptExecution.cs" />
     <Compile Include="DesktopAnalyzersResources1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

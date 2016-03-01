@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Desktop.Analyzers
 {
-    internal class SecurityDiagnosticHelpers
+    public class SecurityDiagnosticHelpers
     {
         public static bool IsXslCompiledTransformLoad(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {

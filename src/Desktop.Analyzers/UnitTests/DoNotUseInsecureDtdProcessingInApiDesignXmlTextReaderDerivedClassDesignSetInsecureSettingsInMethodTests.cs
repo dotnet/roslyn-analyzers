@@ -1,25 +1,22 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
-using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
     public partial class DoNotUseInsecureDtdProcessingInApiDesignAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private static readonly string CA3077XmlTextReaderDerivedClassSetInsecureSettingsInMethodMessage = DesktopAnalyzersResources.XmlTextReaderDerivedClassSetInsecureSettingsInMethodMessage;
+        private static readonly string s_CA3077XmlTextReaderDerivedClassSetInsecureSettingsInMethodMessage = DesktopAnalyzersResources.XmlTextReaderDerivedClassSetInsecureSettingsInMethodMessage;
 
         private DiagnosticResult GetCA3077XmlTextReaderDerivedClassSetInsecureSettingsInMethodCSharpResultAt(int line, int column, string name)
         {
-            return GetCSharpResultAt(line, column, CA3077RuleId, string.Format(CA3077XmlTextReaderDerivedClassSetInsecureSettingsInMethodMessage, name));
+            return GetCSharpResultAt(line, column, CA3077RuleId, string.Format(s_CA3077XmlTextReaderDerivedClassSetInsecureSettingsInMethodMessage, name));
         }
 
         private DiagnosticResult GetCA3077XmlTextReaderDerivedClassSetInsecureSettingsInMethodBasicResultAt(int line, int column, string name)
         {
-            return GetBasicResultAt(line, column, CA3077RuleId, string.Format(CA3077XmlTextReaderDerivedClassSetInsecureSettingsInMethodMessage, name));
+            return GetBasicResultAt(line, column, CA3077RuleId, string.Format(s_CA3077XmlTextReaderDerivedClassSetInsecureSettingsInMethodMessage, name));
         }
 
         [Fact]
@@ -282,7 +279,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -326,7 +322,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -370,7 +365,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -416,7 +410,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -462,15 +455,14 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
         public void XmlTextReaderDerivedTypeParseAndUrlResolverMethodShouldGenerateDiagnostic()
         {
-            var diagWith2Locations = GetCA3077XmlTextReaderDerivedClassSetInsecureSettingsInMethodCSharpResultAt(17, 13, "method");
+            DiagnosticResult diagWith2Locations = GetCA3077XmlTextReaderDerivedClassSetInsecureSettingsInMethodCSharpResultAt(17, 13, "method");
 
-            diagWith2Locations.Locations = new DiagnosticResultLocation[] 
+            diagWith2Locations.Locations = new DiagnosticResultLocation[]
                 {
                     diagWith2Locations.Locations[0],
                     new DiagnosticResultLocation(diagWith2Locations.Locations[0].Path, 18, 13)
@@ -585,7 +577,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -649,7 +640,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
     }
 }

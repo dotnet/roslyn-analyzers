@@ -28,10 +28,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var expression = root.FindNode(context.Span);
-            var model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            var symbol = model.GetDeclaredSymbol(expression);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode expression = root.FindNode(context.Span);
+            SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            ISymbol symbol = model.GetDeclaredSymbol(expression);
 
             // An accessor without an explicit accessibility means that the parent property is actually the 
             // offending symbol. Therefore, don't offer the code fix on the accessor level.
@@ -45,21 +45,21 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             if (expression != null)
             {
                 context.RegisterCodeFix(new MakeInheritedMemberVisibleCodeAction(
-                    string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDecreaseInheritedMemberVisibilityCodeFix, symbol.Name), 
-                    async c => await IncreaseVisibility(context.Document, expression, c).ConfigureAwait(false)), 
+                    string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDecreaseInheritedMemberVisibilityCodeFix, symbol.Name),
+                    async c => await IncreaseVisibility(context.Document, expression, c).ConfigureAwait(false)),
                     context.Diagnostics);
             }
         }
 
         private async Task<Document> IncreaseVisibility(Document document, SyntaxNode node, CancellationToken cancellationToken)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            var model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-            var declaration = editor.Generator.GetDeclaration(node);
-            var symbol = editor.SemanticModel.GetDeclaredSymbol(node);
-            var ancestorTypes = symbol?.ContainingType?.GetBaseTypes() ?? Enumerable.Empty<INamedTypeSymbol>();
-            var hiddenOrOverriddenMembers = ancestorTypes.SelectMany(t => t.GetMembers(symbol.Name));
+            SyntaxNode declaration = editor.Generator.GetDeclaration(node);
+            ISymbol symbol = editor.SemanticModel.GetDeclaredSymbol(node);
+            System.Collections.Generic.IEnumerable<INamedTypeSymbol> ancestorTypes = symbol?.ContainingType?.GetBaseTypes() ?? Enumerable.Empty<INamedTypeSymbol>();
+            System.Collections.Generic.IEnumerable<ISymbol> hiddenOrOverriddenMembers = ancestorTypes.SelectMany(t => t.GetMembers(symbol.Name));
 
             // Check if a public member was overridden
             if (hiddenOrOverriddenMembers.Any(s => s.DeclaredAccessibility == Accessibility.Public))
@@ -89,7 +89,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static void IncreaseVisibility(DocumentEditor editor, SyntaxNode declaration, Accessibility targetAccessibility)
         {
             if (declaration == null) return;
-            var symbol = editor.SemanticModel.GetDeclaredSymbol(declaration);
+            ISymbol symbol = editor.SemanticModel.GetDeclaredSymbol(declaration);
             var property = (symbol as IMethodSymbol)?.AssociatedSymbol as IPropertySymbol;
             if (property != null && IsMoreRestrictive(property.DeclaredAccessibility, targetAccessibility))
             {

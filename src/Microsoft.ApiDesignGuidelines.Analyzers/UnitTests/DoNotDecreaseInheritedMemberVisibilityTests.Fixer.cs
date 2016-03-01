@@ -220,7 +220,6 @@ public class DerivedClass : BaseClass
     internal new event System.EventHandler MyEvent { add{} remove{} }
     protected internal int MyProperty { get; set; }
 }");
-
         }
 
         [Fact]

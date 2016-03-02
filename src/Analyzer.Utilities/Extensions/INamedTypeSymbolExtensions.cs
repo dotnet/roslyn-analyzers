@@ -109,6 +109,15 @@ namespace Analyzer.Utilities
 
         private static bool ContainsEntryPoint(this INamedTypeSymbol symbol, Compilation compilation)
         {
+            // If this type doesn't live in an application assembly (.exe), it can't contain
+            // the entry point.
+            if (compilation.Options.OutputKind != OutputKind.ConsoleApplication &&
+                compilation.Options.OutputKind != OutputKind.WindowsApplication &&
+                compilation.Options.OutputKind != OutputKind.WindowsRuntimeApplication)
+            {
+                return false;
+            }
+
             // TODO: Handle the case where Compilation.Options.MainTypeName matches this type.
             // TODO: Test: can't have type parameters.
             // TODO: Main in nested class? If allowed, what name does it have?

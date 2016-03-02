@@ -165,6 +165,26 @@ internal abstract class A { }
         }
 
         [Fact]
+        public void CSharpNoDiagnosticForDelegate()
+        {
+            VerifyCSharp(@"
+namespace N
+{
+    internal delegate void Del();
+}");
+        }
+
+        [Fact]
+        public void BasicNoDiagnosticForDelegate()
+        {
+            VerifyBasic(@"
+Namespace N
+    Friend Delegate Sub Del()
+End Namespace
+");
+        }
+
+        [Fact]
         public void BasicNoDiagnosticForInternalAbstractClass()
         {
             VerifyBasic(@"
@@ -200,7 +220,7 @@ End Class
 ");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
         public void CSharpNoDiagnosticForTypeContainingAssemblyEntryPointReturningVoid()
         {
             VerifyCSharp(@"
@@ -210,7 +230,7 @@ internal class C
 }");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
         public void BasicNoDiagnosticForTypeContainingAssemblyEntryPointReturningVoid()
         {
             VerifyBasic(@"
@@ -221,7 +241,7 @@ End Class
 ");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
         public void CSharpNoDiagnosticForTypeContainingAssemblyEntryPointReturningInt()
         {
             VerifyCSharp(@"
@@ -231,7 +251,7 @@ internal class C
 }");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
         public void BasicNoDiagnosticForTypeContainingAssemblyEntryPointReturningInt()
         {
             VerifyBasic(@"
@@ -291,7 +311,7 @@ End Class
                 GetBasicResultAt(2, 14, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
         public void BasicNoDiagnosticIfMainMethodIsDifferentlyCased()
         {
             VerifyBasic(@"

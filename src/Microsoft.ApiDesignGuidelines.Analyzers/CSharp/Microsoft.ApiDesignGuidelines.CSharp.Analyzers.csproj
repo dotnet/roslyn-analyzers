@@ -128,8 +128,6 @@
     <Compile Include="CSharpIdentifiersShouldHaveCorrectPrefix.Fixer.cs" />
     <Compile Include="CSharpNonConstantFieldsShouldNotBeVisible.cs" />
     <Compile Include="CSharpNonConstantFieldsShouldNotBeVisible.Fixer.cs" />
-    <Compile Include="CSharpDoNotDecreaseInheritedMemberVisibility.cs" />
-    <Compile Include="CSharpDoNotDecreaseInheritedMemberVisibility.Fixer.cs" />
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.cs" />
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.Fixer.cs" />
     <Compile Include="CSharpCollectionsShouldImplementGenericInterface.Fixer.cs" />
@@ -150,7 +148,6 @@
     <Compile Include="CSharpUriReturnValuesShouldNotBeStrings.Fixer.cs" />
     <Compile Include="CSharpUriPropertiesShouldNotBeStrings.cs" />
     <Compile Include="CSharpUriPropertiesShouldNotBeStrings.Fixer.cs" />
-    <Compile Include="CSharpImplementIDisposableCorrectly.cs" />
     <Compile Include="CSharpImplementIDisposableCorrectly.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldNotContainUnderscores.cs" />
     <Compile Include="CSharpIdentifiersShouldNotContainUnderscores.Fixer.cs" />

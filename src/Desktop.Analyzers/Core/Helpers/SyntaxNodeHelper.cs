@@ -39,7 +39,6 @@ namespace Desktop.Analyzers.Common
         // IsObjectCreationExpressionUnderFieldDeclaration(node) returns true, return null otherwise.
         public abstract SyntaxNode GetVariableDeclaratorOfAFieldDeclarationNode(SyntaxNode objectCreationExpression);
 
-
         public ISymbol GetEnclosingConstructSymbol(SyntaxNode node, SemanticModel semanticModel)
         {
             if (node == null)

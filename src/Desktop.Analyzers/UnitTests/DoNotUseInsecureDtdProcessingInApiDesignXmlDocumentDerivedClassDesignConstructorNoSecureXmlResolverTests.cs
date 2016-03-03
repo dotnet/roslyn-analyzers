@@ -1,9 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
-using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
@@ -12,7 +10,7 @@ namespace Desktop.Analyzers.UnitTests
     {
         private const string CA3077RuleId = DoNotUseInsecureDtdProcessingInApiDesignAnalyzer.RuleId;
 
-        private readonly string CA3077ConstructorMessage = DesktopAnalyzersResources.XmlDocumentDerivedClassConstructorNoSecureXmlResolverMessage;
+        private readonly string _CA3077ConstructorMessage = DesktopAnalyzersResources.XmlDocumentDerivedClassConstructorNoSecureXmlResolverMessage;
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
@@ -26,12 +24,12 @@ namespace Desktop.Analyzers.UnitTests
 
         private DiagnosticResult GetCA3077ConstructorCSharpResultAt(int line, int column, string name)
         {
-            return GetCSharpResultAt(line, column, CA3077RuleId, string.Format(CA3077ConstructorMessage, name));
+            return GetCSharpResultAt(line, column, CA3077RuleId, string.Format(_CA3077ConstructorMessage, name));
         }
 
         private DiagnosticResult GetCA3077ConstructorBasicResultAt(int line, int column, string name)
         {
-            return GetBasicResultAt(line, column, CA3077RuleId, string.Format(CA3077ConstructorMessage, name));
+            return GetBasicResultAt(line, column, CA3077RuleId, string.Format(_CA3077ConstructorMessage, name));
         }
 
         [Fact]
@@ -95,7 +93,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -244,7 +241,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -325,7 +321,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -397,7 +392,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]
@@ -526,7 +520,6 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
-
         }
 
         [Fact]

@@ -144,7 +144,6 @@ Namespace Desktop.Analyzers.Common
             Return Nothing
         End Function
 
-
         Public Overrides Function GetDefaultValueForAnOptionalParameter(declNode As SyntaxNode, paramIndex As Integer) As SyntaxNode
             If (declNode Is Nothing) Then
                 Return Nothing

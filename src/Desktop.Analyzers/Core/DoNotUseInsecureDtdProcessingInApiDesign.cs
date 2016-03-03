@@ -21,24 +21,23 @@ namespace Desktop.Analyzers
         internal static DiagnosticDescriptor RuleDoNotUseInsecureDtdProcessingInApiDesign = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDTDProcessingGenericMessage)),
                                                                                                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDtdProcessingInApiDesignDescription)),
                                                                                                                          HelpLink);
-  
-        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics = ImmutableArray.Create(RuleDoNotUseInsecureDtdProcessingInApiDesign);
+
+        private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics = ImmutableArray.Create(RuleDoNotUseInsecureDtdProcessingInApiDesign);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return DoNotUseInsecureDtdProcessingInApiDesignAnalyzer.supportedDiagnostics;
+                return DoNotUseInsecureDtdProcessingInApiDesignAnalyzer.s_supportedDiagnostics;
             }
         }
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
-                    var compilation = context.Compilation;
+                    Compilation compilation = context.Compilation;
                     var xmlTypes = new CompilationSecurityTypes(compilation);
                     if (ReferencesAnyTargetType(xmlTypes))
                     {
@@ -124,7 +123,7 @@ namespace Desktop.Analyzers
 
                 IMethodSymbol methodSymbol = SyntaxNodeHelper.GetDeclaredSymbol(node, model) as IMethodSymbol;
 
-                if (methodSymbol == null || 
+                if (methodSymbol == null ||
                     methodSymbol.MethodKind != MethodKind.Constructor ||
                     !((methodSymbol.ContainingType != _xmlTypes.XmlDocument) && methodSymbol.ContainingType.DerivesFrom(_xmlTypes.XmlDocument, baseTypesOnly: true)))
                 {
@@ -133,8 +132,8 @@ namespace Desktop.Analyzers
 
                 bool hasSetSecureXmlResolver = false;
 
-                var assignments = this._syntaxNodeHelper.GetDescendantAssignmentExpressionNodes(node);
-                foreach (var a in assignments)
+                IEnumerable<SyntaxNode> assignments = _syntaxNodeHelper.GetDescendantAssignmentExpressionNodes(node);
+                foreach (SyntaxNode a in assignments)
                 {
                     bool isTargetProperty;
                     // this is intended to be an assignment, not a bug
@@ -142,12 +141,12 @@ namespace Desktop.Analyzers
                             model,
                             (s) =>
                             {
-                                return SecurityDiagnosticHelpers.IsXmlDocumentXmlResolverProperty(s, this._xmlTypes);
+                                return SecurityDiagnosticHelpers.IsXmlDocumentXmlResolverProperty(s, _xmlTypes);
                             },
                             (n) =>
                             {
                                 return SyntaxNodeHelper.NodeHasConstantValueNull(n, model) ||
-                                    SecurityDiagnosticHelpers.IsXmlSecureResolverType(model.GetTypeInfo(n).Type, this._xmlTypes);
+                                    SecurityDiagnosticHelpers.IsXmlSecureResolverType(model.GetTypeInfo(n).Type, _xmlTypes);
                             },
                             out isTargetProperty))
                     {
@@ -157,7 +156,7 @@ namespace Desktop.Analyzers
 
                 if (!hasSetSecureXmlResolver)
                 {
-                    var rule = RuleDoNotUseInsecureDtdProcessingInApiDesign;
+                    DiagnosticDescriptor rule = RuleDoNotUseInsecureDtdProcessingInApiDesign;
                     context.ReportDiagnostic(
                         CreateDiagnostic(
                             methodSymbol.Locations,
@@ -187,8 +186,8 @@ namespace Desktop.Analyzers
                     return;
                 }
 
-                var assignments = this._syntaxNodeHelper.GetDescendantAssignmentExpressionNodes(node);
-                foreach (var assignment in assignments)
+                IEnumerable<SyntaxNode> assignments = _syntaxNodeHelper.GetDescendantAssignmentExpressionNodes(node);
+                foreach (SyntaxNode assignment in assignments)
                 {
                     bool isTargetProperty;
                     // this is intended to be an assignment, not a bug
@@ -196,21 +195,21 @@ namespace Desktop.Analyzers
                             model,
                             (s) =>
                             {
-                                return SecurityDiagnosticHelpers.IsXmlDocumentXmlResolverProperty(s, this._xmlTypes);
+                                return SecurityDiagnosticHelpers.IsXmlDocumentXmlResolverProperty(s, _xmlTypes);
                             },
                             (n) =>
                             {
                                 return !(SyntaxNodeHelper.NodeHasConstantValueNull(n, model) ||
-                                         SecurityDiagnosticHelpers.IsXmlSecureResolverType(model.GetTypeInfo(n).Type, this._xmlTypes));
+                                         SecurityDiagnosticHelpers.IsXmlSecureResolverType(model.GetTypeInfo(n).Type, _xmlTypes));
                             },
                             out isTargetProperty)
                         )
                     {
-                        var rule = RuleDoNotUseInsecureDtdProcessingInApiDesign;
+                        DiagnosticDescriptor rule = RuleDoNotUseInsecureDtdProcessingInApiDesign;
                         context.ReportDiagnostic(
                             CreateDiagnostic(
-                                assignment.GetLocation(), 
-                                rule, 
+                                assignment.GetLocation(),
+                                rule,
                                 SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                     nameof(DesktopAnalyzersResources.XmlDocumentDerivedClassSetInsecureXmlResolverInMethodMessage),
                                     methodSymbol.Name
@@ -238,8 +237,8 @@ namespace Desktop.Analyzers
                 bool hasSetSecureXmlResolver = false;
                 bool isDtdProcessingDisabled = false;
 
-                var assignments = this._syntaxNodeHelper.GetDescendantAssignmentExpressionNodes(node);
-                foreach (var assignment in assignments)
+                IEnumerable<SyntaxNode> assignments = _syntaxNodeHelper.GetDescendantAssignmentExpressionNodes(node);
+                foreach (SyntaxNode assignment in assignments)
                 {
                     bool isTargetProperty = false;
 
@@ -247,12 +246,12 @@ namespace Desktop.Analyzers
                             model,
                             (s) =>
                             {
-                                return SecurityDiagnosticHelpers.IsXmlTextReaderXmlResolverProperty(s, this._xmlTypes);
+                                return SecurityDiagnosticHelpers.IsXmlTextReaderXmlResolverProperty(s, _xmlTypes);
                             },
                             (n) =>
                             {
                                 return SyntaxNodeHelper.NodeHasConstantValueNull(n, model) ||
-                                       SecurityDiagnosticHelpers.IsXmlSecureResolverType(model.GetTypeInfo(n).Type, this._xmlTypes);
+                                       SecurityDiagnosticHelpers.IsXmlSecureResolverType(model.GetTypeInfo(n).Type, _xmlTypes);
                             },
                             out isTargetProperty);
 
@@ -265,11 +264,11 @@ namespace Desktop.Analyzers
                             model,
                             (s) =>
                             {
-                                return SecurityDiagnosticHelpers.IsXmlTextReaderDtdProcessingProperty(s, this._xmlTypes);
+                                return SecurityDiagnosticHelpers.IsXmlTextReaderDtdProcessingProperty(s, _xmlTypes);
                             },
                             (n) =>
                             {
-                                return !SyntaxNodeHelper.GetSymbol(n, model).MatchFieldByName(this._xmlTypes.DtdProcessing, SecurityMemberNames.Parse);
+                                return !SyntaxNodeHelper.GetSymbol(n, model).MatchFieldByName(_xmlTypes.DtdProcessing, SecurityMemberNames.Parse);
                             },
                             out isTargetProperty);
 
@@ -278,12 +277,12 @@ namespace Desktop.Analyzers
                         return;
                     }
                 }
-                
-                var rule = RuleDoNotUseInsecureDtdProcessingInApiDesign;
+
+                DiagnosticDescriptor rule = RuleDoNotUseInsecureDtdProcessingInApiDesign;
                 context.ReportDiagnostic(
                     CreateDiagnostic(
-                        methodSymbol.Locations, 
-                        rule, 
+                        methodSymbol.Locations,
+                        rule,
                         SecurityDiagnosticHelpers.GetLocalizableResourceString(
                             nameof(DesktopAnalyzersResources.XmlTextReaderDerivedClassConstructorNoSecureSettingsMessage),
                             SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model)
@@ -308,7 +307,7 @@ namespace Desktop.Analyzers
                 // If the default value are not secure, the AnalyzeNodeForXmlTextReaderDerivedTypeConstructorDecl would be skipped,
                 // therefoer we need to check constructor for any insecure settings.
                 // Otherwise, we skip checking constructors
-                if (this._isFrameworkSecure && methodSymbol.MethodKind == MethodKind.Constructor)
+                if (_isFrameworkSecure && methodSymbol.MethodKind == MethodKind.Constructor)
                 {
                     return;
                 }
@@ -322,8 +321,8 @@ namespace Desktop.Analyzers
                 Location insecureXmlResolverAssignLoc = null;
                 Location issecureDTDProcessingLoc = null;
 
-                var assignments = this._syntaxNodeHelper.GetDescendantAssignmentExpressionNodes(node);
-                foreach (var assignment in assignments)
+                IEnumerable<SyntaxNode> assignments = _syntaxNodeHelper.GetDescendantAssignmentExpressionNodes(node);
+                foreach (SyntaxNode assignment in assignments)
                 {
                     bool ret;
                     bool isTargetProperty;
@@ -332,12 +331,12 @@ namespace Desktop.Analyzers
                             model,
                             (s) =>
                             {
-                                return SecurityDiagnosticHelpers.IsXmlTextReaderXmlResolverProperty(s, this._xmlTypes);
+                                return SecurityDiagnosticHelpers.IsXmlTextReaderXmlResolverProperty(s, _xmlTypes);
                             },
                             (n) =>
                             {
                                 return !(SyntaxNodeHelper.NodeHasConstantValueNull(n, model) ||
-                                        SecurityDiagnosticHelpers.IsXmlSecureResolverType(model.GetTypeInfo(n).Type, this._xmlTypes));
+                                        SecurityDiagnosticHelpers.IsXmlSecureResolverType(model.GetTypeInfo(n).Type, _xmlTypes));
                             },
                             out isTargetProperty
                             );
@@ -361,11 +360,11 @@ namespace Desktop.Analyzers
                             model,
                             (s) =>
                             {
-                                return SecurityDiagnosticHelpers.IsXmlTextReaderDtdProcessingProperty(s, this._xmlTypes);
+                                return SecurityDiagnosticHelpers.IsXmlTextReaderDtdProcessingProperty(s, _xmlTypes);
                             },
                             (n) =>
                             {
-                                return SyntaxNodeHelper.GetSymbol(n, model).MatchFieldByName(this._xmlTypes.DtdProcessing, SecurityMemberNames.Parse);
+                                return SyntaxNodeHelper.GetSymbol(n, model).MatchFieldByName(_xmlTypes.DtdProcessing, SecurityMemberNames.Parse);
                             },
                             out isTargetProperty);
 
@@ -406,13 +405,13 @@ namespace Desktop.Analyzers
                     {
                         locs.Add(issecureDTDProcessingLoc);
                     }
-                    var rule = RuleDoNotUseInsecureDtdProcessingInApiDesign;
+                    DiagnosticDescriptor rule = RuleDoNotUseInsecureDtdProcessingInApiDesign;
                     // TODO: Only first location is shown in error, maybe we want to report on method instead?
                     //       Or on each insecure assignment?
                     context.ReportDiagnostic(
                         CreateDiagnostic(
-                            locs, 
-                            rule, 
+                            locs,
+                            rule,
                             SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                 nameof(DesktopAnalyzersResources.XmlTextReaderDerivedClassSetInsecureSettingsInMethodMessage),
                                 methodSymbol.Name
@@ -431,7 +430,7 @@ namespace Desktop.Analyzers
                     return;
                 }
                 var typeSymbol = (INamedTypeSymbol)symbol;
-                var xmlDocumentSym = this._xmlTypes.XmlDocument;
+                INamedTypeSymbol xmlDocumentSym = _xmlTypes.XmlDocument;
                 if ((typeSymbol != xmlDocumentSym) && typeSymbol.DerivesFrom(xmlDocumentSym, baseTypesOnly: true))
                 {
                     bool explicitlyDeclared = true;
@@ -443,10 +442,10 @@ namespace Desktop.Analyzers
 
                         if (!explicitlyDeclared)
                         {
-                            var rule = RuleDoNotUseInsecureDtdProcessingInApiDesign;
+                            DiagnosticDescriptor rule = RuleDoNotUseInsecureDtdProcessingInApiDesign;
                             context.ReportDiagnostic(
                                 CreateDiagnostic(
-                                    typeSymbol.Locations, 
+                                    typeSymbol.Locations,
                                     rule,
                                     SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                         nameof(DesktopAnalyzersResources.XmlDocumentDerivedClassNoConstructorMessage),
@@ -457,7 +456,7 @@ namespace Desktop.Analyzers
                         }
                     }
 
-                    this._xmlDocumentDerivedTypes.AddOrUpdate(typeSymbol, explicitlyDeclared, (k, v) => explicitlyDeclared);
+                    _xmlDocumentDerivedTypes.AddOrUpdate(typeSymbol, explicitlyDeclared, (k, v) => explicitlyDeclared);
                 }
             }
 
@@ -470,7 +469,7 @@ namespace Desktop.Analyzers
                     return;
                 }
                 var typeSymbol = (INamedTypeSymbol)symbol;
-                var xmlTextReaderSym = this._xmlTypes.XmlTextReader;
+                INamedTypeSymbol xmlTextReaderSym = _xmlTypes.XmlTextReader;
                 if ((typeSymbol != xmlTextReaderSym) && typeSymbol.DerivesFrom(xmlTextReaderSym, baseTypesOnly: true))
                 {
                     bool explicitlyDeclared = true;
@@ -480,13 +479,13 @@ namespace Desktop.Analyzers
                         IMethodSymbol constructor = typeSymbol.Constructors[0];
                         explicitlyDeclared = !constructor.IsImplicitlyDeclared;
 
-                        if (!explicitlyDeclared && !this._isFrameworkSecure)
+                        if (!explicitlyDeclared && !_isFrameworkSecure)
                         {
-                            var rule = RuleDoNotUseInsecureDtdProcessingInApiDesign;
+                            DiagnosticDescriptor rule = RuleDoNotUseInsecureDtdProcessingInApiDesign;
                             context.ReportDiagnostic(
                                 CreateDiagnostic(
-                                    typeSymbol.Locations, 
-                                    rule, 
+                                    typeSymbol.Locations,
+                                    rule,
                                     SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                         nameof(DesktopAnalyzersResources.XmlTextReaderDerivedClassNoConstructorMessage),
                                         symbol.Name
@@ -496,7 +495,7 @@ namespace Desktop.Analyzers
                         }
                     }
 
-                    this._xmlTextReaderDerivedTypes.AddOrUpdate(typeSymbol, explicitlyDeclared, (k, v) => explicitlyDeclared);
+                    _xmlTextReaderDerivedTypes.AddOrUpdate(typeSymbol, explicitlyDeclared, (k, v) => explicitlyDeclared);
                 }
             }
 
@@ -508,10 +507,10 @@ namespace Desktop.Analyzers
             {
                 bool isIntendedValue;
 
-                SyntaxNode left = this._syntaxNodeHelper.GetAssignmentLeftNode(assignment);
-                SyntaxNode right = this._syntaxNodeHelper.GetAssignmentRightNode(assignment);
+                SyntaxNode left = _syntaxNodeHelper.GetAssignmentLeftNode(assignment);
+                SyntaxNode right = _syntaxNodeHelper.GetAssignmentRightNode(assignment);
 
-                var leftSymbol = SyntaxNodeHelper.GetCalleePropertySymbol(left, model);
+                IPropertySymbol leftSymbol = SyntaxNodeHelper.GetCalleePropertySymbol(left, model);
 
                 isTargetProperty = isTargetPropertyFunc(leftSymbol);
 
@@ -541,7 +540,7 @@ namespace Desktop.Analyzers
                 // The goal is to find all assignment like in the example above, "this.xxx.xxx.Property = ...;".
                 // For simplicity, here we adopt a simple but inaccurate logic:
                 //   If the target is a member access node, then the only pattern we are looking for is "this.Property"
-                SyntaxNode memberAccessNode = this._syntaxNodeHelper.GetDescendantMemberAccessExpressionNodes(left).FirstOrDefault();
+                SyntaxNode memberAccessNode = _syntaxNodeHelper.GetDescendantMemberAccessExpressionNodes(left).FirstOrDefault();
 
                 // if assignment target doesn't have any member access node, 
                 // then we treat it as an instance property access without explicit 'this' ('Me' in VB)
@@ -551,8 +550,8 @@ namespace Desktop.Analyzers
                     return isIntendedValue;
                 }
 
-                var exp = this._syntaxNodeHelper.GetMemberAccessExpressionNode(memberAccessNode);
-                var expSymbol = SyntaxNodeHelper.GetSymbol(exp, model);
+                SyntaxNode exp = _syntaxNodeHelper.GetMemberAccessExpressionNode(memberAccessNode);
+                ISymbol expSymbol = SyntaxNodeHelper.GetSymbol(exp, model);
 
                 isTargetProperty = expSymbol.Kind == SymbolKind.Parameter && ((IParameterSymbol)expSymbol).IsThis;
                 if (!isTargetProperty)
@@ -560,8 +559,8 @@ namespace Desktop.Analyzers
                     return false;
                 }
 
-                var name = this._syntaxNodeHelper.GetMemberAccessNameNode(memberAccessNode);
-                var nameSymbol = SyntaxNodeHelper.GetSymbol(name, model);
+                SyntaxNode name = _syntaxNodeHelper.GetMemberAccessNameNode(memberAccessNode);
+                ISymbol nameSymbol = SyntaxNodeHelper.GetSymbol(name, model);
 
                 isTargetProperty = isTargetPropertyFunc(nameSymbol);
                 if (!isTargetProperty)
@@ -578,7 +577,7 @@ namespace Desktop.Analyzers
                 DiagnosticDescriptor rule,
                 params object[] args)
             {
-                return CreateDiagnostic(new []{location}, rule, args);
+                return CreateDiagnostic(new[] { location }, rule, args);
             }
 
             public static Diagnostic CreateDiagnostic(
@@ -586,8 +585,8 @@ namespace Desktop.Analyzers
                 DiagnosticDescriptor rule,
                 params object[] args)
             {
-                var location = locations.First(l => l.IsInSource);
-                var additionalLocations = locations.Where(l => l.IsInSource).Skip(1);
+                Location location = locations.First(l => l.IsInSource);
+                IEnumerable<Location> additionalLocations = locations.Where(l => l.IsInSource).Skip(1);
                 return Diagnostic.Create(rule,
                          location: location,
                          additionalLocations: additionalLocations,

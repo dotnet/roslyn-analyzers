@@ -224,7 +224,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Uses unsafe overload of &apos;{0}&apos; method.
+        ///   Looks up a localized string similar to Unsafe overload of &apos;{0}&apos; method.
         /// </summary>
         internal static string DoNotUseDtdProcessingOverloadsMessage {
             get {
@@ -260,7 +260,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} uses the unsafe setter of InnerXml property of System.Xml.XmlDocument..
+        ///   Looks up a localized string similar to Uses the unsafe setter of InnerXml property of System.Xml.XmlDocument..
         /// </summary>
         internal static string DoNotUseSetInnerXmlMessage {
             get {
@@ -909,7 +909,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to In {0} an XmlDocument instance is created without setting its XmlResolver property to a secure value..
+        ///   Looks up a localized string similar to An XmlDocument instance is created without setting its XmlResolver property to a secure value..
         /// </summary>
         internal static string XmlDocumentWithNoSecureResolverMessage {
             get {
@@ -981,7 +981,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to XmlTextReader instance in {0} is set with insecure values..
+        ///   Looks up a localized string similar to XmlTextReader instance is set with insecure values..
         /// </summary>
         internal static string XmlTextReaderSetInsecureResolutionMessage {
             get {

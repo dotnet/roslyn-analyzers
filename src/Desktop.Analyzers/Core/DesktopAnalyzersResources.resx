@@ -368,7 +368,7 @@
     <comment>CA3075</comment>
   </data>
   <data name="DoNotUseDtdProcessingOverloadsMessage" xml:space="preserve">
-    <value>Uses unsafe overload of '{0}' method</value>
+    <value>Unsafe overload of '{0}' method</value>
     <comment>CA3075</comment>
   </data>
   <data name="DoNotUseDtdProcessingOverloads" xml:space="preserve">

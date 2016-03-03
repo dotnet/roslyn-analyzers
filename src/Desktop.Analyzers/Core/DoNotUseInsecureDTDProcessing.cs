@@ -59,9 +59,9 @@ namespace Desktop.Analyzers
                 (context) =>
                 {
                     Compilation compilation = context.Compilation;
-                    var _xmlTypes = new CompilationSecurityTypes(compilation);
+                    var xmlTypes = new CompilationSecurityTypes(compilation);
 
-                    if (ReferencesAnyTargetType(_xmlTypes))
+                    if (ReferencesAnyTargetType(xmlTypes))
                     {
                         Version version = SecurityDiagnosticHelpers.GetDotNetFrameworkVersion(compilation);
 
@@ -70,7 +70,7 @@ namespace Desktop.Analyzers
                             context.RegisterOperationBlockStartAction(
                                 (c) =>
                                 {
-                                    RegisterAnalyzer(c, _xmlTypes, version);
+                                    RegisterAnalyzer(c, xmlTypes, version);
                                 });
                         }
                     }

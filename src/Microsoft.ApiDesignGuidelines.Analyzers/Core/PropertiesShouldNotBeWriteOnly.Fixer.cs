@@ -9,8 +9,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
     /// <summary>
     /// CA1044: Properties should not be write only
-    /// </summary>
-    public abstract class PropertiesShouldNotBeWriteOnlyFixer : CodeFixProvider
+    /// </summary>       
+    public sealed class PropertiesShouldNotBeWriteOnlyFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PropertiesShouldNotBeWriteOnlyAnalyzer.RuleId);
 

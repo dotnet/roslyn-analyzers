@@ -50,11 +50,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         /// Implementation for CA1044: Properties should not be write only
         /// </summary>
         /// <param name="context"></param>
-        private static void AnalyzeSymbol(SymbolAnalysisContext context)
+        private void AnalyzeSymbol(SymbolAnalysisContext context)
         {
 
             var property = context.Symbol as IPropertySymbol;
-            // If no property found
+            // Nothing to do for overwritten issues
             if (property == null)
             {
                 return;

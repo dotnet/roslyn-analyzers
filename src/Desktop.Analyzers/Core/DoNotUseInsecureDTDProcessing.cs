@@ -811,7 +811,7 @@ namespace Desktop.Analyzers
 
             private void AnalyzeObjectCreationOperation(OperationAnalysisContext context)
             {
-                AnalyzeObjectCreationInternal(context, null, context.Operation);               
+                AnalyzeObjectCreationInternal(context, null, context.Operation);
             }
         }
 

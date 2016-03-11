@@ -94,8 +94,8 @@ namespace Desktop.Analyzers
                     bool isSecureSettings;
                     bool isSetInBlock;
 
-                    int xmlResolverIndex = SecurityDiagnosticHelpers.HasXmlResolverParameter(methodSymbol, _xmlTypes);
-                    int xsltSettingsIndex = SecurityDiagnosticHelpers.HasXsltSettingsParameter(methodSymbol, _xmlTypes);
+                    int xmlResolverIndex = SecurityDiagnosticHelpers.GetXmlResolverParameterIndex(methodSymbol, _xmlTypes);
+                    int xsltSettingsIndex = SecurityDiagnosticHelpers.GetXsltSettingsParameterIndex(methodSymbol, _xmlTypes);
 
                     // Overloads with no XmlResolver and XstlSettings specified are secure since they all have folowing behavior:
                     //  1. An XmlUrlResolver with no user credentials is used to process any xsl:import or xsl:include elements.

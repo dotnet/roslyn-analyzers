@@ -21,20 +21,9 @@ namespace Desktop.Analyzers
                    method.MatchMethodDerivedByName(xmlTypes.XmlDocument, WellKnownMemberNames.InstanceConstructorName);
         }
 
-        public static bool IsXmlDocumentXmlResolverPropertyDerived(ISymbol symbol, CompilationSecurityTypes xmlTypes)
-        {
-            return IsSpecifiedPropertyDerived(symbol, xmlTypes.XmlDocument, SecurityMemberNames.XmlResolver);
-        }
-
         public static bool IsXmlDocumentXmlResolverProperty(ISymbol symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XmlDocument, SecurityMemberNames.XmlResolver);
-        }
-
-        public static bool IsXmlTextReaderCtor(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
-        {
-            return method != null
-                && method.MatchMethodByName(xmlTypes.XmlTextReader, WellKnownMemberNames.InstanceConstructorName);
         }
 
         public static bool IsXmlTextReaderCtorDerived(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
@@ -61,12 +50,6 @@ namespace Desktop.Analyzers
         public static bool IsXmlTextReaderDtdProcessingProperty(ISymbol symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XmlTextReader, SecurityMemberNames.DtdProcessing);
-        }
-
-        public static bool IsXmlReaderCreate(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
-        {
-            return method != null
-                && method.MatchMethodByName(xmlTypes.XmlReader, SecurityMemberNames.Create);
         }
 
         public static bool IsXmlReaderSettingsCtor(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
@@ -116,7 +99,6 @@ namespace Desktop.Analyzers
             return IsSpecifiedProperty(symbol, xmlTypes.XsltSettings, SecurityMemberNames.EnableScript);
         }
 
-
         public static bool IsXmlResolverType(ITypeSymbol symbol, CompilationSecurityTypes xmlTypes)
         {
             return symbol != null
@@ -139,19 +121,19 @@ namespace Desktop.Analyzers
             return symbol == xmlTypes.XmlReaderSettings;
         }
 
-        public static int HasXmlResolverParameter(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
+        public static int GetXmlResolverParameterIndex(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
-            return HasSpecifiedParameter(method, xmlTypes, IsXmlResolverType);
+            return GetSpecifiedParameterIndex(method, xmlTypes, IsXmlResolverType);
         }
 
-        public static int HasXsltSettingsParameter(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
+        public static int GetXsltSettingsParameterIndex(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
-            return HasSpecifiedParameter(method, xmlTypes, IsXsltSettingsType);
+            return GetSpecifiedParameterIndex(method, xmlTypes, IsXsltSettingsType);
         }
 
-        public static int HasXmlReaderSettingsParameter(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
+        public static int GetXmlReaderSettingsParameterIndex(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
-            return HasSpecifiedParameter(method, xmlTypes, IsXmlReaderSettingsType);
+            return GetSpecifiedParameterIndex(method, xmlTypes, IsXmlReaderSettingsType);
         }
 
         public static bool IsXmlReaderType(ITypeSymbol symbol, CompilationSecurityTypes xmlTypes)
@@ -162,7 +144,7 @@ namespace Desktop.Analyzers
 
         public static int HasXmlReaderParameter(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
-            return HasSpecifiedParameter(method, xmlTypes, IsXmlReaderType);
+            return GetSpecifiedParameterIndex(method, xmlTypes, IsXmlReaderType);
         }
 
         public static bool IsExpressionEqualsNull(IOperation operation)
@@ -211,9 +193,10 @@ namespace Desktop.Analyzers
             return false;
         }
 
-        private static int HasSpecifiedParameter(IMethodSymbol method, CompilationSecurityTypes xmlTypes, Func<ITypeSymbol, CompilationSecurityTypes, bool> func)
+        private static int GetSpecifiedParameterIndex(IMethodSymbol method, CompilationSecurityTypes xmlTypes, Func<ITypeSymbol, CompilationSecurityTypes, bool> func)
         {
             int index = -1;
+
             if (method == null)
             {
                 return index;
@@ -227,6 +210,7 @@ namespace Desktop.Analyzers
                     break;
                 }
             }
+
             return index;
         }
 

@@ -210,27 +210,25 @@ namespace Desktop.Analyzers
 
             private void AnalyzeInvocation(OperationAnalysisContext context)
             {
-                IInvocationExpression invoke = context.Operation as IInvocationExpression;
+                IInvocationExpression invocationExpression = context.Operation as IInvocationExpression;
 
-                if(invoke == null)
+                if(invocationExpression == null)
                 {
                     return;
                 }
 
-                IMethodSymbol method = invoke.TargetMethod;
+                IMethodSymbol method = invocationExpression.TargetMethod;
 
                 if(method == null)
                 {
                     return;
                 }
 
-                AnalyzeMethodOverloads(context, method, invoke.ArgumentsInParameterOrder, invoke.Syntax.GetLocation());
+                AnalyzeMethodOverloads(context, method, invocationExpression);
             }
 
-            private void AnalyzeMethodOverloads(OperationAnalysisContext context, IMethodSymbol method, ImmutableArray<IArgument> arguments, Location location)
+            private void AnalyzeMethodOverloads(OperationAnalysisContext context, IMethodSymbol method, IHasArgumentsExpression expression)
             {
-                SemanticModel model = context.Compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree);
-
                 if (method.MatchMethodDerivedByName(_xmlTypes.XmlDocument, SecurityMemberNames.Load) ||                                    //FxCop CA3056
                     method.MatchMethodDerivedByName(_xmlTypes.XmlDocument, SecurityMemberNames.LoadXml) ||                                 //FxCop CA3057
                     method.MatchMethodDerivedByName(_xmlTypes.XPathDocument, WellKnownMemberNames.InstanceConstructorName) ||         //FxCop CA3059
@@ -247,7 +245,7 @@ namespace Desktop.Analyzers
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 rule,
-                                location,
+                                expression.Syntax.GetLocation(),
                                 SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                     nameof(DesktopAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage),
                                     method.Name
@@ -258,14 +256,14 @@ namespace Desktop.Analyzers
                 }
                 else if (method.MatchMethodDerivedByName(_xmlTypes.XmlReader, SecurityMemberNames.Create))
                 {
-                    int xmlReaderSettingsIndex = SecurityDiagnosticHelpers.HasXmlReaderSettingsParameter(method, _xmlTypes);
+                    int xmlReaderSettingsIndex = SecurityDiagnosticHelpers.GetXmlReaderSettingsParameterIndex(method, _xmlTypes);
 
                     if (xmlReaderSettingsIndex < 0)
                     {
                         DiagnosticDescriptor rule = RuleDoNotUseInsecureDTDProcessing;
                         Diagnostic diag = Diagnostic.Create(
                                 RuleDoNotUseInsecureDTDProcessing,
-                                location,
+                                expression.Syntax.GetLocation(),
                                 SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                     nameof(DesktopAnalyzersResources.XmlReaderCreateWrongOverloadMessage)
                                 )
@@ -274,8 +272,8 @@ namespace Desktop.Analyzers
                     }
                     else
                     {
-
-                        IArgument arg = arguments[xmlReaderSettingsIndex];
+                        SemanticModel model = context.Compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree);
+                        IArgument arg = expression.ArgumentsInParameterOrder[xmlReaderSettingsIndex];
                         ISymbol settingsSymbol = arg.Value.Syntax.GetDeclaredOrReferencedSymbol(model);
                         
                         if(settingsSymbol == null)
@@ -290,7 +288,7 @@ namespace Desktop.Analyzers
                             // symbol for settings is not found => passed in without any change => assume insecure
                             Diagnostic diag = Diagnostic.Create(
                                 RuleDoNotUseInsecureDTDProcessing,
-                                location,
+                                expression.Syntax.GetLocation(),
                                 SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                     nameof(DesktopAnalyzersResources.XmlReaderCreateInsecureInputMessage)
                                 )
@@ -304,7 +302,7 @@ namespace Desktop.Analyzers
                             {
                                 diag = Diagnostic.Create(
                                     RuleDoNotUseInsecureDTDProcessing,
-                                    location,
+                                    expression.Syntax.GetLocation(),
                                     SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                         nameof(DesktopAnalyzersResources.XmlReaderCreateInsecureConstructedMessage)
                                     )
@@ -314,7 +312,7 @@ namespace Desktop.Analyzers
                             {
                                 diag = Diagnostic.Create(
                                     RuleDoNotUseInsecureDTDProcessing,
-                                    location,
+                                    expression.Syntax.GetLocation(),
                                     SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                         nameof(DesktopAnalyzersResources.XmlReaderCreateInsecureInputMessage)
                                     )
@@ -374,27 +372,26 @@ namespace Desktop.Analyzers
                 }
                 else
                 {
-                    AnalyzeMethodOverloads(context, objCreation.Constructor, objCreation.ArgumentsInParameterOrder, objCreation.Syntax.GetLocation());
+                    AnalyzeMethodOverloads(context, objCreation.Constructor, objCreation);
                 }
             }
 
             private void AnalyzeObjectCreationForXmlDocument(OperationAnalysisContext context, ISymbol variable, IObjectCreationExpression objCreation)
             {
-                XmlDocumentEnvironment env = null;
+                XmlDocumentEnvironment xmlDocumentEnvironment = null;
 
                 if (variable == null || !_xmlDocumentEnvironments.ContainsKey(variable))
                 {
-                    env = new XmlDocumentEnvironment();
-                    env.IsSecureResolver = false;
-                    env.IsXmlResolverSet = false;
-                    env.XmlDocumentDefinition = objCreation.Syntax;
+                    xmlDocumentEnvironment = new XmlDocumentEnvironment();
+                    xmlDocumentEnvironment.IsSecureResolver = false;
+                    xmlDocumentEnvironment.IsXmlResolverSet = false;
                 }
                 else
                 {
-                    env = _xmlDocumentEnvironments[variable];
-                    env.XmlDocumentDefinition = objCreation.Syntax;
+                    xmlDocumentEnvironment = _xmlDocumentEnvironments[variable];
                 }
 
+                xmlDocumentEnvironment.XmlDocumentDefinition = objCreation.Syntax;
                 SyntaxNode node = objCreation.Syntax;
                 bool isXmlDocumentSecureResolver = false;
 
@@ -452,25 +449,23 @@ namespace Desktop.Analyzers
                     }
                 }
 
-                if (env != null)
-                {
-                    env.IsSecureResolver = isXmlDocumentSecureResolver;
 
-                    if (variable != null)
-                    {
-                        _xmlDocumentEnvironments[variable] = env;
-                    }
-                    else if (!env.IsSecureResolver) // Insecure temp object
-                    {
-                        Diagnostic diag = Diagnostic.Create(
-                                            RuleDoNotUseInsecureDTDProcessing,
-                                            node.GetLocation(),
-                                            SecurityDiagnosticHelpers.GetLocalizableResourceString(
-                                                nameof(DesktopAnalyzersResources.XmlDocumentWithNoSecureResolverMessage)
-                                            )
-                                        );
-                        context.ReportDiagnostic(diag);
-                    }
+                xmlDocumentEnvironment.IsSecureResolver = isXmlDocumentSecureResolver;
+
+                if (variable != null)
+                {
+                    _xmlDocumentEnvironments[variable] = xmlDocumentEnvironment;
+                }
+                else if (!xmlDocumentEnvironment.IsSecureResolver) // Insecure temp object
+                {
+                    Diagnostic diag = Diagnostic.Create(
+                                        RuleDoNotUseInsecureDTDProcessing,
+                                        node.GetLocation(),
+                                        SecurityDiagnosticHelpers.GetLocalizableResourceString(
+                                            nameof(DesktopAnalyzersResources.XmlDocumentWithNoSecureResolverMessage)
+                                        )
+                                    );
+                    context.ReportDiagnostic(diag);
                 }
             }
 
@@ -612,15 +607,7 @@ namespace Desktop.Analyzers
 
             private void AnalyzeXmlResolverPropertyAssignmentForXmlDocument(OperationAnalysisContext context, ISymbol assignedSymbol, IAssignmentExpression expression)
             {
-                XmlDocumentEnvironment env = null;
                 bool isSecureResolver = false;
-
-                if (_xmlDocumentEnvironments.ContainsKey(assignedSymbol))
-                {
-                    env = _xmlDocumentEnvironments[assignedSymbol];
-                    env.IsXmlResolverSet = true;
-                }
-
                 IConversionExpression conv = expression.Value as IConversionExpression;
 
                 if (SecurityDiagnosticHelpers.IsXmlSecureResolverType(conv.Operand.Type, _xmlTypes))
@@ -643,18 +630,19 @@ namespace Desktop.Analyzers
                     context.ReportDiagnostic(diag);
                 }
 
-                if (env != null)
+                if (_xmlDocumentEnvironments.ContainsKey(assignedSymbol))
                 {
-                    env.IsSecureResolver = isSecureResolver;
+                    XmlDocumentEnvironment xmlDocumentEnv = _xmlDocumentEnvironments[assignedSymbol];
+                    xmlDocumentEnv.IsXmlResolverSet = true;
+                    xmlDocumentEnv.IsSecureResolver = isSecureResolver;
                 }
             }
 
             private void AnalyzeXmlTextReaderProperties(OperationAnalysisContext context, ISymbol assignedSymbol, IAssignmentExpression expression, bool isXmlTextReaderXmlResolverProperty, bool isXmlTextReaderDtdProcessingProperty)
             {
                 XmlTextReaderEnvironment env = null;
-                _xmlTextReaderEnvironments.TryGetValue(assignedSymbol, out env);
 
-                if (env == null)
+                if (!_xmlTextReaderEnvironments.TryGetValue(assignedSymbol, out env))
                 {
                     env = new XmlTextReaderEnvironment(_isFrameworkSecure);
                 }
@@ -700,13 +688,12 @@ namespace Desktop.Analyzers
             {
                 IAssignmentExpression expression = context.Operation as IAssignmentExpression;
                 
-                SemanticModel model = context.Compilation.GetSemanticModel(expression.Syntax.SyntaxTree);
-
                 if (expression.Target == null)
                 {
                     return;
                 }
-                
+
+                SemanticModel model = context.Compilation.GetSemanticModel(expression.Syntax.SyntaxTree);
                 var propRef = expression.Target as IPropertyReferenceExpression;
 
                 if (propRef == null) // A variable/field assignment

@@ -83,7 +83,7 @@ namespace Analyzer.Utilities
         private static bool s_firstCallToIsUnused = true;
         private static INamedTypeSymbol s_attributeSymbol;
 
-        public static bool IsUnused(this INamedTypeSymbol symbol, Compilation compilation)
+        public static bool IsOkToBeUnused(this INamedTypeSymbol symbol, Compilation compilation)
         {
             if (s_firstCallToIsUnused)
             {

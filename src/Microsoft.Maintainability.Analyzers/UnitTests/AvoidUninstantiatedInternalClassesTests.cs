@@ -165,7 +165,7 @@ internal abstract class A { }
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForDelegate()
+        public void CSharpNoDiagnosticForInternalDelegate()
         {
             VerifyCSharp(@"
 namespace N
@@ -175,7 +175,29 @@ namespace N
         }
 
         [Fact]
-        public void BasicNoDiagnosticForDelegate()
+        public void BasicNoDiagnosticForInternalEnum()
+        {
+            VerifyBasic(@"
+Namespace N
+    Friend Enum E
+        None            ' VB enums require at least one member.
+    End Enum
+End Namespace
+");
+        }
+
+        [Fact]
+        public void CSharpNoDiagnosticForInternalEnum()
+        {
+            VerifyCSharp(@"
+namespace N
+{
+    internal enum E {}  // C# enums don't care if there are any members.
+}");
+        }
+
+        [Fact]
+        public void BasicNoDiagnosticForInternalDelegate()
         {
             VerifyBasic(@"
 Namespace N

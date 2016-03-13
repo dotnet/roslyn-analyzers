@@ -6,6 +6,9 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Semantics;
 using System;
+using System.Linq;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
@@ -104,8 +107,74 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(AssemblyRule, NamespaceRule, TypeRule, MemberRule, TypeTypeParameterRule, MethodTypeParameterRule, MemberParameterRule, DelegateParameterRule);
 
+        private ConcurrentDictionary<INamedTypeSymbol, ConcurrentDictionary<ISymbol, List<ISymbol>>> _typeDeclaredMemberMapping;
+
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.RegisterCompilationStartAction(compilationStartAnalysisContext =>
+            {
+                _typeDeclaredMemberMapping = new ConcurrentDictionary<INamedTypeSymbol, ConcurrentDictionary<ISymbol, List<ISymbol>>>();
+
+                compilationStartAnalysisContext.RegisterSymbolAction(symbolAnalysisContext =>
+                {
+                    var symbol = symbolAnalysisContext.Symbol;
+                    if (ContainsUnderScore(symbol.Name))
+                    {
+                        switch (symbol.Kind)
+                        {
+                            case SymbolKind.Namespace:
+                                {
+                                    symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(NamespaceRule, symbol.Name));
+                                    return;
+                                }
+
+                            case SymbolKind.NamedType:
+                                {
+                                    if (!symbol.IsPublic())
+                                    {
+                                        return;
+                                    }
+
+                                    symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(TypeRule, symbol.Name));
+                                    return;
+                                }
+
+                            case SymbolKind.Field:
+                                {
+                                    var fieldSymbol = symbol as IFieldSymbol;
+                                    if (symbol.IsPublic() && (fieldSymbol.IsConst || (fieldSymbol.IsStatic && fieldSymbol.IsReadOnly)))
+                                    {
+                                        symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.Name));
+                                        return;
+                                    }
+
+                                    return;
+                                }
+
+                            default:
+                                {
+                                    if (!((symbol.IsPublic() || symbol.IsProtected()) && !symbol.IsOverride))
+                                    {
+                                        return;
+                                    }
+
+                                    if (symbol.IsAccessorMethod() || IsInterfaceImplementation(symbol))
+                                    {
+                                        return;
+                                    }
+
+                                    symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.Name));
+                                    return;
+                                }
+                        }
+                    }
+                },
+            SymbolKind.Namespace, // Namespace
+            SymbolKind.NamedType, //Type
+            SymbolKind.Method, SymbolKind.Property, SymbolKind.Field, SymbolKind.Event // Members
+            );
+            });
+
             analysisContext.RegisterCompilationAction(compilationAnalysisContext =>
             {
                 var compilation = compilationAnalysisContext.Compilation;
@@ -114,68 +183,67 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     compilationAnalysisContext.ReportDiagnostic(compilation.Assembly.CreateDiagnostic(AssemblyRule, compilation.AssemblyName));
                 }
             });
-
-            analysisContext.RegisterSymbolAction(symbolAnalysisContext =>
-            {
-                var symbol = symbolAnalysisContext.Symbol;
-                if (ContainsUnderScore(symbol.Name))
-                {
-                    switch(symbol.Kind)
-                    {
-                        case SymbolKind.Namespace:
-                            {
-                                symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(NamespaceRule, symbol.Name));
-                                return;
-                            }
-
-                        case SymbolKind.NamedType:
-                            {
-                                if (!symbol.IsPublic())
-                                {
-                                    return;
-                                }
-
-                                symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(TypeRule, symbol.Name));
-                                return;
-                            }
-
-                        case SymbolKind.Field:
-                            {
-                                if (!symbol.IsPublic())
-                                {
-                                    return;
-                                }
-
-                                var fieldSymbol = symbol as IFieldSymbol;
-                                if (fieldSymbol.IsConst || (fieldSymbol.IsStatic && fieldSymbol.IsReadOnly))
-                                {
-                                    return;
-                                }
-
-                                symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.Name));
-                                return;
-                            }
-
-                        default:
-                            {
-                                if (!symbol.IsPublic() || symbol.IsOverride)
-                                {
-                                    return;
-                                }
-
-                                symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.Name));
-                                return;
-                            }
-                    }
-                }
-            },
-            SymbolKind.Namespace, // Namespace
-            SymbolKind.NamedType, //Type
-            SymbolKind.Property, SymbolKind.Field, SymbolKind.Event // Members
-            //SymbolKind.TypeParameter, // TypeTypeParameter, MethodTypeParameter
-            //SymbolKind.Parameter //MemberParameter, Delegate Parameter
-            );
         }
+
+        private bool IsInterfaceImplementation(ISymbol symbol)
+        {
+            return IsExplicitInterfaceImplementation(symbol) || IsImplicitInterfaceImplementation(symbol);
+        }
+
+        private bool IsImplicitInterfaceImplementation(ISymbol symbol)
+        {
+            INamedTypeSymbol declaringType = symbol.ContainingType;
+            if (declaringType.AllInterfaces.Any())
+            {
+                ConcurrentDictionary<ISymbol, List<ISymbol>> declaredMemberToInterfaceMembers = _typeDeclaredMemberMapping.GetOrAdd(declaringType, declaringTypeKey =>
+                {
+                    var declaredMemberSymbolsToImplementedInterfaceMembersMap = new ConcurrentDictionary<ISymbol, List<ISymbol>>();
+                    foreach (INamedTypeSymbol implementedInterface in declaringTypeKey.AllInterfaces)
+                    {
+                        foreach (ISymbol member in implementedInterface.GetMembers())
+                        {
+                            ISymbol implementedSymbol = declaringTypeKey.FindImplementationForInterfaceMember(member);
+                            if (implementedSymbol != null)
+                            {
+                                List<ISymbol> implementedSymbolImplementingInterfaceMembers = declaredMemberSymbolsToImplementedInterfaceMembersMap.GetOrAdd(implementedSymbol, s => new List<ISymbol>());
+                                implementedSymbolImplementingInterfaceMembers.Add(member);
+                            }
+                        }
+                    }
+
+                    return declaredMemberSymbolsToImplementedInterfaceMembersMap;
+                });
+
+                List<ISymbol> implementedInterfaceMembers;
+                if (declaredMemberToInterfaceMembers.TryGetValue(symbol, out implementedInterfaceMembers))
+                {
+                    return implementedInterfaceMembers.Any();
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
+        private bool IsExplicitInterfaceImplementation(ISymbol symbol)
+        {
+            var methodSymbol = symbol as IMethodSymbol;
+            if (methodSymbol != null && methodSymbol.ExplicitInterfaceImplementations.Any())
+            {
+                return true;
+            }
+
+            var propertySymbol = symbol as IPropertySymbol;
+            if (propertySymbol != null && propertySymbol.ExplicitInterfaceImplementations.Any())
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+
 
         private bool ContainsUnderScore(string identifier)
         {

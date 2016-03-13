@@ -28,7 +28,7 @@ public class DoesNotMatter
 }
 ",
             testProjectName: "AssemblyNameHasUnderScore_",
-            expected: GetCA1707CSharpResultAt(line: 2, column: 1, symbolKind: SymbolKind.Assembly, identifierName: "AssemblyNameHasUnderScore_"));
+            expected: GetCA1707CSharpResultAt(line: 2, column: 1, symbolKind: SymbolKind.Assembly, identifierNames: "AssemblyNameHasUnderScore_"));
         }
 
         [Fact]
@@ -59,7 +59,7 @@ namespace HasNoUnderScore
     {
     }
 }",
-            GetCA1707CSharpResultAt(line: 2, column: 11, symbolKind: SymbolKind.Namespace, identifierName: "HasUnderScore_"));
+            GetCA1707CSharpResultAt(line: 2, column: 11, symbolKind: SymbolKind.Namespace, identifierNames: "HasUnderScore_"));
         }
 
         [Fact]
@@ -74,7 +74,7 @@ private class UnderScoreInNameButPrivate_
 {
 }
 ",
-            GetCA1707CSharpResultAt(line: 2, column: 14, symbolKind: SymbolKind.NamedType, identifierName: "UnderScoreInName_"));
+            GetCA1707CSharpResultAt(line: 2, column: 14, symbolKind: SymbolKind.NamedType, identifierNames: "UnderScoreInName_"));
         }
 
         [Fact]
@@ -98,10 +98,10 @@ public enum DoesNotMatterEnum
     _EnumWithUnderscore,
     _
 }",
-            GetCA1707CSharpResultAt(line: 4, column: 26, symbolKind: SymbolKind.Member, identifierName: "ConstField_"),
-            GetCA1707CSharpResultAt(line: 5, column: 36, symbolKind: SymbolKind.Member, identifierName: "StaticReadOnlyField_"),
-            GetCA1707CSharpResultAt(line: 16, column: 5, symbolKind: SymbolKind.Member, identifierName: "_EnumWithUnderscore"),
-            GetCA1707CSharpResultAt(line: 17, column: 5, symbolKind: SymbolKind.Member, identifierName: "_"));
+            GetCA1707CSharpResultAt(line: 4, column: 26, symbolKind: SymbolKind.Member, identifierNames: "ConstField_"),
+            GetCA1707CSharpResultAt(line: 5, column: 36, symbolKind: SymbolKind.Member, identifierNames: "StaticReadOnlyField_"),
+            GetCA1707CSharpResultAt(line: 16, column: 5, symbolKind: SymbolKind.Member, identifierNames: "_EnumWithUnderscore"),
+            GetCA1707CSharpResultAt(line: 17, column: 5, symbolKind: SymbolKind.Member, identifierNames: "_"));
         }
 
         [Fact]
@@ -134,10 +134,10 @@ public class Derives : ImplementI1
 
 
 ",
-            GetCA1707CSharpResultAt(line: 4, column: 17, symbolKind: SymbolKind.Member, identifierName: "PublicM1_"),
-            GetCA1707CSharpResultAt(line: 7, column: 20, symbolKind: SymbolKind.Member, identifierName: "ProtectedM4_"),
-            GetCA1707CSharpResultAt(line: 12, column: 10, symbolKind: SymbolKind.Member, identifierName: "M_"),
-            GetCA1707CSharpResultAt(line: 18, column: 25, symbolKind: SymbolKind.Member, identifierName: "M2_"));
+            GetCA1707CSharpResultAt(line: 4, column: 17, symbolKind: SymbolKind.Member, identifierNames: "PublicM1_"),
+            GetCA1707CSharpResultAt(line: 7, column: 20, symbolKind: SymbolKind.Member, identifierNames: "ProtectedM4_"),
+            GetCA1707CSharpResultAt(line: 12, column: 10, symbolKind: SymbolKind.Member, identifierNames: "M_"),
+            GetCA1707CSharpResultAt(line: 18, column: 25, symbolKind: SymbolKind.Member, identifierNames: "M2_"));
         }
 
         [Fact]
@@ -167,20 +167,31 @@ public class Derives : ImplementI1
 {
     public override event EventHandler E2_;
 }",
-            GetCA1707CSharpResultAt(line: 4, column: 31, symbolKind: SymbolKind.Member, identifierName: "PublicE1_"),
-            GetCA1707CSharpResultAt(line: 7, column: 34, symbolKind: SymbolKind.Member, identifierName: "ProtectedE4_"),
-            GetCA1707CSharpResultAt(line: 12, column: 24, symbolKind: SymbolKind.Member, identifierName: "E_"),
-            GetCA1707CSharpResultAt(line: 18, column: 39, symbolKind: SymbolKind.Member, identifierName: "E2_"));
+            GetCA1707CSharpResultAt(line: 4, column: 31, symbolKind: SymbolKind.Member, identifierNames: "PublicE1_"),
+            GetCA1707CSharpResultAt(line: 7, column: 34, symbolKind: SymbolKind.Member, identifierNames: "ProtectedE4_"),
+            GetCA1707CSharpResultAt(line: 12, column: 24, symbolKind: SymbolKind.Member, identifierNames: "E_"),
+            GetCA1707CSharpResultAt(line: 18, column: 39, symbolKind: SymbolKind.Member, identifierNames: "E2_"));
+        }
+
+        [Fact]
+        public void CSharp_CA1707_ForDelegates()
+        {
+            VerifyCSharp(@"
+public delegate void Dele(int intPublic_, string stringPublic_);
+internal delegate void Dele2(int intInternal_, string stringInternal_); // No diagnostics
+",
+            GetCA1707CSharpResultAt(2, 31, SymbolKind.DelegateParameter, "Dele", "intPublic_"),
+            GetCA1707CSharpResultAt(2, 50, SymbolKind.DelegateParameter, "Dele", "stringPublic_"));
         }
 
         #region Helpers
 
-        private static DiagnosticResult GetCA1707CSharpResultAt(int line, int column, SymbolKind symbolKind, string identifierName)
+        private static DiagnosticResult GetCA1707CSharpResultAt(int line, int column, SymbolKind symbolKind, params string[] identifierNames)
         {
-            return GetCA1707CSharpResultAt(line, column, GetApproriateMessage(symbolKind), identifierName);
+            return GetCA1707CSharpResultAt(line, column, GetApproriateMessage(symbolKind), identifierNames);
         }
 
-        private static DiagnosticResult GetCA1707CSharpResultAt(int line, int column, string message, string identifierName)
+        private static DiagnosticResult GetCA1707CSharpResultAt(int line, int column, string message, params string[] identifierName)
         {
             return GetCSharpResultAt(line, column, IdentifiersShouldNotContainUnderscoresAnalyzer.RuleId, string.Format(message, identifierName));
         }
@@ -221,6 +232,8 @@ public class Derives : ImplementI1
                     return MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageType;
                 case SymbolKind.Member:
                     return MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMember;
+                case SymbolKind.DelegateParameter:
+                    return MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageDelegateParameter;
                 default:
                     throw new System.Exception("Unknown Symbol Kind");
             }
@@ -231,7 +244,8 @@ public class Derives : ImplementI1
             Assembly,
             Namespace,
             NamedType,
-            Member
+            Member,
+            DelegateParameter
         }
         #endregion
     }

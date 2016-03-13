@@ -153,7 +153,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                             default:
                                 {
-                                    if (!((symbol.IsPublic() || symbol.IsProtected()) && !symbol.IsOverride))
+                                    if (IsInvalidSymbol(symbol))
+                                    {
+                                        return;
+                                    }
+                                        if (!((symbol.IsPublic() || symbol.IsProtected()) && !symbol.IsOverride))
                                     {
                                         return;
                                     }
@@ -169,10 +173,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         }
                     }
                 },
-            SymbolKind.Namespace, // Namespace
-            SymbolKind.NamedType, //Type
-            SymbolKind.Method, SymbolKind.Property, SymbolKind.Field, SymbolKind.Event // Members
-            );
+                SymbolKind.Namespace, // Namespace
+                SymbolKind.NamedType, //Type
+                SymbolKind.Method, SymbolKind.Property, SymbolKind.Field, SymbolKind.Event // Members
+                );
+
+                GetSyntaxNodeDiagnostics(compilationStartAnalysisContext);
             });
 
             analysisContext.RegisterCompilationAction(compilationAnalysisContext =>
@@ -183,6 +189,32 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     compilationAnalysisContext.ReportDiagnostic(compilation.Assembly.CreateDiagnostic(AssemblyRule, compilation.AssemblyName));
                 }
             });
+        }
+
+        internal abstract void GetSyntaxNodeDiagnostics(CompilationStartAnalysisContext compilationStartAnalysisContext);
+
+        protected void AnalyzeSyntaxNode(SyntaxNodeAnalysisContext syntaxNodeAnalysisContext)
+        {
+            var symbol = syntaxNodeAnalysisContext.SemanticModel.GetDeclaredSymbol(syntaxNodeAnalysisContext.Node);
+            if (symbol == null || symbol.Kind != SymbolKind.Parameter)
+            {
+                return;
+            }
+
+            if (ContainsUnderScore(symbol.Name))
+            {
+                var containingType = symbol.ContainingType;
+
+                // This is parameter in Delegate
+                if (containingType.TypeKind == TypeKind.Delegate && containingType.IsPublic())
+                {
+                    syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(DelegateParameterRule, containingType.Name, symbol.Name));
+                }
+                //else
+                //{
+                //    syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberParameterRule, symbol.ContainingSymbol.Name, symbol.Name));
+                //}
+            }
         }
 
         private bool IsInterfaceImplementation(ISymbol symbol)
@@ -242,8 +274,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             return false;
         }
-
-
 
         private bool ContainsUnderScore(string identifier)
         {

@@ -13,5 +13,11 @@ Namespace Microsoft.ApiDesignGuidelines.Analyzers
     Public NotInheritable Class BasicIdentifiersShouldNotContainUnderscoresAnalyzer
         Inherits IdentifiersShouldNotContainUnderscoresAnalyzer
 
+        Friend Overrides Sub GetSyntaxNodeDiagnostics(compilationStartAnalysisContext As CompilationStartAnalysisContext)
+            compilationStartAnalysisContext.RegisterSyntaxNodeAction(
+                Sub(syntaxNodeAnalysisContext As SyntaxNodeAnalysisContext)
+                    AnalyzeSyntaxNode(syntaxNodeAnalysisContext)
+                End Sub, SyntaxKind.Parameter)
+        End Sub
     End Class
 End Namespace

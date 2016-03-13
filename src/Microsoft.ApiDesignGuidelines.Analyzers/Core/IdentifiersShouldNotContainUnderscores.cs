@@ -157,15 +157,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                     {
                                         return;
                                     }
-                                        if (!((symbol.IsPublic() || symbol.IsProtected()) && !symbol.IsOverride))
-                                    {
-                                        return;
-                                    }
-
-                                    if (symbol.IsAccessorMethod() || IsInterfaceImplementation(symbol))
-                                    {
-                                        return;
-                                    }
 
                                     symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.Name));
                                     return;
@@ -189,6 +180,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     compilationAnalysisContext.ReportDiagnostic(compilation.Assembly.CreateDiagnostic(AssemblyRule, compilation.AssemblyName));
                 }
             });
+        }
+
+        private bool IsInvalidSymbol(ISymbol symbol)
+        {
+            return (!((symbol.IsPublic() || symbol.IsProtected()) && !symbol.IsOverride)) ||
+                symbol.IsAccessorMethod() || IsInterfaceImplementation(symbol);
         }
 
         internal abstract void GetSyntaxNodeDiagnostics(CompilationStartAnalysisContext compilationStartAnalysisContext);

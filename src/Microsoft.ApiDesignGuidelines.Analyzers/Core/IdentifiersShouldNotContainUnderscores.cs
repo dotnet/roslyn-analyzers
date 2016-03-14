@@ -221,12 +221,16 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 else
                 {
                     var containingSymbol = symbol.ContainingSymbol;
-                    if (containingSymbol is INamedTypeSymbol)
+                    if (containingSymbol.Kind == SymbolKind.NamedType)
                     {
                         if (containingSymbol.IsPublic())
                         {
                             syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(TypeTypeParameterRule, containingSymbol.ToDisplayString(), symbol.Name));
                         }
+                    }
+                    else if (containingSymbol.Kind == SymbolKind.Method && !IsInvalidSymbol(containingSymbol))
+                    {
+                        syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MethodTypeParameterRule, containingSymbol.ToDisplayString(), symbol.Name));
                     }
                 }
             }

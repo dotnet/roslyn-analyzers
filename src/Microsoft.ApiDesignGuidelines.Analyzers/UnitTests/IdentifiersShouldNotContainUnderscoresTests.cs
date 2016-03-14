@@ -251,6 +251,59 @@ class NoDiag<U_>
 }",
             GetCA1707CSharpResultAt(2, 28, SymbolKind.TypeTypeParameter, "DoesNotMatter<T_>", "T_"));
         }
+
+        [Fact]
+        public void CSharp_CA1707_ForMemberTypeParameters()
+        {
+            VerifyCSharp(@"
+public class DoesNotMatter22
+{
+    public void PublicM1<T1_>() { }
+    private void PrivateM2<U_>() { } // No diagnostic
+    internal void InternalM3<W_>() { } // No diagnostic
+    protected void ProtectedM4<D_>() { }
+}
+
+public interface I
+{
+    void M<T_>();
+}
+
+public class implementI : I
+{
+    public void M<U_>()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public abstract class Base
+{
+    public virtual void M1<T_>()
+    {
+    }
+
+    public abstract void M2<U_>();
+}
+
+public class Der : Base
+{
+    public override void M2<U_>()
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void M1<T_>()
+    {
+        base.M1<T_>(int1);
+    }
+}",
+            GetCA1707CSharpResultAt(4, 26, SymbolKind.MethodTypeParameter, "DoesNotMatter22.PublicM1<T1_>()", "T1_"),
+            GetCA1707CSharpResultAt(7, 32, SymbolKind.MethodTypeParameter, "DoesNotMatter22.ProtectedM4<D_>()", "D_"),
+            GetCA1707CSharpResultAt(12, 12, SymbolKind.MethodTypeParameter, "I.M<T_>()", "T_"),
+            GetCA1707CSharpResultAt(25, 28, SymbolKind.MethodTypeParameter, "Base.M1<T_>()", "T_"),
+            GetCA1707CSharpResultAt(29, 29, SymbolKind.MethodTypeParameter, "Base.M2<U_>()", "U_"));
+        }
         #region Helpers
 
         private static DiagnosticResult GetCA1707CSharpResultAt(int line, int column, SymbolKind symbolKind, params string[] identifierNames)
@@ -305,6 +358,8 @@ class NoDiag<U_>
                     return MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMemberParameter;
                 case SymbolKind.TypeTypeParameter:
                     return MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageTypeTypeParameter;
+                case SymbolKind.MethodTypeParameter:
+                    return MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMethodTypeParameter;
                 default:
                     throw new System.Exception("Unknown Symbol Kind");
             }
@@ -318,7 +373,8 @@ class NoDiag<U_>
             Member,
             DelegateParameter,
             MemberParameter,
-            TypeTypeParameter
+            TypeTypeParameter,
+            MethodTypeParameter
         }
         #endregion
     }

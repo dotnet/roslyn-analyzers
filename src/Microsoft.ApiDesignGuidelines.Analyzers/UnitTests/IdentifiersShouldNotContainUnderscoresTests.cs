@@ -184,6 +184,58 @@ internal delegate void Dele2(int intInternal_, string stringInternal_); // No di
             GetCA1707CSharpResultAt(2, 50, SymbolKind.DelegateParameter, "Dele", "stringPublic_"));
         }
 
+        [Fact]
+        public void CSharp_CA1707_ForMemberparameters()
+        {
+            VerifyCSharp(@"
+public class DoesNotMatter
+{
+    public void PublicM1(int int_) { }
+    private void PrivateM2(int int_) { } // No diagnostic
+    internal void InternalM3(int int_) { } // No diagnostic
+    protected void ProtectedM4(int int_) { }
+}
+
+public interface I
+{
+    void M(int int_);
+}
+
+public class implementI : I
+{
+    public void M(int int_)
+    {
+    }
+}
+
+public abstract class Base
+{
+    public virtual void M1(int int_)
+    {
+    }
+
+    public abstract void M2(int int_);
+}
+
+public class Der : Base
+{
+    public override void M2(int int_)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void M1(int int_)
+    {
+        base.M1(int_);
+    }
+}",
+            GetCA1707CSharpResultAt(4, 30, SymbolKind.MemberParameter, "PublicM1", "int_"),
+            GetCA1707CSharpResultAt(7, 36, SymbolKind.MemberParameter, "ProtectedM4", "int_"),
+            GetCA1707CSharpResultAt(12, 16, SymbolKind.MemberParameter, "M", "int_"),
+            GetCA1707CSharpResultAt(24, 32, SymbolKind.MemberParameter, "M1", "int_"),
+            GetCA1707CSharpResultAt(28, 33, SymbolKind.MemberParameter, "M2", "int_"));
+        }
+
         #region Helpers
 
         private static DiagnosticResult GetCA1707CSharpResultAt(int line, int column, SymbolKind symbolKind, params string[] identifierNames)
@@ -234,6 +286,8 @@ internal delegate void Dele2(int intInternal_, string stringInternal_); // No di
                     return MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMember;
                 case SymbolKind.DelegateParameter:
                     return MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageDelegateParameter;
+                case SymbolKind.MemberParameter:
+                    return MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMemberParameter;
                 default:
                     throw new System.Exception("Unknown Symbol Kind");
             }
@@ -245,7 +299,8 @@ internal delegate void Dele2(int intInternal_, string stringInternal_); // No di
             Namespace,
             NamedType,
             Member,
-            DelegateParameter
+            DelegateParameter,
+            MemberParameter
         }
         #endregion
     }

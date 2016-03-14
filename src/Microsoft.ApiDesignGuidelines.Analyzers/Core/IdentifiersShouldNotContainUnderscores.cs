@@ -202,15 +202,18 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 var containingType = symbol.ContainingType;
 
-                // This is parameter in Delegate
-                if (containingType.TypeKind == TypeKind.Delegate && containingType.IsPublic())
+                // Parameter in Delegate
+                if (containingType.TypeKind == TypeKind.Delegate)
                 {
-                    syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(DelegateParameterRule, containingType.Name, symbol.Name));
+                    if (containingType.IsPublic())
+                    {
+                        syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(DelegateParameterRule, containingType.Name, symbol.Name));
+                    }
                 }
-                //else
-                //{
-                //    syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberParameterRule, symbol.ContainingSymbol.Name, symbol.Name));
-                //}
+                else if (!IsInvalidSymbol(symbol.ContainingSymbol))
+                {
+                    syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberParameterRule, symbol.ContainingSymbol.Name, symbol.Name));
+                }
             }
         }
 

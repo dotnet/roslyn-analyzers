@@ -18,7 +18,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             compilationStartAnalysisContext.RegisterSyntaxNodeAction(syntaxNodeAnalysisContext =>
             {
                 AnalyzeSyntaxNode(syntaxNodeAnalysisContext);
-            }, SyntaxKind.Parameter);
+            }, SyntaxKind.Parameter, SyntaxKind.TypeParameter);
         }
     }
 }

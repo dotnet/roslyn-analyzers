@@ -17,7 +17,7 @@ Namespace Microsoft.ApiDesignGuidelines.Analyzers
             compilationStartAnalysisContext.RegisterSyntaxNodeAction(
                 Sub(syntaxNodeAnalysisContext As SyntaxNodeAnalysisContext)
                     AnalyzeSyntaxNode(syntaxNodeAnalysisContext)
-                End Sub, SyntaxKind.Parameter)
+                End Sub, SyntaxKind.Parameter, SyntaxKind.TypeParameter)
         End Sub
     End Class
 End Namespace

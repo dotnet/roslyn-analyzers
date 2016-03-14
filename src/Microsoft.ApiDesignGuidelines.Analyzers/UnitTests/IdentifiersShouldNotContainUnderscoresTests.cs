@@ -179,9 +179,11 @@ public class Derives : ImplementI1
             VerifyCSharp(@"
 public delegate void Dele(int intPublic_, string stringPublic_);
 internal delegate void Dele2(int intInternal_, string stringInternal_); // No diagnostics
+public delegate T Del<T>(int t_);
 ",
             GetCA1707CSharpResultAt(2, 31, SymbolKind.DelegateParameter, "Dele", "intPublic_"),
-            GetCA1707CSharpResultAt(2, 50, SymbolKind.DelegateParameter, "Dele", "stringPublic_"));
+            GetCA1707CSharpResultAt(2, 50, SymbolKind.DelegateParameter, "Dele", "stringPublic_"),
+            GetCA1707CSharpResultAt(4, 30, SymbolKind.DelegateParameter, "Del<T>", "t_"));
         }
 
         [Fact]
@@ -236,6 +238,19 @@ public class Der : Base
             GetCA1707CSharpResultAt(28, 33, SymbolKind.MemberParameter, "M2", "int_"));
         }
 
+        [Fact]
+        public void CSharp_CA1707_ForTypeTypeParameters()
+        {
+            VerifyCSharp(@"
+public class DoesNotMatter<T_>
+{
+}
+
+class NoDiag<U_>
+{
+}",
+            GetCA1707CSharpResultAt(2, 28, SymbolKind.TypeTypeParameter, "DoesNotMatter<T_>", "T_"));
+        }
         #region Helpers
 
         private static DiagnosticResult GetCA1707CSharpResultAt(int line, int column, SymbolKind symbolKind, params string[] identifierNames)
@@ -288,6 +303,8 @@ public class Der : Base
                     return MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageDelegateParameter;
                 case SymbolKind.MemberParameter:
                     return MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMemberParameter;
+                case SymbolKind.TypeTypeParameter:
+                    return MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageTypeTypeParameter;
                 default:
                     throw new System.Exception("Unknown Symbol Kind");
             }
@@ -300,7 +317,8 @@ public class Der : Base
             NamedType,
             Member,
             DelegateParameter,
-            MemberParameter
+            MemberParameter,
+            TypeTypeParameter
         }
         #endregion
     }

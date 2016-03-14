@@ -193,26 +193,41 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         protected void AnalyzeSyntaxNode(SyntaxNodeAnalysisContext syntaxNodeAnalysisContext)
         {
             var symbol = syntaxNodeAnalysisContext.SemanticModel.GetDeclaredSymbol(syntaxNodeAnalysisContext.Node);
-            if (symbol == null || symbol.Kind != SymbolKind.Parameter)
+            if (symbol == null || !(symbol.Kind == SymbolKind.Parameter || symbol.Kind == SymbolKind.TypeParameter))
             {
                 return;
             }
 
             if (ContainsUnderScore(symbol.Name))
             {
-                var containingType = symbol.ContainingType;
-
-                // Parameter in Delegate
-                if (containingType.TypeKind == TypeKind.Delegate)
+                if (symbol.Kind == SymbolKind.Parameter)
                 {
-                    if (containingType.IsPublic())
+                    var containingType = symbol.ContainingType;
+
+                    // Parameter in Delegate
+                    if (containingType.TypeKind == TypeKind.Delegate)
                     {
-                        syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(DelegateParameterRule, containingType.Name, symbol.Name));
+                        if (containingType.IsPublic())
+                        {
+                            syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(DelegateParameterRule, containingType.ToDisplayString(), symbol.Name));
+                        }
+                    }
+                    else if (!IsInvalidSymbol(symbol.ContainingSymbol))
+                    {
+                        syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberParameterRule, symbol.ContainingSymbol.Name, symbol.Name));
                     }
                 }
-                else if (!IsInvalidSymbol(symbol.ContainingSymbol))
+                // symbol is TypeParameter
+                else
                 {
-                    syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberParameterRule, symbol.ContainingSymbol.Name, symbol.Name));
+                    var containingSymbol = symbol.ContainingSymbol;
+                    if (containingSymbol is INamedTypeSymbol)
+                    {
+                        if (containingSymbol.IsPublic())
+                        {
+                            syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(TypeTypeParameterRule, containingSymbol.ToDisplayString(), symbol.Name));
+                        }
+                    }
                 }
             }
         }

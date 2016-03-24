@@ -614,7 +614,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Strings should be normalized to uppercase. A small group of characters cannot make a round trip when they are converted to lowercase..
+        ///   Looks up a localized string similar to Strings should be normalized to uppercase. A small group of characters cannot make a round trip when they are converted to lowercase. To make a round trip means to convert the characters from one locale to another locale that represents character data differently, and then to accurately retrieve the original characters from the converted characters..
         /// </summary>
         internal static string NormalizeStringsToUppercaseDescription {
             get {
@@ -623,20 +623,11 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to In method {0}, replace the call to String.ToLower(CultureInfo.InvariantCulture) with String.ToUpper(CultureInfo.InvariantCulture)..
+        ///   Looks up a localized string similar to In method &apos;{0}&apos;, replace the call to &apos;{1}&apos; with &apos;{2}&apos;..
         /// </summary>
         internal static string NormalizeStringsToUppercaseMessageToUpper {
             get {
                 return ResourceManager.GetString("NormalizeStringsToUppercaseMessageToUpper", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to In method {0}, replace the call to {1} with String.ToUpperInvariant()..
-        /// </summary>
-        internal static string NormalizeStringsToUppercaseMessageToUpperInvariant {
-            get {
-                return ResourceManager.GetString("NormalizeStringsToUppercaseMessageToUpperInvariant", resourceCulture);
             }
         }
         

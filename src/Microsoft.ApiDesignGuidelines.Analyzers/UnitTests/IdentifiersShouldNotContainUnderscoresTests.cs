@@ -98,10 +98,10 @@ public enum DoesNotMatterEnum
     _EnumWithUnderscore,
     _
 }",
-            GetCA1707CSharpResultAt(line: 4, column: 26, symbolKind: SymbolKind.Member, identifierNames: "ConstField_"),
-            GetCA1707CSharpResultAt(line: 5, column: 36, symbolKind: SymbolKind.Member, identifierNames: "StaticReadOnlyField_"),
-            GetCA1707CSharpResultAt(line: 16, column: 5, symbolKind: SymbolKind.Member, identifierNames: "_EnumWithUnderscore"),
-            GetCA1707CSharpResultAt(line: 17, column: 5, symbolKind: SymbolKind.Member, identifierNames: "_"));
+            GetCA1707CSharpResultAt(line: 4, column: 26, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.ConstField_"),
+            GetCA1707CSharpResultAt(line: 5, column: 36, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.StaticReadOnlyField_"),
+            GetCA1707CSharpResultAt(line: 16, column: 5, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatterEnum._EnumWithUnderscore"),
+            GetCA1707CSharpResultAt(line: 17, column: 5, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatterEnum._"));
         }
 
         [Fact]
@@ -130,14 +130,11 @@ public class ImplementI1 : I1
 public class Derives : ImplementI1
 {
     public override void M2_() { } // No diagnostic
-}
-
-
-",
-            GetCA1707CSharpResultAt(line: 4, column: 17, symbolKind: SymbolKind.Member, identifierNames: "PublicM1_"),
-            GetCA1707CSharpResultAt(line: 7, column: 20, symbolKind: SymbolKind.Member, identifierNames: "ProtectedM4_"),
-            GetCA1707CSharpResultAt(line: 12, column: 10, symbolKind: SymbolKind.Member, identifierNames: "M_"),
-            GetCA1707CSharpResultAt(line: 18, column: 25, symbolKind: SymbolKind.Member, identifierNames: "M2_"));
+}",
+            GetCA1707CSharpResultAt(line: 4, column: 17, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.PublicM1_()"),
+            GetCA1707CSharpResultAt(line: 7, column: 20, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.ProtectedM4_()"),
+            GetCA1707CSharpResultAt(line: 12, column: 10, symbolKind: SymbolKind.Member, identifierNames: "I1.M_()"),
+            GetCA1707CSharpResultAt(line: 18, column: 25, symbolKind: SymbolKind.Member, identifierNames: "ImplementI1.M2_()"));
         }
 
         [Fact]
@@ -165,12 +162,12 @@ public class ImplementI1 : I1
 
 public class Derives : ImplementI1
 {
-    public override event EventHandler E2_;
+    public override event EventHandler E2_; // No diagnostic
 }",
-            GetCA1707CSharpResultAt(line: 4, column: 31, symbolKind: SymbolKind.Member, identifierNames: "PublicE1_"),
-            GetCA1707CSharpResultAt(line: 7, column: 34, symbolKind: SymbolKind.Member, identifierNames: "ProtectedE4_"),
-            GetCA1707CSharpResultAt(line: 12, column: 24, symbolKind: SymbolKind.Member, identifierNames: "E_"),
-            GetCA1707CSharpResultAt(line: 18, column: 39, symbolKind: SymbolKind.Member, identifierNames: "E2_"));
+            GetCA1707CSharpResultAt(line: 4, column: 31, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.PublicE1_"),
+            GetCA1707CSharpResultAt(line: 7, column: 34, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.ProtectedE4_"),
+            GetCA1707CSharpResultAt(line: 12, column: 24, symbolKind: SymbolKind.Member, identifierNames: "I1.E_"),
+            GetCA1707CSharpResultAt(line: 18, column: 39, symbolKind: SymbolKind.Member, identifierNames: "ImplementI1.E2_"));
         }
 
         [Fact]
@@ -231,11 +228,11 @@ public class Der : Base
         base.M1(int_);
     }
 }",
-            GetCA1707CSharpResultAt(4, 30, SymbolKind.MemberParameter, "PublicM1", "int_"),
-            GetCA1707CSharpResultAt(7, 36, SymbolKind.MemberParameter, "ProtectedM4", "int_"),
-            GetCA1707CSharpResultAt(12, 16, SymbolKind.MemberParameter, "M", "int_"),
-            GetCA1707CSharpResultAt(24, 32, SymbolKind.MemberParameter, "M1", "int_"),
-            GetCA1707CSharpResultAt(28, 33, SymbolKind.MemberParameter, "M2", "int_"));
+            GetCA1707CSharpResultAt(4, 30, SymbolKind.MemberParameter, "DoesNotMatter.PublicM1(int)", "int_"),
+            GetCA1707CSharpResultAt(7, 36, SymbolKind.MemberParameter, "DoesNotMatter.ProtectedM4(int)", "int_"),
+            GetCA1707CSharpResultAt(12, 16, SymbolKind.MemberParameter, "I.M(int)", "int_"),
+            GetCA1707CSharpResultAt(24, 32, SymbolKind.MemberParameter, "Base.M1(int)", "int_"),
+            GetCA1707CSharpResultAt(28, 33, SymbolKind.MemberParameter, "Base.M2(int)", "int_"));
         }
 
         [Fact]

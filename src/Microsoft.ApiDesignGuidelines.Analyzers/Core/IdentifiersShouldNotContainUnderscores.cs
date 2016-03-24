@@ -144,7 +144,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                     var fieldSymbol = symbol as IFieldSymbol;
                                     if (symbol.IsPublic() && (fieldSymbol.IsConst || (fieldSymbol.IsStatic && fieldSymbol.IsReadOnly)))
                                     {
-                                        symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.Name));
+                                        symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.ToDisplayString()));
                                         return;
                                     }
 
@@ -158,7 +158,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                         return;
                                     }
 
-                                    symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.Name));
+                                    symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.ToDisplayString()));
                                     return;
                                 }
                         }
@@ -214,7 +214,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     }
                     else if (!IsInvalidSymbol(symbol.ContainingSymbol))
                     {
-                        syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberParameterRule, symbol.ContainingSymbol.Name, symbol.Name));
+                        syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberParameterRule, symbol.ContainingSymbol.ToDisplayString(), symbol.Name));
                     }
                 }
                 // symbol is TypeParameter

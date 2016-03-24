@@ -144,7 +144,7 @@ namespace Microsoft.QualityGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mark members as static.
+        ///   Looks up a localized string similar to Member {0} does not access instance data and can be marked as static (Shared in VisualBasic).
         /// </summary>
         internal static string MarkMembersAsStaticMessage {
             get {

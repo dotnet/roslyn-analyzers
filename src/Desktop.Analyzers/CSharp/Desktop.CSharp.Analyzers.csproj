@@ -100,7 +100,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CSharpDoNotUseInsecureDTDProcessing.cs" />
     <Compile Include="CSharpDoNotUseInsecureDtdProcessingInApiDesigner.cs" />
     <Compile Include="CSharpDoNotUseInsecureXSLTScriptExecution.cs" />
     <Compile Include="CSharpDoNotCatchCorruptedStateExceptions.cs" />
@@ -132,6 +131,7 @@
     <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup />
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />
   </ImportGroup>

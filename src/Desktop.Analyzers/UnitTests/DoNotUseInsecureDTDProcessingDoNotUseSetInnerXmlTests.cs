@@ -27,7 +27,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075InnerXmlCSharpResultAt(12, 13, "TestMethod")
+                GetCA3075InnerXmlCSharpResultAt(12, 13)
             );
 
             VerifyBasic(@"
@@ -44,7 +44,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075InnerXmlBasicResultAt(11, 13, "TestMethod")
+                GetCA3075InnerXmlBasicResultAt(11, 13)
             );
         }
 
@@ -66,7 +66,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075InnerXmlCSharpResultAt(11, 13, "get_Test")
+                GetCA3075InnerXmlCSharpResultAt(11, 13)
             );
 
             VerifyBasic(@"
@@ -84,7 +84,7 @@ Class TestClass
         End Get
     End Property
 End Class",
-                GetCA3075InnerXmlBasicResultAt(11, 13, "get_Test")
+                GetCA3075InnerXmlBasicResultAt(11, 13)
             );
         }
 
@@ -113,7 +113,7 @@ public XmlDocument GetDoc
             }
         }
 }",
-                GetCA3075InnerXmlCSharpResultAt(15, 21, "set_GetDoc")
+                GetCA3075InnerXmlCSharpResultAt(15, 21)
             );
 
             VerifyBasic(@"
@@ -136,7 +136,7 @@ Class TestClass
         End Set
     End Property
 End Class",
-                GetCA3075InnerXmlBasicResultAt(13, 17, "set_GetDoc")
+                GetCA3075InnerXmlBasicResultAt(13, 17)
             );
         }
 
@@ -161,7 +161,7 @@ class TestClass
         finally { }
     }
 }",
-                GetCA3075InnerXmlCSharpResultAt(13, 13, "TestMethod")
+                GetCA3075InnerXmlCSharpResultAt(13, 13)
             );
 
             VerifyBasic(@"
@@ -181,7 +181,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075InnerXmlBasicResultAt(11, 13, "TestMethod")
+                GetCA3075InnerXmlBasicResultAt(11, 13)
             );
         }
 
@@ -206,7 +206,7 @@ class TestClass
         finally { }
     }
 }",
-                GetCA3075InnerXmlCSharpResultAt(14, 13, "TestMethod")
+                GetCA3075InnerXmlCSharpResultAt(14, 13)
             );
 
             VerifyBasic(@"
@@ -225,7 +225,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075InnerXmlBasicResultAt(12, 13, "TestMethod")
+                GetCA3075InnerXmlBasicResultAt(12, 13)
             );
         }
 
@@ -250,7 +250,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075InnerXmlCSharpResultAt(15, 13, "TestMethod")
+                GetCA3075InnerXmlCSharpResultAt(15, 13)
             );
 
             VerifyBasic(@"
@@ -270,7 +270,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075InnerXmlBasicResultAt(14, 13, "TestMethod")
+                GetCA3075InnerXmlBasicResultAt(14, 13)
             );
         }
 
@@ -297,7 +297,7 @@ class TestClass
         await TestMethod();
     }
 }",
-                GetCA3075InnerXmlCSharpResultAt(12, 13, "Run")
+                GetCA3075InnerXmlCSharpResultAt(12, 13)
             );
 
             VerifyBasic(@"
@@ -305,7 +305,7 @@ Imports System.Threading.Tasks
 Imports System.Xml
 
 Class TestClass
-    Private Function TestMethod() As Task
+    Private Async Function TestMethod() As Task
         Await Task.Run(Function() 
         Dim xml = """"
         Dim doc As New XmlDocument() With { _
@@ -320,7 +320,7 @@ End Function)
         Await TestMethod()
     End Sub
 End Class",
-                GetCA3075InnerXmlBasicResultAt(12, 9, "Run")
+                GetCA3075InnerXmlBasicResultAt(12, 9)
             );
         }
 
@@ -340,7 +340,7 @@ class TestClass
         doc.InnerXml = xml;
     };
 }",
-                GetCA3075InnerXmlCSharpResultAt(11, 9, "TestClass")
+                GetCA3075InnerXmlCSharpResultAt(11, 9)
             );
 
             VerifyBasic(@"
@@ -358,7 +358,7 @@ Class TestClass
 
 End Sub
 End Class",
-                GetCA3075InnerXmlBasicResultAt(12, 5, "TestClass")
+                GetCA3075InnerXmlBasicResultAt(12, 5)
             );
         }
 
@@ -383,7 +383,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075InnerXmlCSharpResultAt(14, 17, ".ctor")
+                GetCA3075InnerXmlCSharpResultAt(14, 17)
             );
 
             VerifyBasic(@"
@@ -400,7 +400,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075InnerXmlBasicResultAt(10, 17, ".ctor")
+                GetCA3075InnerXmlBasicResultAt(10, 17)
             );
         }
 
@@ -422,7 +422,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075InnerXmlCSharpResultAt(12, 13, "TestMethod")
+                GetCA3075InnerXmlCSharpResultAt(12, 13)
             );
 
             VerifyBasic(@"
@@ -439,7 +439,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075InnerXmlBasicResultAt(11, 13, "TestMethod")
+                GetCA3075InnerXmlBasicResultAt(11, 13)
             );
         }
 
@@ -461,7 +461,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075InnerXmlCSharpResultAt(11, 13, "get_Test")
+                GetCA3075InnerXmlCSharpResultAt(11, 13)
             );
 
             VerifyBasic(@"
@@ -479,7 +479,7 @@ Class TestClass
         End Get
     End Property
 End Class",
-                GetCA3075InnerXmlBasicResultAt(11, 13, "get_Test")
+                GetCA3075InnerXmlBasicResultAt(11, 13)
             );
         }
 
@@ -508,7 +508,7 @@ public XmlDataDocument GetDoc
             }
         }
 }",
-                GetCA3075InnerXmlCSharpResultAt(15, 21, "set_GetDoc")
+                GetCA3075InnerXmlCSharpResultAt(15, 21)
             );
 
             VerifyBasic(@"
@@ -532,7 +532,7 @@ Class TestClass
     End Property
 End Class
 ",
-                GetCA3075InnerXmlBasicResultAt(13, 17, "set_GetDoc")
+                GetCA3075InnerXmlBasicResultAt(13, 17)
             );
         }
 
@@ -557,7 +557,7 @@ class TestClass
         finally { }
     }
 }",
-                GetCA3075InnerXmlCSharpResultAt(13, 13, "TestMethod")
+                GetCA3075InnerXmlCSharpResultAt(13, 13)
             );
 
             VerifyBasic(@"
@@ -577,7 +577,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075InnerXmlBasicResultAt(11, 13, "TestMethod")
+                GetCA3075InnerXmlBasicResultAt(11, 13)
             );
         }
 
@@ -602,7 +602,7 @@ class TestClass
         finally { }
     }
 }",
-                GetCA3075InnerXmlCSharpResultAt(14, 13, "TestMethod")
+                GetCA3075InnerXmlCSharpResultAt(14, 13)
             );
 
             VerifyBasic(@"
@@ -621,7 +621,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075InnerXmlBasicResultAt(12, 13, "TestMethod")
+                GetCA3075InnerXmlBasicResultAt(12, 13)
             );
         }
 
@@ -646,7 +646,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075InnerXmlCSharpResultAt(15, 13, "TestMethod")
+                GetCA3075InnerXmlCSharpResultAt(15, 13)
             );
 
             VerifyBasic(@"
@@ -666,7 +666,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075InnerXmlBasicResultAt(14, 13, "TestMethod")
+                GetCA3075InnerXmlBasicResultAt(14, 13)
             );
         }
 
@@ -693,7 +693,7 @@ class TestClass
         await TestMethod();
     }
 }",
-                GetCA3075InnerXmlCSharpResultAt(12, 13, "Run")
+                GetCA3075InnerXmlCSharpResultAt(12, 13)
             );
 
             VerifyBasic(@"
@@ -701,7 +701,7 @@ Imports System.Threading.Tasks
 Imports System.Xml
 
 Class TestClass
-    Private Function TestMethod() As Task
+    Private Async Function TestMethod() As Task
         Await Task.Run(Function() 
         Dim xml = """"
         Dim doc As New XmlDataDocument() With { _
@@ -716,7 +716,7 @@ End Function)
         Await TestMethod()
     End Sub
 End Class",
-                GetCA3075InnerXmlBasicResultAt(12, 9, "Run")
+                GetCA3075InnerXmlBasicResultAt(12, 9)
             );
         }
 
@@ -736,7 +736,7 @@ class TestClass
         doc.InnerXml = xml;
     };
 }",
-                GetCA3075InnerXmlCSharpResultAt(11, 9, "TestClass")
+                GetCA3075InnerXmlCSharpResultAt(11, 9)
             );
 
             VerifyBasic(@"
@@ -754,7 +754,7 @@ Class TestClass
 
 End Sub
 End Class",
-                GetCA3075InnerXmlBasicResultAt(12, 5, "TestClass")
+                GetCA3075InnerXmlBasicResultAt(12, 5)
             );
         }
 
@@ -779,7 +779,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3075InnerXmlCSharpResultAt(14, 17, ".ctor")
+                GetCA3075InnerXmlCSharpResultAt(14, 17)
             );
 
             VerifyBasic(@"
@@ -796,18 +796,18 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075InnerXmlBasicResultAt(10, 17, ".ctor")
+                GetCA3075InnerXmlBasicResultAt(10, 17)
             );
         }
 
-        private DiagnosticResult GetCA3075InnerXmlCSharpResultAt(int line, int column, string name)
+        private DiagnosticResult GetCA3075InnerXmlCSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(_CA3075InnerXmlMessage, name));
+            return GetCSharpResultAt(line, column, CA3075RuleId, _CA3075InnerXmlMessage);
         }
 
-        private DiagnosticResult GetCA3075InnerXmlBasicResultAt(int line, int column, string name)
+        private DiagnosticResult GetCA3075InnerXmlBasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(_CA3075InnerXmlMessage, name));
+            return GetBasicResultAt(line, column, CA3075RuleId, _CA3075InnerXmlMessage);
         }
     }
 }

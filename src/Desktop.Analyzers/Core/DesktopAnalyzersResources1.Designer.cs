@@ -224,7 +224,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} uses unsafe overload of &apos;{1}&apos; method.
+        ///   Looks up a localized string similar to Unsafe overload of &apos;{0}&apos; method.
         /// </summary>
         internal static string DoNotUseDtdProcessingOverloadsMessage {
             get {
@@ -269,7 +269,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} uses the unsafe setter of InnerXml property of System.Xml.XmlDocument..
+        ///   Looks up a localized string similar to Uses the unsafe setter of InnerXml property of System.Xml.XmlDocument..
         /// </summary>
         internal static string DoNotUseSetInnerXmlMessage {
             get {
@@ -927,7 +927,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to In {0} an XmlDocument instance is created without setting its XmlResolver property to a secure value..
+        ///   Looks up a localized string similar to An XmlDocument instance is created without setting its XmlResolver property to a secure value..
         /// </summary>
         internal static string XmlDocumentWithNoSecureResolverMessage {
             get {
@@ -945,7 +945,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to In {0} a potentially insecure XmlReaderSettings instance is provided to XmlReader.Create method..
+        ///   Looks up a localized string similar to A potentially insecure XmlReaderSettings instance is provided to XmlReader.Create method..
         /// </summary>
         internal static string XmlReaderCreateInsecureInputMessage {
             get {
@@ -954,7 +954,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} uses an insecure overload of XmlReader.Create which does not accept an XmlReaderSettings argument. .
+        ///   Looks up a localized string similar to An insecure overload of XmlReader.Create which does not accept an XmlReaderSettings argument..
         /// </summary>
         internal static string XmlReaderCreateWrongOverloadMessage {
             get {
@@ -963,7 +963,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} creates XmlTextReader instance with insecure default settings..
+        ///   Looks up a localized string similar to XmlTextReader instance created with insecure default settings..
         /// </summary>
         internal static string XmlTextReaderConstructedWithNoSecureResolutionMessage {
             get {
@@ -999,7 +999,7 @@ namespace Desktop.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to XmlTextReader instance in {0} is set with insecure values..
+        ///   Looks up a localized string similar to XmlTextReader instance is set with insecure values..
         /// </summary>
         internal static string XmlTextReaderSetInsecureResolutionMessage {
             get {

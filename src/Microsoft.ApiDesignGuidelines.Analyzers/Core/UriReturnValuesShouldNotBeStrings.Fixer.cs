@@ -10,7 +10,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// CA1055: Uri return values should not be strings
     /// </summary>
-    public abstract class UriReturnValuesShouldNotBeStringsFixer : CodeFixProvider
+    public class UriReturnValuesShouldNotBeStringsFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(UriReturnValuesShouldNotBeStringsAnalyzer.RuleId);
 

@@ -10,22 +10,22 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicUriReturnValuesShouldNotBeStringsAnalyzer();
+            return new UriReturnValuesShouldNotBeStringsAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpUriReturnValuesShouldNotBeStringsAnalyzer();
+            return new UriReturnValuesShouldNotBeStringsAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
-            return new BasicUriReturnValuesShouldNotBeStringsFixer();
+            return new UriReturnValuesShouldNotBeStringsFixer();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new CSharpUriReturnValuesShouldNotBeStringsFixer();
+            return new UriReturnValuesShouldNotBeStringsFixer();
         }
     }
 }

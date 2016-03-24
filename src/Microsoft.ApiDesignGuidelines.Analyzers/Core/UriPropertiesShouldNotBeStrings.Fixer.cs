@@ -10,7 +10,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// CA1056: Uri properties should not be strings
     /// </summary>
-    public abstract class UriPropertiesShouldNotBeStringsFixer : CodeFixProvider
+    public class UriPropertiesShouldNotBeStringsFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(UriPropertiesShouldNotBeStringsAnalyzer.RuleId);
 

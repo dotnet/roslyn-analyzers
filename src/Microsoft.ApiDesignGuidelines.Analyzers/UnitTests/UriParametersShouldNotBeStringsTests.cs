@@ -9,12 +9,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicUriParametersShouldNotBeStringsAnalyzer();
+            return new UriParametersShouldNotBeStringsAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpUriParametersShouldNotBeStringsAnalyzer();
+            return new UriParametersShouldNotBeStringsAnalyzer();
         }
     }
 }

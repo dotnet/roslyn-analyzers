@@ -4,8 +4,6 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
-using Microsoft.CodeAnalysis.Semantics;
-using System;
 using System.Linq;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -107,13 +105,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(AssemblyRule, NamespaceRule, TypeRule, MemberRule, TypeTypeParameterRule, MethodTypeParameterRule, MemberParameterRule, DelegateParameterRule);
 
-        private ConcurrentDictionary<INamedTypeSymbol, ConcurrentDictionary<ISymbol, List<ISymbol>>> _typeDeclaredMemberMapping;
+        private ConcurrentDictionary<INamedTypeSymbol, ConcurrentDictionary<ISymbol, List<ISymbol>>> _typeDeclaredMemberOverridingBaseMapping;
 
         public override void Initialize(AnalysisContext analysisContext)
         {
             analysisContext.RegisterCompilationStartAction(compilationStartAnalysisContext =>
             {
-                _typeDeclaredMemberMapping = new ConcurrentDictionary<INamedTypeSymbol, ConcurrentDictionary<ISymbol, List<ISymbol>>>();
+                _typeDeclaredMemberOverridingBaseMapping = new ConcurrentDictionary<INamedTypeSymbol, ConcurrentDictionary<ISymbol, List<ISymbol>>>();
 
                 compilationStartAnalysisContext.RegisterSymbolAction(symbolAnalysisContext =>
                 {
@@ -124,7 +122,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         {
                             case SymbolKind.Namespace:
                                 {
-                                    symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(NamespaceRule, symbol.Name));
+                                    symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(NamespaceRule, symbol.ToDisplayString()));
                                     return;
                                 }
 
@@ -135,7 +133,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                         return;
                                     }
 
-                                    symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(TypeRule, symbol.Name));
+                                    symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(TypeRule, symbol.ToDisplayString()));
                                     return;
                                 }
 
@@ -144,7 +142,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                     var fieldSymbol = symbol as IFieldSymbol;
                                     if (symbol.IsPublic() && (fieldSymbol.IsConst || (fieldSymbol.IsStatic && fieldSymbol.IsReadOnly)))
                                     {
-                                        symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.ToDisplayString()));
+                                        symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
                                         return;
                                     }
 
@@ -158,7 +156,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                         return;
                                     }
 
-                                    symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.ToDisplayString()));
+                                    symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
                                     return;
                                 }
                         }
@@ -214,7 +212,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     }
                     else if (!IsInvalidSymbol(symbol.ContainingSymbol))
                     {
-                        syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberParameterRule, symbol.ContainingSymbol.ToDisplayString(), symbol.Name));
+                        syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberParameterRule, symbol.ContainingSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat), symbol.Name));
                     }
                 }
                 // symbol is TypeParameter
@@ -230,7 +228,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     }
                     else if (containingSymbol.Kind == SymbolKind.Method && !IsInvalidSymbol(containingSymbol))
                     {
-                        syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MethodTypeParameterRule, containingSymbol.ToDisplayString(), symbol.Name));
+                        syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MethodTypeParameterRule, containingSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat), symbol.Name));
                     }
                 }
             }
@@ -246,7 +244,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             INamedTypeSymbol declaringType = symbol.ContainingType;
             if (declaringType.AllInterfaces.Any())
             {
-                ConcurrentDictionary<ISymbol, List<ISymbol>> declaredMemberToInterfaceMembers = _typeDeclaredMemberMapping.GetOrAdd(declaringType, declaringTypeKey =>
+                ConcurrentDictionary<ISymbol, List<ISymbol>> declaredMemberToInterfaceMembers = _typeDeclaredMemberOverridingBaseMapping.GetOrAdd(declaringType, declaringTypeKey =>
                 {
                     var declaredMemberSymbolsToImplementedInterfaceMembersMap = new ConcurrentDictionary<ISymbol, List<ISymbol>>();
                     foreach (INamedTypeSymbol implementedInterface in declaringTypeKey.AllInterfaces)

@@ -19,8 +19,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             return new CSharpIdentifiersShouldNotContainUnderscoresAnalyzer();
         }
 
+        #region CSharp Tests
         [Fact]
-        public void CSharp_CA1707_ForAssembly()
+        public void CA1707_ForAssembly_CSharp()
         {
             VerifyCSharp(@"
 public class DoesNotMatter
@@ -32,7 +33,7 @@ public class DoesNotMatter
         }
 
         [Fact]
-        public void CSharp_CA1707_ForAssembly_NoDiagnostics()
+        public void CA1707_ForAssembly_NoDiagnostics_CSharp()
         {
             VerifyCSharp(@"
 public class DoesNotMatter
@@ -43,13 +44,16 @@ public class DoesNotMatter
         }
 
         [Fact]
-        public void CSharp_CA1707_ForNamespace()
+        public void CA1707_ForNamespace_CSharp()
         {
             VerifyCSharp(@"
-namespace HasUnderScore_
+namespace OuterNamespace
 {
-    public class DoesNotMatter
+    namespace HasUnderScore_
     {
+        public class DoesNotMatter
+        {
+        }
     }
 }
 
@@ -59,26 +63,28 @@ namespace HasNoUnderScore
     {
     }
 }",
-            GetCA1707CSharpResultAt(line: 2, column: 11, symbolKind: SymbolKind.Namespace, identifierNames: "HasUnderScore_"));
+            GetCA1707CSharpResultAt(line: 4, column: 15, symbolKind: SymbolKind.Namespace, identifierNames: "OuterNamespace.HasUnderScore_"));
         }
 
         [Fact]
-        public void CSharp_CA1707_ForTypes()
+        public void CA1707_ForTypes_CSharp()
         {
             VerifyCSharp(@"
-public class UnderScoreInName_
+public class OuterType
 {
+    public class UnderScoreInName_
+    {
+    }
 }
 
 private class UnderScoreInNameButPrivate_
 {
-}
-",
-            GetCA1707CSharpResultAt(line: 2, column: 14, symbolKind: SymbolKind.NamedType, identifierNames: "UnderScoreInName_"));
+}",
+            GetCA1707CSharpResultAt(line: 4, column: 18, symbolKind: SymbolKind.NamedType, identifierNames: "OuterType.UnderScoreInName_"));
         }
 
         [Fact]
-        public void CSharp_CA1707_ForFields()
+        public void CA1707_ForFields_CSharp()
         {
             VerifyCSharp(@"
 public class DoesNotMatter
@@ -105,7 +111,7 @@ public enum DoesNotMatterEnum
         }
 
         [Fact]
-        public void CSharp_CA1707_ForMethods()
+        public void CA1707_ForMethods_CSharp()
         {
             VerifyCSharp(@"
 public class DoesNotMatter
@@ -138,7 +144,40 @@ public class Derives : ImplementI1
         }
 
         [Fact]
-        public void CSharp_CA1707_ForProperties()
+        public void CA1707_ForProperties_CSharp()
+        {
+            VerifyCSharp(@"
+public class DoesNotMatter
+{
+    public int PublicP1_ { get; set; }
+    private int PrivateP2_ { get; set; } // No diagnostic
+    internal int InternalP3_ { get; set; } // No diagnostic
+    protected int ProtectedP4_ { get; set; }
+}
+
+public interface I1
+{
+    int P_ { get; set; }
+}
+
+public class ImplementI1 : I1
+{
+    public int P_ { get; set; } // No diagnostic
+    public virtual int P2_ { get; set; }
+}
+
+public class Derives : ImplementI1
+{
+    public override int P2_ { get; set; } // No diagnostic
+}",
+            GetCA1707CSharpResultAt(line: 4, column: 16, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.PublicP1_"),
+            GetCA1707CSharpResultAt(line: 7, column: 19, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.ProtectedP4_"),
+            GetCA1707CSharpResultAt(line: 12, column: 9, symbolKind: SymbolKind.Member, identifierNames: "I1.P_"),
+            GetCA1707CSharpResultAt(line: 18, column: 24, symbolKind: SymbolKind.Member, identifierNames: "ImplementI1.P2_"));
+        }
+
+        [Fact]
+        public void CA1707_ForEvents_CSharp()
         {
             VerifyCSharp(@"
 public class DoesNotMatter
@@ -171,7 +210,7 @@ public class Derives : ImplementI1
         }
 
         [Fact]
-        public void CSharp_CA1707_ForDelegates()
+        public void CA1707_ForDelegates_CSharp()
         {
             VerifyCSharp(@"
 public delegate void Dele(int intPublic_, string stringPublic_);
@@ -184,7 +223,7 @@ public delegate T Del<T>(int t_);
         }
 
         [Fact]
-        public void CSharp_CA1707_ForMemberparameters()
+        public void CA1707_ForMemberparameters_CSharp()
         {
             VerifyCSharp(@"
 public class DoesNotMatter
@@ -236,7 +275,7 @@ public class Der : Base
         }
 
         [Fact]
-        public void CSharp_CA1707_ForTypeTypeParameters()
+        public void CA1707_ForTypeTypeParameters_CSharp()
         {
             VerifyCSharp(@"
 public class DoesNotMatter<T_>
@@ -250,7 +289,7 @@ class NoDiag<U_>
         }
 
         [Fact]
-        public void CSharp_CA1707_ForMemberTypeParameters()
+        public void CA1707_ForMemberTypeParameters_CSharp()
         {
             VerifyCSharp(@"
 public class DoesNotMatter22
@@ -301,6 +340,368 @@ public class Der : Base
             GetCA1707CSharpResultAt(25, 28, SymbolKind.MethodTypeParameter, "Base.M1<T_>()", "T_"),
             GetCA1707CSharpResultAt(29, 29, SymbolKind.MethodTypeParameter, "Base.M2<U_>()", "U_"));
         }
+        #endregion
+        #region Visual Basic Tests
+        [Fact]
+        public void CA1707_ForAssembly_VisualBasic()
+        {
+            VerifyBasic(@"
+public class DoesNotMatter
+{
+}
+",
+            testProjectName: "AssemblyNameHasUnderScore_",
+            expected: GetCA1707BasicResultAt(line: 2, column: 1, symbolKind: SymbolKind.Assembly, identifierNames: "AssemblyNameHasUnderScore_"));
+        }
+
+        [Fact]
+        public void CA1707_ForAssembly_NoDiagnostics_VisualBasic()
+        {
+            VerifyBasic(@"
+public class DoesNotMatter
+{
+}
+",
+            testProjectName: "AssemblyNameHasNoUnderScore");
+        }
+
+        [Fact]
+        public void CA1707_ForNamespace_VisualBasic()
+        {
+            VerifyBasic(@"
+Namespace OuterNamespace
+    Namespace HasUnderScore_
+        Public Class DoesNotMatter
+        End Class
+    End Namespace
+End Namespace
+
+Namespace HasNoUnderScore
+    Public Class DoesNotMatter
+    End Class
+End Namespace",
+            GetCA1707BasicResultAt(line: 3, column: 15, symbolKind: SymbolKind.Namespace, identifierNames: "OuterNamespace.HasUnderScore_"));
+        }
+
+        [Fact]
+        public void CA1707_ForTypes_VisualBasic()
+        {
+            VerifyBasic(@"
+Public Class OuterType
+    Public Class UnderScoreInName_
+    End Class
+End Class
+
+Private Class UnderScoreInNameButPrivate_
+End Class",
+            GetCA1707BasicResultAt(line: 3, column: 18, symbolKind: SymbolKind.NamedType, identifierNames: "OuterType.UnderScoreInName_"));
+        }
+
+        [Fact]
+        public void CA1707_ForFields_VisualBasic()
+        {
+            VerifyBasic(@"
+Public Class DoesNotMatter
+    Public Const ConstField_ As Integer = 5
+    Public Shared ReadOnly SharedReadOnlyField_ As Integer = 5
+
+    ' No diagnostics for the below
+    Private InstanceField_ As String
+    Private Shared StaticField_ As String
+    Public _field As String
+    Protected Another_field As String
+End Class
+
+Public Enum DoesNotMatterEnum
+    _EnumWithUnderscore
+End Enum",
+            GetCA1707BasicResultAt(line: 3, column: 18, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.ConstField_"),
+            GetCA1707BasicResultAt(line: 4, column: 28, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.SharedReadOnlyField_"),
+            GetCA1707BasicResultAt(line: 14, column: 5, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatterEnum._EnumWithUnderscore"));
+        }
+
+        [Fact]
+        public void CA1707_ForMethods_VisualBasic()
+        {
+            VerifyBasic(@"
+Public Class DoesNotMatter
+    Public Sub PublicM1_()
+    End Sub
+    ' No diagnostic
+    Private Sub PrivateM2_()
+    End Sub
+    ' No diagnostic
+    Friend Sub InternalM3_()
+    End Sub
+    Protected Sub ProtectedM4_()
+    End Sub
+End Class
+
+Public Interface I1
+    Sub M_()
+End Interface
+
+Public Class ImplementI1
+    Inherits I1
+    Public Sub M_() Implements I1.M_
+    End Sub
+    ' No diagnostic
+    Public Overridable Sub M2_()
+    End Sub
+End Class
+
+Public Class Derives
+    Inherits ImplementI1
+    ' No diagnostic
+    Public Overrides Sub M2_()
+    End Sub
+End Class",
+            GetCA1707BasicResultAt(line: 3, column: 16, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.PublicM1_()"),
+            GetCA1707BasicResultAt(line: 11, column: 19, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.ProtectedM4_()"),
+            GetCA1707BasicResultAt(line: 16, column: 9, symbolKind: SymbolKind.Member, identifierNames: "I1.M_()"),
+            GetCA1707BasicResultAt(line: 24, column: 28, symbolKind: SymbolKind.Member, identifierNames: "ImplementI1.M2_()"));
+        }
+
+        [Fact]
+        public void CA1707_ForProperties_VisualBasic()
+        {
+            VerifyBasic(@"
+Public Class DoesNotMatter
+    Public Property PublicP1_() As Integer
+        Get
+            Return 0
+        End Get
+        Set
+        End Set
+    End Property
+    ' No diagnostic
+    Private Property PrivateP2_() As Integer
+        Get
+            Return 0
+        End Get
+        Set
+        End Set
+    End Property
+    ' No diagnostic
+    Friend Property InternalP3_() As Integer
+        Get
+            Return 0
+        End Get
+        Set
+        End Set
+    End Property
+    Protected Property ProtectedP4_() As Integer
+        Get
+            Return 0
+        End Get
+        Set
+        End Set
+    End Property
+End Class
+
+Public Interface I1
+    Property P_() As Integer
+End Interface
+
+Public Class ImplementI1
+    Implements I1
+    ' No diagnostic
+    Public Property P_() As Integer Implements I1.P_
+        Get
+            Return 0
+        End Get
+        Set
+        End Set
+    End Property
+    Public Overridable Property P2_() As Integer
+        Get
+            Return 0
+        End Get
+        Set
+        End Set
+    End Property
+End Class
+
+Public Class Derives
+    Inherits ImplementI1
+    ' No diagnostic
+    Public Overrides Property P2_() As Integer
+        Get
+            Return 0
+        End Get
+        Set
+        End Set
+    End Property
+End Class",
+            GetCA1707BasicResultAt(line: 3, column: 21, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.PublicP1_"),
+            GetCA1707BasicResultAt(line: 26, column: 24, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.ProtectedP4_"),
+            GetCA1707BasicResultAt(line: 36, column: 14, symbolKind: SymbolKind.Member, identifierNames: "I1.P_"),
+            GetCA1707BasicResultAt(line: 49, column: 33, symbolKind: SymbolKind.Member, identifierNames: "ImplementI1.P2_"));
+        }
+
+        [Fact]
+        public void CA1707_ForEvents_VisualBasic()
+        {
+            VerifyBasic(@"
+Public Class DoesNotMatter
+    Public Event PublicE1_ As EventHandler
+    Private Event PrivateE2_ As EventHandler
+    ' No diagnostic
+    Friend Event InternalE3_ As EventHandler
+    ' No diagnostic
+    Protected Event ProtectedE4_ As EventHandler
+End Class
+
+Public Interface I1
+    Event E_ As EventHandler
+End Interface
+
+Public Class ImplementI1
+    Implements I1
+    ' No diagnostic
+    Public Event E_ As EventHandler Implements I1.E_
+    Public Event E2_ As EventHandler
+End Class
+
+Public Class Derives
+    Inherits ImplementI1
+    ' No diagnostic
+    Public Shadows Event E2_ As EventHandler
+End Class",
+            GetCA1707BasicResultAt(line: 3, column: 18, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.PublicE1_"),
+            GetCA1707BasicResultAt(line: 8, column: 21, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.ProtectedE4_"),
+            GetCA1707BasicResultAt(line: 12, column: 11, symbolKind: SymbolKind.Member, identifierNames: "I1.E_"),
+            GetCA1707BasicResultAt(line: 19, column: 18, symbolKind: SymbolKind.Member, identifierNames: "ImplementI1.E2_"),
+            GetCA1707BasicResultAt(line: 25, column: 26, symbolKind: SymbolKind.Member, identifierNames: "Derives.E2_"));
+        }
+
+        [Fact]
+        public void CA1707_ForDelegates_VisualBasic()
+        {
+    VerifyBasic(@"
+Public Delegate Sub Dele(intPublic_ As Integer, stringPublic_ As String)
+' No diagnostics
+Friend Delegate Sub Dele2(intInternal_ As Integer, stringInternal_ As String)
+Public Delegate Function Del(Of T)(t_ As Integer) As T
+",
+            GetCA1707BasicResultAt(2, 26, SymbolKind.DelegateParameter, "Dele", "intPublic_"),
+            GetCA1707BasicResultAt(2, 49, SymbolKind.DelegateParameter, "Dele", "stringPublic_"),
+            GetCA1707BasicResultAt(5, 36, SymbolKind.DelegateParameter, "Del(Of T)", "t_"));
+        }
+
+        [Fact]
+        public void CA1707_ForMemberparameters_VisualBasic()
+        {
+            VerifyBasic(@"Public Class DoesNotMatter
+    Public Sub PublicM1(int_ As Integer)
+    End Sub
+    Private Sub PrivateM2(int_ As Integer)
+    End Sub
+    ' No diagnostic
+    Friend Sub InternalM3(int_ As Integer)
+    End Sub
+    ' No diagnostic
+    Protected Sub ProtectedM4(int_ As Integer)
+    End Sub
+End Class
+
+Public Interface I
+    Sub M(int_ As Integer)
+End Interface
+
+Public Class implementI
+    Implements I
+    Private Sub I_M(int_ As Integer) Implements I.M
+    End Sub
+End Class
+
+Public MustInherit Class Base
+    Public Overridable Sub M1(int_ As Integer)
+    End Sub
+
+    Public MustOverride Sub M2(int_ As Integer)
+End Class
+
+Public Class Der
+    Inherits Base
+    Public Overrides Sub M2(int_ As Integer)
+        Throw New NotImplementedException()
+    End Sub
+
+    Public Overrides Sub M1(int_ As Integer)
+        MyBase.M1(int_)
+    End Sub
+End Class",
+            GetCA1707BasicResultAt(2, 25, SymbolKind.MemberParameter, "DoesNotMatter.PublicM1(Integer)", "int_"),
+            GetCA1707BasicResultAt(10, 31, SymbolKind.MemberParameter, "DoesNotMatter.ProtectedM4(Integer)", "int_"),
+            GetCA1707BasicResultAt(15, 11, SymbolKind.MemberParameter, "I.M(Integer)", "int_"),
+            GetCA1707BasicResultAt(25, 31, SymbolKind.MemberParameter, "Base.M1(Integer)", "int_"),
+            GetCA1707BasicResultAt(28, 32, SymbolKind.MemberParameter, "Base.M2(Integer)", "int_"));
+        }
+
+        [Fact]
+        public void CA1707_ForTypeTypeParameters_VisualBasic()
+        {
+            VerifyBasic(@"
+Public Class DoesNotMatter(Of T_)
+End Class
+
+Class NoDiag(Of U_)
+End Class",
+            GetCA1707BasicResultAt(2, 31, SymbolKind.TypeTypeParameter, "DoesNotMatter(Of T_)", "T_"));
+        }
+
+        [Fact]
+        public void CA1707_ForMemberTypeParameters_VisualBasic()
+        {
+            VerifyBasic(@"
+Public Class DoesNotMatter22
+    Public Sub PublicM1(Of T1_)()
+    End Sub
+    Private Sub PrivateM2(Of U_)()
+    End Sub
+    Friend Sub InternalM3(Of W_)()
+    End Sub
+    Protected Sub ProtectedM4(Of D_)()
+    End Sub
+End Class
+
+Public Interface I
+    Sub M(Of T_)()
+End Interface
+
+Public Class implementI
+    Implements I
+    Public Sub M(Of U_)() Implements I.M
+        Throw New NotImplementedException()
+    End Sub
+End Class
+
+Public MustInherit Class Base
+    Public Overridable Sub M1(Of T_)()
+    End Sub
+
+    Public MustOverride Sub M2(Of U_)()
+End Class
+
+Public Class Der
+    Inherits Base
+    Public Overrides Sub M2(Of U_)()
+        Throw New NotImplementedException()
+    End Sub
+
+    Public Overrides Sub M1(Of T_)()
+        MyBase.M1(Of T_)()
+    End Sub
+End Class",
+            GetCA1707BasicResultAt(3, 28, SymbolKind.MethodTypeParameter, "DoesNotMatter22.PublicM1(Of T1_)()", "T1_"),
+            GetCA1707BasicResultAt(9, 34, SymbolKind.MethodTypeParameter, "DoesNotMatter22.ProtectedM4(Of D_)()", "D_"),
+            GetCA1707BasicResultAt(14, 14, SymbolKind.MethodTypeParameter, "I.M(Of T_)()", "T_"),
+            GetCA1707BasicResultAt(25, 34, SymbolKind.MethodTypeParameter, "Base.M1(Of T_)()", "T_"),
+            GetCA1707BasicResultAt(28, 35, SymbolKind.MethodTypeParameter, "Base.M2(Of U_)()", "U_"));
+        }
+        #endregion
+
         #region Helpers
 
         private static DiagnosticResult GetCA1707CSharpResultAt(int line, int column, SymbolKind symbolKind, params string[] identifierNames)
@@ -318,11 +719,14 @@ public class Der : Base
             Verify(source, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), testProjectName, expected);
         }
 
-        private static DiagnosticResult GetCA1707BasicResultAt(int line, int column, string identifierName)
+        private static DiagnosticResult GetCA1707BasicResultAt(int line, int column, SymbolKind symbolKind, params string[] identifierNames)
         {
-            // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainTypeNamesMessage, identifierName);
-            return GetBasicResultAt(line, column, IdentifiersShouldNotContainTypeNames.RuleId, message);
+            return GetCA1707BasicResultAt(line, column, GetApproriateMessage(symbolKind), identifierNames);
+        }
+
+        private static DiagnosticResult GetCA1707BasicResultAt(int line, int column, string message, params string[] identifierName)
+        {
+            return GetBasicResultAt(line, column, IdentifiersShouldNotContainUnderscoresAnalyzer.RuleId, string.Format(message, identifierName));
         }
 
         private void VerifyBasic(string source, string testProjectName, params DiagnosticResult[] expected)

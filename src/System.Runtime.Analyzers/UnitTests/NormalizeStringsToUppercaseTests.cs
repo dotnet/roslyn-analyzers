@@ -28,35 +28,25 @@ namespace System.Runtime.Analyzers.UnitTests
 using System;
 using System.Globalization;
 
-public class UnexpectedWarningAttribute : Attribute
-{
-    public UnexpectedWarningAttribute(string ruleName, string ruleCategory) { }
-}
-
 public class NormalizeStringsTesterClass
 {
-    [UnexpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")]
-    public void BadNormalizationOneA()
+    public void TestMethodOneA()
     {
-        Console.WriteLine(this);
         Console.WriteLine(""FOO"".ToUpper(CultureInfo.InvariantCulture));
     }
-    [UnexpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")]
-    public void BadNormalizationOneB()
+
+    public void TestMethodOneB()
     {
-        Console.WriteLine(this);
         Console.WriteLine(""FOO"".ToUpper(CultureInfo.CurrentCulture));
     }
-    [UnexpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")]
-    public void BadNormalizationOneC()
+
+    public void TestMethodOneC()
     {
-        Console.WriteLine(this);
         Console.WriteLine(""FOO"".ToUpper(CultureInfo.CurrentUICulture));
     }
-    [UnexpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")]
-    public void BadNormalizationOneD()
+
+    public void TestMethodOneD()
     {
-        Console.WriteLine(this);
         Console.WriteLine(""FOO"".ToUpper(CultureInfo.InstalledUICulture));
     }
 }
@@ -66,31 +56,20 @@ public class NormalizeStringsTesterClass
 Imports System
 Imports System.Globalization
 
-Public Class UnexpectedWarningAttribute
-    Inherits Attribute
-    Public Sub New(ruleName As String, ruleCategory As String)
-    End Sub
-End Class
-
 Public Class NormalizeStringsTesterClass
-    <UnexpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")>
-    Public Sub BadNormalizationOneA()
-        Console.WriteLine(Me)
+    Public Sub TestMethodOneA()
         Console.WriteLine(""FOO"".ToUpper(CultureInfo.InvariantCulture))
     End Sub
-    <UnexpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")>
-    Public Sub BadNormalizationOneB()
-        Console.WriteLine(Me)
+
+    Public Sub TestMethodOneB()
         Console.WriteLine(""FOO"".ToUpper(CultureInfo.CurrentCulture))
     End Sub
-    <UnexpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")>
-    Public Sub BadNormalizationOneC()
-        Console.WriteLine(Me)
+
+    Public Sub TestMethodOneC()
         Console.WriteLine(""FOO"".ToUpper(CultureInfo.CurrentUICulture))
     End Sub
-    <UnexpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")>
-    Public Sub BadNormalizationOneD()
-        Console.WriteLine(Me)
+
+    Public Sub TestMethodOneD()
         Console.WriteLine(""FOO"".ToUpper(CultureInfo.InstalledUICulture))
     End Sub
 End Class
@@ -104,35 +83,25 @@ End Class
 using System;
 using System.Globalization;
 
-public class UnexpectedWarningAttribute : Attribute
-{
-    public UnexpectedWarningAttribute(string ruleName, string ruleCategory) { }
-}
-
 public class NormalizeStringsTesterClass
 {
-    [UnexpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")]
-    public void BadNormalizationTwoA()
+    public void TestMethodTwoA()
     {
-        Console.WriteLine(this);
         Console.WriteLine(""FOO"".ToLower());
     }
-    [UnexpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")]
-    public void BadNormalizationTwoB()
+
+    public void TestMethodTwoB()
     {
-        Console.WriteLine(this);
         Console.WriteLine(""FOO"".ToLower(CultureInfo.CurrentCulture));
     }
-    [UnexpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")]
-    public void BadNormalizationTwoC()
+
+    public void TestMethodTwoC()
     {
-        Console.WriteLine(this);
         Console.WriteLine(""FOO"".ToLower(CultureInfo.CurrentUICulture));
     }
-    [UnexpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")]
-    public void BadNormalizationTwoD()
+
+    public void TestMethodTwoD()
     {
-        Console.WriteLine(this);
         Console.WriteLine(""FOO"".ToLower(CultureInfo.InstalledUICulture));
     }
 }
@@ -142,31 +111,20 @@ public class NormalizeStringsTesterClass
 Imports System
 Imports System.Globalization
 
-Public Class UnexpectedWarningAttribute
-    Inherits Attribute
-    Public Sub New(ruleName As String, ruleCategory As String)
-    End Sub
-End Class
-
 Public Class NormalizeStringsTesterClass
-    <UnexpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")>
-    Public Sub BadNormalizationTwoB()
-        Console.WriteLine(Me)
+    Public Sub TestMethodTwoB()
         Console.WriteLine(""FOO"".ToLower())
     End Sub
-    <UnexpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")>
-    Public Sub BadNormalizationTwoB()
-        Console.WriteLine(Me)
+
+    Public Sub TestMethodTwoB()
         Console.WriteLine(""FOO"".ToLower(CultureInfo.CurrentCulture))
     End Sub
-    <UnexpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")>
-    Public Sub BadNormalizationTwoC()
-        Console.WriteLine(Me)
+
+    Public Sub TestMethodTwoC()
         Console.WriteLine(""FOO"".ToLower(CultureInfo.CurrentUICulture))
     End Sub
-    <UnexpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")>
-    Public Sub BadNormalizationTwoD()
-        Console.WriteLine(Me)
+
+    Public Sub TestMethodTwoD()
         Console.WriteLine(""FOO"".ToLower(CultureInfo.InstalledUICulture))
     End Sub
 End Class
@@ -180,16 +138,10 @@ End Class
 using System;
 using System.Globalization;
 
-public class UnexpectedWarningAttribute : Attribute
-{
-    public UnexpectedWarningAttribute(string ruleName, string ruleCategory) { }
-}
-
 public class NormalizeStringsTesterClass
 {
-    public void BadNormalizationThree()
+    public void TestMethodThree()
     {
-        Console.WriteLine(this);
         Console.WriteLine(""FOO"".ToUpperInvariant());
     }
 }
@@ -199,16 +151,8 @@ public class NormalizeStringsTesterClass
 Imports System
 Imports System.Globalization
 
-Public Class UnexpectedWarningAttribute
-    Inherits Attribute
-    Public Sub New(ruleName As String, ruleCategory As String)
-    End Sub
-End Class
-
 Public Class NormalizeStringsTesterClass
-    <UnexpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")>
-    Public Sub BadNormalizationThree()
-        Console.WriteLine(Me)
+    Public Sub TestMethodThree()
         Console.WriteLine(""FOO"".ToUpperInvariant())
     End Sub
 End Class
@@ -226,47 +170,27 @@ End Class
 using System;
 using System.Globalization;
 
-public class ExpectedWarningAttribute : Attribute
+public class NormalizeStringsTesterClass
 {
-    public ExpectedWarningAttribute(string ruleName, string ruleCategory) { }
-}
-
-namespace Microsoft.FxCop.Tests.Globalization.Bad.CSharp.NormalizeStringsToUppercaseTests
-{
-    public class NormalizeStringsTesterClass
+    public void TestMethod()
     {
-        [ExpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")]
-        public void BadNormalizationOne()
-        {
-            Console.WriteLine(this);
-            Console.WriteLine(""FOO"".ToLower(CultureInfo.InvariantCulture));
-        }
+        Console.WriteLine(""FOO"".ToLower(CultureInfo.InvariantCulture));
     }
 }
 ",
-            GetCSharpDefaultResultAt(18, 31, "BadNormalizationOne", "ToLower", "ToUpperInvariant"));
+            GetCSharpDefaultResultAt(9, 27, "TestMethod", "ToLower", "ToUpperInvariant"));
 
             VerifyBasic(@"
 Imports System
 Imports System.Globalization
 
-Public Class ExpectedWarningAttribute
-    Inherits Attribute
-    Public Sub New(ruleName As String, ruleCategory As String)
+Public Class NormalizeStringsTesterClass
+    Public Sub TestMethod()
+        Console.WriteLine(""FOO"".ToLower(CultureInfo.InvariantCulture))
     End Sub
 End Class
-
-Namespace Microsoft.FxCop.Tests.Globalization.Bad.CSharp.NormalizeStringsToUppercaseTests
-    Public Class NormalizeStringsTesterClass
-        <ExpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")>
-        Public Sub BadNormalizationOne()
-            Console.WriteLine(Me)
-            Console.WriteLine(""FOO"".ToLower(CultureInfo.InvariantCulture))
-        End Sub
-    End Class
-End Namespace
 ",
-            GetBasicDefaultResultAt(16, 31, "BadNormalizationOne", "ToLower", "ToUpperInvariant"));
+            GetBasicDefaultResultAt(7, 27, "TestMethod", "ToLower", "ToUpperInvariant"));
         }
 
         [Fact]
@@ -276,47 +200,27 @@ End Namespace
 using System;
 using System.Globalization;
 
-public class ExpectedWarningAttribute : Attribute
+public class NormalizeStringsTesterClass
 {
-    public ExpectedWarningAttribute(string ruleName, string ruleCategory) { }
-}
-
-namespace Microsoft.FxCop.Tests.Globalization.Bad.CSharp.NormalizeStringsToUppercaseTests
-{
-    public class NormalizeStringsTesterClass
+    public void TestMethod()
     {
-        [ExpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")]
-        public void BadNormalizationTwo()
-        {
-            Console.WriteLine(this);
-            Console.WriteLine(""FOO"".ToLowerInvariant());
-        }
+        Console.WriteLine(""FOO"".ToLowerInvariant());
     }
 }
 ",
-            GetCSharpDefaultResultAt(18, 31, "BadNormalizationTwo", "ToLowerInvariant", "ToUpperInvariant"));
+            GetCSharpDefaultResultAt(9, 27, "TestMethod", "ToLowerInvariant", "ToUpperInvariant"));
 
             VerifyBasic(@"
 Imports System
 Imports System.Globalization
 
-Public Class ExpectedWarningAttribute
-    Inherits Attribute
-    Public Sub New(ruleName As String, ruleCategory As String)
+Public Class NormalizeStringsTesterClass
+    Public Sub TestMethod()
+        Console.WriteLine(""FOO"".ToLowerInvariant())
     End Sub
 End Class
-
-Namespace Microsoft.FxCop.Tests.Globalization.Bad.CSharp.NormalizeStringsToUppercaseTests
-    Public Class NormalizeStringsTesterClass
-        <ExpectedWarning(""NormalizeStringsToUppercase"", ""GlobalizationRules"")>
-        Public Sub BadNormalizationTwo()
-            Console.WriteLine(Me)
-            Console.WriteLine(""FOO"".ToLowerInvariant())
-        End Sub
-    End Class
-End Namespace
 ",
-            GetBasicDefaultResultAt(16, 31, "BadNormalizationTwo", "ToLowerInvariant", "ToUpperInvariant"));
+            GetBasicDefaultResultAt(7, 27, "TestMethod", "ToLowerInvariant", "ToUpperInvariant"));
         }
 
         #endregion

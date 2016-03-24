@@ -13,7 +13,7 @@ Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicIdentifiersShouldNotContainUnderscoresFixer
-        Inherits IdentifiersShouldNotContainUnderscoresFixer
+        Inherits IdentifiersShouldNotContainUnderscoresFixer(Of SyntaxKind)
 
     End Class
 End Namespace

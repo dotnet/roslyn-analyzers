@@ -3,6 +3,7 @@
 using System.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
@@ -10,7 +11,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// CA1707: Identifiers should not contain underscores
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
-    public sealed class CSharpIdentifiersShouldNotContainUnderscoresFixer : IdentifiersShouldNotContainUnderscoresFixer
+    public sealed class CSharpIdentifiersShouldNotContainUnderscoresFixer : IdentifiersShouldNotContainUnderscoresFixer<SyntaxKind>
     {
     }
 }

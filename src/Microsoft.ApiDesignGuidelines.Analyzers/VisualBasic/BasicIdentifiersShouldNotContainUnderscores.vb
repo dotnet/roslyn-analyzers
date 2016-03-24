@@ -11,13 +11,14 @@ Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' </summary>
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
     Public NotInheritable Class BasicIdentifiersShouldNotContainUnderscoresAnalyzer
-        Inherits IdentifiersShouldNotContainUnderscoresAnalyzer
+        Inherits IdentifiersShouldNotContainUnderscoresAnalyzer(Of SyntaxKind)
 
-        Friend Overrides Sub GetSyntaxNodeDiagnostics(compilationStartAnalysisContext As CompilationStartAnalysisContext)
-            compilationStartAnalysisContext.RegisterSyntaxNodeAction(
-                Sub(syntaxNodeAnalysisContext As SyntaxNodeAnalysisContext)
-                    AnalyzeSyntaxNode(syntaxNodeAnalysisContext)
-                End Sub, SyntaxKind.Parameter, SyntaxKind.TypeParameter)
-        End Sub
+        Private Shared s_syntaxKinds As SyntaxKind() = {SyntaxKind.Parameter, SyntaxKind.TypeParameter}
+
+        Public Overrides ReadOnly Property SyntaxKinds As SyntaxKind()
+            Get
+                Return s_syntaxKinds
+            End Get
+        End Property
     End Class
 End Namespace

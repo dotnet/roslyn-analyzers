@@ -13,7 +13,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// CA1707: Identifiers should not contain underscores
     /// </summary>
-    public abstract class IdentifiersShouldNotContainUnderscoresAnalyzer : DiagnosticAnalyzer
+    public abstract class IdentifiersShouldNotContainUnderscoresAnalyzer<TLanguageSyntaxKind> : DiagnosticAnalyzer
+        where TLanguageSyntaxKind : struct
     {
         internal const string RuleId = "CA1707";
         private const string _uri = "https://msdn.microsoft.com/en-us/library/ms182245.aspx";
@@ -105,6 +106,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(AssemblyRule, NamespaceRule, TypeRule, MemberRule, TypeTypeParameterRule, MethodTypeParameterRule, MemberParameterRule, DelegateParameterRule);
 
+        public abstract TLanguageSyntaxKind[] SyntaxKinds { get; }
+
         private ConcurrentDictionary<INamedTypeSymbol, ConcurrentDictionary<ISymbol, List<ISymbol>>> _typeDeclaredMemberOverridingBaseMapping;
 
         public override void Initialize(AnalysisContext analysisContext)
@@ -167,7 +170,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 SymbolKind.Method, SymbolKind.Property, SymbolKind.Field, SymbolKind.Event // Members
                 );
 
-                GetSyntaxNodeDiagnostics(compilationStartAnalysisContext);
+                compilationStartAnalysisContext.RegisterSyntaxNodeAction(syntaxNodeAnalysisContext =>
+                {
+                    AnalyzeSyntaxNode(syntaxNodeAnalysisContext);
+                },SyntaxKinds);
             });
 
             analysisContext.RegisterCompilationAction(compilationAnalysisContext =>
@@ -185,8 +191,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return (!((symbol.IsPublic() || symbol.IsProtected()) && !symbol.IsOverride)) ||
                 symbol.IsAccessorMethod() || IsInterfaceImplementation(symbol);
         }
-
-        internal abstract void GetSyntaxNodeDiagnostics(CompilationStartAnalysisContext compilationStartAnalysisContext);
 
         protected void AnalyzeSyntaxNode(SyntaxNodeAnalysisContext syntaxNodeAnalysisContext)
         {

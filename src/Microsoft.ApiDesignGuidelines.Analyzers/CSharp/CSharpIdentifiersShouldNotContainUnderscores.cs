@@ -11,14 +11,16 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// CA1707: Identifiers should not contain underscores
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class CSharpIdentifiersShouldNotContainUnderscoresAnalyzer : IdentifiersShouldNotContainUnderscoresAnalyzer
+    public sealed class CSharpIdentifiersShouldNotContainUnderscoresAnalyzer : IdentifiersShouldNotContainUnderscoresAnalyzer<SyntaxKind>
     {
-        internal override void GetSyntaxNodeDiagnostics(CompilationStartAnalysisContext compilationStartAnalysisContext)
+        private static readonly SyntaxKind[] s_syntaxKinds = new[] { SyntaxKind.Parameter, SyntaxKind.TypeParameter };
+
+        public override SyntaxKind[] SyntaxKinds
         {
-            compilationStartAnalysisContext.RegisterSyntaxNodeAction(syntaxNodeAnalysisContext =>
+            get
             {
-                AnalyzeSyntaxNode(syntaxNodeAnalysisContext);
-            }, SyntaxKind.Parameter, SyntaxKind.TypeParameter);
+                return s_syntaxKinds;
+            }
         }
     }
 }

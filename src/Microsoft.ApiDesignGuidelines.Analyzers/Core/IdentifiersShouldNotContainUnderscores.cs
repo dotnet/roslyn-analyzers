@@ -188,7 +188,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private bool IsInvalidSymbol(ISymbol symbol)
         {
-            return (!((symbol.IsPublic() || symbol.IsProtected()) && !symbol.IsOverride)) ||
+            return (!(symbol.GetResultantVisibility() == SymbolVisibility.Public && !symbol.IsOverride)) ||
                 symbol.IsAccessorMethod() || IsInterfaceImplementation(symbol);
         }
 
@@ -240,7 +240,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private bool IsInterfaceImplementation(ISymbol symbol)
         {
-            return IsExplicitInterfaceImplementation(symbol) || IsImplicitInterfaceImplementation(symbol);
+            return symbol.IsExplicitInterfaceImplementation() || IsImplicitInterfaceImplementation(symbol);
         }
 
         private bool IsImplicitInterfaceImplementation(ISymbol symbol)
@@ -279,24 +279,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return false;
         }
 
-        private bool IsExplicitInterfaceImplementation(ISymbol symbol)
-        {
-            var methodSymbol = symbol as IMethodSymbol;
-            if (methodSymbol != null && methodSymbol.ExplicitInterfaceImplementations.Any())
-            {
-                return true;
-            }
-
-            var propertySymbol = symbol as IPropertySymbol;
-            if (propertySymbol != null && propertySymbol.ExplicitInterfaceImplementations.Any())
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool ContainsUnderScore(string identifier)
+        private static bool ContainsUnderScore(string identifier)
         {
             return identifier.IndexOf('_') != -1;
         }

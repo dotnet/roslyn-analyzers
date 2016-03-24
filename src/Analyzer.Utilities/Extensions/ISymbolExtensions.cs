@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities
@@ -146,6 +147,23 @@ namespace Analyzer.Utilities
         public static bool MatchFieldByName(this ISymbol member, INamedTypeSymbol type, string name)
         {
             return member != null && member.Kind == SymbolKind.Field && member.MatchMemberByName(type, name);
+        }
+
+        public static bool IsExplicitInterfaceImplementation(this ISymbol symbol)
+        {
+            var methodSymbol = symbol as IMethodSymbol;
+            if (methodSymbol != null && methodSymbol.ExplicitInterfaceImplementations.Any())
+            {
+                return true;
+            }
+
+            var propertySymbol = symbol as IPropertySymbol;
+            if (propertySymbol != null && propertySymbol.ExplicitInterfaceImplementations.Any())
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 

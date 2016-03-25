@@ -26,7 +26,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method(int url) { }
+        public static void Method(int url) { }
     }
 ");
         }
@@ -39,9 +39,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method(string url) { }
+        public static void Method(string url) { }
     }
-", GetCA1054CSharpResultAt(6, 37, "url", "A.Method(string)"));
+", GetCA1054CSharpResultAt(6, 42, "url", "A.Method(string)"));
         }
 
         [Fact]
@@ -52,8 +52,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method(string url) { }
-        public static Method(Uri url) { }
+        public static void Method(string url) { }
+        public static void Method(Uri url) { }
     }
 ");
         }
@@ -66,10 +66,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method(string url, string url2) { }
+        public static void Method(string url, string url2) { }
     }
-", GetCA1054CSharpResultAt(6, 37, "url", "A.Method(string, string)")
- , GetCA1054CSharpResultAt(6, 49, "url2", "A.Method(string, string)"));
+", GetCA1054CSharpResultAt(6, 42, "url", "A.Method(string, string)")
+ , GetCA1054CSharpResultAt(6, 54, "url2", "A.Method(string, string)"));
         }
 
         [Fact]
@@ -80,10 +80,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method(string url, string url2) { }
-        public static Method(string url, Uri url2) { }
-        public static Method(Uri url, string url2) { }
-        public static Method(Uri url, Uri url2) { }
+        public static void Method(string url, string url2) { }
+        public static void Method(string url, Uri url2) { }
+        public static void Method(Uri url, string url2) { }
+        public static void Method(Uri url, Uri url2) { }
     }
 ");
         }
@@ -97,11 +97,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method(string url, string url2) { }
-        public static Method(Uri url, Uri url2) { }
+        public static void Method(string url, string url2) { }
+        public static void Method(Uri url, Uri url2) { }
     }
-", GetCA1054CSharpResultAt(6, 37, "url", "A.Method(string, string)")
- , GetCA1054CSharpResultAt(6, 49, "url2", "A.Method(string, string)"));
+", GetCA1054CSharpResultAt(6, 42, "url", "A.Method(string, string)")
+ , GetCA1054CSharpResultAt(6, 54, "url2", "A.Method(string, string)"));
 
         }
 
@@ -113,7 +113,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     internal class A : IComparable
     {
-        public static Method(string url) { }
+        public static void Method(string url) { }
     }
 ");
         }
@@ -126,13 +126,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     internal class A : Attribute
     {
-        public bool Method(string url) { }
+        public bool void Method(string url) { }
     }
 ");
         }
 
         [Fact]
-        public void CA2234WarningVB()
+        public void CA1054WarningVB()
         {
             // C# and VB shares same implementation. so just one vb test
             VerifyBasic(@"

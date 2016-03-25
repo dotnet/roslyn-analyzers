@@ -18,6 +18,10 @@ namespace Microsoft.CodeAnalysis.UnitTests
 {
     public abstract class DiagnosticAnalyzerTestBase
     {
+        // It is assumed to be of the format, Get<RuleId>CSharpResultAt(line: {0}, column: {1}, message: {3})
+        private string _expectedDiagnosticsAssertionTemplate = null;
+        private bool _printActualDiagnosticsOnFailure = false;
+
         private static readonly MetadataReference s_corlibReference = MetadataReference.CreateFromAssemblyInternal(typeof(object).Assembly);
         private static readonly MetadataReference s_systemCoreReference = MetadataReference.CreateFromAssemblyInternal(typeof(Enumerable).Assembly);
         private static readonly MetadataReference s_systemXmlReference = MetadataReference.CreateFromAssemblyInternal(typeof(System.Xml.XmlDocument).Assembly);
@@ -84,6 +88,21 @@ namespace Microsoft.CodeAnalysis.UnitTests
             }
         }
 
+        protected bool PrintActualDiagnosticsOnFailure
+        {
+            set
+            {
+                _printActualDiagnosticsOnFailure = value;
+            }
+        }
+
+        public string ExpectedDiagnosticsAssertionTemplate
+        {
+            set
+            {
+                _expectedDiagnosticsAssertionTemplate = value;
+            }
+        }
 
         protected static DiagnosticResult GetGlobalResult(string id, string message)
         {
@@ -262,7 +281,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
         protected void Verify(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, params DiagnosticResult[] expected)
         {
-            GetSortedDiagnostics(sources, language, analyzer).Verify(analyzer, expected);
+            GetSortedDiagnostics(sources, language, analyzer).Verify(analyzer, _printActualDiagnosticsOnFailure, _expectedDiagnosticsAssertionTemplate, expected);
         }
 
         protected void Verify(string[] sources, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference, params DiagnosticResult[] expected)
@@ -272,7 +291,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
         protected void Verify(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference, params DiagnosticResult[] expected)
         {
-            GetSortedDiagnostics(sources, language, analyzer, addLanguageSpecificCodeAnalysisReference).Verify(analyzer, expected);
+            GetSortedDiagnostics(sources, language, analyzer, addLanguageSpecificCodeAnalysisReference).Verify(analyzer, _printActualDiagnosticsOnFailure, _expectedDiagnosticsAssertionTemplate, expected);
         }
 
         protected static Diagnostic[] GetSortedDiagnostics(string[] sources, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference = true)

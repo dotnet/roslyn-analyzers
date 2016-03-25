@@ -113,9 +113,9 @@ namespace Analyzer.Utilities
             return member != null && member.ContainingType.DerivesFrom(type) && member.MetadataName == name;
         }
 
-        public static bool MatchMethodDerivedByName(this ISymbol member, INamedTypeSymbol type, string name)
+        public static bool MatchMethodDerivedByName(this IMethodSymbol method, INamedTypeSymbol type, string name)
         {
-            return member != null && member.Kind == SymbolKind.Method && member.MatchMemberDerivedByName(type, name);
+            return method != null && method.MatchMemberDerivedByName(type, name);
         }
 
         public static bool MatchMethodByName(this ISymbol member, INamedTypeSymbol type, string name)

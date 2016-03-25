@@ -7,14 +7,14 @@ namespace Desktop.Analyzers.UnitTests
 {
     public partial class DoNotUseInsecureDTDProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private DiagnosticResult GetCA3075DataSetReadXmlCSharpResultAt(int line, int column, string name)
+        private DiagnosticResult GetCA3075DataSetReadXmlCSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, name, "ReadXml"));
+            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, "ReadXml"));
         }
 
-        private DiagnosticResult GetCA3075DataSetReadXmlBasicResultAt(int line, int column, string name)
+        private DiagnosticResult GetCA3075DataSetReadXmlBasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, name, "ReadXml"));
+            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, "ReadXml"));
         }
 
         [Fact]
@@ -36,7 +36,7 @@ namespace TestNamespace
     }
 }
 ",
-                GetCA3075DataSetReadXmlCSharpResultAt(12, 13, "TestMethod1214")
+                GetCA3075DataSetReadXmlCSharpResultAt(12, 13)
             );
 
             VerifyBasic(@"
@@ -51,7 +51,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075DataSetReadXmlBasicResultAt(9, 13, "TestMethod1214")
+                GetCA3075DataSetReadXmlBasicResultAt(9, 13)
             );
         }
 
@@ -73,7 +73,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075DataSetReadXmlCSharpResultAt(11, 13, "get_Test")
+                GetCA3075DataSetReadXmlCSharpResultAt(11, 13)
             );
 
             VerifyBasic(@"
@@ -89,7 +89,7 @@ Class TestClass
         End Get
     End Property
 End Class",
-                GetCA3075DataSetReadXmlBasicResultAt(9, 13, "get_Test")
+                GetCA3075DataSetReadXmlBasicResultAt(9, 13)
             );
         }
 
@@ -118,7 +118,7 @@ public DataSet GetDoc
             }
         }
 }",
-                GetCA3075DataSetReadXmlCSharpResultAt(15, 21, "set_GetDoc")
+                GetCA3075DataSetReadXmlCSharpResultAt(15, 21)
             );
 
             VerifyBasic(@"
@@ -139,7 +139,7 @@ Class TestClass
         End Set
     End Property
 End Class",
-                GetCA3075DataSetReadXmlBasicResultAt(11, 17, "set_GetDoc")
+                GetCA3075DataSetReadXmlBasicResultAt(11, 17)
             );
         }
 
@@ -164,7 +164,7 @@ End Class",
             finally { }
         }
     }",
-                GetCA3075DataSetReadXmlCSharpResultAt(13, 17, "TestMethod")
+                GetCA3075DataSetReadXmlCSharpResultAt(13, 17)
             );
 
             VerifyBasic(@"
@@ -182,7 +182,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataSetReadXmlBasicResultAt(9, 13, "TestMethod")
+                GetCA3075DataSetReadXmlBasicResultAt(9, 13)
             );
         }
 
@@ -207,7 +207,7 @@ End Class",
             finally { }
         }
     }",
-                GetCA3075DataSetReadXmlCSharpResultAt(14, 17, "TestMethod")
+                GetCA3075DataSetReadXmlCSharpResultAt(14, 17)
             );
 
             VerifyBasic(@"
@@ -224,7 +224,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataSetReadXmlBasicResultAt(10, 13, "TestMethod")
+                GetCA3075DataSetReadXmlBasicResultAt(10, 13)
             );
         }
 
@@ -249,7 +249,7 @@ End Class",
             }
         }
     }",
-                GetCA3075DataSetReadXmlCSharpResultAt(15, 17, "TestMethod")
+                GetCA3075DataSetReadXmlCSharpResultAt(15, 17)
             );
 
             VerifyBasic(@"
@@ -267,7 +267,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataSetReadXmlBasicResultAt(12, 13, "TestMethod")
+                GetCA3075DataSetReadXmlBasicResultAt(12, 13)
             );
         }
 
@@ -294,7 +294,7 @@ using System.Data;
             await TestMethod();
         }
     }",
-                GetCA3075DataSetReadXmlCSharpResultAt(12, 17, "Run")
+                GetCA3075DataSetReadXmlCSharpResultAt(12, 17)
             );
 
             VerifyBasic(@"
@@ -302,7 +302,7 @@ Imports System.Threading.Tasks
 Imports System.Data
 
 Class TestClass
-    Private Function TestMethod() As Task
+    Private Async Function TestMethod() As Task
         Await Task.Run(Function() 
         Dim src = """"
         Dim ds As New DataSet()
@@ -315,7 +315,7 @@ End Function)
         Await TestMethod()
     End Sub
 End Class",
-                GetCA3075DataSetReadXmlBasicResultAt(10, 9, "Run")
+                GetCA3075DataSetReadXmlBasicResultAt(10, 9)
             );
         }
 
@@ -335,7 +335,7 @@ class TestClass
         ds.ReadXml(src);
     };
 }",
-                GetCA3075DataSetReadXmlCSharpResultAt(11, 9, "TestClass")
+                GetCA3075DataSetReadXmlCSharpResultAt(11, 9)
             );
 
             VerifyBasic(@"
@@ -351,7 +351,7 @@ Class TestClass
 
 End Sub
 End Class",
-                GetCA3075DataSetReadXmlBasicResultAt(10, 5, "TestClass")
+                GetCA3075DataSetReadXmlBasicResultAt(10, 5)
             );
         }
 

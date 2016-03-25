@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -34,28 +36,50 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            analysisContext.RegisterOperationBlockStartAction(blockStartContext =>
+            analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                var methodSymbol = blockStartContext.OwningSymbol as IMethodSymbol;
-                if (methodSymbol == null || !ShouldAnalyze(methodSymbol, blockStartContext.Compilation))
-                {
-                    return;
-                }
-                
-                bool isInstanceReferenced = false;
+                // Since property\event accessors cannot be marked static themselves and the associated symbol (property\event)
+                // has to be marked static, we want to report the diagnostic once on the property\event. So we make a note
+                // of the associated symbols on which we've reported diagnostics for this compilation so that we don't duplicate 
+                // those.
+                var reportedAssociatedSymbols = new HashSet<ISymbol>();
 
-                blockStartContext.RegisterOperationAction(operationContext =>
+                compilationContext.RegisterOperationBlockStartAction(blockStartContext =>
                 {
-                    isInstanceReferenced = true;
-                }, OperationKind.InstanceReferenceExpression);
-
-                blockStartContext.RegisterOperationBlockEndAction(blockEndContext =>
-                {
-                    if (!isInstanceReferenced)
+                    var methodSymbol = blockStartContext.OwningSymbol as IMethodSymbol;
+                    if (methodSymbol == null || !ShouldAnalyze(methodSymbol, blockStartContext.Compilation))
                     {
-                        var reportingSymbol = methodSymbol.IsPropertyAccessor() ? methodSymbol.AssociatedSymbol : methodSymbol;
-                        blockEndContext.ReportDiagnostic(reportingSymbol.CreateDiagnostic(Rule, reportingSymbol.Name));
+                        return;
                     }
+
+                    bool isInstanceReferenced = false;
+
+                    blockStartContext.RegisterOperationAction(operationContext =>
+                    {
+                        isInstanceReferenced = true;
+                    }, OperationKind.InstanceReferenceExpression);
+
+                    blockStartContext.RegisterOperationBlockEndAction(blockEndContext =>
+                    {
+                        if (!isInstanceReferenced)
+                        {
+                            ISymbol reportingSymbol = methodSymbol;
+
+                            if (methodSymbol.IsPropertyAccessor() || methodSymbol.IsEventAccessor())
+                            {
+                                // If we've already reported on this associated symbol (i.e property\event) then don't report again.
+                                if (reportedAssociatedSymbols.Contains(methodSymbol.AssociatedSymbol))
+                                {
+                                    return;
+                                }
+
+                                reportingSymbol = methodSymbol.AssociatedSymbol;
+                                reportedAssociatedSymbols.Add(reportingSymbol);
+                            }
+
+                            blockEndContext.ReportDiagnostic(reportingSymbol.CreateDiagnostic(Rule, reportingSymbol.Name));
+                        }
+                    });
                 });
             });
         }
@@ -64,22 +88,79 @@ namespace Microsoft.QualityGuidelines.Analyzers
         {
             // Modifiers that we don't care about
             if (methodSymbol.IsStatic || methodSymbol.IsOverride || methodSymbol.IsVirtual ||
-                methodSymbol.IsExtern || methodSymbol.IsAbstract)
+                methodSymbol.IsExtern || methodSymbol.IsAbstract || methodSymbol.IsImplementationOfAnyInterfaceMethod())
             {
                 return false;
             }
 
-            // Method kinds that we don't care about
-            //if (methodSymbol.IsFinalizer() || 
-            //    methodSymbol.HasAttribute("System.Web.Services.WebMethodAttribute", compilation) ||
-            //    methodSymbol.HasAttribute("Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute", compilation) ||
-            //    methodSymbol.HasAttribute("Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute", compilation) ||
-            //    methodSymbol.HasAttribute("Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute", compilation))
-            //{
-            //    return false;
-            //}
+            if (methodSymbol.IsConstructor() || methodSymbol.IsFinalizer())
+            {
+                return false;
+            }
+            
+            if (methodSymbol.ContainingType.IsGenericType && methodSymbol.GetResultantVisibility() == SymbolVisibility.Public)
+            {
+                return false;
+            }
+
+            var skipAttributes = new INamedTypeSymbol[]
+            {
+                compilation.GetTypeByMetadataName("System.Web.Services.WebMethodAttribute"),
+                // FxCop doesn't check for the fully qualified name for these attributes - so we'll do the same.
+                compilation.GetTypeByMetadataName("AspNetGeneratedCodeAttribute"),
+                compilation.GetTypeByMetadataName("GeneratedCodeAttribute"),
+                compilation.GetTypeByMetadataName("TestInitializeAttribute"),
+                compilation.GetTypeByMetadataName("TestMethodAttribute"),
+                compilation.GetTypeByMetadataName("TestCleanupAttribute")
+            };
+
+            // CA1000 says one shouldn't declare static members on generic types. So don't flag such cases.
+            if (methodSymbol.GetAttributes().Any(attribute => skipAttributes.Contains(attribute.AttributeClass)))
+            {
+                return false;
+            }
+
+            // If this looks like an event handler don't flag such cases.
+            if (methodSymbol.Parameters.Length == 2 && 
+                methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_Object &&
+                IsEventArgs(methodSymbol.Parameters[1].Type, compilation))
+            {
+                return false;
+            }
+
+
 
             return true;
         }
+
+        private static bool IsEventArgs(ITypeSymbol type, Compilation compilation)
+        {
+            if (type.DerivesFrom(WellKnownTypes.EventArgs(compilation)))
+            {
+                return true;
+            }
+
+            if (type.IsValueType)
+            {
+                return type.Name.EndsWith("EventArgs", StringComparison.Ordinal);
+            }
+
+            return false;
+        }
+
+        //private static bool IsExplicitlyVisibleFromCom(IMethodSymbol methodSymbol)
+        //{
+        //    if (methodSymbol.GetResultantVisibility() != SymbolVisibility.Public || methodSymbol.IsGenericMethod)
+        //        return false;
+
+        //    bool isComVisible;
+        //    if (TryGetValueOfComVisibleAttribute(methodSymbol, out isComVisible))
+        //        return isComVisible;
+
+        //    if (TryGetValueOfComVisibleAttribute(methodSymbol.ContainingType, out isComVisible))
+        //        return isComVisible;
+
+        //    return false;
+        //}
     }
 }

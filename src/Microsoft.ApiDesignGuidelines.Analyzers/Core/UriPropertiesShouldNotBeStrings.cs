@@ -103,7 +103,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return;
                 }
 
-                property.CreateDiagnostic(Rule, property.Name);
+                context.ReportDiagnostic(property.CreateDiagnostic(Rule, property.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
             }
         }
     }

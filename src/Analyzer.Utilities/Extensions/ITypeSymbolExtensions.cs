@@ -43,7 +43,7 @@ namespace Analyzer.Utilities
             switch (possibleBase.TypeKind)
             {
                 case TypeKind.Class:
-                    if (type.TypeKind != TypeKind.Class)
+                    if (type.TypeKind == TypeKind.Interface)
                     {
                         return false;
                     }

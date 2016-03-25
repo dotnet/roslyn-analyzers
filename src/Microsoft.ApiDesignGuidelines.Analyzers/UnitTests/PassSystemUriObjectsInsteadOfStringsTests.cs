@@ -395,6 +395,25 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
+        public void CA2234NoWarningNotPublic()
+        {
+            VerifyCSharp(@"
+    using System;
+
+    internal class A : IComparable
+    {
+        public static Method()
+        {
+            Method(""test"");
+        }
+
+        public static Method(string uri) { }
+        public static Method(Uri uri) { }
+    }
+");
+        }
+
+        [Fact]
         public void CA2234WarningVB()
         {
             // since VB and C# shares almost all code except to get method overload group expression
@@ -402,7 +421,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyBasic(@"
     Imports System
     
-    Module A
+    Public Module A
         Public Sub Method()
             Method(""test"", 0, ""test"")
         End Sub
@@ -415,9 +434,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     End Module
 ", GetCA2234BasicResultAt(6, 13, "A.Method()", "A.Method(Uri, Integer, String)", "A.Method(String, Integer, String)"));
         }
-
-        internal static readonly string CA2234Name = "CA2234";
-        internal static readonly string CA2234Message = MicrosoftApiDesignGuidelinesAnalyzersResources.PassSystemUriObjectsInsteadOfStringsMessage;
 
         private static DiagnosticResult GetCA2234CSharpResultAt(int line, int column, params string[] args)
         {

@@ -85,7 +85,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return;
                 }
 
-                if (method.IsAccessorMethod() || method.ReceiverType?.Equals(_string) != true)
+                if (method.IsAccessorMethod() || method.ReturnType?.Equals(_string) != true)
                 {
                     // return type must be string and it must be not an accessor method
                     return;
@@ -103,7 +103,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return;
                 }
 
-                method.CreateDiagnostic(Rule, method.Name);
+                context.ReportDiagnostic(method.CreateDiagnostic(Rule, method.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
             }
         }
     }

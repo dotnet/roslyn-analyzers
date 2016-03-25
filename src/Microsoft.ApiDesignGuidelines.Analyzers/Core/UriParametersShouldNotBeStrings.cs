@@ -119,7 +119,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     if (overload == null)
                     {
                         var parameter = method.Parameters[index];
-                        parameter.CreateDiagnostic(Rule, parameter.Name, method.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat));
+                        context.ReportDiagnostic(parameter.CreateDiagnostic(Rule, parameter.Name, method.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
                     }
                 }
             }

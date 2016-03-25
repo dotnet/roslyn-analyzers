@@ -131,7 +131,6 @@
     <Compile Include="BasicOperatorsShouldHaveSymmetricalOverloads.vb" />
     <Compile Include="BasicOperatorsShouldHaveSymmetricalOverloads.Fixer.vb" />
     <Compile Include="BasicCollectionsShouldImplementGenericInterface.Fixer.vb" />
-    <Compile Include="BasicUseEventsWhereAppropriate.vb" />
     <Compile Include="BasicUseEventsWhereAppropriate.Fixer.vb" />
     <Compile Include="BasicImplementStandardExceptionConstructors.vb" />
     <Compile Include="BasicAvoidEmptyInterfaces.vb" />

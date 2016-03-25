@@ -131,7 +131,6 @@
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.cs" />
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.Fixer.cs" />
     <Compile Include="CSharpCollectionsShouldImplementGenericInterface.Fixer.cs" />
-    <Compile Include="CSharpUseEventsWhereAppropriate.cs" />
     <Compile Include="CSharpUseEventsWhereAppropriate.Fixer.cs" />
     <Compile Include="CSharpImplementStandardExceptionConstructors.cs" />
     <Compile Include="CSharpAvoidEmptyInterfaces.cs" />

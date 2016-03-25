@@ -108,14 +108,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public abstract TLanguageSyntaxKind[] SyntaxKinds { get; }
 
-        private ConcurrentDictionary<INamedTypeSymbol, ConcurrentDictionary<ISymbol, List<ISymbol>>> _typeDeclaredMemberOverridingBaseMapping;
 
         public override void Initialize(AnalysisContext analysisContext)
         {
             analysisContext.RegisterCompilationStartAction(compilationStartAnalysisContext =>
             {
-                _typeDeclaredMemberOverridingBaseMapping = new ConcurrentDictionary<INamedTypeSymbol, ConcurrentDictionary<ISymbol, List<ISymbol>>>();
-
                 compilationStartAnalysisContext.RegisterSymbolAction(symbolAnalysisContext =>
                 {
                     var symbol = symbolAnalysisContext.Symbol;
@@ -173,7 +170,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 compilationStartAnalysisContext.RegisterSyntaxNodeAction(syntaxNodeAnalysisContext =>
                 {
                     AnalyzeSyntaxNode(syntaxNodeAnalysisContext);
-                },SyntaxKinds);
+                }, SyntaxKinds);
             });
 
             analysisContext.RegisterCompilationAction(compilationAnalysisContext =>
@@ -189,7 +186,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private bool IsInvalidSymbol(ISymbol symbol)
         {
             return (!(symbol.GetResultantVisibility() == SymbolVisibility.Public && !symbol.IsOverride)) ||
-                symbol.IsAccessorMethod() || IsInterfaceImplementation(symbol);
+                symbol.IsAccessorMethod() || symbol.IsInterfaceMemberImplementation();
         }
 
         protected void AnalyzeSyntaxNode(SyntaxNodeAnalysisContext syntaxNodeAnalysisContext)
@@ -236,47 +233,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     }
                 }
             }
-        }
-
-        private bool IsInterfaceImplementation(ISymbol symbol)
-        {
-            return symbol.IsExplicitInterfaceImplementation() || IsImplicitInterfaceImplementation(symbol);
-        }
-
-        private bool IsImplicitInterfaceImplementation(ISymbol symbol)
-        {
-            INamedTypeSymbol declaringType = symbol.ContainingType;
-            if (declaringType.AllInterfaces.Any())
-            {
-                ConcurrentDictionary<ISymbol, List<ISymbol>> declaredMemberToInterfaceMembers = _typeDeclaredMemberOverridingBaseMapping.GetOrAdd(declaringType, declaringTypeKey =>
-                {
-                    var declaredMemberSymbolsToImplementedInterfaceMembersMap = new ConcurrentDictionary<ISymbol, List<ISymbol>>();
-                    foreach (INamedTypeSymbol implementedInterface in declaringTypeKey.AllInterfaces)
-                    {
-                        foreach (ISymbol member in implementedInterface.GetMembers())
-                        {
-                            ISymbol implementedSymbol = declaringTypeKey.FindImplementationForInterfaceMember(member);
-                            if (implementedSymbol != null)
-                            {
-                                List<ISymbol> implementedSymbolImplementingInterfaceMembers = declaredMemberSymbolsToImplementedInterfaceMembersMap.GetOrAdd(implementedSymbol, s => new List<ISymbol>());
-                                implementedSymbolImplementingInterfaceMembers.Add(member);
-                            }
-                        }
-                    }
-
-                    return declaredMemberSymbolsToImplementedInterfaceMembersMap;
-                });
-
-                List<ISymbol> implementedInterfaceMembers;
-                if (declaredMemberToInterfaceMembers.TryGetValue(symbol, out implementedInterfaceMembers))
-                {
-                    return implementedInterfaceMembers.Any();
-                }
-
-                return false;
-            }
-
-            return false;
         }
 
         private static bool ContainsUnderScore(string identifier)

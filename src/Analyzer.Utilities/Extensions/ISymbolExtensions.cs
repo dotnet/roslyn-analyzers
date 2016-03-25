@@ -149,7 +149,47 @@ namespace Analyzer.Utilities
             return member != null && member.Kind == SymbolKind.Field && member.MatchMemberByName(type, name);
         }
 
-        public static bool IsExplicitInterfaceImplementation(this ISymbol symbol)
+        /// <summary>
+        /// Checks if a given symbol implements an interface member implicitly or explicitly
+        /// </summary>
+        public static bool IsInterfaceMemberImplementation(this ISymbol symbol)
+        {
+            return symbol.IsExplicitInterfaceMemberImplementation() || symbol.IsImplicitInterfaceMemberImplementation();
+        }
+
+        /// <summary>
+        /// Checks if a given symbol implements an interface member implicitly
+        /// </summary>
+
+        public static bool IsImplicitInterfaceMemberImplementation(this ISymbol symbol)
+        {
+            if (symbol.ContainingType != null)
+            {
+                foreach (INamedTypeSymbol interfaceSymbol in symbol.ContainingType.AllInterfaces)
+                {
+                    foreach (var interfaceMember in interfaceSymbol.GetMembers())
+                    {
+                        if (IsInterfaceMethodImplementation(symbol, interfaceMember))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsInterfaceMethodImplementation(ISymbol symbol, ISymbol interfaceMember)
+        {
+            return interfaceMember != null && symbol.Equals(symbol.ContainingType.FindImplementationForInterfaceMember(interfaceMember));
+        }
+
+        /// <summary>
+        /// Checks if a given symbol implements an interface member explicitly
+        /// </summary>
+
+        public static bool IsExplicitInterfaceMemberImplementation(this ISymbol symbol)
         {
             var methodSymbol = symbol as IMethodSymbol;
             if (methodSymbol != null && methodSymbol.ExplicitInterfaceImplementations.Any())
@@ -159,6 +199,12 @@ namespace Analyzer.Utilities
 
             var propertySymbol = symbol as IPropertySymbol;
             if (propertySymbol != null && propertySymbol.ExplicitInterfaceImplementations.Any())
+            {
+                return true;
+            }
+
+            var eventSymbol = symbol as IEventSymbol;
+            if (eventSymbol != null && eventSymbol.ExplicitInterfaceImplementations.Any())
             {
                 return true;
             }

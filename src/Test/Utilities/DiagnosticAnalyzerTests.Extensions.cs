@@ -13,7 +13,12 @@ namespace Microsoft.CodeAnalysis.UnitTests
 {
     public static class DiagnosticAnalyzerTestsExtensions
     {
-        public static void Verify(this IEnumerable<Diagnostic> actualResults, DiagnosticAnalyzer analyzer, params DiagnosticResult[] expectedResults)
+        public static void Verify(
+            this IEnumerable<Diagnostic> actualResults,
+            DiagnosticAnalyzer analyzer,
+            bool printActualDiagnosticsOnFailure,
+            string expectedDiagnosticsAssertionTemplate,
+            params DiagnosticResult[] expectedResults)
         {
             int expectedCount = expectedResults.Count();
             int actualCount = actualResults.Count();
@@ -22,8 +27,11 @@ namespace Microsoft.CodeAnalysis.UnitTests
             {
                 string diagnosticsOutput = actualResults.Any() ? FormatDiagnostics(analyzer, actualResults) : "    NONE.";
 
-                Assert.True(false,
-                    string.Format("Mismatch between number of diagnostics returned, expected \"{0}\" actual \"{1}\"\r\n\r\nDiagnostics:\r\n{2}\r\n", expectedCount, actualCount, diagnosticsOutput));
+                AssertFalse(
+                    string.Format("Mismatch between number of diagnostics returned, expected \"{0}\" actual \"{1}\"\r\n\r\nDiagnostics:\r\n{2}\r\n", expectedCount, actualCount, diagnosticsOutput),
+                    printActualDiagnosticsOnFailure,
+                    expectedDiagnosticsAssertionTemplate,
+                    actualResults);
             }
 
             for (int i = 0; i < expectedResults.Length; i++)
@@ -35,9 +43,12 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 {
                     if (actual.Location != Location.None)
                     {
-                        Assert.True(false,
+                        AssertFalse(
                             string.Format("Expected:\nA project diagnostic with No location\nActual:\n{0}",
-                            FormatDiagnostics(analyzer, actual)));
+                                FormatDiagnostics(analyzer, actual)),
+                            printActualDiagnosticsOnFailure,
+                            expectedDiagnosticsAssertionTemplate,
+                            actualResults);
                     }
                 }
                 else
@@ -47,10 +58,13 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
                     if (additionalLocations.Length != expected.Locations.Length - 1)
                     {
-                        Assert.True(false,
+                        AssertFalse(
                             string.Format("Expected {0} additional locations but got {1} for Diagnostic:\r\n    {2}\r\n",
                                 expected.Locations.Length - 1, additionalLocations.Length,
-                                FormatDiagnostics(analyzer, actual)));
+                                FormatDiagnostics(analyzer, actual)),
+                            printActualDiagnosticsOnFailure,
+                            expectedDiagnosticsAssertionTemplate,
+                            actualResults);
                     }
 
                     for (int j = 0; j < additionalLocations.Length; ++j)
@@ -61,23 +75,72 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
                 if (actual.Id != expected.Id)
                 {
-                    Assert.True(false,
+                    AssertFalse(
                         string.Format("Expected diagnostic id to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Id, actual.Id, FormatDiagnostics(analyzer, actual)));
+                            expected.Id, actual.Id, FormatDiagnostics(analyzer, actual)),
+                            printActualDiagnosticsOnFailure,
+                            expectedDiagnosticsAssertionTemplate,
+                            actualResults);
                 }
 
                 if (actual.Severity != expected.Severity)
                 {
-                    Assert.True(false,
+                    AssertFalse(
                         string.Format("Expected diagnostic severity to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Severity, actual.Severity, FormatDiagnostics(analyzer, actual)));
+                            expected.Severity, actual.Severity, FormatDiagnostics(analyzer, actual)),
+                        printActualDiagnosticsOnFailure,
+                        expectedDiagnosticsAssertionTemplate,
+                        actualResults);
                 }
 
                 if (actual.GetMessage() != expected.Message)
                 {
-                    Assert.True(false,
+                    AssertFalse(
                         string.Format("Expected diagnostic message to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Message, actual.GetMessage(), FormatDiagnostics(analyzer, actual)));
+                            expected.Message, actual.GetMessage(), FormatDiagnostics(analyzer, actual)),
+                        printActualDiagnosticsOnFailure,
+                        expectedDiagnosticsAssertionTemplate,
+                        actualResults);
+                }
+            }
+        }
+
+        public static void Verify(this IEnumerable<Diagnostic> actualResults, DiagnosticAnalyzer analyzer, params DiagnosticResult[] expectedResults)
+        {
+            Verify(actualResults, analyzer, false, null, expectedResults);
+        }
+
+        private static void AssertFalse(
+            string message,
+            bool printActualDiagnosticsOnFailure,
+            string expectedDiagnosticsAssertionTemplate,
+            IEnumerable<Diagnostic> actualResults)
+        {
+            if (printActualDiagnosticsOnFailure)
+            {
+                actualResults.Print(expectedDiagnosticsAssertionTemplate);
+            }
+
+            Assert.True(false, message);
+        }
+
+        public static void Print(this IEnumerable<Diagnostic> actualResults, string expectedDiagnosticsAssertionTemplate)
+        {
+            Console.WriteLine("Actual diagnostics produced:");
+            Console.WriteLine("============================");
+            foreach (var diagnostic in actualResults)
+            {
+                var actualLinePosition = diagnostic.Location.GetLineSpan().StartLinePosition;
+                var message = diagnostic.GetMessage();
+                var lineNumber = actualLinePosition.Line + 1;
+                var columnNumber = actualLinePosition.Character + 1;
+                if (expectedDiagnosticsAssertionTemplate != null)
+                {
+                    Console.WriteLine(string.Format(expectedDiagnosticsAssertionTemplate, lineNumber, columnNumber, message));
+                }
+                else
+                {
+                    Console.WriteLine($"(line: {lineNumber}, column: {columnNumber}, message: {message})");
                 }
             }
         }

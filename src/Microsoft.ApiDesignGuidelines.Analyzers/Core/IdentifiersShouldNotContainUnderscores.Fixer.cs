@@ -10,10 +10,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// CA1707: Identifiers should not contain underscores
     /// </summary>
-    public abstract class IdentifiersShouldNotContainUnderscoresFixer<TLanguageSyntaxKind> : CodeFixProvider
-        where TLanguageSyntaxKind : struct
+    public abstract class IdentifiersShouldNotContainUnderscoresFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(IdentifiersShouldNotContainUnderscoresAnalyzer<TLanguageSyntaxKind>.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(IdentifiersShouldNotContainUnderscoresAnalyzer.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

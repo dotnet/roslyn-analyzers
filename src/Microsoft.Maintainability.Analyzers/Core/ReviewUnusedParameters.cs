@@ -72,7 +72,7 @@ namespace Microsoft.Maintainability.Analyzers
                         method.IsAbstract ||
                         method.IsVirtual ||
                         method.IsOverride ||
-                        method.IsInterfaceMemberImplementation() ||
+                        method.IsImplementationOfAnyInterfaceMember() ||
                         method.IsFinalizer())
                     {
                         return;

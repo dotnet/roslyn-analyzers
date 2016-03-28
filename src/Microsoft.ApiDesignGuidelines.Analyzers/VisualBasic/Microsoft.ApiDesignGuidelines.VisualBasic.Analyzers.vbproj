@@ -148,7 +148,6 @@
     <Compile Include="BasicUriPropertiesShouldNotBeStrings.vb" />
     <Compile Include="BasicUriPropertiesShouldNotBeStrings.Fixer.vb" />
     <Compile Include="BasicImplementIDisposableCorrectly.Fixer.vb" />
-    <Compile Include="BasicIdentifiersShouldNotContainUnderscores.vb" />
     <Compile Include="BasicIdentifiersShouldNotContainUnderscores.Fixer.vb" />
     <Compile Include="BasicIdentifiersShouldHaveCorrectSuffix.vb" />
     <Compile Include="BasicIdentifiersShouldHaveCorrectSuffix.Fixer.vb" />

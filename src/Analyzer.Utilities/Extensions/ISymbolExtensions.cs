@@ -152,24 +152,29 @@ namespace Analyzer.Utilities
         /// <summary>
         /// Checks if a given symbol implements an interface member implicitly or explicitly
         /// </summary>
-        public static bool IsInterfaceMemberImplementation(this ISymbol symbol)
+        public static bool IsImplementationOfAnyInterfaceMember(this ISymbol symbol)
         {
-            return symbol.IsExplicitInterfaceMemberImplementation() || symbol.IsImplicitInterfaceMemberImplementation();
+            return symbol.IsImplementationOfAnyExplicitInterfaceMember() || symbol.IsImplementationOfAnyImplicitInterfaceMember();
+        }
+
+        public static bool IsImplementationOfAnyImplicitInterfaceMember(this ISymbol symbol)
+        {
+            return IsImplementationOfAnyImplicitInterfaceMember<ISymbol>(symbol);
         }
 
         /// <summary>
         /// Checks if a given symbol implements an interface member implicitly
         /// </summary>
-
-        public static bool IsImplicitInterfaceMemberImplementation(this ISymbol symbol)
+        public static bool IsImplementationOfAnyImplicitInterfaceMember<TSymbol>(this ISymbol symbol)
+        where TSymbol : ISymbol
         {
             if (symbol.ContainingType != null)
             {
                 foreach (INamedTypeSymbol interfaceSymbol in symbol.ContainingType.AllInterfaces)
                 {
-                    foreach (var interfaceMember in interfaceSymbol.GetMembers())
+                    foreach (var interfaceMember in interfaceSymbol.GetMembers().OfType<TSymbol>())
                     {
-                        if (IsInterfaceMethodImplementation(symbol, interfaceMember))
+                        if (IsImplementationOfInterfaceMember(symbol, interfaceMember))
                         {
                             return true;
                         }
@@ -180,7 +185,7 @@ namespace Analyzer.Utilities
             return false;
         }
 
-        private static bool IsInterfaceMethodImplementation(ISymbol symbol, ISymbol interfaceMember)
+        private static bool IsImplementationOfInterfaceMember(ISymbol symbol, ISymbol interfaceMember)
         {
             return interfaceMember != null && symbol.Equals(symbol.ContainingType.FindImplementationForInterfaceMember(interfaceMember));
         }
@@ -189,7 +194,7 @@ namespace Analyzer.Utilities
         /// Checks if a given symbol implements an interface member explicitly
         /// </summary>
 
-        public static bool IsExplicitInterfaceMemberImplementation(this ISymbol symbol)
+        public static bool IsImplementationOfAnyExplicitInterfaceMember(this ISymbol symbol)
         {
             var methodSymbol = symbol as IMethodSymbol;
             if (methodSymbol != null && methodSymbol.ExplicitInterfaceImplementations.Any())

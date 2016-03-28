@@ -13,11 +13,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// CA1707: Identifiers should not contain underscores
     /// </summary>
-    public abstract class IdentifiersShouldNotContainUnderscoresAnalyzer<TLanguageSyntaxKind> : DiagnosticAnalyzer
-        where TLanguageSyntaxKind : struct
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class IdentifiersShouldNotContainUnderscoresAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1707";
-        private const string _uri = "https://msdn.microsoft.com/en-us/library/ms182245.aspx";
+        private const string Uri = "https://msdn.microsoft.com/en-us/library/ms182245.aspx";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
@@ -38,7 +38,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: _uri,
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor NamespaceRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -47,7 +47,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: _uri,
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor TypeRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -56,7 +56,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: _uri,
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor MemberRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -65,7 +65,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: _uri,
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor TypeTypeParameterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -74,7 +74,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: _uri,
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor MethodTypeParameterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -83,7 +83,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: _uri,
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor MemberParameterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -92,7 +92,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: _uri,
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor DelegateParameterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -101,77 +101,89 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: _uri,
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(AssemblyRule, NamespaceRule, TypeRule, MemberRule, TypeTypeParameterRule, MethodTypeParameterRule, MemberParameterRule, DelegateParameterRule);
 
-        public abstract TLanguageSyntaxKind[] SyntaxKinds { get; }
-
-
         public override void Initialize(AnalysisContext analysisContext)
         {
-            analysisContext.RegisterCompilationStartAction(compilationStartAnalysisContext =>
+            analysisContext.RegisterSymbolAction(symbolAnalysisContext =>
             {
-                compilationStartAnalysisContext.RegisterSymbolAction(symbolAnalysisContext =>
+                var symbol = symbolAnalysisContext.Symbol;
+                switch (symbol.Kind)
                 {
-                    var symbol = symbolAnalysisContext.Symbol;
-                    if (ContainsUnderScore(symbol.Name))
-                    {
-                        switch (symbol.Kind)
+                    case SymbolKind.Namespace:
                         {
-                            case SymbolKind.Namespace:
-                                {
-                                    symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(NamespaceRule, symbol.ToDisplayString()));
-                                    return;
-                                }
+                            if (ContainsUnderScore(symbol.Name))
+                            {
+                                symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(NamespaceRule, symbol.ToDisplayString()));
+                            }
 
-                            case SymbolKind.NamedType:
-                                {
-                                    if (!symbol.IsPublic())
-                                    {
-                                        return;
-                                    }
-
-                                    symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(TypeRule, symbol.ToDisplayString()));
-                                    return;
-                                }
-
-                            case SymbolKind.Field:
-                                {
-                                    var fieldSymbol = symbol as IFieldSymbol;
-                                    if (symbol.IsPublic() && (fieldSymbol.IsConst || (fieldSymbol.IsStatic && fieldSymbol.IsReadOnly)))
-                                    {
-                                        symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
-                                        return;
-                                    }
-
-                                    return;
-                                }
-
-                            default:
-                                {
-                                    if (IsInvalidSymbol(symbol))
-                                    {
-                                        return;
-                                    }
-
-                                    symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
-                                    return;
-                                }
+                            return;
                         }
-                    }
-                },
-                SymbolKind.Namespace, // Namespace
-                SymbolKind.NamedType, //Type
-                SymbolKind.Method, SymbolKind.Property, SymbolKind.Field, SymbolKind.Event // Members
-                );
 
-                compilationStartAnalysisContext.RegisterSyntaxNodeAction(syntaxNodeAnalysisContext =>
-                {
-                    AnalyzeSyntaxNode(syntaxNodeAnalysisContext);
-                }, SyntaxKinds);
-            });
+                    case SymbolKind.NamedType:
+                        {
+                            var namedType = symbol as INamedTypeSymbol;
+                            AnalyzeTypeParameters(symbolAnalysisContext, namedType.TypeParameters);
+
+                            if (namedType.TypeKind == TypeKind.Delegate &&
+                                namedType.DelegateInvokeMethod != null)
+                            {
+                                AnalyzeParameters(symbolAnalysisContext, namedType.DelegateInvokeMethod.Parameters);
+                            }
+
+                            if (!ContainsUnderScore(symbol.Name) || !symbol.IsPublic())
+                            {
+                                return;
+                            }
+
+                            symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(TypeRule, symbol.ToDisplayString()));
+                            return;
+                        }
+
+                    case SymbolKind.Field:
+                        {
+                            var fieldSymbol = symbol as IFieldSymbol;
+                            if (ContainsUnderScore(symbol.Name) && symbol.IsPublic() && (fieldSymbol.IsConst || (fieldSymbol.IsStatic && fieldSymbol.IsReadOnly)))
+                            {
+                                symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
+                                return;
+                            }
+
+                            return;
+                        }
+
+                    default:
+                        {
+                            var methodSymbol = symbol as IMethodSymbol;
+                            if (methodSymbol != null)
+                            {
+                                AnalyzeParameters(symbolAnalysisContext, methodSymbol.Parameters);
+                                AnalyzeTypeParameters(symbolAnalysisContext, methodSymbol.TypeParameters);
+                            }
+
+                            var propertySymbol = symbol as IPropertySymbol;
+                            if (propertySymbol != null)
+                            {
+                                AnalyzeParameters(symbolAnalysisContext, propertySymbol.Parameters);
+                            }
+
+                            if (!ContainsUnderScore(symbol.Name) || IsInvalidSymbol(symbol))
+                            {
+                                return;
+                            }
+
+                            symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
+                            return;
+                        }
+                }
+            },
+            SymbolKind.Namespace, // Namespace
+            SymbolKind.NamedType, //Type
+            SymbolKind.Method, SymbolKind.Property, SymbolKind.Field, SymbolKind.Event // Members
+            );
 
             analysisContext.RegisterCompilationAction(compilationAnalysisContext =>
             {
@@ -186,50 +198,50 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private bool IsInvalidSymbol(ISymbol symbol)
         {
             return (!(symbol.GetResultantVisibility() == SymbolVisibility.Public && !symbol.IsOverride)) ||
-                symbol.IsAccessorMethod() || symbol.IsInterfaceMemberImplementation();
+                symbol.IsAccessorMethod() || symbol.IsImplementationOfAnyInterfaceMember();
         }
 
-        protected void AnalyzeSyntaxNode(SyntaxNodeAnalysisContext syntaxNodeAnalysisContext)
+        private void AnalyzeParameters(SymbolAnalysisContext symbolAnalysisContext, IEnumerable<IParameterSymbol> parameters)
         {
-            var symbol = syntaxNodeAnalysisContext.SemanticModel.GetDeclaredSymbol(syntaxNodeAnalysisContext.Node);
-            if (symbol == null || !(symbol.Kind == SymbolKind.Parameter || symbol.Kind == SymbolKind.TypeParameter))
+            foreach (var parameter in parameters)
             {
-                return;
-            }
-
-            if (ContainsUnderScore(symbol.Name))
-            {
-                if (symbol.Kind == SymbolKind.Parameter)
+                if (ContainsUnderScore(parameter.Name))
                 {
-                    var containingType = symbol.ContainingType;
+                    var containingType = parameter.ContainingType;
 
                     // Parameter in Delegate
                     if (containingType.TypeKind == TypeKind.Delegate)
                     {
                         if (containingType.IsPublic())
                         {
-                            syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(DelegateParameterRule, containingType.ToDisplayString(), symbol.Name));
+                            symbolAnalysisContext.ReportDiagnostic(parameter.CreateDiagnostic(DelegateParameterRule, containingType.ToDisplayString(), parameter.Name));
                         }
                     }
-                    else if (!IsInvalidSymbol(symbol.ContainingSymbol))
+                    else if (!IsInvalidSymbol(parameter.ContainingSymbol))
                     {
-                        syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberParameterRule, symbol.ContainingSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat), symbol.Name));
+                        symbolAnalysisContext.ReportDiagnostic(parameter.CreateDiagnostic(MemberParameterRule, parameter.ContainingSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat), parameter.Name));
                     }
                 }
-                // symbol is TypeParameter
-                else
+            }
+        }
+
+        private void AnalyzeTypeParameters(SymbolAnalysisContext symbolAnalysisContext, IEnumerable<ITypeParameterSymbol> typeParameters)
+        {
+            foreach (var typeParameter in typeParameters)
+            {
+                if (ContainsUnderScore(typeParameter.Name))
                 {
-                    var containingSymbol = symbol.ContainingSymbol;
+                    var containingSymbol = typeParameter.ContainingSymbol;
                     if (containingSymbol.Kind == SymbolKind.NamedType)
                     {
                         if (containingSymbol.IsPublic())
                         {
-                            syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(TypeTypeParameterRule, containingSymbol.ToDisplayString(), symbol.Name));
+                            symbolAnalysisContext.ReportDiagnostic(typeParameter.CreateDiagnostic(TypeTypeParameterRule, containingSymbol.ToDisplayString(), typeParameter.Name));
                         }
                     }
                     else if (containingSymbol.Kind == SymbolKind.Method && !IsInvalidSymbol(containingSymbol))
                     {
-                        syntaxNodeAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MethodTypeParameterRule, containingSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat), symbol.Name));
+                        symbolAnalysisContext.ReportDiagnostic(typeParameter.CreateDiagnostic(MethodTypeParameterRule, containingSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat), typeParameter.Name));
                     }
                 }
             }

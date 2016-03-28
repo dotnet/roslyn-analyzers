@@ -11,12 +11,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicIdentifiersShouldNotContainUnderscoresAnalyzer();
+            return new IdentifiersShouldNotContainUnderscoresAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpIdentifiersShouldNotContainUnderscoresAnalyzer();
+            return new IdentifiersShouldNotContainUnderscoresAnalyzer();
         }
 
         #region CSharp Tests
@@ -711,7 +711,7 @@ End Class",
 
         private static DiagnosticResult GetCA1707CSharpResultAt(int line, int column, string message, params string[] identifierName)
         {
-            return GetCSharpResultAt(line, column, IdentifiersShouldNotContainUnderscoresAnalyzer<Microsoft.CodeAnalysis.CSharp.SyntaxKind>.RuleId, string.Format(message, identifierName));
+            return GetCSharpResultAt(line, column, IdentifiersShouldNotContainUnderscoresAnalyzer.RuleId, string.Format(message, identifierName));
         }
 
         private void VerifyCSharp(string source, string testProjectName, params DiagnosticResult[] expected)
@@ -726,7 +726,7 @@ End Class",
 
         private static DiagnosticResult GetCA1707BasicResultAt(int line, int column, string message, params string[] identifierName)
         {
-            return GetBasicResultAt(line, column, IdentifiersShouldNotContainUnderscoresAnalyzer<Microsoft.CodeAnalysis.VisualBasic.SyntaxKind>.RuleId, string.Format(message, identifierName));
+            return GetBasicResultAt(line, column, IdentifiersShouldNotContainUnderscoresAnalyzer.RuleId, string.Format(message, identifierName));
         }
 
         private void VerifyBasic(string source, string testProjectName, params DiagnosticResult[] expected)

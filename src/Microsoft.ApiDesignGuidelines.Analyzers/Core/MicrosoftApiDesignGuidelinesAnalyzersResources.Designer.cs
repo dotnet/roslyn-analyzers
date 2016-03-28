@@ -2386,7 +2386,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use events where appropriate.
+        ///   Looks up a localized string similar to Consider making &apos;{0}&apos; an event..
         /// </summary>
         internal static string UseEventsWhereAppropriateMessage {
             get {

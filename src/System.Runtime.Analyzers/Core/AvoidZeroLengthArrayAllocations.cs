@@ -72,7 +72,7 @@ namespace System.Runtime.Analyzers
             {
                 IOperation dimensionSize = arrayCreationExpression.DimensionSizes[0];
 
-                if (dimensionSize.ConstantValue.HasValue && (int)dimensionSize.ConstantValue.Value == 0)
+                if (dimensionSize.HasConstantValue(0))
                 {
                     // pointers can't be used as generic arguments
                     if (arrayCreationExpression.ElementType.TypeKind != TypeKind.Pointer)

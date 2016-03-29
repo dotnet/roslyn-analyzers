@@ -150,13 +150,13 @@ namespace Desktop.Analyzers
         public static bool IsExpressionEqualsNull(IOperation operation)
         {
             ILiteralExpression literal = operation as ILiteralExpression;
-            return literal != null && literal.ConstantValue.HasValue && literal.ConstantValue.Value == null; 
+            return literal != null && literal.HasNullConstantValue(); 
         }
 
         public static bool IsExpressionEqualsDtdProcessingParse(IOperation operation)
         {
             IFieldReferenceExpression enumRef = operation as IFieldReferenceExpression;
-            return enumRef != null && enumRef.ConstantValue.HasValue && (int)enumRef.ConstantValue.Value == 2; // DtdProcessing.Parse
+            return enumRef != null && enumRef.HasConstantValue(2); // DtdProcessing.Parse
         }
 
         public static bool IsExpressionEqualsIntZero(IOperation operation)
@@ -168,7 +168,7 @@ namespace Desktop.Analyzers
                 return false;
             }
 
-            return literal.ConstantValue.Value.Equals(0);
+            return literal.HasConstantValue(0);
         }
 
         private static bool IsSpecifiedProperty(IPropertySymbol symbol, INamedTypeSymbol namedType, string propertyName)

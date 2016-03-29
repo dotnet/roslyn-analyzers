@@ -172,5 +172,50 @@ End Class";
                 "Imports System\r\n" + arrayEmptySource + fixedSource.Replace("System.Array.Empty", "Array.Empty"),
                 allowNewCompilerDiagnostics: true);
         }
+
+        [Fact]
+        public void EmptyArrayCSharp_DifferentTypeKind()
+        {
+            const string arrayEmptySourceRaw =
+                @"namespace System { public class Array { public static T[] Empty<T>() { return null; } } }";
+
+            const string badSource = @"
+class C
+{
+    void M1()
+    {
+        int[] arr1 = new int[(long)0];                 // yes
+        double[] arr2 = new double[(ulong)0];         // yes
+        double[] arr3 = new double[(long)1];         // no
+    }
+}";
+
+            const string fixedSource = @"
+class C
+{
+    void M1()
+    {
+        int[] arr1 = System.Array.Empty<int>();                 // yes
+        double[] arr2 = System.Array.Empty<double>();         // yes
+        double[] arr3 = new double[(long)1];         // no
+    }
+}";
+            string arrayEmptySource = IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
+
+            VerifyCSharp(badSource + arrayEmptySource, new[]
+            {
+                GetCSharpResultAt(6, 22, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
+                GetCSharpResultAt(7, 25, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor)
+            });
+
+            VerifyCSharpFix(
+                arrayEmptySource + badSource,
+                arrayEmptySource + fixedSource,
+                allowNewCompilerDiagnostics: true);
+            VerifyCSharpFix(
+                "using System;\r\n" + arrayEmptySource + badSource,
+                "using System;\r\n" + arrayEmptySource + fixedSource.Replace("System.Array.Empty", "Array.Empty"),
+                allowNewCompilerDiagnostics: true);
+        }
     }
 }

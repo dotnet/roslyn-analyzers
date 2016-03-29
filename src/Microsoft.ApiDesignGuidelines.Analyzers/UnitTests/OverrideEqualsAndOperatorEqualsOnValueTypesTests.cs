@@ -3,6 +3,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
+using Roslyn.Diagnostics.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
@@ -18,6 +19,24 @@ public struct A
 }",
                 GetCSharpOverrideEqualsDiagnostic(2, 15, "A"),
                 GetCSharpOperatorEqualsDiagnostic(2, 15, "A"));
+        }
+
+        [WorkItem(895, "https://github.com/dotnet/roslyn-analyzers/issues/895")]
+        [Fact]
+        public void CSharpNoDiagnosticForInternalAndPrivateStruct()
+        {
+            VerifyCSharp(@"
+internal struct A
+{
+}
+
+public class B
+{
+    private struct C
+    {
+    }
+}
+");
         }
 
         [Fact]
@@ -109,6 +128,21 @@ End Structure
 ",
                 GetBasicOverrideEqualsDiagnostic(2, 18, "A"),
                 GetBasicOperatorEqualsDiagnostic(2, 18, "A"));
+        }
+
+        [WorkItem(895, "https://github.com/dotnet/roslyn-analyzers/issues/895")]
+        [Fact]
+        public void BasicNoDiagnosticsForInternalAndPrivateStructure()
+        {
+            VerifyBasic(@"
+Friend Structure A
+End Structure
+
+Public Class B
+    Private Structure C
+    End Structure
+End Class
+");
         }
 
         [Fact]

@@ -54,7 +54,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             analysisContext.RegisterSymbolAction(context =>
             {
                 var namedType = (INamedTypeSymbol)context.Symbol;
-                if (namedType.IsValueType)
+                if (namedType.IsValueType && namedType.GetResultantVisibility() == SymbolVisibility.Public)
                 {
                     if (!namedType.OverridesEquals())
                     {

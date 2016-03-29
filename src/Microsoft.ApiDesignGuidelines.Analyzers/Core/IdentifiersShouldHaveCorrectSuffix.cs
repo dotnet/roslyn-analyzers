@@ -13,7 +13,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// CA1710: Identifiers should have correct suffix
     /// </summary>
-    public abstract class IdentifiersShouldHaveCorrectSuffixAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class IdentifiersShouldHaveCorrectSuffixAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1710";
         internal const string Uri = "https://msdn.microsoft.com/en-us/library/ms182244.aspx";
@@ -28,7 +29,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessageDefault,
                                                                              DiagnosticCategory.Naming,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
@@ -37,7 +38,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessageSpecialCollection,
                                                                              DiagnosticCategory.Naming,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);

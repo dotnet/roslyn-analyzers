@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -11,7 +12,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// CA1815: Override equals and operator equals on value types
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class OverrideEqualsAndOperatorEqualsOnValueTypesAnalyzer : DiagnosticAnalyzer
+    public class OverrideEqualsAndOperatorEqualsOnValueTypesAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1815";
 
@@ -49,13 +50,42 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(EqualsRule, OpEqualityRule);
 
+        protected virtual bool IsAssignableTo(INamedTypeSymbol type, INamedTypeSymbol assignableToType)
+        {
+            // TODO: Use the language specific helper for IsAssignableTo.
+            return false;
+        }
+
         public override void Initialize(AnalysisContext analysisContext)
         {
-            analysisContext.RegisterSymbolAction(context =>
+            analysisContext.RegisterCompilationStartAction(compilationStartContext =>
             {
-                var namedType = (INamedTypeSymbol)context.Symbol;
-                if (namedType.IsValueType && namedType.GetResultantVisibility() == SymbolVisibility.Public)
+                var iEnumerator = WellKnownTypes.IEnumerator(compilationStartContext.Compilation);
+                var genericIEnumerator = WellKnownTypes.GenericIEnumerator(compilationStartContext.Compilation);
+
+                compilationStartContext.RegisterSymbolAction(context =>
                 {
+                    var namedType = (INamedTypeSymbol)context.Symbol;
+
+                    // FxCop compat:
+                    //  1. Do not fire for enums.
+                    //  2. Do not fire for enumerators.
+                    //  3. Do not fire for value types without members.
+                    if (!namedType.IsValueType ||
+                        namedType.TypeKind == TypeKind.Enum ||
+                        namedType.GetResultantVisibility() != SymbolVisibility.Public ||
+                        !namedType.GetMembers().Any(m => !m.IsConstructor()))
+                    {
+                        return;
+                    }
+
+                    // Enumerators are often ValueTypes to prevent heap allocation when enumerating
+                    if (iEnumerator != null && IsAssignableTo(namedType, iEnumerator) ||
+                        genericIEnumerator != null && IsAssignableTo(namedType, genericIEnumerator))
+                    {
+                        return;
+                    }
+
                     if (!namedType.OverridesEquals())
                     {
                         context.ReportDiagnostic(namedType.CreateDiagnostic(EqualsRule, namedType.Name));
@@ -65,8 +95,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     {
                         context.ReportDiagnostic(namedType.CreateDiagnostic(OpEqualityRule, namedType.Name));
                     }
-                }
-            }, SymbolKind.NamedType);
+                }, SymbolKind.NamedType);
+            });
         }
     }
 }

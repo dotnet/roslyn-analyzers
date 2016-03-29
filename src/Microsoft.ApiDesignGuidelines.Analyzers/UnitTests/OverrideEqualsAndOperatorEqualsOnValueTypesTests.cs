@@ -16,6 +16,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyCSharp(@"
 public struct A
 {
+    public int X;
 }",
                 GetCSharpOverrideEqualsDiagnostic(2, 15, "A"),
                 GetCSharpOperatorEqualsDiagnostic(2, 15, "A"));
@@ -28,12 +29,101 @@ public struct A
             VerifyCSharp(@"
 internal struct A
 {
+    public int X;
 }
 
 public class B
 {
     private struct C
     {
+        public int X;
+    }
+}
+");
+        }
+
+        [WorkItem(899, "https://github.com/dotnet/roslyn-analyzers/issues/899")]
+        [Fact]
+        public void CSharpNoDiagnosticForEnum()
+        {
+            VerifyCSharp(@"
+public enum E
+{
+    F = 0
+}
+");
+        }
+
+        [WorkItem(899, "https://github.com/dotnet/roslyn-analyzers/issues/899")]
+        [Fact]
+        public void CSharpNoDiagnosticForStructsWithoutMembers()
+        {
+            VerifyCSharp(@"
+public struct EmptyStruct
+{
+}
+");
+        }
+
+        [WorkItem(899, "https://github.com/dotnet/roslyn-analyzers/issues/899")]
+        [Fact(Skip = "899")]
+        public void CSharpNoDiagnosticForEnumerators()
+        {
+            VerifyCSharp(@"
+using System;
+
+public struct MyEnumerator : System.Collections.IEnumerator
+{
+    public object Current
+    {
+        get
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public bool MoveNext()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Reset()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public struct MyGenericEnumerator<T> : System.Collections.Generic.IEnumerator<T>
+{
+    public T Current
+    {
+        get
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    object IEnumerator.Current
+    {
+        get
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool MoveNext()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Reset()
+    {
+        throw new NotImplementedException();
     }
 }
 ");
@@ -45,6 +135,7 @@ public class B
             VerifyCSharp(@"
 public class A
 {
+    public int X;
 }");
         }
 
@@ -124,6 +215,7 @@ public struct A
         {
             VerifyBasic(@"
 Public Structure A
+    Public X As Integer
 End Structure
 ",
                 GetBasicOverrideEqualsDiagnostic(2, 18, "A"),
@@ -136,12 +228,88 @@ End Structure
         {
             VerifyBasic(@"
 Friend Structure A
+    Public X As Integer
 End Structure
 
 Public Class B
     Private Structure C
+        Public X As Integer
     End Structure
 End Class
+");
+        }
+
+        [WorkItem(899, "https://github.com/dotnet/roslyn-analyzers/issues/899")]
+        [Fact]
+        public void BasicNoDiagnosticForEnum()
+        {
+            VerifyBasic(@"
+Public Enum E
+    F = 0
+End Enum
+");
+        }
+
+        [WorkItem(899, "https://github.com/dotnet/roslyn-analyzers/issues/899")]
+        [Fact]
+        public void BasicNoDiagnosticForStructsWithoutMembers()
+        {
+            VerifyBasic(@"
+Public Structure EmptyStruct
+End Structure
+");
+        }
+
+        [WorkItem(899, "https://github.com/dotnet/roslyn-analyzers/issues/899")]
+        [Fact(Skip = "899")]
+        public void BasicNoDiagnosticForEnumerators()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Structure MyEnumerator
+	Implements System.Collections.IEnumerator
+	Public ReadOnly Property Current() As Object
+		Get
+			Throw New NotImplementedException()
+		End Get
+	End Property
+
+	Public Function MoveNext() As Boolean
+		Throw New NotImplementedException()
+	End Function
+
+	Public Sub Reset()
+		Throw New NotImplementedException()
+	End Sub
+End Structure
+
+Public Structure MyGenericEnumerator(Of T)
+	Implements System.Collections.Generic.IEnumerator(Of T)
+	Public ReadOnly Property Current() As T
+		Get
+			Throw New NotImplementedException()
+		End Get
+	End Property
+
+	Private ReadOnly Property IEnumerator_Current() As Object Implements IEnumerator.Current
+		Get
+			Throw New NotImplementedException()
+		End Get
+	End Property
+
+	Public Sub Dispose()
+		Throw New NotImplementedException()
+	End Sub
+
+	Public Function MoveNext() As Boolean
+		Throw New NotImplementedException()
+	End Function
+
+	Public Sub Reset()
+		Throw New NotImplementedException()
+	End Sub
+End Structure
 ");
         }
 

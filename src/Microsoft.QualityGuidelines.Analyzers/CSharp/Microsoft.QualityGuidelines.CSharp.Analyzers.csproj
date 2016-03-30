@@ -103,7 +103,6 @@
   <ItemGroup>
     <Compile Include="CSharpRethrowToPreserveStackDetails.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CSharpUseLiteralsWhereAppropriate.cs" />
     <Compile Include="CSharpUseLiteralsWhereAppropriate.Fixer.cs" />
     <Compile Include="CSharpDoNotInitializeUnnecessarily.cs" />
     <Compile Include="CSharpDoNotInitializeUnnecessarily.Fixer.cs" />

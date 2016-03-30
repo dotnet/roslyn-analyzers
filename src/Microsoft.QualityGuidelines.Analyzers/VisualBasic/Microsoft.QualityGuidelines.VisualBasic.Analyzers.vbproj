@@ -100,7 +100,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicUseLiteralsWhereAppropriate.vb" />
     <Compile Include="BasicUseLiteralsWhereAppropriate.Fixer.vb" />
     <Compile Include="BasicDoNotInitializeUnnecessarily.vb" />
     <Compile Include="BasicDoNotInitializeUnnecessarily.Fixer.vb" />

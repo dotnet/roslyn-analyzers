@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 
@@ -232,8 +231,8 @@ End Structure
 ");
         }
 
-        internal static string CA2231Name = "CA2231";
-        internal static string CA2231Message = MicrosoftApiDesignGuidelinesAnalyzersResources.OverloadOperatorEqualsOnOverridingValueTypeEqualsMessage;
+        internal static readonly string CA2231Name = "CA2231";
+        internal static readonly string CA2231Message = MicrosoftApiDesignGuidelinesAnalyzersResources.OverloadOperatorEqualsOnOverridingValueTypeEqualsMessage;
 
         private static DiagnosticResult GetCA2231CSharpResultAt(int line, int column)
         {

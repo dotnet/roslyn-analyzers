@@ -5,7 +5,7 @@ This repository contains a number of [Roslyn](https://github.com/dotnet/roslyn) 
 
 Debug | Release
 ------|--------
-[![Build Status](http://dotnet-ci.cloudapp.net/job/dotnet_roslyn-analyzers_windows_debug/badge/icon)](http://dotnet-ci.cloudapp.net/job/dotnet_roslyn-analyzers_windows_debug/) | [![Build Status](http://dotnet-ci.cloudapp.net/job/dotnet_roslyn-analyzers_windows_release/badge/icon)](http://dotnet-ci.cloudapp.net/job/dotnet_roslyn-analyzers_windows_release/)
+[![Build Status](http://dotnet-ci.cloudapp.net/job/dotnet_roslyn-analyzers/job/master/job/windows_debug/badge/icon)](http://dotnet-ci.cloudapp.net/job/dotnet_roslyn-analyzers/job/master/job/windows_debug/) | [![Build Status](http://dotnet-ci.cloudapp.net/job/dotnet_roslyn-analyzers/job/master/job/windows_release/badge/icon)](http://dotnet-ci.cloudapp.net/job/dotnet_roslyn-analyzers/job/master/job/windows_release/)
 
 [![Join the chat at https://gitter.im/dotnet/roslyn](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dotnet/roslyn?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -37,7 +37,7 @@ Microsoft.CodeAnalysis.Analyzers
 
 Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
 
-[More info](src/CodeAnalysis/Microsoft.CodeAnalysis.Analyzers.md)
+[More info](src/Microsoft.CodeAnalysis.Analyzers/Microsoft.CodeAnalysis.Analyzers.md)
 
 
 Roslyn.Diagnostics.Analyzers
@@ -99,6 +99,16 @@ Getting Started
 2. Install NuGet packages: `powershell -executionpolicy bypass src\.nuget\NuGetRestore.ps1`
 3. Build: `msbuild src\Analyzers.sln`
 
+**NOTE** The current build of System.Reflection.Metadata (from NuGet package System.Reflection.Metadata.1.2.0-rc2-23629) is unsigned. This causes unit tests to fail. To work around this problem until a new, signed version is available, give the command
+```
+sn -Vr System.Reflection.Metadata,B03F5F7F11D50A3A
+```
+which will cause the CLR to skip strong name verification for that assembly.
+
+When a properly signed version of this assembly becomes available, reenable strong name verification with the command
+```
+sn -Vu System.Reflection.Metadata,B03F5F7F11D50A3A
+```
 
 Submitting Pull Requests
 ========================

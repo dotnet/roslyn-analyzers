@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA1716: Identifiers should not match keywords
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicIdentifiersShouldNotMatchKeywordsFixer
-        Inherits IdentifiersShouldNotMatchKeywordsFixer 
+        Inherits IdentifiersShouldNotMatchKeywordsFixer
 
     End Class
 End Namespace

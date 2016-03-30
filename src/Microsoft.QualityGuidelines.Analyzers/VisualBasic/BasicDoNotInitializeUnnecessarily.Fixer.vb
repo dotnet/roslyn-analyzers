@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.QualityGuidelines.Analyzers     
+Namespace Microsoft.QualityGuidelines.Analyzers
     ''' <summary>
     ''' CA1805: Do not initialize unnecessarily
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicDoNotInitializeUnnecessarilyFixer
-        Inherits DoNotInitializeUnnecessarilyFixer 
+        Inherits DoNotInitializeUnnecessarilyFixer
 
     End Class
 End Namespace

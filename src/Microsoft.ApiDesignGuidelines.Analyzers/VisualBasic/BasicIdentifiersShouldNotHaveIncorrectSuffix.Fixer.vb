@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA1711: Identifiers should not have incorrect suffix
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicIdentifiersShouldNotHaveIncorrectSuffixFixer
-        Inherits IdentifiersShouldNotHaveIncorrectSuffixFixer 
+        Inherits IdentifiersShouldNotHaveIncorrectSuffixFixer
 
     End Class
 End Namespace

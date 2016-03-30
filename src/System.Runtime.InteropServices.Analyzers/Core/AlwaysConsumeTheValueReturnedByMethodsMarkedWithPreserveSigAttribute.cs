@@ -57,23 +57,23 @@ namespace System.Runtime.InteropServices.Analyzers
                 return;
             }
 
-            var node = context.Node;
+            SyntaxNode node = context.Node;
             if (!IsExpressionStatementSyntaxKind(node.Parent.RawKind))
             {
                 return;
             }
 
-            var symbol = context.SemanticModel.GetSymbolInfo(node, context.CancellationToken).Symbol;
+            ISymbol symbol = context.SemanticModel.GetSymbolInfo(node, context.CancellationToken).Symbol;
             if (symbol == null)
             {
                 return;
             }
 
-            foreach (var attributeData in symbol.GetAttributes())
+            foreach (AttributeData attributeData in symbol.GetAttributes())
             {
                 if (attributeData.AttributeClass.Equals(_lazyPreserveSigType))
                 {
-                    var diagnostic = Diagnostic.Create(ConsumePreserveSigAnalyzerDescriptor, node.GetLocation(), symbol);
+                    Diagnostic diagnostic = Diagnostic.Create(ConsumePreserveSigAnalyzerDescriptor, node.GetLocation(), symbol);
                     context.ReportDiagnostic(diagnostic);
                     return;
                 }

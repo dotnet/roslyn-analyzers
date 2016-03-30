@@ -39,8 +39,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                var comparableType = WellKnownTypes.IComparable(compilationContext.Compilation);
-                var genericComparableType = WellKnownTypes.GenericIComparable(compilationContext.Compilation);
+                INamedTypeSymbol comparableType = WellKnownTypes.IComparable(compilationContext.Compilation);
+                INamedTypeSymbol genericComparableType = WellKnownTypes.GenericIComparable(compilationContext.Compilation);
 
                 // Even if one of them is available, we should continue analysis.
                 if (comparableType == null && genericComparableType == null)
@@ -66,20 +66,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             if (namedTypeSymbol.AllInterfaces.Any(t => t.Equals(comparableType) ||
                                                       (t.ConstructedFrom?.Equals(genericComparableType) ?? false)))
             {
-                if (!(namedTypeSymbol.DoesOverrideEquals() && IsEqualityOperatorImplemented(namedTypeSymbol)))
+                if (!(namedTypeSymbol.OverridesEquals() && namedTypeSymbol.ImplementsComparisonOperators()))
                 {
                     addDiagnostic(namedTypeSymbol.CreateDiagnostic(Rule));
                 }
             }
-        }
-
-        private static bool IsEqualityOperatorImplemented(INamedTypeSymbol symbol)
-        {
-            // Does the symbol overload all of the equality operators?  (All are required per http://msdn.microsoft.com/en-us/library/ms182163.aspx example.)
-            return symbol.IsOperatorImplemented(WellKnownMemberNames.EqualityOperatorName) &&
-                   symbol.IsOperatorImplemented(WellKnownMemberNames.InequalityOperatorName) &&
-                   symbol.IsOperatorImplemented(WellKnownMemberNames.LessThanOperatorName) &&
-                   symbol.IsOperatorImplemented(WellKnownMemberNames.GreaterThanOperatorName);
         }
     }
 }

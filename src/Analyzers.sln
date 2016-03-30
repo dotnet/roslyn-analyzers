@@ -212,6 +212,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Resources.Analyzers.
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "System.Resources.VisualBasic.Analyzers", "System.Resources.Analyzers\VisualBasic\System.Resources.VisualBasic.Analyzers.vbproj", "{1D673D5E-514D-4D63-A245-B01B944B0925}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalyzersStatusGenerator", "Tools\AnalyzersStatusGenerator\AnalyzersStatusGenerator.csproj", "{7ED0990C-5642-481D-89BC-3AFC88C38A2D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -558,6 +560,10 @@ Global
 		{1D673D5E-514D-4D63-A245-B01B944B0925}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D673D5E-514D-4D63-A245-B01B944B0925}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D673D5E-514D-4D63-A245-B01B944B0925}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7ED0990C-5642-481D-89BC-3AFC88C38A2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7ED0990C-5642-481D-89BC-3AFC88C38A2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7ED0990C-5642-481D-89BC-3AFC88C38A2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7ED0990C-5642-481D-89BC-3AFC88C38A2D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -648,5 +654,6 @@ Global
 		{54621C34-7229-4B2D-ACC0-82E6A497594A} = {02CACBD3-34BD-4D22-B36C-69DF65D3D2B9}
 		{3ABF972E-18AC-4172-A752-5330F79299EF} = {02CACBD3-34BD-4D22-B36C-69DF65D3D2B9}
 		{1D673D5E-514D-4D63-A245-B01B944B0925} = {02CACBD3-34BD-4D22-B36C-69DF65D3D2B9}
+		{7ED0990C-5642-481D-89BC-3AFC88C38A2D} = {87CF7748-CEB9-4D1A-9A56-F4364B73AB55}
 	EndGlobalSection
 EndGlobal

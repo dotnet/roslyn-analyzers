@@ -2,7 +2,6 @@
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 
@@ -413,7 +412,7 @@ Public Class C
 End Class");
         }
 
-        [Fact(Skip = "Waiting for Roslyn update")]
+        [Fact(Skip ="formatting issue?")]
         public void TestBasic_AbstractMethodChangedToNotAbstract()
         {
             VerifyBasicFix(

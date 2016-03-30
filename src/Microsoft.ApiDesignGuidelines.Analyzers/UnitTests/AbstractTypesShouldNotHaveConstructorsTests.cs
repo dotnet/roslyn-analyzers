@@ -224,8 +224,8 @@ End Class
             VerifyBasic(code, GetCA1012BasicResultAt(3, 29, "D"));
         }
 
-        internal static string CA1012Name = "CA1012";
-        internal static string CA1012Message = MicrosoftApiDesignGuidelinesAnalyzersResources.AbstractTypesShouldNotHaveConstructorsMessage;
+        internal static readonly string CA1012Name = "CA1012";
+        internal static readonly string CA1012Message = MicrosoftApiDesignGuidelinesAnalyzersResources.AbstractTypesShouldNotHaveConstructorsMessage;
 
         private static DiagnosticResult GetCA1012CSharpResultAt(int line, int column, string objectName)
         {

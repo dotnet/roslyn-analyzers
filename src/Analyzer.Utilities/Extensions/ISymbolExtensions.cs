@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities
@@ -64,7 +65,7 @@ namespace Analyzer.Utilities
         public static SymbolVisibility GetResultantVisibility(this ISymbol symbol)
         {
             // Start by assuming it's visible.
-            var visibility = SymbolVisibility.Public;
+            SymbolVisibility visibility = SymbolVisibility.Public;
 
             switch (symbol.Kind)
             {
@@ -106,6 +107,114 @@ namespace Analyzer.Utilities
             }
 
             return visibility;
+        }
+
+        public static bool MatchMemberDerivedByName(this ISymbol member, INamedTypeSymbol type, string name)
+        {
+            return member != null && member.ContainingType.DerivesFrom(type) && member.MetadataName == name;
+        }
+
+        public static bool MatchMethodDerivedByName(this IMethodSymbol method, INamedTypeSymbol type, string name)
+        {
+            return method != null && method.MatchMemberDerivedByName(type, name);
+        }
+
+        public static bool MatchMethodByName(this ISymbol member, INamedTypeSymbol type, string name)
+        {
+            return member != null && member.Kind == SymbolKind.Method && member.MatchMemberByName(type, name);
+        }
+
+        public static bool MatchPropertyDerivedByName(this ISymbol member, INamedTypeSymbol type, string name)
+        {
+            return member != null && member.Kind == SymbolKind.Property && member.MatchMemberDerivedByName(type, name);
+        }
+
+        public static bool MatchFieldDerivedByName(this ISymbol member, INamedTypeSymbol type, string name)
+        {
+            return member != null && member.Kind == SymbolKind.Field && member.MatchMemberDerivedByName(type, name);
+        }
+
+        public static bool MatchMemberByName(this ISymbol member, INamedTypeSymbol type, string name)
+        {
+            return member != null && member.ContainingType == type && member.MetadataName == name;
+        }
+
+        public static bool MatchPropertyByName(this ISymbol member, INamedTypeSymbol type, string name)
+        {
+            return member != null && member.Kind == SymbolKind.Property && member.MatchMemberByName(type, name);
+        }
+
+        public static bool MatchFieldByName(this ISymbol member, INamedTypeSymbol type, string name)
+        {
+            return member != null && member.Kind == SymbolKind.Field && member.MatchMemberByName(type, name);
+        }
+
+        /// <summary>
+        /// Checks if a given symbol implements an interface member implicitly or explicitly
+        /// </summary>
+        public static bool IsImplementationOfAnyInterfaceMember(this ISymbol symbol)
+        {
+            return symbol.IsImplementationOfAnyExplicitInterfaceMember() || symbol.IsImplementationOfAnyImplicitInterfaceMember();
+        }
+
+        public static bool IsImplementationOfAnyImplicitInterfaceMember(this ISymbol symbol)
+        {
+            return IsImplementationOfAnyImplicitInterfaceMember<ISymbol>(symbol);
+        }
+
+        /// <summary>
+        /// Checks if a given symbol implements an interface member implicitly
+        /// </summary>
+        public static bool IsImplementationOfAnyImplicitInterfaceMember<TSymbol>(this ISymbol symbol)
+        where TSymbol : ISymbol
+        {
+            if (symbol.ContainingType != null)
+            {
+                foreach (INamedTypeSymbol interfaceSymbol in symbol.ContainingType.AllInterfaces)
+                {
+                    foreach (var interfaceMember in interfaceSymbol.GetMembers().OfType<TSymbol>())
+                    {
+                        if (IsImplementationOfInterfaceMember(symbol, interfaceMember))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsImplementationOfInterfaceMember(ISymbol symbol, ISymbol interfaceMember)
+        {
+            return interfaceMember != null && symbol.Equals(symbol.ContainingType.FindImplementationForInterfaceMember(interfaceMember));
+        }
+
+        /// <summary>
+        /// Checks if a given symbol implements an interface member explicitly
+        /// </summary>
+
+        public static bool IsImplementationOfAnyExplicitInterfaceMember(this ISymbol symbol)
+        {
+            var methodSymbol = symbol as IMethodSymbol;
+            if (methodSymbol != null && methodSymbol.ExplicitInterfaceImplementations.Any())
+            {
+                return true;
+            }
+
+            var propertySymbol = symbol as IPropertySymbol;
+            if (propertySymbol != null && propertySymbol.ExplicitInterfaceImplementations.Any())
+            {
+                return true;
+            }
+
+            var eventSymbol = symbol as IEventSymbol;
+            if (eventSymbol != null && eventSymbol.ExplicitInterfaceImplementations.Any())
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 

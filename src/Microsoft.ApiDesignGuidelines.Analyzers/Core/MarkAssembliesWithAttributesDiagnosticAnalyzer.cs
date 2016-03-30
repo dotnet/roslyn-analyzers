@@ -47,8 +47,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private void AnalyzeCompilation(CompilationAnalysisContext context)
         {
-            var assemblyVersionAttributeSymbol = WellKnownTypes.AssemblyVersionAttribute(context.Compilation);
-            var assemblyComplianceAttributeSymbol = WellKnownTypes.CLSCompliantAttribute(context.Compilation);
+            INamedTypeSymbol assemblyVersionAttributeSymbol = WellKnownTypes.AssemblyVersionAttribute(context.Compilation);
+            INamedTypeSymbol assemblyComplianceAttributeSymbol = WellKnownTypes.CLSCompliantAttribute(context.Compilation);
 
             if (assemblyVersionAttributeSymbol == null && assemblyComplianceAttributeSymbol == null)
             {
@@ -59,7 +59,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             bool assemblyComplianceAttributeFound = false;
 
             // Check all assembly level attributes for the target attribute
-            foreach (var attribute in context.Compilation.Assembly.GetAttributes())
+            foreach (AttributeData attribute in context.Compilation.Assembly.GetAttributes())
             {
                 if (attribute.AttributeClass.Equals(assemblyVersionAttributeSymbol))
                 {

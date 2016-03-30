@@ -2,7 +2,6 @@
 
 using Microsoft.ApiDesignGuidelines.Analyzers;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 

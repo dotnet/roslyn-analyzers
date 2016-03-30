@@ -10,7 +10,6 @@ using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
-using Microsoft.CodeAnalysis.Formatting;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
@@ -27,10 +26,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public async override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var generator = SyntaxGenerator.GetGenerator(context.Document);
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(context.Document);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            var declaration = root.FindNode(context.Span);
+            SyntaxNode declaration = root.FindNode(context.Span);
             declaration = generator.GetDeclaration(declaration);
 
             if (declaration == null)
@@ -39,7 +38,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
 
             // We cannot have multiple overlapping diagnostics of this id.
-            var diagnostic = context.Diagnostics.Single();
+            Diagnostic diagnostic = context.Diagnostics.Single();
 
             context.RegisterCodeFix(new MyCodeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableInterface,
                                                      async ct => await ImplementIDisposable(context.Document, declaration, ct).ConfigureAwait(false)),
@@ -49,26 +48,26 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private async Task<Document> ImplementIDisposable(Document document, SyntaxNode declaration, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            var generator = editor.Generator;
-            var model = editor.SemanticModel;
+            SyntaxGenerator generator = editor.Generator;
+            SemanticModel model = editor.SemanticModel;
 
             // Add the interface to the baselist.
-            var interfaceType = generator.TypeExpression(WellKnownTypes.IDisposable(model.Compilation));
+            SyntaxNode interfaceType = generator.TypeExpression(WellKnownTypes.IDisposable(model.Compilation));
             editor.AddInterfaceType(declaration, interfaceType);
 
             // Find a Dispose method. If one exists make that implement IDisposable, else generate a new method.
             var typeSymbol = model.GetDeclaredSymbol(declaration) as INamedTypeSymbol;
-            var disposeMethod = (typeSymbol?.GetMembers("Dispose"))?.OfType<IMethodSymbol>()?.Where(m => m.Parameters.Length == 0).FirstOrDefault();
+            IMethodSymbol disposeMethod = (typeSymbol?.GetMembers("Dispose"))?.OfType<IMethodSymbol>()?.Where(m => m.Parameters.Length == 0).FirstOrDefault();
             if (disposeMethod != null && disposeMethod.DeclaringSyntaxReferences.Length == 1)
             {
-                var memberPartNode = await disposeMethod.DeclaringSyntaxReferences.Single().GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
+                SyntaxNode memberPartNode = await disposeMethod.DeclaringSyntaxReferences.Single().GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
                 memberPartNode = generator.GetDeclaration(memberPartNode);
                 editor.ReplaceNode(memberPartNode, generator.AsPublicInterfaceImplementation(memberPartNode, interfaceType));
             }
             else
             {
-                var throwStatement = generator.ThrowStatement(generator.ObjectCreationExpression(WellKnownTypes.NotImplementedException(model.Compilation)));
-                var member = generator.MethodDeclaration(TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer<SyntaxNode>.Dispose, statements: new[] { throwStatement });
+                SyntaxNode throwStatement = generator.ThrowStatement(generator.ObjectCreationExpression(WellKnownTypes.NotImplementedException(model.Compilation)));
+                SyntaxNode member = generator.MethodDeclaration(TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer<SyntaxNode>.Dispose, statements: new[] { throwStatement });
                 member = generator.AsPublicInterfaceImplementation(member, interfaceType);
                 editor.AddMember(declaration, member);
             }

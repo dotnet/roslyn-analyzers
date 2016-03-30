@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA1725: Parameter names should match base declaration
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicParameterNamesShouldMatchBaseDeclarationFixer
-        Inherits ParameterNamesShouldMatchBaseDeclarationFixer 
+        Inherits ParameterNamesShouldMatchBaseDeclarationFixer
 
     End Class
 End Namespace

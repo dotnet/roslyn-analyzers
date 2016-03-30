@@ -23,14 +23,14 @@ namespace System.Runtime.Analyzers
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(context.Document, context.CancellationToken).ConfigureAwait(false);
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var node = root.FindNode(context.Span);
-            var declaration = editor.Generator.GetDeclaration(node);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode node = root.FindNode(context.Span);
+            SyntaxNode declaration = editor.Generator.GetDeclaration(node);
 
             if (declaration != null)
             {
                 // We cannot have multiple overlapping diagnostics of this id.
-                var diagnostic = context.Diagnostics.Single();
+                Diagnostic diagnostic = context.Diagnostics.Single();
 
                 context.RegisterCodeFix(new MyCodeAction(SystemRuntimeAnalyzersResources.AvoidUnsealedAttributesMessage,
                     async ct => await MakeSealed(editor, declaration, ct).ConfigureAwait(false)),
@@ -40,7 +40,7 @@ namespace System.Runtime.Analyzers
 
         private Task<Document> MakeSealed(DocumentEditor editor, SyntaxNode declaration, CancellationToken ct)
         {
-            var modifiers = editor.Generator.GetModifiers(declaration);
+            DeclarationModifiers modifiers = editor.Generator.GetModifiers(declaration);
             editor.SetModifiers(declaration, modifiers + DeclarationModifiers.Sealed);
             return Task.FromResult(editor.GetChangedDocument());
         }

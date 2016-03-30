@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA1014: Mark assemblies with CLSCompliant
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicMarkAssembliesWithClsCompliantFixer
-        Inherits MarkAssembliesWithClsCompliantFixer 
+        Inherits MarkAssembliesWithClsCompliantFixer
 
     End Class
 End Namespace

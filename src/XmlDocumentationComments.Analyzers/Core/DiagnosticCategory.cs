@@ -3,5 +3,5 @@
 namespace XmlDocumentationComments.Analyzers
 {
     internal static class DiagnosticCategory
-    {        public static readonly string Documentation = XmlDocumentationCommentsAnalyzersResources.CategoryDocumentation;}
+    { public static readonly string Documentation = XmlDocumentationCommentsAnalyzersResources.CategoryDocumentation; }
 }

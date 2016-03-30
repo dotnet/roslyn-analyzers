@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.Maintainability.Analyzers     
+Namespace Microsoft.Maintainability.Analyzers
     ''' <summary>
     ''' CA1812: Avoid uninstantiated internal classes
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicAvoidUninstantiatedInternalClassesFixer
-        Inherits AvoidUninstantiatedInternalClassesFixer 
+        Inherits AvoidUninstantiatedInternalClassesFixer
 
     End Class
 End Namespace

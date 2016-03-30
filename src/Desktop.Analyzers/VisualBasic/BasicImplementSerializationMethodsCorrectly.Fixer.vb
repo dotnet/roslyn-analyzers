@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Desktop.Analyzers     
+Namespace Desktop.Analyzers
     ''' <summary>
     ''' CA2238: Implement serialization methods correctly
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicImplementSerializationMethodsCorrectlyFixer
-        Inherits ImplementSerializationMethodsCorrectlyFixer 
+        Inherits ImplementSerializationMethodsCorrectlyFixer
 
     End Class
 End Namespace

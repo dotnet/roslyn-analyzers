@@ -119,7 +119,6 @@
     <Compile Include="DisposableTypesShouldDeclareFinalizer.cs" />
     <Compile Include="DisposableTypesShouldDeclareFinalizer.Fixer.cs" />
     <Compile Include="DoNotRaiseExceptionsInExceptionClauses.cs" />
-    <Compile Include="DoNotRaiseExceptionsInExceptionClauses.Fixer.cs" />
     <Compile Include="FinalizersShouldCallBaseClassFinalizer.cs" />
     <Compile Include="FinalizersShouldCallBaseClassFinalizer.Fixer.cs" />
     <Compile Include="ProvideCorrectArgumentsToFormattingMethods.cs" />

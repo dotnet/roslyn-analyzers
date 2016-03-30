@@ -4,15 +4,20 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
+using System.Linq;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
     /// <summary>
     /// CA1707: Identifiers should not contain underscores
     /// </summary>
-    public abstract class IdentifiersShouldNotContainUnderscoresAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class IdentifiersShouldNotContainUnderscoresAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1707";
+        private const string Uri = "https://msdn.microsoft.com/en-us/library/ms182245.aspx";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
@@ -31,78 +36,220 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessageAssembly,
                                                                              DiagnosticCategory.Naming,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor NamespaceRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageNamespace,
                                                                              DiagnosticCategory.Naming,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor TypeRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageType,
                                                                              DiagnosticCategory.Naming,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor MemberRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageMember,
                                                                              DiagnosticCategory.Naming,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor TypeTypeParameterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageTypeTypeParameter,
                                                                              DiagnosticCategory.Naming,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor MethodTypeParameterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageMethodTypeParameter,
                                                                              DiagnosticCategory.Naming,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor MemberParameterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageMemberParameter,
                                                                              DiagnosticCategory.Naming,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor DelegateParameterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageDelegateParameter,
                                                                              DiagnosticCategory.Naming,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(AssemblyRule, NamespaceRule, TypeRule, MemberRule, TypeTypeParameterRule, MethodTypeParameterRule, MemberParameterRule, DelegateParameterRule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.RegisterSymbolAction(symbolAnalysisContext =>
+            {
+                var symbol = symbolAnalysisContext.Symbol;
+                switch (symbol.Kind)
+                {
+                    case SymbolKind.Namespace:
+                        {
+                            if (ContainsUnderScore(symbol.Name))
+                            {
+                                symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(NamespaceRule, symbol.ToDisplayString()));
+                            }
+
+                            return;
+                        }
+
+                    case SymbolKind.NamedType:
+                        {
+                            var namedType = symbol as INamedTypeSymbol;
+                            AnalyzeTypeParameters(symbolAnalysisContext, namedType.TypeParameters);
+
+                            if (namedType.TypeKind == TypeKind.Delegate &&
+                                namedType.DelegateInvokeMethod != null)
+                            {
+                                AnalyzeParameters(symbolAnalysisContext, namedType.DelegateInvokeMethod.Parameters);
+                            }
+
+                            if (!ContainsUnderScore(symbol.Name) || !symbol.IsPublic())
+                            {
+                                return;
+                            }
+
+                            symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(TypeRule, symbol.ToDisplayString()));
+                            return;
+                        }
+
+                    case SymbolKind.Field:
+                        {
+                            var fieldSymbol = symbol as IFieldSymbol;
+                            if (ContainsUnderScore(symbol.Name) && symbol.IsPublic() && (fieldSymbol.IsConst || (fieldSymbol.IsStatic && fieldSymbol.IsReadOnly)))
+                            {
+                                symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
+                                return;
+                            }
+
+                            return;
+                        }
+
+                    default:
+                        {
+                            var methodSymbol = symbol as IMethodSymbol;
+                            if (methodSymbol != null)
+                            {
+                                AnalyzeParameters(symbolAnalysisContext, methodSymbol.Parameters);
+                                AnalyzeTypeParameters(symbolAnalysisContext, methodSymbol.TypeParameters);
+                            }
+
+                            var propertySymbol = symbol as IPropertySymbol;
+                            if (propertySymbol != null)
+                            {
+                                AnalyzeParameters(symbolAnalysisContext, propertySymbol.Parameters);
+                            }
+
+                            if (!ContainsUnderScore(symbol.Name) || IsInvalidSymbol(symbol))
+                            {
+                                return;
+                            }
+
+                            symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
+                            return;
+                        }
+                }
+            },
+            SymbolKind.Namespace, // Namespace
+            SymbolKind.NamedType, //Type
+            SymbolKind.Method, SymbolKind.Property, SymbolKind.Field, SymbolKind.Event // Members
+            );
+
+            analysisContext.RegisterCompilationAction(compilationAnalysisContext =>
+            {
+                var compilation = compilationAnalysisContext.Compilation;
+                if (ContainsUnderScore(compilation.AssemblyName))
+                {
+                    compilationAnalysisContext.ReportDiagnostic(compilation.Assembly.CreateDiagnostic(AssemblyRule, compilation.AssemblyName));
+                }
+            });
+        }
+
+        private bool IsInvalidSymbol(ISymbol symbol)
+        {
+            return (!(symbol.GetResultantVisibility() == SymbolVisibility.Public && !symbol.IsOverride)) ||
+                symbol.IsAccessorMethod() || symbol.IsImplementationOfAnyInterfaceMember();
+        }
+
+        private void AnalyzeParameters(SymbolAnalysisContext symbolAnalysisContext, IEnumerable<IParameterSymbol> parameters)
+        {
+            foreach (var parameter in parameters)
+            {
+                if (ContainsUnderScore(parameter.Name))
+                {
+                    var containingType = parameter.ContainingType;
+
+                    // Parameter in Delegate
+                    if (containingType.TypeKind == TypeKind.Delegate)
+                    {
+                        if (containingType.IsPublic())
+                        {
+                            symbolAnalysisContext.ReportDiagnostic(parameter.CreateDiagnostic(DelegateParameterRule, containingType.ToDisplayString(), parameter.Name));
+                        }
+                    }
+                    else if (!IsInvalidSymbol(parameter.ContainingSymbol))
+                    {
+                        symbolAnalysisContext.ReportDiagnostic(parameter.CreateDiagnostic(MemberParameterRule, parameter.ContainingSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat), parameter.Name));
+                    }
+                }
+            }
+        }
+
+        private void AnalyzeTypeParameters(SymbolAnalysisContext symbolAnalysisContext, IEnumerable<ITypeParameterSymbol> typeParameters)
+        {
+            foreach (var typeParameter in typeParameters)
+            {
+                if (ContainsUnderScore(typeParameter.Name))
+                {
+                    var containingSymbol = typeParameter.ContainingSymbol;
+                    if (containingSymbol.Kind == SymbolKind.NamedType)
+                    {
+                        if (containingSymbol.IsPublic())
+                        {
+                            symbolAnalysisContext.ReportDiagnostic(typeParameter.CreateDiagnostic(TypeTypeParameterRule, containingSymbol.ToDisplayString(), typeParameter.Name));
+                        }
+                    }
+                    else if (containingSymbol.Kind == SymbolKind.Method && !IsInvalidSymbol(containingSymbol))
+                    {
+                        symbolAnalysisContext.ReportDiagnostic(typeParameter.CreateDiagnostic(MethodTypeParameterRule, containingSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat), typeParameter.Name));
+                    }
+                }
+            }
+        }
+
+        private static bool ContainsUnderScore(string identifier)
+        {
+            return identifier.IndexOf('_') != -1;
         }
     }
 }

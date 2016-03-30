@@ -37,7 +37,8 @@ namespace Microsoft.CodeAnalysis.UnitTests
         internal static readonly string VisualBasicDefaultExt = "vb";
         internal static readonly string CSharpDefaultFilePath = DefaultFilePathPrefix + 0 + "." + CSharpDefaultFileExt;
         internal static readonly string VisualBasicDefaultFilePath = DefaultFilePathPrefix + 0 + "." + VisualBasicDefaultExt;
-        internal static readonly string TestProjectName = "TestProject";
+
+        private const string _testProjectName = "TestProject";
 
         protected abstract DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer();
         protected abstract DiagnosticAnalyzer GetBasicDiagnosticAnalyzer();
@@ -284,9 +285,9 @@ namespace Microsoft.CodeAnalysis.UnitTests
             return GetSortedDiagnostics(sources.ToFileAndSource(), language, analyzer, addLanguageSpecificCodeAnalysisReference);
         }
 
-        protected static Diagnostic[] GetSortedDiagnostics(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference = true)
+        protected static Diagnostic[] GetSortedDiagnostics(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference = true, string projectName = _testProjectName)
         {
-            Tuple<Document[], bool, TextSpan?[]> documentsAndUseSpan = GetDocumentsAndSpans(sources, language, addLanguageSpecificCodeAnalysisReference);
+            Tuple<Document[], bool, TextSpan?[]> documentsAndUseSpan = GetDocumentsAndSpans(sources, language, addLanguageSpecificCodeAnalysisReference, projectName);
             Document[] documents = documentsAndUseSpan.Item1;
             bool useSpans = documentsAndUseSpan.Item2;
             TextSpan?[] spans = documentsAndUseSpan.Item3;
@@ -298,7 +299,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
             return GetDocumentsAndSpans(sources.ToFileAndSource(), language, addLanguageSpecificCodeAnalysisReference);
         }
 
-        protected static Tuple<Document[], bool, TextSpan?[]> GetDocumentsAndSpans(FileAndSource[] sources, string language, bool addLanguageSpecificCodeAnalysisReference = true)
+        protected static Tuple<Document[], bool, TextSpan?[]> GetDocumentsAndSpans(FileAndSource[] sources, string language, bool addLanguageSpecificCodeAnalysisReference = true, string projectName = _testProjectName)
         {
             Assert.True(language == LanguageNames.CSharp || language == LanguageNames.VisualBasic, "Unsupported language");
 
@@ -323,7 +324,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 }
             }
 
-            Project project = CreateProject(sources, language, addLanguageSpecificCodeAnalysisReference);
+            Project project = CreateProject(sources, language, addLanguageSpecificCodeAnalysisReference, null, projectName);
             Document[] documents = project.Documents.ToArray();
             Assert.Equal(sources.Length, documents.Length);
 
@@ -340,16 +341,21 @@ namespace Microsoft.CodeAnalysis.UnitTests
             return CreateProject(sources.ToFileAndSource(), language, addLanguageSpecificCodeAnalysisReference, addToSolution);
         }
 
-        protected static Project CreateProject(FileAndSource[] sources, string language = LanguageNames.CSharp, bool addLanguageSpecificCodeAnalysisReference = true, Solution addToSolution = null)
+        protected static Project CreateProject(
+            FileAndSource[] sources,
+            string language = LanguageNames.CSharp,
+            bool addLanguageSpecificCodeAnalysisReference = true,
+            Solution addToSolution = null,
+            string projectName = _testProjectName)
         {
             string fileNamePrefix = DefaultFilePathPrefix;
             string fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;
             CompilationOptions options = language == LanguageNames.CSharp ? s_CSharpDefaultOptions : s_visualBasicDefaultOptions;
 
-            ProjectId projectId = ProjectId.CreateNewId(debugName: TestProjectName);
+            ProjectId projectId = ProjectId.CreateNewId(debugName: projectName);
 
             Solution solution = (addToSolution ?? new AdhocWorkspace().CurrentSolution)
-                .AddProject(projectId, TestProjectName, TestProjectName, language)
+                .AddProject(projectId, projectName, projectName, language)
                 .AddMetadataReference(projectId, s_corlibReference)
                 .AddMetadataReference(projectId, s_systemCoreReference)
                 .AddMetadataReference(projectId, s_systemXmlReference)

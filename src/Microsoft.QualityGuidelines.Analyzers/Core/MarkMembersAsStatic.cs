@@ -36,6 +36,9 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            // Don't report in generated code since that's not actionable.
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
                 // Since property\event accessors cannot be marked static themselves and the associated symbol (property\event)
@@ -103,19 +106,17 @@ namespace Microsoft.QualityGuidelines.Analyzers
                 return false;
             }
 
-            var skipAttributes = new INamedTypeSymbol[]
+            // FxCop doesn't check for the fully qualified name for these attributes - so we'll do the same.
+            var skipAttributes = new string[]
             {
-                compilation.GetTypeByMetadataName("System.Web.Services.WebMethodAttribute"),
-                // FxCop doesn't check for the fully qualified name for these attributes - so we'll do the same.
-                compilation.GetTypeByMetadataName("AspNetGeneratedCodeAttribute"),
-                compilation.GetTypeByMetadataName("GeneratedCodeAttribute"),
-                compilation.GetTypeByMetadataName("TestInitializeAttribute"),
-                compilation.GetTypeByMetadataName("TestMethodAttribute"),
-                compilation.GetTypeByMetadataName("TestCleanupAttribute")
+                "WebMethodAttribute",
+                "TestInitializeAttribute",
+                "TestMethodAttribute",
+                "TestCleanupAttribute",
             };
 
             // CA1000 says one shouldn't declare static members on generic types. So don't flag such cases.
-            if (methodSymbol.GetAttributes().Any(attribute => skipAttributes.Contains(attribute.AttributeClass)))
+            if (methodSymbol.GetAttributes().Any(attribute => skipAttributes.Contains(attribute.AttributeClass.Name)))
             {
                 return false;
             }
@@ -128,7 +129,10 @@ namespace Microsoft.QualityGuidelines.Analyzers
                 return false;
             }
 
-
+            if (IsExplicitlyVisibleFromCom(methodSymbol, compilation))
+            {
+                return false;
+            }
 
             return true;
         }
@@ -148,19 +152,24 @@ namespace Microsoft.QualityGuidelines.Analyzers
             return false;
         }
 
-        //private static bool IsExplicitlyVisibleFromCom(IMethodSymbol methodSymbol)
-        //{
-        //    if (methodSymbol.GetResultantVisibility() != SymbolVisibility.Public || methodSymbol.IsGenericMethod)
-        //        return false;
+        private static bool IsExplicitlyVisibleFromCom(IMethodSymbol methodSymbol, Compilation compilation)
+        {
+            if (methodSymbol.GetResultantVisibility() != SymbolVisibility.Public || methodSymbol.IsGenericMethod)
+                return false;
 
-        //    bool isComVisible;
-        //    if (TryGetValueOfComVisibleAttribute(methodSymbol, out isComVisible))
-        //        return isComVisible;
+            var comVisibleAttribute = WellKnownTypes.ComVisibleAttribute(compilation);
+            if (comVisibleAttribute == null)
+            {
+                return false;
+            }
 
-        //    if (TryGetValueOfComVisibleAttribute(methodSymbol.ContainingType, out isComVisible))
-        //        return isComVisible;
+            if (methodSymbol.GetAttributes().Any(attribute => attribute.AttributeClass.Equals(comVisibleAttribute)) ||
+                methodSymbol.ContainingType.GetAttributes().Any(attribute => attribute.AttributeClass.Equals(comVisibleAttribute)))
+            {
+                return true;
+            }
 
-        //    return false;
-        //}
+            return false;
+        }
     }
 }

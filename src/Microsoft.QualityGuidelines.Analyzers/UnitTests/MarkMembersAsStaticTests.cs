@@ -161,7 +161,15 @@ public class MembersTests
 
     public int AutoProp { get; set; }
     public int GetterOnlyAutoProp { get; }
-}");
+
+    public void SomeEventHandler(object sender, System.EventArgs args) { }
+}
+
+public class Generic<T>
+{
+    public void Method1() { }
+}
+");
         }
 
         [Fact]
@@ -188,6 +196,14 @@ Public Class MembersTests
 
     Public Property AutoProp As Integer
     Public ReadOnly Property GetterOnlyAutoProp As Integer
+
+    Public Sub SomeEventHandler(sender As Object, args As System.EventArgs)
+    End Sub
+End Class
+
+Public Class Generic(Of T)
+    Public Sub Method1()
+    End Sub
 End Class
 ");
         }
@@ -240,6 +256,101 @@ Public Class SpecialCasesTest2
     Public Function Calculate(arg As Integer) As Integer Implements ISpecialCasesTest.Calculate
         Return arg / 2
     End Function
+End Class
+");
+        }
+
+        [Fact]
+        public void CSharpNoDiagnostic_Attributes()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices; 
+
+namespace System.Web.Services
+{
+    public class WebMethodAttribute : Attribute { }
+}
+
+public class TestInitializeAttribute : Attribute { }
+public class TestMethodAttribute : Attribute { }
+public class TestCleanupAttribute : Attribute { }
+
+public class Test
+{
+    [System.Web.Services.WebMethod]
+    public void Method1() { }
+
+    [TestInitialize]
+    public void Method2() { }
+
+    [TestMethod]
+    public void Method3() { }
+
+    [TestCleanup]
+    public void Method4() { }
+
+    [ComVisible(true)]
+    public void Method5() { }
+}
+
+[ComVisible(true)]
+public class ComVisibleClass
+{
+    public void Method1() { }
+}
+");
+        }
+
+        [Fact]
+        public void BasicNoDiagnostic_Attributes()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.Runtime.InteropServices
+
+Namespace System.Web.Services
+    Public Class WebMethodAttribute
+        Inherits Attribute
+    End Class
+End Namespace
+
+Public Class TestInitializeAttribute
+    Inherits Attribute
+End Class
+Public Class TestMethodAttribute
+    Inherits Attribute
+End Class
+Public Class TestCleanupAttribute
+    Inherits Attribute
+End Class
+
+Public Class Test
+    <System.Web.Services.WebMethod>
+    Public Sub Method1()
+    End Sub
+
+    <TestInitialize>
+    Public Sub Method2()
+    End Sub
+
+    <TestMethod>
+    Public Sub Method3()
+    End Sub
+
+    <TestCleanup>
+    Public Sub Method4()
+    End Sub
+
+    <ComVisible(True)>
+    Public Sub Method5()
+    End Sub
+End Class
+
+<ComVisible(True)>
+Public Class ComVisibleClass
+    Public Sub Method1()
+    End Sub
 End Class
 ");
         }

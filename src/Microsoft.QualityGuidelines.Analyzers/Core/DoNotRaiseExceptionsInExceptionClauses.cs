@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Semantics;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace System.Runtime.Analyzers
+namespace Microsoft.QualityGuidelines.Analyzers
 {
     /// <summary>
     /// CA2219: Do not raise exceptions in exception clauses
@@ -18,12 +18,10 @@ namespace System.Runtime.Analyzers
     {
         internal const string RuleId = "CA2219";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesTitle), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessageFinally = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesMessageFinally), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageFilter = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesMessageFilter), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageFault = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesMessageFault), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageFinally = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesMessageFinally), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesDescription), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
         private const string helpLinkUrl = "https://msdn.microsoft.com/en-us/library/bb386041.aspx";
 
         internal static DiagnosticDescriptor FinallyRule = new DiagnosticDescriptor(RuleId,

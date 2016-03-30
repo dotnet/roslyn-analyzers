@@ -210,4 +210,13 @@
   <data name="RethrowToPreserveStackDetailsTitle" xml:space="preserve">
     <value>Rethrow to preserve stack details.</value>
   </data>
+  <data name="DoNotRaiseExceptionsInExceptionClausesDescription" xml:space="preserve">
+    <value>When an exception is raised in a finally or fault clause, the new exception hides the active exception. When an exception is raised in a filter clause, the run time silently catches the exception. This makes the original error difficult to detect and debug.</value>
+  </data>
+  <data name="DoNotRaiseExceptionsInExceptionClausesMessageFinally" xml:space="preserve">
+    <value>Do not raise an exception from within a finally clause. </value>
+  </data>
+  <data name="DoNotRaiseExceptionsInExceptionClausesTitle" xml:space="preserve">
+    <value>Do not raise exceptions in exception clauses</value>
+  </data>
 </root>

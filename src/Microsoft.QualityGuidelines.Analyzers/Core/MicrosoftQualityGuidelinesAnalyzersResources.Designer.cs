@@ -135,6 +135,33 @@ namespace Microsoft.QualityGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to When an exception is raised in a finally or fault clause, the new exception hides the active exception. When an exception is raised in a filter clause, the run time silently catches the exception. This makes the original error difficult to detect and debug..
+        /// </summary>
+        internal static string DoNotRaiseExceptionsInExceptionClausesDescription {
+            get {
+                return ResourceManager.GetString("DoNotRaiseExceptionsInExceptionClausesDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not raise an exception from within a finally clause. .
+        /// </summary>
+        internal static string DoNotRaiseExceptionsInExceptionClausesMessageFinally {
+            get {
+                return ResourceManager.GetString("DoNotRaiseExceptionsInExceptionClausesMessageFinally", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not raise exceptions in exception clauses.
+        /// </summary>
+        internal static string DoNotRaiseExceptionsInExceptionClausesTitle {
+            get {
+                return ResourceManager.GetString("DoNotRaiseExceptionsInExceptionClausesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Members that do not access instance data or call instance methods can be marked as static (Shared in Visual Basic). After you mark the methods as static, the compiler will emit nonvirtual call sites to these members. This can give you a measurable performance gain for performance-sensitive code..
         /// </summary>
         internal static string MarkMembersAsStaticDescription {

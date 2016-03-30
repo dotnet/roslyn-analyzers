@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 
-namespace System.Runtime.Analyzers.UnitTests
+namespace Microsoft.QualityGuidelines.Analyzers.UnitTests
 {
     public class DoNotRaiseExceptionsInExceptionClausesTests : DiagnosticAnalyzerTestBase
     {

@@ -108,7 +108,6 @@
     <Compile Include="CSharpDoNotInitializeUnnecessarily.cs" />
     <Compile Include="CSharpDoNotInitializeUnnecessarily.Fixer.cs" />
     <Compile Include="CSharpPreferJaggedArraysOverMultidimensional.Fixer.cs" />
-    <Compile Include="CSharpMarkMembersAsStatic.cs" />
     <Compile Include="CSharpMarkMembersAsStatic.Fixer.cs" />
     <Compile Include="CSharpDisposeObjectsBeforeLosingScope.cs" />
     <Compile Include="CSharpDisposeObjectsBeforeLosingScope.Fixer.cs" />

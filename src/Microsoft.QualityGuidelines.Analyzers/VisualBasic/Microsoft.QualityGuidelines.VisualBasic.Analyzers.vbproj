@@ -105,7 +105,6 @@
     <Compile Include="BasicDoNotInitializeUnnecessarily.vb" />
     <Compile Include="BasicDoNotInitializeUnnecessarily.Fixer.vb" />
     <Compile Include="BasicPreferJaggedArraysOverMultidimensional.Fixer.vb" />
-    <Compile Include="BasicMarkMembersAsStatic.vb" />
     <Compile Include="BasicMarkMembersAsStatic.Fixer.vb" />
     <Compile Include="BasicDisposeObjectsBeforeLosingScope.vb" />
     <Compile Include="BasicDisposeObjectsBeforeLosingScope.Fixer.vb" />

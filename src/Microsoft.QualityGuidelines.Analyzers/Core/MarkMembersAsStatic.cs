@@ -13,7 +13,8 @@ namespace Microsoft.QualityGuidelines.Analyzers
     /// <summary>
     /// CA1822: Mark members as static
     /// </summary>
-    public abstract class MarkMembersAsStaticAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class MarkMembersAsStaticAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1822";
 

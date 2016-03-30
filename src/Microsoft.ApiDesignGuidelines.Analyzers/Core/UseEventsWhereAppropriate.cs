@@ -54,7 +54,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 // Bail out for implicitly declared methods, overridden methods, interface implementations, constructors and finalizers (FxCop compat).
                 if (method.IsImplicitlyDeclared ||
                     method.IsOverride ||
-                    method.IsImplementationOfAnyInterfaceMethod() ||
+                    method.IsImplementationOfAnyInterfaceMember() ||
                     method.IsConstructor() ||
                     method.IsFinalizer())
                 {

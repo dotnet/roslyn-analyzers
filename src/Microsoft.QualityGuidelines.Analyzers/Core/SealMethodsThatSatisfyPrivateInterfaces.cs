@@ -10,7 +10,8 @@ namespace Microsoft.QualityGuidelines.Analyzers
     /// <summary>
     /// CA2119: Seal methods that satisfy private interfaces
     /// </summary>
-    public abstract class SealMethodsThatSatisfyPrivateInterfacesAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class SealMethodsThatSatisfyPrivateInterfacesAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2119";
 
@@ -26,7 +27,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182313.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);

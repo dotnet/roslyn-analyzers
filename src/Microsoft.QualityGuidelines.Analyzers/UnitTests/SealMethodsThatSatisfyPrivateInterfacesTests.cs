@@ -13,12 +13,12 @@ namespace Microsoft.QualityGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicSealMethodsThatSatisfyPrivateInterfacesAnalyzer();
+            return new SealMethodsThatSatisfyPrivateInterfacesAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpSealMethodsThatSatisfyPrivateInterfacesAnalyzer();
+            return new SealMethodsThatSatisfyPrivateInterfacesAnalyzer();
         }
 
         [Fact]

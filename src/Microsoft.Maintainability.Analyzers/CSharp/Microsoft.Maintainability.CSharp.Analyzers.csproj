@@ -105,7 +105,6 @@
     <Compile Include="CSharpVariableNamesShouldNotMatchFieldNames.cs" />
     <Compile Include="CSharpVariableNamesShouldNotMatchFieldNames.Fixer.cs" />
     <Compile Include="CSharpReviewUnusedParameters.Fixer.cs" />
-    <Compile Include="CSharpRemoveUnusedLocals.cs" />
     <Compile Include="CSharpRemoveUnusedLocals.Fixer.cs" />
     <Compile Include="CSharpAvoidUninstantiatedInternalClasses.cs" />
     <Compile Include="CSharpAvoidUninstantiatedInternalClasses.Fixer.cs" />

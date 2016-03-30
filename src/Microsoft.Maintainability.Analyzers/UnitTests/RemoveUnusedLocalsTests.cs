@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
@@ -8,7 +9,7 @@ namespace Microsoft.Maintainability.Analyzers.UnitTests
 {
     public class RemoveUnusedLocalsTests : DiagnosticAnalyzerTestBase
     {
-        private const string CA1804RuleId = RemoveUnusedLocalsAnalyzer.RuleId;
+        private const string CA1804RuleId = "CA1804";
         private readonly string _CA1804RemoveUnusedLocalMessage = MicrosoftMaintainabilityAnalyzersResources.RemoveUnusedLocalsMessage;
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
@@ -18,7 +19,7 @@ namespace Microsoft.Maintainability.Analyzers.UnitTests
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpRemoveUnusedLocalsAnalyzer();
+            throw new NotImplementedException();
         }
 
         [Fact]

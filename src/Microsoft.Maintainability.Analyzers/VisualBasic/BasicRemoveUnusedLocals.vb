@@ -1,5 +1,6 @@
 ' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+Imports System.Collections.Immutable
 Imports System.Linq
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
@@ -13,7 +14,29 @@ Namespace Microsoft.Maintainability.Analyzers
     ''' </summary>
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
     Public NotInheritable Class BasicRemoveUnusedLocalsAnalyzer
-        Inherits RemoveUnusedLocalsAnalyzer
+        Inherits DiagnosticAnalyzer
+        Friend Const RuleId As String = "CA1804"
+
+        Private Shared ReadOnly s_localizableTitle As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftMaintainabilityAnalyzersResources.RemoveUnusedLocalsTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, GetType(MicrosoftMaintainabilityAnalyzersResources))
+        Private Shared ReadOnly s_localizableMessage As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftMaintainabilityAnalyzersResources.RemoveUnusedLocalsMessage), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, GetType(MicrosoftMaintainabilityAnalyzersResources))
+        Private Shared ReadOnly s_localizableDescription As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftMaintainabilityAnalyzersResources.RemoveUnusedLocalsDescription), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, GetType(MicrosoftMaintainabilityAnalyzersResources))
+
+        Friend Shared Rule As DiagnosticDescriptor = New DiagnosticDescriptor(
+                                                        RuleId,
+                                                        s_localizableTitle,
+                                                        s_localizableMessage,
+                                                        DiagnosticCategory.Performance,
+                                                        DiagnosticSeverity.Warning,
+                                                        True,
+                                                        s_localizableDescription,
+                                                        "https://msdn.microsoft.com/en-us/library/ms182278.aspx",
+                                                        WellKnownDiagnosticTags.Telemetry)
+
+        Public Overrides ReadOnly Property SupportedDiagnostics As ImmutableArray(Of DiagnosticDescriptor)
+            Get
+                Return ImmutableArray.Create(Rule)
+            End Get
+        End Property
 
         Public Overrides Sub Initialize(analysisContext As AnalysisContext)
 

@@ -12,8 +12,6 @@ namespace Microsoft.Maintainability.Analyzers
     /// </summary>
     public abstract class RemoveUnusedLocalsFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(RemoveUnusedLocalsAnalyzer.RuleId);
-
         public sealed override FixAllProvider GetFixAllProvider()
         {
             // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers

@@ -45,13 +45,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, SpecialCollectionRule);
 
-        private const string EventHandlerString = "EventHandler";
-        private const string CollectionString = "Collection";
-
         // Tuple says <TypeInheritedOrImplemented, AppropriateSuffix, Bool value saying if the suffix can `Collection` or the `AppropriateSuffix`>s
+        // The bool values are as mentioned in the Uri
         private static readonly List<Tuple<string, string, bool>> s_baseTypesAndTheirSuffix = new List<Tuple<string, string, bool>>()
                                                     {
-                                                        //Tuple.Create("TypeName", IsInterface, "Suffix", CanSuffixBeCollection)
+                                                        //Tuple.Create("TypeName", "Suffix", CanSuffixBeCollection)
                                                         Tuple.Create("System.Attribute", "Attribute", false),
                                                         Tuple.Create("System.EventArgs", "EventArgs", false),
                                                         Tuple.Create("System.Exception", "Exception", false),
@@ -103,27 +101,31 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 context.RegisterSymbolAction((saContext) =>
                 {
-                    var namedTypeSymbol = saContext.Symbol as INamedTypeSymbol;
+                    var namedTypeSymbol = (INamedTypeSymbol)saContext.Symbol;
                     if (namedTypeSymbol.GetResultantVisibility() != SymbolVisibility.Public)
                     {
                         return;
                     }
 
-                    var baseType = namedTypeSymbol.GetBaseTypes().FirstOrDefault(bt => baseTypeSuffixMap.Keys.Contains(bt.OriginalDefinition));
+                    var baseType = namedTypeSymbol.GetBaseTypes().FirstOrDefault(bt => baseTypeSuffixMap.ContainsKey(bt.OriginalDefinition));
                     if (baseType != null)
                     {
                         var suffixInfo = baseTypeSuffixMap[baseType.OriginalDefinition];
+
+                        // SpecialCollectionRule - Rename 'LastInFirstOut<T>' to end in either 'Collection' or 'Stack'.
+                        // DefaultRule - Rename 'MyStringObjectHashtable' to end in 'Dictionary'.
                         var rule = suffixInfo.CanSuffixBeCollection ? SpecialCollectionRule : DefaultRule;
-                        if ((suffixInfo.CanSuffixBeCollection && !namedTypeSymbol.Name.EndsWith(CollectionString) && !namedTypeSymbol.Name.EndsWith(suffixInfo.Suffix)) ||
+                        if ((suffixInfo.CanSuffixBeCollection && !namedTypeSymbol.Name.EndsWith("Collection") && !namedTypeSymbol.Name.EndsWith(suffixInfo.Suffix)) ||
                             (!suffixInfo.CanSuffixBeCollection && !namedTypeSymbol.Name.EndsWith(suffixInfo.Suffix)))
                         {
+
                             saContext.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(rule, namedTypeSymbol.ToDisplayString(), suffixInfo.Suffix));
                         }
 
                         return;
                     }
 
-                    var implementedInterface = namedTypeSymbol.AllInterfaces.FirstOrDefault(i => interfaceTypeSuffixMap.Keys.Contains(i.OriginalDefinition));
+                    var implementedInterface = namedTypeSymbol.AllInterfaces.FirstOrDefault(i => interfaceTypeSuffixMap.ContainsKey(i.OriginalDefinition));
                     if (implementedInterface != null)
                     {
                         var suffixInfo = interfaceTypeSuffixMap[implementedInterface.OriginalDefinition];
@@ -137,10 +139,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                 context.RegisterSymbolAction((saContext) =>
                 {
+                    const string eventHandlerString = "EventHandler";
                     var eventSymbol = saContext.Symbol as IEventSymbol;
-                    if (!eventSymbol.Type.Name.EndsWith(EventHandlerString))
+                    if (!eventSymbol.Type.Name.EndsWith(eventHandlerString))
                     {
-                        saContext.ReportDiagnostic(eventSymbol.CreateDiagnostic(DefaultRule, eventSymbol.Type.Name, EventHandlerString));
+                        saContext.ReportDiagnostic(eventSymbol.CreateDiagnostic(DefaultRule, eventSymbol.Type.Name, eventHandlerString));
                     }
                 },
                 SymbolKind.Event);

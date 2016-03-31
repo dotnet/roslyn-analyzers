@@ -1,12 +1,11 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Semantics;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Microsoft.QualityGuidelines.Analyzers
 {
@@ -16,7 +15,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
     /// <remarks>
     /// The original FxCop implementation of this rule finds violations of this rule inside 
     /// filter and fault blocks. However in both C# and VB there's no way to throw an exception
-    /// inside a filter block and there is no language representation for Fault blocks in either language.
+    /// inside a filter block and there is no language representation for fault blocks in either language.
     /// So this analyzer just checks for throw statements inside finally blocks.
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
@@ -28,7 +27,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesMessageFinally), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesDescription), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
 
-        private const string helpLinkUrl = "https://msdn.microsoft.com/en-us/library/bb386041.aspx";
+        private const string HelpLinkUrl = "https://msdn.microsoft.com/en-us/library/bb386041.aspx";
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -37,7 +36,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: helpLinkUrl,
+                                                                             helpLinkUri: HelpLinkUrl,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
@@ -60,7 +59,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
         }
 
         /// <summary>
-        /// Walks a IOperation tree to find throw statements inside finally blocks.
+        /// Walks an IOperation tree to find throw statements inside finally blocks.
         /// </summary>
         private class ThrowInsideFinallyWalker : OperationWalker
         {

@@ -135,7 +135,7 @@ namespace Microsoft.QualityGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to When an exception is raised in a finally or fault clause, the new exception hides the active exception. When an exception is raised in a filter clause, the run time silently catches the exception. This makes the original error difficult to detect and debug..
+        ///   Looks up a localized string similar to When an exception is raised in a finally clause, the new exception hides the active exception. This makes the original error difficult to detect and debug..
         /// </summary>
         internal static string DoNotRaiseExceptionsInExceptionClausesDescription {
             get {
@@ -153,7 +153,7 @@ namespace Microsoft.QualityGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Do not raise exceptions in exception clauses.
+        ///   Looks up a localized string similar to Do not raise exceptions in finally clauses.
         /// </summary>
         internal static string DoNotRaiseExceptionsInExceptionClausesTitle {
             get {

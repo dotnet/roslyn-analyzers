@@ -530,7 +530,7 @@ Names of parameters and members are better used to communicate their meaning tha
     <value>This rule detects methods that have names that ordinarily would be used for events. If a method is called in response to a clearly defined state change, the method should be invoked by an event handler. Objects that call the method should raise events instead of calling the method directly.</value>
   </data>
   <data name="UseEventsWhereAppropriateMessage" xml:space="preserve">
-    <value>Use events where appropriate</value>
+    <value>Consider making '{0}' an event.</value>
   </data>
   <data name="ImplementStandardExceptionConstructorsTitle" xml:space="preserve">
     <value>Implement standard exception constructors</value>

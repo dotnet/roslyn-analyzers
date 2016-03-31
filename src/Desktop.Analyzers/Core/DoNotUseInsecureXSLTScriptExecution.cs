@@ -94,8 +94,8 @@ namespace Desktop.Analyzers
                     bool isSecureSettings;
                     bool isSetInBlock;
 
-                    int xmlResolverIndex = SecurityDiagnosticHelpers.HasXmlResolverParameter(methodSymbol, _xmlTypes);
-                    int xsltSettingsIndex = SecurityDiagnosticHelpers.HasXsltSettingsParameter(methodSymbol, _xmlTypes);
+                    int xmlResolverIndex = SecurityDiagnosticHelpers.GetXmlResolverParameterIndex(methodSymbol, _xmlTypes);
+                    int xsltSettingsIndex = SecurityDiagnosticHelpers.GetXsltSettingsParameterIndex(methodSymbol, _xmlTypes);
 
                     // Overloads with no XmlResolver and XstlSettings specified are secure since they all have folowing behavior:
                     //  1. An XmlUrlResolver with no user credentials is used to process any xsl:import or xsl:include elements.
@@ -116,13 +116,13 @@ namespace Desktop.Analyzers
                         XsltSettingsEnvironment env = null;
 
                         // 1. pass null or XsltSettings.Default as XsltSetting : secure
-                        if (settingsSymbol == null || SecurityDiagnosticHelpers.IsXsltSettingsDefaultProperty(settingsSymbol, _xmlTypes))
+                        if (settingsSymbol == null || SecurityDiagnosticHelpers.IsXsltSettingsDefaultProperty(settingsSymbol as IPropertySymbol, _xmlTypes))
                         {
                             isSetInBlock = true;
                             isSecureSettings = true;
                         }
                         // 2. XsltSettings.TrustedXslt : insecure
-                        else if (SecurityDiagnosticHelpers.IsXsltSettingsTrustedXsltProperty(settingsSymbol, _xmlTypes))
+                        else if (SecurityDiagnosticHelpers.IsXsltSettingsTrustedXsltProperty(settingsSymbol as IPropertySymbol, _xmlTypes))
                         {
                             isSetInBlock = true;
                             isSecureSettings = false;
@@ -211,11 +211,11 @@ namespace Desktop.Analyzers
                         ISymbol argLhsSymbol = SyntaxNodeHelper.GetSymbol(argLhs, model);
 
                         // anything other than a constant false is treated as true
-                        if (SecurityDiagnosticHelpers.IsXsltSettingsEnableDocumentFunctionProperty(argLhsSymbol, _xmlTypes))
+                        if (SecurityDiagnosticHelpers.IsXsltSettingsEnableDocumentFunctionProperty(argLhsSymbol as IPropertySymbol, _xmlTypes))
                         {
                             env.IsDocumentFunctionDisabled = SyntaxNodeHelper.NodeHasConstantValueBoolFalse(argRhs, model);
                         }
-                        else if (SecurityDiagnosticHelpers.IsXsltSettingsEnableScriptProperty(argLhsSymbol, _xmlTypes))
+                        else if (SecurityDiagnosticHelpers.IsXsltSettingsEnableScriptProperty(argLhsSymbol as IPropertySymbol, _xmlTypes))
                         {
                             env.IsScriptDisabled = SyntaxNodeHelper.NodeHasConstantValueBoolFalse(argRhs, model);
                         }
@@ -245,8 +245,8 @@ namespace Desktop.Analyzers
                 }
                 else
                 {
-                    bool isXlstSettingsEnableDocumentFunctionProperty = SecurityDiagnosticHelpers.IsXsltSettingsEnableDocumentFunctionProperty(lhsSymbol, _xmlTypes);
-                    bool isXlstSettingsEnableScriptProperty = SecurityDiagnosticHelpers.IsXsltSettingsEnableScriptProperty(lhsSymbol, _xmlTypes);
+                    bool isXlstSettingsEnableDocumentFunctionProperty = SecurityDiagnosticHelpers.IsXsltSettingsEnableDocumentFunctionProperty(lhsSymbol as IPropertySymbol, _xmlTypes);
+                    bool isXlstSettingsEnableScriptProperty = SecurityDiagnosticHelpers.IsXsltSettingsEnableScriptProperty(lhsSymbol as IPropertySymbol, _xmlTypes);
 
 
                     if (isXlstSettingsEnableDocumentFunctionProperty ||

@@ -368,7 +368,7 @@
     <comment>CA3075</comment>
   </data>
   <data name="DoNotUseDtdProcessingOverloadsMessage" xml:space="preserve">
-    <value>{0} uses unsafe overload of '{1}' method</value>
+    <value>Unsafe overload of '{0}' method</value>
     <comment>CA3075</comment>
   </data>
   <data name="DoNotUseDtdProcessingOverloads" xml:space="preserve">
@@ -376,7 +376,7 @@
     <comment>CA3075</comment>
   </data>
   <data name="DoNotUseSetInnerXmlMessage" xml:space="preserve">
-    <value>{0} uses the unsafe setter of InnerXml property of System.Xml.XmlDocument.</value>
+    <value>Uses the unsafe setter of InnerXml property of System.Xml.XmlDocument.</value>
     <comment>CA3075</comment>
   </data>
   <data name="InsecureXmlDtdProcessing" xml:space="preserve">
@@ -388,7 +388,7 @@
     <comment>CA3075</comment>
   </data>
   <data name="XmlDocumentWithNoSecureResolverMessage" xml:space="preserve">
-    <value>In {0} an XmlDocument instance is created without setting its XmlResolver property to a secure value.</value>
+    <value>An XmlDocument instance is created without setting its XmlResolver property to a secure value.</value>
     <comment>CA3075</comment>
   </data>
   <data name="XmlReaderCreateInsecureConstructedMessage" xml:space="preserve">
@@ -396,19 +396,19 @@
     <comment>CA3075</comment>
   </data>
   <data name="XmlReaderCreateInsecureInputMessage" xml:space="preserve">
-    <value>In {0} a potentially insecure XmlReaderSettings instance is provided to XmlReader.Create method.</value>
+    <value>A potentially insecure XmlReaderSettings instance is provided to XmlReader.Create method.</value>
     <comment>CA3075</comment>
   </data>
   <data name="XmlReaderCreateWrongOverloadMessage" xml:space="preserve">
-    <value>{0} uses an insecure overload of XmlReader.Create which does not accept an XmlReaderSettings argument. </value>
+    <value>An insecure overload of XmlReader.Create which does not accept an XmlReaderSettings argument.</value>
     <comment>CA3075</comment>
   </data>
   <data name="XmlTextReaderConstructedWithNoSecureResolutionMessage" xml:space="preserve">
-    <value>{0} creates XmlTextReader instance with insecure default settings.</value>
+    <value>XmlTextReader instance created with insecure default settings.</value>
     <comment>CA3075</comment>
   </data>
   <data name="XmlTextReaderSetInsecureResolutionMessage" xml:space="preserve">
-    <value>XmlTextReader instance in {0} is set with insecure values.</value>
+    <value>XmlTextReader instance is set with insecure values.</value>
     <comment>CA3075</comment>
   </data>
   <data name="DoNotUseInsecureDTDProcessingGenericMessage" xml:space="preserve">

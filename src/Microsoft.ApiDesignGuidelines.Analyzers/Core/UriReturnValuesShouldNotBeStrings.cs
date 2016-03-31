@@ -91,7 +91,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return;
                 }
 
-                if (method.Parameters.ContainsParameterWithType(_uri))
+                if (method.Parameters.ContainsParameterOfType(_uri))
                 {
                     // If you take a Uri, and return a string, then it's ok 
                     return;

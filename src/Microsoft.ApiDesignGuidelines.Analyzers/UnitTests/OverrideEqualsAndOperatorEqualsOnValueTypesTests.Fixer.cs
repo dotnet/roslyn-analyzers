@@ -15,12 +15,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyCSharpFix(@"
 public struct A
 {
+    public int X;
 }
 ",
 
 @"
 public struct A
 {
+    public int X;
+
     public override bool Equals(object obj)
     {
         throw new System.NotImplementedException();
@@ -190,11 +193,14 @@ public struct A
         {
             VerifyBasicFix(@"
 Public Structure A
+    Public X As Integer
 End Structure
 ",
 
 @"
 Public Structure A
+    Public X As Integer
+
     Public Overrides Function Equals(obj As Object) As Boolean
         Throw New System.NotImplementedException()
     End Function

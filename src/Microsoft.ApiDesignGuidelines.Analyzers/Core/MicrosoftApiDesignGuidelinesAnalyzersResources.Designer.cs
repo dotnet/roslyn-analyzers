@@ -2305,7 +2305,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Uri parameters should not be strings.
+        ///   Looks up a localized string similar to Change the type of parameter {0} of method {1} from string to System.Uri, or provide an overload to {1} that allows {0} to be passed as a System.Uri object..
         /// </summary>
         internal static string UriParametersShouldNotBeStringsMessage {
             get {
@@ -2332,7 +2332,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Uri properties should not be strings.
+        ///   Looks up a localized string similar to Change the type of property {0} from string to System.Uri..
         /// </summary>
         internal static string UriPropertiesShouldNotBeStringsMessage {
             get {
@@ -2359,7 +2359,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Uri return values should not be strings.
+        ///   Looks up a localized string similar to Change the return type of method {0} from string to System.Uri..
         /// </summary>
         internal static string UriReturnValuesShouldNotBeStringsMessage {
             get {

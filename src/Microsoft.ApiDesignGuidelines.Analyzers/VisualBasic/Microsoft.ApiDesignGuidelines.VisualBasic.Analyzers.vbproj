@@ -141,12 +141,6 @@
     <Compile Include="BasicDeclareTypesInNamespaces.Fixer.vb" />
     <Compile Include="BasicDoNotDeclareVisibleInstanceFields.vb" />
     <Compile Include="BasicDoNotDeclareVisibleInstanceFields.Fixer.vb" />
-    <Compile Include="BasicUriParametersShouldNotBeStrings.vb" />
-    <Compile Include="BasicUriParametersShouldNotBeStrings.Fixer.vb" />
-    <Compile Include="BasicUriReturnValuesShouldNotBeStrings.vb" />
-    <Compile Include="BasicUriReturnValuesShouldNotBeStrings.Fixer.vb" />
-    <Compile Include="BasicUriPropertiesShouldNotBeStrings.vb" />
-    <Compile Include="BasicUriPropertiesShouldNotBeStrings.Fixer.vb" />
     <Compile Include="BasicImplementIDisposableCorrectly.Fixer.vb" />
     <Compile Include="BasicIdentifiersShouldNotContainUnderscores.Fixer.vb" />
     <Compile Include="BasicIdentifiersShouldHaveCorrectSuffix.Fixer.vb" />

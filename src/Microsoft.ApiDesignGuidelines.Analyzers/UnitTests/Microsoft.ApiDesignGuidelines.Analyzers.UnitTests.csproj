@@ -235,9 +235,7 @@
     <Compile Include="UriParametersShouldNotBeStringsTests.cs" />
     <Compile Include="UriParametersShouldNotBeStringsTests.Fixer.cs" />
     <Compile Include="UriReturnValuesShouldNotBeStringsTests.cs" />
-    <Compile Include="UriReturnValuesShouldNotBeStringsTests.Fixer.cs" />
     <Compile Include="UriPropertiesShouldNotBeStringsTests.cs" />
-    <Compile Include="UriPropertiesShouldNotBeStringsTests.Fixer.cs" />
     <Compile Include="ImplementIDisposableCorrectlyTests.cs" />
     <Compile Include="ImplementIDisposableCorrectlyTests.Fixer.cs" />
     <Compile Include="ExceptionsShouldBePublicTests.cs" />

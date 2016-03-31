@@ -18,6 +18,9 @@
         -Microsoft.Design#CA1030;
         -Microsoft.Design#CA1036;
         -Microsoft.Design#CA1060;
+        -Microsoft.Design#CA1054;
+        -Microsoft.Design#CA1055;
+        -Microsoft.Design#CA1056;
 
         -Microsoft.Naming#CA1720;
 

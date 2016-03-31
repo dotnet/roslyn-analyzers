@@ -19,14 +19,14 @@ namespace Microsoft.QualityGuidelines.Analyzers
         internal const string RuleId = "CA2219";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesTitle), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
-
-        private static readonly LocalizableString s_localizableMessageFinally = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesMessageFinally), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesMessageFinally), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesDescription), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
+
         private const string helpLinkUrl = "https://msdn.microsoft.com/en-us/library/bb386041.aspx";
 
-        internal static DiagnosticDescriptor FinallyRule = new DiagnosticDescriptor(RuleId,
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
-                                                                             s_localizableMessageFinally,
+                                                                             s_localizableMessage,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
@@ -34,38 +34,31 @@ namespace Microsoft.QualityGuidelines.Analyzers
                                                                              helpLinkUri: helpLinkUrl,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(FinallyRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            analysisContext.RegisterCompilationStartAction(compilationStartContext =>
+            analysisContext.RegisterOperationBlockAction(operationBlockContext =>
             {
-                Compilation compilation = compilationStartContext.Compilation;
-                INamedTypeSymbol exceptionType = WellKnownTypes.Exception(compilation);
-                if (exceptionType == null)
+                foreach (var block in operationBlockContext.OperationBlocks)
                 {
-                    return;
-                }
+                    var walker = new ThrowInsideFinallyWalker();
+                    walker.Visit(block);
 
-                compilationStartContext.RegisterOperationBlockAction(operationBlockContext =>
-                {
-                    foreach (var block in operationBlockContext.OperationBlocks)
+                    foreach (var throwStatement in walker.ThrowStatements)
                     {
-                        var walker = new ThrowStatementWalker();
-                        walker.Visit(block);
-
-                        foreach (var throwStatement in walker.ThrowStatements)
-                        {
-                            operationBlockContext.ReportDiagnostic(throwStatement.Syntax.CreateDiagnostic(FinallyRule));
-                        }
+                        operationBlockContext.ReportDiagnostic(throwStatement.Syntax.CreateDiagnostic(Rule));
                     }
-                });
+                }
             });
         }
 
-        private class ThrowStatementWalker : OperationWalker
+        /// <summary>
+        /// Walks a IOperation tree to find throw statements inside finally blocks.
+        /// </summary>
+        private class ThrowInsideFinallyWalker : OperationWalker
         {
-            private int _insideFinally;
+            private int _finallyBlockNestingDepth;
 
             public List<IThrowStatement> ThrowStatements { get; private set; } = new List<IThrowStatement>();
 
@@ -77,14 +70,14 @@ namespace Microsoft.QualityGuidelines.Analyzers
                     Visit(catchClause);
                 }
 
-                _insideFinally++;
+                _finallyBlockNestingDepth++;
                 Visit(operation.FinallyHandler);
-                _insideFinally--;
+                _finallyBlockNestingDepth--;
             }
 
             public override void VisitThrowStatement(IThrowStatement operation)
             {
-                if (_insideFinally > 0)
+                if (_finallyBlockNestingDepth > 0)
                 {
                     ThrowStatements.Add(operation);
                 }

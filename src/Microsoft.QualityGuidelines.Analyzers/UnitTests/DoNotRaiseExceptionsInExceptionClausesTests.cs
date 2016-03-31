@@ -49,7 +49,7 @@ public class Test
 }
 ";
             VerifyCSharp(code,
-                GetCSharpResultAt(22, 13, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule));
+                GetCSharpResultAt(22, 13, DoNotRaiseExceptionsInExceptionClausesAnalyzer.Rule));
         }
 
         [Fact]
@@ -73,7 +73,7 @@ Public Class Test
 End Class
 ";
             VerifyBasic(code,
-                GetBasicResultAt(13, 13, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule));
+                GetBasicResultAt(13, 13, DoNotRaiseExceptionsInExceptionClausesAnalyzer.Rule));
         }
 
         [Fact]
@@ -109,10 +109,10 @@ public class Test
 }
 ";
             VerifyCSharp(code,
-                GetCSharpResultAt(15, 17, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule),
-                GetCSharpResultAt(19, 17, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule),
-                GetCSharpResultAt(23, 17, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule),
-                GetCSharpResultAt(25, 13, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule));
+                GetCSharpResultAt(15, 17, DoNotRaiseExceptionsInExceptionClausesAnalyzer.Rule),
+                GetCSharpResultAt(19, 17, DoNotRaiseExceptionsInExceptionClausesAnalyzer.Rule),
+                GetCSharpResultAt(23, 17, DoNotRaiseExceptionsInExceptionClausesAnalyzer.Rule),
+                GetCSharpResultAt(25, 13, DoNotRaiseExceptionsInExceptionClausesAnalyzer.Rule));
         }
 
         [Fact]
@@ -138,10 +138,10 @@ Public Class Test
 End Class
 ";
             VerifyBasic(code,
-                GetBasicResultAt(9, 17, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule),
-                GetBasicResultAt(11, 17, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule),
-                GetBasicResultAt(13, 17, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule),
-                GetBasicResultAt(15, 13, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule));
+                GetBasicResultAt(9, 17, DoNotRaiseExceptionsInExceptionClausesAnalyzer.Rule),
+                GetBasicResultAt(11, 17, DoNotRaiseExceptionsInExceptionClausesAnalyzer.Rule),
+                GetBasicResultAt(13, 17, DoNotRaiseExceptionsInExceptionClausesAnalyzer.Rule),
+                GetBasicResultAt(15, 13, DoNotRaiseExceptionsInExceptionClausesAnalyzer.Rule));
         }
     }
 }

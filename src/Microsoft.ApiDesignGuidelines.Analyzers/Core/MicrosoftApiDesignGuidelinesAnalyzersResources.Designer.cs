@@ -2224,6 +2224,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rename to &apos;{0}&apos;.
+        /// </summary>
+        internal static string RenameToTitle {
+            get {
+                return ResourceManager.GetString("RenameToTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A public or protected type contains only static members and is not declared by using the sealed (C# Reference) (NotInheritable) modifier. A type that is not meant to be inherited should be marked by using the sealed modifier to prevent its use as a base type..
         /// </summary>
         internal static string StaticHolderTypesShouldBeSealedDescription {

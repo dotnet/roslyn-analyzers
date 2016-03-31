@@ -148,8 +148,6 @@
     <Compile Include="CSharpIdentifiersShouldNotMatchKeywords.Fixer.cs" />
     <Compile Include="CSharpPropertyNamesShouldNotMatchGetMethods.Fixer.cs" />
     <Compile Include="CSharpTypeNamesShouldNotMatchNamespaces.Fixer.cs" />
-    <Compile Include="CSharpParameterNamesShouldMatchBaseDeclaration.cs" />
-    <Compile Include="CSharpParameterNamesShouldMatchBaseDeclaration.Fixer.cs" />
     <Compile Include="CSharpUsePreferredTerms.cs" />
     <Compile Include="CSharpUsePreferredTerms.Fixer.cs" />
     <Compile Include="CSharpOverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.cs" />

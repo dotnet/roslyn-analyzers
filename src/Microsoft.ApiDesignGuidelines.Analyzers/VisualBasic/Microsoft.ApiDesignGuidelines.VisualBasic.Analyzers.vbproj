@@ -148,8 +148,6 @@
     <Compile Include="BasicIdentifiersShouldNotMatchKeywords.Fixer.vb" />
     <Compile Include="BasicPropertyNamesShouldNotMatchGetMethods.Fixer.vb" />
     <Compile Include="BasicTypeNamesShouldNotMatchNamespaces.Fixer.vb" />
-    <Compile Include="BasicParameterNamesShouldMatchBaseDeclaration.vb" />
-    <Compile Include="BasicParameterNamesShouldMatchBaseDeclaration.Fixer.vb" />
     <Compile Include="BasicUsePreferredTerms.vb" />
     <Compile Include="BasicUsePreferredTerms.Fixer.vb" />
     <Compile Include="BasicOverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.vb" />

@@ -359,51 +359,6 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to When an exception is raised in a finally or fault clause, the new exception hides the active exception. When an exception is raised in a filter clause, the run time silently catches the exception. This makes the original error difficult to detect and debug..
-        /// </summary>
-        internal static string DoNotRaiseExceptionsInExceptionClausesDescription {
-            get {
-                return ResourceManager.GetString("DoNotRaiseExceptionsInExceptionClausesDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Modify member {0} so that it does not raise an exception from within a fault clause. When an exception is raised from within a fault clause, the new exception hides the active exception, making the original error hard to detect and debug..
-        /// </summary>
-        internal static string DoNotRaiseExceptionsInExceptionClausesMessageFault {
-            get {
-                return ResourceManager.GetString("DoNotRaiseExceptionsInExceptionClausesMessageFault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Modify member {0} so that it does not raise an exception from within a filter clause. When an exception is raised from within a filter clause, the runtime silently catches the exception, causing the filter to evaluate to false. This makes it hard to detect and debug errors in the filter&apos;s logic..
-        /// </summary>
-        internal static string DoNotRaiseExceptionsInExceptionClausesMessageFilter {
-            get {
-                return ResourceManager.GetString("DoNotRaiseExceptionsInExceptionClausesMessageFilter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Modify member {0} so that it does not raise an exception from within a finally clause. When an exception is raised from within a finally clause, the new exception hides the active exception, if present, making the original error hard to detect and debug..
-        /// </summary>
-        internal static string DoNotRaiseExceptionsInExceptionClausesMessageFinally {
-            get {
-                return ResourceManager.GetString("DoNotRaiseExceptionsInExceptionClausesMessageFinally", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do not raise exceptions in exception clauses.
-        /// </summary>
-        internal static string DoNotRaiseExceptionsInExceptionClausesTitle {
-            get {
-                return ResourceManager.GetString("DoNotRaiseExceptionsInExceptionClausesTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type..
         /// </summary>
         internal static string DoNotRaiseReservedExceptionTypesDescription {

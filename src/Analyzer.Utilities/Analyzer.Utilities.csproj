@@ -47,6 +47,7 @@
     <Compile Include="Extensions\INamedTypeSymbolExtensions.cs" />
     <Compile Include="Extensions\ISymbolExtensions.cs" />
     <Compile Include="Extensions\ITypeSymbolExtensions.cs" />
+    <Compile Include="Extensions\IOperationExtensions.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\SyntaxNodeExtensions.cs" />

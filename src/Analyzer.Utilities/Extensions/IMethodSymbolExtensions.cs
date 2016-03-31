@@ -104,38 +104,6 @@ namespace Analyzer.Utilities
             INamedTypeSymbol constructedInterface = typeArgument != null ? interfaceType?.Construct(typeArgument) : interfaceType;
             var interfaceMethod = constructedInterface?.GetMembers(interfaceMethodName).Single() as IMethodSymbol;
 
-            return IsInterfaceMethodImplementation(method, interfaceMethod);
-        }
-
-        /// <summary>
-        /// Checks if the given method implements any interface method, implicitly or explicitly.
-        /// </summary>
-        public static bool IsImplementationOfAnyInterfaceMethod(this IMethodSymbol method)
-        {
-            if (method.ExplicitInterfaceImplementations.Length > 0)
-            {
-                return true;
-            }
-
-            // This is an approximation, because another class could derive from this one
-            // and rely on methodSymbol implementing one of *it's* interfaces methods, but
-            // it's good enough.
-            foreach (INamedTypeSymbol interfaceSymbol in method.ContainingType.AllInterfaces)
-            {
-                foreach (IMethodSymbol interfaceMethod in interfaceSymbol.GetMembers().OfType<IMethodSymbol>())
-                {
-                    if (IsInterfaceMethodImplementation(method, interfaceMethod))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        private static bool IsInterfaceMethodImplementation(IMethodSymbol method, IMethodSymbol interfaceMethod)
-        {
             return interfaceMethod != null && method.Equals(method.ContainingType.FindImplementationForInterfaceMember(interfaceMethod));
         }
 

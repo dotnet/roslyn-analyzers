@@ -131,7 +131,6 @@
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.cs" />
     <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.Fixer.cs" />
     <Compile Include="CSharpCollectionsShouldImplementGenericInterface.Fixer.cs" />
-    <Compile Include="CSharpUseEventsWhereAppropriate.cs" />
     <Compile Include="CSharpUseEventsWhereAppropriate.Fixer.cs" />
     <Compile Include="CSharpImplementStandardExceptionConstructors.cs" />
     <Compile Include="CSharpAvoidEmptyInterfaces.cs" />
@@ -149,9 +148,7 @@
     <Compile Include="CSharpUriPropertiesShouldNotBeStrings.cs" />
     <Compile Include="CSharpUriPropertiesShouldNotBeStrings.Fixer.cs" />
     <Compile Include="CSharpImplementIDisposableCorrectly.Fixer.cs" />
-    <Compile Include="CSharpIdentifiersShouldNotContainUnderscores.cs" />
     <Compile Include="CSharpIdentifiersShouldNotContainUnderscores.Fixer.cs" />
-    <Compile Include="CSharpIdentifiersShouldHaveCorrectSuffix.cs" />
     <Compile Include="CSharpIdentifiersShouldHaveCorrectSuffix.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldNotHaveIncorrectSuffix.cs" />
     <Compile Include="CSharpIdentifiersShouldNotHaveIncorrectSuffix.Fixer.cs" />

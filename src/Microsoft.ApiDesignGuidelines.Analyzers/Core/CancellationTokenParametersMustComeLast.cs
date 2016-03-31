@@ -40,7 +40,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     {
                         var methodSymbol = (IMethodSymbol)symbolContext.Symbol;
                         if (methodSymbol.IsOverride ||
-                            methodSymbol.IsImplementationOfAnyInterfaceMethod())
+                            methodSymbol.IsImplementationOfAnyInterfaceMember())
                         {
                             return;
                         }

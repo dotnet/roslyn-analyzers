@@ -151,20 +151,29 @@ namespace Analyzer.Utilities
             return member != null && member.Kind == SymbolKind.Field && member.MatchMemberByName(type, name);
         }
 
-        public static bool ContainsParameterWithType(this IEnumerable<IParameterSymbol> parameters, INamedTypeSymbol type)
+        /// <summary>
+        /// Check whether given parameters contains any parameter with given type.
+        /// </summary>
+        public static bool ContainsParameterOfType(this IEnumerable<IParameterSymbol> parameters, INamedTypeSymbol type)
         {
-            var parametersWithType = GetParametersWithType(parameters, type);
-            return parametersWithType.Any();
+            var parametersOfType = GetParametersOfType(parameters, type);
+            return parametersOfType.Any();
         }
 
-        public static IEnumerable<IParameterSymbol> GetParametersWithType(this IEnumerable<IParameterSymbol> parameters, INamedTypeSymbol type)
+        /// <summary>
+        /// Get parameters which type is the given type
+        /// </summary>
+        public static IEnumerable<IParameterSymbol> GetParametersOfType(this IEnumerable<IParameterSymbol> parameters, INamedTypeSymbol type)
         {
-            return parameters.Where(p => p.Type?.Equals(type) == true);
+            return parameters.Where(p => p.Type.Equals(type) == true);
         }
 
-        public static bool OverloadWithGivenTypeParameterExist(this IEnumerable<IMethodSymbol> overloads, IMethodSymbol self, INamedTypeSymbol type, CancellationToken cancellationToken)
+        /// <summary>
+        /// Check whether given overloads has any overload whose parameters has the given type as its parameter type.
+        /// </summary>
+        public static bool HasOverloadWithParameterOfType(this IEnumerable<IMethodSymbol> overloads, IMethodSymbol self, INamedTypeSymbol type, CancellationToken cancellationToken)
         {
-            foreach (IMethodSymbol overload in overloads)
+            foreach (var overload in overloads)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -182,6 +191,9 @@ namespace Analyzer.Utilities
             return false;
         }
 
+        /// <summary>
+        /// Convert given parameters to the indices to the given method's parameter list.
+        /// </summary>
         public static IEnumerable<int> GetParameterIndices(this IMethodSymbol method, IEnumerable<IParameterSymbol> parameters, CancellationToken cancellationToken)
         {
             var set = new HashSet<IParameterSymbol>(parameters);
@@ -196,6 +208,9 @@ namespace Analyzer.Utilities
             }
         }
 
+        /// <summary>
+        /// Check whether parameter types of the given methods are same for given parameter indices.
+        /// </summary>
         public static bool ParameterTypesAreSame(this IMethodSymbol method1, IMethodSymbol method2, IEnumerable<int> parameterIndices, CancellationToken cancellationToken)
         {
             foreach (int index in parameterIndices)
@@ -204,7 +219,7 @@ namespace Analyzer.Utilities
 
                 // this doesnt account for type conversion but FxCop implementation seems doesnt either
                 // so this should match FxCop implementation.
-                if (method2.Parameters[index].Type?.Equals(method1.Parameters[index].Type) == false)
+                if (method2.Parameters[index].Type.Equals(method1.Parameters[index].Type) == false)
                 {
                     return false;
                 }
@@ -213,27 +228,18 @@ namespace Analyzer.Utilities
             return true;
         }
 
-        public static bool AllParametersHaveGivenType(this IMethodSymbol method, IEnumerable<int> parameterIndices, INamedTypeSymbol type, CancellationToken cancellationToken)
-        {
-            foreach (var index in parameterIndices)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                if (method.Parameters[index].Type?.Equals(type) == false)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
+        /// <summary>
+        /// Check whether given symbol is from mscorlib
+        /// </summary>
         public static bool IsFromMscorlib(this ISymbol symbol, Compilation compilation)
         {
             var @object = WellKnownTypes.Object(compilation);
             return symbol.ContainingAssembly?.Equals(@object.ContainingAssembly) == true;
         }
 
+        /// <summary>
+        /// Get overload from the given overloads that matches given method signature + given parameter
+        /// </summary>
         public static IMethodSymbol GetMatchingOverload(this IMethodSymbol method, IEnumerable<IMethodSymbol> overloads, int parameterIndex, INamedTypeSymbol type, CancellationToken cancellationToken)
         {
             foreach (IMethodSymbol overload in overloads)
@@ -253,7 +259,7 @@ namespace Analyzer.Utilities
                     continue;
                 }
 
-                if (overload.Parameters[parameterIndex].Type?.Equals(type) == true)
+                if (overload.Parameters[parameterIndex].Type.Equals(type) == true)
                 {
                     // we no longer interested in this overload. there can be only 1 match
                     return overload;

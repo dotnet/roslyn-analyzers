@@ -89,7 +89,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return;
                 }
 
-                var stringParameters = method.Parameters.GetParametersWithType(_string);
+                var stringParameters = method.Parameters.GetParametersOfType(_string);
                 if (!stringParameters.Any())
                 {
                     // no string parameter. not interested.

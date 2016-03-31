@@ -125,7 +125,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 //         it seems wierd that I need to do this to get thsoe.
                 var model = _compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree);
 
-                var stringParameters = method.Parameters.GetParametersWithType(_string);
+                var stringParameters = method.Parameters.GetParametersOfType(_string);
                 if (!stringParameters.Any())
                 {
                     // no string parameter. not interested.
@@ -141,7 +141,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                 // now we make sure we actually have overloads that contains uri type parameter
                 var overloads = model.GetMemberGroup(node, context.CancellationToken).OfType<IMethodSymbol>();
-                if (!overloads.OverloadWithGivenTypeParameterExist(method, _uri, context.CancellationToken))
+                if (!overloads.HasOverloadWithParameterOfType(method, _uri, context.CancellationToken))
                 {
                     // no overload that contains uri as parameter
                     return;

@@ -33,7 +33,7 @@ namespace Analyzer.Utilities
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                if (symbol.Name?.IndexOf(word, StringComparison.OrdinalIgnoreCase) >= 0)
+                if (symbol.Name.IndexOf(word, StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     return true;
                 }

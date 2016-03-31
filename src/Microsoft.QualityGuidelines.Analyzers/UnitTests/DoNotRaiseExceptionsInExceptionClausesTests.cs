@@ -49,7 +49,7 @@ public class Test
 }
 ";
             VerifyCSharp(code,
-                GetCSharpResultAt(20, 13, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule));
+                GetCSharpResultAt(22, 13, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule));
         }
 
         [Fact]
@@ -73,7 +73,75 @@ Public Class Test
 End Class
 ";
             VerifyBasic(code,
-                GetBasicResultAt(20, 13, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule));
+                GetBasicResultAt(13, 13, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule));
+        }
+
+        [Fact]
+        public void CSharpNestedFinally()
+        {
+            var code = @"
+using System;
+
+public class Test
+{
+    public static void Main()
+    {
+        try
+        {
+        }
+        finally
+        {
+            try
+            {
+                throw new Exception();
+            }
+            catch 
+            {
+                throw new Exception();
+            }
+            finally
+            {
+                throw new Exception();
+            }
+            throw new Exception();
+        }
+    }
+}
+";
+            VerifyCSharp(code,
+                GetCSharpResultAt(15, 17, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule),
+                GetCSharpResultAt(19, 17, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule),
+                GetCSharpResultAt(23, 17, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule),
+                GetCSharpResultAt(25, 13, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule));
+        }
+
+        [Fact]
+        public void BasicNestedFinally()
+        {
+            var code = @"
+Imports System
+
+Public Class Test
+    Public Sub Method()
+        Try
+        Finally
+            Try
+                Throw New Exception()
+            Catch
+                Throw New Exception()
+            Finally
+                Throw New Exception()
+            End Try
+            Throw New Exception()
+        End Try
+    End Sub
+End Class
+";
+            VerifyBasic(code,
+                GetBasicResultAt(9, 17, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule),
+                GetBasicResultAt(11, 17, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule),
+                GetBasicResultAt(13, 17, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule),
+                GetBasicResultAt(15, 13, DoNotRaiseExceptionsInExceptionClausesAnalyzer.FinallyRule));
         }
     }
 }

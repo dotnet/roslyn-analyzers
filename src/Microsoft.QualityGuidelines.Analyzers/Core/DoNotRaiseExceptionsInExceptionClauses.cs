@@ -47,18 +47,50 @@ namespace Microsoft.QualityGuidelines.Analyzers
                     return;
                 }
 
-                compilationStartContext.RegisterOperationAction(operationContext =>
+                compilationStartContext.RegisterOperationBlockAction(operationBlockContext =>
                 {
-                    var tryStatement = operationContext.Operation as ITryStatement;
-
-                    var throwStatements = tryStatement.FinallyHandler.Statements.OfType<IThrowStatement>();
-
-                    foreach (var throwStatement in throwStatements)
+                    foreach (var block in operationBlockContext.OperationBlocks)
                     {
-                        operationContext.ReportDiagnostic(throwStatement.Syntax.CreateDiagnostic(FinallyRule));
+                        var walker = new ThrowStatementWalker();
+                        walker.Visit(block);
+
+                        foreach (var throwStatement in walker.ThrowStatements)
+                        {
+                            operationBlockContext.ReportDiagnostic(throwStatement.Syntax.CreateDiagnostic(FinallyRule));
+                        }
                     }
-                }, OperationKind.TryStatement);
+                });
             });
+        }
+
+        private class ThrowStatementWalker : OperationWalker
+        {
+            private int _insideFinally;
+
+            public List<IThrowStatement> ThrowStatements { get; private set; } = new List<IThrowStatement>();
+
+            public override void VisitTryStatement(ITryStatement operation)
+            {
+                Visit(operation.Body);
+                foreach (var catchClause in operation.Catches)
+                {
+                    Visit(catchClause);
+                }
+
+                _insideFinally++;
+                Visit(operation.FinallyHandler);
+                _insideFinally--;
+            }
+
+            public override void VisitThrowStatement(IThrowStatement operation)
+            {
+                if (_insideFinally > 0)
+                {
+                    ThrowStatements.Add(operation);
+                }
+
+                base.VisitThrowStatement(operation);
+            }
         }
     }
 }

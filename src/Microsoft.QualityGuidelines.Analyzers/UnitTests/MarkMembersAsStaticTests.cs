@@ -159,6 +159,13 @@ public class MembersTests
         return temp.x;
     }
 
+    private int backingField;
+    public int Prop1 
+    { 
+        get { return backingField; }
+        set { backingField = value; }
+    }
+
     public int AutoProp { get; set; }
     public int GetterOnlyAutoProp { get; }
 
@@ -168,6 +175,11 @@ public class MembersTests
 public class Generic<T>
 {
     public void Method1() { }
+    
+    public int Property
+    {
+        get { return 5; }
+    }
 }
 ");
         }
@@ -194,6 +206,16 @@ Public Class MembersTests
         Return temp.x
     End Function
 
+    Private backingField As Integer
+    Public Property Prop1 As Integer
+        Get
+            Return backingField
+        End Get
+        Set 
+            backingField = Value
+        End Set
+    End Property
+
     Public Property AutoProp As Integer
     Public ReadOnly Property GetterOnlyAutoProp As Integer
 
@@ -204,6 +226,12 @@ End Class
 Public Class Generic(Of T)
     Public Sub Method1()
     End Sub
+
+    Public ReadOnly Property Property1 As Integer
+        Get
+            Return 5
+        End Get
+    End Property
 End Class
 ");
         }

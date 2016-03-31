@@ -62,11 +62,22 @@ Public Class Tester
     Public Sub Testing()
         Dim c as Integer
         c = 0
+        Dim lambda As Action = Sub()
+                                   Dim lambdaA = 0
+                                   lambdaA = 3
+                               End Sub
+        Dim rateIt = 3
+        Dim debitIt = 4
+        Calculate(rateIt, debitIt)
+    End Sub
+
+    Sub Calculate(ByVal rate As Double, ByRef debt As Double)
+        debt = debt + (debt * rate / 100)
     End Sub
 End Class", 
-            GetBasicResultAt(4, 13, CA1804RuleId, _CA1804RemoveUnusedLocalMessage));
+            GetBasicResultAt(4, 13, CA1804RuleId, _CA1804RemoveUnusedLocalMessage),
+            GetBasicResultAt(6, 13, CA1804RuleId, _CA1804RemoveUnusedLocalMessage),
+            GetBasicResultAt(7, 40, CA1804RuleId, _CA1804RemoveUnusedLocalMessage));
         }
-
-
     }
 }

@@ -30,12 +30,14 @@ public class Class1
     static readonly int f5 = 3;
     const int f6 = 3;
     static readonly int f7 = 8 + f6;
+    internal static readonly int f8 = 8 + f6;
 }",
         GetCSharpEmptyStringResultAt(line: 4, column: 28, symbolName: "f1"),
         GetCSharpDefaultResultAt(line: 5, column: 28, symbolName: "f2", value: "Nothing"),
         GetCSharpDefaultResultAt(line: 6, column: 31, symbolName: "f4", value: "Message is shown only for f4"),
         GetCSharpDefaultResultAt(line: 7, column: 25, symbolName: "f5", value: "3"),
-        GetCSharpDefaultResultAt(line: 9, column: 25, symbolName: "f7", value: "11"));
+        GetCSharpDefaultResultAt(line: 9, column: 25, symbolName: "f7", value: "11"),
+        GetCSharpDefaultResultAt(line: 10, column: 34, symbolName: "f8", value: "11"));
         }
 
         [Fact]
@@ -44,8 +46,7 @@ public class Class1
             VerifyCSharp(@"
 public class Class1
 {
-    public static readonly string f1 = """"; // Not private
-    internal static readonly string f2 = ""Nothing""; // Not private
+    public static readonly string f1 = """"; // Not private or Internal
     static string f3, f4 = ""Message is shown only for f4""; // Not readonly
     readonly int f5 = 3; // Not static
     const int f6 = 3; // Is already const
@@ -65,12 +66,14 @@ Public Class Class1
     Shared ReadOnly f5 As Integer = 3
     Const f6 As Integer = 3
     Shared ReadOnly f7 As Integer = 8 + f6
+    Friend Shared ReadOnly f8 As Integer = 8 + f6
 End Class",
         GetBasicEmptyStringResultAt(line: 3, column: 21, symbolName: "f1"),
         GetBasicDefaultResultAt(line: 4, column: 21, symbolName: "f2", value: "Nothing"),
         GetBasicDefaultResultAt(line: 5, column: 35, symbolName: "f4", value: "Message is shown only for f4"),
         GetBasicDefaultResultAt(line: 6, column: 21, symbolName: "f5", value: "3"),
-        GetBasicDefaultResultAt(line: 8, column: 21, symbolName: "f7", value: "11"));
+        GetBasicDefaultResultAt(line: 8, column: 21, symbolName: "f7", value: "11"),
+        GetBasicDefaultResultAt(line: 9, column: 28, symbolName: "f8", value: "11"));
         }
 
         [Fact]
@@ -78,10 +81,8 @@ End Class",
         {
             VerifyBasic(@"
 Public Class Class1
-    ' Not Private
+    ' Not Private or Friend
     Public Shared ReadOnly f1 As String = ""
-    ' Not Private
-    Friend Shared ReadOnly f2 As String = ""Nothing""
     ' Not Readonly
     Shared f3 As String, f4 As String = ""Message is shown only for f4""
     ' Not Shared

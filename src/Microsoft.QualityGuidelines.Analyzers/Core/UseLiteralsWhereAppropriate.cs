@@ -56,25 +56,25 @@ namespace Microsoft.QualityGuidelines.Analyzers
                 var fieldInitializerValue = fieldInitializer.Value;
                 if (fieldInitializerValue == null||
                     lastField.IsConst ||
-                    lastField.GetResultantVisibility() != SymbolVisibility.Private ||!lastField.IsStatic || !lastField.IsReadOnly)
+                    lastField.GetResultantVisibility() == SymbolVisibility.Public ||!lastField.IsStatic || !lastField.IsReadOnly ||
+                    !fieldInitializerValue.ConstantValue.HasValue)
                 {
                     return;
                 }
 
-                if(fieldInitializerValue.ConstantValue.HasValue)
-                {
-                    var initializerValue = fieldInitializerValue.ConstantValue.Value;
-                    if (initializerValue != null)
-                    {
-                        if (fieldInitializerValue.Type == saContext.Compilation.GetSpecialType(SpecialType.System_String) &&
-                            ((string)initializerValue)?.Length == 0)
-                        {
-                            saContext.ReportDiagnostic(lastField.CreateDiagnostic(EmptyStringRule, lastField.Name));
-                            return;
-                        }
+                var initializerValue = fieldInitializerValue.ConstantValue.Value;
 
-                        saContext.ReportDiagnostic(lastField.CreateDiagnostic(DefaultRule, lastField.Name, initializerValue.ToString()));
+                // Though null is const we dont fire the diagnostic to be FxCop Compact
+                if (initializerValue != null)
+                {
+                    if (fieldInitializerValue.Type == saContext.Compilation.GetSpecialType(SpecialType.System_String) &&
+                        ((string)initializerValue)?.Length == 0)
+                    {
+                        saContext.ReportDiagnostic(lastField.CreateDiagnostic(EmptyStringRule, lastField.Name));
+                        return;
                     }
+
+                    saContext.ReportDiagnostic(lastField.CreateDiagnostic(DefaultRule, lastField.Name, initializerValue));
                 }
             },
             OperationKind.FieldInitializerAtDeclaration);

@@ -111,7 +111,6 @@
     <Compile Include="VariableNamesShouldNotMatchFieldNames.Fixer.cs" />
     <Compile Include="ReviewUnusedParameters.cs" />
     <Compile Include="ReviewUnusedParameters.Fixer.cs" />
-    <Compile Include="RemoveUnusedLocals.cs" />
     <Compile Include="RemoveUnusedLocals.Fixer.cs" />
     <Compile Include="DoNotIgnoreMethodResults.cs" />
     <Compile Include="AvoidUninstantiatedInternalClasses.cs" />

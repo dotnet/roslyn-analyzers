@@ -13,6 +13,12 @@ namespace Microsoft.QualityGuidelines.Analyzers
     /// <summary>
     /// CA2219: Do not raise exceptions in exception clauses
     /// </summary>
+    /// <remarks>
+    /// The original FxCop implementation of this rule finds violations of this rule inside 
+    /// filter and fault blocks. However in both C# and VB there's no way to throw an exception
+    /// inside a filter block and there is no language representation for Fault blocks in either language.
+    /// So this analyzer just checks for throw statements inside finally blocks.
+    /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotRaiseExceptionsInExceptionClausesAnalyzer : DiagnosticAnalyzer
     {

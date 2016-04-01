@@ -659,7 +659,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Specify CultureInfo.
+        ///   Looks up a localized string similar to Because the behavior of &apos;{0}&apos; could vary based on the current user&apos;s locale settings, replace this call in &apos;{1}&apos; with a call to &apos;{2}&apos;. If the result of &apos;{2}&apos; will be displayed to the user, specify &apos;CultureInfo.CurrentCulture&apos; as the &apos;CultureInfo&apos; parameter. Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk or to a database, specify &apos;CultureInfo.InvariantCulture&apos;..
         /// </summary>
         internal static string SpecifyCultureInfoMessage {
             get {

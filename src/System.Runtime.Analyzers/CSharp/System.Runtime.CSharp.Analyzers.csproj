@@ -120,7 +120,6 @@
     <Compile Include="CSharpAvoidZeroLengthArrayAllocations.cs" />
     <Compile Include="CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.cs" />
     <Compile Include="CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.Fixer.cs" />
-    <Compile Include="CSharpSpecifyCultureInfo.cs" />
     <Compile Include="CSharpSpecifyCultureInfo.Fixer.cs" />
     <Compile Include="CSharpSpecifyIFormatProvider.cs" />
     <Compile Include="CSharpSpecifyIFormatProvider.Fixer.cs" />

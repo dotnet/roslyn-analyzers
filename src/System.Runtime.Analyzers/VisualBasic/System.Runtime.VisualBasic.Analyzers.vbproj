@@ -118,7 +118,6 @@
     <Compile Include="BasicAvoidZeroLengthArrayAllocations.vb" />
     <Compile Include="BasicDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.vb" />
     <Compile Include="BasicDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.Fixer.vb" />
-    <Compile Include="BasicSpecifyCultureInfo.vb" />
     <Compile Include="BasicSpecifyCultureInfo.Fixer.vb" />
     <Compile Include="BasicSpecifyIFormatProvider.vb" />
     <Compile Include="BasicSpecifyIFormatProvider.Fixer.vb" />

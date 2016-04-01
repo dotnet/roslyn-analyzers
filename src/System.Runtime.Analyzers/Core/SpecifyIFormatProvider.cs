@@ -1,9 +1,14 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Globalization;
+using System.Linq;
+using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Analyzer.Utilities;
+using Microsoft.CodeAnalysis.Semantics;
 
 namespace System.Runtime.Analyzers
 {
@@ -63,6 +68,129 @@ namespace System.Runtime.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.RegisterCompilationStartAction(csaContext =>
+            {
+                var stringType = csaContext.Compilation.GetSpecialType(SpecialType.System_String);
+
+                var stringFormatMembers = stringType?.GetMembers("Format").OfType<IMethodSymbol>();
+                var stringFormatMemberWithStringAndObjectParameter = GetMemberWithName(stringFormatMembers, "string.Format(string, object)");
+                var stringFormatMemberWithStringObjectAndObjectParameter = GetMemberWithName(stringFormatMembers, "string.Format(string, object, object)");
+                var stringFormatMemberWithStringObjectObjectAndObjectParameter = GetMemberWithName(stringFormatMembers, "string.Format(string, object, object, object)");
+                var stringFormatMemberWithStringAndParamsObjectParameter = GetMemberWithName(stringFormatMembers, "string.Format(string, params object[])");
+                var stringFormatMemberWithIFormatProviderStringAndParamsObjectParameter = GetMemberWithName(stringFormatMembers, "string.Format(System.IFormatProvider, string, params object[])");
+
+                var IFormatProviderType = csaContext.Compilation.GetTypeByMetadataName("System.IFormatProvider");
+
+                var CultureInfoType = csaContext.Compilation.GetTypeByMetadataName("System.Globalization.CultureInfo");
+                var currentCultureProperty = CultureInfoType?.GetMembers("CurrentCulture").OfType<IPropertySymbol>().SingleOrDefault();
+                var invariantCultureProperty = CultureInfoType?.GetMembers("InvariantCulture").OfType<IPropertySymbol>().SingleOrDefault();
+                var currentUICultureProperty = CultureInfoType?.GetMembers("CurrentUICulture").OfType<IPropertySymbol>().SingleOrDefault();
+                var installedUICultureProperty = CultureInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().SingleOrDefault();
+
+                var threadType = csaContext.Compilation.GetTypeByMetadataName("System.Threading.Thread");
+                var currentThreadCurrentUICultureProperty = threadType?.GetMembers("CurrentUICulture").OfType<IPropertySymbol>().SingleOrDefault();
+
+                csaContext.RegisterOperationAction(oaContext =>
+                {
+                    var invocationExpression = (IInvocationExpression)oaContext.Operation;
+                    var targetMethod = invocationExpression.TargetMethod;
+
+                    if (stringType != null && CultureInfoType != null &&
+                        (targetMethod.Equals(stringFormatMemberWithStringAndObjectParameter) ||
+                         targetMethod.Equals(stringFormatMemberWithStringObjectAndObjectParameter) ||
+                         targetMethod.Equals(stringFormatMemberWithStringObjectObjectAndObjectParameter) ||
+                         targetMethod.Equals(stringFormatMemberWithStringAndParamsObjectParameter)))
+                    {
+                        // Sample message for IFormatProviderAlternateStringRule: Because the behavior of string.Format(string, object) could vary based on the current user's locale settings,
+                        // replace this call in IFormatProviderStringTest.M() with a call to string.Format(System.IFormatProvider, string, params object[]). If the result of 
+                        // string.Format(System.IFormatProvider, string, params object[]) will be displayed to the user, specify System.Globalization.CultureInfo.CurrentCulture as the 'IFormatProvider' parameter.
+                        // Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk or to a database, specify System.Globalization.CultureInfo.InvariantCulture.
+                        oaContext.ReportDiagnostic(
+                            invocationExpression.Syntax.CreateDiagnostic(
+                                IFormatProviderAlternateStringRule,
+                                targetMethod.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
+                                oaContext.ContainingSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
+                                stringFormatMemberWithIFormatProviderStringAndParamsObjectParameter.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
+                                currentCultureProperty.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
+                                invariantCultureProperty.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
+
+                        return;
+                    }
+
+                    IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType.GetMembers(targetMethod.Name).OfType<IMethodSymbol>();
+                    if (methodsWithSameNameAsTargetMethod.Count() > 1)
+                    {
+                        var correctOverloads = methodsWithSameNameAsTargetMethod.GetMethodOverloadsWithDesiredParameterAtLeadingOrTrailing(targetMethod, IFormatProviderType);
+                        
+                        // If there are two matching overloads, one with CultureInfo as the first parameter and one with CultureInfo as the last parameter,
+                        // report the diagnostic on the overload with CultureInfo as the last parameter, to match the behavior of FxCop.
+                        var correctOverload = correctOverloads
+                                              .Where(overload => overload.Parameters.Last().Type.Equals(IFormatProviderType))
+                                              .FirstOrDefault() ?? correctOverloads.FirstOrDefault();
+
+                        // Sample message for IFormatProviderAlternateRule: Because the behavior of System.Convert.ToInt64(string) could vary based on the current user's locale settings,
+                        // replace this call in IFormatProviderStringTest.TestMethod() with a call to System.Convert.ToInt64(string, System.IFormatProvider). If the result of 
+                        // System.Convert.ToInt64(string, System.IFormatProvider) will be based on input from the user, specify System.Globalization.CultureInfo.CurrentCulture as the 'IFormatProvider' parameter.
+                        // Otherwise, if the result will based on input stored and accessed by software, such as when it is loaded from disk or from a database, specify System.Globalization.CultureInfo.InvariantCulture.
+                        if (correctOverload != null)
+                        {
+                            oaContext.ReportDiagnostic(
+                                invocationExpression.Syntax.CreateDiagnostic(
+                                    targetMethod.ReturnType.Equals(stringType) ? 
+                                     IFormatProviderAlternateStringRule :
+                                     IFormatProviderAlternateRule,
+                                    targetMethod.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
+                                    oaContext.ContainingSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
+                                    correctOverload.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
+                                    currentCultureProperty.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
+                                    invariantCultureProperty.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
+                        }
+                    }
+
+                    IEnumerable<int> IformatProviderParameterIndices = GetIndexesOfParameterType(targetMethod, IFormatProviderType);
+                    foreach (var index in IformatProviderParameterIndices)
+                    {
+                        var argument = invocationExpression.ArgumentsInParameterOrder[index];
+                        if (argument != null && currentUICultureProperty != null &&
+                            installedUICultureProperty != null && currentThreadCurrentUICultureProperty != null)
+                        {
+                            var semanticModel = oaContext.Compilation.GetSemanticModel(argument.Syntax.SyntaxTree);
+                            var symbol = semanticModel.GetSymbolInfo(argument.Syntax).Symbol;
+
+                            if (symbol != null &
+                                (symbol.Equals(currentUICultureProperty) ||
+                                 symbol.Equals(installedUICultureProperty) ||
+                                 symbol.Equals(currentThreadCurrentUICultureProperty)))
+                            {
+                                oaContext.ReportDiagnostic(
+                                    invocationExpression.Syntax.CreateDiagnostic(
+                                        targetMethod.ReturnType.Equals(stringType) ?
+                                            UICultureStringRule :
+                                            UICultureRule,
+                                        oaContext.ContainingSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
+                                        symbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
+                                        targetMethod.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
+                                        currentCultureProperty.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
+                                        invariantCultureProperty.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
+                            }
+                        }
+                    }
+
+                }, OperationKind.InvocationExpression);
+            });
+        }
+
+        private IEnumerable<int> GetIndexesOfParameterType(IMethodSymbol targetMethod, INamedTypeSymbol formatProviderType)
+        {
+            return targetMethod.Parameters
+                .Select((Parameter, Index) => new { Parameter, Index })
+                .Where(x => x.Parameter.Type.Equals(formatProviderType))
+                .Select(x => x.Index);
+        }
+
+        private static IMethodSymbol GetMemberWithName(IEnumerable<IMethodSymbol> stringFormatMembers, string displayName)
+        {
+            return stringFormatMembers?.Where(member => string.Equals(member.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat), displayName, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
         }
     }
 }

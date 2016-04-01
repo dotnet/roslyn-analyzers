@@ -72,5 +72,10 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 return this.Locations.Length > 0 ? this.Locations[0].Column : -1;
             }
         }
+
+        public override string ToString()
+        {
+            return Message;
+        }
     }
 }

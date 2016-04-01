@@ -1,11 +1,12 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Semantics;
-using System.Linq;
 
 namespace System.Runtime.Analyzers
 {
@@ -50,7 +51,7 @@ namespace System.Runtime.Analyzers
                             return;
                         }
 
-                        var methodsWithSameNameAsTargetMethod = targetMethod.ContainingType.GetMembers(targetMethod.Name).OfType<IMethodSymbol>();
+                        IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType.GetMembers(targetMethod.Name).OfType<IMethodSymbol>();
                         if (methodsWithSameNameAsTargetMethod.Count() < 2)
                         {
                             return;
@@ -63,18 +64,20 @@ namespace System.Runtime.Analyzers
                                 return false;
                             }
 
+                            // The expected method overload should either have the CultureInfo parameter as the first argument or as the last argument
                             // Assume CultureInfo is the last parameter so j, which is the index of the parameter
-                            // in m to compare against targetMethod's parameter is set to 0
+                            // in candidateMethod to compare against targetMethod's parameter is set to 0
                             int j = 0;
 
                             if (candidateMethod.Parameters.First().Type.Equals(cultureInfoType))
                             {
-                                // If CultureInfo is the first then the parameters to compare in m against targetMethod
+                                // If CultureInfo is the first parameter then the parameters to compare in candidateMethod against targetMethod
                                 // is offset by 1
                                 j = 1;
                             }
                             else if (!candidateMethod.Parameters.Last().Type.Equals(cultureInfoType))
                             {
+                                // CultureInfo is neither the first parameter nor the last parameter
                                 return false;
                             }
 

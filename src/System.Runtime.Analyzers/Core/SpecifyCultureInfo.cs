@@ -81,7 +81,6 @@ namespace System.Runtime.Analyzers
                                 return false;
                             }
 
-
                             for (int i = 0; i < targetMethod.Parameters.Count(); i++, j++)
                             {
                                 if (!targetMethod.Parameters[i].Type.Equals(candidateMethod.Parameters[j].Type))
@@ -93,7 +92,8 @@ namespace System.Runtime.Analyzers
                             return true;
                         });
 
-                        // Pick the one with CultureInfo as the last Parameter
+                        // If there are two matching overloads, one with CultureInfo as the first parameter and one with CultureInfo as the last parameter,
+                        // report the diagnostic on the overload with CultureInfo as the last parameter, to match the behavior of FxCop.
                         var correctOverload = correctOverloads
                                               .Where(overload => overload.Parameters.Last().Type.Equals(cultureInfoType))
                                               .FirstOrDefault() ?? correctOverloads.FirstOrDefault();

@@ -77,8 +77,12 @@ namespace System.Runtime.Analyzers
                 var stringFormatMemberWithStringAndObjectParameter = GetSingleOrDefaultMemberWithName(stringFormatMembers, "string.Format(string, object)");
                 var stringFormatMemberWithStringObjectAndObjectParameter = GetSingleOrDefaultMemberWithName(stringFormatMembers, "string.Format(string, object, object)");
                 var stringFormatMemberWithStringObjectObjectAndObjectParameter = GetSingleOrDefaultMemberWithName(stringFormatMembers, "string.Format(string, object, object, object)");
-                var stringFormatMemberWithStringAndParamsObjectParameter = GetSingleOrDefaultMemberWithName(stringFormatMembers, "string.Format(string, params object[])");
-                var stringFormatMemberWithIFormatProviderStringAndParamsObjectParameter = GetSingleOrDefaultMemberWithName(stringFormatMembers, "string.Format(System.IFormatProvider, string, params object[])");
+
+                var paramsObjectArraySymbolDisplay = csaContext.Compilation.Language == LanguageNames.CSharp ?
+                                                     "params object[]" :
+                                                     "ParamArray Object()";
+                var stringFormatMemberWithStringAndParamsObjectParameter = GetSingleOrDefaultMemberWithName(stringFormatMembers, $"string.Format(string, {paramsObjectArraySymbolDisplay})");
+                var stringFormatMemberWithIFormatProviderStringAndParamsObjectParameter = GetSingleOrDefaultMemberWithName(stringFormatMembers, $"string.Format(System.IFormatProvider, string, {paramsObjectArraySymbolDisplay})");
 
                 var IFormatProviderType = csaContext.Compilation.GetTypeByMetadataName("System.IFormatProvider");
 

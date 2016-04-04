@@ -795,7 +795,39 @@ GetIFormatProviderUICultureRuleBasicResultAt(13, 9, "UICultureAsIFormatProviderR
                                                     "System.Globalization.CultureInfo.InvariantCulture"));
        }
 
-       [Fact]
+        [Fact]
+        public void CA1305_NonStringReturningComputerInfoInstalledUICultureIFormatProvider_VisualBasic()
+        {
+            this.PrintActualDiagnosticsOnFailure = true;
+            VerifyBasic(@"
+Imports System
+Imports System.Globalization
+Imports System.Threading
+Imports Microsoft.VisualBasic.Devices
+
+Public NotInheritable Class UICultureAsIFormatProviderReturningNonStringTest
+    Private Sub New()
+    End Sub
+    Public Shared Sub TestMethod()
+        Dim computerInfo As New Microsoft.VisualBasic.Devices.ComputerInfo()
+        IFormatProviderOverloads.IFormatProviderReturningNonString(""1"", computerInfo.InstalledUICulture)
+    End Sub
+End Class
+
+Friend NotInheritable Class IFormatProviderOverloads
+    Private Sub New()
+    End Sub
+    Public Shared Sub IFormatProviderReturningNonString(format As String, provider As IFormatProvider)
+    End Sub
+End Class",
+GetIFormatProviderUICultureRuleBasicResultAt(12, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
+                                                    "Microsoft.VisualBasic.Devices.ComputerInfo.InstalledUICulture",
+                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, System.IFormatProvider)",
+                                                    "System.Globalization.CultureInfo.CurrentCulture",
+                                                    "System.Globalization.CultureInfo.InvariantCulture"));
+        }
+
+        [Fact]
        public void CA1305_RuleException_NoDiagnostics_VisualBasic()
        {
            VerifyBasic(@"

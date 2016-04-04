@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis.VisualBasic;
+using Microsoft.VisualBasic.Devices;
 using Roslyn.Test.Utilities;
 using Roslyn.Utilities;
 using Xunit;
@@ -22,8 +23,9 @@ namespace Microsoft.CodeAnalysis.UnitTests
         private static readonly MetadataReference s_systemCoreReference = MetadataReference.CreateFromAssemblyInternal(typeof(Enumerable).Assembly);
         private static readonly MetadataReference s_systemXmlReference = MetadataReference.CreateFromAssemblyInternal(typeof(System.Xml.XmlDocument).Assembly);
         private static readonly MetadataReference s_systemXmlDataReference = MetadataReference.CreateFromAssemblyInternal(typeof(System.Data.Rule).Assembly);
-        private static readonly MetadataReference s_CSharpSymbolsReference = MetadataReference.CreateFromAssemblyInternal(typeof(CSharpCompilation).Assembly);
+        private static readonly MetadataReference s_cSharpSymbolsReference = MetadataReference.CreateFromAssemblyInternal(typeof(CSharpCompilation).Assembly);
         private static readonly MetadataReference s_visualBasicSymbolsReference = MetadataReference.CreateFromAssemblyInternal(typeof(VisualBasicCompilation).Assembly);
+        private static readonly MetadataReference s_visualBasicReference = MetadataReference.CreateFromAssemblyInternal(typeof(ComputerInfo).Assembly);
         private static readonly MetadataReference s_codeAnalysisReference = MetadataReference.CreateFromAssemblyInternal(typeof(Compilation).Assembly);
         private static readonly MetadataReference s_workspacesReference = MetadataReference.CreateFromAssemblyInternal(typeof(Workspace).Assembly);
         private static readonly MetadataReference s_immutableCollectionsReference = MetadataReference.CreateFromAssemblyInternal(typeof(ImmutableArray<int>).Assembly);
@@ -381,8 +383,13 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
             if (addLanguageSpecificCodeAnalysisReference)
             {
-                MetadataReference symbolsReference = language == LanguageNames.CSharp ? s_CSharpSymbolsReference : s_visualBasicSymbolsReference;
+                MetadataReference symbolsReference = language == LanguageNames.CSharp ? s_cSharpSymbolsReference : s_visualBasicSymbolsReference;
                 project = project.AddMetadataReference(symbolsReference);
+            }
+
+            if (language == LanguageNames.VisualBasic)
+            {
+                project = project.AddMetadataReference(s_visualBasicReference);
             }
 
             int count = 0;

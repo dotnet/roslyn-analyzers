@@ -97,6 +97,9 @@ namespace System.Runtime.Analyzers
 
                 var activatorType = csaContext.Compilation.GetTypeByMetadataName("System.Activator");
                 var resourceManagerType = csaContext.Compilation.GetTypeByMetadataName("System.Resources.ResourceManager");
+
+                var computerInfoType = csaContext.Compilation.GetTypeByMetadataName("Microsoft.VisualBasic.Devices.ComputerInfo");
+                var installedUICulturePropertyOfComputerInfoType = computerInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().SingleOrDefault();
                 #endregion
 
                 csaContext.RegisterOperationAction(oaContext =>
@@ -183,7 +186,8 @@ namespace System.Runtime.Analyzers
                             if (symbol != null &
                                 (symbol.Equals(currentUICultureProperty) ||
                                  symbol.Equals(installedUICultureProperty) ||
-                                 symbol.Equals(currentThreadCurrentUICultureProperty)))
+                                 symbol.Equals(currentThreadCurrentUICultureProperty) ||
+                                 (installedUICulturePropertyOfComputerInfoType != null && symbol.Equals(installedUICulturePropertyOfComputerInfoType))))
                             {
                                 // Sample message 
                                 // 1. UICultureStringRule - 'TestClass.TestMethod()' passes 'Thread.CurrentUICulture' as the 'IFormatProvider' parameter to 'TestClass.CalleeMethod(string, IFormatProvider)'.

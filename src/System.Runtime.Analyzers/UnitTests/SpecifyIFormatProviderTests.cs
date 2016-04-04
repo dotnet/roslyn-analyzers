@@ -402,6 +402,30 @@ GetIFormatProviderUICultureRuleCSharpResultAt(13, 9, "UICultureAsIFormatProvider
                                                      "System.Globalization.CultureInfo.InvariantCulture"));
         }
 
+        [Fact]
+        public void CA1305_RuleException_NoDiagnostics_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Globalization;
+using System.Threading;
+
+public static class IFormatProviderStringTest
+{
+    public static void TrailingThreadCurrentUICulture()
+        {
+            var s = new System.Resources.ResourceManager(null);
+            Console.WriteLine(s.GetObject("""", Thread.CurrentThread.CurrentUICulture));
+            Console.WriteLine(s.GetStream("""", Thread.CurrentThread.CurrentUICulture));
+            Console.WriteLine(s.GetResourceSet(Thread.CurrentThread.CurrentUICulture, false, false));
+
+            var activator = Activator.CreateInstance(null, System.Reflection.BindingFlags.CreateInstance, null, null, Thread.CurrentThread.CurrentUICulture);
+            Console.WriteLine(activator);
+        }
+    }
+}");
+        }
+
         private DiagnosticResult GetIFormatProviderAlternateStringRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3, string arg4, string arg5)
         {
             return GetCSharpResultAt(line, column, SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateStringRule, arg1, arg2, arg3, arg4, arg5);

@@ -18,6 +18,7 @@ namespace System.Runtime.Analyzers
     public abstract class SpecifyIFormatProviderAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1305";
+        internal const string Uri = @"https://msdn.microsoft.com/en-us/library/ms182190.aspx";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.SpecifyIFormatProviderTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
 
@@ -32,36 +33,36 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableMessageIFormatProviderAlternateString,
                                                                              DiagnosticCategory.Globalization,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor IFormatProviderAlternateRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageIFormatProviderAlternate,
                                                                              DiagnosticCategory.Globalization,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor UICultureStringRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageUICultureString,
                                                                              DiagnosticCategory.Globalization,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor UICultureRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageUICulture,
                                                                              DiagnosticCategory.Globalization,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(IFormatProviderAlternateStringRule, IFormatProviderAlternateRule, UICultureStringRule, UICultureRule);
@@ -70,14 +71,14 @@ namespace System.Runtime.Analyzers
         {
             analysisContext.RegisterCompilationStartAction(csaContext =>
             {
+                #region "Get All the WellKnown Types and Members"
                 var stringType = csaContext.Compilation.GetSpecialType(SpecialType.System_String);
-
                 var stringFormatMembers = stringType?.GetMembers("Format").OfType<IMethodSymbol>();
-                var stringFormatMemberWithStringAndObjectParameter = GetMemberWithName(stringFormatMembers, "string.Format(string, object)");
-                var stringFormatMemberWithStringObjectAndObjectParameter = GetMemberWithName(stringFormatMembers, "string.Format(string, object, object)");
-                var stringFormatMemberWithStringObjectObjectAndObjectParameter = GetMemberWithName(stringFormatMembers, "string.Format(string, object, object, object)");
-                var stringFormatMemberWithStringAndParamsObjectParameter = GetMemberWithName(stringFormatMembers, "string.Format(string, params object[])");
-                var stringFormatMemberWithIFormatProviderStringAndParamsObjectParameter = GetMemberWithName(stringFormatMembers, "string.Format(System.IFormatProvider, string, params object[])");
+                var stringFormatMemberWithStringAndObjectParameter = GetSingleOrDefaultMemberWithName(stringFormatMembers, "string.Format(string, object)");
+                var stringFormatMemberWithStringObjectAndObjectParameter = GetSingleOrDefaultMemberWithName(stringFormatMembers, "string.Format(string, object, object)");
+                var stringFormatMemberWithStringObjectObjectAndObjectParameter = GetSingleOrDefaultMemberWithName(stringFormatMembers, "string.Format(string, object, object, object)");
+                var stringFormatMemberWithStringAndParamsObjectParameter = GetSingleOrDefaultMemberWithName(stringFormatMembers, "string.Format(string, params object[])");
+                var stringFormatMemberWithIFormatProviderStringAndParamsObjectParameter = GetSingleOrDefaultMemberWithName(stringFormatMembers, "string.Format(System.IFormatProvider, string, params object[])");
 
                 var IFormatProviderType = csaContext.Compilation.GetTypeByMetadataName("System.IFormatProvider");
 
@@ -90,11 +91,25 @@ namespace System.Runtime.Analyzers
                 var threadType = csaContext.Compilation.GetTypeByMetadataName("System.Threading.Thread");
                 var currentThreadCurrentUICultureProperty = threadType?.GetMembers("CurrentUICulture").OfType<IPropertySymbol>().SingleOrDefault();
 
+                var activatorType = csaContext.Compilation.GetTypeByMetadataName("System.Activator");
+                var resourceManagerType = csaContext.Compilation.GetTypeByMetadataName("System.Resources.ResourceManager");
+                #endregion
+
                 csaContext.RegisterOperationAction(oaContext =>
                 {
                     var invocationExpression = (IInvocationExpression)oaContext.Operation;
                     var targetMethod = invocationExpression.TargetMethod;
 
+                    #region "Exceptions"
+                    if (targetMethod.ContainingType != null && 
+                        (activatorType != null && activatorType.Equals(targetMethod.ContainingType)) ||
+                        (resourceManagerType != null && resourceManagerType.Equals(targetMethod.ContainingType)))
+                    {
+                        return;
+                    }
+                    #endregion
+
+                    #region "IFormatProviderAlternateStringRule Only"
                     if (stringType != null && CultureInfoType != null &&
                         (targetMethod.Equals(stringFormatMemberWithStringAndObjectParameter) ||
                          targetMethod.Equals(stringFormatMemberWithStringObjectAndObjectParameter) ||
@@ -116,7 +131,9 @@ namespace System.Runtime.Analyzers
 
                         return;
                     }
+                    #endregion
 
+                    #region "IFormatProviderAlternateStringRule & IFormatProviderAlternateRule"
                     IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType.GetMembers(targetMethod.Name).OfType<IMethodSymbol>();
                     if (methodsWithSameNameAsTargetMethod.Count() > 1)
                     {
@@ -146,7 +163,9 @@ namespace System.Runtime.Analyzers
                                     invariantCultureProperty.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
                         }
                     }
+                    #endregion
 
+                    #region "UICultureStringRule & UICultureRule"
                     IEnumerable<int> IformatProviderParameterIndices = GetIndexesOfParameterType(targetMethod, IFormatProviderType);
                     foreach (var index in IformatProviderParameterIndices)
                     {
@@ -162,6 +181,16 @@ namespace System.Runtime.Analyzers
                                  symbol.Equals(installedUICultureProperty) ||
                                  symbol.Equals(currentThreadCurrentUICultureProperty)))
                             {
+                                // Sample message 
+                                // 1. UICultureStringRule - 'TestClass.TestMethod()' passes 'Thread.CurrentUICulture' as the 'IFormatProvider' parameter to 'TestClass.CalleeMethod(string, IFormatProvider)'.
+                                // This property returns a culture that is inappropriate for formatting methods. If the result of 'TestClass.CalleeMethod(string, IFormatProvider)' will be displayed to the user,
+                                // specify 'CultureInfo.CurrentCulture' as the 'IFormatProvider' parameter. Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk
+                                // or to a database, specify 'CultureInfo.InvariantCulture'.
+                                // 2. UICultureRule -'TestClass.TestMethod()' passes 'CultureInfo.CurrentUICulture' as the 'IFormatProvider' parameter to 'TestClass.Callee(IFormatProvider, string)'.
+                                // This property returns a culture that is inappropriate for formatting methods. If the result of 'TestClass.Callee(IFormatProvider, string)' will be based on input from the user,
+                                // specify 'CultureInfo.CurrentCulture' as the 'IFormatProvider' parameter. Otherwise, if the result will based on input stored and accessed by software, such as when it is loaded
+                                // from disk or from a database, specify 'CultureInfo.InvariantCulture'.
+
                                 oaContext.ReportDiagnostic(
                                     invocationExpression.Syntax.CreateDiagnostic(
                                         targetMethod.ReturnType.Equals(stringType) ?
@@ -175,6 +204,7 @@ namespace System.Runtime.Analyzers
                             }
                         }
                     }
+                    #endregion
 
                 }, OperationKind.InvocationExpression);
             });
@@ -188,7 +218,7 @@ namespace System.Runtime.Analyzers
                 .Select(x => x.Index);
         }
 
-        private static IMethodSymbol GetMemberWithName(IEnumerable<IMethodSymbol> stringFormatMembers, string displayName)
+        private static IMethodSymbol GetSingleOrDefaultMemberWithName(IEnumerable<IMethodSymbol> stringFormatMembers, string displayName)
         {
             return stringFormatMembers?.Where(member => string.Equals(member.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat), displayName, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
         }

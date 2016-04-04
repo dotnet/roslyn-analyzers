@@ -9,7 +9,7 @@ using Analyzer.Utilities;
 
 namespace Desktop.Analyzers
 {
-    public abstract class DoNotCatchCorruptedStateExceptionsAnalyzer<TLanguageKindEnum, TCatchClauseSyntax, TThrowStatementSyntax> : DiagnosticAnalyzer  
+    public abstract class DoNotCatchCorruptedStateExceptionsAnalyzer<TLanguageKindEnum, TCatchClauseSyntax, TThrowStatementSyntax> : DiagnosticAnalyzer
         where TLanguageKindEnum : struct
         where TCatchClauseSyntax : SyntaxNode
         where TThrowStatementSyntax : SyntaxNode
@@ -70,7 +70,7 @@ namespace Desktop.Analyzers
                                     codeBlockStartContext.RegisterCodeBlockEndAction(analyzer.AnalyzeCodeBlockEnd);
                                 }
                             }
-                        }); 
+                        });
                     }
                 });
         }
@@ -104,7 +104,7 @@ namespace Desktop.Analyzers
 
                 if (IsCatchTypeTooGeneral(exceptionTypeSymbol))
                 {
-                    var parentNode = catchNode.Parent;
+                    SyntaxNode parentNode = catchNode.Parent;
                     while (parentNode != _codeBlock)
                     {
                         // for now there doesn't seem to have any way to annotate lambdas with attributes
@@ -132,7 +132,7 @@ namespace Desktop.Analyzers
 
             public void AnalyzeCodeBlockEnd(CodeBlockAnalysisContext context)
             {
-                foreach (var pair in _catchAllCatchClauses)
+                foreach (KeyValuePair<TCatchClauseSyntax, ISymbol> pair in _catchAllCatchClauses)
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(

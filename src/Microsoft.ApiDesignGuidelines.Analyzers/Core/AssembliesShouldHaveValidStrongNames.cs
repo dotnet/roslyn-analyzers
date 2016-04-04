@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
-{                   
+{
     /// <summary>
     /// CA2210: Assemblies should have valid strong names
     /// </summary>
@@ -15,11 +15,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         internal const string RuleId = "CA2210";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.AssembliesShouldHaveValidStrongNamesTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        
+
         private static readonly LocalizableString s_localizableMessageNoStrongName = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.AssembliesShouldHaveValidStrongNamesMessageNoStrongName), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageNotValid = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.AssembliesShouldHaveValidStrongNamesMessageNotValid), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.AssembliesShouldHaveValidStrongNamesDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        
+
         internal static DiagnosticDescriptor NoStrongNameRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageNoStrongName,
@@ -43,7 +43,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            
         }
     }
 }

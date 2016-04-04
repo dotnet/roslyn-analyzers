@@ -50,7 +50,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
 
             public IEnumerable<string> CalculateDiff(IList<T> sequenceA, IList<T> sequenceB, Func<T, string> toString)
             {
-                foreach (var edit in GetEdits(sequenceA, sequenceA.Count, sequenceB, sequenceB.Count).Reverse())
+                foreach (Edit edit in GetEdits(sequenceA, sequenceA.Count, sequenceB, sequenceB.Count).Reverse())
                 {
                     switch (edit.Kind)
                     {
@@ -72,7 +72,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
 
         public static string DiffReport<T>(IEnumerable<T> expected, IEnumerable<T> actual, IEqualityComparer<T> comparer = null, Func<T, string> toString = null, string separator = ",\r\n")
         {
-            var lcs = (comparer != null) ? new LCS<T>(comparer) : LCS<T>.Default;
+            LCS<T> lcs = (comparer != null) ? new LCS<T>(comparer) : LCS<T>.Default;
             toString = toString ?? new Func<T, string>(obj => obj.ToString());
 
             IList<T> expectedList = expected as IList<T> ?? new List<T>(expected);
@@ -90,8 +90,8 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
 
         public static string DiffReport(string expected, string actual)
         {
-            var exlines = Lines(expected);
-            var aclines = Lines(actual);
+            string[] exlines = Lines(expected);
+            string[] aclines = Lines(actual);
             return DiffReport(exlines, aclines, separator: "\r\n");
         }
 
@@ -202,7 +202,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
                 }
 
                 int lcsLength = 0;
-                foreach (var pair in GetMatchingPairs(sequenceA, lengthA, sequenceB, lengthB))
+                foreach (KeyValuePair<int, int> pair in GetMatchingPairs(sequenceA, lengthA, sequenceB, lengthB))
                 {
                     lcsLength++;
                 }
@@ -234,8 +234,8 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
             /// </remarks>
             private int[,] ComputeCostMatrix(TSequence sequenceA, int lengthA, TSequence sequenceB, int lengthB)
             {
-                var la = lengthA + 1;
-                var lb = lengthB + 1;
+                int la = lengthA + 1;
+                int lb = lengthB + 1;
 
                 // TODO: Optimization possible: O(ND) time, O(N) space
                 // EUGENE W. MYERS: An O(ND) Difference Algorithm and Its Variations

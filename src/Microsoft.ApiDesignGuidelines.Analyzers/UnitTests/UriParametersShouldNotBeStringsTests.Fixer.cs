@@ -2,7 +2,6 @@
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 
@@ -12,22 +11,147 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicUriParametersShouldNotBeStringsAnalyzer();
+            return new UriParametersShouldNotBeStringsAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpUriParametersShouldNotBeStringsAnalyzer();
+            return new UriParametersShouldNotBeStringsAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
-            return new BasicUriParametersShouldNotBeStringsFixer();
+            return new UriParametersShouldNotBeStringsFixer();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new CSharpUriParametersShouldNotBeStringsFixer();
+            return new UriParametersShouldNotBeStringsFixer();
+        }
+
+        [Fact]
+        public void CA1054WarningWithUrl()
+        {
+            var code = @"
+using System;
+
+public class A : IComparable
+{
+    public static void Method(string url) { }
+}
+";
+
+            var fix = @"
+using System;
+
+public class A : IComparable
+{
+    public static void Method(string url) { }
+
+    public static void Method(Uri url)
+    {
+        throw new NotImplementedException();
+    }
+}
+";
+
+            VerifyCSharpFix(code, fix);
+        }
+
+        [Fact]
+        public void CA1054MultipleWarningWithUrl()
+        {
+            var code = @"
+using System;
+
+public class A : IComparable
+{
+    public static void Method(string url, string url2) { }
+}
+";
+            var fix = @"
+using System;
+
+public class A : IComparable
+{
+    public static void Method(string url, string url2) { }
+
+    public static void Method(Uri url, string url2)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static void Method(string url, Uri url2)
+    {
+        throw new NotImplementedException();
+    }
+}
+";
+
+            VerifyCSharpFix(code, fix);
+        }
+
+        [Fact]
+        public void CA1054MultipleWarningWithUrlWithOverload()
+        {
+            // Following original FxCop implementation. but this seems strange.
+            var code = @"
+using System;
+
+public class A : IComparable
+{
+    public static void Method(string url, string url2) { }
+    public static void Method(Uri url, Uri url2) { }
+}
+";
+            var fix = @"
+using System;
+
+public class A : IComparable
+{
+    public static void Method(string url, string url2) { }
+    public static void Method(Uri url, Uri url2) { }
+
+    public static void Method(Uri url, string url2)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static void Method(string url, Uri url2)
+    {
+        throw new NotImplementedException();
+    }
+}
+";
+            VerifyCSharpFix(code, fix);
+        }
+
+        [Fact]
+        public void CA1054WarningVB()
+        {
+            // C# and VB shares same implementation. so just one vb test
+            var code = @"
+Imports System
+
+Public Class A
+    Public Sub Method(firstUri As String)
+    End Sub
+End Class
+";
+            var fix = @"
+Imports System
+
+Public Class A
+    Public Sub Method(firstUri As String)
+    End Sub
+
+    Public Sub Method(firstUri As Uri)
+        Throw New NotImplementedException()
+    End Sub
+End Class
+";
+
+            VerifyBasicFix(code, fix);
         }
     }
 }

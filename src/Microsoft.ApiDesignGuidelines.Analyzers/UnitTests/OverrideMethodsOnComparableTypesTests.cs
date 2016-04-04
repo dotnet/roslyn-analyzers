@@ -1,13 +1,11 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
-using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
-{                                  
+{
     public partial class OverrideMethodsOnComparableTypesTests : CodeFixTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
@@ -867,13 +865,13 @@ End Class
 ",
             GetCA1036BasicResultAt(8, 18));
         }
-                                                                        
+
         [Fact]
         public void Bug1994CSharp()
         {
             VerifyCSharp("enum MyEnum {}");
         }
-                                                                         
+
         [Fact]
         public void Bug1994VisualBasic()
         {
@@ -884,8 +882,8 @@ Enum MyEnum
 End Enum");
         }
 
-        internal static string CA1036Name = "CA1036";
-        internal static string CA1036Message = MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals;
+        internal static readonly string CA1036Name = "CA1036";
+        internal static readonly string CA1036Message = MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals;
 
         private static DiagnosticResult GetCA1036CSharpResultAt(int line, int column)
         {

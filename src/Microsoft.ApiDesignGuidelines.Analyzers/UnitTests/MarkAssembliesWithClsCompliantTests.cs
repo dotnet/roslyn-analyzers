@@ -2,7 +2,6 @@
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 
@@ -188,14 +187,14 @@ class Program
             s_diagnosticCA1016, s_diagnosticCA1014);
         }
 
-        private static DiagnosticResult s_diagnosticCA1014 = new DiagnosticResult
+        private static readonly DiagnosticResult s_diagnosticCA1014 = new DiagnosticResult
         {
             Id = MarkAssembliesWithAttributesDiagnosticAnalyzer.CA1014RuleId,
             Severity = DiagnosticSeverity.Warning,
             Message = MarkAssembliesWithAttributesDiagnosticAnalyzer.CA1014Rule.MessageFormat.ToString()
         };
 
-        private static DiagnosticResult s_diagnosticCA1016 = new DiagnosticResult
+        private static readonly DiagnosticResult s_diagnosticCA1016 = new DiagnosticResult
         {
             Id = MarkAssembliesWithAttributesDiagnosticAnalyzer.CA1016RuleId,
             Severity = DiagnosticSeverity.Warning,

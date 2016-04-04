@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace System.Runtime.Analyzers     
+Namespace System.Runtime.Analyzers
     ''' <summary>
     ''' CA2220: Finalizers should call base class finalizer
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicFinalizersShouldCallBaseClassFinalizerFixer
-        Inherits FinalizersShouldCallBaseClassFinalizerFixer 
+        Inherits FinalizersShouldCallBaseClassFinalizerFixer
 
     End Class
 End Namespace

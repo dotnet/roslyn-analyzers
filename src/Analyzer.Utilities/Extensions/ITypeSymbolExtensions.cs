@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities
@@ -39,34 +40,18 @@ namespace Analyzer.Utilities
                 return false;
             }
 
-            if (type.Equals(possibleBase))
-            {
-                return true;
-            }
-
             switch (possibleBase.TypeKind)
             {
                 case TypeKind.Class:
-                    for (ITypeSymbol t = type.BaseType; t != null; t = t.BaseType)
+                    if (type.TypeKind == TypeKind.Interface)
                     {
-                        if (t.Equals(possibleBase))
-                        {
-                            return true;
-                        }
+                        return false;
                     }
 
-                    return false;
+                    return DerivesFrom(type, possibleBase, baseTypesOnly: true);
 
                 case TypeKind.Interface:
-                    foreach (var i in type.AllInterfaces)
-                    {
-                        if (i.Equals(possibleBase))
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
+                    return DerivesFrom(type, possibleBase);
 
                 default:
                     return false;
@@ -75,7 +60,7 @@ namespace Analyzer.Utilities
 
         public static IEnumerable<INamedTypeSymbol> GetBaseTypes(this ITypeSymbol type)
         {
-            var current = type.BaseType;
+            INamedTypeSymbol current = type.BaseType;
             while (current != null)
             {
                 yield return current;
@@ -85,7 +70,7 @@ namespace Analyzer.Utilities
 
         public static IEnumerable<ITypeSymbol> GetBaseTypesAndThis(this ITypeSymbol type)
         {
-            var current = type;
+            ITypeSymbol current = type;
             while (current != null)
             {
                 yield return current;
@@ -93,8 +78,18 @@ namespace Analyzer.Utilities
             }
         }
 
-        public static bool DerivesFrom(this INamedTypeSymbol symbol, INamedTypeSymbol candidateBaseType)
+        public static bool DerivesFrom(this ITypeSymbol symbol, ITypeSymbol candidateBaseType, bool baseTypesOnly = false)
         {
+            if (candidateBaseType == null)
+            {
+                return false;
+            }
+
+            if (!baseTypesOnly && symbol.AllInterfaces.OfType<ITypeSymbol>().Contains(candidateBaseType))
+            {
+                return true;
+            }
+
             while (symbol != null)
             {
                 if (symbol.Equals(candidateBaseType))
@@ -171,9 +166,9 @@ namespace Analyzer.Utilities
 
             public override Accessibility VisitNamedType(INamedTypeSymbol symbol)
             {
-                var accessibility = symbol.DeclaredAccessibility;
+                Accessibility accessibility = symbol.DeclaredAccessibility;
 
-                foreach (var arg in symbol.TypeArguments)
+                foreach (ITypeSymbol arg in symbol.TypeArguments)
                 {
                     accessibility = CommonAccessibilityUtilities.Minimum(accessibility, arg.Accept(this));
                 }

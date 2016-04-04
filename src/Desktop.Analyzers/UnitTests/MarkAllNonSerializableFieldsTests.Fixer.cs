@@ -3,7 +3,7 @@
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
-using Roslyn.Diagnostics.Test.Utilities;  
+using Roslyn.Diagnostics.Test.Utilities;
 using Xunit;
 
 namespace Desktop.Analyzers.UnitTests

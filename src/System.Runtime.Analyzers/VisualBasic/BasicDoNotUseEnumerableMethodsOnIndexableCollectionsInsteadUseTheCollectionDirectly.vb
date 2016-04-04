@@ -5,7 +5,7 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace System.Runtime.Analyzers   
+Namespace System.Runtime.Analyzers
     ''' <summary>
     ''' RS0014: Do not use Enumerable methods on indexable collections. Instead use the collection directly
     ''' </summary>

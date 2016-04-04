@@ -38,22 +38,22 @@
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Common.1.2.0-beta-20151118-02\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Common.1.2.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.1.2.0-beta-20151118-02\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.1.2.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.1.2.0-beta-20151118-02\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.1.2.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.0-beta-20151118-02\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Collections.Immutable, Version=1.1.37.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -86,9 +86,9 @@
       <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Reflection.Metadata, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+    <Reference Include="System.Reflection.Metadata, Version=1.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\System.Reflection.Metadata.1.1.0\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
+      <HintPath>..\..\..\packages\System.Reflection.Metadata.1.2.0\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -96,6 +96,7 @@
     <Content Include="System.Runtime.CSharp.Analyzers.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -104,48 +105,29 @@
     <Compile Include="CSharpUseOrdinalStringComparison.Fixer.cs" />
     <Compile Include="CSharpDoNotUseTimersThatPreventPowerStateChanges.cs" />
     <Compile Include="CSharpDoNotUseTimersThatPreventPowerStateChanges.Fixer.cs" />
-    <Compile Include="CSharpTestForEmptyStringsUsingStringLength.cs" />
     <Compile Include="CSharpTestForEmptyStringsUsingStringLength.Fixer.cs" />
-    <Compile Include="CSharpDoNotLockOnObjectsWithWeakIdentity.cs" />
-    <Compile Include="CSharpDoNotCatchCorruptedStateExceptionsInGeneralHandlers.cs" />
-    <Compile Include="CSharpDoNotCatchCorruptedStateExceptionsInGeneralHandlers.Fixer.cs" />
-    <Compile Include="CSharpRethrowToPreserveStackDetails.cs" />
-    <Compile Include="CSharpRethrowToPreserveStackDetails.Fixer.cs" />
     <Compile Include="CSharpDoNotRaiseReservedExceptionTypes.cs" />
     <Compile Include="CSharpInitializeStaticFieldsInline.cs" />
     <Compile Include="CSharpInitializeStaticFieldsInline.Fixer.cs" />
-    <Compile Include="CSharpDisposableFieldsShouldBeDisposed.cs" />
-    <Compile Include="CSharpDoNotCallOverridableMethodsInConstructors.cs" />
-    <Compile Include="CSharpDoNotCallOverridableMethodsInConstructors.Fixer.cs" />
     <Compile Include="CSharpDisposeMethodsShouldCallBaseClassDispose.cs" />
     <Compile Include="CSharpDisposeMethodsShouldCallBaseClassDispose.Fixer.cs" />
-    <Compile Include="CSharpDisposableTypesShouldDeclareFinalizer.cs" />
     <Compile Include="CSharpDisposableTypesShouldDeclareFinalizer.Fixer.cs" />
-    <Compile Include="CSharpDoNotRaiseExceptionsInExceptionClauses.cs" />
-    <Compile Include="CSharpDoNotRaiseExceptionsInExceptionClauses.Fixer.cs" />
     <Compile Include="CSharpFinalizersShouldCallBaseClassFinalizer.cs" />
     <Compile Include="CSharpFinalizersShouldCallBaseClassFinalizer.Fixer.cs" />
-    <Compile Include="CSharpProvideCorrectArgumentsToFormattingMethods.cs" />
-    <Compile Include="CSharpProvideCorrectArgumentsToFormattingMethods.Fixer.cs" />
-    <Compile Include="CSharpTestForNaNCorrectly.cs" />
     <Compile Include="CSharpTestForNaNCorrectly.Fixer.cs" />
     <Compile Include="CSharpAttributeStringLiteralsShouldParseCorrectly.cs" />
     <Compile Include="CSharpAttributeStringLiteralsShouldParseCorrectly.Fixer.cs" />
     <Compile Include="CSharpAvoidZeroLengthArrayAllocations.cs" />
-    <Compile Include="CSharpAvoidZeroLengthArrayAllocations.Fixer.cs" />
     <Compile Include="CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.cs" />
     <Compile Include="CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.Fixer.cs" />
-    <Compile Include="CSharpSpecifyCultureInfo.cs" />
     <Compile Include="CSharpSpecifyCultureInfo.Fixer.cs" />
     <Compile Include="CSharpSpecifyIFormatProvider.cs" />
     <Compile Include="CSharpSpecifyIFormatProvider.Fixer.cs" />
     <Compile Include="CSharpSpecifyStringComparison.cs" />
     <Compile Include="CSharpSpecifyStringComparison.Fixer.cs" />
-    <Compile Include="CSharpNormalizeStringsToUppercase.cs" />
     <Compile Include="CSharpNormalizeStringsToUppercase.Fixer.cs" />
     <Compile Include="CSharpCallGCSuppressFinalizeCorrectly.cs" />
     <Compile Include="CSharpCallGCSuppressFinalizeCorrectly.Fixer.cs" />
-    <Compile Include="CSharpInstantiateArgumentExceptionsCorrectly.cs" />
     <Compile Include="CSharpInstantiateArgumentExceptionsCorrectly.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>

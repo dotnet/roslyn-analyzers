@@ -199,8 +199,8 @@ namespace Desktop.Analyzers.UnitTests
                 GetCA2237BasicResultAt(4, 30, "CA2237SerializableWithBaseAttr"));
         }
 
-        internal static string CA2237Name = SerializationRulesDiagnosticAnalyzer.RuleCA2237Id;
-        internal static string CA2237Message = DesktopAnalyzersResources.MarkISerializableTypesWithSerializableMessage;
+        internal static readonly string CA2237Name = SerializationRulesDiagnosticAnalyzer.RuleCA2237Id;
+        internal static readonly string CA2237Message = DesktopAnalyzersResources.MarkISerializableTypesWithSerializableMessage;
 
         private static DiagnosticResult GetCA2237CSharpResultAt(int line, int column, string objectName)
         {

@@ -125,16 +125,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #N/A.
-        /// </summary>
-        internal static string AvoidZeroLengthArrayAllocationsDescription {
-            get {
-                return ResourceManager.GetString("AvoidZeroLengthArrayAllocationsDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Avoid zero-length array allocations..
+        ///   Looks up a localized string similar to Avoid unnecessary zero-length array allocations.  Use Array.Empty&lt;T&gt;() instead..
         /// </summary>
         internal static string AvoidZeroLengthArrayAllocationsMessage {
             get {
@@ -368,51 +359,6 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to When an exception is raised in a finally or fault clause, the new exception hides the active exception. When an exception is raised in a filter clause, the run time silently catches the exception. This makes the original error difficult to detect and debug..
-        /// </summary>
-        internal static string DoNotRaiseExceptionsInExceptionClausesDescription {
-            get {
-                return ResourceManager.GetString("DoNotRaiseExceptionsInExceptionClausesDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Modify member {0} so that it does not raise an exception from within a fault clause. When an exception is raised from within a fault clause, the new exception hides the active exception, making the original error hard to detect and debug..
-        /// </summary>
-        internal static string DoNotRaiseExceptionsInExceptionClausesMessageFault {
-            get {
-                return ResourceManager.GetString("DoNotRaiseExceptionsInExceptionClausesMessageFault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Modify member {0} so that it does not raise an exception from within a filter clause. When an exception is raised from within a filter clause, the runtime silently catches the exception, causing the filter to evaluate to false. This makes it hard to detect and debug errors in the filter&apos;s logic..
-        /// </summary>
-        internal static string DoNotRaiseExceptionsInExceptionClausesMessageFilter {
-            get {
-                return ResourceManager.GetString("DoNotRaiseExceptionsInExceptionClausesMessageFilter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Modify member {0} so that it does not raise an exception from within a finally clause. When an exception is raised from within a finally clause, the new exception hides the active exception, if present, making the original error hard to detect and debug..
-        /// </summary>
-        internal static string DoNotRaiseExceptionsInExceptionClausesMessageFinally {
-            get {
-                return ResourceManager.GetString("DoNotRaiseExceptionsInExceptionClausesMessageFinally", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do not raise exceptions in exception clauses.
-        /// </summary>
-        internal static string DoNotRaiseExceptionsInExceptionClausesTitle {
-            get {
-                return ResourceManager.GetString("DoNotRaiseExceptionsInExceptionClausesTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type..
         /// </summary>
         internal static string DoNotRaiseReservedExceptionTypesDescription {
@@ -623,7 +569,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Strings should be normalized to uppercase. A small group of characters cannot make a round trip when they are converted to lowercase..
+        ///   Looks up a localized string similar to Strings should be normalized to uppercase. A small group of characters cannot make a round trip when they are converted to lowercase. To make a round trip means to convert the characters from one locale to another locale that represents character data differently, and then to accurately retrieve the original characters from the converted characters..
         /// </summary>
         internal static string NormalizeStringsToUppercaseDescription {
             get {
@@ -632,20 +578,11 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to In method {0}, replace the call to String.ToLower(CultureInfo.InvariantCulture) with String.ToUpper(CultureInfo.InvariantCulture)..
+        ///   Looks up a localized string similar to In method &apos;{0}&apos;, replace the call to &apos;{1}&apos; with &apos;{2}&apos;..
         /// </summary>
         internal static string NormalizeStringsToUppercaseMessageToUpper {
             get {
                 return ResourceManager.GetString("NormalizeStringsToUppercaseMessageToUpper", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to In method {0}, replace the call to {1} with String.ToUpperInvariant()..
-        /// </summary>
-        internal static string NormalizeStringsToUppercaseMessageToUpperInvariant {
-            get {
-                return ResourceManager.GetString("NormalizeStringsToUppercaseMessageToUpperInvariant", resourceCulture);
             }
         }
         
@@ -722,7 +659,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Specify CultureInfo.
+        ///   Looks up a localized string similar to Because the behavior of &apos;{0}&apos; could vary based on the current user&apos;s locale settings, replace this call in &apos;{1}&apos; with a call to &apos;{2}&apos;. If the result of &apos;{2}&apos; will be displayed to the user, specify &apos;CultureInfo.CurrentCulture&apos; as the &apos;CultureInfo&apos; parameter. Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk or to a database, specify &apos;CultureInfo.InvariantCulture&apos;..
         /// </summary>
         internal static string SpecifyCultureInfoMessage {
             get {
@@ -871,6 +808,15 @@ namespace System.Runtime.Analyzers {
         internal static string TestForNaNCorrectlyTitle {
             get {
                 return ResourceManager.GetString("TestForNaNCorrectlyTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use Array.Empty.
+        /// </summary>
+        internal static string UseArrayEmpty {
+            get {
+                return ResourceManager.GetString("UseArrayEmpty", resourceCulture);
             }
         }
         

@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA2210: Assemblies should have valid strong names
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicAssembliesShouldHaveValidStrongNamesFixer
-        Inherits AssembliesShouldHaveValidStrongNamesFixer 
+        Inherits AssembliesShouldHaveValidStrongNamesFixer
 
     End Class
 End Namespace

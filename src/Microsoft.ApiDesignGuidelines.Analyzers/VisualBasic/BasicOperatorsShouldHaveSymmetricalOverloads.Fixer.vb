@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers     
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA2226: Operators should have symmetrical overloads
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicOperatorsShouldHaveSymmetricalOverloadsFixer
-        Inherits OperatorsShouldHaveSymmetricalOverloadsFixer 
+        Inherits OperatorsShouldHaveSymmetricalOverloadsFixer
 
     End Class
 End Namespace

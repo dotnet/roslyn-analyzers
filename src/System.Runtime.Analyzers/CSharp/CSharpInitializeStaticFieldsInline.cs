@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Diagnostics;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -13,7 +12,7 @@ namespace System.Runtime.Analyzers
     public sealed class CSharpInitializeStaticFieldsInlineAnalyzer : InitializeStaticFieldsInlineAnalyzer<SyntaxKind>
     {
         protected override SyntaxKind AssignmentNodeKind => SyntaxKind.SimpleAssignmentExpression;
-        
+
         protected override bool InitialiesStaticField(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var assignmentNode = (AssignmentExpressionSyntax)node;

@@ -217,7 +217,7 @@
     <value>Constructors on abstract types can be called only by derived types. Because public constructors create instances of a type, and you cannot create instances of an abstract type, an abstract type that has a public constructor is incorrectly designed.</value>
   </data>
   <data name="AbstractTypesShouldNotHaveConstructorsMessage" xml:space="preserve">
-    <value>Abstract types should not have constructors</value>
+    <value>Abstract type {0} should not have constructors</value>
   </data>
   <data name="MarkAssembliesWithClsCompliantTitle" xml:space="preserve">
     <value>Mark assemblies with CLSCompliant</value>
@@ -315,30 +315,6 @@
   <data name="OverrideMethodsOnComparableTypesMessageOperator" xml:space="preserve">
     <value>{0} should define operator '{1}' since it implements IComparable.</value>
   </data>
-  <data name="StaticHolderTypesShouldBeSealedTitle" xml:space="preserve">
-    <value>Static holder types should be sealed</value>
-  </data>
-  <data name="StaticHolderTypesShouldBeSealedDescription" xml:space="preserve">
-    <value>A public or protected type contains only static members and is not declared by using the sealed (C# Reference) (NotInheritable) modifier. A type that is not meant to be inherited should be marked by using the sealed modifier to prevent its use as a base type.</value>
-  </data>
-  <data name="StaticHolderTypesShouldBeSealedMessageDefault" xml:space="preserve">
-    <value>Because type {0} contains only 'static' ('Shared' in Visual Basic) members, mark it as 'sealed' ('NotInheritable' in Visual Basic) to prevent consumers from inheriting from it.</value>
-  </data>
-  <data name="StaticHolderTypesShouldBeSealedMessageCSharp20" xml:space="preserve">
-    <value>Because type {0} contains only 'static' members, mark it as 'static' to prevent consumers from inheriting from it.</value>
-  </data>
-  <data name="StaticHolderTypesShouldNotHaveConstructorsTitle" xml:space="preserve">
-    <value>Static holder types should not have constructors</value>
-  </data>
-  <data name="StaticHolderTypesShouldNotHaveConstructorsDescription" xml:space="preserve">
-    <value>A public or nested public type declares only static members and has a public or protected default constructor. The constructor is unnecessary because calling static members does not require an instance of the type. The string overload should call the uniform resource identifier (URI) overload by using the string argument for safety and security.</value>
-  </data>
-  <data name="StaticHolderTypesShouldNotHaveConstructorsMessageDefault" xml:space="preserve">
-    <value>Because type {0} contains only 'static' ('Shared' in Visual Basic) members, add a default private constructor to prevent the compiler from adding a default public constructor.</value>
-  </data>
-  <data name="StaticHolderTypesShouldNotHaveConstructorsMessageCSharp20" xml:space="preserve">
-    <value>Because type {0} contains only 'static' members, mark it as 'static' to prevent the compiler from adding a default public constructor.</value>
-  </data>
   <data name="MovePInvokesToNativeMethodsClassTitle" xml:space="preserve">
     <value>Move pinvokes to native methods class</value>
   </data>
@@ -354,17 +330,8 @@
   <data name="IdentifiersShouldDifferByMoreThanCaseDescription" xml:space="preserve">
     <value>Identifiers for namespaces, types, members, and parameters cannot differ only by case because languages that target the common language runtime are not required to be case-sensitive.</value>
   </data>
-  <data name="IdentifiersShouldDifferByMoreThanCaseMessageMember" xml:space="preserve">
-    <value>Change member names {0} and '{1}' so that they differ by more than case.</value>
-  </data>
-  <data name="IdentifiersShouldDifferByMoreThanCaseMessageType" xml:space="preserve">
-    <value>Change type names {0} and '{1}' so that they differ by more than case.</value>
-  </data>
-  <data name="IdentifiersShouldDifferByMoreThanCaseMessageNamespace" xml:space="preserve">
-    <value>Change namespace names {0} and '{1}' so that they differ by more than case.</value>
-  </data>
-  <data name="IdentifiersShouldDifferByMoreThanCaseMessageParameter" xml:space="preserve">
-    <value>Change parameter names {0} and '{1}' so that they differ by more than case.</value>
+  <data name="IdentifiersShouldDifferByMoreThanCaseMessage" xml:space="preserve">
+    <value>Names of '{0}' and '{1}' should differ by more than case.</value>
   </data>
   <data name="IdentifiersShouldHaveCorrectPrefixTitle" xml:space="preserve">
     <value>Identifiers should have correct prefix</value>
@@ -375,11 +342,8 @@
   <data name="IdentifiersShouldHaveCorrectPrefixMessageInterface" xml:space="preserve">
     <value>Prefix interface name {0} with 'I'.</value>
   </data>
-  <data name="IdentifiersShouldHaveCorrectPrefixMessageTypeTypeParameter" xml:space="preserve">
-    <value>On type {0}, prefix generic type parameter name {1} with 'T'.</value>
-  </data>
-  <data name="IdentifiersShouldHaveCorrectPrefixMessageMethodTypeParameter" xml:space="preserve">
-    <value>On method {0}, prefix generic type parameter name {1} with 'T'.</value>
+  <data name="IdentifiersShouldHaveCorrectPrefixMessageTypeParameter" xml:space="preserve">
+    <value>Prefix generic type parameter name {0} with 'T'.</value>
   </data>
   <data name="NonConstantFieldsShouldNotBeVisibleTitle" xml:space="preserve">
     <value>Non-constant fields should not be visible</value>
@@ -460,13 +424,10 @@
     <value>A call is made to a method that has a string parameter whose name contains "uri", "URI", "urn", "URN", "url", or "URL". The declaring type of the method contains a corresponding method overload that has a System.Uri parameter.</value>
   </data>
   <data name="PassSystemUriObjectsInsteadOfStringsMessage" xml:space="preserve">
-    <value>Pass system uri objects instead of strings</value>
+    <value>Modify '{0}' to call '{1}' instead of '{2}'.</value>
   </data>
   <data name="ImplementIEquatableWhenOverridingObjectEqualsTitle" xml:space="preserve">
-    <value>Implement IEquatable when overriding Object.Equals</value>
-  </data>
-  <data name="ImplementIEquatableWhenOverridingObjectEqualsDescription" xml:space="preserve">
-    <value>#N/A</value>
+    <value>Type {0} should implement IEquatable&lt;T&gt; because it overrides Equals</value>
   </data>
   <data name="ImplementIEquatableWhenOverridingObjectEqualsMessage" xml:space="preserve">
     <value>Implement IEquatable when overriding Object.Equals</value>
@@ -474,11 +435,8 @@
   <data name="CancellationTokenParametersMustComeLastTitle" xml:space="preserve">
     <value>CancellationToken parameters must come last</value>
   </data>
-  <data name="CancellationTokenParametersMustComeLastDescription" xml:space="preserve">
-    <value>#N/A</value>
-  </data>
   <data name="CancellationTokenParametersMustComeLastMessage" xml:space="preserve">
-    <value>CancellationToken parameters must come last</value>
+    <value>Method '{0}' should take CancellationToken as the last parameter</value>
   </data>
   <data name="ConstructorMakeNoninheritableBaseClassInheritableTitle" xml:space="preserve">
     <value>Constructor make noninheritable base class inheritable</value>
@@ -535,6 +493,9 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="EnumsShouldZeroValueNotFlagsNoZeroValueCodeFix" xml:space="preserve">
     <value>Add a zero-valued member 'None' to enum.</value>
   </data>
+  <data name="AbstractTypesShouldNotHavePublicConstructorsCodeFix" xml:space="preserve">
+    <value>Change the accessibility of public constructors to protected.</value>
+  </data>
   <data name="DoNotDeclareStaticMembersOnGenericTypesTitle" xml:space="preserve">
     <value>Do not declare static members on generic types</value>
   </data>
@@ -559,11 +520,8 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="EnumStorageShouldBeInt32Description" xml:space="preserve">
     <value>An enumeration is a value type that defines a set of related named constants. By default, the System.Int32 data type is used to store the constant value. Although you can change this underlying type, it is not required or recommended for most scenarios.</value>
   </data>
-  <data name="EnumStorageShouldBeInt32MessageNotInt32" xml:space="preserve">
+  <data name="EnumStorageShouldBeInt32Message" xml:space="preserve">
     <value>If possible, make the underlying type of {0} System.Int32 instead of {1}.</value>
-  </data>
-  <data name="EnumStorageShouldBeInt32MessageNotIntegral" xml:space="preserve">
-    <value>If possible, make the underlying type of {0} Int32 instead of {1}. Otherwise consider Byte, Int16, or Int64.</value>
   </data>
   <data name="UseEventsWhereAppropriateTitle" xml:space="preserve">
     <value>Use events where appropriate</value>
@@ -572,7 +530,7 @@ Names of parameters and members are better used to communicate their meaning tha
     <value>This rule detects methods that have names that ordinarily would be used for events. If a method is called in response to a clearly defined state change, the method should be invoked by an event handler. Objects that call the method should raise events instead of calling the method directly.</value>
   </data>
   <data name="UseEventsWhereAppropriateMessage" xml:space="preserve">
-    <value>Use events where appropriate</value>
+    <value>Consider making '{0}' an event.</value>
   </data>
   <data name="ImplementStandardExceptionConstructorsTitle" xml:space="preserve">
     <value>Implement standard exception constructors</value>
@@ -614,7 +572,7 @@ Names of parameters and members are better used to communicate their meaning tha
     <value>A type or member is marked by using a System.ObsoleteAttribute attribute that does not have its ObsoleteAttribute.Message property specified. When a type or member that is marked by using ObsoleteAttribute is compiled, the Message property of the attribute is displayed. This gives the user information about the obsolete type or member.</value>
   </data>
   <data name="ProvideObsoleteAttributeMessageMessage" xml:space="preserve">
-    <value>Provide ObsoleteAttribute message</value>
+    <value>Provide a message for the ObsoleteAttribute that marks {0} as Obsolete</value>
   </data>
   <data name="PropertiesShouldNotBeWriteOnlyTitle" xml:space="preserve">
     <value>Properties should not be write only</value>
@@ -653,7 +611,7 @@ Names of parameters and members are better used to communicate their meaning tha
     <value>If a method takes a string representation of a URI, a corresponding overload should be provided that takes an instance of the URI class, which provides these services in a safe and secure manner.</value>
   </data>
   <data name="UriParametersShouldNotBeStringsMessage" xml:space="preserve">
-    <value>Uri parameters should not be strings</value>
+    <value>Change the type of parameter {0} of method {1} from string to System.Uri, or provide an overload to {1} that allows {0} to be passed as a System.Uri object.</value>
   </data>
   <data name="UriReturnValuesShouldNotBeStringsTitle" xml:space="preserve">
     <value>Uri return values should not be strings</value>
@@ -662,7 +620,7 @@ Names of parameters and members are better used to communicate their meaning tha
     <value>This rule assumes that the method returns a URI. A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The System.Uri class provides these services in a safe and secure manner.</value>
   </data>
   <data name="UriReturnValuesShouldNotBeStringsMessage" xml:space="preserve">
-    <value>Uri return values should not be strings</value>
+    <value>Change the return type of method {0} from string to System.Uri.</value>
   </data>
   <data name="UriPropertiesShouldNotBeStringsTitle" xml:space="preserve">
     <value>Uri properties should not be strings</value>
@@ -671,7 +629,7 @@ Names of parameters and members are better used to communicate their meaning tha
     <value>This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The System.Uri class provides these services in a safe and secure manner.</value>
   </data>
   <data name="UriPropertiesShouldNotBeStringsMessage" xml:space="preserve">
-    <value>Uri properties should not be strings</value>
+    <value>Change the type of property {0} from string to System.Uri.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyTitle" xml:space="preserve">
     <value>Implement IDisposable Correctly</value>
@@ -832,11 +790,8 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="PropertyNamesShouldNotMatchGetMethodsDescription" xml:space="preserve">
     <value>The name of a public or protected member starts with ""Get"" and otherwise matches the name of a public or protected property. ""Get"" methods and properties should have names that clearly distinguish their function.</value>
   </data>
-  <data name="PropertyNamesShouldNotMatchGetMethodsMessageSameType" xml:space="preserve">
-    <value>The property name {0} is confusing given the existence of method {1}. Rename or remove one of these members.</value>
-  </data>
-  <data name="PropertyNamesShouldNotMatchGetMethodsMessageBaseType" xml:space="preserve">
-    <value>The property name {0} is confusing given the existence of inherited method {1}. Rename or remove this property.</value>
+  <data name="PropertyNamesShouldNotMatchGetMethodsMessage" xml:space="preserve">
+    <value>The property name '{0}' is confusing given the existence of method '{1}'. Rename or remove one of these members.</value>
   </data>
   <data name="TypeNamesShouldNotMatchNamespacesTitle" xml:space="preserve">
     <value>Type names should not match namespaces</value>
@@ -969,5 +924,68 @@ Names of parameters and members are better used to communicate their meaning tha
   </data>
   <data name="Generate_missing_operators" xml:space="preserve">
     <value>Generate missing operators</value>
+  </data>
+  <data name="OverrideEqualsOnOverloadingOperatorEqualsCodeActionTitle" xml:space="preserve">
+    <value>Override object.Equals</value>
+  </data>
+  <data name="OverrideGetHashCodeOnOverridingEqualsCodeActionTitle" xml:space="preserve">
+    <value>Override object.GetHashCode</value>
+  </data>
+  <data name="MakeExceptionPublic" xml:space="preserve">
+    <value>Make exception public</value>
+  </data>
+  <data name="InterfaceMethodsShouldBeCallableByChildTypesFix1" xml:space="preserve">
+    <value>Make '{0}' protected.</value>
+  </data>
+  <data name="InterfaceMethodsShouldBeCallableByChildTypesFix2" xml:space="preserve">
+    <value>Change '{0}' to a public interface implementation.</value>
+  </data>
+  <data name="InterfaceMethodsShouldBeCallableByChildTypesFix3" xml:space="preserve">
+    <value>Make the containing type '{0}' sealed.</value>
+  </data>
+  <data name="StaticHolderTypeIsNotStatic" xml:space="preserve">
+    <value>Type '{0}' is a static holder type but is neither static nor NotInheritable</value>
+  </data>
+  <data name="StaticHolderTypesShouldBeStaticOrNotInheritable" xml:space="preserve">
+    <value>Static holder types should be Static or NotInheritable</value>
+  </data>
+  <data name="MakeClassStatic" xml:space="preserve">
+    <value>Make Class Static</value>
+  </data>
+  <data name="OverrideObjectEqualsMessage" xml:space="preserve">
+    <value>Type {0} should override Equals because it implements IEquatable&lt;T&gt;</value>
+  </data>
+  <data name="OverrideObjectEqualsTitle" xml:space="preserve">
+    <value>Override Object.Equals(object) when implementing IEquatable&lt;T&gt;</value>
+  </data>
+  <data name="UseIntegralOrStringArgumentForIndexersDescription" xml:space="preserve">
+    <value>Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the Object type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.</value>
+  </data>
+  <data name="UseIntegralOrStringArgumentForIndexersMessage" xml:space="preserve">
+    <value>Use Integral Or String Argument For Indexers</value>
+  </data>
+  <data name="UseIntegralOrStringArgumentForIndexersTitle" xml:space="preserve">
+    <value>Use Integral Or String Argument For Indexers</value>
+  </data>
+  <data name="DoNotDirectlyAwaitATaskDescription" xml:space="preserve">
+    <value>While authoring a library where the consumer is not known and when there is no need for a SynchronizationContext,  consider using ConfigureAwait(false). Otherwise, the consumers of the library may face deadlocks by consuming the asynchronous methods in a blocking fashion.</value>
+  </data>
+  <data name="DoNotDirectlyAwaitATaskMessage" xml:space="preserve">
+    <value>Do not directly await a Task without calling ConfigureAwait</value>
+  </data>
+  <data name="DoNotDirectlyAwaitATaskTitle" xml:space="preserve">
+    <value>Do not directly await a Task</value>
+  </data>
+  <data name="AppendConfigureAwaitFalse" xml:space="preserve">
+    <value>Append .ConfigureAwait(false)</value>
+  </data>
+  <data name="DoNotDecreaseInheritedMemberVisibilityCodeFix" xml:space="preserve">
+    <value>Increase visibility for '{0}'</value>
+  </data>
+  <data name="ImplementIEquatableWhenOverridingObjectEqualsDescription" xml:space="preserve">
+    <value>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</value>
+  </data>
+  <data name="OverrideObjectEqualsDescription" xml:space="preserve">
+    <value>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</value>
   </data>
 </root>

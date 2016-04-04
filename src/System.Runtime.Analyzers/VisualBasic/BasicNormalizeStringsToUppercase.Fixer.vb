@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace System.Runtime.Analyzers     
+Namespace System.Runtime.Analyzers
     ''' <summary>
     ''' CA1308: Normalize strings to uppercase
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicNormalizeStringsToUppercaseFixer
-        Inherits NormalizeStringsToUppercaseFixer 
+        Inherits NormalizeStringsToUppercaseFixer
 
     End Class
 End Namespace

@@ -16,7 +16,7 @@ namespace Analyzer.Utilities
                 throw new ArgumentNullException(nameof(source));
             }
 
-            foreach (var v in source)
+            foreach (T v in source)
             {
                 yield return v;
             }

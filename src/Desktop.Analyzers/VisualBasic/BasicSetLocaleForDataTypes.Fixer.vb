@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Desktop.Analyzers     
+Namespace Desktop.Analyzers
     ''' <summary>
     ''' CA1306: Set locale for data types
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicSetLocaleForDataTypesFixer
-        Inherits SetLocaleForDataTypesFixer 
+        Inherits SetLocaleForDataTypesFixer
 
     End Class
 End Namespace

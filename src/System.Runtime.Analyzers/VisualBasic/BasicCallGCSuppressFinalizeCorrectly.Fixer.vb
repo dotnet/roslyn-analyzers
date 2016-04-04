@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace System.Runtime.Analyzers     
+Namespace System.Runtime.Analyzers
     ''' <summary>
     ''' CA1816: Dispose methods should call SuppressFinalize
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicCallGCSuppressFinalizeCorrectlyFixer
-        Inherits CallGCSuppressFinalizeCorrectlyFixer 
+        Inherits CallGCSuppressFinalizeCorrectlyFixer
 
     End Class
 End Namespace

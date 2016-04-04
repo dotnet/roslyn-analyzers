@@ -1,10 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -24,25 +22,25 @@ namespace System.Runtime.InteropServices.Analyzers
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var node = root.FindNode(context.Span);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode node = root.FindNode(context.Span);
             if (node == null)
             {
                 return;
             }
 
-            var model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            var charSetType = model.Compilation.GetTypeByMetadataName("System.Runtime.InteropServices.CharSet");
-            var dllImportType = model.Compilation.GetTypeByMetadataName("System.Runtime.InteropServices.DllImportAttribute");
-            var marshalAsType = model.Compilation.GetTypeByMetadataName("System.Runtime.InteropServices.MarshalAsAttribute");
-            var unmanagedType = model.Compilation.GetTypeByMetadataName("System.Runtime.InteropServices.UnmanagedType");
+            SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            INamedTypeSymbol charSetType = model.Compilation.GetTypeByMetadataName("System.Runtime.InteropServices.CharSet");
+            INamedTypeSymbol dllImportType = model.Compilation.GetTypeByMetadataName("System.Runtime.InteropServices.DllImportAttribute");
+            INamedTypeSymbol marshalAsType = model.Compilation.GetTypeByMetadataName("System.Runtime.InteropServices.MarshalAsAttribute");
+            INamedTypeSymbol unmanagedType = model.Compilation.GetTypeByMetadataName("System.Runtime.InteropServices.UnmanagedType");
             if (charSetType == null || dllImportType == null || marshalAsType == null || unmanagedType == null)
             {
                 return;
             }
 
             // We cannot have multiple overlapping diagnostics of this id.
-            var diagnostic = context.Diagnostics.Single();
+            Diagnostic diagnostic = context.Diagnostics.Single();
 
             if (IsAttribute(node))
             {
@@ -66,23 +64,23 @@ namespace System.Runtime.InteropServices.Analyzers
         private async Task<Document> FixAttributeArguments(Document document, SyntaxNode attributeDeclaration,
             INamedTypeSymbol charSetType, INamedTypeSymbol dllImportType, INamedTypeSymbol marshalAsType, INamedTypeSymbol unmanagedType, CancellationToken cancellationToken)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            var generator = editor.Generator;
-            var model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            SyntaxGenerator generator = editor.Generator;
+            SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
             // could be either a [DllImport] or [MarshalAs] attribute
-            var attributeType = model.GetSymbolInfo(attributeDeclaration, cancellationToken).Symbol;
-            var arguments = generator.GetAttributeArguments(attributeDeclaration);
+            ISymbol attributeType = model.GetSymbolInfo(attributeDeclaration, cancellationToken).Symbol;
+            IReadOnlyList<SyntaxNode> arguments = generator.GetAttributeArguments(attributeDeclaration);
 
             if (dllImportType.Equals(attributeType.ContainingType))
             {
                 // [DllImport] attribute, add or replace CharSet named parameter
-                var argumentValue = generator.MemberAccessExpression(
+                SyntaxNode argumentValue = generator.MemberAccessExpression(
                                         generator.TypeExpression(charSetType),
                                         generator.IdentifierName(UnicodeText));
-                var newCharSetArgument = generator.AttributeArgument(CharSetText, argumentValue);
+                SyntaxNode newCharSetArgument = generator.AttributeArgument(CharSetText, argumentValue);
 
-                var charSetArgument = FindNamedArgument(arguments, CharSetText);
+                SyntaxNode charSetArgument = FindNamedArgument(arguments, CharSetText);
                 if (charSetArgument == null)
                 {
                     // add the parameter
@@ -97,7 +95,7 @@ namespace System.Runtime.InteropServices.Analyzers
             else if (marshalAsType.Equals(attributeType.ContainingType) && arguments.Count == 1)
             {
                 // [MarshalAs] attribute, replace the only argument
-                var newArgument = generator.AttributeArgument(
+                SyntaxNode newArgument = generator.AttributeArgument(
                                         generator.MemberAccessExpression(
                                             generator.TypeExpression(unmanagedType),
                                             generator.IdentifierName(LPWStrText)));

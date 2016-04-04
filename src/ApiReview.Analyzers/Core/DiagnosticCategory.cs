@@ -3,5 +3,5 @@
 namespace ApiReview.Analyzers
 {
     internal static class DiagnosticCategory
-    {        public static readonly string Reliability = ApiReviewAnalyzersResources.CategoryReliability;}
+    { public static readonly string Reliability = ApiReviewAnalyzersResources.CategoryReliability; }
 }

@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Collections.Generic;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -19,7 +18,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// to describe their type, which is expected to be provided by development tools. For names of members,  
     /// if a data type name must be used, use a language-independent name instead of a language-specific one.  
     /// </summary> 
-    
+
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class IdentifiersShouldNotContainTypeNames : DiagnosticAnalyzer
     {
@@ -30,7 +29,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainTypeNamesDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
         internal static ImmutableHashSet<string> s_types = ImmutableHashSet.CreateRange<string>(StringComparer.OrdinalIgnoreCase,
-            new []{
+            new[]{
                 "char",
                 "wchar",
                 "int8",
@@ -94,11 +93,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 AnalyzeSymbol(symbolContext.Symbol, symbolContext);
 
-                var parameters = symbolContext.Symbol.Kind == SymbolKind.Property ?
+                ImmutableArray<IParameterSymbol> parameters = symbolContext.Symbol.Kind == SymbolKind.Property ?
                     ((IPropertySymbol)symbolContext.Symbol).Parameters :
                     ((IMethodSymbol)symbolContext.Symbol).Parameters;
 
-                foreach (var param in parameters)
+                foreach (IParameterSymbol param in parameters)
                 {
                     AnalyzeSymbol(param, symbolContext);
                 }
@@ -108,11 +107,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static void AnalyzeSymbol(ISymbol symbol, SymbolAnalysisContext context)
         {
             // Check if memeber contains type name 
-            var identifier = symbol.Name;
-            var isTypeName = s_types.Contains(identifier);
+            string identifier = symbol.Name;
+            bool isTypeName = s_types.Contains(identifier);
             if (isTypeName)
             {
-                var diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], identifier);
+                Diagnostic diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], identifier);
                 context.ReportDiagnostic(diagnostic);
             }
         }

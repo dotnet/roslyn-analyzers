@@ -5,7 +5,7 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers   
+Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
     ''' CA2234: Pass system uri objects instead of strings
     ''' </summary>
@@ -13,5 +13,9 @@ Namespace Microsoft.ApiDesignGuidelines.Analyzers
     Public NotInheritable Class BasicPassSystemUriObjectsInsteadOfStringsAnalyzer
         Inherits PassSystemUriObjectsInsteadOfStringsAnalyzer
 
+        Protected Overrides Function GetInvocationExpression(node As SyntaxNode) As SyntaxNode
+            Dim invocationNode = TryCast(node, InvocationExpressionSyntax)
+            Return invocationNode?.Expression
+        End Function
     End Class
 End Namespace

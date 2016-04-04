@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 
@@ -107,8 +106,8 @@ End Class
 ");
         }
 
-        internal static string CA1018Name = "CA1018";
-        internal static string CA1018Message = MicrosoftApiDesignGuidelinesAnalyzersResources.MarkAttributesWithAttributeUsageMessageDefault;
+        internal static readonly string CA1018Name = "CA1018";
+        internal static readonly string CA1018Message = MicrosoftApiDesignGuidelinesAnalyzersResources.MarkAttributesWithAttributeUsageMessageDefault;
 
         private static DiagnosticResult GetCA1018CSharpResultAt(int line, int column, string objectName)
         {

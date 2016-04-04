@@ -28,15 +28,15 @@
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Common.1.2.0-beta-20151118-02\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Common.1.2.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.CSharp">
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.1.0.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.1.2.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.0-beta-20151118-02\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Collections.Immutable, Version=1.1.37.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -69,9 +69,9 @@
       <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Reflection.Metadata, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+    <Reference Include="System.Reflection.Metadata, Version=1.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\System.Reflection.Metadata.1.1.0\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
+      <HintPath>..\..\..\packages\System.Reflection.Metadata.1.2.0\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -81,6 +81,7 @@
     <InternalsVisibleToTest Include="Desktop.Analyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="install.ps1" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
@@ -94,16 +95,22 @@
     <None Include="uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DoNotCatchCorruptedStateExceptions.cs" />
-    <Compile Include="DoNotUseInsecureCryptographicAlgorithms.cs" />
-    <Compile Include="Helpers\CompilationSecurityTypes.cs" />
-    <Compile Include="Helpers\SecurityTypes.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DesktopAnalyzersResources.Designer.cs">
+    <Compile Include="DoNotUseInsecureDTDProcessing.cs" />
+    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesign.cs" />
+    <Compile Include="DoNotUseInsecureXSLTScriptExecution.cs" />
+    <Compile Include="DesktopAnalyzersResources1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>DesktopAnalyzersResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="DoNotCatchCorruptedStateExceptions.cs" />
+    <Compile Include="DoNotUseInsecureCryptographicAlgorithms.cs" />
+    <Compile Include="Helpers\CompilationSecurityTypes.cs" />
+    <Compile Include="Helpers\SecurityDiagnosticHelpers.cs" />
+    <Compile Include="Helpers\SecurityTypes.cs" />
+    <Compile Include="Helpers\SyntaxNodeHelper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SecurityMemberNames.cs" />
     <Compile Include="SerializationDiagnosticAnalyzer.cs" />
     <Compile Include="SpecifyMessageBoxOptions.cs" />
     <Compile Include="SpecifyMessageBoxOptions.Fixer.cs" />
@@ -126,24 +133,14 @@
     <Compile Include="ProvideDeserializationMethodsForOptionalFields.Fixer.cs" />
     <Compile Include="ImplementISerializableCorrectly.cs" />
     <Compile Include="ImplementISerializableCorrectly.Fixer.cs" />
-    <Compile Include="UseXmlReaderForDataSetReadXml.cs" />
-    <Compile Include="UseXmlReaderForDataSetReadXml.Fixer.cs" />
-    <Compile Include="UseXmlReaderForDataSetReadXmlSchema.cs" />
-    <Compile Include="UseXmlReaderForDataSetReadXmlSchema.Fixer.cs" />
-    <Compile Include="ReviewDataViewCollectionString.cs" />
-    <Compile Include="ReviewDataViewCollectionString.Fixer.cs" />
-    <Compile Include="UseXmlReaderForDataTableReadXml.cs" />
-    <Compile Include="UseXmlReaderForDataTableReadXml.Fixer.cs" />
-    <Compile Include="UseXmlReaderForDataTableReadXmlSchema.cs" />
-    <Compile Include="UseXmlReaderForDataTableReadXmlSchema.Fixer.cs" />
     <Compile Include="TypesShouldNotExtendCertainBaseTypes.cs" />
     <Compile Include="TypesShouldNotExtendCertainBaseTypes.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DesktopAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>DesktopAnalyzersResources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>DesktopAnalyzersResources1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

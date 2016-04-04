@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -68,7 +67,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                var attributeType = WellKnownTypes.IDisposable(compilationContext.Compilation);
+                INamedTypeSymbol attributeType = WellKnownTypes.IDisposable(compilationContext.Compilation);
                 if (attributeType == null)
                 {
                     return;
@@ -103,14 +102,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             // Only examine parameters of public constructors. Can't use protected 
             // constructors to define an attribute so this rule only applies to
             // public constructors.
-            var instanceConstructorsToCheck = attributeType.InstanceConstructors.Where(c => c.DeclaredAccessibility == Accessibility.Public);
+            IEnumerable<IMethodSymbol> instanceConstructorsToCheck = attributeType.InstanceConstructors.Where(c => c.DeclaredAccessibility == Accessibility.Public);
 
             if (instanceConstructorsToCheck.Any())
             {
                 var uniqueParamNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                foreach (var constructor in instanceConstructorsToCheck)
+                foreach (IMethodSymbol constructor in instanceConstructorsToCheck)
                 {
-                    foreach (var parameter in constructor.Parameters)
+                    foreach (IParameterSymbol parameter in constructor.Parameters)
                     {
                         if (uniqueParamNames.Add(parameter.Name))
                         {
@@ -124,7 +123,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static IDictionary<string, IPropertySymbol> GetAllPropertiesInTypeChain(INamedTypeSymbol attributeType)
         {
             var propertiesMap = new Dictionary<string, IPropertySymbol>(StringComparer.OrdinalIgnoreCase);
-            foreach (var currentType in attributeType.GetBaseTypesAndThis())
+            foreach (INamedTypeSymbol currentType in attributeType.GetBaseTypesAndThis())
             {
                 foreach (IPropertySymbol property in currentType.GetMembers().Where(m => m.Kind == SymbolKind.Property))
                 {
@@ -140,7 +139,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private void AnalyzeParameters(Compilation compilation, IEnumerable<IParameterSymbol> parameters, IDictionary<string, IPropertySymbol> propertiesMap, INamedTypeSymbol attributeType, Action<Diagnostic> addDiagnostic)
         {
-            foreach (var parameter in parameters)
+            foreach (IParameterSymbol parameter in parameters)
             {
                 if (parameter.Type.Kind != SymbolKind.ErrorType)
                 {

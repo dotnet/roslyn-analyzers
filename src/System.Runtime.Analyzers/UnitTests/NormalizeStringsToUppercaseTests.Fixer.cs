@@ -2,9 +2,7 @@
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
-using Xunit;
 
 namespace System.Runtime.Analyzers.UnitTests
 {
@@ -12,12 +10,12 @@ namespace System.Runtime.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicNormalizeStringsToUppercaseAnalyzer();
+            return new NormalizeStringsToUppercaseAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpNormalizeStringsToUppercaseAnalyzer();
+            return new NormalizeStringsToUppercaseAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

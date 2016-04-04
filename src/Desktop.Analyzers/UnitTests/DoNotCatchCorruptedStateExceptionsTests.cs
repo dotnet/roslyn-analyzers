@@ -2,7 +2,7 @@
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
-using Xunit;                 
+using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
@@ -73,7 +73,7 @@ namespace Desktop.Analyzers.UnitTests
                         Catch e As System.Exception
                         End Try
                         Return True
-                    End Sub
+                    End Function
                 End Class
             End Namespace
             ");
@@ -214,7 +214,7 @@ namespace Desktop.Analyzers.UnitTests
                             Throw
                         End Try
                         Return 0
-                    End Sub
+                    End Function
                 End Class
             End Namespace
             ");
@@ -706,7 +706,7 @@ namespace Desktop.Analyzers.UnitTests
             );
         }
 
-  
+
         [Fact]
         public void CA2153TestCatchExceptionInNestedClassMethodwithInnerHpcseAndOuterSecurityCriticalAttributes()
         {
@@ -899,10 +899,10 @@ namespace Desktop.Analyzers.UnitTests
                             {
                                 Console.WriteLine(""CATCH"");
                             }
-                            return ""asdf"";
                         }
                     }
                     private static void AccessViolation(){}
+                }
             }",
             GetCA2153CSharpResultAt(20, 29, "TestNamespace.TestClass.SaveNewFile3.set", "object")
             );
@@ -959,8 +959,7 @@ namespace Desktop.Analyzers.UnitTests
                                 Dim fileStream As New FileStream(""name"", FileMode.Create)
                             Catch e As System.Exception
                             End Try
-                            Return x
-                        End Get
+                        End Set
                     End Property
                 End Class
             End Namespace
@@ -1000,7 +999,8 @@ namespace Desktop.Analyzers.UnitTests
                         }
                         finally { }
                     }
-                }"
+                }
+            }"
             );
         }
 
@@ -1034,7 +1034,6 @@ namespace Desktop.Analyzers.UnitTests
                         }
                         catch {}
                         finally { }
-                        }
                     }
                 }
             }",
@@ -1146,6 +1145,7 @@ namespace Desktop.Analyzers.UnitTests
             );
 
             VerifyBasic(@"
+            Imports System
             Imports System.IO
             Imports System.Security
             Imports System.Runtime.ExceptionServices
@@ -1164,10 +1164,11 @@ namespace Desktop.Analyzers.UnitTests
                 End Class
             End Namespace
             ",
-            GetCA2153BasicResultAt(13, 25, "Public Shared Sub TestMethod()", "System.Exception")
+            GetCA2153BasicResultAt(14, 25, "Public Shared Sub TestMethod()", "System.Exception")
             );
 
             VerifyBasic(@"
+            Imports System
             Imports System.IO
             Imports System.Security
             Imports System.Runtime.ExceptionServices
@@ -1187,7 +1188,7 @@ namespace Desktop.Analyzers.UnitTests
                 End Class
             End Namespace
             ",
-            GetCA2153BasicResultAt(13, 25, "Public Shared Function TestMethod() As Double", "System.Exception")
+            GetCA2153BasicResultAt(14, 25, "Public Shared Function TestMethod() As Double", "System.Exception")
             );
         }
 

@@ -7,13 +7,13 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace ApiReview.Analyzers     
+Namespace ApiReview.Analyzers
     ''' <summary>
     ''' CA2001: Avoid calling problematic methods
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicAvoidCallingProblematicMethodsFixer
-        Inherits AvoidCallingProblematicMethodsFixer 
+        Inherits AvoidCallingProblematicMethodsFixer
 
     End Class
 End Namespace

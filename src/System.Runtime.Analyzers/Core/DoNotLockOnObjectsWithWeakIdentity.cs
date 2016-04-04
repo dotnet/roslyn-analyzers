@@ -1,10 +1,10 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Semantics;
 
 namespace System.Runtime.Analyzers
 {
@@ -19,7 +19,8 @@ namespace System.Runtime.Analyzers
     /// A thread that tries to acquire a lock on an object that has a weak identity can be blocked by a second thread in 
     /// a different application domain that has a lock on the same object. 
     /// </summary>
-    public abstract class DoNotLockOnObjectsWithWeakIdentityAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class DoNotLockOnObjectsWithWeakIdentityAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2002";
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotLockOnObjectsWithWeakIdentityTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
@@ -37,16 +38,25 @@ namespace System.Runtime.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        protected void GetDiagnosticsForNode(SyntaxNode node, SemanticModel model, Action<Diagnostic> addDiagnostic)
+        public override void Initialize(AnalysisContext analysisContext)
         {
-            var type = model.GetTypeInfo(node).Type;
-            if (type != null && TypeHasWeakIdentity(type, model))
+            analysisContext.RegisterCompilationStartAction(compilationStartContext =>
             {
-                addDiagnostic(node.CreateDiagnostic(Rule, type.ToDisplayString()));
-            }
+                Compilation compilation = compilationStartContext.Compilation;
+                compilationStartContext.RegisterOperationAction(context =>
+                {
+                    var lockStatement = (ILockStatement)context.Operation;
+                    ITypeSymbol type = lockStatement?.LockedObject?.Type;
+                    if (type != null && TypeHasWeakIdentity(type, compilation))
+                    {
+                        context.ReportDiagnostic(lockStatement.LockedObject.Syntax.CreateDiagnostic(Rule, type.ToDisplayString()));
+                    }
+                },
+                OperationKind.LockStatement);
+            });
         }
 
-        private bool TypeHasWeakIdentity(ITypeSymbol type, SemanticModel model)
+        private bool TypeHasWeakIdentity(ITypeSymbol type, Compilation compilation)
         {
             switch (type.TypeKind)
             {
@@ -55,7 +65,6 @@ namespace System.Runtime.Analyzers
                     return arrayType != null && IsPrimitiveType(arrayType.ElementType);
                 case TypeKind.Class:
                 case TypeKind.TypeParameter:
-                    Compilation compilation = model.Compilation;
                     INamedTypeSymbol marshalByRefObjectTypeSymbol = compilation.GetTypeByMetadataName("System.MarshalByRefObject");
                     INamedTypeSymbol executionEngineExceptionTypeSymbol = compilation.GetTypeByMetadataName("System.ExecutionEngineException");
                     INamedTypeSymbol outOfMemoryExceptionTypeSymbol = compilation.GetTypeByMetadataName("System.OutOfMemoryException");

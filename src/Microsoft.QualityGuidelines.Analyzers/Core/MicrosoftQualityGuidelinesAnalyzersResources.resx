@@ -117,7 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-
   <data name="UseLiteralsWhereAppropriateTitle" xml:space="preserve">
     <value>Use literals where appropriate</value>
   </data>
@@ -161,7 +160,7 @@
     <value>Members that do not access instance data or call instance methods can be marked as static (Shared in Visual Basic). After you mark the methods as static, the compiler will emit nonvirtual call sites to these members. This can give you a measurable performance gain for performance-sensitive code.</value>
   </data>
   <data name="MarkMembersAsStaticMessage" xml:space="preserve">
-    <value>Mark members as static</value>
+    <value>Member {0} does not access instance data and can be marked as static (Shared in VisualBasic)</value>
   </data>
   <data name="DisposeObjectsBeforeLosingScopeTitle" xml:space="preserve">
     <value>Dispose Objects Before Losing Scope</value>
@@ -193,13 +192,31 @@
   <data name="SealMethodsThatSatisfyPrivateInterfacesMessage" xml:space="preserve">
     <value>Seal methods that satisfy private interfaces</value>
   </data>
-  <data name="CategoryPerformance" xml:space="preserve">
-    <value>Performance</value>
+  <data name="RemoveEmptyFinalizers" xml:space="preserve">
+    <value>Remove empty Finalizers</value>
   </data>
-  <data name="CategoryReliability" xml:space="preserve">
-    <value>Reliability</value>
+  <data name="RemoveEmptyFinalizersDescription" xml:space="preserve">
+    <value>Finalizers should be avoided where possible, to avoid the additional performance overhead involved in tracking object lifetime.</value>
   </data>
-  <data name="CategorySecurity" xml:space="preserve">
-    <value>Security</value>
+  <data name="DoNotCallOverridableMethodsInConstructors" xml:space="preserve">
+    <value>Do not call overridable methods in constructors</value>
+  </data>
+  <data name="DoNotCallOverridableMethodsInConstructorsDescription" xml:space="preserve">
+    <value>Virtual methods defined on the class should not be called from constructors. If a derived class has overridden the method, the derived class version will be called (before the derived class constructor is called).</value>
+  </data>
+  <data name="RethrowToPreserveStackDetailsMessage" xml:space="preserve">
+    <value>Re-throwing caught exception changes stack information.</value>
+  </data>
+  <data name="RethrowToPreserveStackDetailsTitle" xml:space="preserve">
+    <value>Rethrow to preserve stack details.</value>
+  </data>
+  <data name="DoNotRaiseExceptionsInExceptionClausesDescription" xml:space="preserve">
+    <value>When an exception is raised in a finally clause, the new exception hides the active exception. This makes the original error difficult to detect and debug.</value>
+  </data>
+  <data name="DoNotRaiseExceptionsInExceptionClausesMessageFinally" xml:space="preserve">
+    <value>Do not raise an exception from within a finally clause. </value>
+  </data>
+  <data name="DoNotRaiseExceptionsInExceptionClausesTitle" xml:space="preserve">
+    <value>Do not raise exceptions in finally clauses</value>
   </data>
 </root>

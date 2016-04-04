@@ -17,7 +17,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             where TTypeDeclarationSyntax : SyntaxNode
     {
         internal const string RuleId = "CA1001";
-        internal const string Dispose = "Dispose";               
+        internal const string Dispose = "Dispose";
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                          new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources)),
@@ -35,14 +35,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                var disposableType = WellKnownTypes.IDisposable(compilationContext.Compilation);        
+                INamedTypeSymbol disposableType = WellKnownTypes.IDisposable(compilationContext.Compilation);
 
                 if (disposableType == null)
                 {
                     return;
                 }
 
-                var analyzer = GetAnalyzer(disposableType);
+                DisposableFieldAnalyzer analyzer = GetAnalyzer(disposableType);
                 compilationContext.RegisterSymbolAction(context =>
                 {
                     analyzer.AnalyzeSymbol(context);
@@ -55,34 +55,34 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         protected abstract class DisposableFieldAnalyzer
         {
-            private INamedTypeSymbol _disposableTypeSymbol;   
+            private readonly INamedTypeSymbol _disposableTypeSymbol;
 
             public DisposableFieldAnalyzer(INamedTypeSymbol disposableTypeSymbol)
             {
-                _disposableTypeSymbol = disposableTypeSymbol;       
+                _disposableTypeSymbol = disposableTypeSymbol;
             }
-                                                                               
+
             public void AnalyzeSymbol(SymbolAnalysisContext symbolContext)
             {
                 INamedTypeSymbol namedType = (INamedTypeSymbol)symbolContext.Symbol;
                 if (!namedType.AllInterfaces.Contains(_disposableTypeSymbol))
                 {
-                    var disposableFields = from member in namedType.GetMembers()
-                                           where member.Kind == SymbolKind.Field && !member.IsStatic
-                                           let field = member as IFieldSymbol
-                                           where field.Type != null && field.Type.AllInterfaces.Contains(_disposableTypeSymbol)
-                                           select field;
+                    IEnumerable<IFieldSymbol> disposableFields = from member in namedType.GetMembers()
+                                                                 where member.Kind == SymbolKind.Field && !member.IsStatic
+                                                                 let field = member as IFieldSymbol
+                                                                 where field.Type != null && field.Type.AllInterfaces.Contains(_disposableTypeSymbol)
+                                                                 select field;
 
                     if (disposableFields.Any())
                     {
                         var disposableFieldsHashSet = new HashSet<ISymbol>(disposableFields);
-                        var classDecls = GetClassDeclarationNodes(namedType, symbolContext.CancellationToken);
-                        foreach (var classDecl in classDecls)
+                        IEnumerable<TTypeDeclarationSyntax> classDecls = GetClassDeclarationNodes(namedType, symbolContext.CancellationToken);
+                        foreach (TTypeDeclarationSyntax classDecl in classDecls)
                         {
-                            var model = symbolContext.Compilation.GetSemanticModel(classDecl.SyntaxTree);
-                            var syntaxNodes = classDecl.DescendantNodes(n => !(n is TTypeDeclarationSyntax) || ReferenceEquals(n, classDecl))
-                                .Where(n => IsDisposableFieldCreation(n, 
-                                                                    model, 
+                            SemanticModel model = symbolContext.Compilation.GetSemanticModel(classDecl.SyntaxTree);
+                            IEnumerable<SyntaxNode> syntaxNodes = classDecl.DescendantNodes(n => !(n is TTypeDeclarationSyntax) || ReferenceEquals(n, classDecl))
+                                .Where(n => IsDisposableFieldCreation(n,
+                                                                    model,
                                                                     disposableFieldsHashSet,
                                                                     symbolContext.CancellationToken));
                             if (syntaxNodes.Any())
@@ -90,18 +90,18 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                 symbolContext.ReportDiagnostic(namedType.CreateDiagnostic(Rule, namedType.Name));
                                 return;
                             }
-                        }  
+                        }
                     }
                 }
             }
 
             private IEnumerable<TTypeDeclarationSyntax> GetClassDeclarationNodes(INamedTypeSymbol namedType, CancellationToken cancellationToken)
             {
-                foreach (var syntax in namedType.DeclaringSyntaxReferences.Select(s => s.GetSyntax(cancellationToken)))
+                foreach (SyntaxNode syntax in namedType.DeclaringSyntaxReferences.Select(s => s.GetSyntax(cancellationToken)))
                 {
                     if (syntax != null)
                     {
-                        var classDecl = syntax.FirstAncestorOrSelf<TTypeDeclarationSyntax>(ascendOutOfTrivia: false);
+                        TTypeDeclarationSyntax classDecl = syntax.FirstAncestorOrSelf<TTypeDeclarationSyntax>(ascendOutOfTrivia: false);
                         if (classDecl != null)
                         {
                             yield return classDecl;
@@ -111,7 +111,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
 
             protected abstract bool IsDisposableFieldCreation(SyntaxNode node, SemanticModel model, HashSet<ISymbol> disposableFields, CancellationToken cancellationToken);
-
         }
     }
 }

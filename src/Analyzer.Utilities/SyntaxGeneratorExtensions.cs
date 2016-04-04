@@ -33,6 +33,7 @@ namespace Analyzer.Utilities
         /// <param name="containingType">
         /// A symbol specifying the type of the operands of the comparison operator.
         /// </param>
+        /// <param name="compilation">The compilation</param>
         /// <returns>
         /// A <see cref="SyntaxNode"/> representing the declaration.
         /// </returns>
@@ -40,7 +41,9 @@ namespace Analyzer.Utilities
         /// A comparison operator is a public, static (Shared in VB) method with two operands,
         /// each of the containing type, and a return type of bool (Boolean in VB).
         /// </remarks>
-        public static SyntaxNode ComparisonOperatorDeclaration(this SyntaxGenerator generator, OperatorKind operatorKind, INamedTypeSymbol containingType)
+        public static SyntaxNode ComparisonOperatorDeclaration(
+            this SyntaxGenerator generator, OperatorKind operatorKind,
+            INamedTypeSymbol containingType, Compilation compilation)
         {
             if (!s_comparisonOperators.Contains(operatorKind))
             {
@@ -57,7 +60,7 @@ namespace Analyzer.Utilities
                 generator.TypeExpression(SpecialType.System_Boolean),
                 Accessibility.Public,
                 DeclarationModifiers.Static,
-                generator.DefaultMethodBody());
+                generator.DefaultMethodBody(compilation));
         }
 
         /// <summary>
@@ -66,10 +69,11 @@ namespace Analyzer.Utilities
         /// <param name="generator">
         /// The <see cref="SyntaxGenerator"/> used to create the declaration.
         /// </param>
+        /// <param name="compilation">The compilation</param>
         /// <returns>
         /// A <see cref="SyntaxNode"/> representing the declaration.
         /// </returns>
-        public static SyntaxNode EqualsOverrideDeclaration(this SyntaxGenerator generator)
+        public static SyntaxNode EqualsOverrideDeclaration(this SyntaxGenerator generator, Compilation compilation)
         {
             return generator.MethodDeclaration(
                 WellKnownMemberNames.ObjectEquals,
@@ -80,7 +84,7 @@ namespace Analyzer.Utilities
                 returnType: generator.TypeExpression(SpecialType.System_Boolean),
                 accessibility: Accessibility.Public,
                 modifiers: DeclarationModifiers.Override,
-                statements: generator.DefaultMethodBody());
+                statements: generator.DefaultMethodBody(compilation));
         }
 
         /// <summary>
@@ -89,17 +93,19 @@ namespace Analyzer.Utilities
         /// <param name="generator">
         /// The <see cref="SyntaxGenerator"/> used to create the declaration.
         /// </param>
+        /// <param name="compilation">The compilation</param>
         /// <returns>
         /// A <see cref="SyntaxNode"/> representing the declaration.
         /// </returns>
-        public static SyntaxNode GetHashCodeOverrideDeclaration(this SyntaxGenerator generator)
+        public static SyntaxNode GetHashCodeOverrideDeclaration(
+            this SyntaxGenerator generator, Compilation compilation)
         {
             return generator.MethodDeclaration(
                 WellKnownMemberNames.ObjectGetHashCode,
                 returnType: generator.TypeExpression(SpecialType.System_Int32),
                 accessibility: Accessibility.Public,
                 modifiers: DeclarationModifiers.Override,
-                statements: generator.DefaultMethodBody());
+                statements: generator.DefaultMethodBody(compilation));
         }
 
         /// <summary>
@@ -108,15 +114,21 @@ namespace Analyzer.Utilities
         /// <param name="generator">
         /// The <see cref="SyntaxGenerator"/> used to create the statements.
         /// </param>
+        /// <param name="compilation">The compilation</param>
         /// <returns>
         /// An sequence containing a single statement that throws <see cref="System.NotImplementedException"/>.
         /// </returns>
-        public static IEnumerable<SyntaxNode> DefaultMethodBody(this SyntaxGenerator generator)
+        public static IEnumerable<SyntaxNode> DefaultMethodBody(
+            this SyntaxGenerator generator, Compilation compilation)
         {
-            return new SyntaxNode[]
-            {
-                generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException")))
-            };
+            yield return DefaultMethodStatement(generator, compilation);
+        }
+
+        public static SyntaxNode DefaultMethodStatement(this SyntaxGenerator generator, Compilation compilation)
+        {
+            return generator.ThrowStatement(generator.ObjectCreationExpression(
+                            generator.TypeExpression(
+                                compilation.GetTypeByMetadataName("System.NotImplementedException"))));
         }
     }
 }

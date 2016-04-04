@@ -47,10 +47,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private async Task<Document> OverrideObjectEquals(Document document, SyntaxNode typeDeclaration, CancellationToken cancellationToken)
         {
-            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            SyntaxGenerator generator = editor.Generator;
+            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            var generator = editor.Generator;
 
-            SyntaxNode methodDeclaration = generator.EqualsOverrideDeclaration();
+            var methodDeclaration = generator.EqualsOverrideDeclaration(editor.SemanticModel.Compilation);
 
             editor.AddMember(typeDeclaration, methodDeclaration);
             return editor.GetChangedDocument();

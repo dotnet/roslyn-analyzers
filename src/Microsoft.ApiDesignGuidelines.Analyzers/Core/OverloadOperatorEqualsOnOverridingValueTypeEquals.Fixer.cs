@@ -50,19 +50,21 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private async Task<Document> ImplementOperatorEquals(Document document, SyntaxNode declaration, INamedTypeSymbol typeSymbol, CancellationToken cancellationToken)
         {
-            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            SyntaxGenerator generator = editor.Generator;
+            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            var generator = editor.Generator;
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.EqualityOperatorName))
             {
-                SyntaxNode equalityOperator = generator.ComparisonOperatorDeclaration(OperatorKind.Equality, typeSymbol);
+                var equalityOperator = generator.ComparisonOperatorDeclaration(
+                    OperatorKind.Equality, typeSymbol, editor.SemanticModel.Compilation);
 
                 editor.AddMember(declaration, equalityOperator);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.InequalityOperatorName))
             {
-                SyntaxNode inequalityOperator = generator.ComparisonOperatorDeclaration(OperatorKind.Inequality, typeSymbol);
+                var inequalityOperator = generator.ComparisonOperatorDeclaration(
+                    OperatorKind.Inequality, typeSymbol, editor.SemanticModel.Compilation);
 
                 editor.AddMember(declaration, inequalityOperator);
             }

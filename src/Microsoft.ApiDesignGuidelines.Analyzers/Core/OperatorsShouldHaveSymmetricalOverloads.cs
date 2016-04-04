@@ -73,6 +73,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     continue;
                 }
 
+                if (operator1.GetParameters().Length != 2)
+                {
+                    continue;
+                }
+
                 if (HasSymmetricOperator(operator1, operators2))
                 {
                     continue;

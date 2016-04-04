@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeActions;
 using System.Diagnostics;
 using Analyzer.Utilities;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using System.Linq;
+using Microsoft.CodeAnalysis.Editing;
+using System.Collections.Generic;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
@@ -19,27 +24,96 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public sealed override FixAllProvider GetFixAllProvider()
         {
-            // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
             return WellKnownFixAllProviders.BatchFixer;
         }
 
         public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            context.RegisterCodeFix(CodeAction.Create(MicrosoftApiDesignGuidelinesAnalyzersResources.Generate_missing_operators,
-                c => CreateChangedDocument(context.Document, c), nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.Generate_missing_operators)),
-                context.Diagnostics.First());
+            context.RegisterCodeFix(
+                CodeAction.Create(
+                    MicrosoftApiDesignGuidelinesAnalyzersResources.Generate_missing_operators,
+                    c => CreateChangedDocument(context, c),
+                    nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.Generate_missing_operators)),
+                context.Diagnostics);
             return Task.FromResult(true);
         }
 
-        private async Task<Document> CreateChangedDocument(CodeFixContext context, CancellationToken cancellationToken)
+        private async Task<Document> CreateChangedDocument(
+            CodeFixContext context, CancellationToken cancellationToken)
         {
             var document = context.Document;
-            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            var containingOperator = semanticModel.GetEnclosingSymbol(context.Diagnostics.First().Location.SourceSpan.Start, cancellationToken);
+            var editor = await DocumentEditor.CreateAsync(document, cancellationToken);
+            var semanticModel = editor.SemanticModel;
+            var root = await semanticModel.SyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
+            var operatorNode = root.FindNode(context.Diagnostics.First().Location.SourceSpan);
+
+            var containingOperator = (IMethodSymbol)semanticModel.GetDeclaredSymbol(operatorNode, cancellationToken);
 
             Debug.Assert(containingOperator.IsUserDefinedOperator());
 
-            var generator = SyntaxGenerator.GetGenerator(document);
+            var generator = editor.Generator;
+            var newOperator = generator.OperatorDeclaration(
+                GetInvertedOperator(containingOperator),
+                containingOperator.GetParameters().Select(p => generator.ParameterDeclaration(p)),
+                generator.TypeExpression(containingOperator.ReturnType),
+                containingOperator.DeclaredAccessibility,
+                generator.GetModifiers(operatorNode),
+                GetInvertedStatements(generator, containingOperator, semanticModel.Compilation));
+
+            operatorNode = operatorNode.AncestorsAndSelf().First(a => a.RawKind == newOperator.RawKind);
+
+            editor.InsertAfter(operatorNode, newOperator);
+            return editor.GetChangedDocument();
+        }
+
+        private IEnumerable<SyntaxNode> GetInvertedStatements(
+            SyntaxGenerator generator, IMethodSymbol containingOperator, Compilation compilation)
+        {
+            yield return GetInvertedStatement(generator, containingOperator, compilation);
+        }
+
+        private SyntaxNode GetInvertedStatement(
+            SyntaxGenerator generator, IMethodSymbol containingOperator, Compilation compilation)
+        {
+            if (containingOperator.Name == WellKnownMemberNames.EqualityOperatorName)
+            {
+                return generator.ReturnStatement(
+                    generator.LogicalNotExpression(
+                        generator.ValueEqualsExpression(
+                            generator.IdentifierName(containingOperator.Parameters[0].Name),
+                            generator.IdentifierName(containingOperator.Parameters[1].Name))));
+            }
+            else if (containingOperator.Name == WellKnownMemberNames.InequalityOperatorName)
+            {
+                return generator.ReturnStatement(
+                    generator.LogicalNotExpression(
+                        generator.ValueNotEqualsExpression(
+                            generator.IdentifierName(containingOperator.Parameters[0].Name),
+                            generator.IdentifierName(containingOperator.Parameters[1].Name))));
+            }
+            else
+            {
+                // If it's a  <   >   <=   or  >=   operator then we can't simply invert a call
+                // to the existing operator.  i.e. the body of the "<" method should *not* be:
+                //    return !(a > b);
+                // Just provide a throwing impl for now.
+                return generator.DefaultMethodStatement(compilation);
+            }
+        }
+
+        private OperatorKind GetInvertedOperator(IMethodSymbol containingOperator)
+        {
+            switch(containingOperator.Name)
+            {
+                case WellKnownMemberNames.EqualityOperatorName: return OperatorKind.Inequality;
+                case WellKnownMemberNames.InequalityOperatorName: return OperatorKind.Equality;
+                case WellKnownMemberNames.LessThanOperatorName: return OperatorKind.GreaterThan;
+                case WellKnownMemberNames.LessThanOrEqualOperatorName: return OperatorKind.GreaterThanOrEqual;
+                case WellKnownMemberNames.GreaterThanOperatorName: return OperatorKind.LessThan;
+                case WellKnownMemberNames.GreaterThanOrEqualOperatorName: return OperatorKind.LessThanOrEqual;
+            }
+
+            throw new InvalidOperationException();
         }
     }
 }

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 
-namespace Analyzer.Utilities.Extensions
+namespace Analyzer.Utilities
 {
     public static class IEnumerableOfIMethodSymbolExtensions
     {
@@ -18,9 +19,10 @@ namespace Analyzer.Utilities.Extensions
         /// <param name="selectedOverload"><see cref="IMethodSymbol"/> that is currently picked by the user</param>
         /// <param name="expectedParameterType"><see cref="INamedTypeSymbol"/> type of the leading parameter or the trailing parameter</param>
         public static IEnumerable<IMethodSymbol> GetMethodOverloadsWithDesiredParameterAtLeadingOrTrailing(
-            this IEnumerable<IMethodSymbol> methods,
-            IMethodSymbol selectedOverload,
-            INamedTypeSymbol expectedParameterType)
+             this IEnumerable<IMethodSymbol> methods,
+             IMethodSymbol selectedOverload,
+             INamedTypeSymbol expectedParameterType,
+             bool trailingOnly = false)
         {
             return methods.Where(candidateMethod =>
             {
@@ -29,21 +31,21 @@ namespace Analyzer.Utilities.Extensions
                     return false;
                 }
 
-                // The expected method overload should either have the expectedParameterType parameter as the first argument or as the last argument
-                // Assume expectedParameterType is the last parameter so j, which is the index of the parameter
-                // in candidateMethod to compare against selectedOverload's parameter is set to 0
-                int j = 0;
+                 // The expected method overload should either have the expectedParameterType parameter as the first argument or as the last argument
+                 // Assume expectedParameterType is the last parameter so j, which is the index of the parameter
+                 // in candidateMethod to compare against selectedOverload's parameter is set to 0
+                 int j = 0;
 
-                if (candidateMethod.Parameters.First().Type.Equals(expectedParameterType))
+                if (!trailingOnly && candidateMethod.Parameters.First().Type.Equals(expectedParameterType))
                 {
-                    // If expectedParameterType is the first parameter then the parameters to compare in candidateMethod against selectedOverload
-                    // is offset by 1
-                    j = 1;
+                     // If expectedParameterType is the first parameter then the parameters to compare in candidateMethod against selectedOverload
+                     // is offset by 1
+                     j = 1;
                 }
                 else if (!candidateMethod.Parameters.Last().Type.Equals(expectedParameterType))
                 {
-                    // expectedParameterType is neither the first parameter nor the last parameter
-                    return false;
+                     // expectedParameterType is neither the first parameter nor the last parameter
+                     return false;
                 }
 
                 for (int i = 0; i < selectedOverload.Parameters.Count(); i++, j++)
@@ -57,6 +59,20 @@ namespace Analyzer.Utilities.Extensions
 
                 return true;
             });
+        }
+
+        public static IEnumerable<IMethodSymbol> GetMethodOverloadsWithDesiredParameterAtTrailing(
+             this IEnumerable<IMethodSymbol> methods,
+             IMethodSymbol selectedOverload,
+             INamedTypeSymbol expectedParameterType,
+             bool trailingOnly = false)
+        {
+            return GetMethodOverloadsWithDesiredParameterAtLeadingOrTrailing(methods, selectedOverload, expectedParameterType, true);
+        }
+
+        public static IMethodSymbol GetSingleOrDefaultMemberWithName(this IEnumerable<IMethodSymbol> stringFormatMembers, string displayName)
+        {
+             return stringFormatMembers?.Where(member => string.Equals(member.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat), displayName, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
         }
     }
 }

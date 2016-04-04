@@ -120,7 +120,6 @@
     <Compile Include="BasicDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.Fixer.vb" />
     <Compile Include="BasicSpecifyCultureInfo.Fixer.vb" />
     <Compile Include="BasicSpecifyIFormatProvider.Fixer.vb" />
-    <Compile Include="BasicSpecifyStringComparison.vb" />
     <Compile Include="BasicSpecifyStringComparison.Fixer.vb" />
     <Compile Include="BasicNormalizeStringsToUppercase.Fixer.vb" />
     <Compile Include="BasicCallGCSuppressFinalizeCorrectly.vb" />

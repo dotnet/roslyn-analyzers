@@ -122,7 +122,6 @@
     <Compile Include="CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.Fixer.cs" />
     <Compile Include="CSharpSpecifyCultureInfo.Fixer.cs" />
     <Compile Include="CSharpSpecifyIFormatProvider.Fixer.cs" />
-    <Compile Include="CSharpSpecifyStringComparison.cs" />
     <Compile Include="CSharpSpecifyStringComparison.Fixer.cs" />
     <Compile Include="CSharpNormalizeStringsToUppercase.Fixer.cs" />
     <Compile Include="CSharpCallGCSuppressFinalizeCorrectly.cs" />

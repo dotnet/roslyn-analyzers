@@ -109,9 +109,10 @@ namespace System.Runtime.Analyzers
                     var targetMethod = invocationExpression.TargetMethod;
 
                     #region "Exceptions"
-                    if (targetMethod.ContainingType != null && 
-                        (activatorType != null && activatorType.Equals(targetMethod.ContainingType)) ||
-                        (resourceManagerType != null && resourceManagerType.Equals(targetMethod.ContainingType)))
+                    if (targetMethod.IsGenericMethod ||
+                        (targetMethod.ContainingType != null && 
+                         (activatorType != null && activatorType.Equals(targetMethod.ContainingType)) ||
+                         (resourceManagerType != null && resourceManagerType.Equals(targetMethod.ContainingType))))
                     {
                         return;
                     }

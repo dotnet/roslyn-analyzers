@@ -257,6 +257,46 @@ GetIFormatProviderAlternateRuleCSharpResultAt(11, 9, "IFormatProviderOverloads.T
         }
 
         [Fact]
+        public void CA1305_NonStringReturningStringFormatOverloads_TargetMethodNoGenerics_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+
+public static class IFormatProviderStringTest
+{
+    public static void TestMethod()
+    {
+        IFormatProviderOverloads.TargetMethodIsNonGeneric(""1"");
+        IFormatProviderOverloads.TargetMethodIsGeneric<int>(""1""); // No Diagnostics because the target method can be generic
+    }
+}
+
+internal static class IFormatProviderOverloads
+{
+    public static void TargetMethodIsNonGeneric(string format)
+    {
+    }
+
+    public static void TargetMethodIsNonGeneric<T>(string format, IFormatProvider provider)
+    {
+    }
+
+    public static void TargetMethodIsGeneric<T>(string format)
+    {
+    }
+
+    public static void TargetMethodIsGeneric(string format, IFormatProvider provider)
+    {
+    }
+}",
+GetIFormatProviderAlternateRuleCSharpResultAt(8, 9, "IFormatProviderOverloads.TargetMethodIsNonGeneric(string)",
+                                                    "IFormatProviderStringTest.TestMethod()",
+                                                    "IFormatProviderOverloads.TargetMethodIsNonGeneric<T>(string, System.IFormatProvider)",
+                                                    "System.Globalization.CultureInfo.CurrentCulture",
+                                                    "System.Globalization.CultureInfo.InvariantCulture"));
+        }
+
+        [Fact]
         public void CA1305_StringReturningUICultureIFormatProvider_CSharp()
         {
             VerifyCSharp(@"

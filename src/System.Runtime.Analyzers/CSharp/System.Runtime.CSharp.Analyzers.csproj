@@ -121,7 +121,6 @@
     <Compile Include="CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.cs" />
     <Compile Include="CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.Fixer.cs" />
     <Compile Include="CSharpSpecifyCultureInfo.Fixer.cs" />
-    <Compile Include="CSharpSpecifyIFormatProvider.cs" />
     <Compile Include="CSharpSpecifyIFormatProvider.Fixer.cs" />
     <Compile Include="CSharpSpecifyStringComparison.cs" />
     <Compile Include="CSharpSpecifyStringComparison.Fixer.cs" />

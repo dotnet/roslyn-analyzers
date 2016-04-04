@@ -15,7 +15,8 @@ namespace System.Runtime.Analyzers
     /// <summary>
     /// CA1305: Specify IFormatProvider
     /// </summary>
-    public abstract class SpecifyIFormatProviderAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class SpecifyIFormatProviderAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1305";
         internal const string Uri = @"https://msdn.microsoft.com/en-us/library/ms182190.aspx";

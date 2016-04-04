@@ -10,12 +10,12 @@ namespace System.Runtime.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicSpecifyIFormatProviderAnalyzer();
+            return new SpecifyIFormatProviderAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpSpecifyIFormatProviderAnalyzer();
+            return new SpecifyIFormatProviderAnalyzer();
         }
 
         [Fact]
@@ -259,7 +259,6 @@ GetIFormatProviderAlternateRuleCSharpResultAt(11, 9, "IFormatProviderOverloads.T
         [Fact]
         public void CA1305_StringReturningUICultureIFormatProvider_CSharp()
         {
-            this.PrintActualDiagnosticsOnFailure = true;
             VerifyCSharp(@"
 using System;
 using System.Globalization;
@@ -333,7 +332,6 @@ GetIFormatProviderUICultureStringRuleCSharpResultAt(13, 9, "UICultureAsIFormatPr
         [Fact]
         public void CA1305_NonStringReturningUICultureIFormatProvider_CSharp()
         {
-            this.PrintActualDiagnosticsOnFailure = true;
             VerifyCSharp(@"
 using System;
 using System.Globalization;
@@ -654,7 +652,6 @@ GetIFormatProviderAlternateRuleBasicResultAt(13, 9, "IFormatProviderOverloads.Tr
         [Fact]
        public void CA1305_StringReturningUICultureIFormatProvider_VisualBasic()
        {
-           this.PrintActualDiagnosticsOnFailure = true;
            VerifyBasic(@"
 Imports System
 Imports System.Globalization
@@ -727,7 +724,6 @@ GetIFormatProviderUICultureStringRuleBasicResultAt(13, 9, "UICultureAsIFormatPro
        [Fact]
        public void CA1305_NonStringReturningUICultureIFormatProvider_VisualBasic()
        {
-           this.PrintActualDiagnosticsOnFailure = true;
            VerifyBasic(@"
 Imports System
 Imports System.Globalization
@@ -798,7 +794,6 @@ GetIFormatProviderUICultureRuleBasicResultAt(13, 9, "UICultureAsIFormatProviderR
         [Fact]
         public void CA1305_NonStringReturningComputerInfoInstalledUICultureIFormatProvider_VisualBasic()
         {
-            this.PrintActualDiagnosticsOnFailure = true;
             VerifyBasic(@"
 Imports System
 Imports System.Globalization

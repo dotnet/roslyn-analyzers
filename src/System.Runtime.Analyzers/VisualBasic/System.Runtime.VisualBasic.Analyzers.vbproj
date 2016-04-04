@@ -119,7 +119,6 @@
     <Compile Include="BasicDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.vb" />
     <Compile Include="BasicDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.Fixer.vb" />
     <Compile Include="BasicSpecifyCultureInfo.Fixer.vb" />
-    <Compile Include="BasicSpecifyIFormatProvider.vb" />
     <Compile Include="BasicSpecifyIFormatProvider.Fixer.vb" />
     <Compile Include="BasicSpecifyStringComparison.vb" />
     <Compile Include="BasicSpecifyStringComparison.Fixer.vb" />

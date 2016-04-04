@@ -73,9 +73,26 @@ namespace Microsoft.CodeAnalysis.UnitTests
             }
         }
 
+        private string GetSeverityString(DiagnosticSeverity severity)
+        {
+            switch (severity)
+            {
+                case DiagnosticSeverity.Hidden:
+                    return "Hidden";
+                case DiagnosticSeverity.Info:
+                    return "Info";
+                case DiagnosticSeverity.Warning:
+                    return "Warning";
+                case DiagnosticSeverity.Error:
+                    return "Error";
+                default:
+                    return "";
+            }
+        }
+
         public override string ToString()
         {
-            return Message;
+            return $"{System.IO.Path.GetFileName(Path)}({Line},{Column}): {GetSeverityString(Severity)} {Id}: {Message}";
         }
     }
 }

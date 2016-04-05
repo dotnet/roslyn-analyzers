@@ -855,6 +855,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Generate missing operators.
+        /// </summary>
+        internal static string Generate_missing_operators {
+            get {
+                return ResourceManager.GetString("Generate_missing_operators", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Identifiers for namespaces, types, members, and parameters cannot differ only by case because languages that target the common language runtime are not required to be case-sensitive..
         /// </summary>
         internal static string IdentifiersShouldDifferByMoreThanCaseDescription {
@@ -2206,7 +2215,25 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Type &apos;{0}&apos; is a static holder type but is neither static nor NotInheritable.
+        ///   Looks up a localized string similar to Since &apos;{0}&apos; redefines operator &apos;{1}&apos;, it should also redefine operator &apos;{2}&apos;.
+        /// </summary>
+        internal static string Since_0_redefines_operator_1_it_should_also_redefine_operator_2 {
+            get {
+                return ResourceManager.GetString("Since_0_redefines_operator_1_it_should_also_redefine_operator_2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A public or protected type contains only static members and is not declared by using the sealed (C# Reference) (NotInheritable) modifier. A type that is not meant to be inherited should be marked by using the sealed modifier to prevent its use as a base type..
+        /// </summary>
+        internal static string StaticHolderTypesShouldBeSealedDescription {
+            get {
+                return ResourceManager.GetString("StaticHolderTypesShouldBeSealedDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Because type {0} contains only &apos;static&apos; members, mark it as &apos;static&apos; to prevent consumers from inheriting from it..
         /// </summary>
         internal static string StaticHolderTypeIsNotStatic {
             get {

@@ -55,7 +55,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             var generator = editor.Generator;
             var newOperator = generator.OperatorDeclaration(
-                GetInvertedOperator(containingOperator),
+                GetInvertedOperatorKind(containingOperator),
                 containingOperator.GetParameters().Select(p => generator.ParameterDeclaration(p)),
                 generator.TypeExpression(containingOperator.ReturnType),
                 containingOperator.DeclaredAccessibility,
@@ -103,7 +103,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
         }
 
-        private OperatorKind GetInvertedOperator(IMethodSymbol containingOperator)
+        private OperatorKind GetInvertedOperatorKind(IMethodSymbol containingOperator)
         {
             switch(containingOperator.Name)
             {

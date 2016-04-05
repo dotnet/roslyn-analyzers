@@ -50,6 +50,34 @@ class A
         }
 
         [Fact]
+        public void CSharpTestOverloads1()
+        {
+            VerifyCSharpFix(
+                @"
+class A
+{
+    public static bool operator==(A a1, A a2) { return false; }
+    public static bool operator==(A a1, bool a2) { return false; }
+}", @"
+class A
+{
+    public static bool operator==(A a1, A a2) { return false; }
+
+    public static bool operator !=(A a1, A a2)
+    {
+        return !(a1 == a2);
+    }
+
+    public static bool operator==(A a1, bool a2) { return false; }
+
+    public static bool operator !=(A a1, bool a2)
+    {
+        return !(a1 == a2);
+    }
+}");
+        }
+
+        [Fact]
         public void CSharpTestInequality()
         {
             VerifyCSharpFix(

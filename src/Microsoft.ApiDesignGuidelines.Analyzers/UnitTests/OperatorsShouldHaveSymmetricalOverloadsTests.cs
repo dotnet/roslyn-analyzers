@@ -10,12 +10,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicOperatorsShouldHaveSymmetricalOverloadsAnalyzer();
+            return new OperatorsShouldHaveSymmetricalOverloadsAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpOperatorsShouldHaveSymmetricalOverloadsAnalyzer();
+            return new OperatorsShouldHaveSymmetricalOverloadsAnalyzer();
         }
 
         [Fact]

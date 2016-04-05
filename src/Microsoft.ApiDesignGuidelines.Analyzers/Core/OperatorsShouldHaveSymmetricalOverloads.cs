@@ -12,7 +12,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// CA2226: Operators should have symmetrical overloads
     /// </summary>
-    public abstract class OperatorsShouldHaveSymmetricalOverloadsAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class OperatorsShouldHaveSymmetricalOverloadsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2226";
 

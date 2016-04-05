@@ -48,6 +48,16 @@ Severity: Warning
 
 Help: [https://msdn.microsoft.com/en-us/library/ms182132.aspx](https://msdn.microsoft.com/en-us/library/ms182132.aspx)
 
+### CA1011: Consider passing base types as parameters ###
+
+When a base type is specified as a parameter in a method declaration, any type that is derived from the base type can be passed as the corresponding argument to the method. If the additional functionality that is provided by the derived parameter type is not required, use of the base type enables wider use of the method.
+
+Category: Design
+
+Severity: Warning
+
+Help: [https://msdn.microsoft.com/en-us/library/3hk32yyz.aspx](https://msdn.microsoft.com/en-us/library/3hk32yyz.aspx)
+
 ### CA1012: Abstract types should not have constructors ###
 
 Category: Design

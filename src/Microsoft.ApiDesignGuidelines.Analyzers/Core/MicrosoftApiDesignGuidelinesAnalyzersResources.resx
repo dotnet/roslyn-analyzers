@@ -982,4 +982,13 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="OverrideObjectEqualsDescription" xml:space="preserve">
     <value>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</value>
   </data>
+  <data name="ConsiderPassingBaseTypesAsParametersDescription" xml:space="preserve">
+    <value>When a base type is specified as a parameter in a method declaration, any type that is derived from the base type can be passed as the corresponding argument to the method. If the additional functionality that is provided by the derived parameter type is not required, use of the base type enables wider use of the method.</value>
+  </data>
+  <data name="ConsiderPassingBaseTypesAsParametersMessage" xml:space="preserve">
+    <value>Consider changing the type of parameter {0} in {1} from {2} to its base type {3}. This method appears to only require base class members in its implementation. Suppress this violation if there is a compelling reason to require the more derived type in the method signature.</value>
+  </data>
+  <data name="ConsiderPassingBaseTypesAsParametersTitle" xml:space="preserve">
+    <value>Consider passing base types as parameters</value>
+  </data>
 </root>

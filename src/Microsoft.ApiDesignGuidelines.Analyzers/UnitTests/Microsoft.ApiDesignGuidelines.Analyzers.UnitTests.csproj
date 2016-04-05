@@ -230,7 +230,6 @@
     <Compile Include="DeclareTypesInNamespacesTests.cs" />
     <Compile Include="DeclareTypesInNamespacesTests.Fixer.cs" />
     <Compile Include="DoNotDeclareVisibleInstanceFieldsTests.cs" />
-    <Compile Include="DoNotDeclareVisibleInstanceFieldsTests.Fixer.cs" />
     <Compile Include="UriParametersShouldNotBeStringsTests.cs" />
     <Compile Include="UriParametersShouldNotBeStringsTests.Fixer.cs" />
     <Compile Include="UriReturnValuesShouldNotBeStringsTests.cs" />

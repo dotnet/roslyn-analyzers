@@ -135,8 +135,6 @@
     <Compile Include="BasicPropertiesShouldNotBeWriteOnly.vb" />
     <Compile Include="BasicPropertiesShouldNotBeWriteOnly.Fixer.vb" />
     <Compile Include="BasicDeclareTypesInNamespaces.Fixer.vb" />
-    <Compile Include="BasicDoNotDeclareVisibleInstanceFields.vb" />
-    <Compile Include="BasicDoNotDeclareVisibleInstanceFields.Fixer.vb" />
     <Compile Include="BasicImplementIDisposableCorrectly.Fixer.vb" />
     <Compile Include="BasicIdentifiersShouldNotContainUnderscores.Fixer.vb" />
     <Compile Include="BasicIdentifiersShouldHaveCorrectSuffix.Fixer.vb" />

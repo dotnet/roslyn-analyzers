@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -68,21 +67,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private struct Analyzer
         {
-            private static readonly SymbolDisplayFormat s_symbolDisplayFormat = new SymbolDisplayFormat(
-                SymbolDisplayGlobalNamespaceStyle.Omitted,
-                SymbolDisplayTypeQualificationStyle.NameAndContainingTypes,
-                SymbolDisplayGenericsOptions.IncludeTypeParameters,
-                SymbolDisplayMemberOptions.IncludeContainingType | SymbolDisplayMemberOptions.IncludeParameters,
-                SymbolDisplayDelegateStyle.NameAndParameters,
-                SymbolDisplayExtensionMethodStyle.InstanceMethod,
-                SymbolDisplayParameterOptions.IncludeType | SymbolDisplayParameterOptions.IncludeOptionalBrackets,
-                SymbolDisplayPropertyStyle.NameOnly,
-                SymbolDisplayLocalOptions.IncludeType,
-                SymbolDisplayKindOptions.None,
-                SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers | SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
-
-            private static readonly ImmutableHashSet<string> s_uriWords = ImmutableHashSet.Create(StringComparer.OrdinalIgnoreCase, "uri", "urn", "url");
-
             // this type will be created per compilation 
             // this is actually a bug - https://github.com/dotnet/roslyn-analyzers/issues/845
 #pragma warning disable RS1008 
@@ -113,9 +97,24 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
 
                 var invocation = (IInvocationExpression)context.Operation;
-                IMethodSymbol method = invocation.TargetMethod;
+                var method = invocation.TargetMethod;
 
-                SyntaxNode node = _expressionGetter(context.Operation.Syntax);
+                // check basic stuff that FxCop checks. 
+                if (method.IsFromMscorlib(_compilation))
+                {
+                    // Methods defined within mscorlib are excluded from this rule,
+                    // since mscorlib cannot depend on System.Uri, which is defined 
+                    // in System.dll
+                    return;
+                }
+
+                if (method.GetResultantVisibility() != SymbolVisibility.Public)
+                {
+                    // only apply to methods that are exposed outside
+                    return;
+                }
+
+                var node = _expressionGetter(context.Operation.Syntax);
                 if (node == null)
                 {
                     // we don't have right expression node to check overloads
@@ -124,11 +123,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                 // REVIEW: why IOperation doesn't contain things like compilation and semantic model?
                 //         it seems wierd that I need to do this to get thsoe.
-                SemanticModel model = _compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree);
+                var model = _compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree);
 
-                // due to limitation of using "this" in lambda in struct
-                INamedTypeSymbol stringType = _string;
-                IEnumerable<IParameterSymbol> stringParameters = method.Parameters.Where(p => p.Type?.Equals(stringType) == true);
+                var stringParameters = method.Parameters.GetParametersOfType(_string);
                 if (!stringParameters.Any())
                 {
                     // no string parameter. not interested.
@@ -136,24 +133,25 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
 
                 // now do cheap string check whether those string parameter contains uri word list we are looking for.
-                if (!CheckStringParametersContainUriWords(stringParameters, context.CancellationToken))
+                if (!stringParameters.ParameterNamesContainUriWordSubstring(context.CancellationToken))
                 {
                     // no string parameter that contains what we are looking for.
                     return;
                 }
 
                 // now we make sure we actually have overloads that contains uri type parameter
-                if (!CheckOverloadsContainUriParameters(model, method, node, context.CancellationToken))
+                var overloads = model.GetMemberGroup(node, context.CancellationToken).OfType<IMethodSymbol>();
+                if (!overloads.HasOverloadWithParameterOfType(method, _uri, context.CancellationToken))
                 {
                     // no overload that contains uri as parameter
                     return;
                 }
 
                 // now we do more expensive word parsing to find exact parameter that contains url in parameter name
-                var indicesSet = new HashSet<int>(GetParameterIndices(method, GetStringParametersThatContainsUriWords(stringParameters, context.CancellationToken), context.CancellationToken));
+                var indicesSet = new HashSet<int>(method.GetParameterIndices(stringParameters.GetParametersThatContainUriWords(context.CancellationToken), context.CancellationToken));
 
                 // now we search exact match. this is exactly same behavior as old FxCop
-                foreach (IMethodSymbol overload in model.GetMemberGroup(node, context.CancellationToken).OfType<IMethodSymbol>())
+                foreach (IMethodSymbol overload in overloads)
                 {
                     context.CancellationToken.ThrowIfCancellationRequested();
 
@@ -163,7 +161,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         continue;
                     }
 
-                    if (!CheckParameterTypes(method, overload, Enumerable.Range(0, method.Parameters.Length).Where(i => !indicesSet.Contains(i)), context.CancellationToken))
+                    if (!method.ParameterTypesAreSame(overload, Enumerable.Range(0, method.Parameters.Length).Where(i => !indicesSet.Contains(i)), context.CancellationToken))
                     {
                         // check whether remaining parameters match existing types, otherwise, we are not interested
                         continue;
@@ -175,7 +173,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     foreach (int index in indicesSet)
                     {
                         // check other string uri parameters matches original type
-                        if (!CheckParameterTypes(method, overload, indicesSet.Where(i => i != index), context.CancellationToken))
+                        if (!method.ParameterTypesAreSame(overload, indicesSet.Where(i => i != index), context.CancellationToken))
                         {
                             continue;
                         }
@@ -183,114 +181,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         // okay all other type match. check the main one
                         if (overload.Parameters[index].Type?.Equals(_uri) == true)
                         {
-                            context.ReportDiagnostic(node.CreateDiagnostic(Rule, owningSymbol.ToDisplayString(s_symbolDisplayFormat), overload.ToDisplayString(s_symbolDisplayFormat), method.ToDisplayString(s_symbolDisplayFormat)));
+                            context.ReportDiagnostic(
+                                node.CreateDiagnostic(
+                                    Rule,
+                                    owningSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                                    overload.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                                    method.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
 
                             // we no longer interested in this overload. there can be only 1 match
-                            break;
-                        }
-                    }
-                }
-            }
-
-            private bool CheckParameterTypes(IMethodSymbol method, IMethodSymbol overload, IEnumerable<int> parameterIndices, CancellationToken cancellationToken)
-            {
-                foreach (int index in parameterIndices)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    // this doesnt account for type conversion but FxCop implementation seems doesnt either
-                    // so this should match FxCop implementation.
-                    if (overload.Parameters[index].Type?.Equals(method.Parameters[index].Type) == false)
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-
-            private IEnumerable<int> GetParameterIndices(IMethodSymbol method, IEnumerable<IParameterSymbol> parameters, CancellationToken cancellationToken)
-            {
-                var set = new HashSet<IParameterSymbol>(parameters);
-                for (var i = 0; i < method.Parameters.Length; i++)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    if (set.Contains(method.Parameters[i]))
-                    {
-                        yield return i;
-                    }
-                }
-            }
-
-            private bool CheckOverloadsContainUriParameters(SemanticModel model, IMethodSymbol method, SyntaxNode node, CancellationToken cancellationToken)
-            {
-                INamedTypeSymbol uriType = _uri;
-                foreach (IMethodSymbol overload in model.GetMemberGroup(node, cancellationToken).OfType<IMethodSymbol>())
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    if (method.Equals(overload))
-                    {
-                        continue;
-                    }
-
-                    if (overload.Parameters.Any(p => p.Type?.Equals(uriType) == true))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
-            private bool CheckStringParametersContainUriWords(IEnumerable<IParameterSymbol> stringParameters, CancellationToken cancellationToken)
-            {
-                foreach (IParameterSymbol parameter in stringParameters)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    if (CheckStringParameterContainsUriWords(parameter, cancellationToken))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
-            private static bool CheckStringParameterContainsUriWords(IParameterSymbol parameter, CancellationToken cancellationToken)
-            {
-                foreach (string word in s_uriWords)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    if (parameter.Name?.IndexOf(word, StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
-            private IEnumerable<IParameterSymbol> GetStringParametersThatContainsUriWords(IEnumerable<IParameterSymbol> stringParameters, CancellationToken cancellationToken)
-            {
-                foreach (IParameterSymbol parameter in stringParameters)
-                {
-                    if (parameter.Name == null || !CheckStringParameterContainsUriWords(parameter, cancellationToken))
-                    {
-                        // quick check failed
-                        continue;
-                    }
-
-                    string word;
-                    var parser = new WordParser(parameter.Name, WordParserOptions.SplitCompoundWords);
-                    while ((word = parser.NextWord()) != null)
-                    {
-                        if (s_uriWords.Contains(word))
-                        {
-                            yield return parameter;
                             break;
                         }
                     }

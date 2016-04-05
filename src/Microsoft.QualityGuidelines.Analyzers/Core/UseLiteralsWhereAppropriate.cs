@@ -1,18 +1,22 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Semantics;
 
 namespace Microsoft.QualityGuidelines.Analyzers
 {
     /// <summary>
     /// CA1802: Use literals where appropriate
     /// </summary>
-    public abstract class UseLiteralsWhereAppropriateAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class UseLiteralsWhereAppropriateAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1802";
+        internal const string Uri = @"https://msdn.microsoft.com/en-us/library/ms182280.aspx";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.UseLiteralsWhereAppropriateTitle), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
 
@@ -25,24 +29,55 @@ namespace Microsoft.QualityGuidelines.Analyzers
                                                                              s_localizableMessageDefault,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor EmptyStringRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageEmptyString,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, EmptyStringRule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.RegisterOperationAction(saContext =>
+            {
+                var fieldInitializer = saContext.Operation as IFieldInitializer;
+
+                // Diagnostics are reported on the last initialized field to retain the previous FxCop behavior
+                var lastField = fieldInitializer.InitializedFields.LastOrDefault();
+                var fieldInitializerValue = fieldInitializer.Value;
+                if (fieldInitializerValue == null||
+                    lastField.IsConst ||
+                    lastField.GetResultantVisibility() == SymbolVisibility.Public ||!lastField.IsStatic || !lastField.IsReadOnly ||
+                    !fieldInitializerValue.ConstantValue.HasValue)
+                {
+                    return;
+                }
+
+                var initializerValue = fieldInitializerValue.ConstantValue.Value;
+
+                // Though null is const we dont fire the diagnostic to be FxCop Compact
+                if (initializerValue != null)
+                {
+                    if (fieldInitializerValue.Type == saContext.Compilation.GetSpecialType(SpecialType.System_String) &&
+                        ((string)initializerValue)?.Length == 0)
+                    {
+                        saContext.ReportDiagnostic(lastField.CreateDiagnostic(EmptyStringRule, lastField.Name));
+                        return;
+                    }
+
+                    saContext.ReportDiagnostic(lastField.CreateDiagnostic(DefaultRule, lastField.Name, initializerValue));
+                }
+            },
+            OperationKind.FieldInitializerAtDeclaration);
         }
     }
 }

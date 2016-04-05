@@ -111,7 +111,7 @@ namespace Analyzer.Utilities
         /// <returns>
         /// An sequence containing a single statement that throws <see cref="System.NotImplementedException"/>.
         /// </returns>
-        private static IEnumerable<SyntaxNode> DefaultMethodBody(this SyntaxGenerator generator)
+        public static IEnumerable<SyntaxNode> DefaultMethodBody(this SyntaxGenerator generator)
         {
             return new SyntaxNode[]
             {

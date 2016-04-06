@@ -812,7 +812,7 @@ Names of parameters and members are better used to communicate their meaning tha
     <value>Consistent naming of parameters in an override hierarchy increases the usability of the method overrides. A parameter name in a derived method that differs from the name in the base declaration can cause confusion about whether the method is an override of the base method or a new overload of the method.</value>
   </data>
   <data name="ParameterNamesShouldMatchBaseDeclarationMessage" xml:space="preserve">
-    <value>Parameter names should match base declaration</value>
+    <value>In member {0}, change parameter name {1} to {2} in order to match the identifier as it has been declared in {3}.</value>
   </data>
   <data name="UsePreferredTermsTitle" xml:space="preserve">
     <value>Use preferred terms</value>

@@ -34,8 +34,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              helpLinkUri: null,     // TODO: add MSDN url
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
-        private static readonly Action<SymbolAnalysisContext> AnalyzeMethodSymbolAction = AnalyzeMethodSymbol;
-
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -45,7 +43,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             analysisContext.EnableConcurrentExecution();
 
-            analysisContext.RegisterSymbolAction(AnalyzeMethodSymbolAction, SymbolKind.Method);
+            analysisContext.RegisterSymbolAction(AnalyzeMethodSymbol, SymbolKind.Method);
         }
 
         private static void AnalyzeMethodSymbol(SymbolAnalysisContext analysisContext)
@@ -102,6 +100,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 {
                     bestMatch = originalDefinition;
                     bestMatchScore = currentMatchScore;
+
+                    if (bestMatchScore == methodSymbol.Parameters.Length)
+                    {
+                        break;
+                    }
                 }
             }
 
@@ -114,7 +117,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 {
                     var properties = ImmutableDictionary<string, string>.Empty.SetItem(NewNamePropertyName, bestMatchParameter.Name);
 
-                    analysisContext.ReportDiagnostic(Diagnostic.Create(Rule, currentParameter.Locations.First(), properties, null));
+                    analysisContext.ReportDiagnostic(Diagnostic.Create(Rule, currentParameter.Locations.First(), properties, methodSymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat), currentParameter.Name, bestMatchParameter.Name, bestMatch.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
                 }
             }
         }

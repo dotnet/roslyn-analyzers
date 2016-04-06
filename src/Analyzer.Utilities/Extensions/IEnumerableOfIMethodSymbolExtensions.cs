@@ -9,6 +9,14 @@ namespace Analyzer.Utilities.Extensions
 {
     public static class IEnumerableOfIMethodSymbolExtensions
     {
+        /// <summary>
+        /// Returns a list of method symbols from a given list of the method symbols, which has its parameter type as
+        /// expectedParameterType as its first parameter or the last parameter in addition to matching all the other 
+        /// parameter types of the selectedOverload method symbol
+        /// </summary>
+        /// <param name="methods">List of <see cref="IMethodSymbol"/> to scan for possible overloads</param>
+        /// <param name="selectedOverload"><see cref="IMethodSymbol"/> that is currently picked by the user</param>
+        /// <param name="expectedParameterType"><see cref="INamedTypeSymbol"/> type of the leading parameter or the trailing parameter</param>
         public static IEnumerable<IMethodSymbol> GetMethodOverloadsWithDesiredParameterAtLeadingOrTrailing(
             this IEnumerable<IMethodSymbol> methods,
             IMethodSymbol selectedOverload,

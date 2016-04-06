@@ -73,6 +73,13 @@ namespace System.Runtime.Analyzers
             analysisContext.RegisterCompilationStartAction(csaContext =>
             {
                 #region "Get All the WellKnown Types and Members"
+                var iformatProviderType = csaContext.Compilation.GetTypeByMetadataName("System.IFormatProvider");
+                var cultureInfoType = csaContext.Compilation.GetTypeByMetadataName("System.Globalization.CultureInfo");
+                if (iformatProviderType == null || cultureInfoType == null)
+                {
+                    return;
+                }
+
                 var stringType = csaContext.Compilation.GetSpecialType(SpecialType.System_String);
                 var stringFormatMembers = stringType?.GetMembers("Format").OfType<IMethodSymbol>();
                 var stringFormatMemberWithStringAndObjectParameter = GetSingleOrDefaultMemberWithName(stringFormatMembers, "string.Format(string, object)");
@@ -85,13 +92,10 @@ namespace System.Runtime.Analyzers
                 var stringFormatMemberWithStringAndParamsObjectParameter = GetSingleOrDefaultMemberWithName(stringFormatMembers, $"string.Format(string, {paramsObjectArraySymbolDisplay})");
                 var stringFormatMemberWithIFormatProviderStringAndParamsObjectParameter = GetSingleOrDefaultMemberWithName(stringFormatMembers, $"string.Format(System.IFormatProvider, string, {paramsObjectArraySymbolDisplay})");
 
-                var IFormatProviderType = csaContext.Compilation.GetTypeByMetadataName("System.IFormatProvider");
-
-                var CultureInfoType = csaContext.Compilation.GetTypeByMetadataName("System.Globalization.CultureInfo");
-                var currentCultureProperty = CultureInfoType?.GetMembers("CurrentCulture").OfType<IPropertySymbol>().SingleOrDefault();
-                var invariantCultureProperty = CultureInfoType?.GetMembers("InvariantCulture").OfType<IPropertySymbol>().SingleOrDefault();
-                var currentUICultureProperty = CultureInfoType?.GetMembers("CurrentUICulture").OfType<IPropertySymbol>().SingleOrDefault();
-                var installedUICultureProperty = CultureInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().SingleOrDefault();
+                var currentCultureProperty = cultureInfoType?.GetMembers("CurrentCulture").OfType<IPropertySymbol>().SingleOrDefault();
+                var invariantCultureProperty = cultureInfoType?.GetMembers("InvariantCulture").OfType<IPropertySymbol>().SingleOrDefault();
+                var currentUICultureProperty = cultureInfoType?.GetMembers("CurrentUICulture").OfType<IPropertySymbol>().SingleOrDefault();
+                var installedUICultureProperty = cultureInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().SingleOrDefault();
 
                 var threadType = csaContext.Compilation.GetTypeByMetadataName("System.Threading.Thread");
                 var currentThreadCurrentUICultureProperty = threadType?.GetMembers("CurrentUICulture").OfType<IPropertySymbol>().SingleOrDefault();
@@ -119,7 +123,7 @@ namespace System.Runtime.Analyzers
                     #endregion
 
                     #region "IFormatProviderAlternateStringRule Only"
-                    if (stringType != null && CultureInfoType != null &&
+                    if (stringType != null && cultureInfoType != null &&
                         (targetMethod.Equals(stringFormatMemberWithStringAndObjectParameter) ||
                          targetMethod.Equals(stringFormatMemberWithStringObjectAndObjectParameter) ||
                          targetMethod.Equals(stringFormatMemberWithStringObjectObjectAndObjectParameter) ||
@@ -146,12 +150,12 @@ namespace System.Runtime.Analyzers
                     IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType.GetMembers(targetMethod.Name).OfType<IMethodSymbol>();
                     if (methodsWithSameNameAsTargetMethod.Count() > 1)
                     {
-                        var correctOverloads = methodsWithSameNameAsTargetMethod.GetMethodOverloadsWithDesiredParameterAtLeadingOrTrailing(targetMethod, IFormatProviderType);
+                        var correctOverloads = methodsWithSameNameAsTargetMethod.GetMethodOverloadsWithDesiredParameterAtLeadingOrTrailing(targetMethod, iformatProviderType);
                         
                         // If there are two matching overloads, one with CultureInfo as the first parameter and one with CultureInfo as the last parameter,
                         // report the diagnostic on the overload with CultureInfo as the last parameter, to match the behavior of FxCop.
                         var correctOverload = correctOverloads
-                                              .Where(overload => overload.Parameters.Last().Type.Equals(IFormatProviderType))
+                                              .Where(overload => overload.Parameters.Last().Type.Equals(iformatProviderType))
                                               .FirstOrDefault() ?? correctOverloads.FirstOrDefault();
 
                         // Sample message for IFormatProviderAlternateRule: Because the behavior of System.Convert.ToInt64(string) could vary based on the current user's locale settings,
@@ -175,7 +179,7 @@ namespace System.Runtime.Analyzers
                     #endregion
 
                     #region "UICultureStringRule & UICultureRule"
-                    IEnumerable<int> IformatProviderParameterIndices = GetIndexesOfParameterType(targetMethod, IFormatProviderType);
+                    IEnumerable<int> IformatProviderParameterIndices = GetIndexesOfParameterType(targetMethod, iformatProviderType);
                     foreach (var index in IformatProviderParameterIndices)
                     {
                         var argument = invocationExpression.ArgumentsInParameterOrder[index];

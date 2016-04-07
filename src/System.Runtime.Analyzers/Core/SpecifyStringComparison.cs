@@ -42,10 +42,10 @@ namespace System.Runtime.Analyzers
             {
                 var stringComparisonType = csaContext.Compilation.GetTypeByMetadataName("System.StringComparison");
                 var stringType = csaContext.Compilation.GetSpecialType(SpecialType.System_String);
-                var currentCulture = stringComparisonType.GetMembers("CurrentCulture").SingleOrDefault();
-                var currentCultureIgnoreCase = stringComparisonType.GetMembers("CurrentCultureIgnoreCase").SingleOrDefault();
-                var ordinalIgnoreCase = stringComparisonType.GetMembers("OrdinalIgnoreCase").SingleOrDefault();
-                var ordinal = stringComparisonType.GetMembers("Ordinal").SingleOrDefault();
+                var currentCulture = stringComparisonType.GetMembers("CurrentCulture").OfType<IFieldSymbol>().SingleOrDefault();
+                var currentCultureIgnoreCase = stringComparisonType.GetMembers("CurrentCultureIgnoreCase").OfType<IFieldSymbol>().SingleOrDefault();
+                var ordinalIgnoreCase = stringComparisonType.GetMembers("OrdinalIgnoreCase").OfType<IFieldSymbol>().SingleOrDefault();
+                var ordinal = stringComparisonType.GetMembers("Ordinal").OfType<IFieldSymbol>().SingleOrDefault();
 
                 // Without these symbols the rule cannot run
                 if (stringComparisonType == null || stringType == null || currentCulture == null ||
@@ -55,16 +55,16 @@ namespace System.Runtime.Analyzers
                 }
 
                 var stringCompareToNamedMethods = stringType.GetMembers("CompareTo").OfType<IMethodSymbol>();
-                var stringCompareToParameterString = stringCompareToNamedMethods.GetSingleOrDefaultMemberWithName("string.CompareTo(string)");
-                var stringCompareToParameterObject = stringCompareToNamedMethods.GetSingleOrDefaultMemberWithName("string.CompareTo(object)");
+                var stringCompareToParameterString = GetSingleOrDefaultMemberWithName(stringCompareToNamedMethods, "string.CompareTo(string)");
+                var stringCompareToParameterObject = GetSingleOrDefaultMemberWithName(stringCompareToNamedMethods, "string.CompareTo(object)");
 
                 var boolString = csaContext.Compilation.Language == LanguageNames.CSharp ? "bool" : "Boolean";
                 var intString = csaContext.Compilation.Language == LanguageNames.CSharp ? "int" : "Integer";
                 var stringCompareNamedMethods = stringType.GetMembers("Compare").OfType<IMethodSymbol>();
-                var stringCompareParameterStringStringBool = stringCompareNamedMethods.GetSingleOrDefaultMemberWithName($"string.Compare(string, string, {boolString})");
-                var stringCompareParameterStringStringComparison = stringCompareNamedMethods.GetSingleOrDefaultMemberWithName("string.Compare(string, string, System.StringComparison)");
-                var stringCompareParameterStringIntStringIntIntBool = stringCompareNamedMethods.GetSingleOrDefaultMemberWithName($"string.Compare(string, {intString}, string, {intString}, {intString}, {boolString})");
-                var stringCompareParameterStringIntStringIntIntComparison = stringCompareNamedMethods.GetSingleOrDefaultMemberWithName($"string.Compare(string, {intString}, string, {intString}, {intString}, System.StringComparison)");
+                var stringCompareParameterStringStringBool = GetSingleOrDefaultMemberWithName(stringCompareNamedMethods, $"string.Compare(string, string, {boolString})");
+                var stringCompareParameterStringStringComparison = GetSingleOrDefaultMemberWithName(stringCompareNamedMethods, "string.Compare(string, string, System.StringComparison)");
+                var stringCompareParameterStringIntStringIntIntBool = GetSingleOrDefaultMemberWithName(stringCompareNamedMethods, $"string.Compare(string, {intString}, string, {intString}, {intString}, {boolString})");
+                var stringCompareParameterStringIntStringIntIntComparison = GetSingleOrDefaultMemberWithName(stringCompareNamedMethods, $"string.Compare(string, {intString}, string, {intString}, {intString}, System.StringComparison)");
 
                 IDictionary<IMethodSymbol, IMethodSymbol> overloadMap = new Dictionary<IMethodSymbol, IMethodSymbol>();
                 overloadMap.AddKeyValueIfNotNull(stringCompareToParameterString, stringCompareParameterStringStringComparison);
@@ -94,6 +94,8 @@ namespace System.Runtime.Analyzers
                             currentCultureIgnoreCase,
                             ordinalIgnoreCase,
                             ordinal);
+
+                        return;
                     }
 
                     IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType.GetMembers(targetMethod.Name).OfType<IMethodSymbol>();
@@ -140,6 +142,11 @@ namespace System.Runtime.Analyzers
                     currentCultureIgnoreCase.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
                     ordinalIgnoreCase.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
                     ordinal.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
+        }
+
+        private IMethodSymbol GetSingleOrDefaultMemberWithName(IEnumerable<IMethodSymbol> stringFormatMembers, string displayName)
+        {
+            return stringFormatMembers?.Where(member => string.Equals(member.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat), displayName, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
         }
     }
 }

@@ -69,24 +69,13 @@ namespace Analyzer.Utilities
         /// </summary>
         /// <param name="methods">List of <see cref="IMethodSymbol"/> to scan for possible overloads</param>
         /// <param name="selectedOverload"><see cref="IMethodSymbol"/> that is currently picked by the user</param>
-        /// <param name="expectedParameterType"><see cref="INamedTypeSymbol"/> type of the leading parameter or the trailing parameter</param>
+        /// <param name="expectedTrailingParameterType"><see cref="INamedTypeSymbol"/> type of the leading parameter or the trailing parameter</param>
         public static IEnumerable<IMethodSymbol> GetMethodOverloadsWithDesiredParameterAtTrailing(
              this IEnumerable<IMethodSymbol> methods,
              IMethodSymbol selectedOverload,
-             INamedTypeSymbol expectedParameterType)
+             INamedTypeSymbol expectedTrailingParameterType)
         {
-            return GetMethodOverloadsWithDesiredParameterAtLeadingOrTrailing(methods, selectedOverload, expectedParameterType, true);
-        }
-
-        /// <summary>
-        /// Return all the method symbols with the name matching the displayName case-insensitively
-        /// </summary>
-        /// <param name="stringFormatMembers"></param>
-        /// <param name="displayName"></param>
-        /// <returns></returns>
-        public static IMethodSymbol GetSingleOrDefaultMemberWithName(this IEnumerable<IMethodSymbol> stringFormatMembers, string displayName)
-        {
-             return stringFormatMembers?.Where(member => string.Equals(member.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat), displayName, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+            return GetMethodOverloadsWithDesiredParameterAtLeadingOrTrailing(methods, selectedOverload, expectedTrailingParameterType, trailingOnly: true);
         }
     }
 }

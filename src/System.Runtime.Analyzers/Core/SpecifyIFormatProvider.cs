@@ -90,7 +90,7 @@ namespace System.Runtime.Analyzers
                                                      "params object[]" :
                                                      "ParamArray Object()";
                 var stringFormatMemberWithStringAndParamsObjectParameter = GetSingleOrDefaultMemberWithName(stringFormatMembers, $"string.Format(string, {paramsObjectArraySymbolDisplay})");
-                var stringFormatMemberWithIFormatProviderStringAndParamsObjectParameter = GetSingleOrDefaultMemberWithName(stringFormatMembers, $"string.Format(System.IFormatProvider, string, {paramsObjectArraySymbolDisplay})");
+                var stringFormatMemberWithIFormatProviderStringAndParamsObjectParameter = GetSingleOrDefaultMemberWithName(stringFormatMembers, $"string.Format(IFormatProvider, string, {paramsObjectArraySymbolDisplay})");
 
                 var currentCultureProperty = cultureInfoType?.GetMembers("CurrentCulture").OfType<IPropertySymbol>().SingleOrDefault();
                 var invariantCultureProperty = cultureInfoType?.GetMembers("InvariantCulture").OfType<IPropertySymbol>().SingleOrDefault();
@@ -130,17 +130,13 @@ namespace System.Runtime.Analyzers
                          targetMethod.Equals(stringFormatMemberWithStringAndParamsObjectParameter)))
                     {
                         // Sample message for IFormatProviderAlternateStringRule: Because the behavior of string.Format(string, object) could vary based on the current user's locale settings,
-                        // replace this call in IFormatProviderStringTest.M() with a call to string.Format(System.IFormatProvider, string, params object[]). If the result of 
-                        // string.Format(System.IFormatProvider, string, params object[]) will be displayed to the user, specify System.Globalization.CultureInfo.CurrentCulture as the 'IFormatProvider' parameter.
-                        // Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk or to a database, specify System.Globalization.CultureInfo.InvariantCulture.
+                        // replace this call in IFormatProviderStringTest.M() with a call to string.Format(IFormatProvider, string, params object[]).
                         oaContext.ReportDiagnostic(
                             invocationExpression.Syntax.CreateDiagnostic(
                                 IFormatProviderAlternateStringRule,
-                                targetMethod.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
-                                oaContext.ContainingSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
-                                stringFormatMemberWithIFormatProviderStringAndParamsObjectParameter.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
-                                currentCultureProperty.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
-                                invariantCultureProperty.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
+                                targetMethod.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                                oaContext.ContainingSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                                stringFormatMemberWithIFormatProviderStringAndParamsObjectParameter.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
 
                         return;
                     }
@@ -158,10 +154,8 @@ namespace System.Runtime.Analyzers
                                               .Where(overload => overload.Parameters.Last().Type.Equals(iformatProviderType))
                                               .FirstOrDefault() ?? correctOverloads.FirstOrDefault();
 
-                        // Sample message for IFormatProviderAlternateRule: Because the behavior of System.Convert.ToInt64(string) could vary based on the current user's locale settings,
-                        // replace this call in IFormatProviderStringTest.TestMethod() with a call to System.Convert.ToInt64(string, System.IFormatProvider). If the result of 
-                        // System.Convert.ToInt64(string, System.IFormatProvider) will be based on input from the user, specify System.Globalization.CultureInfo.CurrentCulture as the 'IFormatProvider' parameter.
-                        // Otherwise, if the result will based on input stored and accessed by software, such as when it is loaded from disk or from a database, specify System.Globalization.CultureInfo.InvariantCulture.
+                        // Sample message for IFormatProviderAlternateRule: Because the behavior of Convert.ToInt64(string) could vary based on the current user's locale settings,
+                        // replace this call in IFormatProviderStringTest.TestMethod() with a call to Convert.ToInt64(string, IFormatProvider).
                         if (correctOverload != null)
                         {
                             oaContext.ReportDiagnostic(
@@ -169,11 +163,9 @@ namespace System.Runtime.Analyzers
                                     targetMethod.ReturnType.Equals(stringType) ? 
                                      IFormatProviderAlternateStringRule :
                                      IFormatProviderAlternateRule,
-                                    targetMethod.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
-                                    oaContext.ContainingSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
-                                    correctOverload.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
-                                    currentCultureProperty.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
-                                    invariantCultureProperty.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
+                                    targetMethod.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                                    oaContext.ContainingSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                                    correctOverload.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
                         }
                     }
                     #endregion
@@ -197,24 +189,18 @@ namespace System.Runtime.Analyzers
                             {
                                 // Sample message 
                                 // 1. UICultureStringRule - 'TestClass.TestMethod()' passes 'Thread.CurrentUICulture' as the 'IFormatProvider' parameter to 'TestClass.CalleeMethod(string, IFormatProvider)'.
-                                // This property returns a culture that is inappropriate for formatting methods. If the result of 'TestClass.CalleeMethod(string, IFormatProvider)' will be displayed to the user,
-                                // specify 'CultureInfo.CurrentCulture' as the 'IFormatProvider' parameter. Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk
-                                // or to a database, specify 'CultureInfo.InvariantCulture'.
+                                // This property returns a culture that is inappropriate for formatting methods.
                                 // 2. UICultureRule -'TestClass.TestMethod()' passes 'CultureInfo.CurrentUICulture' as the 'IFormatProvider' parameter to 'TestClass.Callee(IFormatProvider, string)'.
-                                // This property returns a culture that is inappropriate for formatting methods. If the result of 'TestClass.Callee(IFormatProvider, string)' will be based on input from the user,
-                                // specify 'CultureInfo.CurrentCulture' as the 'IFormatProvider' parameter. Otherwise, if the result will based on input stored and accessed by software, such as when it is loaded
-                                // from disk or from a database, specify 'CultureInfo.InvariantCulture'.
+                                // This property returns a culture that is inappropriate for formatting methods.
 
                                 oaContext.ReportDiagnostic(
                                     invocationExpression.Syntax.CreateDiagnostic(
                                         targetMethod.ReturnType.Equals(stringType) ?
                                             UICultureStringRule :
                                             UICultureRule,
-                                        oaContext.ContainingSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
-                                        symbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
-                                        targetMethod.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
-                                        currentCultureProperty.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
-                                        invariantCultureProperty.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
+                                        oaContext.ContainingSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                                        symbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                                        targetMethod.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
                             }
                         }
                     }
@@ -234,7 +220,7 @@ namespace System.Runtime.Analyzers
 
         private static IMethodSymbol GetSingleOrDefaultMemberWithName(IEnumerable<IMethodSymbol> stringFormatMembers, string displayName)
         {
-            return stringFormatMembers?.Where(member => string.Equals(member.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat), displayName, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+            return stringFormatMembers?.Where(member => string.Equals(member.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat), displayName, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
         }
     }
 }

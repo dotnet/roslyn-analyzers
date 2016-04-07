@@ -50,24 +50,16 @@ public static class IFormatProviderStringTest
 }",
 GetIFormatProviderAlternateStringRuleCSharpResultAt(10, 16, "string.Format(string, object)",
                                                             "IFormatProviderStringTest.SpecifyIFormatProvider1()",
-                                                            "string.Format(System.IFormatProvider, string, params object[])",
-                                                            "System.Globalization.CultureInfo.CurrentCulture",
-                                                            "System.Globalization.CultureInfo.InvariantCulture"),
+                                                            "string.Format(IFormatProvider, string, params object[])"),
 GetIFormatProviderAlternateStringRuleCSharpResultAt(15, 16, "string.Format(string, object, object)",
                                                             "IFormatProviderStringTest.SpecifyIFormatProvider2()",
-                                                            "string.Format(System.IFormatProvider, string, params object[])",
-                                                            "System.Globalization.CultureInfo.CurrentCulture",
-                                                            "System.Globalization.CultureInfo.InvariantCulture"),
+                                                            "string.Format(IFormatProvider, string, params object[])"),
 GetIFormatProviderAlternateStringRuleCSharpResultAt(20, 16, "string.Format(string, object, object, object)",
                                                             "IFormatProviderStringTest.SpecifyIFormatProvider3()",
-                                                            "string.Format(System.IFormatProvider, string, params object[])",
-                                                            "System.Globalization.CultureInfo.CurrentCulture",
-                                                            "System.Globalization.CultureInfo.InvariantCulture"),
+                                                            "string.Format(IFormatProvider, string, params object[])"),
 GetIFormatProviderAlternateStringRuleCSharpResultAt(25, 16, "string.Format(string, params object[])",
                                                             "IFormatProviderStringTest.SpecifyIFormatProvider4()",
-                                                            "string.Format(System.IFormatProvider, string, params object[])",
-                                                            "System.Globalization.CultureInfo.CurrentCulture",
-                                                            "System.Globalization.CultureInfo.InvariantCulture"));
+                                                            "string.Format(IFormatProvider, string, params object[])"));
         }
 
         [Fact]
@@ -127,19 +119,13 @@ internal static class IFormatProviderOverloads
 }",
 GetIFormatProviderAlternateStringRuleCSharpResultAt(10, 9, "IFormatProviderOverloads.LeadingIFormatProviderReturningString(string)",
                                                            "IFormatProviderStringTest.SpecifyIFormatProvider()",
-                                                           "IFormatProviderOverloads.LeadingIFormatProviderReturningString(System.IFormatProvider, string)",
-                                                           "System.Globalization.CultureInfo.CurrentCulture",
-                                                           "System.Globalization.CultureInfo.InvariantCulture"),
+                                                           "IFormatProviderOverloads.LeadingIFormatProviderReturningString(IFormatProvider, string)"),
 GetIFormatProviderAlternateStringRuleCSharpResultAt(11, 9, "IFormatProviderOverloads.TrailingIFormatProviderReturningString(string)",
                                                            "IFormatProviderStringTest.SpecifyIFormatProvider()",
-                                                           "IFormatProviderOverloads.TrailingIFormatProviderReturningString(string, System.IFormatProvider)",
-                                                           "System.Globalization.CultureInfo.CurrentCulture",
-                                                           "System.Globalization.CultureInfo.InvariantCulture"),
+                                                           "IFormatProviderOverloads.TrailingIFormatProviderReturningString(string, IFormatProvider)"),
 GetIFormatProviderAlternateStringRuleCSharpResultAt(12, 9, "IFormatProviderOverloads.UserDefinedParamsMatchMethodOverload(string, params object[])",
                                                            "IFormatProviderStringTest.SpecifyIFormatProvider()",
-                                                           "IFormatProviderOverloads.UserDefinedParamsMatchMethodOverload(System.IFormatProvider, string, params object[])",
-                                                           "System.Globalization.CultureInfo.CurrentCulture",
-                                                           "System.Globalization.CultureInfo.InvariantCulture"));
+                                                           "IFormatProviderOverloads.UserDefinedParamsMatchMethodOverload(IFormatProvider, string, params object[])"));
         }
 
         [Fact]
@@ -234,26 +220,18 @@ internal static class IFormatProviderOverloads
         Console.WriteLine(string.Format(provider, format));
     }
 }",
-GetIFormatProviderAlternateRuleCSharpResultAt(8, 17, "System.Convert.ToInt32(string)",
+GetIFormatProviderAlternateRuleCSharpResultAt(8, 17, "Convert.ToInt32(string)",
                                                      "IFormatProviderStringTest.TestMethod()",
-                                                     "System.Convert.ToInt32(string, System.IFormatProvider)",
-                                                     "System.Globalization.CultureInfo.CurrentCulture",
-                                                     "System.Globalization.CultureInfo.InvariantCulture"),
-GetIFormatProviderAlternateRuleCSharpResultAt(9, 18, "System.Convert.ToInt64(string)",
+                                                     "Convert.ToInt32(string, IFormatProvider)"),
+GetIFormatProviderAlternateRuleCSharpResultAt(9, 18, "Convert.ToInt64(string)",
                                                      "IFormatProviderStringTest.TestMethod()",
-                                                     "System.Convert.ToInt64(string, System.IFormatProvider)",
-                                                     "System.Globalization.CultureInfo.CurrentCulture",
-                                                     "System.Globalization.CultureInfo.InvariantCulture"),
+                                                     "Convert.ToInt64(string, IFormatProvider)"),
 GetIFormatProviderAlternateRuleCSharpResultAt(10, 9, "IFormatProviderOverloads.LeadingIFormatProvider(string)",
                                                      "IFormatProviderStringTest.TestMethod()",
-                                                     "IFormatProviderOverloads.LeadingIFormatProvider(System.IFormatProvider, string)",
-                                                     "System.Globalization.CultureInfo.CurrentCulture",
-                                                     "System.Globalization.CultureInfo.InvariantCulture"),
+                                                     "IFormatProviderOverloads.LeadingIFormatProvider(IFormatProvider, string)"),
 GetIFormatProviderAlternateRuleCSharpResultAt(11, 9, "IFormatProviderOverloads.TrailingIFormatProvider(string)",
                                                      "IFormatProviderStringTest.TestMethod()",
-                                                     "IFormatProviderOverloads.TrailingIFormatProvider(string, System.IFormatProvider)",
-                                                     "System.Globalization.CultureInfo.CurrentCulture",
-                                                     "System.Globalization.CultureInfo.InvariantCulture"));
+                                                     "IFormatProviderOverloads.TrailingIFormatProvider(string, IFormatProvider)"));
         }
 
         [Fact]
@@ -291,9 +269,7 @@ internal static class IFormatProviderOverloads
 }",
 GetIFormatProviderAlternateRuleCSharpResultAt(8, 9, "IFormatProviderOverloads.TargetMethodIsNonGeneric(string)",
                                                     "IFormatProviderStringTest.TestMethod()",
-                                                    "IFormatProviderOverloads.TargetMethodIsNonGeneric<T>(string, System.IFormatProvider)",
-                                                    "System.Globalization.CultureInfo.CurrentCulture",
-                                                    "System.Globalization.CultureInfo.InvariantCulture"));
+                                                    "IFormatProviderOverloads.TargetMethodIsNonGeneric<T>(string, IFormatProvider)"));
         }
 
         [Fact]
@@ -327,46 +303,30 @@ internal static class IFormatProviderOverloads
         return null;
     }
 }",
-GetIFormatProviderAlternateStringRuleCSharpResultAt(10, 9, "IFormatProviderOverloads.IFormatProviderReturningString(string, System.IFormatProvider)",
+GetIFormatProviderAlternateStringRuleCSharpResultAt(10, 9, "IFormatProviderOverloads.IFormatProviderReturningString(string, IFormatProvider)",
                                                            "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                           "IFormatProviderOverloads.IFormatProviderReturningString(string, System.IFormatProvider, System.IFormatProvider)",
-                                                           "System.Globalization.CultureInfo.CurrentCulture",
-                                                           "System.Globalization.CultureInfo.InvariantCulture"),
+                                                           "IFormatProviderOverloads.IFormatProviderReturningString(string, IFormatProvider, IFormatProvider)"),
 GetIFormatProviderUICultureStringRuleCSharpResultAt(10, 9, "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                           "System.Globalization.CultureInfo.CurrentUICulture",
-                                                           "IFormatProviderOverloads.IFormatProviderReturningString(string, System.IFormatProvider)",
-                                                           "System.Globalization.CultureInfo.CurrentCulture",
-                                                           "System.Globalization.CultureInfo.InvariantCulture"),
-GetIFormatProviderAlternateStringRuleCSharpResultAt(11, 9, "IFormatProviderOverloads.IFormatProviderReturningString(string, System.IFormatProvider)",
+                                                           "CultureInfo.CurrentUICulture",
+                                                           "IFormatProviderOverloads.IFormatProviderReturningString(string, IFormatProvider)"),
+GetIFormatProviderAlternateStringRuleCSharpResultAt(11, 9, "IFormatProviderOverloads.IFormatProviderReturningString(string, IFormatProvider)",
                                                            "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                           "IFormatProviderOverloads.IFormatProviderReturningString(string, System.IFormatProvider, System.IFormatProvider)",
-                                                           "System.Globalization.CultureInfo.CurrentCulture",
-                                                           "System.Globalization.CultureInfo.InvariantCulture"),
+                                                           "IFormatProviderOverloads.IFormatProviderReturningString(string, IFormatProvider, IFormatProvider)"),
 GetIFormatProviderUICultureStringRuleCSharpResultAt(11, 9, "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                           "System.Globalization.CultureInfo.InstalledUICulture",
-                                                           "IFormatProviderOverloads.IFormatProviderReturningString(string, System.IFormatProvider)",
-                                                           "System.Globalization.CultureInfo.CurrentCulture",
-                                                           "System.Globalization.CultureInfo.InvariantCulture"),
-GetIFormatProviderAlternateStringRuleCSharpResultAt(12, 9, "IFormatProviderOverloads.IFormatProviderReturningString(string, System.IFormatProvider)",
+                                                           "CultureInfo.InstalledUICulture",
+                                                           "IFormatProviderOverloads.IFormatProviderReturningString(string, IFormatProvider)"),
+GetIFormatProviderAlternateStringRuleCSharpResultAt(12, 9, "IFormatProviderOverloads.IFormatProviderReturningString(string, IFormatProvider)",
                                                            "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                           "IFormatProviderOverloads.IFormatProviderReturningString(string, System.IFormatProvider, System.IFormatProvider)",
-                                                           "System.Globalization.CultureInfo.CurrentCulture",
-                                                           "System.Globalization.CultureInfo.InvariantCulture"),
+                                                           "IFormatProviderOverloads.IFormatProviderReturningString(string, IFormatProvider, IFormatProvider)"),
 GetIFormatProviderUICultureStringRuleCSharpResultAt(12, 9, "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                           "System.Threading.Thread.CurrentUICulture",
-                                                           "IFormatProviderOverloads.IFormatProviderReturningString(string, System.IFormatProvider)",
-                                                           "System.Globalization.CultureInfo.CurrentCulture",
-                                                           "System.Globalization.CultureInfo.InvariantCulture"),
+                                                           "Thread.CurrentUICulture",
+                                                           "IFormatProviderOverloads.IFormatProviderReturningString(string, IFormatProvider)"),
 GetIFormatProviderUICultureStringRuleCSharpResultAt(13, 9, "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                           "System.Threading.Thread.CurrentUICulture",
-                                                           "IFormatProviderOverloads.IFormatProviderReturningString(string, System.IFormatProvider, System.IFormatProvider)",
-                                                           "System.Globalization.CultureInfo.CurrentCulture",
-                                                           "System.Globalization.CultureInfo.InvariantCulture"),
+                                                           "Thread.CurrentUICulture",
+                                                           "IFormatProviderOverloads.IFormatProviderReturningString(string, IFormatProvider, IFormatProvider)"),
 GetIFormatProviderUICultureStringRuleCSharpResultAt(13, 9, "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                           "System.Globalization.CultureInfo.InstalledUICulture",
-                                                           "IFormatProviderOverloads.IFormatProviderReturningString(string, System.IFormatProvider, System.IFormatProvider)",
-                                                           "System.Globalization.CultureInfo.CurrentCulture",
-                                                           "System.Globalization.CultureInfo.InvariantCulture"));
+                                                           "CultureInfo.InstalledUICulture",
+                                                           "IFormatProviderOverloads.IFormatProviderReturningString(string, IFormatProvider, IFormatProvider)"));
         }
 
         [Fact]
@@ -398,46 +358,30 @@ internal static class IFormatProviderOverloads
     {
     }
 }",
-GetIFormatProviderAlternateRuleCSharpResultAt(10, 9, "IFormatProviderOverloads.IFormatProviderReturningNonString(string, System.IFormatProvider)",
+GetIFormatProviderAlternateRuleCSharpResultAt(10, 9, "IFormatProviderOverloads.IFormatProviderReturningNonString(string, IFormatProvider)",
                                                      "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(string, System.IFormatProvider, System.IFormatProvider)",
-                                                     "System.Globalization.CultureInfo.CurrentCulture",
-                                                     "System.Globalization.CultureInfo.InvariantCulture"),
+                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(string, IFormatProvider, IFormatProvider)"),
 GetIFormatProviderUICultureRuleCSharpResultAt(10, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                     "System.Globalization.CultureInfo.CurrentUICulture",
-                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(string, System.IFormatProvider)",
-                                                     "System.Globalization.CultureInfo.CurrentCulture",
-                                                     "System.Globalization.CultureInfo.InvariantCulture"),
-GetIFormatProviderAlternateRuleCSharpResultAt(11, 9, "IFormatProviderOverloads.IFormatProviderReturningNonString(string, System.IFormatProvider)",
+                                                     "CultureInfo.CurrentUICulture",
+                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(string, IFormatProvider)"),
+GetIFormatProviderAlternateRuleCSharpResultAt(11, 9, "IFormatProviderOverloads.IFormatProviderReturningNonString(string, IFormatProvider)",
                                                      "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(string, System.IFormatProvider, System.IFormatProvider)",
-                                                     "System.Globalization.CultureInfo.CurrentCulture",
-                                                     "System.Globalization.CultureInfo.InvariantCulture"),
+                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(string, IFormatProvider, IFormatProvider)"),
 GetIFormatProviderUICultureRuleCSharpResultAt(11, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                     "System.Globalization.CultureInfo.InstalledUICulture",
-                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(string, System.IFormatProvider)",
-                                                     "System.Globalization.CultureInfo.CurrentCulture",
-                                                     "System.Globalization.CultureInfo.InvariantCulture"),
-GetIFormatProviderAlternateRuleCSharpResultAt(12, 9, "IFormatProviderOverloads.IFormatProviderReturningNonString(string, System.IFormatProvider)",
+                                                     "CultureInfo.InstalledUICulture",
+                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(string, IFormatProvider)"),
+GetIFormatProviderAlternateRuleCSharpResultAt(12, 9, "IFormatProviderOverloads.IFormatProviderReturningNonString(string, IFormatProvider)",
                                                      "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(string, System.IFormatProvider, System.IFormatProvider)",
-                                                     "System.Globalization.CultureInfo.CurrentCulture",
-                                                     "System.Globalization.CultureInfo.InvariantCulture"),
+                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(string, IFormatProvider, IFormatProvider)"),
 GetIFormatProviderUICultureRuleCSharpResultAt(12, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                     "System.Threading.Thread.CurrentUICulture",
-                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(string, System.IFormatProvider)",
-                                                     "System.Globalization.CultureInfo.CurrentCulture",
-                                                     "System.Globalization.CultureInfo.InvariantCulture"),
+                                                     "Thread.CurrentUICulture",
+                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(string, IFormatProvider)"),
 GetIFormatProviderUICultureRuleCSharpResultAt(13, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                     "System.Threading.Thread.CurrentUICulture",
-                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(string, System.IFormatProvider, System.IFormatProvider)",
-                                                     "System.Globalization.CultureInfo.CurrentCulture",
-                                                     "System.Globalization.CultureInfo.InvariantCulture"),
+                                                     "Thread.CurrentUICulture",
+                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(string, IFormatProvider, IFormatProvider)"),
 GetIFormatProviderUICultureRuleCSharpResultAt(13, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                     "System.Globalization.CultureInfo.InstalledUICulture",
-                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(string, System.IFormatProvider, System.IFormatProvider)",
-                                                     "System.Globalization.CultureInfo.CurrentCulture",
-                                                     "System.Globalization.CultureInfo.InvariantCulture"));
+                                                     "CultureInfo.InstalledUICulture",
+                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(string, IFormatProvider, IFormatProvider)"));
         }
 
         [Fact]
@@ -492,25 +436,17 @@ Public NotInheritable Class IFormatProviderStringTest
     End Function
 End Class",
 GetIFormatProviderAlternateStringRuleBasicResultAt(11, 16, "String.Format(String, Object)",
-                                                            "IFormatProviderStringTest.SpecifyIFormatProvider1()",
-                                                            "String.Format(System.IFormatProvider, String, ParamArray Object())",
-                                                            "System.Globalization.CultureInfo.CurrentCulture",
-                                                            "System.Globalization.CultureInfo.InvariantCulture"),
+                                                           "IFormatProviderStringTest.SpecifyIFormatProvider1()",
+                                                           "String.Format(IFormatProvider, String, ParamArray Object())"),
 GetIFormatProviderAlternateStringRuleBasicResultAt(15, 16, "String.Format(String, Object, Object)",
-                                                            "IFormatProviderStringTest.SpecifyIFormatProvider2()",
-                                                            "String.Format(System.IFormatProvider, String, ParamArray Object())",
-                                                            "System.Globalization.CultureInfo.CurrentCulture",
-                                                            "System.Globalization.CultureInfo.InvariantCulture"),
+                                                           "IFormatProviderStringTest.SpecifyIFormatProvider2()",
+                                                           "String.Format(IFormatProvider, String, ParamArray Object())"),
 GetIFormatProviderAlternateStringRuleBasicResultAt(19, 16, "String.Format(String, Object, Object, Object)",
-                                                            "IFormatProviderStringTest.SpecifyIFormatProvider3()",
-                                                            "String.Format(System.IFormatProvider, String, ParamArray Object())",
-                                                            "System.Globalization.CultureInfo.CurrentCulture",
-                                                            "System.Globalization.CultureInfo.InvariantCulture"),
+                                                           "IFormatProviderStringTest.SpecifyIFormatProvider3()",
+                                                           "String.Format(IFormatProvider, String, ParamArray Object())"),
 GetIFormatProviderAlternateStringRuleBasicResultAt(23, 16, "String.Format(String, ParamArray Object())",
-                                                            "IFormatProviderStringTest.SpecifyIFormatProvider4()",
-                                                            "String.Format(System.IFormatProvider, String, ParamArray Object())",
-                                                            "System.Globalization.CultureInfo.CurrentCulture",
-                                                            "System.Globalization.CultureInfo.InvariantCulture"));
+                                                           "IFormatProviderStringTest.SpecifyIFormatProvider4()",
+                                                           "String.Format(IFormatProvider, String, ParamArray Object())"));
         }
 
        [Fact]
@@ -564,19 +500,13 @@ Friend NotInheritable Class IFormatProviderOverloads
 End Class",
 GetIFormatProviderAlternateStringRuleBasicResultAt(10, 9, "IFormatProviderOverloads.LeadingIFormatProviderReturningString(String)",
                                                           "IFormatProviderStringTest.SpecifyIFormatProvider()",
-                                                          "IFormatProviderOverloads.LeadingIFormatProviderReturningString(System.IFormatProvider, String)",
-                                                          "System.Globalization.CultureInfo.CurrentCulture",
-                                                          "System.Globalization.CultureInfo.InvariantCulture"),
+                                                          "IFormatProviderOverloads.LeadingIFormatProviderReturningString(IFormatProvider, String)"),
 GetIFormatProviderAlternateStringRuleBasicResultAt(11, 9, "IFormatProviderOverloads.TrailingIFormatProviderReturningString(String)",
                                                           "IFormatProviderStringTest.SpecifyIFormatProvider()",
-                                                          "IFormatProviderOverloads.TrailingIFormatProviderReturningString(String, System.IFormatProvider)",
-                                                          "System.Globalization.CultureInfo.CurrentCulture",
-                                                          "System.Globalization.CultureInfo.InvariantCulture"),
+                                                          "IFormatProviderOverloads.TrailingIFormatProviderReturningString(String, IFormatProvider)"),
 GetIFormatProviderAlternateStringRuleBasicResultAt(12, 9, "IFormatProviderOverloads.UserDefinedParamsMatchMethodOverload(String, ParamArray Object())",
                                                           "IFormatProviderStringTest.SpecifyIFormatProvider()",
-                                                          "IFormatProviderOverloads.UserDefinedParamsMatchMethodOverload(System.IFormatProvider, String, ParamArray Object())",
-                                                          "System.Globalization.CultureInfo.CurrentCulture",
-                                                          "System.Globalization.CultureInfo.InvariantCulture"));
+                                                          "IFormatProviderOverloads.UserDefinedParamsMatchMethodOverload(IFormatProvider, String, ParamArray Object())"));
        }
 
        [Fact]
@@ -667,26 +597,18 @@ Friend NotInheritable Class IFormatProviderOverloads
         Console.WriteLine(String.Format(provider, format))
     End Sub
 End Class",
-GetIFormatProviderAlternateRuleBasicResultAt(10, 28, "System.Convert.ToInt32(String)",
-                                                    "IFormatProviderStringTest.TestMethod()",
-                                                    "System.Convert.ToInt32(String, System.IFormatProvider)",
-                                                    "System.Globalization.CultureInfo.CurrentCulture",
-                                                    "System.Globalization.CultureInfo.InvariantCulture"),
-GetIFormatProviderAlternateRuleBasicResultAt(11, 25, "System.Convert.ToInt64(String)",
-                                                    "IFormatProviderStringTest.TestMethod()",
-                                                    "System.Convert.ToInt64(String, System.IFormatProvider)",
-                                                    "System.Globalization.CultureInfo.CurrentCulture",
-                                                    "System.Globalization.CultureInfo.InvariantCulture"),
+GetIFormatProviderAlternateRuleBasicResultAt(10, 28, "Convert.ToInt32(String)",
+                                                     "IFormatProviderStringTest.TestMethod()",
+                                                     "Convert.ToInt32(String, IFormatProvider)"),
+GetIFormatProviderAlternateRuleBasicResultAt(11, 25, "Convert.ToInt64(String)",
+                                                     "IFormatProviderStringTest.TestMethod()",
+                                                     "Convert.ToInt64(String, IFormatProvider)"),
 GetIFormatProviderAlternateRuleBasicResultAt(12, 9, "IFormatProviderOverloads.LeadingIFormatProvider(String)",
                                                     "IFormatProviderStringTest.TestMethod()",
-                                                    "IFormatProviderOverloads.LeadingIFormatProvider(System.IFormatProvider, String)",
-                                                    "System.Globalization.CultureInfo.CurrentCulture",
-                                                    "System.Globalization.CultureInfo.InvariantCulture"),
+                                                    "IFormatProviderOverloads.LeadingIFormatProvider(IFormatProvider, String)"),
 GetIFormatProviderAlternateRuleBasicResultAt(13, 9, "IFormatProviderOverloads.TrailingIFormatProvider(String)",
                                                     "IFormatProviderStringTest.TestMethod()",
-                                                    "IFormatProviderOverloads.TrailingIFormatProvider(String, System.IFormatProvider)",
-                                                    "System.Globalization.CultureInfo.CurrentCulture",
-                                                    "System.Globalization.CultureInfo.InvariantCulture"));
+                                                    "IFormatProviderOverloads.TrailingIFormatProvider(String, IFormatProvider)"));
        }
 
         [Fact]
@@ -719,46 +641,30 @@ Friend NotInheritable Class IFormatProviderOverloads
         Return Nothing
     End Function
 End Class",
-GetIFormatProviderAlternateStringRuleBasicResultAt(10, 9, "IFormatProviderOverloads.IFormatProviderReturningString(String, System.IFormatProvider)",
+GetIFormatProviderAlternateStringRuleBasicResultAt(10, 9, "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider)",
                                                           "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, System.IFormatProvider, System.IFormatProvider)",
-                                                          "System.Globalization.CultureInfo.CurrentCulture",
-                                                          "System.Globalization.CultureInfo.InvariantCulture"),
+                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider, IFormatProvider)"),
 GetIFormatProviderUICultureStringRuleBasicResultAt(10, 9, "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                          "System.Globalization.CultureInfo.CurrentUICulture",
-                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, System.IFormatProvider)",
-                                                          "System.Globalization.CultureInfo.CurrentCulture",
-                                                          "System.Globalization.CultureInfo.InvariantCulture"),
-GetIFormatProviderAlternateStringRuleBasicResultAt(11, 9, "IFormatProviderOverloads.IFormatProviderReturningString(String, System.IFormatProvider)",
+                                                          "CultureInfo.CurrentUICulture",
+                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider)"),
+GetIFormatProviderAlternateStringRuleBasicResultAt(11, 9, "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider)",
                                                           "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, System.IFormatProvider, System.IFormatProvider)",
-                                                          "System.Globalization.CultureInfo.CurrentCulture",
-                                                          "System.Globalization.CultureInfo.InvariantCulture"),
+                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider, IFormatProvider)"),
 GetIFormatProviderUICultureStringRuleBasicResultAt(11, 9, "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                          "System.Globalization.CultureInfo.InstalledUICulture",
-                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, System.IFormatProvider)",
-                                                          "System.Globalization.CultureInfo.CurrentCulture",
-                                                          "System.Globalization.CultureInfo.InvariantCulture"),
-GetIFormatProviderAlternateStringRuleBasicResultAt(12, 9, "IFormatProviderOverloads.IFormatProviderReturningString(String, System.IFormatProvider)",
+                                                          "CultureInfo.InstalledUICulture",
+                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider)"),
+GetIFormatProviderAlternateStringRuleBasicResultAt(12, 9, "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider)",
                                                           "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, System.IFormatProvider, System.IFormatProvider)",
-                                                          "System.Globalization.CultureInfo.CurrentCulture",
-                                                          "System.Globalization.CultureInfo.InvariantCulture"),
+                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider, IFormatProvider)"),
 GetIFormatProviderUICultureStringRuleBasicResultAt(12, 9, "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                          "System.Threading.Thread.CurrentUICulture",
-                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, System.IFormatProvider)",
-                                                          "System.Globalization.CultureInfo.CurrentCulture",
-                                                          "System.Globalization.CultureInfo.InvariantCulture"),
+                                                          "Thread.CurrentUICulture",
+                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider)"),
 GetIFormatProviderUICultureStringRuleBasicResultAt(13, 9, "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                          "System.Threading.Thread.CurrentUICulture",
-                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, System.IFormatProvider, System.IFormatProvider)",
-                                                          "System.Globalization.CultureInfo.CurrentCulture",
-                                                          "System.Globalization.CultureInfo.InvariantCulture"),
+                                                          "Thread.CurrentUICulture",
+                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider, IFormatProvider)"),
 GetIFormatProviderUICultureStringRuleBasicResultAt(13, 9, "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                          "System.Globalization.CultureInfo.InstalledUICulture",
-                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, System.IFormatProvider, System.IFormatProvider)",
-                                                          "System.Globalization.CultureInfo.CurrentCulture",
-                                                          "System.Globalization.CultureInfo.InvariantCulture"));
+                                                          "CultureInfo.InstalledUICulture",
+                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider, IFormatProvider)"));
        }
 
        [Fact]
@@ -789,46 +695,30 @@ Friend NotInheritable Class IFormatProviderOverloads
     Public Shared Sub IFormatProviderReturningNonString(format As String, provider As IFormatProvider, provider2 As IFormatProvider)
     End Sub
 End Class",
-GetIFormatProviderAlternateRuleBasicResultAt(10, 9, "IFormatProviderOverloads.IFormatProviderReturningNonString(String, System.IFormatProvider)",
+GetIFormatProviderAlternateRuleBasicResultAt(10, 9, "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider)",
                                                     "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, System.IFormatProvider, System.IFormatProvider)",
-                                                    "System.Globalization.CultureInfo.CurrentCulture",
-                                                    "System.Globalization.CultureInfo.InvariantCulture"),
+                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider, IFormatProvider)"),
 GetIFormatProviderUICultureRuleBasicResultAt(10, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                    "System.Globalization.CultureInfo.CurrentUICulture",
-                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, System.IFormatProvider)",
-                                                    "System.Globalization.CultureInfo.CurrentCulture",
-                                                    "System.Globalization.CultureInfo.InvariantCulture"),
-GetIFormatProviderAlternateRuleBasicResultAt(11, 9, "IFormatProviderOverloads.IFormatProviderReturningNonString(String, System.IFormatProvider)",
+                                                    "CultureInfo.CurrentUICulture",
+                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider)"),
+GetIFormatProviderAlternateRuleBasicResultAt(11, 9, "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider)",
                                                     "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, System.IFormatProvider, System.IFormatProvider)",
-                                                    "System.Globalization.CultureInfo.CurrentCulture",
-                                                    "System.Globalization.CultureInfo.InvariantCulture"),
+                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider, IFormatProvider)"),
 GetIFormatProviderUICultureRuleBasicResultAt(11, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                    "System.Globalization.CultureInfo.InstalledUICulture",
-                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, System.IFormatProvider)",
-                                                    "System.Globalization.CultureInfo.CurrentCulture",
-                                                    "System.Globalization.CultureInfo.InvariantCulture"),
-GetIFormatProviderAlternateRuleBasicResultAt(12, 9, "IFormatProviderOverloads.IFormatProviderReturningNonString(String, System.IFormatProvider)",
+                                                    "CultureInfo.InstalledUICulture",
+                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider)"),
+GetIFormatProviderAlternateRuleBasicResultAt(12, 9, "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider)",
                                                     "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, System.IFormatProvider, System.IFormatProvider)",
-                                                    "System.Globalization.CultureInfo.CurrentCulture",
-                                                    "System.Globalization.CultureInfo.InvariantCulture"),
+                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider, IFormatProvider)"),
 GetIFormatProviderUICultureRuleBasicResultAt(12, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                    "System.Threading.Thread.CurrentUICulture",
-                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, System.IFormatProvider)",
-                                                    "System.Globalization.CultureInfo.CurrentCulture",
-                                                    "System.Globalization.CultureInfo.InvariantCulture"),
+                                                    "Thread.CurrentUICulture",
+                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider)"),
 GetIFormatProviderUICultureRuleBasicResultAt(13, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                    "System.Threading.Thread.CurrentUICulture",
-                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, System.IFormatProvider, System.IFormatProvider)",
-                                                    "System.Globalization.CultureInfo.CurrentCulture",
-                                                    "System.Globalization.CultureInfo.InvariantCulture"),
+                                                    "Thread.CurrentUICulture",
+                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider, IFormatProvider)"),
 GetIFormatProviderUICultureRuleBasicResultAt(13, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                    "System.Globalization.CultureInfo.InstalledUICulture",
-                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, System.IFormatProvider, System.IFormatProvider)",
-                                                    "System.Globalization.CultureInfo.CurrentCulture",
-                                                    "System.Globalization.CultureInfo.InvariantCulture"));
+                                                    "CultureInfo.InstalledUICulture",
+                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider, IFormatProvider)"));
        }
 
         [Fact]
@@ -856,10 +746,8 @@ Friend NotInheritable Class IFormatProviderOverloads
     End Sub
 End Class",
 GetIFormatProviderUICultureRuleBasicResultAt(12, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                    "Microsoft.VisualBasic.Devices.ComputerInfo.InstalledUICulture",
-                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, System.IFormatProvider)",
-                                                    "System.Globalization.CultureInfo.CurrentCulture",
-                                                    "System.Globalization.CultureInfo.InvariantCulture"));
+                                                    "ComputerInfo.InstalledUICulture",
+                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider)"));
         }
 
         [Fact]
@@ -885,44 +773,44 @@ Public NotInheritable Class IFormatProviderStringTest
 End Class");
        }
 
-        private DiagnosticResult GetIFormatProviderAlternateStringRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3, string arg4, string arg5)
+        private DiagnosticResult GetIFormatProviderAlternateStringRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3)
         {
-            return GetCSharpResultAt(line, column, SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateStringRule, arg1, arg2, arg3, arg4, arg5);
+            return GetCSharpResultAt(line, column, SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateStringRule, arg1, arg2, arg3);
         }
 
-        private DiagnosticResult GetIFormatProviderAlternateRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3, string arg4, string arg5)
+        private DiagnosticResult GetIFormatProviderAlternateRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3)
         {
-            return GetCSharpResultAt(line, column, SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateRule, arg1, arg2, arg3, arg4, arg5);
+            return GetCSharpResultAt(line, column, SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateRule, arg1, arg2, arg3);
         }
 
-        private DiagnosticResult GetIFormatProviderUICultureStringRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3, string arg4, string arg5)
+        private DiagnosticResult GetIFormatProviderUICultureStringRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3)
         {
-            return GetCSharpResultAt(line, column, SpecifyIFormatProviderAnalyzer.UICultureStringRule, arg1, arg2, arg3, arg4, arg5);
+            return GetCSharpResultAt(line, column, SpecifyIFormatProviderAnalyzer.UICultureStringRule, arg1, arg2, arg3);
         }
 
-        private DiagnosticResult GetIFormatProviderUICultureRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3, string arg4, string arg5)
+        private DiagnosticResult GetIFormatProviderUICultureRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3)
         {
-            return GetCSharpResultAt(line, column, SpecifyIFormatProviderAnalyzer.UICultureRule, arg1, arg2, arg3, arg4, arg5);
+            return GetCSharpResultAt(line, column, SpecifyIFormatProviderAnalyzer.UICultureRule, arg1, arg2, arg3);
         }
 
-        private DiagnosticResult GetIFormatProviderAlternateStringRuleBasicResultAt(int line, int column, string arg1, string arg2, string arg3, string arg4, string arg5)
+        private DiagnosticResult GetIFormatProviderAlternateStringRuleBasicResultAt(int line, int column, string arg1, string arg2, string arg3)
         {
-            return GetBasicResultAt(line, column, SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateStringRule, arg1, arg2, arg3, arg4, arg5);
+            return GetBasicResultAt(line, column, SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateStringRule, arg1, arg2, arg3);
         }
 
-        private DiagnosticResult GetIFormatProviderAlternateRuleBasicResultAt(int line, int column, string arg1, string arg2, string arg3, string arg4, string arg5)
+        private DiagnosticResult GetIFormatProviderAlternateRuleBasicResultAt(int line, int column, string arg1, string arg2, string arg3)
         {
-            return GetBasicResultAt(line, column, SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateRule, arg1, arg2, arg3, arg4, arg5);
+            return GetBasicResultAt(line, column, SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateRule, arg1, arg2, arg3);
         }
 
-        private DiagnosticResult GetIFormatProviderUICultureStringRuleBasicResultAt(int line, int column, string arg1, string arg2, string arg3, string arg4, string arg5)
+        private DiagnosticResult GetIFormatProviderUICultureStringRuleBasicResultAt(int line, int column, string arg1, string arg2, string arg3)
         {
-            return GetBasicResultAt(line, column, SpecifyIFormatProviderAnalyzer.UICultureStringRule, arg1, arg2, arg3, arg4, arg5);
+            return GetBasicResultAt(line, column, SpecifyIFormatProviderAnalyzer.UICultureStringRule, arg1, arg2, arg3);
         }
 
-        private DiagnosticResult GetIFormatProviderUICultureRuleBasicResultAt(int line, int column, string arg1, string arg2, string arg3, string arg4, string arg5)
+        private DiagnosticResult GetIFormatProviderUICultureRuleBasicResultAt(int line, int column, string arg1, string arg2, string arg3)
         {
-            return GetBasicResultAt(line, column, SpecifyIFormatProviderAnalyzer.UICultureRule, arg1, arg2, arg3, arg4, arg5);
+            return GetBasicResultAt(line, column, SpecifyIFormatProviderAnalyzer.UICultureRule, arg1, arg2, arg3);
         }
     }
 }

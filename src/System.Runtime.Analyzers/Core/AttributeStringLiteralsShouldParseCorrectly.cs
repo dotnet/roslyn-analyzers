@@ -4,6 +4,9 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
+using Microsoft.CodeAnalysis.Semantics;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace System.Runtime.Analyzers
 {
@@ -25,24 +28,232 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableMessageDefault,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb264490.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor EmptyRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageEmpty,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb264490.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, EmptyRule);
 
+        private static List<ValueValidator> s_tokensToValueValidator =
+            new List<ValueValidator>(
+                new[] { new ValueValidator(new[] { "guid" }, "Guid", GuidValueValidator),
+                        new ValueValidator(new[] { "url", "uri", "urn" }, "Uri", UrlValueValidator, "UriTemplate")});
+
+        private static bool GuidValueValidator(string value)
+        {
+            try
+            {
+                new Guid(value);
+                return true;
+            }
+            catch (OverflowException)
+            {
+            }
+            catch (FormatException)
+            {
+            }
+
+            return false;
+        }
+
+        private static bool UrlValueValidator(string value)
+        {
+            return Uri.IsWellFormedUriString(value, System.UriKind.RelativeOrAbsolute);
+        }
+
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.RegisterSymbolAction(saContext =>
+            {
+                var symbol = saContext.Symbol;
+                AnalyzeSymbol(saContext.ReportDiagnostic, symbol);
+                switch(symbol.Kind)
+                {
+                    case SymbolKind.NamedType:
+                        {
+                            var namedType = symbol as INamedTypeSymbol;
+
+                            AnalyzeSymbols(saContext.ReportDiagnostic, namedType.TypeParameters);
+
+                            if (namedType.TypeKind == TypeKind.Delegate && namedType.DelegateInvokeMethod != null)
+                            {
+                                AnalyzeSymbols(saContext.ReportDiagnostic, namedType.DelegateInvokeMethod.Parameters);
+                            }
+
+                            return;
+                        }
+
+                    default:
+                        {
+                            var methodSymbol = symbol as IMethodSymbol;
+                            if (methodSymbol != null && !methodSymbol.IsAccessorMethod())
+                            {
+                                AnalyzeSymbols(saContext.ReportDiagnostic, methodSymbol.Parameters);
+                                AnalyzeSymbols(saContext.ReportDiagnostic, methodSymbol.TypeParameters);
+                            }
+
+                            var propertySymbol = symbol as IPropertySymbol;
+                            if (propertySymbol != null)
+                            {
+                                AnalyzeSymbols(saContext.ReportDiagnostic, propertySymbol.Parameters);
+                            }
+
+                            return;
+                        }
+                }
+            },
+            SymbolKind.NamedType,
+            SymbolKind.Method, SymbolKind.Property, SymbolKind.Field, SymbolKind.Event);
+
+            analysisContext.RegisterCompilationAction(caContext =>
+            {
+                var compilation = caContext.Compilation;
+                AnalyzeSymbol(caContext.ReportDiagnostic, compilation.Assembly);
+            });
+        }
+
+        private void AnalyzeSymbols(Action<Diagnostic> reportDiagnostic, IEnumerable<ISymbol> symbols)
+        {
+           foreach(var symbol in symbols)
+            {
+                AnalyzeSymbol(reportDiagnostic, symbol);
+            }
+        }
+
+        private void AnalyzeSymbol(Action<Diagnostic> reportDiagnostic, ISymbol symbol)
+        {
+            var attributes = symbol.GetAttributes();
+
+            foreach (var attribute in attributes)
+            {
+                Analyze(reportDiagnostic, attribute);
+            }
+        }
+
+        private void Analyze(Action<Diagnostic> reportDiagnostic, AttributeData attributeData)
+        {
+            var attributeConstructor = attributeData.AttributeConstructor;
+            var constructorArguments = attributeData.ConstructorArguments;
+
+            if (attributeConstructor == null || attributeConstructor.Parameters.Count() != constructorArguments.Count())
+            {
+                return;
+            }
+
+            var syntax = attributeData.ApplicationSyntaxReference.GetSyntax();
+
+            for (int i = 0; i < attributeConstructor.Parameters.Count(); i++)
+            {
+                var parameter = attributeConstructor.Parameters[i];
+                if (parameter.Type.SpecialType != SpecialType.System_String)
+                {
+                    continue;
+                }
+
+                // If the name of the parameter is not something which requires the value-passed
+                // to the parameter to be validated then we dont have to do anything
+                var valueValidator = GetValueValidator(parameter.Name);
+                if (valueValidator != null && !valueValidator.IsIgnoredName(parameter.Name))
+                {
+                    if (constructorArguments[i].Value != null)
+                    {
+                        var value = (string)constructorArguments[i].Value;
+                        string classDisplayString = attributeData.AttributeClass.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat);
+                        if (value.Equals(string.Empty))
+                        {
+                            reportDiagnostic(syntax.CreateDiagnostic(EmptyRule,
+                                classDisplayString,
+                                parameter.Name,
+                                valueValidator.TypeName));
+                        }
+                        else if(!valueValidator.IsValidValue(value))
+                        {
+                            reportDiagnostic(syntax.CreateDiagnostic(DefaultRule,
+                                classDisplayString,
+                                parameter.Name,
+                                value,
+                                valueValidator.TypeName));
+                        }
+                    }
+                }
+            }
+
+            foreach (var namedArgument in attributeData.NamedArguments)
+            {
+                if (namedArgument.Value.IsNull ||
+                    namedArgument.Value.Type.SpecialType != SpecialType.System_String)
+                {
+                    return;
+                }
+
+                var valueValidator = GetValueValidator(namedArgument.Key);
+                if (valueValidator != null && !valueValidator.IsIgnoredName(namedArgument.Key))
+                {
+                    var value = (string)(namedArgument.Value.Value);
+                    string classDisplayString = attributeData.AttributeClass.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat);
+                    if (value.Equals(string.Empty))
+                    {
+                        reportDiagnostic(syntax.CreateDiagnostic(EmptyRule,
+                            classDisplayString,
+                            $"{classDisplayString}.{namedArgument.Key}",
+                            valueValidator.TypeName));
+                    }
+                    else if (!valueValidator.IsValidValue(value))
+                    {
+                        reportDiagnostic(syntax.CreateDiagnostic(DefaultRule,
+                            classDisplayString,
+                            $"{classDisplayString}.{namedArgument.Key}",
+                            value,
+                            valueValidator.TypeName));
+                    }
+                }
+            }
+        }
+
+        private ValueValidator GetValueValidator(string name)
+        {
+            foreach (var valueValidator in s_tokensToValueValidator)
+            {
+                if (WordParser.ContainsWord(name, WordParserOptions.SplitCompoundWords, valueValidator.AcceptedTokens))
+                {
+                    return valueValidator;
+                }
+            }
+
+            return null;
+        }
+    }
+
+    internal class ValueValidator
+    {
+        private string _ignoredName;
+
+        public string[] AcceptedTokens { get; }
+        public string TypeName { get; }
+        public Func<string, bool> IsValidValue { get; }
+
+        public bool IsIgnoredName(string name)
+        {
+            return _ignoredName != null && string.Equals(_ignoredName, name, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public ValueValidator(string[] acceptedTokens, string typeName, Func<string, bool> isValidValue, string ignoredName = null)
+        {
+            _ignoredName = ignoredName;
+
+            AcceptedTokens = acceptedTokens;
+            TypeName = typeName;
+            IsValidValue = isValidValue;
         }
     }
 }

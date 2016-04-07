@@ -280,10 +280,10 @@
     <value>The string literal parameter of an attribute does not parse correctly for a URL, a GUID, or a version.</value>
   </data>
   <data name="AttributeStringLiteralsShouldParseCorrectlyMessageDefault" xml:space="preserve">
-    <value>In the constructor of {0}, change the value of argument {1}, which is currently "{2}", to something that can be correctly parsed as {3}.</value>
+    <value>In the constructor of '{0}', change the value of argument '{1}', which is currently "{2}", to something that can be correctly parsed as '{3}'.</value>
   </data>
   <data name="AttributeStringLiteralsShouldParseCorrectlyMessageEmpty" xml:space="preserve">
-    <value>In the constructor of {0}, change the value of argument {1}, which is currently an empty string (""), to something that can be correctly parsed as {2}.</value>
+    <value>In the constructor of '{0}', change the value of argument '{1}', which is currently an empty string (""), to something that can be correctly parsed as '{2}'.</value>
   </data>
   <data name="AvoidZeroLengthArrayAllocationsTitle" xml:space="preserve">
     <value>Avoid zero-length array allocations.</value>

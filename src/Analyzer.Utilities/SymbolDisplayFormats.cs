@@ -13,7 +13,7 @@ namespace Analyzer.Utilities
                 SymbolDisplayMemberOptions.IncludeContainingType | SymbolDisplayMemberOptions.IncludeParameters,
                 SymbolDisplayDelegateStyle.NameAndParameters,
                 SymbolDisplayExtensionMethodStyle.InstanceMethod,
-                SymbolDisplayParameterOptions.IncludeType | SymbolDisplayParameterOptions.IncludeOptionalBrackets,
+                SymbolDisplayParameterOptions.IncludeType | SymbolDisplayParameterOptions.IncludeOptionalBrackets | SymbolDisplayParameterOptions.IncludeParamsRefOut,
                 SymbolDisplayPropertyStyle.NameOnly,
                 SymbolDisplayLocalOptions.IncludeType,
                 SymbolDisplayKindOptions.None,

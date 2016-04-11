@@ -10,12 +10,12 @@ namespace System.Runtime.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicSpecifyIFormatProviderAnalyzer();
+            return new SpecifyIFormatProviderAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpSpecifyIFormatProviderAnalyzer();
+            return new SpecifyIFormatProviderAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

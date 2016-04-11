@@ -55,7 +55,6 @@
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\SyntaxNodeExtensions.cs" />
-    <Compile Include="Extensions\IEnumerableOfIMethodSymbolExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SymbolDisplayFormats.cs" />
     <Compile Include="SyntaxGeneratorExtensions.cs" />

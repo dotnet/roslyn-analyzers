@@ -302,11 +302,7 @@ GetCA1307BasicResultsAt(7, 9, "StringComparisonTests.DoNothing(String)",
                 SpecifyStringComparisonAnalyzer.Rule,
                 arg1,
                 arg2,
-                arg3,
-                "System.StringComparison.CurrentCulture",
-                "System.StringComparison.CurrentCultureIgnoreCase",
-                "System.StringComparison.OrdinalIgnoreCase",
-                "System.StringComparison.Ordinal");
+                arg3);
         }
 
         private DiagnosticResult GetCA1307BasicResultsAt(int line, int column, string arg1, string arg2, string arg3)
@@ -317,11 +313,7 @@ GetCA1307BasicResultsAt(7, 9, "StringComparisonTests.DoNothing(String)",
                 SpecifyStringComparisonAnalyzer.Rule,
                 arg1,
                 arg2,
-                arg3,
-                "System.StringComparison.CurrentCulture",
-                "System.StringComparison.CurrentCultureIgnoreCase",
-                "System.StringComparison.OrdinalIgnoreCase",
-                "System.StringComparison.Ordinal");
+                arg3);
         }
     }
 }

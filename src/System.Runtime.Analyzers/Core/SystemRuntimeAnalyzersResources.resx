@@ -334,7 +334,7 @@
     <value>A string comparison operation uses a method overload that does not set a StringComparison parameter. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify 'StringComparison.CurrentCulture' or 'StringComparison.CurrentCultureIgnoreCase' as the 'StringComparison' parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify 'StringComparison.OrdinalIgnoreCase'. Otherwise, if comparing case-sensitive identifiers, specify 'StringComparison.Ordinal'.</value>
   </data>
   <data name="SpecifyStringComparisonMessage" xml:space="preserve">
-    <value>Because the behavior of '{0}' could vary based on the current user's locale settings, replace this call in '{1}' with a call to '{2}'.</value>
+    <value>The behavior of '{0}' could vary based on the current user's locale settings, replace this call in '{1}' with a call to '{2}'.</value>
   </data>
   <data name="NormalizeStringsToUppercaseTitle" xml:space="preserve">
     <value>Normalize strings to uppercase</value>

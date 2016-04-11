@@ -740,7 +740,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Because the behavior of &apos;{0}&apos; could vary based on the current user&apos;s locale settings, replace this call in &apos;{1}&apos; with a call to &apos;{2}&apos;..
+        ///   Looks up a localized string similar to The behavior of &apos;{0}&apos; could vary based on the current user&apos;s locale settings, replace this call in &apos;{1}&apos; with a call to &apos;{2}&apos;..
         /// </summary>
         internal static string SpecifyStringComparisonMessage {
             get {

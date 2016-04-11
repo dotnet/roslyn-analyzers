@@ -20,7 +20,6 @@ namespace System.Runtime.Analyzers
         internal const string RuleId = "CA1307";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.SpecifyStringComparisonTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.SpecifyStringComparisonMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.SpecifyStringComparisonDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
 
@@ -94,7 +93,8 @@ namespace System.Runtime.Analyzers
                     var targetMethod = invocationExpression.TargetMethod;
 
                     if (targetMethod.IsGenericMethod ||
-                        targetMethod.ContainingType == null)
+                        targetMethod.ContainingType == null ||
+                        targetMethod.ContainingType.IsErrorType())
                     {
                         return;
                     }

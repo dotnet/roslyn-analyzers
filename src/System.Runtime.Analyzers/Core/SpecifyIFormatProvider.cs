@@ -5,7 +5,6 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using Analyzer.Utilities;
-using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Semantics;
@@ -84,27 +83,22 @@ namespace System.Runtime.Analyzers
                 var stringType = csaContext.Compilation.GetSpecialType(SpecialType.System_String);
                 var stringFormatMembers = stringType?.GetMembers("Format").OfType<IMethodSymbol>();
 
-                var stringFormatMemberWithStringAndObjectParameter = GetSingleOrDefaultMemberWithParameterInfos(
-                                                                         stringFormatMembers, 
+                var stringFormatMemberWithStringAndObjectParameter = stringFormatMembers.GetSingleOrDefaultMemberWithParameterInfos(
                                                                          GetParameterInfo(stringType), 
                                                                          GetParameterInfo(objectType));
-                var stringFormatMemberWithStringObjectAndObjectParameter = GetSingleOrDefaultMemberWithParameterInfos(
-                                                                               stringFormatMembers,
+                var stringFormatMemberWithStringObjectAndObjectParameter = stringFormatMembers.GetSingleOrDefaultMemberWithParameterInfos(
                                                                                GetParameterInfo(stringType),
                                                                                GetParameterInfo(objectType),
                                                                                GetParameterInfo(objectType));
-                var stringFormatMemberWithStringObjectObjectAndObjectParameter = GetSingleOrDefaultMemberWithParameterInfos(
-                                                                                     stringFormatMembers,
+                var stringFormatMemberWithStringObjectObjectAndObjectParameter = stringFormatMembers.GetSingleOrDefaultMemberWithParameterInfos(
                                                                                      GetParameterInfo(stringType),
                                                                                      GetParameterInfo(objectType),
                                                                                      GetParameterInfo(objectType),
                                                                                      GetParameterInfo(objectType));
-                var stringFormatMemberWithStringAndParamsObjectParameter = GetSingleOrDefaultMemberWithParameterInfos(
-                                                                               stringFormatMembers, 
+                var stringFormatMemberWithStringAndParamsObjectParameter = stringFormatMembers.GetSingleOrDefaultMemberWithParameterInfos(
                                                                                GetParameterInfo(stringType),
                                                                                GetParameterInfo(objectType, isArray: true, arrayRank: 1, isParams: true));
-                var stringFormatMemberWithIFormatProviderStringAndParamsObjectParameter = GetSingleOrDefaultMemberWithParameterInfos(
-                                                                                              stringFormatMembers,
+                var stringFormatMemberWithIFormatProviderStringAndParamsObjectParameter = stringFormatMembers.GetSingleOrDefaultMemberWithParameterInfos(
                                                                                               GetParameterInfo(iformatProviderType),
                                                                                               GetParameterInfo(stringType),
                                                                                               GetParameterInfo(objectType, isArray: true, arrayRank: 1, isParams: true));
@@ -238,69 +232,6 @@ namespace System.Runtime.Analyzers
         private ParameterInfo GetParameterInfo(INamedTypeSymbol type, bool isArray = false, int arrayRank = 0, bool isParams = false)
         {
             return ParameterInfo.GetParameterInfo(type, isArray, arrayRank, isParams);
-        }
-
-        private IMethodSymbol GetSingleOrDefaultMemberWithParameterInfos(IEnumerable<IMethodSymbol> members, params ParameterInfo[] expectedParameterTypesInOrder)
-        {
-            var expectedParameterCount = expectedParameterTypesInOrder.Count();
-            return members?.Where(member =>
-            {
-                if (member.Parameters.Count() != expectedParameterCount)
-                {
-                    return false;
-                }
-
-                for (int i = 0; i < expectedParameterCount; i++)
-                {
-                    // check IsParams only on the last parameter
-                    if (i == expectedParameterCount - 1 && 
-                        member.Parameters[i].IsParams != expectedParameterTypesInOrder[i].IsParams)
-                    {
-                        return false;
-                    }
-
-                    var parameterType = member.Parameters[i].Type;
-                    if (expectedParameterTypesInOrder[i].IsArray)
-                    {
-                        var arrayParameterSymbol = parameterType as IArrayTypeSymbol;
-                        if(arrayParameterSymbol?.Rank != expectedParameterTypesInOrder[i].ArrayRank)
-                        {
-                            return false;
-                        }
-
-                        parameterType = arrayParameterSymbol.ElementType;
-                    }
-
-                    if (!expectedParameterTypesInOrder[i].Type.Equals(parameterType))
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }).SingleOrDefault();
-        }
-
-        // Contains the expected properties of a parameter
-        private class ParameterInfo
-        {
-            public int ArrayRank { get; private set; }
-            public bool IsArray { get; private set; }
-            public bool IsParams { get; private set; }
-            public INamedTypeSymbol Type { get; private set; }
-
-            private ParameterInfo(INamedTypeSymbol type, bool isArray, int arrayRank, bool isParams)
-            {
-                Type = type;
-                IsArray = isArray;
-                ArrayRank = arrayRank;
-                IsParams = isParams;
-            }
-
-            public static ParameterInfo GetParameterInfo(INamedTypeSymbol type, bool isArray, int arrayRank, bool isParams)
-            {
-                return new ParameterInfo(type, isArray, arrayRank, isParams);
-            }
         }
     }
 }

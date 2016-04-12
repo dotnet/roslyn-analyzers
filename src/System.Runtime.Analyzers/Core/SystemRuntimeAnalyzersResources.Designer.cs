@@ -731,7 +731,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A string comparison operation uses a method overload that does not set a StringComparison parameter..
+        ///   Looks up a localized string similar to A string comparison operation uses a method overload that does not set a StringComparison parameter. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify &apos;StringComparison.CurrentCulture&apos; or &apos;StringComparison.CurrentCultureIgnoreCase&apos; as the &apos;StringComparison&apos; parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify &apos;StringComparison.OrdinalIgnoreCase&apos;. Otherwise, if c [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SpecifyStringComparisonDescription {
             get {
@@ -740,7 +740,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Specify StringComparison.
+        ///   Looks up a localized string similar to The behavior of &apos;{0}&apos; could vary based on the current user&apos;s locale settings, replace this call in &apos;{1}&apos; with a call to &apos;{2}&apos;..
         /// </summary>
         internal static string SpecifyStringComparisonMessage {
             get {

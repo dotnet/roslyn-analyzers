@@ -47,7 +47,7 @@ namespace System.Runtime.Analyzers
                     {
                         var invocationExpression = (IInvocationExpression)oaContext.Operation;
                         var targetMethod = invocationExpression.TargetMethod;
-                        if (targetMethod.ContainingType == null)
+                        if (targetMethod.ContainingType == null || targetMethod.ContainingType.IsErrorType() || targetMethod.IsGenericMethod)
                         {
                             return;
                         }
@@ -71,9 +71,9 @@ namespace System.Runtime.Analyzers
                             oaContext.ReportDiagnostic(
                                 invocationExpression.Syntax.CreateDiagnostic(
                                     Rule,
-                                    targetMethod.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
-                                    oaContext.ContainingSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
-                                    correctOverload.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
+                                    targetMethod.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                                    oaContext.ContainingSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                                    correctOverload.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
                         }
                     }, OperationKind.InvocationExpression);
                 }

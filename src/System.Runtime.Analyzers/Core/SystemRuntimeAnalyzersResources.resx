@@ -307,7 +307,7 @@
     <value>A method or constructor calls a member that has an overload that accepts a System.Globalization.CultureInfo parameter, and the method or constructor does not call the overload that takes the CultureInfo parameter. When a CultureInfo or System.IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales.</value>
   </data>
   <data name="SpecifyCultureInfoMessage" xml:space="preserve">
-    <value>Because the behavior of '{0}' could vary based on the current user's locale settings, replace this call in '{1}' with a call to '{2}'. If the result of '{2}' will be displayed to the user, specify 'CultureInfo.CurrentCulture' as the 'CultureInfo' parameter. Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk or to a database, specify 'CultureInfo.InvariantCulture'.</value>
+    <value>Because the behavior of '{0}' could vary based on the current user's locale settings, replace this call in '{1}' with a call to '{2}'.</value>
   </data>
   <data name="SpecifyIFormatProviderTitle" xml:space="preserve">
     <value>Specify IFormatProvider</value>
@@ -316,10 +316,10 @@
     <value>A method or constructor calls one or more members that have overloads that accept a System.IFormatProvider parameter, and the method or constructor does not call the overload that takes the IFormatProvider parameter. When a System.Globalization.CultureInfo or IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales. If the result will be based on the input from/output displayed to the user, specify 'CultureInfo.CurrentCulture' as the 'IFormatProvider'. Otherwise, if the result will be stored and accessed by software, such as when it is loaded from disk/database and when it is persisted to disk/database, specify 'CultureInfo.InvariantCulture'</value>
   </data>
   <data name="SpecifyIFormatProviderMessageIFormatProviderAlternateString" xml:space="preserve">
-    <value>Because the behavior of '{0}' could vary based on the current user's locale settings, replace this call in '{1}' with a call to '{2}'.</value>
+    <value>The behavior of '{0}' could vary based on the current user's locale settings, replace this call in '{1}' with a call to '{2}'.</value>
   </data>
   <data name="SpecifyIFormatProviderMessageIFormatProviderAlternate" xml:space="preserve">
-    <value>Because the behavior of '{0}' could vary based on the current user's locale settings, replace this call in '{1}' with a call to '{2}'.</value>
+    <value>The behavior of '{0}' could vary based on the current user's locale settings, replace this call in '{1}' with a call to '{2}'.</value>
   </data>
   <data name="SpecifyIFormatProviderMessageUICultureString" xml:space="preserve">
     <value>'{0}' passes '{1}' as the 'IFormatProvider' parameter to '{2}'. This property returns a culture that is inappropriate for formatting methods.</value>

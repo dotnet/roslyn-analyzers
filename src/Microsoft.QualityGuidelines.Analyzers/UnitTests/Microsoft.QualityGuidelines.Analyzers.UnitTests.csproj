@@ -157,8 +157,6 @@
     <Compile Include="RethrowToPreserveStackDetailsTests.cs" />
     <Compile Include="UseLiteralsWhereAppropriateTests.cs" />
     <Compile Include="UseLiteralsWhereAppropriateTests.Fixer.cs" />
-    <Compile Include="DoNotInitializeUnnecessarilyTests.cs" />
-    <Compile Include="DoNotInitializeUnnecessarilyTests.Fixer.cs" />
     <Compile Include="PreferJaggedArraysOverMultidimensionalTests.cs" />
     <Compile Include="PreferJaggedArraysOverMultidimensionalTests.Fixer.cs" />
     <Compile Include="MarkMembersAsStaticTests.cs" />

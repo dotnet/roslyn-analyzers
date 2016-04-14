@@ -10,7 +10,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// CA1051: Do not declare visible instance fields
     /// </summary>
-    public abstract class DoNotDeclareVisibleInstanceFieldsAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class DoNotDeclareVisibleInstanceFieldsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1051";
 
@@ -24,15 +25,25 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182141.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.RegisterSymbolAction(obj =>
+            {
+                var field = (IFieldSymbol)obj.Symbol;
+
+                // Only report diagnostic on non-static, non-const, public fields
+                if (!field.IsStatic && !field.IsConst && field.IsPublic())
+                {
+                    obj.ReportDiagnostic(field.CreateDiagnostic(Rule));
+                }
+            }, SymbolKind.Field);
         }
     }
 }

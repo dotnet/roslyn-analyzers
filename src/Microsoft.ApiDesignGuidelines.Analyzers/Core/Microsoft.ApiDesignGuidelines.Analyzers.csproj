@@ -181,7 +181,6 @@
     <Compile Include="DeclareTypesInNamespaces.cs" />
     <Compile Include="DeclareTypesInNamespaces.Fixer.cs" />
     <Compile Include="DoNotDeclareVisibleInstanceFields.cs" />
-    <Compile Include="DoNotDeclareVisibleInstanceFields.Fixer.cs" />
     <Compile Include="UriParametersShouldNotBeStrings.cs" />
     <Compile Include="UriParametersShouldNotBeStrings.Fixer.cs" />
     <Compile Include="UriReturnValuesShouldNotBeStrings.cs" />

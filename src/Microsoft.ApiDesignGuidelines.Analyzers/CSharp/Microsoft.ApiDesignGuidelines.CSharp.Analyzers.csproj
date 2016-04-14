@@ -126,8 +126,6 @@
     <Compile Include="CSharpUsePropertiesWhereAppropriate.Fixer.cs" />
     <Compile Include="CSharpMovePInvokesToNativeMethodsClass.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldHaveCorrectPrefix.Fixer.cs" />
-    <Compile Include="CSharpNonConstantFieldsShouldNotBeVisible.cs" />
-    <Compile Include="CSharpNonConstantFieldsShouldNotBeVisible.Fixer.cs" />
     <Compile Include="CSharpCollectionsShouldImplementGenericInterface.Fixer.cs" />
     <Compile Include="CSharpUseEventsWhereAppropriate.Fixer.cs" />
     <Compile Include="CSharpImplementStandardExceptionConstructors.cs" />
@@ -137,8 +135,6 @@
     <Compile Include="CSharpPropertiesShouldNotBeWriteOnly.cs" />
     <Compile Include="CSharpPropertiesShouldNotBeWriteOnly.Fixer.cs" />
     <Compile Include="CSharpDeclareTypesInNamespaces.Fixer.cs" />
-    <Compile Include="CSharpDoNotDeclareVisibleInstanceFields.cs" />
-    <Compile Include="CSharpDoNotDeclareVisibleInstanceFields.Fixer.cs" />
     <Compile Include="CSharpImplementIDisposableCorrectly.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldNotContainUnderscores.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldHaveCorrectSuffix.Fixer.cs" />

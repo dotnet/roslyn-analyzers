@@ -650,7 +650,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A method or constructor calls a member that has an overload that accepts a System.Globalization.CultureInfo parameter, and the method or constructor does not call the overload that takes the CultureInfo parameter. When a CultureInfo or System.IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales..
+        ///   Looks up a localized string similar to A method or constructor calls a member that has an overload that accepts a System.Globalization.CultureInfo parameter, and the method or constructor does not call the overload that takes the CultureInfo parameter. When a CultureInfo or System.IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales. If the result will be displayed to the user, specify &apos;CultureInfo.CurrentCulture&apos; as the &apos;CultureInfo&apos; parameter. [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SpecifyCultureInfoDescription {
             get {
@@ -659,7 +659,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Because the behavior of &apos;{0}&apos; could vary based on the current user&apos;s locale settings, replace this call in &apos;{1}&apos; with a call to &apos;{2}&apos;. If the result of &apos;{2}&apos; will be displayed to the user, specify &apos;CultureInfo.CurrentCulture&apos; as the &apos;CultureInfo&apos; parameter. Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk or to a database, specify &apos;CultureInfo.InvariantCulture&apos;..
+        ///   Looks up a localized string similar to The behavior of &apos;{0}&apos; could vary based on the current user&apos;s locale settings. Replace this call in &apos;{1}&apos; with a call to &apos;{2}&apos;..
         /// </summary>
         internal static string SpecifyCultureInfoMessage {
             get {
@@ -686,7 +686,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Because the behavior of &apos;{0}&apos; could vary based on the current user&apos;s locale settings, replace this call in &apos;{1}&apos; with a call to &apos;{2}&apos;..
+        ///   Looks up a localized string similar to The behavior of &apos;{0}&apos; could vary based on the current user&apos;s locale settings. Replace this call in &apos;{1}&apos; with a call to &apos;{2}&apos;..
         /// </summary>
         internal static string SpecifyIFormatProviderMessageIFormatProviderAlternate {
             get {
@@ -695,7 +695,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Because the behavior of &apos;{0}&apos; could vary based on the current user&apos;s locale settings, replace this call in &apos;{1}&apos; with a call to &apos;{2}&apos;..
+        ///   Looks up a localized string similar to The behavior of &apos;{0}&apos; could vary based on the current user&apos;s locale settings. Replace this call in &apos;{1}&apos; with a call to &apos;{2}&apos;..
         /// </summary>
         internal static string SpecifyIFormatProviderMessageIFormatProviderAlternateString {
             get {
@@ -740,7 +740,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The behavior of &apos;{0}&apos; could vary based on the current user&apos;s locale settings, replace this call in &apos;{1}&apos; with a call to &apos;{2}&apos;..
+        ///   Looks up a localized string similar to The behavior of &apos;{0}&apos; could vary based on the current user&apos;s locale settings. Replace this call in &apos;{1}&apos; with a call to &apos;{2}&apos;..
         /// </summary>
         internal static string SpecifyStringComparisonMessage {
             get {

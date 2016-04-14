@@ -95,7 +95,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 new KeyValuePair<string, ImmutableArray<string>>(AttributeSuffix, ImmutableArray.CreateRange(new[] { "System.Attribute" })),
                 new KeyValuePair<string, ImmutableArray<string>>(CollectionSuffix, ImmutableArray.CreateRange(new[] { "System.Collections.IEnumerable" })),
-                new KeyValuePair<string, ImmutableArray<string>>(DictionarySuffix, ImmutableArray.CreateRange(new[] { "System.Collections.IDictionary" })),
+                new KeyValuePair<string, ImmutableArray<string>>(DictionarySuffix, ImmutableArray.CreateRange(new[] { "System.Collections.IDictionary", "System.Collections.Generic.IReadOnlyDictionary`2" })),
                 new KeyValuePair<string, ImmutableArray<string>>(EventArgsSuffix, ImmutableArray.CreateRange(new[] { "System.EventArgs" })),
                 new KeyValuePair<string, ImmutableArray<string>>(ExceptionSuffix, ImmutableArray.CreateRange(new[] { "System.Exception" })),
                 new KeyValuePair<string, ImmutableArray<string>>(PermissionSuffix, ImmutableArray.CreateRange(new[] { "System.Security.IPermission" })),

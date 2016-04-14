@@ -25,6 +25,7 @@
         -Microsoft.Design#CA1034;
         -Microsoft.Design#CA1036;
         -Microsoft.Design#CA1041;
+        -Microsoft.Design#CA1043;
         -Microsoft.Design#CA1050;
         -Microsoft.Design#CA1051;
         -Microsoft.Design#CA1052;
@@ -35,11 +36,6 @@
         -Microsoft.Design#CA1063;
         -Microsoft.Design#CA1064;
         -Microsoft.Design#CA1065;
-        -Microsoft.Design#CA1066;
-        -Microsoft.Design#CA1067;
-        -Microsoft.Design#CA1068;
-        -Microsoft.Design#CA1720;
-        -Microsoft.Design#CA1721;
 
         -Microsoft.Naming#CA1707;
         -Microsoft.Naming#CA1708;
@@ -48,15 +44,14 @@
         -Microsoft.Naming#CA1715;
         -Microsoft.Naming#CA1716;
         -Microsoft.Naming#CA1717;
+        -Microsoft.Naming#CA1720;
+        -Microsoft.Naming#CA1721;
         -Microsoft.Naming#CA1724;
         -Microsoft.Naming#CA1725;
-        
-        -Microsoft.Performance#CA1043;
+
         -Microsoft.Performance#CA1815;
         -Microsoft.Performance#CA1819;
 
-        -Microsoft.Reliability#CA2007;
-        
         -Microsoft.Usage#CA2211;
         -Microsoft.Usage#CA2217;
         -Microsoft.Usage#CA2222;

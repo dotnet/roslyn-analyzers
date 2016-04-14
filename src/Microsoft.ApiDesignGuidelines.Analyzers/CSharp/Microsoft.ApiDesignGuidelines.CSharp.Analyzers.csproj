@@ -142,7 +142,6 @@
     <Compile Include="CSharpImplementIDisposableCorrectly.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldNotContainUnderscores.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldHaveCorrectSuffix.Fixer.cs" />
-    <Compile Include="CSharpIdentifiersShouldNotHaveIncorrectSuffix.cs" />
     <Compile Include="CSharpIdentifiersShouldNotHaveIncorrectSuffix.Fixer.cs" />
     <Compile Include="CSharpEnumsShouldHavePluralNames.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldNotMatchKeywords.Fixer.cs" />

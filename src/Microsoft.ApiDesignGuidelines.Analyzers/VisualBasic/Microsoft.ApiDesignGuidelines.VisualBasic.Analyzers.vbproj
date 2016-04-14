@@ -142,7 +142,6 @@
     <Compile Include="BasicImplementIDisposableCorrectly.Fixer.vb" />
     <Compile Include="BasicIdentifiersShouldNotContainUnderscores.Fixer.vb" />
     <Compile Include="BasicIdentifiersShouldHaveCorrectSuffix.Fixer.vb" />
-    <Compile Include="BasicIdentifiersShouldNotHaveIncorrectSuffix.vb" />
     <Compile Include="BasicIdentifiersShouldNotHaveIncorrectSuffix.Fixer.vb" />
     <Compile Include="BasicEnumsShouldHavePluralNames.Fixer.vb" />
     <Compile Include="BasicIdentifiersShouldNotMatchKeywords.Fixer.vb" />

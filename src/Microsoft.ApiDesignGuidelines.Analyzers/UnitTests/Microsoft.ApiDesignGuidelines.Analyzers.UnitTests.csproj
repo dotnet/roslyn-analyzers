@@ -225,7 +225,6 @@
     <Compile Include="AvoidEmptyInterfacesTests.cs" />
     <Compile Include="AvoidEmptyInterfacesTests.Fixer.cs" />
     <Compile Include="ProvideObsoleteAttributeMessageTests.cs" />
-    <Compile Include="ProvideObsoleteAttributeMessageTests.Fixer.cs" />
     <Compile Include="PropertiesShouldNotBeWriteOnlyTests.cs" />
     <Compile Include="PropertiesShouldNotBeWriteOnlyTests.Fixer.cs" />
     <Compile Include="DeclareTypesInNamespacesTests.cs" />

@@ -175,7 +175,6 @@
     <Compile Include="AvoidEmptyInterfaces.cs" />
     <Compile Include="AvoidEmptyInterfaces.Fixer.cs" />
     <Compile Include="ProvideObsoleteAttributeMessage.cs" />
-    <Compile Include="ProvideObsoleteAttributeMessage.Fixer.cs" />
     <Compile Include="PropertiesShouldNotBeWriteOnly.cs" />
     <Compile Include="PropertiesShouldNotBeWriteOnly.Fixer.cs" />
     <Compile Include="DeclareTypesInNamespaces.cs" />

@@ -52,15 +52,15 @@ namespace Microsoft.QualityGuidelines.Analyzers
                             {
                                 if (symbol.IsOverride)
                                 {
-                                    context.RegisterCodeFix(new ChangeModifierAction("Make member not overridable.", "MakeMemberNotOverridable", solution, symbol, DeclarationModifiers.From(symbol) + DeclarationModifiers.Sealed), dx);
+                                    context.RegisterCodeFix(new ChangeModifierAction(MicrosoftQualityGuidelinesAnalyzersResources.MakeMemberNotOverridable, "MakeMemberNotOverridable", solution, symbol, DeclarationModifiers.From(symbol) + DeclarationModifiers.Sealed), dx);
                                 }
                                 else if (symbol.IsVirtual)
                                 {
-                                    context.RegisterCodeFix(new ChangeModifierAction("Make member not overridable.", "MakeMemberNotOverridable", solution, symbol, DeclarationModifiers.From(symbol) - DeclarationModifiers.Virtual), dx);
+                                    context.RegisterCodeFix(new ChangeModifierAction(MicrosoftQualityGuidelinesAnalyzersResources.MakeMemberNotOverridable, "MakeMemberNotOverridable", solution, symbol, DeclarationModifiers.From(symbol) - DeclarationModifiers.Virtual), dx);
                                 }
                                 else if (symbol.IsAbstract)
                                 {
-                                    context.RegisterCodeFix(new ChangeModifierAction("Make member not overridable.", "MakeMemberNotOverridable", solution, symbol, DeclarationModifiers.From(symbol) - DeclarationModifiers.Abstract), dx);
+                                    context.RegisterCodeFix(new ChangeModifierAction(MicrosoftQualityGuidelinesAnalyzersResources.MakeMemberNotOverridable, "MakeMemberNotOverridable", solution, symbol, DeclarationModifiers.From(symbol) - DeclarationModifiers.Abstract), dx);
                                 }
 
                                 // trigger containing type code fixes below
@@ -74,10 +74,10 @@ namespace Microsoft.QualityGuidelines.Analyzers
                                 // cannot make abstract type sealed because they cannot be constructed
                                 if (!type.IsAbstract)
                                 {
-                                    context.RegisterCodeFix(new ChangeModifierAction("Make declaring type sealed.", "MakeDeclaringTypeSealed", solution, type, DeclarationModifiers.From(type) + DeclarationModifiers.Sealed), dx);
+                                    context.RegisterCodeFix(new ChangeModifierAction(MicrosoftQualityGuidelinesAnalyzersResources.MakeDeclaringTypeSealed, "MakeDeclaringTypeSealed", solution, type, DeclarationModifiers.From(type) + DeclarationModifiers.Sealed), dx);
                                 }
 
-                                context.RegisterCodeFix(new ChangeAccessibilityAction("Make declaring type internal.", "MakeDeclaringTypeInternal", solution, type, Accessibility.Internal), dx);
+                                context.RegisterCodeFix(new ChangeAccessibilityAction(MicrosoftQualityGuidelinesAnalyzersResources.MakeDeclaringTypeInternal, "MakeDeclaringTypeInternal", solution, type, Accessibility.Internal), dx);
                             }
                         }
                     }

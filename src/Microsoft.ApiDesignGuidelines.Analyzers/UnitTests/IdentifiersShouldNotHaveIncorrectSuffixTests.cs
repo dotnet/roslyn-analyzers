@@ -1488,7 +1488,7 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_MethodNameEndsWithNewAndMethodNameWithoutNewExistsInHierarchy()
+        public void CA1711_CSharp_Diagnostic_MethodNameEndsWithNewAndMethodNameWithoutNewExistsInAncestorClass()
         {
             VerifyCSharp(
 @"public class MyBaseClass
@@ -1512,7 +1512,7 @@ public class MyClass : MyDerivedClass
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_MethodNameEndsWithNewAndMethodNameWithoutNewExistsInHierarchy()
+        public void CA1711_Basic_Diagnostic_MethodNameEndsWithNewAndMethodNameWithoutNewExistsInAncestorClass()
         {
             VerifyBasic(
 @"Public Class MyBaseClass
@@ -1535,6 +1535,44 @@ End Class",
                     IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.MemberNewerVersionRule,
                     IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.NewSuffix,
                     "MyMethodNew"));
+        }
+
+        [Fact]
+        public void CA1711_CSharp_Diagnostic_MethodNameEndingWithNewImplementsInterfaceMethod()
+        {
+            VerifyCSharp(
+@"public interface MyBaseInterface
+{
+    void MyMethodNew();
+}
+
+public interface MyDerivedInterface : MyBaseInterface
+{
+}
+
+public class MyClass : MyDerivedInterface
+{
+    public void MyMethodNew() { }
+}");
+        }
+
+        [Fact]
+        public void CA1711_Basic_Diagnostic_MethodNameEndsWithNewAndMethodNameWithoutNewExistsInImplementedInterface()
+        {
+            VerifyBasic(
+@"Public Interface MyBaseInterface
+    Sub MyMethodNew()
+End Interface
+
+Public Interface MyDerivedInterface
+    Inherits MyBaseInterface
+End Interface
+
+Public Class MyClass
+    Implements MyDerivedInterface
+    Public Sub MyMethodNew() Implements MyBaseInterface.MyMethodNew
+    End Sub
+End Class");
         }
 
         [Fact]
@@ -1608,6 +1646,57 @@ public class MyClass : MyBaseClasss
                     IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.ExSuffix,
                     "MyMethodEx"));
         }
+
+        [Fact]
+        public void CA1711_CSharp_Diagnostic_MethodNameEndingWithExImplementsInterfaceMethod()
+        {
+            VerifyCSharp(
+@"public interface MyBaseInterface
+{
+    void MyMethodEx();
+}
+
+public interface MyDerivedInterface : MyBaseInterface
+{
+}
+
+public class MyClass : MyDerivedInterface
+{
+    public void MyMethodEx() { }
+}",
+                // Diagnostic for the interface method, but none for the implementation.
+                GetCSharpResultAt(
+                    3, 10,
+                    IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.MemberNewerVersionRule,
+                    IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.ExSuffix,
+                    "MyMethodEx"));
+        }
+
+        [Fact]
+        public void CA1711_Basic_Diagnostic_MethodNameEndingWithExImplementsInterfaceMethod()
+        {
+            VerifyBasic(
+@"Public Interface MyBaseInterface
+    Sub MyMethodEx()
+End Interface
+
+Public Interface MyDerivedInterface
+    Inherits MyBaseInterface
+End Interface
+
+Public Class MyClass
+    Implements MyDerivedInterface
+    Public Sub MyMethodEx() Implements MyBaseInterface.MyMethodEx
+    End Sub
+End Class",
+                // Diagnostic for the interface method, but none for the implementation.
+                GetBasicResultAt(
+                    2, 9,
+                    IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.MemberNewerVersionRule,
+                    IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.ExSuffix,
+                    "MyMethodEx"));
+        }
+
 
         [Fact]
         public void CA1711_CSharp_Diagnostic_MethodNameEndsWithImpl()

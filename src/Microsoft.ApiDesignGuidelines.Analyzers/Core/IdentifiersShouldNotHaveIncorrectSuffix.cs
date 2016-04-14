@@ -207,7 +207,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         return;
                     }
 
-                    if (methodSymbol.IsOverride)
+                    if (methodSymbol.IsOverride || methodSymbol.IsImplementationOfAnyInterfaceMember())
                     {
                         return;
                     }

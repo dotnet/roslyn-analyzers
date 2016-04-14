@@ -151,8 +151,6 @@
     <Compile Include="CSharpUsePreferredTerms.cs" />
     <Compile Include="CSharpUsePreferredTerms.Fixer.cs" />
     <Compile Include="CSharpOverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.cs" />
-    <Compile Include="CSharpAssembliesShouldHaveValidStrongNames.cs" />
-    <Compile Include="CSharpAssembliesShouldHaveValidStrongNames.Fixer.cs" />
     <Compile Include="CSharpOverrideGetHashCodeOnOverridingEquals.Fixer.cs" />
     <Compile Include="CSharpOverrideEqualsOnOverloadingOperatorEquals.Fixer.cs" />
   </ItemGroup>

@@ -112,8 +112,6 @@
     <Compile Include="CSharpDisposeMethodsShouldCallBaseClassDispose.cs" />
     <Compile Include="CSharpDisposeMethodsShouldCallBaseClassDispose.Fixer.cs" />
     <Compile Include="CSharpDisposableTypesShouldDeclareFinalizer.Fixer.cs" />
-    <Compile Include="CSharpFinalizersShouldCallBaseClassFinalizer.cs" />
-    <Compile Include="CSharpFinalizersShouldCallBaseClassFinalizer.Fixer.cs" />
     <Compile Include="CSharpTestForNaNCorrectly.Fixer.cs" />
     <Compile Include="CSharpAttributeStringLiteralsShouldParseCorrectly.cs" />
     <Compile Include="CSharpAttributeStringLiteralsShouldParseCorrectly.Fixer.cs" />

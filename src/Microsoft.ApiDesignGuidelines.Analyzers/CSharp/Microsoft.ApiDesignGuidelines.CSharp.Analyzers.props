@@ -16,8 +16,6 @@
         -Microsoft.Design#CA1032;
         -Microsoft.Design#CA1040;
 
-        -Microsoft.Usage#CA2218;
-        -Microsoft.Usage#CA2224;
         -Microsoft.Usage#CA2234;
       </CodeAnalysisRuleSetOverrides>
    </PropertyGroup>

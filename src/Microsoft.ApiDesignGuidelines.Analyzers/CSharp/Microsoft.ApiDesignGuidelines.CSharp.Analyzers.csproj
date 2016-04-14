@@ -131,7 +131,6 @@
     <Compile Include="CSharpImplementStandardExceptionConstructors.cs" />
     <Compile Include="CSharpAvoidEmptyInterfaces.cs" />
     <Compile Include="CSharpAvoidEmptyInterfaces.Fixer.cs" />
-    <Compile Include="CSharpProvideObsoleteAttributeMessage.Fixer.cs" />
     <Compile Include="CSharpPropertiesShouldNotBeWriteOnly.cs" />
     <Compile Include="CSharpPropertiesShouldNotBeWriteOnly.Fixer.cs" />
     <Compile Include="CSharpDeclareTypesInNamespaces.Fixer.cs" />
@@ -147,8 +146,6 @@
     <Compile Include="CSharpUsePreferredTerms.cs" />
     <Compile Include="CSharpUsePreferredTerms.Fixer.cs" />
     <Compile Include="CSharpOverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.cs" />
-    <Compile Include="CSharpAssembliesShouldHaveValidStrongNames.cs" />
-    <Compile Include="CSharpAssembliesShouldHaveValidStrongNames.Fixer.cs" />
     <Compile Include="CSharpOverrideGetHashCodeOnOverridingEquals.Fixer.cs" />
     <Compile Include="CSharpOverrideEqualsOnOverloadingOperatorEquals.Fixer.cs" />
   </ItemGroup>

@@ -114,8 +114,6 @@
     <Compile Include="RethrowToPreserveStackDetails.cs" />
     <Compile Include="UseLiteralsWhereAppropriate.cs" />
     <Compile Include="UseLiteralsWhereAppropriate.Fixer.cs" />
-    <Compile Include="DoNotInitializeUnnecessarily.cs" />
-    <Compile Include="DoNotInitializeUnnecessarily.Fixer.cs" />
     <Compile Include="PreferJaggedArraysOverMultidimensional.cs" />
     <Compile Include="PreferJaggedArraysOverMultidimensional.Fixer.cs" />
     <Compile Include="MarkMembersAsStatic.cs" />

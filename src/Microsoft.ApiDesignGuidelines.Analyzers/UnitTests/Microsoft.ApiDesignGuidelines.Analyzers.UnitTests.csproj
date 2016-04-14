@@ -224,7 +224,6 @@
     <Compile Include="AvoidEmptyInterfacesTests.cs" />
     <Compile Include="AvoidEmptyInterfacesTests.Fixer.cs" />
     <Compile Include="ProvideObsoleteAttributeMessageTests.cs" />
-    <Compile Include="ProvideObsoleteAttributeMessageTests.Fixer.cs" />
     <Compile Include="PropertiesShouldNotBeWriteOnlyTests.cs" />
     <Compile Include="PropertiesShouldNotBeWriteOnlyTests.Fixer.cs" />
     <Compile Include="DeclareTypesInNamespacesTests.cs" />
@@ -261,8 +260,6 @@
     <Compile Include="OverrideEqualsAndOperatorEqualsOnValueTypesTests.cs" />
     <Compile Include="OverrideEqualsAndOperatorEqualsOnValueTypesTests.Fixer.cs" />
     <Compile Include="PropertiesShouldNotReturnArraysTests.cs" />
-    <Compile Include="AssembliesShouldHaveValidStrongNamesTests.cs" />
-    <Compile Include="AssembliesShouldHaveValidStrongNamesTests.Fixer.cs" />
     <Compile Include="OverrideGetHashCodeOnOverridingEqualsTests.cs" />
     <Compile Include="OverrideGetHashCodeOnOverridingEqualsTests.Fixer.cs" />
     <Compile Include="OverrideEqualsOnOverloadingOperatorEqualsTests.cs" />

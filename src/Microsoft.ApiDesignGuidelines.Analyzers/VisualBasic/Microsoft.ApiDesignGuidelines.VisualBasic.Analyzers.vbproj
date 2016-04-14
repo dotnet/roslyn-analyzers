@@ -131,7 +131,6 @@
     <Compile Include="BasicImplementStandardExceptionConstructors.vb" />
     <Compile Include="BasicAvoidEmptyInterfaces.vb" />
     <Compile Include="BasicAvoidEmptyInterfaces.Fixer.vb" />
-    <Compile Include="BasicProvideObsoleteAttributeMessage.Fixer.vb" />
     <Compile Include="BasicPropertiesShouldNotBeWriteOnly.vb" />
     <Compile Include="BasicPropertiesShouldNotBeWriteOnly.Fixer.vb" />
     <Compile Include="BasicDeclareTypesInNamespaces.Fixer.vb" />
@@ -147,8 +146,6 @@
     <Compile Include="BasicUsePreferredTerms.vb" />
     <Compile Include="BasicUsePreferredTerms.Fixer.vb" />
     <Compile Include="BasicOverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.vb" />
-    <Compile Include="BasicAssembliesShouldHaveValidStrongNames.vb" />
-    <Compile Include="BasicAssembliesShouldHaveValidStrongNames.Fixer.vb" />
     <Compile Include="BasicOverrideGetHashCodeOnOverridingEquals.vb" />
     <Compile Include="BasicOverrideGetHashCodeOnOverridingEquals.Fixer.vb" />
     <Compile Include="BasicOverrideEqualsOnOverloadingOperatorEquals.vb" />

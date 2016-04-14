@@ -385,7 +385,7 @@ Public Class C
 End Class");
         }
 
-        [Fact]
+        [Fact(Skip = "Enable this when roslyn is available with needed fix")]
         public void TestBasic_VirtualMethodChangedToNotVirtual()
         {
             VerifyBasicFix(
@@ -412,7 +412,7 @@ Public Class C
 End Class");
         }
 
-        [Fact(Skip ="formatting issue?")]
+        [Fact(Skip = "Enable this when roslyn is available with needed fix")]
         public void TestBasic_AbstractMethodChangedToNotAbstract()
         {
             VerifyBasicFix(
@@ -437,6 +437,5 @@ Public MustInherit Class C
     End Sub
 End Class");
         }
-
     }
 }

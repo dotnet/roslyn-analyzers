@@ -19,8 +19,8 @@ namespace Microsoft.QualityGuidelines.Analyzers
 {
     /// <summary>
     /// CA2119: Seal methods that satisfy private interfaces
-    /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
+    /// </summary>    
+    [ExportCodeFixProvider(LanguageNames.CSharp /*, LanguageNames.VisualBasic*/), Shared]  // note: disabled VB until SyntaxGenerator.WithStatements works
     public sealed class SealMethodsThatSatisfyPrivateInterfacesFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(SealMethodsThatSatisfyPrivateInterfacesAnalyzer.RuleId);
@@ -138,13 +138,9 @@ namespace Microsoft.QualityGuidelines.Analyzers
                 {
                     e.SetModifiers(d, _newModifiers);
 
-                    // TODO: this behavior needs to move to SyntaxGenerator
-                    if (this.Symbol.IsAbstract && !_newModifiers.IsAbstract)
+                    if (this.Symbol.IsAbstract && !_newModifiers.IsAbstract && this.Symbol.Kind == SymbolKind.Method)
                     {
-                        if (this.Symbol.Kind == SymbolKind.Method)
-                        {
-                            e.ReplaceNode(d, (_d, g) => g.WithStatements(_d, new SyntaxNode[] { }));
-                        }
+                        e.ReplaceNode(d, (_d, g) => g.WithStatements(_d, new SyntaxNode[] { }));
                     }
                 }
                 , cancellationToken);

@@ -110,76 +110,72 @@ namespace System.Runtime.Analyzers
                 MustNotCall
             }
 
-            private bool _suppressFinalizeCalled = false;
-
             private readonly Compilation _compilation;
             private readonly IMethodSymbol _containingMethodSymbol;
             private readonly IMethodSymbol _gcSuppressFinalizeMethodSymbol;
+            private readonly SuppressFinalizeUsage _expectedUsage;
 
+            private bool _suppressFinalizeCalled = false;
             private SemanticModel _semanticModel;
-            private IInvocationExpression _invocationExpression;
 
             public SuppressFinalizeAnalyzer(IMethodSymbol methodSymbol, IMethodSymbol gcSuppressFinalizeMethodSymbol, Compilation compilation)
             {
                 this._compilation = compilation;
                 this._containingMethodSymbol = methodSymbol;
                 this._gcSuppressFinalizeMethodSymbol = gcSuppressFinalizeMethodSymbol;
+
+                this._expectedUsage = GetAllowedSuppressFinalizeUsage(_containingMethodSymbol);
             }
 
             public void Analyze(OperationAnalysisContext analysisContext)
             {
-                _invocationExpression = (IInvocationExpression)analysisContext.Operation;
-                if (_invocationExpression.TargetMethod.OriginalDefinition.Equals(_gcSuppressFinalizeMethodSymbol))
+                var invocationExpression = (IInvocationExpression)analysisContext.Operation;
+                if (invocationExpression.TargetMethod.OriginalDefinition.Equals(_gcSuppressFinalizeMethodSymbol))
                 {
                     _suppressFinalizeCalled = true;
-                    _semanticModel = analysisContext.Compilation.GetSemanticModel(analysisContext.Operation.Syntax.SyntaxTree);
-                }
-            }
 
-            public void OperationBlockEndAction(OperationBlockAnalysisContext context)
-            {
-                var expectedUsage = GetAllowedSuppressFinalizeUsage(_containingMethodSymbol);
-
-                // Check for absence of GC.SuppressFinalize
-                if (!_suppressFinalizeCalled && expectedUsage == SuppressFinalizeUsage.MustCall)
-                {
-                    var descriptor = _containingMethodSymbol.ContainingType.HasFinalizer() ? NotCalledWithFinalizerRule : NotCalledRule;
-                    context.ReportDiagnostic(_containingMethodSymbol.CreateDiagnostic(
-                        descriptor,
-                        _containingMethodSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
-                        _gcSuppressFinalizeMethodSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
-
-                    return;
-                }
-
-                if (_suppressFinalizeCalled)
-                {
-                    // this means the _invocationExpression is the GC.SuppressFinalize call.
-                    // Check for GC.SuppressFinalize outside of IDisposable.Dispose()
-                    if (expectedUsage == SuppressFinalizeUsage.MustNotCall)
+                    if (_semanticModel == null)
                     {
-                        context.ReportDiagnostic(_invocationExpression.Syntax.CreateDiagnostic(
+                        _semanticModel = analysisContext.Compilation.GetSemanticModel(analysisContext.Operation.Syntax.SyntaxTree);
+                    }
+
+                    // Check for GC.SuppressFinalize outside of IDisposable.Dispose()
+                    if (_expectedUsage == SuppressFinalizeUsage.MustNotCall)
+                    {
+                        analysisContext.ReportDiagnostic(invocationExpression.Syntax.CreateDiagnostic(
                             OutsideDisposeRule,
                             _containingMethodSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
                             _gcSuppressFinalizeMethodSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
                     }
 
                     // Checks for GC.SuppressFinalize(this)
-                    if (_invocationExpression.ArgumentsInSourceOrder.Count() != 1)
+                    if (invocationExpression.ArgumentsInSourceOrder.Count() != 1)
                     {
                         return;
                     }
 
-                    var parameterSymbol = _semanticModel.GetSymbolInfo(_invocationExpression.ArgumentsInSourceOrder.Single().Syntax).Symbol as IParameterSymbol;
+                    var parameterSymbol = _semanticModel.GetSymbolInfo(invocationExpression.ArgumentsInSourceOrder.Single().Syntax).Symbol as IParameterSymbol;
                     if (parameterSymbol == null || !parameterSymbol.IsThis)
                     {
-                        context.ReportDiagnostic(_invocationExpression.Syntax.CreateDiagnostic(
+                        analysisContext.ReportDiagnostic(invocationExpression.Syntax.CreateDiagnostic(
                             NotPassedThisRule,
                             _containingMethodSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
                             _gcSuppressFinalizeMethodSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
                     }
                 }
+            }
 
+            public void OperationBlockEndAction(OperationBlockAnalysisContext context)
+            {
+                // Check for absence of GC.SuppressFinalize
+                if (!_suppressFinalizeCalled && _expectedUsage == SuppressFinalizeUsage.MustCall)
+                {
+                    var descriptor = _containingMethodSymbol.ContainingType.HasFinalizer() ? NotCalledWithFinalizerRule : NotCalledRule;
+                    context.ReportDiagnostic(_containingMethodSymbol.CreateDiagnostic(
+                        descriptor,
+                        _containingMethodSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                        _gcSuppressFinalizeMethodSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
+                }
             }
 
             private SuppressFinalizeUsage GetAllowedSuppressFinalizeUsage(IMethodSymbol method)
@@ -193,7 +189,7 @@ namespace System.Runtime.Analyzers
                     return SuppressFinalizeUsage.CanCall;
                 }
 
-                if (!IsDisposeMethod(method))
+                if (!method.IsDisposeImplementation(_compilation))
                 {
                     return SuppressFinalizeUsage.MustNotCall;
                 }
@@ -219,31 +215,6 @@ namespace System.Runtime.Analyzers
                 // prevent derived finalizable types from having to reimplement
                 // IDisposable.Dispose just to call it.
                 return SuppressFinalizeUsage.MustCall;
-            }
-
-            private bool IsDisposeMethod(IMethodSymbol method)
-            {
-                var disposableType = WellKnownTypes.IDisposable(_compilation);
-
-                if (method.Parameters.Length != 0 ||
-                    !method.ReturnsVoid ||
-                    !method.ContainingType.AllInterfaces.Any(i => i.OriginalDefinition.Equals(disposableType)))
-                {
-                    return false;
-                }
-
-                if (method.IsPublic() && method.Name.Equals("Dispose"))
-                {
-                    return true;
-                }
-
-                if (disposableType == null)
-                {
-                    var disposeMethod = disposableType.GetMembers("Dispose").OfType<IMethodSymbol>().SingleOrDefault();
-                    return method.Equals(method.ContainingType.FindImplementationForInterfaceMember(disposeMethod));
-                }
-
-                return false;
             }
         }
     }

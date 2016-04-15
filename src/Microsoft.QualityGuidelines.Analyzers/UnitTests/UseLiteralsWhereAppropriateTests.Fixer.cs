@@ -10,12 +10,12 @@ namespace Microsoft.QualityGuidelines.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicUseLiteralsWhereAppropriateAnalyzer();
+            return new UseLiteralsWhereAppropriateAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpUseLiteralsWhereAppropriateAnalyzer();
+            return new UseLiteralsWhereAppropriateAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

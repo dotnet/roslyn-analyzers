@@ -10,12 +10,12 @@ namespace System.Runtime.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicNormalizeStringsToUppercaseAnalyzer();
+            return new NormalizeStringsToUppercaseAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpNormalizeStringsToUppercaseAnalyzer();
+            return new NormalizeStringsToUppercaseAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

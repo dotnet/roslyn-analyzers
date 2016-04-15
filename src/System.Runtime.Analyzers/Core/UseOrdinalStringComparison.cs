@@ -100,8 +100,7 @@ namespace System.Runtime.Analyzers
             if (operation.BinaryOperationKind == BinaryOperationKind.StringEquals || operation.BinaryOperationKind == BinaryOperationKind.StringNotEquals)
             {
                 // If either of the operands is null, we shouldn't report a diagnostic.
-                if ((operation.LeftOperand.ConstantValue.HasValue && operation.LeftOperand.ConstantValue.Value == null) ||
-                    (operation.RightOperand.ConstantValue.HasValue && operation.RightOperand.ConstantValue.Value == null))
+                if (operation.LeftOperand.HasNullConstantValue() || operation.RightOperand.HasNullConstantValue())
                 {
                     return;
                 }

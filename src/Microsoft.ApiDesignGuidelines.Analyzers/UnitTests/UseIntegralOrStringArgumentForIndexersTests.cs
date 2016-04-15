@@ -81,6 +81,70 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     }");
         }
 
+        [Fact]
+        public void TestCSharpGenericIndexer()
+        {
+            VerifyCSharp(@"
+    public class Months<T>
+    {
+        public string this[T index]
+        {
+            get
+            {
+                return null;
+            }
+        }
+    }");
+        }
+
+        [Fact]
+        public void TestBasicGenericIndexer()
+        {
+            VerifyBasic(@"
+    Public Class Months(Of T)
+        Default Public ReadOnly Property Item(index As T)
+            Get
+                Return Nothing
+            End Get
+        End Property
+    End Class");
+        }
+
+        [Fact]
+        public void TestCSharpEnumIndexer()
+        {
+            VerifyCSharp(@"
+    public class Months<T>
+    {
+        public enum Foo { }
+
+        public string this[Foo index]
+        {
+            get
+            {
+                return null;
+            }
+        }
+    }");
+        }
+
+        [Fact]
+        public void TestBasicEnumIndexer()
+        {
+            VerifyBasic(@"
+    Public Class Months(Of T)
+        Public Enum Foo
+            Val1
+        End Enum
+
+        Default Public ReadOnly Property Item(index As Foo)
+            Get
+                Return Nothing
+            End Get
+        End Property
+    End Class");
+        }
+
         private static DiagnosticResult CreateCSharpResult(int line, int col)
         {
             return GetCSharpResultAt(line, col, UseIntegralOrStringArgumentForIndexersAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.UseIntegralOrStringArgumentForIndexersMessage);

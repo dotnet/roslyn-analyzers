@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities
@@ -39,34 +40,18 @@ namespace Analyzer.Utilities
                 return false;
             }
 
-            if (type.Equals(possibleBase))
-            {
-                return true;
-            }
-
             switch (possibleBase.TypeKind)
             {
                 case TypeKind.Class:
-                    for (ITypeSymbol t = type.BaseType; t != null; t = t.BaseType)
+                    if (type.TypeKind == TypeKind.Interface)
                     {
-                        if (t.Equals(possibleBase))
-                        {
-                            return true;
-                        }
+                        return false;
                     }
 
-                    return false;
+                    return DerivesFrom(type, possibleBase, baseTypesOnly: true);
 
                 case TypeKind.Interface:
-                    foreach (INamedTypeSymbol i in type.AllInterfaces)
-                    {
-                        if (i.Equals(possibleBase))
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
+                    return DerivesFrom(type, possibleBase);
 
                 default:
                     return false;
@@ -93,14 +78,14 @@ namespace Analyzer.Utilities
             }
         }
 
-        public static bool DerivesFrom(this ITypeSymbol symbol, INamedTypeSymbol candidateBaseType, bool baseTypesOnly = false)
+        public static bool DerivesFrom(this ITypeSymbol symbol, ITypeSymbol candidateBaseType, bool baseTypesOnly = false)
         {
             if (candidateBaseType == null)
             {
                 return false;
             }
 
-            if (!baseTypesOnly && symbol.AllInterfaces.Contains(candidateBaseType))
+            if (!baseTypesOnly && symbol.AllInterfaces.OfType<ITypeSymbol>().Contains(candidateBaseType))
             {
                 return true;
             }

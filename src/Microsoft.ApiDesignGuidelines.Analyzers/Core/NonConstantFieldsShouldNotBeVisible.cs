@@ -1,16 +1,17 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Immutable;
 using Analyzer.Utilities;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+using System.Collections.Immutable;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
     /// <summary>
     /// CA2211: Non-constant fields should not be visible
     /// </summary>
-    public abstract class NonConstantFieldsShouldNotBeVisibleAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class NonConstantFieldsShouldNotBeVisibleAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2211";
 
@@ -24,15 +25,25 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182353.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.RegisterSymbolAction(obj =>
+            {
+                var field = (IFieldSymbol)obj.Symbol;
+
+                // Only report diagnostic on public non-readonly static fields
+                if(field.IsPublic() && !field.IsConst && field.IsStatic && !field.IsReadOnly)
+                {
+                    obj.ReportDiagnostic(field.CreateDiagnostic(Rule));
+                }
+            }, SymbolKind.Field);
         }
     }
 }

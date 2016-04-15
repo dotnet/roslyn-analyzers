@@ -1,5 +1,6 @@
 ' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+Imports System.Collections.Immutable
 Imports System.Composition
 Imports System.Linq
 Imports Microsoft.CodeAnalysis
@@ -15,5 +16,10 @@ Namespace Microsoft.Maintainability.Analyzers
     Public NotInheritable Class BasicRemoveUnusedLocalsFixer
         Inherits RemoveUnusedLocalsFixer
 
+        Public Overrides ReadOnly Property FixableDiagnosticIds As ImmutableArray(Of String)
+            Get
+                Return ImmutableArray.Create(BasicRemoveUnusedLocalsAnalyzer.RuleId)
+            End Get
+        End Property
     End Class
 End Namespace

@@ -3,10 +3,11 @@
 using System;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Semantics;
 
 namespace Desktop.Analyzers
 {
-    internal class SecurityDiagnosticHelpers
+    public class SecurityDiagnosticHelpers
     {
         public static bool IsXslCompiledTransformLoad(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
@@ -20,20 +21,9 @@ namespace Desktop.Analyzers
                    method.MatchMethodDerivedByName(xmlTypes.XmlDocument, WellKnownMemberNames.InstanceConstructorName);
         }
 
-        public static bool IsXmlDocumentXmlResolverPropertyDerived(ISymbol symbol, CompilationSecurityTypes xmlTypes)
-        {
-            return IsSpecifiedPropertyDerived(symbol, xmlTypes.XmlDocument, SecurityMemberNames.XmlResolver);
-        }
-
-        public static bool IsXmlDocumentXmlResolverProperty(ISymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlDocumentXmlResolverProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XmlDocument, SecurityMemberNames.XmlResolver);
-        }
-
-        public static bool IsXmlTextReaderCtor(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
-        {
-            return method != null
-                && method.MatchMethodByName(xmlTypes.XmlTextReader, WellKnownMemberNames.InstanceConstructorName);
         }
 
         public static bool IsXmlTextReaderCtorDerived(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
@@ -42,30 +32,24 @@ namespace Desktop.Analyzers
                 && method.MatchMethodDerivedByName(xmlTypes.XmlTextReader, WellKnownMemberNames.InstanceConstructorName);
         }
 
-        public static bool IsXmlTextReaderXmlResolverPropertyDerived(ISymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlTextReaderXmlResolverPropertyDerived(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedPropertyDerived(symbol, xmlTypes.XmlTextReader, SecurityMemberNames.XmlResolver);
         }
 
-        public static bool IsXmlTextReaderDtdProcessingPropertyDerived(ISymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlTextReaderDtdProcessingPropertyDerived(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedPropertyDerived(symbol, xmlTypes.XmlTextReader, SecurityMemberNames.DtdProcessing);
         }
 
-        public static bool IsXmlTextReaderXmlResolverProperty(ISymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlTextReaderXmlResolverProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XmlTextReader, SecurityMemberNames.XmlResolver);
         }
 
-        public static bool IsXmlTextReaderDtdProcessingProperty(ISymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlTextReaderDtdProcessingProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XmlTextReader, SecurityMemberNames.DtdProcessing);
-        }
-
-        public static bool IsXmlReaderCreate(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
-        {
-            return method != null
-                && method.MatchMethodByName(xmlTypes.XmlReader, SecurityMemberNames.Create);
         }
 
         public static bool IsXmlReaderSettingsCtor(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
@@ -74,17 +58,17 @@ namespace Desktop.Analyzers
                 && method.MatchMethodByName(xmlTypes.XmlReaderSettings, WellKnownMemberNames.InstanceConstructorName);
         }
 
-        public static bool IsXmlReaderSettingsXmlResolverProperty(ISymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlReaderSettingsXmlResolverProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XmlReaderSettings, SecurityMemberNames.XmlResolver);
         }
 
-        public static bool IsXmlReaderSettingsDtdProcessingProperty(ISymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlReaderSettingsDtdProcessingProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XmlReaderSettings, SecurityMemberNames.DtdProcessing);
         }
 
-        public static bool IsXmlReaderSettingsMaxCharactersFromEntitiesProperty(ISymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlReaderSettingsMaxCharactersFromEntitiesProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XmlReaderSettings, SecurityMemberNames.MaxCharactersFromEntities);
         }
@@ -95,26 +79,25 @@ namespace Desktop.Analyzers
                 && method.MatchMethodByName(xmlTypes.XsltSettings, WellKnownMemberNames.InstanceConstructorName);
         }
 
-        public static bool IsXsltSettingsTrustedXsltProperty(ISymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXsltSettingsTrustedXsltProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XsltSettings, SecurityMemberNames.TrustedXslt);
         }
 
-        public static bool IsXsltSettingsDefaultProperty(ISymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXsltSettingsDefaultProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XsltSettings, SecurityMemberNames.Default);
         }
 
-        public static bool IsXsltSettingsEnableDocumentFunctionProperty(ISymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXsltSettingsEnableDocumentFunctionProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XsltSettings, SecurityMemberNames.EnableDocumentFunction);
         }
 
-        public static bool IsXsltSettingsEnableScriptProperty(ISymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXsltSettingsEnableScriptProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XsltSettings, SecurityMemberNames.EnableScript);
         }
-
 
         public static bool IsXmlResolverType(ITypeSymbol symbol, CompilationSecurityTypes xmlTypes)
         {
@@ -138,19 +121,19 @@ namespace Desktop.Analyzers
             return symbol == xmlTypes.XmlReaderSettings;
         }
 
-        public static int HasXmlResolverParameter(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
+        public static int GetXmlResolverParameterIndex(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
-            return HasSpecifiedParameter(method, xmlTypes, IsXmlResolverType);
+            return GetSpecifiedParameterIndex(method, xmlTypes, IsXmlResolverType);
         }
 
-        public static int HasXsltSettingsParameter(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
+        public static int GetXsltSettingsParameterIndex(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
-            return HasSpecifiedParameter(method, xmlTypes, IsXsltSettingsType);
+            return GetSpecifiedParameterIndex(method, xmlTypes, IsXsltSettingsType);
         }
 
-        public static int HasXmlReaderSettingsParameter(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
+        public static int GetXmlReaderSettingsParameterIndex(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
-            return HasSpecifiedParameter(method, xmlTypes, IsXmlReaderSettingsType);
+            return GetSpecifiedParameterIndex(method, xmlTypes, IsXmlReaderSettingsType);
         }
 
         public static bool IsXmlReaderType(ITypeSymbol symbol, CompilationSecurityTypes xmlTypes)
@@ -161,12 +144,36 @@ namespace Desktop.Analyzers
 
         public static int HasXmlReaderParameter(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
-            return HasSpecifiedParameter(method, xmlTypes, IsXmlReaderType);
+            return GetSpecifiedParameterIndex(method, xmlTypes, IsXmlReaderType);
         }
 
-        private static bool IsSpecifiedProperty(ISymbol symbol, INamedTypeSymbol namedType, string propertyName)
+        public static bool IsExpressionEqualsNull(IOperation operation)
         {
-            if (symbol != null && symbol.Kind == SymbolKind.Property)
+            ILiteralExpression literal = operation as ILiteralExpression;
+            return literal != null && literal.HasNullConstantValue(); 
+        }
+
+        public static bool IsExpressionEqualsDtdProcessingParse(IOperation operation)
+        {
+            IFieldReferenceExpression enumRef = operation as IFieldReferenceExpression;
+            return enumRef != null && enumRef.HasConstantValue(2); // DtdProcessing.Parse
+        }
+
+        public static bool IsExpressionEqualsIntZero(IOperation operation)
+        {
+            ILiteralExpression literal = operation as ILiteralExpression;
+
+            if(literal == null || !literal.ConstantValue.HasValue)
+            {
+                return false;
+            }
+
+            return literal.HasConstantValue(0);
+        }
+
+        private static bool IsSpecifiedProperty(IPropertySymbol symbol, INamedTypeSymbol namedType, string propertyName)
+        {
+            if (symbol != null)
             {
                 IPropertySymbol property = (IPropertySymbol)symbol;
                 return property.MatchPropertyByName(namedType, propertyName);
@@ -175,9 +182,9 @@ namespace Desktop.Analyzers
             return false;
         }
 
-        private static bool IsSpecifiedPropertyDerived(ISymbol symbol, INamedTypeSymbol namedType, string propertyName)
+        private static bool IsSpecifiedPropertyDerived(IPropertySymbol symbol, INamedTypeSymbol namedType, string propertyName)
         {
-            if (symbol != null && symbol.Kind == SymbolKind.Property)
+            if (symbol != null)
             {
                 IPropertySymbol property = (IPropertySymbol)symbol;
                 return property.MatchPropertyDerivedByName(namedType, propertyName);
@@ -186,9 +193,10 @@ namespace Desktop.Analyzers
             return false;
         }
 
-        private static int HasSpecifiedParameter(IMethodSymbol method, CompilationSecurityTypes xmlTypes, Func<ITypeSymbol, CompilationSecurityTypes, bool> func)
+        private static int GetSpecifiedParameterIndex(IMethodSymbol method, CompilationSecurityTypes xmlTypes, Func<ITypeSymbol, CompilationSecurityTypes, bool> func)
         {
             int index = -1;
+
             if (method == null)
             {
                 return index;
@@ -202,6 +210,7 @@ namespace Desktop.Analyzers
                     break;
                 }
             }
+
             return index;
         }
 

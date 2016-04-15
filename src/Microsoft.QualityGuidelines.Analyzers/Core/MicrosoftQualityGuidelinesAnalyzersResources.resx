@@ -160,7 +160,7 @@
     <value>Members that do not access instance data or call instance methods can be marked as static (Shared in Visual Basic). After you mark the methods as static, the compiler will emit nonvirtual call sites to these members. This can give you a measurable performance gain for performance-sensitive code.</value>
   </data>
   <data name="MarkMembersAsStaticMessage" xml:space="preserve">
-    <value>Mark members as static</value>
+    <value>Member {0} does not access instance data and can be marked as static (Shared in VisualBasic)</value>
   </data>
   <data name="DisposeObjectsBeforeLosingScopeTitle" xml:space="preserve">
     <value>Dispose Objects Before Losing Scope</value>
@@ -209,5 +209,23 @@
   </data>
   <data name="RethrowToPreserveStackDetailsTitle" xml:space="preserve">
     <value>Rethrow to preserve stack details.</value>
+  </data>
+  <data name="MakeDeclaringTypeInternal" xml:space="preserve">
+    <value>Make declaring type internal.</value>
+  </data>
+  <data name="MakeDeclaringTypeSealed" xml:space="preserve">
+    <value>Make declaring type sealed.</value>
+  </data>
+  <data name="MakeMemberNotOverridable" xml:space="preserve">
+    <value>Make member not overridable.</value>
+  </data>
+  <data name="DoNotRaiseExceptionsInExceptionClausesDescription" xml:space="preserve">
+    <value>When an exception is raised in a finally clause, the new exception hides the active exception. This makes the original error difficult to detect and debug.</value>
+  </data>
+  <data name="DoNotRaiseExceptionsInExceptionClausesMessageFinally" xml:space="preserve">
+    <value>Do not raise an exception from within a finally clause. </value>
+  </data>
+  <data name="DoNotRaiseExceptionsInExceptionClausesTitle" xml:space="preserve">
+    <value>Do not raise exceptions in finally clauses</value>
   </data>
 </root>

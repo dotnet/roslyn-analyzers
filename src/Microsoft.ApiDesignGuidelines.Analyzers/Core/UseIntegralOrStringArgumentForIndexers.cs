@@ -57,6 +57,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 if (symbol.GetParameters().Length == 1)
                 {
                     ITypeSymbol paramType = symbol.GetParameters()[0].Type;
+
+                    if (paramType.TypeKind == TypeKind.TypeParameter)
+                    {
+                        return;
+                    }
+
+                    if (paramType.TypeKind == TypeKind.Enum)
+                    {
+                        paramType = ((INamedTypeSymbol)paramType).EnumUnderlyingType;
+                    }
+
                     if (!s_allowedTypes.Contains(paramType.SpecialType))
                     {
                         context.ReportDiagnostic(symbol.CreateDiagnostic(Rule));

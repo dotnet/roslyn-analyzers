@@ -150,7 +150,4 @@
   <data name="CategorySecurity" xml:space="preserve">
     <value>Security</value>
   </data>
-  <data name="ErrorStringDoesNotEndWithSuffix" xml:space="preserve">
-    <value>The string "{0}" does not end with the suffix "{1}".</value>
-  </data>
 </root>

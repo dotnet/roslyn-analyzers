@@ -41,15 +41,21 @@ namespace Analyzer.Utilities.Extensions
 
         public static string WithoutSuffix(this string str, string suffix)
         {
+            if (str == null)
+            {
+                throw new ArgumentNullException(nameof(str));
+            }
+
+            if (suffix == null)
+            {
+                throw new ArgumentNullException(nameof(suffix));
+            }
+
             if (!str.HasSuffix(suffix))
             {
                 throw new ArgumentException(
-                    string.Format(
-                        CultureInfo.CurrentCulture,
-                        AnalyzerUtilitiesResources.ErrorStringDoesNotEndWithSuffix,
-                        str,
-                        suffix),
-                    nameof(str));
+                        $"The string {str} does not end with the suffix {suffix}.",
+                        nameof(str));
             }
 
             return str.Substring(0, str.Length - suffix.Length);

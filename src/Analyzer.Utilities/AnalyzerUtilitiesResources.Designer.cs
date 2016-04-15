@@ -159,14 +159,5 @@ namespace Analyzer.Utilities {
                 return ResourceManager.GetString("CategoryUsage", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The string &quot;{0}&quot; does not end with the suffix &quot;{1}&quot;..
-        /// </summary>
-        internal static string ErrorStringDoesNotEndWithSuffix {
-            get {
-                return ResourceManager.GetString("ErrorStringDoesNotEndWithSuffix", resourceCulture);
-            }
-        }
     }
 }

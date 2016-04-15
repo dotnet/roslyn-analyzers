@@ -64,7 +64,6 @@
     <Compile Include="CSharpSpecifyIFormatProvider.Fixer.cs" />
     <Compile Include="CSharpSpecifyStringComparison.Fixer.cs" />
     <Compile Include="CSharpNormalizeStringsToUppercase.Fixer.cs" />
-    <Compile Include="CSharpCallGCSuppressFinalizeCorrectly.cs" />
     <Compile Include="CSharpCallGCSuppressFinalizeCorrectly.Fixer.cs" />
     <Compile Include="CSharpInstantiateArgumentExceptionsCorrectly.Fixer.cs" />
   </ItemGroup>

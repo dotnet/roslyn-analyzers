@@ -213,7 +213,7 @@ namespace Analyzer.Utilities
         /// <exception cref="ArgumentException">
         ///     <paramref name="options"/> is not one or more of the <see cref="WordParserOptions"/> values.
         /// </exception>
-        internal static bool ContainsWord(string text, WordParserOptions options, params string[] words)
+        public static bool ContainsWord(string text, WordParserOptions options, params string[] words)
         {
             return ContainsWord(text, options, NullChar, words);
         }

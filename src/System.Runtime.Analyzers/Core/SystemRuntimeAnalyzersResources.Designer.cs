@@ -71,7 +71,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to In the constructor of {0}, change the value of argument {1}, which is currently &quot;{2}&quot;, to something that can be correctly parsed as {3}..
+        ///   Looks up a localized string similar to In the constructor of &apos;{0}&apos;, change the value of argument &apos;{1}&apos;, which is currently &quot;{2}&quot;, to something that can be correctly parsed as &apos;{3}&apos;..
         /// </summary>
         internal static string AttributeStringLiteralsShouldParseCorrectlyMessageDefault {
             get {
@@ -80,7 +80,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to In the constructor of {0}, change the value of argument {1}, which is currently an empty string (&quot;&quot;), to something that can be correctly parsed as {2}..
+        ///   Looks up a localized string similar to In the constructor of &apos;{0}&apos;, change the value of argument &apos;{1}&apos;, which is currently an empty string (&quot;&quot;), to something that can be correctly parsed as &apos;{2}&apos;..
         /// </summary>
         internal static string AttributeStringLiteralsShouldParseCorrectlyMessageEmpty {
             get {

@@ -54,7 +54,6 @@
     <Compile Include="BasicDisposeMethodsShouldCallBaseClassDispose.Fixer.vb" />
     <Compile Include="BasicDisposableTypesShouldDeclareFinalizer.Fixer.vb" />
     <Compile Include="BasicTestForNaNCorrectly.Fixer.vb" />
-    <Compile Include="BasicAttributeStringLiteralsShouldParseCorrectly.vb" />
     <Compile Include="BasicAttributeStringLiteralsShouldParseCorrectly.Fixer.vb" />
     <Compile Include="BasicAvoidZeroLengthArrayAllocations.vb" />
     <Compile Include="BasicDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.vb" />

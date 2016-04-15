@@ -469,6 +469,54 @@ Friend Class C
 End Class");
         }
 
+        [Fact]
+        public void CA1812_CSharp_NoDiagnostic_DerivesFromSafeHandle()
+        {
+            VerifyCSharp(
+@"using System;
+using System.Runtime.InteropServices;
+
+internal class MySafeHandle : SafeHandle
+{
+    protected MySafeHandle(IntPtr invalidHandleValue, bool ownsHandle)
+        : base(invalidHandleValue, ownsHandle)
+    {
+    }
+
+    protected override bool IsInvalid => true;
+
+    protected override bool ReleaseHandle()
+    {
+        return true;
+    }
+}");
+        }
+
+        [Fact]
+        public void CA1812_Basic_NoDiagnostic_DerivesFromSafeHandle()
+        {
+            VerifyBasic(
+@"Imports System.Runtime.InteropServices
+
+Friend Class MySafeHandle
+    Inherits SafeHandle
+
+    Protected Sub New(invalidHandleValue As IntPtr, ownsHandle As Boolean)
+        MyBase.New(invalidHandleValue, ownsHandle)
+    End Sub
+
+    Public Overrides ReadOnly Property IsInvalid As Boolean
+        Get
+            Return True
+        End Get
+    End Property
+
+    Protected Overrides Function ReleaseHandle() As Boolean
+        Return True
+    End Function
+End Class");
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new AvoidUninstantiatedInternalClassesAnalyzer();

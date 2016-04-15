@@ -120,6 +120,13 @@ namespace Analyzer.Utilities
                 return true;
             }
 
+            // SafeHandles can be created from within the type itself by native code.
+            INamedTypeSymbol safeHandle = compilation.GetTypeByMetadataName("System.Runtime.InteropServices.SafeHandle");
+            if (symbol.Inherits(safeHandle))
+            {
+                return true;
+            }
+
             return false;
         }
 

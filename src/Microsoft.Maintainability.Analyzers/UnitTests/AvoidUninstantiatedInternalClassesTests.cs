@@ -10,7 +10,7 @@ namespace Microsoft.Maintainability.Analyzers.UnitTests
     public class AvoidUninstantiatedInternalClassesTests : DiagnosticAnalyzerTestBase
     {
         [Fact]
-        public void CSharpDiagnosticForUninstantiatedInternalClass()
+        public void CA1812_CSharp_Diagnostic_UninstantiatedInternalClass()
         {
             VerifyCSharp(@"
 internal class C { }
@@ -19,7 +19,7 @@ internal class C { }
         }
 
         [Fact]
-        public void BasicDiagnosticForUninstantiatedInternalClass()
+        public void CA1812_Basic_Diagnostic_UninstantiatedInternalClass()
         {
             VerifyBasic(@"
 Friend Class C
@@ -29,7 +29,7 @@ End Class
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForUninstantiatedInternalStruct()
+        public void CA1812_CSharp_NoDiagnostic_UninstantiatedInternalStruct()
         {
             VerifyCSharp(@"
 internal struct CInternal { }
@@ -37,7 +37,7 @@ internal struct CInternal { }
         }
 
         [Fact]
-        public void BasicNoDiagnosticForUninstantiatedInternalStruct()
+        public void CA1812_Basic_NoDiagnostic_UninstantiatedInternalStruct()
         {
             VerifyBasic(@"
 Friend Structure CInternal
@@ -46,7 +46,7 @@ End Structure
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForUninstantiatedPublicClass()
+        public void CA1812_CSharp_NoDiagnostic_UninstantiatedPublicClass()
         {
             VerifyCSharp(@"
 public class C { }
@@ -54,7 +54,7 @@ public class C { }
         }
 
         [Fact]
-        public void BasicNoDiagnosticForUninstantiatedPublicClass()
+        public void CA1812_Basic_NoDiagnostic_UninstantiatedPublicClass()
         {
             VerifyBasic(@"
 Public Class C
@@ -63,7 +63,7 @@ End Class
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForInstantiatedInternalClass()
+        public void CA1812_CSharp_NoDiagnostic_InstantiatedInternalClass()
         {
             VerifyCSharp(@"
 internal class C { }
@@ -76,7 +76,7 @@ public class D
         }
 
         [Fact]
-        public void BasicNoDiagnosticForInstantiatedInternalClass()
+        public void CA1812_Basic_NoDiagnostic_InstantiatedInternalClass()
         {
             VerifyBasic(@"
 Friend Class C
@@ -89,7 +89,7 @@ End Class
         }
 
         [Fact]
-        public void CSharpDiagnosticForUninstantiatedInternalClassNestedInPublicClass()
+        public void CA1812_CSharp_Diagnostic_UninstantiatedInternalClassNestedInPublicClass()
         {
             VerifyCSharp(@"
 public class C
@@ -101,7 +101,7 @@ public class C
         }
 
         [Fact]
-        public void BasicDiagnosticForUninstantiatedInternalClassNestedInPublicClass()
+        public void CA1812_Basic_Diagnostic_UninstantiatedInternalClassNestedInPublicClass()
         {
             VerifyBasic(@"
 Public Class C
@@ -113,7 +113,7 @@ End Class
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForInstantiatedInternalClassNestedInPublicClass()
+        public void CA1812_CSharp_NoDiagnostic_InstantiatedInternalClassNestedInPublicClass()
         {
             VerifyCSharp(@"
 public class C
@@ -126,7 +126,7 @@ public class C
         }
 
         [Fact]
-        public void BasicNoDiagnosticForInstantiatedInternalClassNestedInPublicClass()
+        public void CA1812_Basic_NoDiagnostic_InstantiatedInternalClassNestedInPublicClass()
         {
             VerifyBasic(@"
 Public Class C
@@ -139,7 +139,7 @@ End Class
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForInternalStaticClass()
+        public void CA1812_CSharp_NoDiagnostic_ForInternalStaticClass()
         {
             VerifyCSharp(@"
 internal static class S { }
@@ -147,7 +147,7 @@ internal static class S { }
         }
 
         [Fact]
-        public void BasicNoDiagnosticForInternalModule()
+        public void CA1812_Basic_NoDiagnostic_InternalModule()
         {
             // No static classes in VB.
             VerifyBasic(@"
@@ -157,7 +157,7 @@ End Module
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForInternalAbstractClass()
+        public void CA1812_CSharp_NoDiagnostic_InternalAbstractClass()
         {
             VerifyCSharp(@"
 internal abstract class A { }
@@ -165,7 +165,16 @@ internal abstract class A { }
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForInternalDelegate()
+        public void CA1812_Basic_NoDiagnostic_InternalAbstractClass()
+        {
+            VerifyBasic(@"
+Friend MustInherit Class A
+End Class
+");
+        }
+
+        [Fact]
+        public void CA1812_CSharp_NoDiagnostic_InternalDelegate()
         {
             VerifyCSharp(@"
 namespace N
@@ -175,7 +184,27 @@ namespace N
         }
 
         [Fact]
-        public void BasicNoDiagnosticForInternalEnum()
+        public void CA1812_Basic_NoDiagnostic_InternalDelegate()
+        {
+            VerifyBasic(@"
+Namespace N
+    Friend Delegate Sub Del()
+End Namespace
+");
+        }
+
+        [Fact]
+        public void CA1812_CSharp_NoDiagnostic_InternalEnum()
+        {
+            VerifyCSharp(@"
+namespace N
+{
+    internal enum E {}  // C# enums don't care if there are any members.
+}");
+        }
+
+        [Fact]
+        public void CA1812_Basic_NoDiagnostic_InternalEnum()
         {
             VerifyBasic(@"
 Namespace N
@@ -187,36 +216,7 @@ End Namespace
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForInternalEnum()
-        {
-            VerifyCSharp(@"
-namespace N
-{
-    internal enum E {}  // C# enums don't care if there are any members.
-}");
-        }
-
-        [Fact]
-        public void BasicNoDiagnosticForInternalDelegate()
-        {
-            VerifyBasic(@"
-Namespace N
-    Friend Delegate Sub Del()
-End Namespace
-");
-        }
-
-        [Fact]
-        public void BasicNoDiagnosticForInternalAbstractClass()
-        {
-            VerifyBasic(@"
-Friend MustInherit Class A
-End Class
-");
-        }
-
-        [Fact]
-        public void CSharpNoDiagnosticForAttributeClass()
+        public void CA1812_CSharp_NoDiagnostic_AttributeClass()
         {
             VerifyCSharp(@"
 using System;
@@ -227,7 +227,7 @@ internal class MyOtherAttribute: MyAttribute {}
         }
 
         [Fact]
-        public void BasicNoDiagnosticForAttributeClass()
+        public void CA1812_Basic_NoDiagnostic_AttributeClass()
         {
             VerifyBasic(@"
 Imports System
@@ -243,7 +243,7 @@ End Class
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
-        public void CSharpNoDiagnosticForTypeContainingAssemblyEntryPointReturningVoid()
+        public void CA1812_CSharp_NoDiagnostic_TypeContainingAssemblyEntryPointReturningVoid()
         {
             VerifyCSharp(@"
 internal class C
@@ -253,7 +253,7 @@ internal class C
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
-        public void BasicNoDiagnosticForTypeContainingAssemblyEntryPointReturningVoid()
+        public void CA1812_Basic_NoDiagnostic_TypeContainingAssemblyEntryPointReturningVoid()
         {
             VerifyBasic(@"
 Friend Class C
@@ -264,7 +264,7 @@ End Class
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
-        public void CSharpNoDiagnosticForTypeContainingAssemblyEntryPointReturningInt()
+        public void CA1812_CSharp_NoDiagnostic_TypeContainingAssemblyEntryPointReturningInt()
         {
             VerifyCSharp(@"
 internal class C
@@ -274,7 +274,7 @@ internal class C
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
-        public void BasicNoDiagnosticForTypeContainingAssemblyEntryPointReturningInt()
+        public void CA1812_Basic_NoDiagnostic_TypeContainingAssemblyEntryPointReturningInt()
         {
             VerifyBasic(@"
 Friend Class C
@@ -286,7 +286,7 @@ End Class
         }
 
         [Fact]
-        public void CSharpDiagnosticForMainMethodWithWrongReturnType()
+        public void CA1812_CSharp_Diagnostic_MainMethodWithWrongReturnType()
         {
             VerifyCSharp(@"
 internal class C
@@ -297,7 +297,7 @@ internal class C
         }
 
         [Fact]
-        public void BasicDiagnosticForMainMethodWithWrongReturnType()
+        public void CA1812_Basic_Diagnostic_MainMethodWithWrongReturnType()
         {
             VerifyBasic(@"
 Friend Class C
@@ -310,7 +310,7 @@ End Class
         }
 
         [Fact]
-        public void CSharpDiagnosticIfMainMethodIsNotStatic()
+        public void CA1812_CSharp_Diagnostic_MainMethodIsNotStatic()
         {
             VerifyCSharp(@"
 internal class C
@@ -322,7 +322,7 @@ internal class C
         }
 
         [Fact]
-        public void BasicDiagnosticIfMainMethodIsNotStatic()
+        public void CA1812_Basic_Diagnostic_MainMethodIsNotStatic()
         {
             VerifyBasic(@"
 Friend Class C
@@ -334,7 +334,7 @@ End Class
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
-        public void BasicNoDiagnosticIfMainMethodIsDifferentlyCased()
+        public void CA1812_Basic_NoDiagnostic_MainMethodIsDifferentlyCased()
         {
             VerifyBasic(@"
 Friend Class C
@@ -347,7 +347,7 @@ End Class
         // The following tests are just to ensure that the messages are formatted properly
         // for types within namespaces.
         [Fact]
-        public void CSharpDiagnosticForUninstantiatedInternalClassInNamespace()
+        public void CA1812_CSharp_Diagnostic_UninstantiatedInternalClassInNamespace()
         {
             VerifyCSharp(@"
 namespace N
@@ -359,7 +359,7 @@ namespace N
         }
 
         [Fact]
-        public void BasicDiagnosticForUninstantiatedInternalClassInNamespace()
+        public void CA1812_Basic_Diagnostic_UninstantiatedInternalClassInNamespace()
         {
             VerifyBasic(@"
 Namespace N
@@ -371,7 +371,7 @@ End Namespace
         }
 
         [Fact]
-        public void CSharpDiagnosticForUninstantiatedInternalClassNestedInPublicClassInNamespace()
+        public void CA1812_CSharp_Diagnostic_UninstantiatedInternalClassNestedInPublicClassInNamespace()
         {
             VerifyCSharp(@"
 namespace N
@@ -386,7 +386,7 @@ namespace N
         }
 
         [Fact]
-        public void BasicDiagnosticForUninstantiatedInternalClassNestedInPublicClassInNamespace()
+        public void CA1812_Basic_Diagnostic_UninstantiatedInternalClassNestedInPublicClassInNamespace()
         {
             VerifyBasic(@"
 Namespace N

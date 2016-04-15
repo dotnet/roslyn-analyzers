@@ -144,7 +144,7 @@ namespace System.Runtime.Analyzers
                 // Check for absence of GC.SuppressFinalize
                 if (!_suppressFinalizeCalled && expectedUsage == SuppressFinalizeUsage.MustCall)
                 {
-                    var descriptor = HasFinalizer(_containingMethodSymbol.ContainingType) ? NotCalledWithFinalizerRule : NotCalledRule;
+                    var descriptor = _containingMethodSymbol.ContainingType.HasFinalizer() ? NotCalledWithFinalizerRule : NotCalledRule;
                     context.ReportDiagnostic(_containingMethodSymbol.CreateDiagnostic(
                         descriptor,
                         _containingMethodSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
@@ -201,7 +201,7 @@ namespace System.Runtime.Analyzers
 
                 // If the Dispose method is declared in a sealed type, we do
                 // not require that the method calls GC.SuppressFinalize
-                var hasFinalizer = HasFinalizer(method.ContainingType);
+                var hasFinalizer = method.ContainingType.HasFinalizer();
                 if (method.ContainingType.IsSealed && !hasFinalizer)
                 {
                     return SuppressFinalizeUsage.CanCall;
@@ -245,21 +245,6 @@ namespace System.Runtime.Analyzers
                 }
 
                 return false;
-            }
-
-            private bool HasFinalizer(INamedTypeSymbol type)
-            {
-                return type.GetMembers("Finalize").OfType<IMethodSymbol>().Any(IsFinalizer);
-            }
-
-            private bool IsFinalizer(IMethodSymbol m)
-            {
-                // validate the signature
-                return !m.IsStatic &&
-                       !m.IsAbstract &&
-                       m.ReturnsVoid &&
-                       m.Parameters.Count() == 0 &&
-                       m.MethodKind == MethodKind.Destructor;
             }
         }
     }

@@ -82,29 +82,50 @@ namespace Analyzer.Utilities
 
         private static bool s_firstCallToIsUnused = true;
         private static INamedTypeSymbol s_attributeSymbol;
+        private static INamedTypeSymbol s_exportAttributeSymbol;
 
         public static bool IsOkToBeUnused(this INamedTypeSymbol symbol, Compilation compilation)
         {
             if (s_firstCallToIsUnused)
             {
                 s_attributeSymbol = compilation.GetTypeByMetadataName("System.Attribute");
+                s_exportAttributeSymbol = compilation.GetTypeByMetadataName("System.Composition.ExportAttribute");
             }
 
+            if (symbol.TypeKind != TypeKind.Class || symbol.IsStatic || symbol.IsAbstract)
+            {
+                return true;
+            }
+            
             // Attributes are not instantiated in IL but are created by reflection.
             if (symbol.Inherits(s_attributeSymbol))
             {
-                return false;
+                return true;
             }
 
             // The type containing the assembly's entry point is OK.
             if (symbol.ContainsEntryPoint(compilation))
             {
-                return false;
+                return true;
             }
 
-            return symbol.TypeKind == TypeKind.Class
-                    && !symbol.IsStatic
-                    && !symbol.IsAbstract;
+            // MEF exported classes are instantiated by MEF, by reflection.
+            if (symbol.IsMefExported())
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool IsMefExported(this INamedTypeSymbol symbol)
+        {
+            return symbol.HasAttribute(s_exportAttributeSymbol);
+        }
+
+        public static bool HasAttribute(this INamedTypeSymbol symbol, INamedTypeSymbol attribute)
+        {
+            return symbol.GetAttributes().Any(attr => attr.AttributeClass.Equals(attribute));
         }
 
         private static bool ContainsEntryPoint(this INamedTypeSymbol symbol, Compilation compilation)

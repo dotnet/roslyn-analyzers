@@ -55,7 +55,7 @@ namespace Microsoft.Maintainability.Analyzers
                 startContext.RegisterSymbolAction(context =>
                 {
                     INamedTypeSymbol type = (INamedTypeSymbol)context.Symbol;
-                    if (type.GetResultantVisibility() != SymbolVisibility.Public && type.IsOkToBeUnused(context.Compilation))
+                    if (type.GetResultantVisibility() != SymbolVisibility.Public && !type.IsOkToBeUnused(context.Compilation))
                     {
                         internalTypes.Add(type);
                     }

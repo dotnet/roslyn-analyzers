@@ -23,8 +23,7 @@ namespace Microsoft.Maintainability.Analyzers.UnitTests
         {
             VerifyBasic(
 @"Friend Class C
-End Class
-",
+End Class",
                 GetBasicResultAt(1, 14, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
         }
 
@@ -32,8 +31,7 @@ End Class
         public void CA1812_CSharp_NoDiagnostic_UninstantiatedInternalStruct()
         {
             VerifyCSharp(
-@"internal struct CInternal { }
-");
+@"internal struct CInternal { }");
         }
 
         [Fact]
@@ -41,16 +39,14 @@ End Class
         {
             VerifyBasic(
 @"Friend Structure CInternal
-End Structure
-");
+End Structure");
         }
 
         [Fact]
         public void CA1812_CSharp_NoDiagnostic_UninstantiatedPublicClass()
         {
             VerifyCSharp(
-@"public class C { }
-");
+@"public class C { }");
         }
 
         [Fact]
@@ -58,8 +54,7 @@ End Structure
         {
             VerifyBasic(
 @"Public Class C
-End Class
-");
+End Class");
         }
 
         [Fact]
@@ -71,8 +66,7 @@ End Class
 public class D
 {
     private readonly C _c = new C();
-}
-");
+}");
         }
 
         [Fact]
@@ -84,8 +78,7 @@ End Class
 
 Public Class D
      Private _c As New C
-End Class
-");
+End Class");
         }
 
         [Fact]
@@ -95,8 +88,7 @@ End Class
 @"public class C
 {
     internal class D { }
-}
-",
+}",
                 GetCSharpResultAt(3, 20, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C.D"));
         }
 
@@ -107,8 +99,7 @@ End Class
 @"Public Class C
     Friend Class D
     End Class
-End Class
-",
+End Class",
                 GetBasicResultAt(2, 18, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C.D"));
         }
 
@@ -121,8 +112,7 @@ End Class
     private readonly D _d = new D();
 
     internal class D { }
-}
-");
+}");
         }
 
         [Fact]
@@ -134,16 +124,14 @@ End Class
 
     Friend Class D
     End Class
-End Class
-");
+End Class");
         }
 
         [Fact]
         public void CA1812_CSharp_NoDiagnostic_ForInternalStaticClass()
         {
             VerifyCSharp(@"
-internal static class S { }
-");
+internal static class S { }");
         }
 
         [Fact]
@@ -152,16 +140,14 @@ internal static class S { }
             // No static classes in VB.
             VerifyBasic(
 @"Friend Module M
-End Module
-");
+End Module");
         }
 
         [Fact]
         public void CA1812_CSharp_NoDiagnostic_InternalAbstractClass()
         {
             VerifyCSharp(
-@"internal abstract class A { }
-");
+@"internal abstract class A { }");
         }
 
         [Fact]
@@ -169,8 +155,7 @@ End Module
         {
             VerifyBasic(
 @"Friend MustInherit Class A
-End Class
-");
+End Class");
         }
 
         [Fact]
@@ -189,8 +174,7 @@ namespace N
             VerifyBasic(@"
 Namespace N
     Friend Delegate Sub Del()
-End Namespace
-");
+End Namespace");
         }
 
         [Fact]
@@ -211,8 +195,7 @@ End Namespace
     Friend Enum E
         None            ' VB enums require at least one member.
     End Enum
-End Namespace
-");
+End Namespace");
         }
 
         [Fact]
@@ -222,8 +205,7 @@ End Namespace
 @"using System;
 
 internal class MyAttribute: Attribute {}
-internal class MyOtherAttribute: MyAttribute {}
-");
+internal class MyOtherAttribute: MyAttribute {}");
         }
 
         [Fact]
@@ -238,8 +220,7 @@ End Class
 
 Friend Class MyOtherAttribute
     Inherits MyAttribute
-End Class
-");
+End Class");
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
@@ -259,8 +240,7 @@ End Class
 @"Friend Class C
     Private Shared Sub Main()
     End Sub
-End Class
-");
+End Class");
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
@@ -281,8 +261,7 @@ End Class
     Private Shared Function Main() As Integer
         Return 1
     End Sub
-End Class
-");
+End Class");
         }
 
         [Fact]
@@ -304,8 +283,7 @@ End Class
     Private Shared Function Main() As String
         Return ""
     End Sub
-End Class
-",
+End Class",
                 GetBasicResultAt(1, 14, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
         }
 
@@ -316,8 +294,7 @@ End Class
 @"internal class C
 {
     private void Main() {}
-}
-",
+}",
                 GetCSharpResultAt(1, 16, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
         }
 
@@ -328,8 +305,7 @@ End Class
 @"Friend Class C
     Private Sub Main()
     End Sub
-End Class
-",
+End Class",
                 GetBasicResultAt(1, 14, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
         }
 
@@ -340,8 +316,7 @@ End Class
 @"Friend Class C
     Private Shared Sub mAiN()
     End Sub
-End Class
-");
+End Class");
         }
 
         // The following tests are just to ensure that the messages are formatted properly
@@ -353,8 +328,7 @@ End Class
 @"namespace N
 {
     internal class C { }
-}
-",
+}",
                 GetCSharpResultAt(3, 20, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
         }
 
@@ -365,8 +339,7 @@ End Class
 @"Namespace N
     Friend Class C
     End Class
-End Namespace
-",
+End Namespace",
                 GetBasicResultAt(2, 18, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
         }
 
@@ -380,8 +353,7 @@ End Namespace
     {
         internal class D { }
     }
-}
-",
+}",
                 GetCSharpResultAt(5, 24, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C.D"));
         }
 
@@ -394,9 +366,31 @@ End Namespace
         Friend Class D
         End Class
     End Class
-End Namespace
-",
+End Namespace",
                 GetBasicResultAt(3, 22, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C.D"));
+        }
+
+        [Fact]
+        public void CA1812_CSharp_NoDiagnostic_UninstantiatedInternalMefExportedClass()
+        {
+            VerifyCSharp(
+@"using System.Composition;
+
+[Export]
+internal class C
+{
+}");
+        }
+
+        [Fact]
+        public void CA1812_Basic_NoDiagnostic_UninstantiatedInternalMefExportedClass()
+        {
+            VerifyBasic(
+@"Imports System.Composition
+
+<Export>
+Friend Class C
+End Class");
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

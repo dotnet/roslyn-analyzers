@@ -517,6 +517,36 @@ Friend Class MySafeHandle
 End Class");
         }
 
+        [Fact]
+        public void CA1812_CSharp_NoDiagnostic_DerivesFromTraceListener()
+        {
+            VerifyCSharp(
+@"using System.Diagnostics;
+
+internal class MyTraceListener : TraceListener
+{
+    public override void Write(string message) { }
+    public override void WriteLine(string message) { }
+}");
+        }
+
+        [Fact]
+        public void CA1812_Basic_NoDiagnostic_DerivesFromTraceListener()
+        {
+            VerifyBasic(
+@"Imports System.Diagnostics
+
+Friend Class MyTraceListener
+    Inherits TraceListener
+
+    Public Overrides Sub Write(message As String)
+    End Sub
+
+    Public Overrides Sub WriteLine(message As String)
+    End Sub
+End Class");
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new AvoidUninstantiatedInternalClassesAnalyzer();

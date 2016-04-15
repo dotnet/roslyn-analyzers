@@ -127,6 +127,12 @@ namespace Analyzer.Utilities
                 return true;
             }
 
+            INamedTypeSymbol traceListener = compilation.GetTypeByMetadataName("System.Diagnostics.TraceListener");
+            if (symbol.Inherits(traceListener))
+            {
+                return true;
+            }
+
             return false;
         }
 

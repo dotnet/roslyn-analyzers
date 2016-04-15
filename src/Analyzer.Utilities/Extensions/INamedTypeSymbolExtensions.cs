@@ -76,36 +76,7 @@ namespace Analyzer.Utilities
             return symbol.GetMembers()
                 .Where(m => m.Kind == SymbolKind.Method)
                 .Cast<IMethodSymbol>()
-                .Any(IsFinalizer);
-        }
-
-        // TODO: Once @srivatsn merges his analyzer for CA1065 (in which he extracted the IsFinalizer
-        // method from RemoveEmptyFinalizers.cs and placed it in IMethodSymbolExtensions.cs), we
-        // should remove this copy of that method.
-        private static bool IsFinalizer(IMethodSymbol method)
-        {
-            if (method.MethodKind == MethodKind.Destructor)
-            {
-                return true; // for C#
-            }
-
-            if (method.Name != "Finalize" || method.Parameters.Length != 0 || !method.ReturnsVoid)
-            {
-                return false;
-            }
-
-            IMethodSymbol overridden = method.OverriddenMethod;
-            if (overridden == null)
-            {
-                return false;
-            }
-
-            for (IMethodSymbol o = overridden.OverriddenMethod; o != null; o = o.OverriddenMethod)
-            {
-                overridden = o;
-            }
-
-            return overridden.ContainingType.SpecialType == SpecialType.System_Object; // it is object.Finalize
+                .Any(IMethodSymbolExtensions.IsFinalizer);
         }
 
         private static bool IsEqualsOverride(IMethodSymbol method)

@@ -12,6 +12,8 @@ namespace System.Runtime.Analyzers
 {
     /// <summary>
     /// CA2243: Attribute string literals should parse correctly
+    /// Unlike FxCop, this rule does not fire diagnostics for ill-formed versions
+    /// Reason: There is wide usage of semantic versioning which does not follow traditional versioning grammar.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class AttributeStringLiteralsShouldParseCorrectlyAnalyzer : DiagnosticAnalyzer
@@ -94,21 +96,22 @@ namespace System.Runtime.Analyzers
                             return;
                         }
 
-                    default:
+                    case SymbolKind.Method:
                         {
                             var methodSymbol = symbol as IMethodSymbol;
-                            if (methodSymbol != null && !methodSymbol.IsAccessorMethod())
+                            if (!methodSymbol.IsAccessorMethod())
                             {
                                 AnalyzeSymbols(saContext.ReportDiagnostic, methodSymbol.Parameters);
                                 AnalyzeSymbols(saContext.ReportDiagnostic, methodSymbol.TypeParameters);
                             }
 
-                            var propertySymbol = symbol as IPropertySymbol;
-                            if (propertySymbol != null)
-                            {
-                                AnalyzeSymbols(saContext.ReportDiagnostic, propertySymbol.Parameters);
-                            }
+                            return;
+                        }
 
+                    case SymbolKind.Property:
+                        { 
+                            var propertySymbol = symbol as IPropertySymbol;
+                            AnalyzeSymbols(saContext.ReportDiagnostic, propertySymbol.Parameters);
                             return;
                         }
                 }

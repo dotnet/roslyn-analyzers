@@ -91,27 +91,27 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         // Dictionary that maps from a type name suffix to the set of base types from which
         // a type with that suffix is permitted to derive.
         private static readonly ImmutableDictionary<string, ImmutableArray<string>> s_suffixToBaseTypeNamesDictionary = ImmutableDictionary.CreateRange(
-            new KeyValuePair<string, ImmutableArray<string>>[]
+            new Dictionary<string, ImmutableArray<string>>
             {
-                new KeyValuePair<string, ImmutableArray<string>>(AttributeSuffix, ImmutableArray.CreateRange(new[] { "System.Attribute" })),
-                new KeyValuePair<string, ImmutableArray<string>>(CollectionSuffix, ImmutableArray.CreateRange(new[] { "System.Collections.IEnumerable" })),
-                new KeyValuePair<string, ImmutableArray<string>>(DictionarySuffix, ImmutableArray.CreateRange(new[] { "System.Collections.IDictionary", "System.Collections.Generic.IReadOnlyDictionary`2" })),
-                new KeyValuePair<string, ImmutableArray<string>>(EventArgsSuffix, ImmutableArray.CreateRange(new[] { "System.EventArgs" })),
-                new KeyValuePair<string, ImmutableArray<string>>(ExceptionSuffix, ImmutableArray.CreateRange(new[] { "System.Exception" })),
-                new KeyValuePair<string, ImmutableArray<string>>(PermissionSuffix, ImmutableArray.CreateRange(new[] { "System.Security.IPermission" })),
-                new KeyValuePair<string, ImmutableArray<string>>(StreamSuffix, ImmutableArray.CreateRange(new[] { "System.IO.Stream" })),
-                new KeyValuePair<string, ImmutableArray<string>>(QueueSuffix, ImmutableArray.CreateRange(new[] { "System.Collections.Queue", "System.Collections.Generic.Queue`1" })),
-                new KeyValuePair<string, ImmutableArray<string>>(StackSuffix, ImmutableArray.CreateRange(new[] { "System.Collections.Stack", "System.Collections.Generic.Stack`1" }))
+                [AttributeSuffix] = ImmutableArray.CreateRange(new[] { "System.Attribute" }),
+                [CollectionSuffix] = ImmutableArray.CreateRange(new[] { "System.Collections.IEnumerable" }),
+                [DictionarySuffix] = ImmutableArray.CreateRange(new[] { "System.Collections.IDictionary", "System.Collections.Generic.IReadOnlyDictionary`2" }),
+                [EventArgsSuffix] = ImmutableArray.CreateRange(new[] { "System.EventArgs" }),
+                [ExceptionSuffix] = ImmutableArray.CreateRange(new[] { "System.Exception" }),
+                [PermissionSuffix] = ImmutableArray.CreateRange(new[] { "System.Security.IPermission" }),
+                [StreamSuffix] = ImmutableArray.CreateRange(new[] { "System.IO.Stream" }),
+                [QueueSuffix] = ImmutableArray.CreateRange(new[] { "System.Collections.Queue", "System.Collections.Generic.Queue`1" }),
+                [StackSuffix] = ImmutableArray.CreateRange(new[] { "System.Collections.Stack", "System.Collections.Generic.Stack`1" })
             });
 
         // Dictionary from type name suffix to an array containing the only types that are
         // allowed to have that suffix.
-        private static readonly ImmutableDictionary<string, ImmutableArray<string>> s_suffixToAllowedTypesDictionary = ImmutableDictionary.Create<string, ImmutableArray<string>>()
-            .AddRange(new KeyValuePair<string, ImmutableArray<string>>[]
+        private static readonly ImmutableDictionary<string, ImmutableArray<string>> s_suffixToAllowedTypesDictionary = ImmutableDictionary.CreateRange(
+            new Dictionary<string, ImmutableArray<string>>
             {
-                new KeyValuePair<string, ImmutableArray<string>>(DelegateSuffix, ImmutableArray.CreateRange(new[] { "System.Delegate", "System.MulticastDelegate" })),
-                new KeyValuePair<string, ImmutableArray<string>>(EventHandlerSuffix, ImmutableArray.CreateRange(new[] { "System.EventHandler" })),
-                new KeyValuePair<string, ImmutableArray<string>>(EnumSuffix, ImmutableArray.CreateRange(new[] { "System.Enum" }))
+                [DelegateSuffix] = ImmutableArray.CreateRange(new[] { "System.Delegate", "System.MulticastDelegate" }),
+                [EventHandlerSuffix] = ImmutableArray.CreateRange(new[] { "System.EventHandler" }),
+                [EnumSuffix] = ImmutableArray.CreateRange(new[] { "System.Enum" })
             });
 
         public override void Initialize(AnalysisContext analysisContext)

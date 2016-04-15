@@ -198,3 +198,9 @@ FakesAssemblies/
 
 # cibuild test results
 TestResults.xml
+
+# NuGet V3 artifacts
+*-packages.config
+*.nuget.props
+*.nuget.targets
+project.lock.json

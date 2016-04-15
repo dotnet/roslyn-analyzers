@@ -23,12 +23,12 @@ namespace System.Runtime.Analyzers.UnitTests
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicCallGCSuppressFinalizeCorrectlyAnalyzer();
+            return new CallGCSuppressFinalizeCorrectlyAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpCallGCSuppressFinalizeCorrectlyAnalyzer();
+            return new CallGCSuppressFinalizeCorrectlyAnalyzer();
         }
 
         #region CSharpNoDiagnosticCases

@@ -122,7 +122,6 @@
     <Compile Include="BasicSpecifyIFormatProvider.Fixer.vb" />
     <Compile Include="BasicSpecifyStringComparison.Fixer.vb" />
     <Compile Include="BasicNormalizeStringsToUppercase.Fixer.vb" />
-    <Compile Include="BasicCallGCSuppressFinalizeCorrectly.vb" />
     <Compile Include="BasicCallGCSuppressFinalizeCorrectly.Fixer.vb" />
     <Compile Include="BasicInstantiateArgumentExceptionsCorrectly.Fixer.vb" />
   </ItemGroup>

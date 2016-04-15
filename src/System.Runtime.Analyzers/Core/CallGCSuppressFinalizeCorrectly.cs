@@ -12,7 +12,8 @@ namespace System.Runtime.Analyzers
     /// <summary>
     /// CA1816: Dispose methods should call SuppressFinalize
     /// </summary>
-    public abstract class CallGCSuppressFinalizeCorrectlyAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class CallGCSuppressFinalizeCorrectlyAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1816";
 
@@ -89,8 +90,6 @@ namespace System.Runtime.Analyzers
             });
 
         }
-
-
 
         private class SuppressFinalizeAnalyzer
         {

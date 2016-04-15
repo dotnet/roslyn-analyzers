@@ -9,7 +9,8 @@ namespace System.Runtime.Analyzers.UnitTests
 {
     public class CallGCSuppressFinalizeCorrectlyTests : DiagnosticAnalyzerTestBase
     {
-        private const string GCSuppressFinalizeMethodSignature = "GC.SuppressFinalize(object)";
+        private const string GCSuppressFinalizeMethodSignature_CSharp = "GC.SuppressFinalize(object)";
+        private const string GCSuppressFinalizeMethodSignature_Basic = "GC.SuppressFinalize(Object)";
 
         private static DiagnosticResult GetCA1816CSharpResultAt(int line, int column, DiagnosticDescriptor rule, string containingMethodName, string gcSuppressFinalizeMethodName)
         {
@@ -31,11 +32,12 @@ namespace System.Runtime.Analyzers.UnitTests
             return new CallGCSuppressFinalizeCorrectlyAnalyzer();
         }
 
-        #region CSharpNoDiagnosticCases
+        #region NoDiagnosticCases
 
         [Fact]
-        public void DisposableWithoutFinalizerCSharpNoDiagnostic()
+        public void DisposableWithoutFinalizer_CSharp_NoDiagnostic()
         {
+            this.PrintActualDiagnosticsOnFailure = true;
 
             var code = @"
 using System;
@@ -59,9 +61,30 @@ public class DisposableWithoutFinalizer : IDisposable
         }
 
         [Fact]
-        public void DisposableWithFinalizerCSharpNoDiagnostic()
+        public void DisposableWithoutFinalizer_Basic_NoDiagnostic()
         {
+            var code = @"
+Imports System
+Imports System.ComponentModel
 
+Public Class DisposableWithoutFinalizer
+	Implements IDisposable
+	Public Sub Dispose() Implements IDisposable.Dispose
+		Dispose(True)
+		GC.SuppressFinalize(Me)
+	End Sub
+
+	Protected Overridable Sub Dispose(disposing As Boolean)
+		Console.WriteLine(Me)
+		Console.WriteLine(disposing)
+	End Sub
+End Class";
+            VerifyBasic(code);
+        }
+
+        [Fact]
+        public void DisposableWithFinalizer_CSharp_NoDiagnostic()
+        {
             var code = @"
 using System;
 using System.ComponentModel;
@@ -89,7 +112,37 @@ public class DisposableWithFinalizer : IDisposable
         }
 
         [Fact]
-        public void SealedDisposableWithoutFinalizerCSharpNoDiagnostic()
+        public void DisposableWithFinalizer_Basic_NoDiagnostic()
+        {
+            var code = @"
+Imports System
+Imports System.ComponentModel
+
+Public Class DisposableWithFinalizer
+	Implements IDisposable
+	Protected Overrides Sub Finalize()
+		Try
+			Dispose(False)
+		Finally
+			MyBase.Finalize()
+		End Try
+	End Sub
+
+	Public Sub Dispose() Implements IDisposable.Dispose
+		Dispose(True)
+		GC.SuppressFinalize(Me)
+	End Sub
+
+	Protected Overridable Sub Dispose(disposing As Boolean)
+		Console.WriteLine(Me)
+		Console.WriteLine(disposing)
+	End Sub
+End Class";
+            VerifyBasic(code);
+        }
+
+        [Fact]
+        public void SealedDisposableWithoutFinalizer_CSharp_NoDiagnostic()
         {
 
             var code = @"
@@ -114,7 +167,29 @@ public sealed class SealedDisposableWithoutFinalizer : IDisposable
         }
 
         [Fact]
-        public void SealedDisposableWithFinalizerCSharpNoDiagnostic()
+        public void SealedDisposableWithoutFinalizer_Basic_NoDiagnostic()
+        {
+            var code = @"
+Imports System
+Imports System.ComponentModel
+
+Public NotInheritable Class SealedDisposableWithoutFinalizer
+	Implements IDisposable
+	Public Sub Dispose() Implements IDisposable.Dispose
+		Dispose(True)
+		GC.SuppressFinalize(Me)
+	End Sub
+
+	Private Sub Dispose(disposing As Boolean)
+		Console.WriteLine(Me)
+		Console.WriteLine(disposing)
+	End Sub
+End Class";
+            VerifyBasic(code);
+        }
+
+        [Fact]
+        public void SealedDisposableWithFinalizer_CSharp_NoDiagnostic()
         {
             var code = @"
 using System;
@@ -143,7 +218,37 @@ public sealed class SealedDisposableWithFinalizer : IDisposable
         }
 
         [Fact]
-        public void InternalDisposableWithoutFinalizerCSharpNoDiagnostic()
+        public void SealedDisposableWithFinalizer_Basic_NoDiagnostic()
+        {
+            var code = @"
+Imports System
+Imports System.ComponentModel
+
+Public NotInheritable Class SealedDisposableWithFinalizer
+	Implements IDisposable
+	Protected Overrides Sub Finalize()
+		Try
+			Dispose(False)
+		Finally
+			MyBase.Finalize()
+		End Try
+	End Sub
+
+	Public Sub Dispose() Implements IDisposable.Dispose
+		Dispose(True)
+		GC.SuppressFinalize(Me)
+	End Sub
+
+	Private Sub Dispose(disposing As Boolean)
+		Console.WriteLine(Me)
+		Console.WriteLine(disposing)
+	End Sub
+End Class";
+            VerifyBasic(code);
+        }
+
+        [Fact]
+        public void InternalDisposableWithoutFinalizer_CSharp_NoDiagnostic()
         {
             var code = @"
 using System;
@@ -167,7 +272,29 @@ internal class InternalDisposableWithoutFinalizer : IDisposable
         }
 
         [Fact]
-        public void PrivateDisposableWithoutFinalizerCSharpNoDiagnostic()
+        public void InternalDisposableWithoutFinalizer_Basic_NoDiagnostic()
+        {
+            var code = @"
+Imports System
+Imports System.ComponentModel
+
+Friend Class InternalDisposableWithoutFinalizer
+	Implements IDisposable
+	Public Sub Dispose() Implements IDisposable.Dispose
+		Dispose(True)
+		' GC.SuppressFinalize(this);
+	End Sub
+
+	Protected Overridable Sub Dispose(disposing As Boolean)
+		Console.WriteLine(Me)
+		Console.WriteLine(disposing)
+	End Sub
+End Class";
+            VerifyBasic(code);
+        }
+
+        [Fact]
+        public void PrivateDisposableWithoutFinalizer_CSharp_NoDiagnostic()
         {
             var code = @"
 using System;
@@ -194,7 +321,33 @@ public static class NestedClassHolder
         }
 
         [Fact]
-        public void SealedDisposableWithoutFinalizerAndWithoutCallingSuppressFinalizeCSharpNoDiagnostic()
+        public void PrivateDisposableWithoutFinalizer_Basic_NoDiagnostic()
+        {
+            var code = @"
+Imports System
+Imports System.ComponentModel
+
+Public NotInheritable Class NestedClassHolder
+	Private Sub New()
+	End Sub
+	Private Class PrivateDisposableWithoutFinalizer
+		Implements IDisposable
+		Public Sub Dispose() Implements IDisposable.Dispose
+			Dispose(True)
+			' GC.SuppressFinalize(this);
+		End Sub
+
+		Protected Overridable Sub Dispose(disposing As Boolean)
+			Console.WriteLine(Me)
+			Console.WriteLine(disposing)
+		End Sub
+	End Class
+End Class";
+            VerifyBasic(code);
+        }
+
+        [Fact]
+        public void SealedDisposableWithoutFinalizerAndWithoutCallingSuppressFinalize_CSharp_NoDiagnostic()
         {
             var code = @"
 using System;
@@ -217,7 +370,28 @@ public sealed class SealedDisposableWithoutFinalizerAndWithoutCallingSuppressFin
         }
 
         [Fact]
-        public void DisposableStructCSharpNoDiagnostic()
+        public void SealedDisposableWithoutFinalizerAndWithoutCallingSuppressFinalize_Basic_NoDiagnostic()
+        {
+            var code = @"
+Imports System
+Imports System.ComponentModel
+
+Public NotInheritable Class SealedDisposableWithoutFinalizerAndWithoutCallingSuppressFinalize
+	Implements IDisposable
+	Public Sub Dispose() Implements IDisposable.Dispose
+		Dispose(True)
+	End Sub
+
+	Private Sub Dispose(disposing As Boolean)
+		Console.WriteLine(Me)
+		Console.WriteLine(disposing)
+	End Sub
+End Class";
+            VerifyBasic(code);
+        }
+
+        [Fact]
+        public void DisposableStruct_CSharp_NoDiagnostic()
         {
             var code = @"
 using System;
@@ -240,7 +414,28 @@ public struct DisposableStruct : IDisposable
         }
 
         [Fact]
-        public void SealedDisposableCallingGCSuppressFinalizeInConstructorCSharpNoDiagnostic()
+        public void DisposableStruct_Basic_NoDiagnostic()
+        {
+            var code = @"
+Imports System
+Imports System.ComponentModel
+
+Public Structure DisposableStruct
+	Implements IDisposable
+	Public Sub Dispose() Implements IDisposable.Dispose
+		Dispose(True)
+	End Sub
+
+	Private Sub Dispose(disposing As Boolean)
+		Console.WriteLine(Me)
+		Console.WriteLine(disposing)
+	End Sub
+End Structure";
+            VerifyBasic(code);
+        }
+
+        [Fact]
+        public void SealedDisposableCallingGCSuppressFinalizeInConstructor_CSharp_NoDiagnostic()
         {
             var code = @"
 using System;
@@ -258,12 +453,30 @@ public sealed class SealedDisposableCallingGCSuppressFinalizeInConstructor : Com
             VerifyCSharp(code);
         }
 
+        [Fact]
+        public void SealedDisposableCallingGCSuppressFinalizeInConstructor_Basic_NoDiagnostic()
+        {
+            var code = @"
+Imports System
+Imports System.ComponentModel
+
+Public NotInheritable Class SealedDisposableCallingGCSuppressFinalizeInConstructor
+	Inherits Component
+	Public Sub New()
+		' We don't ever want our finalizer (that we inherit from Component) to run
+		' (We are sealed and we don't own any unmanaged resources).
+		GC.SuppressFinalize(Me)
+	End Sub
+End Class";
+            VerifyBasic(code);
+        }
+
         #endregion
 
-        #region CSharpDiagnosticCases
+        #region DiagnosticCases
 
         [Fact]
-        public void SealedDisposableWithFinalizerCSharpDiagnostic()
+        public void SealedDisposableWithFinalizer_CSharp_Diagnostic()
         {
             var code = @"
 using System;
@@ -298,13 +511,55 @@ using System.ComponentModel;
                 column: 21,
                 rule: CallGCSuppressFinalizeCorrectlyAnalyzer.NotCalledWithFinalizerRule,
                 containingMethodName: "SealedDisposableWithFinalizer.Dispose()",
-                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature);
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
 
             VerifyCSharp(code, diagnosticResult);
         }
 
         [Fact]
-        public void DisposableWithFinalizerCSharpDiagnostic()
+        public void SealedDisposableWithFinalizer_Basic_Diagnostic()
+        {
+            var code = @"
+Imports System
+Imports System.ComponentModel
+
+Public Class SealedDisposableWithFinalizer
+	Implements IDisposable
+	Public Shared Sub Main(args As String())
+
+	End Sub
+
+	Protected Overrides Sub Finalize()
+		Try
+			Dispose(False)
+		Finally
+			MyBase.Finalize()
+		End Try
+	End Sub
+
+	Public Sub Dispose() Implements IDisposable.Dispose
+		Dispose(True)
+		' GC.SuppressFinalize(this);
+	End Sub
+
+	Private Sub Dispose(disposing As Boolean)
+		Console.WriteLine(Me)
+		Console.WriteLine(disposing)
+	End Sub
+End Class";
+
+            var diagnosticResult = GetCA1816BasicResultAt(
+                line: 19,
+                column: 13,
+                rule: CallGCSuppressFinalizeCorrectlyAnalyzer.NotCalledWithFinalizerRule,
+                containingMethodName: "SealedDisposableWithFinalizer.Dispose()",
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
+
+            VerifyBasic(code, diagnosticResult);
+        }
+
+        [Fact]
+        public void DisposableWithFinalizer_CSharp_Diagnostic()
         {
             var code = @"
 using System;
@@ -334,13 +589,51 @@ public class DisposableWithFinalizer : IDisposable
                 column: 17,
                 rule: CallGCSuppressFinalizeCorrectlyAnalyzer.NotCalledWithFinalizerRule,
                 containingMethodName: "DisposableWithFinalizer.Dispose()",
-                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature);
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
 
             VerifyCSharp(code, diagnosticResult);
         }
 
         [Fact]
-        public void InternalDisposableWithFinalizerCSharpDiagnostic()
+        public void DisposableWithFinalizer_Basic_Diagnostic()
+        {
+            var code = @"
+Imports System
+Imports System.ComponentModel
+
+Public Class DisposableWithFinalizer
+	Implements IDisposable
+	Protected Overrides Sub Finalize()
+		Try
+			Dispose(False)
+		Finally
+			MyBase.Finalize()
+		End Try
+	End Sub
+
+	Public Sub Dispose() Implements IDisposable.Dispose
+		Dispose(True)
+		' GC.SuppressFinalize(this);
+	End Sub
+
+	Protected Overridable Sub Dispose(disposing As Boolean)
+		Console.WriteLine(Me)
+		Console.WriteLine(disposing)
+	End Sub
+End Class";
+
+            var diagnosticResult = GetCA1816BasicResultAt(
+                line: 15,
+                column: 13,
+                rule: CallGCSuppressFinalizeCorrectlyAnalyzer.NotCalledWithFinalizerRule,
+                containingMethodName: "DisposableWithFinalizer.Dispose()",
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
+
+            VerifyBasic(code, diagnosticResult);
+        }
+
+        [Fact]
+        public void InternalDisposableWithFinalizer_CSharp_Diagnostic()
         {
             var code = @"
 using System;
@@ -370,13 +663,51 @@ internal class InternalDisposableWithFinalizer : IDisposable
                 column: 17,
                 rule: CallGCSuppressFinalizeCorrectlyAnalyzer.NotCalledWithFinalizerRule,
                 containingMethodName: "InternalDisposableWithFinalizer.Dispose()",
-                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature);
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
 
             VerifyCSharp(code, diagnosticResult);
         }
 
         [Fact]
-        public void PrivateDisposableWithFinalizerCSharpDiagnostic()
+        public void InternalDisposableWithFinalizer_Basic_Diagnostic()
+        {
+            var code = @"
+Imports System
+Imports System.ComponentModel
+
+Friend Class InternalDisposableWithFinalizer
+	Implements IDisposable
+	Protected Overrides Sub Finalize()
+		Try
+			Dispose(False)
+		Finally
+			MyBase.Finalize()
+		End Try
+	End Sub
+
+	Public Sub Dispose() Implements IDisposable.Dispose
+		Dispose(True)
+		' GC.SuppressFinalize(this);
+	End Sub
+
+	Protected Overridable Sub Dispose(disposing As Boolean)
+		Console.WriteLine(Me)
+		Console.WriteLine(disposing)
+	End Sub
+End Class";
+
+            var diagnosticResult = GetCA1816BasicResultAt(
+                line: 15,
+                column: 13,
+                rule: CallGCSuppressFinalizeCorrectlyAnalyzer.NotCalledWithFinalizerRule,
+                containingMethodName: "InternalDisposableWithFinalizer.Dispose()",
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
+
+            VerifyBasic(code, diagnosticResult);
+        }
+
+        [Fact]
+        public void PrivateDisposableWithFinalizer_CSharp_Diagnostic()
         {
             var code = @"
 using System;
@@ -397,10 +728,11 @@ public static class NestedClassHolder
             // GC.SuppressFinalize(this);
         }
 
-    protected virtual void Dispose(bool disposing)
-    {
-        Console.WriteLine(this);
-        Console.WriteLine(disposing);
+        protected virtual void Dispose(bool disposing)
+        {
+            Console.WriteLine(this);
+            Console.WriteLine(disposing);
+        }
     }
 }";
             var diagnosticResult = GetCA1816CSharpResultAt(
@@ -408,13 +740,55 @@ public static class NestedClassHolder
                 column: 21,
                 rule: CallGCSuppressFinalizeCorrectlyAnalyzer.NotCalledWithFinalizerRule,
                 containingMethodName: "NestedClassHolder.PrivateDisposableWithFinalizer.Dispose()",
-                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature);
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
 
             VerifyCSharp(code, diagnosticResult);
         }
 
         [Fact]
-        public void DisposableWithoutFinalizerCSharpDiagnostic()
+        public void PrivateDisposableWithFinalizer_Basic_Diagnostic()
+        {
+            var code = @"
+Imports System
+Imports System.ComponentModel
+
+Public NotInheritable Class NestedClassHolder
+	Private Sub New()
+	End Sub
+	Private Class PrivateDisposableWithFinalizer
+		Implements IDisposable
+		Protected Overrides Sub Finalize()
+			Try
+				Dispose(False)
+			Finally
+				MyBase.Finalize()
+			End Try
+		End Sub
+
+		Public Sub Dispose() Implements IDisposable.Dispose
+			Dispose(True)
+			' GC.SuppressFinalize(this);
+		End Sub
+
+		Protected Overridable Sub Dispose(disposing As Boolean)
+			Console.WriteLine(Me)
+			Console.WriteLine(disposing)
+		End Sub
+	End Class
+End Class";
+
+            var diagnosticResult = GetCA1816BasicResultAt(
+                line: 18,
+                column: 14,
+                rule: CallGCSuppressFinalizeCorrectlyAnalyzer.NotCalledWithFinalizerRule,
+                containingMethodName: "NestedClassHolder.PrivateDisposableWithFinalizer.Dispose()",
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
+
+            VerifyBasic(code, diagnosticResult);
+        }
+
+        [Fact]
+        public void DisposableWithoutFinalizer_CSharp_Diagnostic()
         {
             var code = @"
 using System;
@@ -439,13 +813,43 @@ public class DisposableWithoutFinalizer : IDisposable
                 column: 17,
                 rule: CallGCSuppressFinalizeCorrectlyAnalyzer.NotCalledRule,
                 containingMethodName: "DisposableWithoutFinalizer.Dispose()",
-                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature);
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
 
             VerifyCSharp(code, diagnosticResult);
         }
 
         [Fact]
-        public void DisposableComponentCSharpDiagnostic()
+        public void DisposableWithoutFinalizer_Basic_Diagnostic()
+        {
+            var code = @"
+Imports System
+Imports System.ComponentModel
+
+Public Class DisposableWithoutFinalizer
+	Implements IDisposable
+	Public Sub Dispose() Implements IDisposable.Dispose
+		Dispose(True)
+		' GC.SuppressFinalize(this);
+	End Sub
+
+	Protected Overridable Sub Dispose(disposing As Boolean)
+		Console.WriteLine(Me)
+		Console.WriteLine(disposing)
+	End Sub
+End Class";
+
+            var diagnosticResult = GetCA1816BasicResultAt(
+                line: 7,
+                column: 13,
+                rule: CallGCSuppressFinalizeCorrectlyAnalyzer.NotCalledRule,
+                containingMethodName: "DisposableWithoutFinalizer.Dispose()",
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
+
+            VerifyBasic(code, diagnosticResult);
+        }
+
+        [Fact]
+        public void DisposableComponent_CSharp_Diagnostic()
         {
             var code = @"
 using System;
@@ -464,13 +868,39 @@ public class DisposableComponent : Component, IDisposable
                 column: 17,
                 rule: CallGCSuppressFinalizeCorrectlyAnalyzer.NotCalledRule,
                 containingMethodName: "DisposableComponent.Dispose()",
-                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature);
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
 
             VerifyCSharp(code, diagnosticResult);
         }
 
         [Fact]
-        public void NotADisposableClassCSharpDiagnostic()
+        public void DisposableComponent_Basic_Diagnostic()
+        {
+            var code = @"
+Imports System
+Imports System.ComponentModel
+
+Public Class DisposableComponent
+	Inherits Component
+	Implements IDisposable
+	Public Sub Dispose() Implements IDisposable.Dispose
+		Dispose(True)
+		' GC.SuppressFinalize(this);
+	End Sub
+End Class";
+
+            var diagnosticResult = GetCA1816BasicResultAt(
+                line: 8,
+                column: 13,
+                rule: CallGCSuppressFinalizeCorrectlyAnalyzer.NotCalledRule,
+                containingMethodName: "DisposableComponent.Dispose()",
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
+
+            VerifyBasic(code, diagnosticResult);
+        }
+
+        [Fact]
+        public void NotADisposableClass_CSharp_Diagnostic()
         {
             var code = @"
 using System;
@@ -488,13 +918,36 @@ public class NotADisposableClass
                 column: 9,
                 rule: CallGCSuppressFinalizeCorrectlyAnalyzer.OutsideDisposeRule,
                 containingMethodName: "NotADisposableClass.NotADisposableClass()",
-                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature);
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
 
             VerifyCSharp(code, diagnosticResult);
         }
 
         [Fact]
-        public void DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlacesCSharpDiagnostic()
+        public void NotADisposableClass_Basic_Diagnostic()
+        {
+            var code = @"
+Imports System
+Imports System.ComponentModel
+
+Public Class NotADisposableClass
+	Public Sub New()
+		GC.SuppressFinalize(Me)
+	End Sub
+End Class";
+
+            var diagnosticResult = GetCA1816BasicResultAt(
+                line: 7,
+                column: 3,
+                rule: CallGCSuppressFinalizeCorrectlyAnalyzer.OutsideDisposeRule,
+                containingMethodName: "NotADisposableClass.New()",
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
+
+            VerifyBasic(code, diagnosticResult);
+        }
+
+        [Fact]
+        public void DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces_CSharp_Diagnostic()
         {
             var code = @"
 using System;
@@ -532,31 +985,89 @@ public class DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces : IDispo
                 column: 9,
                 rule: CallGCSuppressFinalizeCorrectlyAnalyzer.OutsideDisposeRule,
                 containingMethodName: "DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces.DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces()",
-                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature);
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
             var diagnosticResult2 = GetCA1816CSharpResultAt(
                 line: 12,
                 column: 17,
                 rule: CallGCSuppressFinalizeCorrectlyAnalyzer.NotCalledRule,
                 containingMethodName: "DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces.Dispose()",
-                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature);
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
             var diagnosticResult3 = GetCA1816CSharpResultAt(
                 line: 20,
                 column: 9,
                 rule: CallGCSuppressFinalizeCorrectlyAnalyzer.OutsideDisposeRule,
                 containingMethodName: "DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces.CallGCSuppressFinalize()",
-                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature);
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
             var diagnosticResult4 = GetCA1816CSharpResultAt(
                 line: 28,
                 column: 13,
                 rule: CallGCSuppressFinalizeCorrectlyAnalyzer.OutsideDisposeRule,
                 containingMethodName: "DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces.Dispose(bool)",
-                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature);
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
 
             VerifyCSharp(code, diagnosticResult1, diagnosticResult2, diagnosticResult3, diagnosticResult4);
         }
 
         [Fact]
-        public void DisposableClassThatCallsGCSuppressFinalizeWithTheWrongArgumentsCSharpDiagnostic()
+        public void DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces_Basic_Diagnostic()
+        {
+            var code = @"
+Imports System
+Imports System.ComponentModel
+
+Public Class DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces
+	Implements IDisposable
+	Public Sub New()
+		GC.SuppressFinalize(Me)
+	End Sub
+
+	Public Sub Dispose() Implements IDisposable.Dispose
+		Dispose(True)
+		CallGCSuppressFinalize()
+	End Sub
+
+	Private Sub CallGCSuppressFinalize()
+		GC.SuppressFinalize(Me)
+	End Sub
+
+	Protected Overridable Sub Dispose(disposing As Boolean)
+		If disposing Then
+			Console.WriteLine(Me)
+			GC.SuppressFinalize(Me)
+		End If
+	End Sub
+End Class";
+
+            var diagnosticResult1 = GetCA1816BasicResultAt(
+                line: 8,
+                column: 3,
+                rule: CallGCSuppressFinalizeCorrectlyAnalyzer.OutsideDisposeRule,
+                containingMethodName: "DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces.New()",
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
+            var diagnosticResult2 = GetCA1816BasicResultAt(
+                line: 11,
+                column: 13,
+                rule: CallGCSuppressFinalizeCorrectlyAnalyzer.NotCalledRule,
+                containingMethodName: "DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces.Dispose()",
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
+            var diagnosticResult3 = GetCA1816BasicResultAt(
+                line: 17,
+                column: 3,
+                rule: CallGCSuppressFinalizeCorrectlyAnalyzer.OutsideDisposeRule,
+                containingMethodName: "DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces.CallGCSuppressFinalize()",
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
+            var diagnosticResult4 = GetCA1816BasicResultAt(
+                line: 23,
+                column: 4,
+                rule: CallGCSuppressFinalizeCorrectlyAnalyzer.OutsideDisposeRule,
+                containingMethodName: "DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces.Dispose(Boolean)",
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
+
+            VerifyBasic(code, diagnosticResult1, diagnosticResult2, diagnosticResult3, diagnosticResult4);
+        }
+
+        [Fact]
+        public void DisposableClassThatCallsGCSuppressFinalizeWithTheWrongArguments_CSharp_Diagnostic()
         {
             var code = @"
 using System;
@@ -587,9 +1098,42 @@ public class DisposableClassThatCallsGCSuppressFinalizeWithTheWrongArguments : I
                 column: 9,
                 rule: CallGCSuppressFinalizeCorrectlyAnalyzer.NotPassedThisRule,
                 containingMethodName: "DisposableClassThatCallsGCSuppressFinalizeWithTheWrongArguments.Dispose()",
-                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature);
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
 
             VerifyCSharp(code, diagnosticResult);
+        }
+
+        [Fact]
+        public void DisposableClassThatCallsGCSuppressFinalizeWithTheWrongArguments_Basic_Diagnostic()
+        {
+            var code = @"
+Imports System
+Imports System.ComponentModel
+
+Public Class DisposableClassThatCallsGCSuppressFinalizeWithTheWrongArguments
+	Implements IDisposable
+	Public Sub New()
+	End Sub
+
+	Public Sub Dispose() Implements IDisposable.Dispose
+		Dispose(True)
+		GC.SuppressFinalize(True)
+	End Sub
+
+	Protected Overridable Sub Dispose(disposing As Boolean)
+		If disposing Then
+			Console.WriteLine(Me)
+		End If
+	End Sub
+End Class";
+            var diagnosticResult = GetCA1816BasicResultAt(
+                line: 12,
+                column: 3,
+                rule: CallGCSuppressFinalizeCorrectlyAnalyzer.NotPassedThisRule,
+                containingMethodName: "DisposableClassThatCallsGCSuppressFinalizeWithTheWrongArguments.Dispose()",
+                gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
+
+            VerifyBasic(code, diagnosticResult);
         }
 
         #endregion

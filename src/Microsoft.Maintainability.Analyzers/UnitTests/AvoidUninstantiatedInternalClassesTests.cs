@@ -371,7 +371,30 @@ End Namespace",
         }
 
         [Fact]
-        public void CA1812_CSharp_NoDiagnostic_UninstantiatedInternalMefExportedClass()
+        public void CA1812_CSharp_NoDiagnostic_UninstantiatedInternalMef1ExportedClass()
+        {
+            VerifyCSharp(
+@"using System.ComponentModel.Composition;
+
+[Export]
+internal class C
+{
+}");
+        }
+
+        [Fact]
+        public void CA1812_Basic_NoDiagnostic_UninstantiatedInternalMef1ExportedClass()
+        {
+            VerifyBasic(
+@"Imports System.ComponentModel.Composition
+
+<Export>
+Friend Class C
+End Class");
+        }
+
+        [Fact]
+        public void CA1812_CSharp_NoDiagnostic_UninstantiatedInternalMef2ExportedClass()
         {
             VerifyCSharp(
 @"using System.Composition;
@@ -383,7 +406,7 @@ internal class C
         }
 
         [Fact]
-        public void CA1812_Basic_NoDiagnostic_UninstantiatedInternalMefExportedClass()
+        public void CA1812_Basic_NoDiagnostic_UninstantiatedInternalMef2ExportedClass()
         {
             VerifyBasic(
 @"Imports System.Composition

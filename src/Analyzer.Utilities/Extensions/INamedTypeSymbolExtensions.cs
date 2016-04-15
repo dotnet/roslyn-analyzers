@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -82,21 +81,23 @@ namespace Analyzer.Utilities
 
         private static bool s_firstCallToIsUnused = true;
         private static INamedTypeSymbol s_attributeSymbol;
-        private static INamedTypeSymbol s_exportAttributeSymbol;
+        private static INamedTypeSymbol s_mef1ExportAttributeSymbol;
+        private static INamedTypeSymbol s_mef2ExportAttributeSymbol;
 
         public static bool IsOkToBeUnused(this INamedTypeSymbol symbol, Compilation compilation)
         {
             if (s_firstCallToIsUnused)
             {
                 s_attributeSymbol = compilation.GetTypeByMetadataName("System.Attribute");
-                s_exportAttributeSymbol = compilation.GetTypeByMetadataName("System.Composition.ExportAttribute");
+                s_mef1ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.ComponentModel.Composition.ExportAttribute");
+                s_mef2ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.Composition.ExportAttribute");
             }
 
             if (symbol.TypeKind != TypeKind.Class || symbol.IsStatic || symbol.IsAbstract)
             {
                 return true;
             }
-            
+
             // Attributes are not instantiated in IL but are created by reflection.
             if (symbol.Inherits(s_attributeSymbol))
             {
@@ -120,7 +121,8 @@ namespace Analyzer.Utilities
 
         public static bool IsMefExported(this INamedTypeSymbol symbol)
         {
-            return symbol.HasAttribute(s_exportAttributeSymbol);
+            return (s_mef1ExportAttributeSymbol != null && symbol.HasAttribute(s_mef1ExportAttributeSymbol))
+                || (s_mef2ExportAttributeSymbol != null && symbol.HasAttribute(s_mef2ExportAttributeSymbol));
         }
 
         public static bool HasAttribute(this INamedTypeSymbol symbol, INamedTypeSymbol attribute)

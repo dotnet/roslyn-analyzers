@@ -68,6 +68,17 @@ namespace System.Runtime.Analyzers
         {
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
+                var gcSuppressFinalizeMethodSymbol = compilationContext.Compilation
+                                                        .GetTypeByMetadataName("System.GC")
+                                                        .GetMembers("SuppressFinalize")
+                                                        .OfType<IMethodSymbol>()
+                                                        .SingleOrDefault();
+
+                if (gcSuppressFinalizeMethodSymbol == null)
+                {
+                    return;
+                }
+
                 compilationContext.RegisterOperationBlockStartAction(operationBlockContext =>
                 {
                     if (operationBlockContext.OwningSymbol.Kind != SymbolKind.Method)
@@ -75,16 +86,15 @@ namespace System.Runtime.Analyzers
                         return;
                     }
 
-                    var method = (IMethodSymbol)operationBlockContext.OwningSymbol;
-                    if (method.IsExtern || method.IsAbstract)
+                    var methodSymbol = (IMethodSymbol)operationBlockContext.OwningSymbol;
+                    if (methodSymbol.IsExtern || methodSymbol.IsAbstract)
                     {
                         return;
                     }
 
-                    var analyzer = new SuppressFinalizeAnalyzer(method, compilationContext.Compilation);
+                    var analyzer = new SuppressFinalizeAnalyzer(methodSymbol, gcSuppressFinalizeMethodSymbol, compilationContext.Compilation);
 
                     operationBlockContext.RegisterOperationAction(analyzer.Analyze, OperationKind.InvocationExpression);
-
                     operationBlockContext.RegisterOperationBlockEndAction(analyzer.OperationBlockEndAction);
                 });
             });
@@ -104,27 +114,21 @@ namespace System.Runtime.Analyzers
 
             private readonly Compilation _compilation;
             private readonly IMethodSymbol _containingMethodSymbol;
+            private readonly IMethodSymbol _gcSuppressFinalizeMethodSymbol;
+
             private SemanticModel _semanticModel;
             private IInvocationExpression _invocationExpression;
-            private IMethodSymbol _gcSuppressFinalizeMethodSymbol;
-            private bool _failFast;
 
-            public SuppressFinalizeAnalyzer(IMethodSymbol methodSymbol, Compilation compilation)
+            public SuppressFinalizeAnalyzer(IMethodSymbol methodSymbol, IMethodSymbol gcSuppressFinalizeMethodSymbol, Compilation compilation)
             {
                 this._compilation = compilation;
                 this._containingMethodSymbol = methodSymbol;
+                this._gcSuppressFinalizeMethodSymbol = gcSuppressFinalizeMethodSymbol;
             }
 
             public void Analyze(OperationAnalysisContext analysisContext)
             {
                 _invocationExpression = (IInvocationExpression)analysisContext.Operation;
-                _gcSuppressFinalizeMethodSymbol = _compilation.GetTypeByMetadataName("System.GC").GetMembers("SuppressFinalize").OfType<IMethodSymbol>().SingleOrDefault();
-                if (_gcSuppressFinalizeMethodSymbol == null)
-                {
-                    _failFast = true;
-                    return;
-                }
-
                 if (_invocationExpression.TargetMethod.OriginalDefinition.Equals(_gcSuppressFinalizeMethodSymbol))
                 {
                     _suppressFinalizeCalled = true;
@@ -134,11 +138,6 @@ namespace System.Runtime.Analyzers
 
             public void OperationBlockEndAction(OperationBlockAnalysisContext context)
             {
-                if (_failFast)
-                {
-                    return;
-                }
-
                 var expectedUsage = GetAllowedSuppressFinalizeUsage(_containingMethodSymbol);
 
                 // Check for absence of GC.SuppressFinalize

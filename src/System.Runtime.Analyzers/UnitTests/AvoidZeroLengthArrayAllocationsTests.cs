@@ -1,10 +1,11 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Reflection;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using System.Reflection;
-using Xunit;
 using Microsoft.CodeAnalysis.UnitTests;
+using Roslyn.Diagnostics.Test.Utilities;
+using Xunit;
 
 namespace System.Runtime.Analyzers.UnitTests
 {
@@ -216,6 +217,37 @@ class C
                 "using System;\r\n" + arrayEmptySource + badSource,
                 "using System;\r\n" + arrayEmptySource + fixedSource.Replace("System.Array.Empty", "Array.Empty"),
                 allowNewCompilerDiagnostics: true);
+        }
+
+        [WorkItem(10214, "https://github.com/dotnet/roslyn/issues/10214")]
+        [Fact]
+        public void EmptyArrayVisualBasic_CompilerGeneratedArrayCreation()
+        {
+            const string arrayEmptySourceRaw = @"
+Namespace System
+    Public Class Array
+       Public Shared Function Empty(Of T)() As T()
+           Return Nothing
+       End Function
+    End Class
+End Namespace
+";
+            const string source = @"
+Class C
+    Private Sub F(ParamArray args As String())
+    End Sub
+
+    Private Sub G()
+        F()     ' Compiler seems to generate a param array with size 0 for the invocation.
+    End Sub
+End Class
+";
+
+            string arrayEmptySource = IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
+
+            // Should we be flagging diagnostics on compiler generated code?
+            // Should the analyzer even be invoked for compiler generated code?
+            VerifyBasic(source + arrayEmptySource);
         }
     }
 }

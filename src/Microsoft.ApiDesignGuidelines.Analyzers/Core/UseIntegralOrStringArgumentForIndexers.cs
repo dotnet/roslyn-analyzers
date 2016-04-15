@@ -24,7 +24,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
-                                                                             DiagnosticCategory.Performance,
+                                                                             DiagnosticCategory.Design,
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
@@ -57,6 +57,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 if (symbol.GetParameters().Length == 1)
                 {
                     ITypeSymbol paramType = symbol.GetParameters()[0].Type;
+
+                    if (paramType.TypeKind == TypeKind.TypeParameter)
+                    {
+                        return;
+                    }
+
+                    if (paramType.TypeKind == TypeKind.Enum)
+                    {
+                        paramType = ((INamedTypeSymbol)paramType).EnumUnderlyingType;
+                    }
+
                     if (!s_allowedTypes.Contains(paramType.SpecialType))
                     {
                         context.ReportDiagnostic(symbol.CreateDiagnostic(Rule));

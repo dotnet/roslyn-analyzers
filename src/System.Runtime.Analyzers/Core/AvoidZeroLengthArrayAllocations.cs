@@ -74,6 +74,13 @@ namespace System.Runtime.Analyzers
 
                 if (dimensionSize.HasConstantValue(0))
                 {
+                    // Workaround for https://github.com/dotnet/roslyn/issues/10214
+                    // Bail out for compiler generated param array creation.
+                    if (IsCompilerGeneratedParamsArray(arrayCreationExpression, context))
+                    {
+                        return;
+                    }
+
                     // pointers can't be used as generic arguments
                     if (arrayCreationExpression.ElementType.TypeKind != TypeKind.Pointer)
                     {
@@ -81,6 +88,28 @@ namespace System.Runtime.Analyzers
                     }
                 }
             }
+        }
+
+        private static bool IsCompilerGeneratedParamsArray(IArrayCreationExpression arrayCreationExpression, OperationAnalysisContext context)
+        {
+            var model = context.Compilation.GetSemanticModel(arrayCreationExpression.Syntax.SyntaxTree);
+
+            // Compiler generated array creation seems to just use the syntax from the parent.
+            var parent = model.GetOperation(arrayCreationExpression.Syntax, context.CancellationToken) as IInvocationExpression;
+            if (parent == null || parent.TargetMethod == null || parent.TargetMethod.Parameters.Length == 0)
+            {
+                return false;
+            }
+
+            if (!parent.TargetMethod.Parameters.Last().IsParams)
+            {
+                return false;
+            }
+
+            var lastArgument = parent.ArgumentsInParameterOrder.LastOrDefault();
+            return lastArgument.Syntax == parent.Syntax &&
+                lastArgument != null &&
+                lastArgument.ArgumentKind == ArgumentKind.ParamArray;
         }
 
         protected abstract bool IsAttributeSyntax(SyntaxNode node);

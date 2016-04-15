@@ -359,51 +359,6 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to When an exception is raised in a finally or fault clause, the new exception hides the active exception. When an exception is raised in a filter clause, the run time silently catches the exception. This makes the original error difficult to detect and debug..
-        /// </summary>
-        internal static string DoNotRaiseExceptionsInExceptionClausesDescription {
-            get {
-                return ResourceManager.GetString("DoNotRaiseExceptionsInExceptionClausesDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Modify member {0} so that it does not raise an exception from within a fault clause. When an exception is raised from within a fault clause, the new exception hides the active exception, making the original error hard to detect and debug..
-        /// </summary>
-        internal static string DoNotRaiseExceptionsInExceptionClausesMessageFault {
-            get {
-                return ResourceManager.GetString("DoNotRaiseExceptionsInExceptionClausesMessageFault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Modify member {0} so that it does not raise an exception from within a filter clause. When an exception is raised from within a filter clause, the runtime silently catches the exception, causing the filter to evaluate to false. This makes it hard to detect and debug errors in the filter&apos;s logic..
-        /// </summary>
-        internal static string DoNotRaiseExceptionsInExceptionClausesMessageFilter {
-            get {
-                return ResourceManager.GetString("DoNotRaiseExceptionsInExceptionClausesMessageFilter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Modify member {0} so that it does not raise an exception from within a finally clause. When an exception is raised from within a finally clause, the new exception hides the active exception, if present, making the original error hard to detect and debug..
-        /// </summary>
-        internal static string DoNotRaiseExceptionsInExceptionClausesMessageFinally {
-            get {
-                return ResourceManager.GetString("DoNotRaiseExceptionsInExceptionClausesMessageFinally", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do not raise exceptions in exception clauses.
-        /// </summary>
-        internal static string DoNotRaiseExceptionsInExceptionClausesTitle {
-            get {
-                return ResourceManager.GetString("DoNotRaiseExceptionsInExceptionClausesTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type..
         /// </summary>
         internal static string DoNotRaiseReservedExceptionTypesDescription {
@@ -695,7 +650,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A method or constructor calls a member that has an overload that accepts a System.Globalization.CultureInfo parameter, and the method or constructor does not call the overload that takes the CultureInfo parameter. When a CultureInfo or System.IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales..
+        ///   Looks up a localized string similar to A method or constructor calls a member that has an overload that accepts a System.Globalization.CultureInfo parameter, and the method or constructor does not call the overload that takes the CultureInfo parameter. When a CultureInfo or System.IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales. If the result will be displayed to the user, specify &apos;CultureInfo.CurrentCulture&apos; as the &apos;CultureInfo&apos; parameter. [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SpecifyCultureInfoDescription {
             get {
@@ -704,7 +659,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Specify CultureInfo.
+        ///   Looks up a localized string similar to The behavior of &apos;{0}&apos; could vary based on the current user&apos;s locale settings. Replace this call in &apos;{1}&apos; with a call to &apos;{2}&apos;..
         /// </summary>
         internal static string SpecifyCultureInfoMessage {
             get {
@@ -722,7 +677,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A method or constructor calls one or more members that have overloads that accept a System.IFormatProvider parameter, and the method or constructor does not call the overload that takes the IFormatProvider parameter. When a System.Globalization.CultureInfo or IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales..
+        ///   Looks up a localized string similar to A method or constructor calls one or more members that have overloads that accept a System.IFormatProvider parameter, and the method or constructor does not call the overload that takes the IFormatProvider parameter. When a System.Globalization.CultureInfo or IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales. If the result will be based on the input from/output displayed to the user, specify &apos;CultureInfo [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SpecifyIFormatProviderDescription {
             get {
@@ -731,7 +686,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Because the behavior of {0} could vary based on the current user&apos;s locale settings, replace this call in {1} with a call to {2}. If the result of {2} will be based on input from the user, specify {3} as the &apos;IFormatProvider&apos; parameter. Otherwise, if the result will based on input stored and accessed by software, such as when it is loaded from disk or from a database, specify {4}..
+        ///   Looks up a localized string similar to The behavior of &apos;{0}&apos; could vary based on the current user&apos;s locale settings. Replace this call in &apos;{1}&apos; with a call to &apos;{2}&apos;..
         /// </summary>
         internal static string SpecifyIFormatProviderMessageIFormatProviderAlternate {
             get {
@@ -740,7 +695,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Because the behavior of {0} could vary based on the current user&apos;s locale settings, replace this call in {1} with a call to {2}. If the result of {2} will be displayed to the user, specify {3} as the &apos;IFormatProvider&apos; parameter. Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk or to a database, specify {4}..
+        ///   Looks up a localized string similar to The behavior of &apos;{0}&apos; could vary based on the current user&apos;s locale settings. Replace this call in &apos;{1}&apos; with a call to &apos;{2}&apos;..
         /// </summary>
         internal static string SpecifyIFormatProviderMessageIFormatProviderAlternateString {
             get {
@@ -749,7 +704,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} passes {1} as the &apos;IFormatProvider&apos; parameter to {2}. This property returns a culture that is inappropriate for formatting methods. If the result of {2} will be based on input from the user, specify {3} as the &apos;IFormatProvider&apos; parameter. Otherwise, if the result will based on input stored and accessed by software, such as when it is loaded from disk or from a database, specify {4}..
+        ///   Looks up a localized string similar to &apos;{0}&apos; passes &apos;{1}&apos; as the &apos;IFormatProvider&apos; parameter to &apos;{2}&apos;. This property returns a culture that is inappropriate for formatting methods..
         /// </summary>
         internal static string SpecifyIFormatProviderMessageUICulture {
             get {
@@ -758,7 +713,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} passes {1} as the &apos;IFormatProvider&apos; parameter to {2}. This property returns a culture that is inappropriate for formatting methods. If the result of {2} will be displayed to the user, specify {3} as the &apos;IFormatProvider&apos; parameter. Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk or to a database, specify {4}..
+        ///   Looks up a localized string similar to &apos;{0}&apos; passes &apos;{1}&apos; as the &apos;IFormatProvider&apos; parameter to &apos;{2}&apos;. This property returns a culture that is inappropriate for formatting methods..
         /// </summary>
         internal static string SpecifyIFormatProviderMessageUICultureString {
             get {
@@ -776,7 +731,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A string comparison operation uses a method overload that does not set a StringComparison parameter..
+        ///   Looks up a localized string similar to A string comparison operation uses a method overload that does not set a StringComparison parameter. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify &apos;StringComparison.CurrentCulture&apos; or &apos;StringComparison.CurrentCultureIgnoreCase&apos; as the &apos;StringComparison&apos; parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify &apos;StringComparison.OrdinalIgnoreCase&apos;. Otherwise, if c [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SpecifyStringComparisonDescription {
             get {
@@ -785,7 +740,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Specify StringComparison.
+        ///   Looks up a localized string similar to The behavior of &apos;{0}&apos; could vary based on the current user&apos;s locale settings. Replace this call in &apos;{1}&apos; with a call to &apos;{2}&apos;..
         /// </summary>
         internal static string SpecifyStringComparisonMessage {
             get {

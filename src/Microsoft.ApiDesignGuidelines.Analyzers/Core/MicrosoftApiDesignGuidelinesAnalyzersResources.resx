@@ -611,7 +611,7 @@ Names of parameters and members are better used to communicate their meaning tha
     <value>If a method takes a string representation of a URI, a corresponding overload should be provided that takes an instance of the URI class, which provides these services in a safe and secure manner.</value>
   </data>
   <data name="UriParametersShouldNotBeStringsMessage" xml:space="preserve">
-    <value>Uri parameters should not be strings</value>
+    <value>Change the type of parameter {0} of method {1} from string to System.Uri, or provide an overload to {1} that allows {0} to be passed as a System.Uri object.</value>
   </data>
   <data name="UriReturnValuesShouldNotBeStringsTitle" xml:space="preserve">
     <value>Uri return values should not be strings</value>
@@ -620,7 +620,7 @@ Names of parameters and members are better used to communicate their meaning tha
     <value>This rule assumes that the method returns a URI. A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The System.Uri class provides these services in a safe and secure manner.</value>
   </data>
   <data name="UriReturnValuesShouldNotBeStringsMessage" xml:space="preserve">
-    <value>Uri return values should not be strings</value>
+    <value>Change the return type of method {0} from string to System.Uri.</value>
   </data>
   <data name="UriPropertiesShouldNotBeStringsTitle" xml:space="preserve">
     <value>Uri properties should not be strings</value>
@@ -629,7 +629,7 @@ Names of parameters and members are better used to communicate their meaning tha
     <value>This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The System.Uri class provides these services in a safe and secure manner.</value>
   </data>
   <data name="UriPropertiesShouldNotBeStringsMessage" xml:space="preserve">
-    <value>Uri properties should not be strings</value>
+    <value>Change the type of property {0} from string to System.Uri.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyTitle" xml:space="preserve">
     <value>Implement IDisposable Correctly</value>
@@ -812,7 +812,7 @@ Names of parameters and members are better used to communicate their meaning tha
     <value>Consistent naming of parameters in an override hierarchy increases the usability of the method overrides. A parameter name in a derived method that differs from the name in the base declaration can cause confusion about whether the method is an override of the base method or a new overload of the method.</value>
   </data>
   <data name="ParameterNamesShouldMatchBaseDeclarationMessage" xml:space="preserve">
-    <value>Parameter names should match base declaration</value>
+    <value>In member {0}, change parameter name {1} to {2} in order to match the identifier as it has been declared in {3}.</value>
   </data>
   <data name="UsePreferredTermsTitle" xml:space="preserve">
     <value>Use preferred terms</value>
@@ -919,6 +919,12 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="OverrideEqualsOnOverloadingOperatorEqualsMessage" xml:space="preserve">
     <value>Override Equals on overloading operator equals</value>
   </data>
+  <data name="Since_0_redefines_operator_1_it_should_also_redefine_operator_2" xml:space="preserve">
+    <value>Since '{0}' redefines operator '{1}', it should also redefine operator '{2}'</value>
+  </data>
+  <data name="Generate_missing_operators" xml:space="preserve">
+    <value>Generate missing operators</value>
+  </data>
   <data name="OverrideEqualsOnOverloadingOperatorEqualsCodeActionTitle" xml:space="preserve">
     <value>Override object.Equals</value>
   </data>
@@ -981,5 +987,8 @@ Names of parameters and members are better used to communicate their meaning tha
   </data>
   <data name="OverrideObjectEqualsDescription" xml:space="preserve">
     <value>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</value>
+  </data>
+  <data name="RenameToTitle" xml:space="preserve">
+    <value>Rename to '{0}'</value>
   </data>
 </root>

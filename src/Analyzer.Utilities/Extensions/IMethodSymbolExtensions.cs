@@ -150,6 +150,15 @@ namespace Analyzer.Utilities
         }
 
         /// <summary>
+        /// Checks if the method is an accessor for a property.
+        /// </summary>
+        public static bool IsPropertyAccessor(this IMethodSymbol method)
+        {
+            return method.MethodKind == MethodKind.PropertyGet ||
+                   method.MethodKind == MethodKind.PropertySet;
+        }
+
+        /// <summary>
         /// Checks if the method is an accessor for an event.
         /// </summary>
         public static bool IsEventAccessor(this IMethodSymbol method)

@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis.VisualBasic;
+using Microsoft.VisualBasic.Devices;
 using Roslyn.Test.Utilities;
 using Roslyn.Utilities;
 using Xunit;
@@ -22,8 +23,9 @@ namespace Microsoft.CodeAnalysis.UnitTests
         private static readonly MetadataReference s_systemCoreReference = MetadataReference.CreateFromAssemblyInternal(typeof(Enumerable).Assembly);
         private static readonly MetadataReference s_systemXmlReference = MetadataReference.CreateFromAssemblyInternal(typeof(System.Xml.XmlDocument).Assembly);
         private static readonly MetadataReference s_systemXmlDataReference = MetadataReference.CreateFromAssemblyInternal(typeof(System.Data.Rule).Assembly);
-        private static readonly MetadataReference s_CSharpSymbolsReference = MetadataReference.CreateFromAssemblyInternal(typeof(CSharpCompilation).Assembly);
+        private static readonly MetadataReference s_csharpSymbolsReference = MetadataReference.CreateFromAssemblyInternal(typeof(CSharpCompilation).Assembly);
         private static readonly MetadataReference s_visualBasicSymbolsReference = MetadataReference.CreateFromAssemblyInternal(typeof(VisualBasicCompilation).Assembly);
+        private static readonly MetadataReference s_visualBasicReference = MetadataReference.CreateFromAssemblyInternal(typeof(ComputerInfo).Assembly);
         private static readonly MetadataReference s_codeAnalysisReference = MetadataReference.CreateFromAssemblyInternal(typeof(Compilation).Assembly);
         private static readonly MetadataReference s_workspacesReference = MetadataReference.CreateFromAssemblyInternal(typeof(Workspace).Assembly);
         private static readonly MetadataReference s_immutableCollectionsReference = MetadataReference.CreateFromAssemblyInternal(typeof(ImmutableArray<int>).Assembly);
@@ -354,7 +356,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
             ProjectId projectId = ProjectId.CreateNewId(debugName: projectName);
 
-            Solution solution = (addToSolution ?? new AdhocWorkspace().CurrentSolution)
+            Project project = (addToSolution ?? new AdhocWorkspace().CurrentSolution)
                 .AddProject(projectId, projectName, projectName, language)
                 .AddMetadataReference(projectId, s_corlibReference)
                 .AddMetadataReference(projectId, s_systemCoreReference)
@@ -372,14 +374,22 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 .AddMetadataReference(projectId, s_workspacesReference)
                 .AddMetadataReference(projectId, s_systemDiagnosticsDebugReference)
                 .AddMetadataReference(projectId, s_systemDataReference)
-                .WithProjectCompilationOptions(projectId, options);
+                .WithProjectCompilationOptions(projectId, options)
+                .GetProject(projectId);
+
+            // Enable IOperation Feature on the project
+            var parseOptions = project.ParseOptions.WithFeatures(project.ParseOptions.Features.Concat(SpecializedCollections.SingletonEnumerable(KeyValuePair.Create("IOperation", "true"))));
+            project = project.WithParseOptions(parseOptions);
 
             if (addLanguageSpecificCodeAnalysisReference)
             {
-                MetadataReference symbolsReference = language == LanguageNames.CSharp ? s_CSharpSymbolsReference : s_visualBasicSymbolsReference;
-                Project project = solution.GetProject(projectId);
+                MetadataReference symbolsReference = language == LanguageNames.CSharp ? s_csharpSymbolsReference : s_visualBasicSymbolsReference;
                 project = project.AddMetadataReference(symbolsReference);
-                solution = project.Solution;
+            }
+
+            if (language == LanguageNames.VisualBasic)
+            {
+                project = project.AddMetadataReference(s_visualBasicReference);
             }
 
             int count = 0;
@@ -387,10 +397,10 @@ namespace Microsoft.CodeAnalysis.UnitTests
             {
                 string newFileName = source.FilePath ?? fileNamePrefix + count++ + "." + fileExt;
                 DocumentId documentId = DocumentId.CreateNewId(projectId, debugName: newFileName);
-                solution = solution.AddDocument(documentId, newFileName, SourceText.From(source.Source));
+                project = project.AddDocument(newFileName, SourceText.From(source.Source)).Project;
             }
 
-            return solution.GetProject(projectId);
+            return project;
         }
 
         protected static Diagnostic[] GetSortedDiagnostics(DiagnosticAnalyzer analyzer, Document document, TextSpan?[] spans = null)

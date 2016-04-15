@@ -128,13 +128,6 @@ End Class");
         }
 
         [Fact]
-        public void CA1812_CSharp_NoDiagnostic_ForInternalStaticClass()
-        {
-            VerifyCSharp(@"
-internal static class S { }");
-        }
-
-        [Fact]
         public void CA1812_Basic_NoDiagnostic_InternalModule()
         {
             // No static classes in VB.
@@ -262,29 +255,6 @@ End Class");
         Return 1
     End Sub
 End Class");
-        }
-
-        [Fact]
-        public void CA1812_CSharp_Diagnostic_MainMethodWithWrongReturnType()
-        {
-            VerifyCSharp(
-@"internal class C
-{
-    private static string Main() { return ""; }
-}",
-                GetCSharpResultAt(1, 16, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
-        }
-
-        [Fact]
-        public void CA1812_Basic_Diagnostic_MainMethodWithWrongReturnType()
-        {
-            VerifyBasic(
-@"Friend Class C
-    Private Shared Function Main() As String
-        Return ""
-    End Sub
-End Class",
-                GetBasicResultAt(1, 14, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
         }
 
         [Fact]
@@ -590,10 +560,6 @@ End Class");
     } 
 }",
                 GetCSharpResultAt(
-                    1, 16,
-                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
-                    "C"),
-                GetCSharpResultAt(
                     3, 20,
                     AvoidUninstantiatedInternalClassesAnalyzer.Rule,
                     "C.C2"));
@@ -607,10 +573,6 @@ End Class");
     Friend Class C2
     End Class
 End Class",
-                GetBasicResultAt(
-                    1, 14,
-                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
-                    "C"),
                 GetBasicResultAt(
                     2, 18,
                     AvoidUninstantiatedInternalClassesAnalyzer.Rule,
@@ -648,6 +610,40 @@ End Class",
                     1, 14,
                     AvoidUninstantiatedInternalClassesAnalyzer.Rule,
                     "C"));
+        }
+
+        [Fact]
+        public void CA1812_CSharp_NoDiagnostic_StaticHolderClass()
+        {
+            VerifyCSharp(
+@"internal static class C
+{
+    internal static void F() { }
+}");
+        }
+
+        [Fact]
+        public void CA1812_Basic_NoDiagnostic_StaticHolderClass()
+        {
+            VerifyCSharp(
+@"Friend Shared Class C
+    Friend Shared Sub F()
+    End Sub
+End Class");
+        }
+
+        [Fact]
+        public void CA1812_CSharp_Diagnostic_EmptyInternalStaticClass()
+        {
+            // Note that this is not considered a "static holder class"
+            // because it doesn't actually have any static members.
+            VerifyCSharp(
+@"internal static class S { }",
+
+                GetCSharpResultAt(
+                    1, 23,
+                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
+                    "S"));
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

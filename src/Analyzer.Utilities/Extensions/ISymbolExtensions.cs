@@ -24,9 +24,19 @@ namespace Analyzer.Utilities
                 accessorSymbol.MethodKind == MethodKind.EventRemove || accessorSymbol.MethodKind == MethodKind.EventAdd);
         }
 
+        public static bool IsDefaultConstructor(this ISymbol symbol)
+        {
+            return symbol.IsConstructor() && symbol.GetParameters().Length == 0;
+        }
+
         public static bool IsPublic(this ISymbol symbol)
         {
             return symbol.DeclaredAccessibility == Accessibility.Public;
+        }
+
+        public static bool IsProtected(this ISymbol symbol)
+        {
+            return symbol.DeclaredAccessibility == Accessibility.Protected;
         }
 
         public static bool IsErrorType(this ISymbol symbol)

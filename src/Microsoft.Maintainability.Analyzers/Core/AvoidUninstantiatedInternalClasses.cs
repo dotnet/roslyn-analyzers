@@ -101,7 +101,7 @@ namespace Microsoft.Maintainability.Analyzers
 
         public static bool IsOkToBeUnused(INamedTypeSymbol type, Compilation compilation)
         {
-            if (type.TypeKind != TypeKind.Class || type.IsStatic || type.IsAbstract)
+            if (type.TypeKind != TypeKind.Class || type.IsAbstract)
             {
                 return true;
             }
@@ -149,6 +149,11 @@ namespace Microsoft.Maintainability.Analyzers
 
             INamedTypeSymbol traceListener = compilation.GetTypeByMetadataName("System.Diagnostics.TraceListener");
             if (type.Inherits(traceListener))
+            {
+                return true;
+            }
+
+            if (type.IsStaticHolderType())
             {
                 return true;
             }

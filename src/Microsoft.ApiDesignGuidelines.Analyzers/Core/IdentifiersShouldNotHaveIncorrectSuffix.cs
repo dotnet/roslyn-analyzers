@@ -201,23 +201,31 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             analysisContext.RegisterSymbolAction(
                 (SymbolAnalysisContext context) =>
                 {
-                    var methodSymbol = (IMethodSymbol)context.Symbol;
-                    if (methodSymbol.GetResultantVisibility() != SymbolVisibility.Public)
+                    var memberSymbol = context.Symbol;
+                    if (memberSymbol.GetResultantVisibility() != SymbolVisibility.Public)
                     {
                         return;
                     }
 
-                    if (methodSymbol.IsOverride || methodSymbol.IsImplementationOfAnyInterfaceMember())
+                    if (memberSymbol.IsOverride || memberSymbol.IsImplementationOfAnyInterfaceMember())
                     {
                         return;
                     }
 
-                    string name = methodSymbol.Name;
+                    // If this is a method, and it's actually the getter or setter of a property,
+                    // then don't complain. We'll complain about the property itself.
+                    var methodSymbol = memberSymbol as IMethodSymbol;
+                    if (methodSymbol != null && methodSymbol.IsPropertyAccessor())
+                    {
+                        return;
+                    }
+
+                    string name = memberSymbol.Name;
 
                     if (name.HasSuffix(ExSuffix))
                     {
                         context.ReportDiagnostic(
-                            methodSymbol.CreateDiagnostic(MemberNewerVersionRule, ExSuffix, name));
+                            memberSymbol.CreateDiagnostic(MemberNewerVersionRule, ExSuffix, name));
                         return;
                     }
 
@@ -228,12 +236,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     if (name.HasSuffix(NewSuffix))
                     {
                         string nameWithoutSuffix = name.WithoutSuffix(NewSuffix);
-                        INamedTypeSymbol containingType = methodSymbol.ContainingType;
+                        INamedTypeSymbol containingType = memberSymbol.ContainingType;
 
-                        if (MethodNameExistsInHierarchy(nameWithoutSuffix, containingType))
+                        if (MemberNameExistsInHierarchy(nameWithoutSuffix, containingType, memberSymbol.Kind))
                         {
                             context.ReportDiagnostic(
-                                methodSymbol.CreateDiagnostic(MemberNewerVersionRule, NewSuffix, name));
+                                memberSymbol.CreateDiagnostic(MemberNewerVersionRule, NewSuffix, name));
                             return;
                         }
                     }
@@ -241,16 +249,16 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     if (name.HasSuffix(ImplSuffix))
                     {
                         context.ReportDiagnostic(
-                            methodSymbol.CreateDiagnostic(MemberWithAlternateRule, ImplSuffix, name, CoreSuffix));
+                            memberSymbol.CreateDiagnostic(MemberWithAlternateRule, ImplSuffix, name, CoreSuffix));
                     }
-                }, SymbolKind.Method);
+                }, SymbolKind.Event, SymbolKind.Field, SymbolKind.Method, SymbolKind.Property);
         }
 
-        private bool MethodNameExistsInHierarchy(string methodName, INamedTypeSymbol containingType)
+        private bool MemberNameExistsInHierarchy(string memberName, INamedTypeSymbol containingType, SymbolKind kind)
         {
             for (INamedTypeSymbol baseType = containingType; baseType != null; baseType = baseType.BaseType)
             {
-                if (baseType.GetMembers(methodName).Any(member => member.Kind == SymbolKind.Method))
+                if (baseType.GetMembers(memberName).Any(member => member.Kind == kind))
                 {
                     return true;
                 }

@@ -1538,7 +1538,7 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_MethodNameEndingWithNewImplementsInterfaceMethod()
+        public void CA1711_CSharp_NoDiagnostic_MethodNameEndingWithNewImplementsInterfaceMethod()
         {
             VerifyCSharp(
 @"public interface MyBaseInterface
@@ -1557,7 +1557,7 @@ public class MyClass : MyDerivedInterface
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_MethodNameEndsWithNewAndMethodNameWithoutNewExistsInImplementedInterface()
+        public void CA1711_Basic_NoDiagnostic_MethodNameEndsWithNewAndMethodNameWithoutNewExistsInImplementedInterface()
         {
             VerifyBasic(
 @"Public Interface MyBaseInterface
@@ -1751,6 +1751,101 @@ End Class",
                     IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.MemberNewerVersionRule,
                     IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.ExSuffix,
                     "MyMethodEx"));
+        }
+
+        [Fact]
+        public void CA1711_CSharp_Diagnostic_EventNameEndsWithEx()
+        {
+            VerifyCSharp(
+@"public class MyClass
+{
+    public delegate void EventCallback(object sender, EventArgs e);
+    public event EventCallback MyEventEx;
+}",
+                GetCSharpResultAt(
+                    4, 32,
+                    IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.MemberNewerVersionRule,
+                    IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.ExSuffix,
+                    "MyEventEx"));
+        }
+
+        [Fact]
+        public void CA1711_Basic_Diagnostic_EventNameEndsWithEx()
+        {
+            VerifyBasic(
+@"Public Class MyClass
+    Public Delegate Sub EventCallback(sender As Object, e As EventArgs)
+    Public Event MyEventEx As EventCallback
+End Class",
+                GetBasicResultAt(
+                    3, 18,
+                    IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.MemberNewerVersionRule,
+                    IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.ExSuffix,
+                    "MyEventEx"));
+        }
+
+        [Fact]
+        public void CA1711_CSharp_Diagnostic_PropertyNameEndsWithEx()
+        {
+            VerifyCSharp(
+@"public class MyClass
+{
+    public int MyPropertyEx { get; set; }
+}",
+                GetCSharpResultAt(
+                    3, 16,
+                    IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.MemberNewerVersionRule,
+                    IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.ExSuffix,
+                    "MyPropertyEx"));
+        }
+
+        [Fact]
+        public void CA1711_Basic_Diagnostic_PropertyNameEndsWithEx()
+        {
+            VerifyBasic(
+@"Public Class MyClass
+    Public Property MyPropertyEx As Integer
+        Get
+            Return 0
+        End Get
+        Set(value As Integer)
+        End Set
+    End Property
+End Class",
+                GetBasicResultAt(
+                    2, 21,
+                    IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.MemberNewerVersionRule,
+                    IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.ExSuffix,
+                    "MyPropertyEx"));
+        }
+
+        [Fact]
+        public void CA1711_CSharp_Diagnostic_FieldNameEndsWithEx()
+        {
+            VerifyCSharp(
+@"public class MyClass
+{
+    public int MyFieldEx;
+}",
+                GetCSharpResultAt(
+                    3, 16,
+                    IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.MemberNewerVersionRule,
+                    IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.ExSuffix,
+                    "MyFieldEx"));
+        }
+
+        [Fact]
+        public void CA1711_Basic_Diagnostic_FieldNameEndsWithEx()
+        {
+            VerifyBasic(
+@"Public Class MyClass
+    Public MyFieldEx As Integer
+End Class",
+                GetBasicResultAt(
+                    2, 12,
+                    IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.MemberNewerVersionRule,
+                    IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.ExSuffix,
+                    "MyFieldEx"));
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

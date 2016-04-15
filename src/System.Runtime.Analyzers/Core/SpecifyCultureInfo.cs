@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Semantics;
@@ -46,7 +47,7 @@ namespace System.Runtime.Analyzers
                     {
                         var invocationExpression = (IInvocationExpression)oaContext.Operation;
                         var targetMethod = invocationExpression.TargetMethod;
-                        if (targetMethod.ContainingType == null)
+                        if (targetMethod.ContainingType == null || targetMethod.ContainingType.IsErrorType() || targetMethod.IsGenericMethod)
                         {
                             return;
                         }
@@ -57,40 +58,7 @@ namespace System.Runtime.Analyzers
                             return;
                         }
 
-                        var correctOverloads = methodsWithSameNameAsTargetMethod.Where(candidateMethod =>
-                        {
-                            if (targetMethod.Parameters.Count() + 1 != candidateMethod.Parameters.Count())
-                            {
-                                return false;
-                            }
-
-                            // The expected method overload should either have the CultureInfo parameter as the first argument or as the last argument
-                            // Assume CultureInfo is the last parameter so j, which is the index of the parameter
-                            // in candidateMethod to compare against targetMethod's parameter is set to 0
-                            int j = 0;
-
-                            if (candidateMethod.Parameters.First().Type.Equals(cultureInfoType))
-                            {
-                                // If CultureInfo is the first parameter then the parameters to compare in candidateMethod against targetMethod
-                                // is offset by 1
-                                j = 1;
-                            }
-                            else if (!candidateMethod.Parameters.Last().Type.Equals(cultureInfoType))
-                            {
-                                // CultureInfo is neither the first parameter nor the last parameter
-                                return false;
-                            }
-
-                            for (int i = 0; i < targetMethod.Parameters.Count(); i++, j++)
-                            {
-                                if (!targetMethod.Parameters[i].Type.Equals(candidateMethod.Parameters[j].Type))
-                                {
-                                    return false;
-                                }
-                            }
-
-                            return true;
-                        });
+                        var correctOverloads = methodsWithSameNameAsTargetMethod.GetMethodOverloadsWithDesiredParameterAtLeadingOrTrailing(targetMethod, cultureInfoType);
 
                         // If there are two matching overloads, one with CultureInfo as the first parameter and one with CultureInfo as the last parameter,
                         // report the diagnostic on the overload with CultureInfo as the last parameter, to match the behavior of FxCop.
@@ -103,9 +71,9 @@ namespace System.Runtime.Analyzers
                             oaContext.ReportDiagnostic(
                                 invocationExpression.Syntax.CreateDiagnostic(
                                     Rule,
-                                    targetMethod.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
-                                    oaContext.ContainingSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
-                                    correctOverload.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
+                                    targetMethod.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                                    oaContext.ContainingSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                                    correctOverload.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
                         }
                     }, OperationKind.InvocationExpression);
                 }

@@ -9,24 +9,56 @@
    <PropertyGroup>
       <CodeAnalysisRuleSetOverrides>
         $(CodeAnalysisRuleSetOverrides);
+        -Microsoft.Design#CA1000;
         -Microsoft.Design#CA1008;
+        -Microsoft.Design#CA1010;
         -Microsoft.Design#CA1012;
+        -Microsoft.Design#CA1014;
+        -Microsoft.Design#CA1016;
         -Microsoft.Design#CA1017;
         -Microsoft.Design#CA1018;
         -Microsoft.Design#CA1024;
         -Microsoft.Design#CA1027;
+        -Microsoft.Design#CA1028;
         -Microsoft.Design#CA1030;
+        -Microsoft.Design#CA1033;
+        -Microsoft.Design#CA1034;
         -Microsoft.Design#CA1036;
-        -Microsoft.Design#CA1060;
+        -Microsoft.Design#CA1041;
+        -Microsoft.Design#CA1043;
+        -Microsoft.Design#CA1050;
+        -Microsoft.Design#CA1051;
+        -Microsoft.Design#CA1052;
         -Microsoft.Design#CA1054;
         -Microsoft.Design#CA1055;
         -Microsoft.Design#CA1056;
+        -Microsoft.Design#CA1060;
+        -Microsoft.Design#CA1063;
+        -Microsoft.Design#CA1064;
+        -Microsoft.Design#CA1065;
 
+        -Microsoft.Naming#CA1707;
+        -Microsoft.Naming#CA1708;
+        -Microsoft.Naming#CA1710;
+        -Microsoft.Naming#CA1714;
+        -Microsoft.Naming#CA1715;
+        -Microsoft.Naming#CA1716;
+        -Microsoft.Naming#CA1717;
         -Microsoft.Naming#CA1720;
+        -Microsoft.Naming#CA1721;
+        -Microsoft.Naming#CA1724;
+        -Microsoft.Naming#CA1725;
 
+        -Microsoft.Performance#CA1815;
+        -Microsoft.Performance#CA1819;
+
+        -Microsoft.Usage#CA2211;
+        -Microsoft.Usage#CA2217;
+        -Microsoft.Usage#CA2222;
+        -Microsoft.Usage#CA2225;
+        -Microsoft.Usage#CA2226;
         -Microsoft.Usage#CA2227;
         -Microsoft.Usage#CA2231;
-        -Microsoft.Usage#CA2217;
       </CodeAnalysisRuleSetOverrides>
    </PropertyGroup>
 </Project>

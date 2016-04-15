@@ -78,13 +78,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return document;
             }
 
-            var newMethod = CreateNewMethod(generator, methodSymbol, parameterIndex);
+            var newMethod = CreateNewMethod(generator, methodSymbol, parameterIndex, editor.SemanticModel.Compilation);
             editor.AddMember(targetNode, newMethod);
 
             return editor.GetChangedDocument();
         }
 
-        private static SyntaxNode CreateNewMethod(SyntaxGenerator generator, IMethodSymbol methodSymbol, int parameterIndex)
+        private static SyntaxNode CreateNewMethod(
+            SyntaxGenerator generator, IMethodSymbol methodSymbol, int parameterIndex, Compilation compilation)
         {
             // create original parameter decl
             var originalParameter = generator.ParameterDeclaration(methodSymbol.Parameters[parameterIndex]);
@@ -93,7 +94,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             var newParameter = generator.ReplaceNode(originalParameter, generator.GetType(originalParameter), generator.DottedName("System.Uri"));
 
             // create original method decl
-            var original = generator.MethodDeclaration(methodSymbol, generator.DefaultMethodBody());
+            var original = generator.MethodDeclaration(methodSymbol, generator.DefaultMethodBody(compilation));
 
             // get parameters from original method decl
             var originalParameters = generator.GetParameters(original);

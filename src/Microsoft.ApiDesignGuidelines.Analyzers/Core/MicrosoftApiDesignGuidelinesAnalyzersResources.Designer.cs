@@ -855,6 +855,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Generate missing operators.
+        /// </summary>
+        internal static string Generate_missing_operators {
+            get {
+                return ResourceManager.GetString("Generate_missing_operators", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Identifiers for namespaces, types, members, and parameters cannot differ only by case because languages that target the common language runtime are not required to be case-sensitive..
         /// </summary>
         internal static string IdentifiersShouldDifferByMoreThanCaseDescription {
@@ -2017,7 +2026,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Parameter names should match base declaration.
+        ///   Looks up a localized string similar to In member {0}, change parameter name {1} to {2} in order to match the identifier as it has been declared in {3}..
         /// </summary>
         internal static string ParameterNamesShouldMatchBaseDeclarationMessage {
             get {
@@ -2202,6 +2211,24 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         internal static string ProvideObsoleteAttributeMessageTitle {
             get {
                 return ResourceManager.GetString("ProvideObsoleteAttributeMessageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename to &apos;{0}&apos;.
+        /// </summary>
+        internal static string RenameToTitle {
+            get {
+                return ResourceManager.GetString("RenameToTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Since &apos;{0}&apos; redefines operator &apos;{1}&apos;, it should also redefine operator &apos;{2}&apos;.
+        /// </summary>
+        internal static string Since_0_redefines_operator_1_it_should_also_redefine_operator_2 {
+            get {
+                return ResourceManager.GetString("Since_0_redefines_operator_1_it_should_also_redefine_operator_2", resourceCulture);
             }
         }
         

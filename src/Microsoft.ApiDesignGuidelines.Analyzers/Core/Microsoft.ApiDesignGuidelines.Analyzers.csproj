@@ -175,13 +175,11 @@
     <Compile Include="AvoidEmptyInterfaces.cs" />
     <Compile Include="AvoidEmptyInterfaces.Fixer.cs" />
     <Compile Include="ProvideObsoleteAttributeMessage.cs" />
-    <Compile Include="ProvideObsoleteAttributeMessage.Fixer.cs" />
     <Compile Include="PropertiesShouldNotBeWriteOnly.cs" />
     <Compile Include="PropertiesShouldNotBeWriteOnly.Fixer.cs" />
     <Compile Include="DeclareTypesInNamespaces.cs" />
     <Compile Include="DeclareTypesInNamespaces.Fixer.cs" />
     <Compile Include="DoNotDeclareVisibleInstanceFields.cs" />
-    <Compile Include="DoNotDeclareVisibleInstanceFields.Fixer.cs" />
     <Compile Include="UriParametersShouldNotBeStrings.cs" />
     <Compile Include="UriParametersShouldNotBeStrings.Fixer.cs" />
     <Compile Include="UriReturnValuesShouldNotBeStrings.cs" />
@@ -212,8 +210,6 @@
     <Compile Include="OverrideEqualsAndOperatorEqualsOnValueTypes.cs" />
     <Compile Include="OverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.cs" />
     <Compile Include="PropertiesShouldNotReturnArrays.cs" />
-    <Compile Include="AssembliesShouldHaveValidStrongNames.cs" />
-    <Compile Include="AssembliesShouldHaveValidStrongNames.Fixer.cs" />
     <Compile Include="OverrideGetHashCodeOnOverridingEquals.Fixer.cs" />
     <Compile Include="OverrideEqualsOnOverloadingOperatorEquals.Fixer.cs" />
   </ItemGroup>

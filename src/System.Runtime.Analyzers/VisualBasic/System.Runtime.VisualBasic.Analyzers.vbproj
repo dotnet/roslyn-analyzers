@@ -110,8 +110,6 @@
     <Compile Include="BasicDisposeMethodsShouldCallBaseClassDispose.vb" />
     <Compile Include="BasicDisposeMethodsShouldCallBaseClassDispose.Fixer.vb" />
     <Compile Include="BasicDisposableTypesShouldDeclareFinalizer.Fixer.vb" />
-    <Compile Include="BasicFinalizersShouldCallBaseClassFinalizer.vb" />
-    <Compile Include="BasicFinalizersShouldCallBaseClassFinalizer.Fixer.vb" />
     <Compile Include="BasicTestForNaNCorrectly.Fixer.vb" />
     <Compile Include="BasicAttributeStringLiteralsShouldParseCorrectly.vb" />
     <Compile Include="BasicAttributeStringLiteralsShouldParseCorrectly.Fixer.vb" />
@@ -119,9 +117,7 @@
     <Compile Include="BasicDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.vb" />
     <Compile Include="BasicDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.Fixer.vb" />
     <Compile Include="BasicSpecifyCultureInfo.Fixer.vb" />
-    <Compile Include="BasicSpecifyIFormatProvider.vb" />
     <Compile Include="BasicSpecifyIFormatProvider.Fixer.vb" />
-    <Compile Include="BasicSpecifyStringComparison.vb" />
     <Compile Include="BasicSpecifyStringComparison.Fixer.vb" />
     <Compile Include="BasicNormalizeStringsToUppercase.Fixer.vb" />
     <Compile Include="BasicCallGCSuppressFinalizeCorrectly.vb" />

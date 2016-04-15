@@ -44,7 +44,9 @@
     <Compile Include="DiagnosticHelpers.cs" />
     <Compile Include="DocumentChangeAction.cs" />
     <Compile Include="Extensions\DiagnosticExtensions.cs" />
+    <Compile Include="Extensions\IDictionaryExtensions.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
+    <Compile Include="Extensions\IEnumerableOfIMethodSymbolExtensions.cs" />
     <Compile Include="Extensions\IMethodSymbolExtensions.cs" />
     <Compile Include="Extensions\INamedTypeSymbolExtensions.cs" />
     <Compile Include="Extensions\ISymbolExtensions.cs" />

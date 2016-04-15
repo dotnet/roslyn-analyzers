@@ -126,21 +126,14 @@
     <Compile Include="CSharpUsePropertiesWhereAppropriate.Fixer.cs" />
     <Compile Include="CSharpMovePInvokesToNativeMethodsClass.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldHaveCorrectPrefix.Fixer.cs" />
-    <Compile Include="CSharpNonConstantFieldsShouldNotBeVisible.cs" />
-    <Compile Include="CSharpNonConstantFieldsShouldNotBeVisible.Fixer.cs" />
-    <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.cs" />
-    <Compile Include="CSharpOperatorsShouldHaveSymmetricalOverloads.Fixer.cs" />
     <Compile Include="CSharpCollectionsShouldImplementGenericInterface.Fixer.cs" />
     <Compile Include="CSharpUseEventsWhereAppropriate.Fixer.cs" />
     <Compile Include="CSharpImplementStandardExceptionConstructors.cs" />
     <Compile Include="CSharpAvoidEmptyInterfaces.cs" />
     <Compile Include="CSharpAvoidEmptyInterfaces.Fixer.cs" />
-    <Compile Include="CSharpProvideObsoleteAttributeMessage.Fixer.cs" />
     <Compile Include="CSharpPropertiesShouldNotBeWriteOnly.cs" />
     <Compile Include="CSharpPropertiesShouldNotBeWriteOnly.Fixer.cs" />
     <Compile Include="CSharpDeclareTypesInNamespaces.Fixer.cs" />
-    <Compile Include="CSharpDoNotDeclareVisibleInstanceFields.cs" />
-    <Compile Include="CSharpDoNotDeclareVisibleInstanceFields.Fixer.cs" />
     <Compile Include="CSharpImplementIDisposableCorrectly.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldNotContainUnderscores.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldHaveCorrectSuffix.Fixer.cs" />
@@ -150,13 +143,9 @@
     <Compile Include="CSharpIdentifiersShouldNotMatchKeywords.Fixer.cs" />
     <Compile Include="CSharpPropertyNamesShouldNotMatchGetMethods.Fixer.cs" />
     <Compile Include="CSharpTypeNamesShouldNotMatchNamespaces.Fixer.cs" />
-    <Compile Include="CSharpParameterNamesShouldMatchBaseDeclaration.cs" />
-    <Compile Include="CSharpParameterNamesShouldMatchBaseDeclaration.Fixer.cs" />
     <Compile Include="CSharpUsePreferredTerms.cs" />
     <Compile Include="CSharpUsePreferredTerms.Fixer.cs" />
     <Compile Include="CSharpOverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.cs" />
-    <Compile Include="CSharpAssembliesShouldHaveValidStrongNames.cs" />
-    <Compile Include="CSharpAssembliesShouldHaveValidStrongNames.Fixer.cs" />
     <Compile Include="CSharpOverrideGetHashCodeOnOverridingEquals.Fixer.cs" />
     <Compile Include="CSharpOverrideEqualsOnOverloadingOperatorEquals.Fixer.cs" />
   </ItemGroup>

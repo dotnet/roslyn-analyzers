@@ -46,8 +46,6 @@
     <Compile Include="BasicDisposeObjectsBeforeLosingScope.Fixer.vb" />
     <Compile Include="BasicReviewVisibleEventHandlers.vb" />
     <Compile Include="BasicReviewVisibleEventHandlers.Fixer.vb" />
-    <Compile Include="BasicSealMethodsThatSatisfyPrivateInterfaces.vb" />
-    <Compile Include="BasicSealMethodsThatSatisfyPrivateInterfaces.Fixer.vb" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

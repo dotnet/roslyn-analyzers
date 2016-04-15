@@ -162,6 +162,33 @@ namespace Microsoft.QualityGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Make declaring type internal..
+        /// </summary>
+        internal static string MakeDeclaringTypeInternal {
+            get {
+                return ResourceManager.GetString("MakeDeclaringTypeInternal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make declaring type sealed..
+        /// </summary>
+        internal static string MakeDeclaringTypeSealed {
+            get {
+                return ResourceManager.GetString("MakeDeclaringTypeSealed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make member not overridable..
+        /// </summary>
+        internal static string MakeMemberNotOverridable {
+            get {
+                return ResourceManager.GetString("MakeMemberNotOverridable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Members that do not access instance data or call instance methods can be marked as static (Shared in Visual Basic). After you mark the methods as static, the compiler will emit nonvirtual call sites to these members. This can give you a measurable performance gain for performance-sensitive code..
         /// </summary>
         internal static string MarkMembersAsStaticDescription {

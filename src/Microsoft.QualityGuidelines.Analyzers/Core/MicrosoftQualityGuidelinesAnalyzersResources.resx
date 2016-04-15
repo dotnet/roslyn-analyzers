@@ -210,6 +210,15 @@
   <data name="RethrowToPreserveStackDetailsTitle" xml:space="preserve">
     <value>Rethrow to preserve stack details.</value>
   </data>
+  <data name="MakeDeclaringTypeInternal" xml:space="preserve">
+    <value>Make declaring type internal.</value>
+  </data>
+  <data name="MakeDeclaringTypeSealed" xml:space="preserve">
+    <value>Make declaring type sealed.</value>
+  </data>
+  <data name="MakeMemberNotOverridable" xml:space="preserve">
+    <value>Make member not overridable.</value>
+  </data>
   <data name="DoNotRaiseExceptionsInExceptionClausesDescription" xml:space="preserve">
     <value>When an exception is raised in a finally clause, the new exception hides the active exception. This makes the original error difficult to detect and debug.</value>
   </data>

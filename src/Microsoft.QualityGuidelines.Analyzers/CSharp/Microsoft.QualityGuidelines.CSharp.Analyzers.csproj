@@ -49,8 +49,6 @@
     <Compile Include="CSharpDisposeObjectsBeforeLosingScope.Fixer.cs" />
     <Compile Include="CSharpReviewVisibleEventHandlers.cs" />
     <Compile Include="CSharpReviewVisibleEventHandlers.Fixer.cs" />
-    <Compile Include="CSharpSealMethodsThatSatisfyPrivateInterfaces.cs" />
-    <Compile Include="CSharpSealMethodsThatSatisfyPrivateInterfaces.Fixer.cs" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

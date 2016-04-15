@@ -423,7 +423,7 @@ End Class");
 @"using System.Configuration;
 using System.Xml;
 
-public class C : IConfigurationSectionHandler
+internal class C : IConfigurationSectionHandler
 {
     public object Create(object parent, object configContext, XmlNode section)
     {
@@ -431,6 +431,43 @@ public class C : IConfigurationSectionHandler
     }
 }");
          }
+
+        [Fact]
+        public void CA1812_Basic_NoDiagnostic_ImplementsIConfigurationSectionHandler()
+        {
+            VerifyBasic(
+@"Imports System.Configuration
+Imports System.Xml
+
+Friend Class C
+    Implements IConfigurationSectionHandler
+    Private Function IConfigurationSectionHandler_Create(parent As Object, configContext As Object, section As XmlNode) As Object Implements IConfigurationSectionHandler.Create
+        Return Nothing
+    End Function
+End Class");
+        }
+
+        [Fact]
+        public void CA1812_CSharp_NoDiagnostic_DerivesFromConfigurationSection()
+        {
+            VerifyCSharp(
+@"using System.Configuration;
+
+internal class C : ConfigurationSection
+{
+}");
+        }
+
+        [Fact]
+        public void CA1812_Basic_NoDiagnostic_DerivesFromConfigurationSection()
+        {
+            VerifyBasic(
+@"Imports System.Configuration
+
+Friend Class C
+    Inherits ConfigurationSection
+End Class");
+        }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {

@@ -81,7 +81,6 @@ namespace Analyzer.Utilities
 
         public static bool IsOkToBeUnused(this INamedTypeSymbol symbol, Compilation compilation)
         {
-
             if (symbol.TypeKind != TypeKind.Class || symbol.IsStatic || symbol.IsAbstract)
             {
                 return true;
@@ -109,7 +108,14 @@ namespace Analyzer.Utilities
             // Types implementing the (deprecated) IConfigurationSectionHandler interface
             // are OK because they are instantiated by the configuration system.
             INamedTypeSymbol iConfigurationSectionHandlerSymbol = compilation.GetTypeByMetadataName("System.Configuration.IConfigurationSectionHandler");
-            if (symbol.AllInterfaces.Any(i => i.Equals(iConfigurationSectionHandlerSymbol)))
+            if (symbol.Inherits(iConfigurationSectionHandlerSymbol))
+            {
+                return true;
+            }
+
+            // Likewise for types derived from ConfigurationSection.
+            INamedTypeSymbol configurationSection = compilation.GetTypeByMetadataName("System.Configuration.ConfigurationSection");
+            if (symbol.Inherits(configurationSection))
             {
                 return true;
             }

@@ -547,6 +547,109 @@ Friend Class MyTraceListener
 End Class");
         }
 
+        [Fact]
+        public void CA1812_CSharp_NoDiagnostic_InternalNestedTypeIsInstantiated()
+        {
+            VerifyCSharp(
+@"internal class C
+{
+    internal class C2
+    {
+    } 
+}
+
+public class D
+{
+    private readonly C.C2 _c2 = new C.C2();
+}
+");
+        }
+
+        [Fact]
+        public void CA1812_Basic_NoDiagnostic_InternalNestedTypeIsInstantiated()
+        {
+            VerifyBasic(
+@"Friend Class C
+    Friend Class C2
+    End Class
+End Class
+
+Public Class D
+    Private _c2 As new C.C2
+End Class");
+        }
+
+        [Fact]
+        public void CA1812_CSharp_Diagnostic_InternalNestedTypeIsNotInstantiated()
+        {
+            VerifyCSharp(
+@"internal class C
+{
+    internal class C2
+    {
+    } 
+}",
+                GetCSharpResultAt(
+                    1, 16,
+                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
+                    "C"),
+                GetCSharpResultAt(
+                    3, 20,
+                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
+                    "C.C2"));
+        }
+
+        [Fact]
+        public void CA1812_Basic_Diagnostic_InternalNestedTypeIsNotInstantiated()
+        {
+            VerifyBasic(
+@"Friend Class C
+    Friend Class C2
+    End Class
+End Class",
+                GetBasicResultAt(
+                    1, 14,
+                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
+                    "C"),
+                GetBasicResultAt(
+                    2, 18,
+                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
+                    "C.C2"));
+        }
+
+        [Fact]
+        public void CA1812_CSharp_Diagnostic_PrivateNestedTypeIsInstantiated()
+        {
+            VerifyCSharp(
+@"internal class C
+{
+    private readonly C2 _c2 = new C2();
+    private class C2
+    {
+    } 
+}",
+                GetCSharpResultAt(
+                    1, 16,
+                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
+                    "C"));
+        }
+
+        [Fact]
+        public void CA1812_Basic_Diagnostic_PrivateNestedTypeIsInstantiated()
+        {
+            VerifyBasic(
+@"Friend Class C
+    Private _c2 As New C2
+    
+    Private Class C2
+    End Class
+End Class",
+                GetBasicResultAt(
+                    1, 14,
+                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
+                    "C"));
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new AvoidUninstantiatedInternalClassesAnalyzer();

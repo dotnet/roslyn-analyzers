@@ -10,12 +10,12 @@ namespace System.Runtime.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicAttributeStringLiteralsShouldParseCorrectlyAnalyzer();
+            return new AttributeStringLiteralsShouldParseCorrectlyAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpAttributeStringLiteralsShouldParseCorrectlyAnalyzer();
+            return new AttributeStringLiteralsShouldParseCorrectlyAnalyzer();
         }
 
         [Fact]

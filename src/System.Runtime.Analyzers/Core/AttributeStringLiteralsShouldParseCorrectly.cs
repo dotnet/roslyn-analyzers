@@ -13,7 +13,7 @@ namespace System.Runtime.Analyzers
     /// <summary>
     /// CA2243: Attribute string literals should parse correctly
     /// </summary>
-    public abstract class AttributeStringLiteralsShouldParseCorrectlyAnalyzer : DiagnosticAnalyzer
+    public sealed class AttributeStringLiteralsShouldParseCorrectlyAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2243";
 

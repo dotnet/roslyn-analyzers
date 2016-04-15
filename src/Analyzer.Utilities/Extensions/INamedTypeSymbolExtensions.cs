@@ -79,19 +79,8 @@ namespace Analyzer.Utilities
                 .Any(m => m.IsFinalizer());
         }
 
-        private static bool s_firstCallToIsUnused = true;
-        private static INamedTypeSymbol s_attributeSymbol;
-        private static INamedTypeSymbol s_mef1ExportAttributeSymbol;
-        private static INamedTypeSymbol s_mef2ExportAttributeSymbol;
-
         public static bool IsOkToBeUnused(this INamedTypeSymbol symbol, Compilation compilation)
         {
-            if (s_firstCallToIsUnused)
-            {
-                s_attributeSymbol = compilation.GetTypeByMetadataName("System.Attribute");
-                s_mef1ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.ComponentModel.Composition.ExportAttribute");
-                s_mef2ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.Composition.ExportAttribute");
-            }
 
             if (symbol.TypeKind != TypeKind.Class || symbol.IsStatic || symbol.IsAbstract)
             {
@@ -99,7 +88,8 @@ namespace Analyzer.Utilities
             }
 
             // Attributes are not instantiated in IL but are created by reflection.
-            if (symbol.Inherits(s_attributeSymbol))
+            INamedTypeSymbol attributeSymbol = compilation.GetTypeByMetadataName("System.Attribute");
+            if (symbol.Inherits(attributeSymbol))
             {
                 return true;
             }
@@ -111,7 +101,15 @@ namespace Analyzer.Utilities
             }
 
             // MEF exported classes are instantiated by MEF, by reflection.
-            if (symbol.IsMefExported())
+            if (symbol.IsMefExported(compilation))
+            {
+                return true;
+            }
+
+            // Types implementing the (deprecated) IConfigurationSectionHandler interface
+            // are OK because they are instantiated by the configuration system.
+            INamedTypeSymbol iConfigurationSectionHandlerSymbol = compilation.GetTypeByMetadataName("System.Configuration.IConfigurationSectionHandler");
+            if (symbol.AllInterfaces.Any(i => i.Equals(iConfigurationSectionHandlerSymbol)))
             {
                 return true;
             }
@@ -119,10 +117,13 @@ namespace Analyzer.Utilities
             return false;
         }
 
-        public static bool IsMefExported(this INamedTypeSymbol symbol)
+        public static bool IsMefExported(this INamedTypeSymbol symbol, Compilation compilation)
         {
-            return (s_mef1ExportAttributeSymbol != null && symbol.HasAttribute(s_mef1ExportAttributeSymbol))
-                || (s_mef2ExportAttributeSymbol != null && symbol.HasAttribute(s_mef2ExportAttributeSymbol));
+            INamedTypeSymbol mef1ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.ComponentModel.Composition.ExportAttribute");
+            INamedTypeSymbol mef2ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.Composition.ExportAttribute");
+
+            return (mef1ExportAttributeSymbol != null && symbol.HasAttribute(mef1ExportAttributeSymbol))
+                || (mef2ExportAttributeSymbol != null && symbol.HasAttribute(mef2ExportAttributeSymbol));
         }
 
         public static bool HasAttribute(this INamedTypeSymbol symbol, INamedTypeSymbol attribute)

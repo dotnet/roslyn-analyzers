@@ -416,6 +416,22 @@ Friend Class C
 End Class");
         }
 
+        [Fact]
+        public void CA1812_CSharp_NoDiagnostic_ImplementsIConfigurationSectionHandler()
+        {
+            VerifyCSharp(
+@"using System.Configuration;
+using System.Xml;
+
+public class C : IConfigurationSectionHandler
+{
+    public object Create(object parent, object configContext, XmlNode section)
+    {
+        return null;
+    }
+}");
+         }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new AvoidUninstantiatedInternalClassesAnalyzer();

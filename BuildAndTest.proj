@@ -20,7 +20,7 @@
   <Target Name="RestorePackages">
     <Exec Command="&quot;$(NuGetExe)&quot; install xunit.runner.console -version 2.0.0 -OutputDirectory &quot;$(PackagesDirectory)&quot;"/>
     <Exec Command="&quot;$(NuGetExe)&quot; restore &quot;$(MSBuildThisFileDirectory)\Src\.nuget\packages.config&quot; -PackagesDirectory &quot;$(PackagesDirectory)&quot;" />
-    <Exec Command="&quot;$(NuGetExe)&quot; restore &quot;$(SolutionFile)&quot; -PackagesDirectory &quot;$(PackagesDirectory)&quot;" />
+    <Exec Command="&quot;$(NuGetExe)&quot; restore &quot;$(SolutionFile)&quot;" />
   </Target>
 
   <Target Name="Build" DependsOnTargets="RestorePackages">

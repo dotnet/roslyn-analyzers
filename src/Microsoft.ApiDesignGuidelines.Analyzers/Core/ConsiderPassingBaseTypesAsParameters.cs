@@ -14,7 +14,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     using TMapParameterToTypeSet = Dictionary<IParameterSymbol, HashSet<ITypeSymbol>>;
 
     /// <summary>
-    /// CA1011: Consider passing base types as parameters
+    /// CA1011: Consider passing base types as parameters. 
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class ConsiderPassingBaseTypesAsParametersAnalyzer : DiagnosticAnalyzer
@@ -40,13 +40,20 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext context)
         {
-            // perform analysis on each method block
+            // Analyzer Strategy: Track all usages of each parameter, including member accesses 
+            // and passing as an argument to another method.
+            // Compares the parameter type to the target type (i.e. the containing type for member
+            // accesses, or the argument type for method calls), and identify a "most derived type"
+            // based on this. If the most derived type is a base type of the parameter's type,  
+            // recommend using that type instead.
+            
+            // Perform analysis on each method block
             context.RegisterOperationBlockStartAction(
                 (blockStartContext) =>
                 {
                     IMethodSymbol containingMethod = blockStartContext.OwningSymbol as IMethodSymbol;
 
-                    if (containingMethod == null || containingMethod.IsOverride || containingMethod.IsVirtual) // TODO method.IsSpecialName
+                    if (containingMethod == null || containingMethod.IsOverride || containingMethod.IsVirtual)
                     {
                         return;
                     }
@@ -55,10 +62,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     var mostDerivedTypeFor = new Dictionary<IParameterSymbol, ITypeSymbol>();
                     var allDerivedTypesFor = new Dictionary<IParameterSymbol, HashSet<ITypeSymbol>>();
 
-                    // store type of each parameter
-                    //containingMethod.Parameters
-
-                    // 1. check the arguments of all method calls for a parameter
+                    // 1. Track passing the parameter as an argument to a method call
                     //    E.g.  string Read1(FileStream s) => Read2(s);
                     //          string Read2(Stream s) => s.Read();
                     blockStartContext.RegisterOperationAction(
@@ -73,8 +77,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                             }
                         }, OperationKind.Argument);
 
-                    // 2. check for member references (fields, properties, etc)
-                    //    E.g.  bool CanRead(FileStream s) => s.CanRead; // no diagnostic because this is abstract
+                    // 2. Track member references (fields, properties, etc)
+                    //    E.g.  bool CanRead(FileStream s) => s.CanRead;
                     blockStartContext.RegisterOperationAction(
                         (operationContext) =>
                         {
@@ -91,8 +95,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         OperationKind.PropertyReferenceExpression,
                         OperationKind.EventReferenceExpression);
 
-                    // 3. check for member invocations
-                    //    E.g.  string ReadLine(FileStream s) => s.ReadLine();
+                    // 3. Track member invocations
+                    //    E.g. string ReadLine(FileStream s) => s.ReadLine();
                     blockStartContext.RegisterOperationAction(
                         (operationContext) =>
                         {
@@ -106,7 +110,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         },
                         OperationKind.InvocationExpression);
 
-                    // 4a. no warning
+                    // -- Special cases that shut down analysis --
+
+                    // If ever a parameter is cast to an even more derived type,
+                    // then there's probably a good reason why this method is
+                    // strongly typed. Also, if it is cast at all, we could lose
+                    // track of its flow, so we ignore any parameter that's cast.
+
+                    // (a) No warning for is expressions
                     blockStartContext.RegisterOperationAction(
                         (operationContext) =>
                         {
@@ -121,13 +132,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         },
                         OperationKind.IsTypeExpression);
 
-                    // 4b. shut down analysis for conversions
+                    // (b) No warning for explicit casts
                     blockStartContext.RegisterOperationAction(
                         (operationContext) =>
                         {
                             var oper = operationContext.Operation as IConversionExpression;
                             IParameterSymbol parameter;
-                            if (oper != null && (parameter = GetParameterSymbol(oper.Operand)) != null)
+                            if (oper != null
+                                && oper.IsExplicit
+                                && (parameter = GetParameterSymbol(oper.Operand)) != null)
                             {
                                 // prevent diagnostic for this parameter
                                 RecordParameterUse(parameter, parameter.Type,
@@ -136,7 +149,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         },
                         OperationKind.ConversionExpression);
 
-                    // 5a. shut down analysis for variable declarations
+                    // Since we don't understand flow control, as soon as we see
+                    // a parameter assigned to another variable, we will no longer
+                    // be certain if its exact type is necessary or not, so
+                    // we have to shut down the analysis.
+
+                    // (c) shut down analysis when parameter is assigned in a variable declaration
                     blockStartContext.RegisterOperationAction(
                         (operationContext) =>
                         {
@@ -154,7 +172,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         },
                         OperationKind.VariableDeclarationStatement);
 
-                    // 5a. shut down analysis for assignments
+                    // (d) shut down analysis when parameter is assigned in other assignments
                     blockStartContext.RegisterOperationAction(
                         (operationContext) =>
                         {
@@ -164,25 +182,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                             {
                                 // prevent diagnostic for this parameter
                                 RecordParameterUse(parameter, parameter.Type,
-                                    mostDerivedTypeFor, allDerivedTypesFor); // TODO iterate through child values
+                                    mostDerivedTypeFor, allDerivedTypesFor); 
                             }
                         },
                         OperationKind.AssignmentExpression,
                         OperationKind.CompoundAssignmentExpression);
 
-                    // tester
-                    blockStartContext.RegisterOperationAction(
-                        (operationContext) =>
-                        {
-                            var oper = operationContext.Operation as IBlockStatement;
-                            var desc = oper?.Descendants();
-                            var names = desc?.Select(v => v.Syntax.ToString());
-                            var kinds = desc?.Select(v => v.Kind);
-                            if (oper != null) { }
-                        },
-                        OperationKind.BlockStatement);
+                    // Finally, check the maps containing most derived types and 
+                    // fire diagnostics if a base class could be used instead.
 
-                    // check parameter maps and fire diagnostics as appropriate
                     blockStartContext.RegisterOperationBlockEndAction(
                         (blockEndContext) =>
                         {
@@ -190,7 +198,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         });
                 });
         }
-
 
         private void CheckParameters(
             OperationBlockAnalysisContext context,
@@ -203,17 +210,40 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 ITypeSymbol paramType = parameter.Type;
                 ITypeSymbol mostDerived = pair.Value;
 
-                if (mostDerived != null && !mostDerived.Equals(paramType))
+                // Check that the most derived type found is not the same as the
+                // parameter type, or 'object'
+                if (mostDerived != null 
+                    && !mostDerived.Equals(paramType)
+                    && mostDerived.SpecialType != SpecialType.System_Object)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Rule, parameter.Locations.FirstOrDefault(), 
-                        parameter.Name,
-                        parameter.ContainingSymbol?.Name,
-                        paramType,
-                        mostDerived));
+                    // Verify that indeed the most derived type is assignable to all the derived types. 
+                    // Sometimes this can be not true if a concrete class implements two completely 
+                    // separate interfaces, like string implements ICloneable and IComparable.
+                    bool descendantOfAll = true;
+                    HashSet<ITypeSymbol> allDerived;
+                    if (allDerivedTypesFor.TryGetValue(parameter, out allDerived) && allDerived != null)
+                    {
+                        descendantOfAll = allDerived.All(t => IsAssignableTo(mostDerived, t));
+                    }
+
+                    if (descendantOfAll)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Rule, parameter.Locations.FirstOrDefault(),
+                            parameter.Name,
+                            parameter.ContainingSymbol?.Name,
+                            paramType,
+                            mostDerived));
+                    }
                 }
             }
         }
 
+        /// <summary>
+        /// Record the most derived usage type (and all usage types) to use in 
+        /// our evaluation at the end of the method. Note that setting usage type
+        /// to the parameter's type effectively shuts down the analysis, because
+        /// it will always be the most derived type.
+        /// </summary>
         private void RecordParameterUse(
             IParameterSymbol parameter,
             ITypeSymbol usageType,
@@ -223,7 +253,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             var paramType = parameter.Type;
 
             if (parameter.IsThis
-                || parameter.IsImplicitlyDeclared // TODO add is Out parameter
+                || parameter.IsImplicitlyDeclared 
                 || paramType.IsValueType
                 || paramType.SpecialType != SpecialType.None // ignore all the special types
                 || paramType.IsValueType
@@ -232,11 +262,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
+            // if the usage type is not compatible with the parameter, shutdown
+            // the analysis by making usage type the parameter type
             if (!IsAssignableTo(paramType, usageType))
             {
                 usageType = paramType;
             }
 
+            // Record the most derived usage type
             ITypeSymbol mostDerivedTypeSoFar;
             if (!mostDerivedTypeFor.TryGetValue(parameter, out mostDerivedTypeSoFar)
                 || IsAssignableTo(usageType, mostDerivedTypeSoFar))
@@ -244,9 +277,25 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 mostDerivedTypeFor[parameter] = usageType;
             }
 
-            // TODO All Derived Types
+            // Save all the usage types, so we can later verify that the most derived type
+            // is assignable to them all (i.e. in case we get a class that implements two 
+            // unrelated interfaces)
+            HashSet<ITypeSymbol> derivedTypes = null;
+            if (!allDerivedTypesFor.TryGetValue(parameter, out derivedTypes))
+            {
+                derivedTypes = new HashSet<ITypeSymbol>();
+                allDerivedTypesFor[parameter] = derivedTypes;
+            }
+            if (!derivedTypes.Contains(usageType))
+            {
+                derivedTypes.Add(usageType);
+            }
         }
 
+        /// <summary>
+        /// Utility to determine if the IOperation is a parameter reference. 
+        /// Returns null if it is not.
+        /// </summary>
         static IParameterSymbol GetParameterSymbol(IOperation value)
         {
             if (value?.Kind == OperationKind.ConversionExpression)

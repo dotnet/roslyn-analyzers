@@ -1,18 +1,19 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Semantics;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace System.Runtime.Analyzers
 {
     /// <summary>
     /// CA2243: Attribute string literals should parse correctly
     /// </summary>
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class AttributeStringLiteralsShouldParseCorrectlyAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2243";

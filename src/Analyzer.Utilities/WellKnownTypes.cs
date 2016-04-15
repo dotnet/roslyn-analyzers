@@ -21,9 +21,19 @@ namespace Analyzer.Utilities
             return compilation.GetTypeByMetadataName("System.Collections.IEnumerable");
         }
 
+        public static INamedTypeSymbol IEnumerator(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Collections.IEnumerator");
+        }
+
         public static INamedTypeSymbol GenericIEnumerable(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName("System.Collections.Generic.IEnumerable`1");
+        }
+
+        public static INamedTypeSymbol GenericIEnumerator(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Collections.Generic.IEnumerator`1");
         }
 
         public static INamedTypeSymbol IList(Compilation compilation)

@@ -501,7 +501,7 @@ namespace Desktop.Analyzers
 
             private bool IsAssigningIntendedValueToPropertyDerivedFromType(SyntaxNode assignment,
                 SemanticModel model,
-                Func<ISymbol, bool> isTargetPropertyFunc,
+                Func<IPropertySymbol, bool> isTargetPropertyFunc,
                 Func<SyntaxNode, bool> isIntendedValueFunc,
                 out bool isTargetProperty)
             {
@@ -562,7 +562,7 @@ namespace Desktop.Analyzers
                 SyntaxNode name = _syntaxNodeHelper.GetMemberAccessNameNode(memberAccessNode);
                 ISymbol nameSymbol = SyntaxNodeHelper.GetSymbol(name, model);
 
-                isTargetProperty = isTargetPropertyFunc(nameSymbol);
+                isTargetProperty = isTargetPropertyFunc(nameSymbol as IPropertySymbol);
                 if (!isTargetProperty)
                 {
                     return false;

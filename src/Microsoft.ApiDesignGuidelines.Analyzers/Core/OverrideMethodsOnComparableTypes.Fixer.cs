@@ -48,47 +48,47 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private async Task<Document> ImplementComparable(Document document, SyntaxNode declaration, INamedTypeSymbol typeSymbol, CancellationToken cancellationToken)
         {
-            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            SyntaxGenerator generator = editor.Generator;
+            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            var generator = editor.Generator;
 
             if (!typeSymbol.OverridesEquals())
             {
-                SyntaxNode equalsMethod = generator.EqualsOverrideDeclaration();
+                var equalsMethod = generator.EqualsOverrideDeclaration(editor.SemanticModel.Compilation);
 
                 editor.AddMember(declaration, equalsMethod);
             }
 
             if (!typeSymbol.OverridesGetHashCode())
             {
-                SyntaxNode getHashCodeMethod = generator.GetHashCodeOverrideDeclaration();
+                var getHashCodeMethod = generator.GetHashCodeOverrideDeclaration(editor.SemanticModel.Compilation);
 
                 editor.AddMember(declaration, getHashCodeMethod);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.EqualityOperatorName))
             {
-                SyntaxNode equalityOperator = generator.ComparisonOperatorDeclaration(OperatorKind.Equality, typeSymbol);
+                var equalityOperator = generator.ComparisonOperatorDeclaration(OperatorKind.Equality, typeSymbol, editor.SemanticModel.Compilation);
 
                 editor.AddMember(declaration, equalityOperator);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.InequalityOperatorName))
             {
-                SyntaxNode inequalityOperator = generator.ComparisonOperatorDeclaration(OperatorKind.Inequality, typeSymbol);
+                var inequalityOperator = generator.ComparisonOperatorDeclaration(OperatorKind.Inequality, typeSymbol, editor.SemanticModel.Compilation);
 
                 editor.AddMember(declaration, inequalityOperator);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.LessThanOperatorName))
             {
-                SyntaxNode lessThanOperator = generator.ComparisonOperatorDeclaration(OperatorKind.LessThan, typeSymbol);
+                var lessThanOperator = generator.ComparisonOperatorDeclaration(OperatorKind.LessThan, typeSymbol, editor.SemanticModel.Compilation);
 
                 editor.AddMember(declaration, lessThanOperator);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.GreaterThanOperatorName))
             {
-                SyntaxNode greaterThanOperator = generator.ComparisonOperatorDeclaration(OperatorKind.GreaterThan, typeSymbol);
+                var greaterThanOperator = generator.ComparisonOperatorDeclaration(OperatorKind.GreaterThan, typeSymbol, editor.SemanticModel.Compilation);
 
                 editor.AddMember(declaration, greaterThanOperator);
             }

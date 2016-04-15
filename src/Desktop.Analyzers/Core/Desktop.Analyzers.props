@@ -9,10 +9,11 @@
    <PropertyGroup>
       <CodeAnalysisRuleSetOverrides>
         $(CodeAnalysisRuleSetOverrides);
+        -Microsoft.Design#CA1058;
+        
         -Microsoft.Usage#CA2229;
         -Microsoft.Usage#CA2235;
         -Microsoft.Usage#CA2237;
-        -Microsoft.Usage#CA1058;
       </CodeAnalysisRuleSetOverrides>
    </PropertyGroup>
 </Project>

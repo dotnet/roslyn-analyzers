@@ -2,6 +2,7 @@
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
+using Roslyn.Diagnostics.Test.Utilities;
 using Xunit;
 
 namespace System.Runtime.InteropServices.Analyzers.UnitTests
@@ -53,7 +54,7 @@ namespace System.Runtime.InteropServices.Analyzers.UnitTests
             VerifyCSharp(@"
 using System.Runtime.InteropServices;
 
-class C
+public class C
 {
     [DllImport(""user32.dll"")]
     public static extern void Foo1(); // should not be public
@@ -78,7 +79,7 @@ class C
             VerifyCSharp(@"
 using System.Runtime.InteropServices;
 
-class C
+public class C
 {
     [DllImport(""user32.dll"")]
     public static extern void Foo1(); // should not be public
@@ -102,7 +103,7 @@ class C
             VerifyBasic(@"
 Imports System.Runtime.InteropServices
 
-Class C
+Public Class C
     <DllImport(""user32.dll"")>
     Public Shared Sub Foo1() ' should not be public
     End Sub
@@ -131,7 +132,7 @@ End Class
             VerifyBasic(@"
 Imports System.Runtime.InteropServices
 
-Class C
+Public Class C
     <DllImport(""user32.dll"")>
     Public Shared Sub Foo1() ' should not be public
     End Sub
@@ -158,7 +159,7 @@ End Class
             VerifyBasic(@"
 Imports System.Runtime.InteropServices
 
-Class C
+Public Class C
     <DllImport(""user32.dll"")>
     Public Shared Function Foo1() As Integer ' should not be public
     End Function
@@ -187,7 +188,7 @@ End Class
             VerifyBasic(@"
 Imports System.Runtime.InteropServices
 
-Class C
+Public Class C
     Public Declare Sub Foo1 Lib ""user32.dll"" Alias ""Foo1"" () ' should not be public
 
     Protected Declare Sub Foo2 Lib ""user32.dll"" Alias ""Foo2"" () ' should not be protected
@@ -208,7 +209,7 @@ End Class
             VerifyBasic(@"
 Imports System.Runtime.InteropServices
 
-Class C
+Public Class C
     Public Declare Function Foo1 Lib ""user32.dll"" Alias ""Foo1"" () As Integer ' should not be public
 
     Protected Declare Function Foo2 Lib ""user32.dll"" Alias ""Foo2"" () As Integer ' should not be protected
@@ -221,6 +222,37 @@ End Class
                 BasicResult1401(5, 29, "Foo1"),
                 BasicResult1401(7, 32, "Foo2"),
                 BasicResult1401(11, 22, "Foo4"));
+        }
+
+        [WorkItem(792, "https://github.com/dotnet/roslyn-analyzers/issues/792")]
+        [Fact]
+        public void CA1401CSharpNonPublic()
+        {
+            VerifyCSharp(@"
+using System.Runtime.InteropServices;
+
+public sealed class TimerFontContainer
+{
+    private static class NativeMethods
+    {
+        [DllImport(""gdi32.dll"")]
+        public static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont, IntPtr pdv, [In] ref uint pcFonts);
+    }
+}
+");
+        }
+
+        [WorkItem(792, "https://github.com/dotnet/roslyn-analyzers/issues/792")]
+        [Fact]
+        public void CA1401BasicNonPublic()
+        {
+            VerifyBasic(@"
+Public NotInheritable Class TimerFontContainer
+    Private Class NativeMethods
+        Public Declare Function AddFontMemResourceEx Lib ""gdi32.dll"" (pbFont As Integer, cbFont As Integer, pdv As Integer) As Integer
+    End Class
+End Class
+");
         }
 
         #endregion

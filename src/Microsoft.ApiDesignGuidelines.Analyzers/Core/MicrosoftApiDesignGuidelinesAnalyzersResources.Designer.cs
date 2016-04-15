@@ -855,6 +855,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Generate missing operators.
+        /// </summary>
+        internal static string Generate_missing_operators {
+            get {
+                return ResourceManager.GetString("Generate_missing_operators", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Identifiers for namespaces, types, members, and parameters cannot differ only by case because languages that target the common language runtime are not required to be case-sensitive..
         /// </summary>
         internal static string IdentifiersShouldDifferByMoreThanCaseDescription {
@@ -2017,7 +2026,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Parameter names should match base declaration.
+        ///   Looks up a localized string similar to In member {0}, change parameter name {1} to {2} in order to match the identifier as it has been declared in {3}..
         /// </summary>
         internal static string ParameterNamesShouldMatchBaseDeclarationMessage {
             get {
@@ -2206,6 +2215,24 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rename to &apos;{0}&apos;.
+        /// </summary>
+        internal static string RenameToTitle {
+            get {
+                return ResourceManager.GetString("RenameToTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Since &apos;{0}&apos; redefines operator &apos;{1}&apos;, it should also redefine operator &apos;{2}&apos;.
+        /// </summary>
+        internal static string Since_0_redefines_operator_1_it_should_also_redefine_operator_2 {
+            get {
+                return ResourceManager.GetString("Since_0_redefines_operator_1_it_should_also_redefine_operator_2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Type &apos;{0}&apos; is a static holder type but is neither static nor NotInheritable.
         /// </summary>
         internal static string StaticHolderTypeIsNotStatic {
@@ -2305,7 +2332,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Uri parameters should not be strings.
+        ///   Looks up a localized string similar to Change the type of parameter {0} of method {1} from string to System.Uri, or provide an overload to {1} that allows {0} to be passed as a System.Uri object..
         /// </summary>
         internal static string UriParametersShouldNotBeStringsMessage {
             get {
@@ -2332,7 +2359,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Uri properties should not be strings.
+        ///   Looks up a localized string similar to Change the type of property {0} from string to System.Uri..
         /// </summary>
         internal static string UriPropertiesShouldNotBeStringsMessage {
             get {
@@ -2359,7 +2386,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Uri return values should not be strings.
+        ///   Looks up a localized string similar to Change the return type of method {0} from string to System.Uri..
         /// </summary>
         internal static string UriReturnValuesShouldNotBeStringsMessage {
             get {
@@ -2386,7 +2413,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use events where appropriate.
+        ///   Looks up a localized string similar to Consider making &apos;{0}&apos; an event..
         /// </summary>
         internal static string UseEventsWhereAppropriateMessage {
             get {

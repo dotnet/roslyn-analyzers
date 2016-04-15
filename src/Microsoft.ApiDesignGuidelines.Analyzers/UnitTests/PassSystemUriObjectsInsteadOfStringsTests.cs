@@ -26,12 +26,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method()
+        public static void Method()
         {
             Method(1);
         }
 
-        public static Method(int url) { }
+        public static void Method(int url) { }
     }
 ");
         }
@@ -44,12 +44,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method()
+        public static void Method()
         {
             Method(1);
         }
 
-        public static Method(int uri) { }
+        public static void Method(int uri) { }
     }
 ");
         }
@@ -62,12 +62,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method()
+        public static void Method()
         {
             Method(1);
         }
 
-        public static Method(int urn) { }
+        public static void Method(int urn) { }
     }
 ");
         }
@@ -80,13 +80,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method()
+        public static void Method()
         {
             Method(1);
         }
 
-        public static Method(int urn) { }
-        public static Method(Uri uri) { }
+        public static void Method(int urn) { }
+        public static void Method(Uri uri) { }
     }
 ");
         }
@@ -99,12 +99,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method()
+        public static void Method()
         {
             Method(""test"");
         }
 
-        public static Method(string uri) { }
+        public static void Method(string uri) { }
     }
 ");
         }
@@ -117,12 +117,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method()
+        public static void Method()
         {
             Method(""test"");
         }
 
-        public static Method(string url) { }
+        public static void Method(string url) { }
     }
 ");
         }
@@ -135,12 +135,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method()
+        public static void Method()
         {
             Method(""test"");
         }
 
-        public static Method(string urn) { }
+        public static void Method(string urn) { }
     }
 ");
         }
@@ -153,13 +153,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method()
+        public static void Method()
         {
             Method(""test"");
         }
 
-        public static Method(string uri) { }
-        public static Method(Uri uri) { }
+        public static void Method(string uri) { }
+        public static void Method(Uri uri) { }
     }
 ", GetCA2234CSharpResultAt(8, 13, "A.Method()", "A.Method(Uri)", "A.Method(string)"));
         }
@@ -172,13 +172,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method()
+        public static void Method()
         {
             Method(""test"");
         }
 
-        public static Method(string url) { }
-        public static Method(Uri uri) { }
+        public static void Method(string url) { }
+        public static void Method(Uri uri) { }
     }
 ", GetCA2234CSharpResultAt(8, 13, "A.Method()", "A.Method(Uri)", "A.Method(string)"));
         }
@@ -191,13 +191,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method()
+        public static void Method()
         {
             Method(""test"");
         }
 
-        public static Method(string urn) { }
-        public static Method(Uri uri) { }
+        public static void Method(string urn) { }
+        public static void Method(Uri uri) { }
     }
 ", GetCA2234CSharpResultAt(8, 13, "A.Method()", "A.Method(Uri)", "A.Method(string)"));
         }
@@ -210,13 +210,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method()
+        public static void Method()
         {
             Method(""test"");
         }
 
-        public static Method(string myUri) { }
-        public static Method(Uri uri) { }
+        public static void Method(string myUri) { }
+        public static void Method(Uri uri) { }
     }
 ", GetCA2234CSharpResultAt(8, 13, "A.Method()", "A.Method(Uri)", "A.Method(string)"));
         }
@@ -229,13 +229,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method()
+        public static void Method()
         {
             Method(""test"");
         }
 
-        public static Method(string myuri) { }
-        public static Method(Uri uri) { }
+        public static void Method(string myuri) { }
+        public static void Method(Uri uri) { }
     }
 ");
         }
@@ -248,13 +248,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method()
+        public static void Method()
         {
             Method(""test"", ""test"", ""test"");
         }
 
-        public static Method(string param1, string param2, string lastUrl) { }
-        public static Method(string param1, string param2, Uri lastUrl) { }
+        public static void Method(string param1, string param2, string lastUrl) { }
+        public static void Method(string param1, string param2, Uri lastUrl) { }
     }
 ", GetCA2234CSharpResultAt(8, 13, "A.Method()", "A.Method(string, string, Uri)", "A.Method(string, string, string)"));
         }
@@ -267,13 +267,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method()
+        public static void Method()
         {
             Method(""test"", 0, ""test"");
         }
 
-        public static Method(string firstUri, int i, string lastUrl) { }
-        public static Method(Uri uri, int i, string lastUrl) { }
+        public static void Method(string firstUri, int i, string lastUrl) { }
+        public static void Method(Uri uri, int i, string lastUrl) { }
     }
 ", GetCA2234CSharpResultAt(8, 13, "A.Method()", "A.Method(Uri, int, string)", "A.Method(string, int, string)"));
         }
@@ -286,12 +286,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method()
+        public static void Method()
         {
             Method(""test"", null);
         }
 
-        public static Method(string firstUri, Uri lastUri) { }
+        public static void Method(string firstUri, Uri lastUri) { }
     }
 ");
         }
@@ -304,13 +304,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method()
+        public static void Method()
         {
             Method(""test"", null);
         }
 
-        public static Method(string firstUri, Uri lastUri) { }
-        public static Method(int other, Uri lastUri) { }
+        public static void Method(string firstUri, Uri lastUri) { }
+        public static void Method(int other, Uri lastUri) { }
     }
 ");
         }
@@ -323,13 +323,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method()
+        public static void Method()
         {
             Method(""test"", null);
         }
 
-        public static Method(string firstUri, Uri lastUrl) { }
-        public static Method(Uri uri, Uri lastUrl) { }
+        public static void Method(string firstUri, Uri lastUrl) { }
+        public static void Method(Uri uri, Uri lastUrl) { }
     }
 ", GetCA2234CSharpResultAt(8, 13, "A.Method()", "A.Method(Uri, Uri)", "A.Method(string, Uri)"));
         }
@@ -342,15 +342,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method()
+        public static void Method()
         {
             Method(""test"", ""test2"");
         }
 
-        public static Method(string firstUri, string lastUrl) { }
-        public static Method(Uri uri, string lastUrl) { }
-        public static Method(string uri, Uri lastUrl) { }
-        public static Method(Uri uri, Uri lastUrl) { }
+        public static void Method(string firstUri, string lastUrl) { }
+        public static void Method(Uri uri, string lastUrl) { }
+        public static void Method(string uri, Uri lastUrl) { }
+        public static void Method(Uri uri, Uri lastUrl) { }
     }
 ", GetCA2234CSharpResultAt(8, 13, "A.Method()", "A.Method(Uri, string)", "A.Method(string, string)")
  , GetCA2234CSharpResultAt(8, 13, "A.Method()", "A.Method(string, Uri)", "A.Method(string, string)"));
@@ -364,13 +364,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method()
+        public static void Method()
         {
             Method(""test"", null);
         }
 
-        public static Method(string firstUri, string lastUrl) { }
-        public static Method(Uri uri) { }
+        public static void Method(string firstUri, string lastUrl) { }
+        public static void Method(Uri uri) { }
     }
 ");
         }
@@ -383,13 +383,32 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A : IComparable
     {
-        public static Method()
+        public static void Method()
         {
             Method(""test"", null);
         }
 
-        public static Method(string firstUri, string lastUrl) { }
-        public static Method(Uri uri, int i) { }
+        public static void Method(string firstUri, string lastUrl) { }
+        public static void Method(Uri uri, int i) { }
+    }
+");
+        }
+
+        [Fact]
+        public void CA2234NoWarningNotPublic()
+        {
+            VerifyCSharp(@"
+    using System;
+
+    internal class A : IComparable
+    {
+        public static void Method()
+        {
+            Method(""test"");
+        }
+
+        public static void Method(string uri) { }
+        public static void Method(Uri uri) { }
     }
 ");
         }
@@ -402,7 +421,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyBasic(@"
     Imports System
     
-    Module A
+    Public Module A
         Public Sub Method()
             Method(""test"", 0, ""test"")
         End Sub
@@ -415,9 +434,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     End Module
 ", GetCA2234BasicResultAt(6, 13, "A.Method()", "A.Method(Uri, Integer, String)", "A.Method(String, Integer, String)"));
         }
-
-        internal static readonly string CA2234Name = "CA2234";
-        internal static readonly string CA2234Message = MicrosoftApiDesignGuidelinesAnalyzersResources.PassSystemUriObjectsInsteadOfStringsMessage;
 
         private static DiagnosticResult GetCA2234CSharpResultAt(int line, int column, params string[] args)
         {

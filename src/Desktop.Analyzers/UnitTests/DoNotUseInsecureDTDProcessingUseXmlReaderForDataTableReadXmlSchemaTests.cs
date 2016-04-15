@@ -7,14 +7,14 @@ namespace Desktop.Analyzers.UnitTests
 {
     public partial class DoNotUseInsecureDTDProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private DiagnosticResult GetCA3075DataTableReadXmlSchemaCSharpResultAt(int line, int column, string name)
+        private DiagnosticResult GetCA3075DataTableReadXmlSchemaCSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, name, "ReadXmlSchema"));
+            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, "ReadXmlSchema"));
         }
 
-        private DiagnosticResult GetCA3075DataTableReadXmlSchemaBasicResultAt(int line, int column, string name)
+        private DiagnosticResult GetCA3075DataTableReadXmlSchemaBasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, name, "ReadXmlSchema"));
+            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, "ReadXmlSchema"));
         }
 
         [Fact]
@@ -37,7 +37,7 @@ namespace TestNamespace
     }
 }
 ",
-                GetCA3075DataTableReadXmlSchemaCSharpResultAt(13, 13, "TestMethod")
+                GetCA3075DataTableReadXmlSchemaCSharpResultAt(13, 13)
             );
 
             VerifyBasic(@"
@@ -53,7 +53,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3075DataTableReadXmlSchemaBasicResultAt(10, 13, "TestMethod")
+                GetCA3075DataTableReadXmlSchemaBasicResultAt(10, 13)
             );
         }
 
@@ -75,7 +75,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075DataTableReadXmlSchemaCSharpResultAt(11, 13, "get_Test")
+                GetCA3075DataTableReadXmlSchemaCSharpResultAt(11, 13)
             );
 
             VerifyBasic(@"
@@ -91,7 +91,7 @@ Class TestClass
         End Get
     End Property
 End Class",
-                GetCA3075DataTableReadXmlSchemaBasicResultAt(9, 13, "get_Test")
+                GetCA3075DataTableReadXmlSchemaBasicResultAt(9, 13)
             );
         }
 
@@ -120,7 +120,7 @@ class TestClass
         }
     }
 }",
-                GetCA3075DataTableReadXmlSchemaCSharpResultAt(15, 17, "set_GetDoc")
+                GetCA3075DataTableReadXmlSchemaCSharpResultAt(15, 17)
             );
 
             VerifyBasic(@"
@@ -141,7 +141,7 @@ Class TestClass
         End Set
     End Property
 End Class",
-                GetCA3075DataTableReadXmlSchemaBasicResultAt(11, 17, "set_GetDoc")
+                GetCA3075DataTableReadXmlSchemaBasicResultAt(11, 17)
             );
         }
 
@@ -166,7 +166,7 @@ End Class",
             finally { }
         }
     }",
-                GetCA3075DataTableReadXmlSchemaCSharpResultAt(13, 17, "TestMethod")
+                GetCA3075DataTableReadXmlSchemaCSharpResultAt(13, 17)
             );
 
             VerifyBasic(@"
@@ -184,7 +184,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataTableReadXmlSchemaBasicResultAt(9, 13, "TestMethod")
+                GetCA3075DataTableReadXmlSchemaBasicResultAt(9, 13)
             );
         }
 
@@ -209,7 +209,7 @@ End Class",
             finally { }
         }
     }",
-                GetCA3075DataTableReadXmlSchemaCSharpResultAt(14, 17, "TestMethod")
+                GetCA3075DataTableReadXmlSchemaCSharpResultAt(14, 17)
             );
 
             VerifyBasic(@"
@@ -226,7 +226,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataTableReadXmlSchemaBasicResultAt(10, 13, "TestMethod")
+                GetCA3075DataTableReadXmlSchemaBasicResultAt(10, 13)
             );
         }
 
@@ -251,7 +251,7 @@ End Class",
             }
         }
     }",
-                GetCA3075DataTableReadXmlSchemaCSharpResultAt(15, 17, "TestMethod")
+                GetCA3075DataTableReadXmlSchemaCSharpResultAt(15, 17)
             );
 
             VerifyBasic(@"
@@ -269,7 +269,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataTableReadXmlSchemaBasicResultAt(12, 13, "TestMethod")
+                GetCA3075DataTableReadXmlSchemaBasicResultAt(12, 13)
             );
         }
 
@@ -296,7 +296,7 @@ using System.Data;
             await TestMethod();
         }
     }",
-                GetCA3075DataTableReadXmlSchemaCSharpResultAt(12, 17, "Run")
+                GetCA3075DataTableReadXmlSchemaCSharpResultAt(12, 17)
             );
 
             VerifyBasic(@"
@@ -304,7 +304,7 @@ Imports System.Threading.Tasks
 Imports System.Data
 
 Class TestClass
-    Private Function TestMethod() As Task
+    Private Async Function TestMethod() As Task
         Await Task.Run(Function() 
         Dim src = """"
         Dim dt As New DataTable()
@@ -317,7 +317,7 @@ End Function)
         Await TestMethod()
     End Sub
 End Class",
-                GetCA3075DataTableReadXmlSchemaBasicResultAt(10, 9, "Run")
+                GetCA3075DataTableReadXmlSchemaBasicResultAt(10, 9)
             );
         }
 
@@ -337,7 +337,7 @@ class TestClass
         dt.ReadXmlSchema(src);
     };
 }",
-                GetCA3075DataTableReadXmlSchemaCSharpResultAt(11, 9, "TestClass")
+                GetCA3075DataTableReadXmlSchemaCSharpResultAt(11, 9)
             );
 
             VerifyBasic(@"
@@ -353,7 +353,7 @@ Class TestClass
 
 End Sub
 End Class",
-                GetCA3075DataTableReadXmlSchemaBasicResultAt(10, 5, "TestClass")
+                GetCA3075DataTableReadXmlSchemaBasicResultAt(10, 5)
             );
         }
 

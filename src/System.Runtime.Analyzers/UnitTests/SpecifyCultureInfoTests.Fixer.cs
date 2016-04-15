@@ -10,12 +10,12 @@ namespace System.Runtime.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicSpecifyCultureInfoAnalyzer();
+            return new SpecifyCultureInfoAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpSpecifyCultureInfoAnalyzer();
+            return new SpecifyCultureInfoAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

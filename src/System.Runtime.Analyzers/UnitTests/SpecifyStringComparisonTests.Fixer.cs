@@ -10,12 +10,12 @@ namespace System.Runtime.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicSpecifyStringComparisonAnalyzer();
+            return new SpecifyStringComparisonAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpSpecifyStringComparisonAnalyzer();
+            return new SpecifyStringComparisonAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -16,6 +17,53 @@ namespace Analyzer.Utilities
                 yield return current;
                 current = current.BaseType;
             }
+        }
+
+        /// <summary>
+        /// Returns a value indicating whether <paramref name="type"/> derives from, or implements
+        /// any generic construction of, the type defined by <paramref name="parentType"/>.
+        /// </summary>
+        /// <remarks>
+        /// This method only works when <paramref name="parentType"/> is a definition,
+        /// not a constructed type.
+        /// </remarks>
+        /// <example>
+        /// <para>
+        /// If <paramref name="parentType"/> is the class <code>Stack&gt;T></code>, then this
+        /// method will return <code>true</code> when called on <code>Stack&gt;int></code>
+        /// or any type derived it, because <code>Stack&gt;int></code> is constructed from
+        /// <code>Stack&gt;T></code>.
+        /// </para>
+        /// <para>
+        /// Similarly, if <paramref name="parentType"/> is the interface <code>IList&gt;T></code>, 
+        /// then this method will return <code>true</code> for <code>List&gt;int></code>
+        /// or any other class that extends <code>IList&gt;></code> or an class that implements it,
+        /// because <code>IList&gt;int></code> is constructed from <code>IList&gt;T></code>.
+        /// </para>
+        /// </example>
+        public static bool DerivesFromOrImplementsAnyConstructionOf(this INamedTypeSymbol type, INamedTypeSymbol parentType, Compilation compilation)
+        {
+            if (!parentType.IsDefinition)
+            {
+                throw new ArgumentException($"The type {nameof(parentType)} is not a definition; it is a constructed type", nameof(parentType));
+            }
+
+            for (INamedTypeSymbol baseType = type.OriginalDefinition;
+                baseType != null;
+                baseType = baseType.BaseType?.OriginalDefinition)
+            {
+                if (baseType.Equals(parentType))
+                {
+                    return true;
+                }
+            }
+
+            if (type.OriginalDefinition.AllInterfaces.Any(baseInterface => baseInterface.OriginalDefinition.Equals(parentType)))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public static bool ImplementsOperator(this INamedTypeSymbol symbol, string op)

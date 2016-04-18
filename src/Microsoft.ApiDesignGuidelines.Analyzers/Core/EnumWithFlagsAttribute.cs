@@ -68,11 +68,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             context.RegisterSymbolAction(symbolContext =>
             {
-                AnalyzeSymbol((INamedTypeSymbol)symbolContext.Symbol, symbolContext.Compilation, symbolContext.ReportDiagnostic, symbolContext.CancellationToken);
+                AnalyzeSymbol((INamedTypeSymbol)symbolContext.Symbol, symbolContext.Compilation, symbolContext.ReportDiagnostic);
             }, SymbolKind.NamedType);
         }
 
-        private void AnalyzeSymbol(INamedTypeSymbol symbol, Compilation compilation, Action<Diagnostic> addDiagnostic, CancellationToken cancellationToken)
+        private void AnalyzeSymbol(INamedTypeSymbol symbol, Compilation compilation, Action<Diagnostic> addDiagnostic)
         {
             if (symbol != null &&
                 symbol.TypeKind == TypeKind.Enum &&

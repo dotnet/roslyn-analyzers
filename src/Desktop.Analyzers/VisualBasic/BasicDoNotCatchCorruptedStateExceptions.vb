@@ -16,12 +16,12 @@ Namespace Desktop.Analyzers
     Public Class BasicDoNotCatchCorruptedStateExceptionsAnalyzer
         Inherits DoNotCatchCorruptedStateExceptionsAnalyzer(Of SyntaxKind, CatchBlockSyntax, ThrowStatementSyntax)
 
-        Protected Overrides Function GetAnalyzer(compilationTypes As CompilationSecurityTypes, owningSymbol As ISymbol, codeBlock As SyntaxNode) As Analyzer
+        Protected Overrides Function GetAnalyzer(compilationTypes As CompilationSecurityTypes, owningSymbol As ISymbol, codeBlock As SyntaxNode) As CodeBlockAnalyzer
             Return New BasicAnalyzer(compilationTypes, owningSymbol, codeBlock)
         End Function
 
         Private NotInheritable Class BasicAnalyzer
-            Inherits Analyzer
+            Inherits CodeBlockAnalyzer
 
             Public Overrides ReadOnly Property CatchClauseKind As SyntaxKind
                 Get

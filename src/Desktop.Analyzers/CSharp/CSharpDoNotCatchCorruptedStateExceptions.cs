@@ -12,12 +12,12 @@ namespace Desktop.Analyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class CSharpDoNotCatchCorruptedStateExceptionsAnalyzer : DoNotCatchCorruptedStateExceptionsAnalyzer<SyntaxKind, CatchClauseSyntax, ThrowStatementSyntax>
     {
-        protected override Analyzer GetAnalyzer(CompilationSecurityTypes compilationTypes, ISymbol owningSymbol, SyntaxNode codeBlock)
+        protected override CodeBlockAnalyzer GetAnalyzer(CompilationSecurityTypes compilationTypes, ISymbol owningSymbol, SyntaxNode codeBlock)
         {
             return new CSharpAnalyzer(compilationTypes, owningSymbol, codeBlock);
         }
 
-        private sealed class CSharpAnalyzer : Analyzer
+        private sealed class CSharpAnalyzer : CodeBlockAnalyzer
         {
             public CSharpAnalyzer(CompilationSecurityTypes compilationTypes, ISymbol owningSymbol, SyntaxNode codeBlock)
                 : base(compilationTypes, owningSymbol, codeBlock)

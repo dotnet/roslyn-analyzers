@@ -165,18 +165,18 @@ namespace Desktop.Analyzers.Common
             return null;
         }
 
-        protected override IEnumerable<SyntaxNode> GetCallArgumentExpressionNodes(SyntaxNode node, CallKind callKind)
+        protected override IEnumerable<SyntaxNode> GetCallArgumentExpressionNodes(SyntaxNode node, CallKinds callKind)
         {
             if (node != null)
             {
                 ArgumentListSyntax argList = null;
                 SyntaxKind kind = node.Kind();
-                if ((kind == SyntaxKind.InvocationExpression) && ((callKind & CallKind.Invocation) != 0))
+                if ((kind == SyntaxKind.InvocationExpression) && ((callKind & CallKinds.Invocation) != 0))
                 {
                     var invocationNode = (InvocationExpressionSyntax)node;
                     argList = invocationNode.ArgumentList;
                 }
-                else if ((kind == SyntaxKind.ObjectCreationExpression) && ((callKind & CallKind.ObjectCreation) != 0))
+                else if ((kind == SyntaxKind.ObjectCreationExpression) && ((callKind & CallKinds.ObjectCreation) != 0))
                 {
                     var invocationNode = (ObjectCreationExpressionSyntax)node;
                     argList = invocationNode.ArgumentList;

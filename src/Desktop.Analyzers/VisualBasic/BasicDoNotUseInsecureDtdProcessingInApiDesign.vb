@@ -13,8 +13,8 @@ Namespace Desktop.Analyzers
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
     Public Class BasicDoNotUseInsecureDtdProcessingInApiDesignAnalyzer
         Inherits DoNotUseInsecureDtdProcessingInApiDesignAnalyzer
-        Protected Overrides Function GetAnalyzer(context As CompilationStartAnalysisContext, types As CompilationSecurityTypes, targetFrameworkVersion As Version) As Analyzer
-            Dim analyzer As New Analyzer(types, BasicSyntaxNodeHelper.DefaultInstance, targetFrameworkVersion)
+        Protected Overrides Function GetAnalyzer(context As CompilationStartAnalysisContext, types As CompilationSecurityTypes, targetFrameworkVersion As Version) As SymbolAndNodeAnalyzer
+            Dim analyzer As New SymbolAndNodeAnalyzer(types, BasicSyntaxNodeHelper.DefaultInstance, targetFrameworkVersion)
             context.RegisterSyntaxNodeAction(AddressOf analyzer.AnalyzeNode, SyntaxKind.SubBlock, SyntaxKind.FunctionBlock, SyntaxKind.ConstructorBlock)
 
             Return analyzer

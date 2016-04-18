@@ -62,11 +62,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             INamedTypeSymbol equatableType = context.Compilation.GetTypeByMetadataName(IEquatableMetadataName);
             if (objectType != null && equatableType != null)
             {
-                context.RegisterSymbolAction(c => AnalyzeSymbol(c, objectType, equatableType), SymbolKind.NamedType);
+                context.RegisterSymbolAction(c => AnalyzeSymbol(c, equatableType), SymbolKind.NamedType);
             }
         }
 
-        private void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol objectType, INamedTypeSymbol equatableType)
+        private void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol equatableType)
         {
             var namedType = context.Symbol as INamedTypeSymbol;
             if (namedType == null || !(namedType.TypeKind == TypeKind.Struct || namedType.TypeKind == TypeKind.Class))

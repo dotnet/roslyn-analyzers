@@ -59,9 +59,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\Microsoft.Maintainability.Analyzers.csproj">
-      <Project>{36755424-5267-478c-9434-37a507e22711}</Project>
-      <Name>Microsoft.Maintainability.Analyzers</Name>
+    <ProjectReference Include="..\Core\Microsoft.Maintainability.Analyzers.Core.csproj">
+      <Project>{69F09F58-97C4-4070-9348-9A6A6D1C81F9}</Project>
+      <Name>Microsoft.Maintainability.Analyzers.Core</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
       <ForceIncludeInVSIX>true</ForceIncludeInVSIX>

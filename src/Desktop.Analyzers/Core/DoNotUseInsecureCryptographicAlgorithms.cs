@@ -32,7 +32,7 @@ namespace Desktop.Analyzers
                                                                                           s_localizableDoNotUseWeakAlgorithmsMessage,
                                                                                           s_localizableDoNotUseWeakAlgorithmsDescription,
                                                                                           CA5350HelpLink);
-        protected abstract Analyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes cryptTypes);
+        protected abstract SyntaxNodeAnalyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes cryptTypes);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics = ImmutableArray.Create(DoNotUseWeakCryptographicRule,
                                                                                                                     DoNotUseBrokenCryptographicRule);
@@ -78,11 +78,11 @@ namespace Desktop.Analyzers
                 || types.HMACRIPEMD160 != null;
         }
 
-        protected class Analyzer
+        protected class SyntaxNodeAnalyzer
         {
             private readonly CompilationSecurityTypes _cryptTypes;
 
-            public Analyzer(CompilationSecurityTypes cryptTypes)
+            public SyntaxNodeAnalyzer(CompilationSecurityTypes cryptTypes)
             {
                 _cryptTypes = cryptTypes;
             }

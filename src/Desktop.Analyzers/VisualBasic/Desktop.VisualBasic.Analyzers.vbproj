@@ -29,9 +29,9 @@
       <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
       <Name>Analyzer.Utilities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Core\Desktop.Analyzers.csproj">
+    <ProjectReference Include="..\Core\Desktop.Analyzers.Core.csproj">
       <Project>{FD5AAAFD-FEE5-438A-A710-EFC02510F922}</Project>
-      <Name>Desktop.Analyzers</Name>
+      <Name>Desktop.Analyzers.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

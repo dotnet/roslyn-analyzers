@@ -30,9 +30,9 @@
       <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
       <Name>Analyzer.Utilities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Core\Microsoft.ApiDesignGuidelines.Analyzers.csproj">
+    <ProjectReference Include="..\Core\Microsoft.ApiDesignGuidelines.Analyzers.Core.csproj">
       <Project>{9B5FFB24-D965-4CF1-8BB2-02C282193F4F}</Project>
-      <Name>Microsoft.ApiDesignGuidelines.Analyzers</Name>
+      <Name>Microsoft.ApiDesignGuidelines.Analyzers.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

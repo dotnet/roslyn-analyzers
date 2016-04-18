@@ -25,9 +25,9 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\System.Collections.Immutable.Analyzers.csproj">
+    <ProjectReference Include="..\Core\System.Collections.Immutable.Analyzers.Core.csproj">
       <Project>{09AF1081-1906-4030-BCA9-66C6DD53FF7C}</Project>
-      <Name>System.Collections.Immutable.Analyzers</Name>
+      <Name>System.Collections.Immutable.Analyzers.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

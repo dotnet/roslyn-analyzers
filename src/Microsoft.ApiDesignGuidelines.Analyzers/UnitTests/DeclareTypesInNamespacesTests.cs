@@ -8,9 +8,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 {
     public class DeclareTypesInNamespacesTests : DiagnosticAnalyzerTestBase
     {
-        private static readonly string s_ruleId = DeclareTypesInNamespacesAnalyzer.RuleId;
-        private static readonly string s_message = MicrosoftApiDesignGuidelinesAnalyzersResources.DeclareTypesInNamespacesMessage;
-
         [Fact]
         public void OuterTypeInGlobalNamespace_Warns()
         {
@@ -93,12 +90,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         private static DiagnosticResult GetCSharpExpectedResult(int line, int column)
         {
-            return GetCSharpResultAt(line, column, s_ruleId, s_message);
+            return GetCSharpResultAt(line, column, DeclareTypesInNamespacesAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.DeclareTypesInNamespacesMessage);
         }
 
         private static DiagnosticResult GetBasicExpectedResult(int line, int column)
         {
-            return GetBasicResultAt(line, column, s_ruleId, s_message);
+            return GetBasicResultAt(line, column, DeclareTypesInNamespacesAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.DeclareTypesInNamespacesMessage);
         }
     }
 }

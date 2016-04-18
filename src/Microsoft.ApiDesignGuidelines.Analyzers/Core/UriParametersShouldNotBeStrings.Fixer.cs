@@ -60,10 +60,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
-            context.RegisterCodeFix(CodeAction.Create(title, c => AddMethodAsync(context.Document, context.Span, root, methodNode, targetNode, c), equivalenceKey: title), context.Diagnostics);
+            context.RegisterCodeFix(CodeAction.Create(title, c => AddMethodAsync(context.Document, context.Span, methodNode, targetNode, c), equivalenceKey: title), context.Diagnostics);
         }
 
-        private async Task<Document> AddMethodAsync(Document document, TextSpan span, SyntaxNode root, SyntaxNode methodNode, SyntaxNode targetNode, CancellationToken cancellationToken)
+        private async Task<Document> AddMethodAsync(Document document, TextSpan span, SyntaxNode methodNode, SyntaxNode targetNode, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;

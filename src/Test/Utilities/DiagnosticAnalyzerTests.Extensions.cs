@@ -203,7 +203,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
                         else
                         {
                             Assert.False(location.IsInMetadata,
-                                string.Format("Test base does not currently handle diagnostics in metadata locations. Diagnostic in metadata:\r\n", diagnostics[i]));
+                                "Test base does not currently handle diagnostics in metadata locations. Diagnostic in metadata:\r\n" + diagnostics[i]);
 
                             string resultMethodName = GetResultMethodName(diagnostics[i]);
                             Text.LinePosition linePosition = diagnostics[i].Location.GetLineSpan().StartLinePosition;
@@ -245,9 +245,9 @@ namespace Microsoft.CodeAnalysis.UnitTests
             return FormatDiagnostics(analyzer, diagnostics.ToArray());
         }
 
-        public static DiagnosticAnalyzerTestBase.FileAndSource[] ToFileAndSource(this string[] sources)
+        public static FileAndSource[] ToFileAndSource(this string[] sources)
         {
-            return sources.Select(s => new DiagnosticAnalyzerTestBase.FileAndSource() { FilePath = null, Source = s }).ToArray();
+            return sources.Select(s => new FileAndSource() { FilePath = null, Source = s }).ToArray();
         }
     }
 }

@@ -26,9 +26,9 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\XmlDocumentationComments.Analyzers.csproj">
+    <ProjectReference Include="..\Core\XmlDocumentationComments.Analyzers.Core.csproj">
       <Project>{1B37C044-D0F9-4C32-A516-0EA819FC3607}</Project>
-      <Name>XmlDocumentationComments.Analyzers</Name>
+      <Name>XmlDocumentationComments.Analyzers.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

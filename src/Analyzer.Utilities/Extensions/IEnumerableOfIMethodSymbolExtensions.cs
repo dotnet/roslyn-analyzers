@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities
@@ -116,7 +112,7 @@ namespace Analyzer.Utilities
                         parameterType = arrayParameterSymbol.ElementType;
                     }
 
-                    if (!expectedParameterTypesInOrder[i].Type.Equals(parameterType))
+                    if (!expectedParameterTypesInOrder[i].ParameterType.Equals(parameterType))
                     {
                         return false;
                     }
@@ -133,11 +129,11 @@ namespace Analyzer.Utilities
         public int ArrayRank { get; private set; }
         public bool IsArray { get; private set; }
         public bool IsParams { get; private set; }
-        public INamedTypeSymbol Type { get; private set; }
+        public INamedTypeSymbol ParameterType { get; private set; }
 
         private ParameterInfo(INamedTypeSymbol type, bool isArray, int arrayRank, bool isParams)
         {
-            Type = type;
+            ParameterType = type;
             IsArray = isArray;
             ArrayRank = arrayRank;
             IsParams = isParams;

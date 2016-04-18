@@ -127,16 +127,14 @@ End Class
 
         #endregion
 
-        internal static readonly string CA1813Name = "CA1813";
-
         private static DiagnosticResult GetCA1813CSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA1813Name, SystemRuntimeAnalyzersResources.AvoidUnsealedAttributesMessage);
+            return GetCSharpResultAt(line, column, AvoidUnsealedAttributesAnalyzer.RuleId, SystemRuntimeAnalyzersResources.AvoidUnsealedAttributesMessage);
         }
 
         private static DiagnosticResult GetCA1813BasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA1813Name, SystemRuntimeAnalyzersResources.AvoidUnsealedAttributesMessage);
+            return GetBasicResultAt(line, column, AvoidUnsealedAttributesAnalyzer.RuleId, SystemRuntimeAnalyzersResources.AvoidUnsealedAttributesMessage);
         }
     }
 }

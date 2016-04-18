@@ -16,8 +16,13 @@
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
 
     <SignAssembly Condition="'$(SignAssembly)' == ''">true</SignAssembly>
-    
-    <NuGetPackagesPath Condition="'$(NuGetPackagesPath)' == ''">$(MSBuildThisFileDirectory)..\..\packages</NuGetPackagesPath>
+
+    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == ''">$(NUGET_PACKAGES)</NuGetPackageRoot>
+    <!-- Respect environment variable if set -->
+    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and
+                                 '$(OS)' == 'Windows_NT'">$(UserProfile)\.nuget\packages</NuGetPackageRoot>
+    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and
+                                 '$(OS)' != 'Windows_NT'">$(HOME)\.nuget\packages</NuGetPackageRoot>
   </PropertyGroup>
 
   <!-- Project language -->
@@ -30,7 +35,7 @@
   <!-- Import the global NuGet packages -->
   <PropertyGroup>
     <ToolsetCompilerPackageName>Microsoft.Net.Compilers</ToolsetCompilerPackageName>
-    <ToolsetCompilerPropsFilePath>$(NuGetPackagesPath)\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props</ToolsetCompilerPropsFilePath>
+    <ToolsetCompilerPropsFilePath>$(NuGetPackageRoot)\Microsoft.Net.Compilers\1.2.1\build\Microsoft.Net.Compilers.props</ToolsetCompilerPropsFilePath>
   </PropertyGroup>
   
   <!-- Use the compiler server -->
@@ -139,7 +144,7 @@
   
   <PropertyGroup>
     <AuthenticodeCertificateName>MicrosoftSHA1</AuthenticodeCertificateName>
-    <FakeSignToolPath>$(MSBuildThisFileDirectory)..\..\packages\FakeSign.0.9.2\tools\FakeSign.exe</FakeSignToolPath>
+    <FakeSignToolPath>$(NuGetPackageRoot)\FakeSign\0.9.2\tools\FakeSign.exe</FakeSignToolPath>
   </PropertyGroup>
   
   <Import Project="Analyzers.Versions.targets" />

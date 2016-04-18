@@ -19,9 +19,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class TypesThatOwnDisposableFieldsShouldBeDisposableFixer : CodeFixProvider
     {
-        private const string NotImplementedExceptionName = "System.NotImplementedException";
-        private const string IDisposableName = "System.IDisposable";
-
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer<SyntaxNode>.RuleId);
 
         public async override Task RegisterCodeFixesAsync(CodeFixContext context)

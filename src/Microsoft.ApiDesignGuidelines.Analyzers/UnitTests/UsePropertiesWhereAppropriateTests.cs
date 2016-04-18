@@ -339,16 +339,16 @@ End Class
             GetCA1024BasicResultAt(17, 24, "GetFileNameProtected"));
         }
 
-        internal static readonly string CA1024Name = "CA1024";
-
         private static DiagnosticResult GetCA1024CSharpResultAt(int line, int column, string methodName)
         {
-            return GetCSharpResultAt(line, column, CA1024Name, string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.UsePropertiesWhereAppropriateMessage, methodName));
+            return GetCSharpResultAt(line, column, UsePropertiesWhereAppropriateAnalyzer.RuleId,
+                string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.UsePropertiesWhereAppropriateMessage, methodName));
         }
 
         private static DiagnosticResult GetCA1024BasicResultAt(int line, int column, string methodName)
         {
-            return GetBasicResultAt(line, column, CA1024Name, string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.UsePropertiesWhereAppropriateMessage, methodName));
+            return GetBasicResultAt(line, column, UsePropertiesWhereAppropriateAnalyzer.RuleId,
+                string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.UsePropertiesWhereAppropriateMessage, methodName));
         }
     }
 }

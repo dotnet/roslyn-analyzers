@@ -32,7 +32,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var model = await context.Document.GetSemanticModelAsync(context.CancellationToken);
+            var model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
             var gen = SyntaxGenerator.GetGenerator(context.Document);
 
             foreach (var dx in context.Diagnostics)
@@ -143,7 +143,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                         e.ReplaceNode(d, (_d, g) => g.WithStatements(_d, new SyntaxNode[] { }));
                     }
                 }
-                , cancellationToken);
+                , cancellationToken).ConfigureAwait(false);
                 return editor.ChangedSolution;
             }
         }
@@ -161,7 +161,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
             protected async override Task<Solution> GetChangedSolutionAsync(CancellationToken cancellationToken)
             {
                 var editor = SymbolEditor.Create(this.Solution);
-                await editor.EditAllDeclarationsAsync(this.Symbol, (e, d) => e.SetAccessibility(d, _newAccessibility), cancellationToken);
+                await editor.EditAllDeclarationsAsync(this.Symbol, (e, d) => e.SetAccessibility(d, _newAccessibility), cancellationToken).ConfigureAwait(false);
                 return editor.ChangedSolution;
             }
         }

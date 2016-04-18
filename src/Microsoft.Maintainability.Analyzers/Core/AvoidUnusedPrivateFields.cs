@@ -69,7 +69,7 @@ namespace Microsoft.Maintainability.Analyzers
                         {
                             foreach (IFieldSymbol unreferencedPrivateField in unreferencedPrivateFields)
                             {
-                                compilationEndContext.ReportDiagnostic(Diagnostic.Create(Rule, unreferencedPrivateField.Locations[0]));
+                                compilationEndContext.ReportDiagnostic(Diagnostic.Create(Rule, unreferencedPrivateField.Locations[0], unreferencedPrivateField.Name));
                             }
                         });
                 });

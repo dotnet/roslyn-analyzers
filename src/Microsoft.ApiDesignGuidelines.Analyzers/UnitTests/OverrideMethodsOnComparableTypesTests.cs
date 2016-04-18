@@ -882,17 +882,14 @@ Enum MyEnum
 End Enum");
         }
 
-        internal static readonly string CA1036Name = "CA1036";
-        internal static readonly string CA1036Message = MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals;
-
         private static DiagnosticResult GetCA1036CSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA1036Name, CA1036Message);
+            return GetCSharpResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals);
         }
 
         private static DiagnosticResult GetCA1036BasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA1036Name, CA1036Message);
+            return GetBasicResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals);
         }
     }
 }

@@ -12,9 +12,9 @@ namespace Desktop.Analyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class CSharpDoNotUseInsecureDtdProcessingInApiDesignAnalyzer : DoNotUseInsecureDtdProcessingInApiDesignAnalyzer
     {
-        protected override Analyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes types, Version targetFrameworkVersion)
+        protected override SymbolAndNodeAnalyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes types, Version targetFrameworkVersion)
         {
-            Analyzer analyzer = new Analyzer(types, CSharpSyntaxNodeHelper.Default, targetFrameworkVersion);
+            SymbolAndNodeAnalyzer analyzer = new SymbolAndNodeAnalyzer(types, CSharpSyntaxNodeHelper.Default, targetFrameworkVersion);
             context.RegisterSyntaxNodeAction(analyzer.AnalyzeNode, SyntaxKind.MethodDeclaration, SyntaxKind.ConstructorDeclaration);
 
             return analyzer;

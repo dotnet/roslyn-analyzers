@@ -2,7 +2,7 @@
 
 namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
 {
-    public class DiagnosticCategory
+    public static class DiagnosticCategory
     {
         public const string Security = "Microsoft.Security";
     }

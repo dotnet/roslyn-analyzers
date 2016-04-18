@@ -391,7 +391,7 @@ namespace MetaCompilation
                                 return;
                             }
 
-                            List<ISymbol> registerArgs = registerInfo.RegisterArgs;
+                            IList<ISymbol> registerArgs = registerInfo.RegisterArgs;
                             if (registerArgs == null)
                             {
                                 return;
@@ -3128,7 +3128,7 @@ namespace MetaCompilation
                     get;
                     set;
                 }
-                public List<ISymbol> RegisterArgs
+                public IList<ISymbol> RegisterArgs
                 {
                     get;
                     set;

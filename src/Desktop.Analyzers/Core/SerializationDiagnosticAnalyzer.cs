@@ -122,11 +122,11 @@ namespace Desktop.Analyzers
                         return;
                     }
 
-                    context.RegisterSymbolAction(new Analyzer(iserializableTypeSymbol, serializationInfoTypeSymbol, streamingContextTypeSymbol, serializableAttributeTypeSymbol, nonSerializedAttributeTypeSymbol).AnalyzeSymbol, SymbolKind.NamedType);
+                    context.RegisterSymbolAction(new SymbolAnalyzer(iserializableTypeSymbol, serializationInfoTypeSymbol, streamingContextTypeSymbol, serializableAttributeTypeSymbol, nonSerializedAttributeTypeSymbol).AnalyzeSymbol, SymbolKind.NamedType);
                 });
         }
 
-        private sealed class Analyzer
+        private sealed class SymbolAnalyzer
         {
             private readonly INamedTypeSymbol _iserializableTypeSymbol;
             private readonly INamedTypeSymbol _serializationInfoTypeSymbol;
@@ -134,7 +134,7 @@ namespace Desktop.Analyzers
             private readonly INamedTypeSymbol _serializableAttributeTypeSymbol;
             private readonly INamedTypeSymbol _nonSerializedAttributeTypeSymbol;
 
-            public Analyzer(
+            public SymbolAnalyzer(
                 INamedTypeSymbol iserializableTypeSymbol,
                 INamedTypeSymbol serializationInfoTypeSymbol,
                 INamedTypeSymbol streamingContextTypeSymbol,

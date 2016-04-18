@@ -29,7 +29,7 @@ namespace Desktop.Analyzers
                                                                              helpLinkUri: "http://aka.ms/CA2153",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
-        protected abstract Analyzer GetAnalyzer(CompilationSecurityTypes compilationTypes, ISymbol owningSymbol, SyntaxNode codeBlock);
+        protected abstract CodeBlockAnalyzer GetAnalyzer(CompilationSecurityTypes compilationTypes, ISymbol owningSymbol, SyntaxNode codeBlock);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics = ImmutableArray.Create(Rule);
 
@@ -64,7 +64,7 @@ namespace Desktop.Analyzers
                                 ImmutableArray<AttributeData> attributes = method.GetAttributes();
                                 if (attributes.FirstOrDefault(attribute => attribute.AttributeClass == compilationTypes.HandleProcessCorruptedStateExceptionsAttribute) != null)
                                 {
-                                    Analyzer analyzer = GetAnalyzer(compilationTypes, owningSymbol, codeBlockStartContext.CodeBlock);
+                                    CodeBlockAnalyzer analyzer = GetAnalyzer(compilationTypes, owningSymbol, codeBlockStartContext.CodeBlock);
                                     codeBlockStartContext.RegisterSyntaxNodeAction(analyzer.AnalyzeCatchClause, analyzer.CatchClauseKind);
                                     codeBlockStartContext.RegisterSyntaxNodeAction(analyzer.AnalyzeThrowStatement, analyzer.ThrowStatementKind);
                                     codeBlockStartContext.RegisterCodeBlockEndAction(analyzer.AnalyzeCodeBlockEnd);
@@ -75,7 +75,7 @@ namespace Desktop.Analyzers
                 });
         }
 
-        protected abstract class Analyzer
+        protected abstract class CodeBlockAnalyzer
         {
             private readonly ISymbol _owningSymbol;
             private readonly SyntaxNode _codeBlock;
@@ -89,7 +89,7 @@ namespace Desktop.Analyzers
             protected abstract bool IsCatchClause(SyntaxNode node);
             protected abstract bool IslambdaExpression(SyntaxNode node);
 
-            protected Analyzer(CompilationSecurityTypes compilationTypes, ISymbol owningSymbol, SyntaxNode codeBlock)
+            protected CodeBlockAnalyzer(CompilationSecurityTypes compilationTypes, ISymbol owningSymbol, SyntaxNode codeBlock)
             {
                 _owningSymbol = owningSymbol;
                 _codeBlock = codeBlock;

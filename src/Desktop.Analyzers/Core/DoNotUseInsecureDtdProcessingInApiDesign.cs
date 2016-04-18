@@ -47,7 +47,7 @@ namespace Desktop.Analyzers
                         // TODO: should we throw an exception to notify user?
                         if (version != null)
                         {
-                            Analyzer analyzer = GetAnalyzer(context, xmlTypes, version);
+                            SymbolAndNodeAnalyzer analyzer = GetAnalyzer(context, xmlTypes, version);
                             context.RegisterSymbolAction(analyzer.AnalyzeSymbol, SymbolKind.NamedType);
                         }
                     }
@@ -73,9 +73,9 @@ namespace Desktop.Analyzers
                                             customTags: WellKnownDiagnosticTags.Telemetry);
         }
 
-        protected abstract Analyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes types, Version targetFrameworkVersion);
+        protected abstract SymbolAndNodeAnalyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes types, Version targetFrameworkVersion);
 
-        protected sealed class Analyzer
+        protected sealed class SymbolAndNodeAnalyzer
         {
             // .NET frameworks >= 4.5.2 have secure default settings for XmlTextReader:
             //      DtdProcessing is enabled with null resolver
@@ -91,11 +91,11 @@ namespace Desktop.Analyzers
             private readonly ConcurrentDictionary<INamedTypeSymbol, bool> _xmlTextReaderDerivedTypes = new ConcurrentDictionary<INamedTypeSymbol, bool>();
 
 
-            public Analyzer(CompilationSecurityTypes xmlTypes, SyntaxNodeHelper helper, Version targetFrameworkVersion)
+            public SymbolAndNodeAnalyzer(CompilationSecurityTypes xmlTypes, SyntaxNodeHelper helper, Version targetFrameworkVersion)
             {
                 _xmlTypes = xmlTypes;
                 _syntaxNodeHelper = helper;
-                _isFrameworkSecure = targetFrameworkVersion == null ? false : targetFrameworkVersion >= Analyzer.s_minSecureFxVersion;
+                _isFrameworkSecure = targetFrameworkVersion == null ? false : targetFrameworkVersion >= SymbolAndNodeAnalyzer.s_minSecureFxVersion;
             }
 
             public void AnalyzeNode(SyntaxNodeAnalysisContext context)

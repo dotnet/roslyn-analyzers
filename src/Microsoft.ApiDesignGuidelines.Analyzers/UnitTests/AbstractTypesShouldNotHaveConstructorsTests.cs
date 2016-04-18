@@ -224,17 +224,16 @@ End Class
             VerifyBasic(code, GetCA1012BasicResultAt(3, 29, "D"));
         }
 
-        internal static readonly string CA1012Name = "CA1012";
         internal static readonly string CA1012Message = MicrosoftApiDesignGuidelinesAnalyzersResources.AbstractTypesShouldNotHaveConstructorsMessage;
 
         private static DiagnosticResult GetCA1012CSharpResultAt(int line, int column, string objectName)
         {
-            return GetCSharpResultAt(line, column, CA1012Name, string.Format(CA1012Message, objectName));
+            return GetCSharpResultAt(line, column, AbstractTypesShouldNotHaveConstructorsAnalyzer.RuleId, string.Format(CA1012Message, objectName));
         }
 
         private static DiagnosticResult GetCA1012BasicResultAt(int line, int column, string objectName)
         {
-            return GetBasicResultAt(line, column, CA1012Name, string.Format(CA1012Message, objectName));
+            return GetBasicResultAt(line, column, AbstractTypesShouldNotHaveConstructorsAnalyzer.RuleId, string.Format(CA1012Message, objectName));
         }
     }
 }

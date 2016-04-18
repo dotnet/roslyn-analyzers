@@ -749,7 +749,7 @@ End Namespace
         private const string CA5350RuleName = DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographicRuleId;
         private const string CA5351RuleName = DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographicRuleId;
 
-        private readonly string _doNotUseMD5Message = Resources.DoNotUseMD5;
-        private readonly string _doNotUseSHA1Message = Resources.DoNotUseSHA1;
+        private readonly string _doNotUseMD5Message = SystemSecurityCryptographyResources.DoNotUseMD5;
+        private readonly string _doNotUseSHA1Message = SystemSecurityCryptographyResources.DoNotUseSHA1;
     }
 }

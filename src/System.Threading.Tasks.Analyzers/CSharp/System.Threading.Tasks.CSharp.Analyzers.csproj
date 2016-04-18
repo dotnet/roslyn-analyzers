@@ -26,9 +26,9 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\System.Threading.Tasks.Analyzers.csproj">
+    <ProjectReference Include="..\Core\System.Threading.Tasks.Analyzers.Core.csproj">
       <Project>{F777D035-1513-453A-80FF-2EB16A938A60}</Project>
-      <Name>System.Threading.Tasks.Analyzers</Name>
+      <Name>System.Threading.Tasks.Analyzers.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

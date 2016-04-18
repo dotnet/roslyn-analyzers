@@ -170,7 +170,11 @@ namespace Roslyn.Test.Utilities
             output = outputBuilder.ToString();
         }
 
+        // CA1715: Prefix generic type parameter name with 'T'
+        // TODO: Remove the below pragma suppression once the following issue is fixed: https://github.com/dotnet/roslyn-analyzers/issues/937
+#pragma warning disable CA1715
         private static V GetOrAdd<K, V>(IDictionary<K, V> dictionary, K key, Func<K, V> function)
+#pragma warning restore CA1715
         {
             V value;
             if (!dictionary.TryGetValue(key, out value))

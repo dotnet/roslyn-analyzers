@@ -35,9 +35,9 @@
       <Project>{0A0621F2-D1DC-47FF-B643-C6646557505E}</Project>
       <Name>DiagnosticsTestUtilities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Core\System.Security.Cryptography.Hashing.Algorithms.Analyzers.csproj">
+    <ProjectReference Include="..\Core\System.Security.Cryptography.Hashing.Algorithms.Analyzers.Core.csproj">
       <Project>{DAA5B1A4-9C03-4F0E-AC61-AAD0F96457F8}</Project>
-      <Name>System.Security.Cryptography.Hashing.Algorithms.Analyzers</Name>
+      <Name>System.Security.Cryptography.Hashing.Algorithms.Analyzers.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\CSharp\System.Security.Cryptography.Hashing.CSharp.Algorithms.csproj">
       <Project>{9C86C9DB-6A03-487A-8A38-9D09DB7DFDFB}</Project>

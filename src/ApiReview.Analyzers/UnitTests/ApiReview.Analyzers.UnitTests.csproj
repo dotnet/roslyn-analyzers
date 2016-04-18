@@ -39,9 +39,9 @@
       <Project>{0A0621F2-D1DC-47FF-B643-C6646557505E}</Project>
       <Name>DiagnosticsTestUtilities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Core\ApiReview.Analyzers.csproj">
+    <ProjectReference Include="..\Core\ApiReview.Analyzers.Core.csproj">
       <Project>{46A05D87-29E2-4CC9-AC07-B0AF9ADE74EC}</Project>
-      <Name>ApiReview.Analyzers</Name>
+      <Name>ApiReview.Analyzers.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\CSharp\ApiReview.CSharp.Analyzers.csproj">
       <Project>{0329D516-FB5C-4689-885D-5D14CBF57560}</Project>

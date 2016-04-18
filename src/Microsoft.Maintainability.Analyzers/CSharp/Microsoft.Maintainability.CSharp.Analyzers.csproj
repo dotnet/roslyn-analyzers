@@ -26,9 +26,9 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\Microsoft.Maintainability.Analyzers.csproj">
+    <ProjectReference Include="..\Core\Microsoft.Maintainability.Analyzers.Core.csproj">
       <Project>{69F09F58-97C4-4070-9348-9A6A6D1C81F9}</Project>
-      <Name>Microsoft.Maintainability.Analyzers</Name>
+      <Name>Microsoft.Maintainability.Analyzers.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -52,18 +52,18 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return;
                 }
 
-                var analyzer = new Analyzer(@string, uri, attribute);
+                var analyzer = new PerCompilationAnalyzer(@string, uri, attribute);
                 c.RegisterSymbolAction(analyzer.Analyze, SymbolKind.Method);
             });
         }
 
-        private class Analyzer
+        private class PerCompilationAnalyzer
         {
             private readonly INamedTypeSymbol _string;
             private readonly INamedTypeSymbol _uri;
             private readonly INamedTypeSymbol _attribute;
 
-            public Analyzer(INamedTypeSymbol @string, INamedTypeSymbol uri, INamedTypeSymbol attribute)
+            public PerCompilationAnalyzer(INamedTypeSymbol @string, INamedTypeSymbol uri, INamedTypeSymbol attribute)
             {
                 _string = @string;
                 _uri = uri;

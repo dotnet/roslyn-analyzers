@@ -9,6 +9,10 @@ namespace a2md
     {
         public bool Equals(DiagnosticDescriptor x, DiagnosticDescriptor y) => x.Id.Equals(y.Id);
 
+        // CA1720: Identifier 'obj' contains type name
+        // TOODO: Remove the below suppression once https://github.com/dotnet/roslyn-analyzers/issues/938 is fixed.
+#pragma warning disable CA1720
         public int GetHashCode(DiagnosticDescriptor obj) => obj.Id.GetHashCode();
+#pragma warning restore CA1720
     }
 }

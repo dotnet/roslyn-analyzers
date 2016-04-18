@@ -10,8 +10,8 @@ Namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
     Public Class BasicDoNotUseInsecureCryptographicAlgorithmsAnalyzer
         Inherits DoNotUseInsecureCryptographicAlgorithmsAnalyzer
 
-        Protected Overrides Function GetAnalyzer(context As CompilationStartAnalysisContext, cryptTypes As CompilationSecurityTypes) As Analyzer
-            Dim analyzer As Analyzer = New Analyzer(cryptTypes)
+        Protected Overrides Function GetAnalyzer(context As CompilationStartAnalysisContext, cryptTypes As CompilationSecurityTypes) As SyntaxNodeAnalyzer
+            Dim analyzer As SyntaxNodeAnalyzer = New SyntaxNodeAnalyzer(cryptTypes)
             context.RegisterSyntaxNodeAction(AddressOf analyzer.AnalyzeNode,
                                              SyntaxKind.InvocationExpression,
                                              SyntaxKind.ObjectCreationExpression)

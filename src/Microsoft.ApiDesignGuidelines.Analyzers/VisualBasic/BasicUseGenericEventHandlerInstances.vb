@@ -16,13 +16,13 @@ Namespace Microsoft.ApiDesignGuidelines.Analyzers
             eventHandler As INamedTypeSymbol,
             genericEventHandler As INamedTypeSymbol,
             eventArgs As INamedTypeSymbol,
-            comSourceInterfacesAttribute As INamedTypeSymbol) As AnalyzerBase
+            comSourceInterfacesAttribute As INamedTypeSymbol) As SymbolAnalyzer
 
-            Return New BasicAnalyzer(compilation, eventHandler, genericEventHandler, eventArgs, comSourceInterfacesAttribute)
+            Return New BasicSymbolAnalyzer(compilation, eventHandler, genericEventHandler, eventArgs, comSourceInterfacesAttribute)
         End Function
 
-        Private NotInheritable Class BasicAnalyzer
-            Inherits AnalyzerBase
+        Private NotInheritable Class BasicSymbolAnalyzer
+            Inherits SymbolAnalyzer
 
             Public Sub New(
                 compilation As Compilation,

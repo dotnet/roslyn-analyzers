@@ -39,9 +39,9 @@
       <Project>{0A0621F2-D1DC-47FF-B643-C6646557505E}</Project>
       <Name>DiagnosticsTestUtilities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Core\Microsoft.ApiDesignGuidelines.Analyzers.csproj">
+    <ProjectReference Include="..\Core\Microsoft.ApiDesignGuidelines.Analyzers.Core.csproj">
       <Project>{9B5FFB24-D965-4CF1-8BB2-02C282193F4F}</Project>
-      <Name>Microsoft.ApiDesignGuidelines.Analyzers</Name>
+      <Name>Microsoft.ApiDesignGuidelines.Analyzers.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\CSharp\Microsoft.ApiDesignGuidelines.CSharp.Analyzers.csproj">
       <Project>{9CB337FD-D2C2-47A3-855E-0D27C00D96B8}</Project>

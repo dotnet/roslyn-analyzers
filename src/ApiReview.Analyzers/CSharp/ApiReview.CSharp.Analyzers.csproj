@@ -30,9 +30,9 @@
       <Project>{434fa01f-b8cb-41f7-88d1-7906003f23bc}</Project>
       <Name>CodeAnalysis</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Core\ApiReview.Analyzers.csproj">
+    <ProjectReference Include="..\Core\ApiReview.Analyzers.Core.csproj">
       <Project>{46A05D87-29E2-4CC9-AC07-B0AF9ADE74EC}</Project>
-      <Name>ApiReview.Analyzers</Name>
+      <Name>ApiReview.Analyzers.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

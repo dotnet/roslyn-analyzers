@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
+using System.Linq;
+using Roslyn.Utilities;
 using Xunit;
 
 namespace Microsoft.CodeAnalysis.UnitTests
 {
-    public struct DiagnosticResultLocation
+    public struct DiagnosticResultLocation: IEquatable<DiagnosticResultLocation>
     {
         public DiagnosticResultLocation(string path, int line, int column)
         {
@@ -19,9 +22,39 @@ namespace Microsoft.CodeAnalysis.UnitTests
         public string Path;
         public int Line;
         public int Column;
+
+        // TODO: Remove the below suppression once https://github.com/dotnet/roslyn-analyzers/issues/938 is fixed.
+#pragma warning disable CA1720 // Identifier contains type name
+        public override bool Equals(object obj)
+#pragma warning restore CA1720 // Identifier contains type name
+        {
+            return this.Equals((DiagnosticResultLocation)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Hash.CombineValues(new []{ this.Path.GetHashCode(), this.Line, this.Column });
+        }
+
+        public bool Equals(DiagnosticResultLocation other)
+        {
+            return this.Path.Equals(other.Path, System.StringComparison.OrdinalIgnoreCase) &&
+                this.Line == other.Line &&
+                this.Column == other.Column;
+        }
+
+        public static bool operator ==(DiagnosticResultLocation left, DiagnosticResultLocation right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(DiagnosticResultLocation left, DiagnosticResultLocation right)
+        {
+            return !left.Equals(right);
+        }
     }
 
-    public struct DiagnosticResult
+    public struct DiagnosticResult: IEquatable<DiagnosticResult>
     {
         private DiagnosticResultLocation[] _locations;
 
@@ -93,6 +126,36 @@ namespace Microsoft.CodeAnalysis.UnitTests
         public override string ToString()
         {
             return $"{System.IO.Path.GetFileName(Path)}({Line},{Column}): {GetSeverityString(Severity)} {Id}: {Message}";
+        }
+
+        // TODO: Remove the below suppression once https://github.com/dotnet/roslyn-analyzers/issues/938 is fixed.
+#pragma warning disable CA1720 // Identifier contains type name
+        public override bool Equals(object obj)
+#pragma warning restore CA1720 // Identifier contains type name
+        {
+            return this.Equals((DiagnosticResult)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Hash.Combine(this.Locations.Length,
+                Hash.CombineValues(this.Locations.Select(l => l.GetHashCode())));
+        }
+
+        public bool Equals(DiagnosticResult other)
+        {
+            return this.Locations.Length == other.Locations.Length &&
+                this.Locations.SetEquals(other.Locations);
+        }
+
+        public static bool operator ==(DiagnosticResult left, DiagnosticResult right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(DiagnosticResult left, DiagnosticResult right)
+        {
+            return right.Equals(left);
         }
     }
 }

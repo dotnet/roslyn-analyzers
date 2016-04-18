@@ -333,16 +333,14 @@ public class C
 
         #endregion
 
-        internal static readonly string CA2241Name = "CA2241";
-
         private static DiagnosticResult GetCA2241CSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA2241Name, SystemRuntimeAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage);
+            return GetCSharpResultAt(line, column, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.RuleId, SystemRuntimeAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage);
         }
 
         private static DiagnosticResult GetCA2241BasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA2241Name, SystemRuntimeAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage);
+            return GetBasicResultAt(line, column, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.RuleId, SystemRuntimeAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage);
         }
     }
 }

@@ -19,6 +19,7 @@
 
         -Microsoft.Reliability#CA2002;
 
+        -Microsoft.Usage#CA1816
         -Microsoft.Usage#CA2208;
         -Microsoft.Usage#CA2216;
         -Microsoft.Usage#CA2241;

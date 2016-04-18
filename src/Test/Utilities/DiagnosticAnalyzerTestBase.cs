@@ -87,7 +87,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
             }
         }
 
-        protected bool PrintActualDiagnosticsOnFailure { private get; set; }
+        protected bool PrintActualDiagnosticsOnFailure { get; set; }
 
         // It is assumed to be of the format, Get<RuleId>CSharpResultAt(line: {0}, column: {1}, message: {2})
         public string ExpectedDiagnosticsAssertionTemplate { private get; set; }

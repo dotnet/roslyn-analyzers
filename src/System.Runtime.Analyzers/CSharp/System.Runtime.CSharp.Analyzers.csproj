@@ -56,7 +56,6 @@
     <Compile Include="CSharpDisposeMethodsShouldCallBaseClassDispose.Fixer.cs" />
     <Compile Include="CSharpDisposableTypesShouldDeclareFinalizer.Fixer.cs" />
     <Compile Include="CSharpTestForNaNCorrectly.Fixer.cs" />
-    <Compile Include="CSharpAttributeStringLiteralsShouldParseCorrectly.cs" />
     <Compile Include="CSharpAttributeStringLiteralsShouldParseCorrectly.Fixer.cs" />
     <Compile Include="CSharpAvoidZeroLengthArrayAllocations.cs" />
     <Compile Include="CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.cs" />
@@ -65,7 +64,6 @@
     <Compile Include="CSharpSpecifyIFormatProvider.Fixer.cs" />
     <Compile Include="CSharpSpecifyStringComparison.Fixer.cs" />
     <Compile Include="CSharpNormalizeStringsToUppercase.Fixer.cs" />
-    <Compile Include="CSharpCallGCSuppressFinalizeCorrectly.cs" />
     <Compile Include="CSharpCallGCSuppressFinalizeCorrectly.Fixer.cs" />
     <Compile Include="CSharpInstantiateArgumentExceptionsCorrectly.Fixer.cs" />
   </ItemGroup>

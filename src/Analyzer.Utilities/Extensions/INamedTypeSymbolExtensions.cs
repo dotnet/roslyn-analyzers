@@ -41,7 +41,7 @@ namespace Analyzer.Utilities
         /// because <code>IList&gt;int></code> is constructed from <code>IList&gt;T></code>.
         /// </para>
         /// </example>
-        public static bool DerivesFromOrImplementsAnyConstructionOf(this INamedTypeSymbol type, INamedTypeSymbol parentType, Compilation compilation)
+        public static bool DerivesFromOrImplementsAnyConstructionOf(this INamedTypeSymbol type, INamedTypeSymbol parentType)
         {
             if (!parentType.IsDefinition)
             {

@@ -22,7 +22,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
-                                                                             DiagnosticCategory.Design,
+                                                                             DiagnosticCategory.Naming,
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,

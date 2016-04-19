@@ -812,7 +812,7 @@ Names of parameters and members are better used to communicate their meaning tha
     <value>Consistent naming of parameters in an override hierarchy increases the usability of the method overrides. A parameter name in a derived method that differs from the name in the base declaration can cause confusion about whether the method is an override of the base method or a new overload of the method.</value>
   </data>
   <data name="ParameterNamesShouldMatchBaseDeclarationMessage" xml:space="preserve">
-    <value>Parameter names should match base declaration</value>
+    <value>In member {0}, change parameter name {1} to {2} in order to match the identifier as it has been declared in {3}.</value>
   </data>
   <data name="UsePreferredTermsTitle" xml:space="preserve">
     <value>Use preferred terms</value>
@@ -919,6 +919,12 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="OverrideEqualsOnOverloadingOperatorEqualsMessage" xml:space="preserve">
     <value>Override Equals on overloading operator equals</value>
   </data>
+  <data name="Since_0_redefines_operator_1_it_should_also_redefine_operator_2" xml:space="preserve">
+    <value>Since '{0}' redefines operator '{1}', it should also redefine operator '{2}'</value>
+  </data>
+  <data name="Generate_missing_operators" xml:space="preserve">
+    <value>Generate missing operators</value>
+  </data>
   <data name="OverrideEqualsOnOverloadingOperatorEqualsCodeActionTitle" xml:space="preserve">
     <value>Override object.Equals</value>
   </data>
@@ -981,6 +987,9 @@ Names of parameters and members are better used to communicate their meaning tha
   </data>
   <data name="OverrideObjectEqualsDescription" xml:space="preserve">
     <value>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</value>
+  </data>
+  <data name="RenameToTitle" xml:space="preserve">
+    <value>Rename to '{0}'</value>
   </data>
   <data name="ConsiderPassingBaseTypesAsParametersDescription" xml:space="preserve">
     <value>When a base type is specified as a parameter in a method declaration, any type that is derived from the base type can be passed as the corresponding argument to the method. If the additional functionality that is provided by the derived parameter type is not required, use of the base type enables wider use of the method.</value>

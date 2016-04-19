@@ -121,7 +121,7 @@ namespace System.Runtime.InteropServices.Analyzers
                 Location defaultLocation = dllAttribute == null ? methodSymbol.Locations.FirstOrDefault() : GetAttributeLocation(dllAttribute);
 
                 // CA1401 - PInvoke methods should not be visible
-                if (methodSymbol.DeclaredAccessibility == Accessibility.Public || methodSymbol.DeclaredAccessibility == Accessibility.Protected)
+                if (methodSymbol.GetResultantVisibility() == SymbolVisibility.Public)
                 {
                     context.ReportDiagnostic(context.Symbol.CreateDiagnostic(RuleCA1401, methodSymbol.Name));
                 }

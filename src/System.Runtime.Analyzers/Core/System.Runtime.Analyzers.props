@@ -9,12 +9,21 @@
    <PropertyGroup>
       <CodeAnalysisRuleSetOverrides>
         $(CodeAnalysisRuleSetOverrides);
+        -Microsoft.Globalization#CA1304;
+        -Microsoft.Globalization#CA1305;
+        -Microsoft.Globalization#CA1307;
         -Microsoft.Globalization#CA1308;
 
-        -Microsoft.Performance#CA1810;
+        -Microsoft.Performance#CA1813;
+        -Microsoft.Performance#CA1820;
 
-        -Microsoft.Usage#CA2201;
-        -Microsoft.Usage#CA2207;
+        -Microsoft.Reliability#CA2002;
+
+        -Microsoft.Usage#CA1816
+        -Microsoft.Usage#CA2208;
+        -Microsoft.Usage#CA2216;
+        -Microsoft.Usage#CA2241;
+        -Microsoft.Usage#CA2242;
       </CodeAnalysisRuleSetOverrides>
    </PropertyGroup>
 </Project>

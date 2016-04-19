@@ -19,7 +19,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static readonly LocalizableString s_localizableMessageMakeMoreAccessible = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertiesShouldNotBeWriteOnlyMessageMakeMoreAccessible), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertiesShouldNotBeWriteOnlyDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
-
         internal static DiagnosticDescriptor AddGetterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageAddGetter,
@@ -52,19 +51,26 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         /// <param name="context"></param>
         private void AnalyzeSymbol(SymbolAnalysisContext context)
         {
-
             var property = context.Symbol as IPropertySymbol;
-            // Nothing to do for overwritten issues
+            // There is no violation is the property was overwritten, so turn off scanning
             if (property == null)
             {
                 return;
             }
-            // check for when rule is turned off
-            if (property.IsOverride)
+            // not raising a violation for when: 
+            //     property is overwritten since the error will be in base type 
+            //     property is the implementaton of any interface member 
+            if (property.IsOverride || property.IsImplementationOfAnyInterfaceMember())
+            {
+                return;
+            }
+            // If property is not visible outside the assembly
+            if (property.GetResultantVisibility() != SymbolVisibility.Public)
             {
                 return;
             }
 
+            // We handled the non-CA1044 cases earlier.  Now, we handle CA1044 cases
             // If there is no getter then it is not accessible
             if (property.IsWriteOnly)
             {

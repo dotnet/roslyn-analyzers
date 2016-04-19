@@ -68,6 +68,8 @@
     <Content Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsiderPassingBaseTypesAsParametersTests.cs" />
+    <Compile Include="ConsiderPassingBaseTypesAsParametersTests.Fixer.cs" />
     <Compile Include="DoNotDirectlyAwaitATaskTests.cs" />
     <Compile Include="DoNotDirectlyAwaitATaskTests.Fixer.cs" />
     <Compile Include="EnumWithFlagsAttributeTests.cs" />

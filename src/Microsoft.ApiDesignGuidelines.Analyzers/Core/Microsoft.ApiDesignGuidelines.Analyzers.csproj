@@ -43,6 +43,8 @@
     <None Include="uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsiderPassingBaseTypesAsParameters.cs" />
+    <Compile Include="ConsiderPassingBaseTypesAsParameters.Fixer.cs" />
     <Compile Include="DoNotDirectlyAwaitATask.cs" />
     <Compile Include="DoNotDirectlyAwaitATask.Fixer.cs" />
     <Compile Include="EnumWithFlagsAttribute.cs" />

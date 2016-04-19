@@ -12,6 +12,7 @@
         -Microsoft.Design#CA1000;
         -Microsoft.Design#CA1008;
         -Microsoft.Design#CA1010;
+        -Microsoft.Design#CA1011;
         -Microsoft.Design#CA1012;
         -Microsoft.Design#CA1014;
         -Microsoft.Design#CA1016;

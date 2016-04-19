@@ -315,6 +315,33 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to When a base type is specified as a parameter in a method declaration, any type that is derived from the base type can be passed as the corresponding argument to the method. If the additional functionality that is provided by the derived parameter type is not required, use of the base type enables wider use of the method..
+        /// </summary>
+        internal static string ConsiderPassingBaseTypesAsParametersDescription {
+            get {
+                return ResourceManager.GetString("ConsiderPassingBaseTypesAsParametersDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Consider changing the type of parameter {0} in {1} from {2} to its base type {3}. This method appears to only require base class members in its implementation. Suppress this violation if there is a compelling reason to require the more derived type in the method signature..
+        /// </summary>
+        internal static string ConsiderPassingBaseTypesAsParametersMessage {
+            get {
+                return ResourceManager.GetString("ConsiderPassingBaseTypesAsParametersMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Consider passing base types as parameters.
+        /// </summary>
+        internal static string ConsiderPassingBaseTypesAsParametersTitle {
+            get {
+                return ResourceManager.GetString("ConsiderPassingBaseTypesAsParametersTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to When a base class is noninheritable because its constructor is internal, a derived class should not make it inheritable by having a public or protected constructor..
         /// </summary>
         internal static string ConstructorMakeNoninheritableBaseClassInheritableDescription {

@@ -67,7 +67,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol attributeType = WellKnownTypes.IDisposable(compilationContext.Compilation);
+                INamedTypeSymbol attributeType = WellKnownTypes.Attribute(compilationContext.Compilation);
                 if (attributeType == null)
                 {
                     return;
@@ -83,7 +83,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private void AnalyzeSymbol(INamedTypeSymbol symbol, INamedTypeSymbol attributeType, Compilation compilation, Action<Diagnostic> addDiagnostic)
         {
-            if (symbol != null && symbol.GetBaseTypesAndThis().Contains(WellKnownTypes.Attribute(compilation)) && symbol.DeclaredAccessibility != Accessibility.Private)
+            if (symbol != null && symbol.GetBaseTypesAndThis().Contains(attributeType) && symbol.DeclaredAccessibility != Accessibility.Private)
             {
                 IEnumerable<IParameterSymbol> parametersToCheck = GetAllPublicConstructorParameters(symbol);
                 if (parametersToCheck.Any())

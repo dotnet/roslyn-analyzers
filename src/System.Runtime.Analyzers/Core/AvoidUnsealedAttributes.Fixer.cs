@@ -33,12 +33,12 @@ namespace System.Runtime.Analyzers
                 Diagnostic diagnostic = context.Diagnostics.Single();
 
                 context.RegisterCodeFix(new MyCodeAction(SystemRuntimeAnalyzersResources.AvoidUnsealedAttributesMessage,
-                    async ct => await MakeSealed(editor, declaration, ct).ConfigureAwait(false)),
+                    async ct => await MakeSealed(editor, declaration).ConfigureAwait(false)),
                     diagnostic);
             }
         }
 
-        private Task<Document> MakeSealed(DocumentEditor editor, SyntaxNode declaration, CancellationToken ct)
+        private Task<Document> MakeSealed(DocumentEditor editor, SyntaxNode declaration)
         {
             DeclarationModifiers modifiers = editor.Generator.GetModifiers(declaration);
             editor.SetModifiers(declaration, modifiers + DeclarationModifiers.Sealed);

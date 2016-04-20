@@ -2,4 +2,20 @@
 <RuleSet Name="Common diagnostic rules for all Roslyn Analyzer projects"
          Description="This file contains diagnostic settings used by all Roslyn Analyzer projects. Projects that need specific settings should have their own rule set files that Include this one, and then make the necessary adjustments." 
          ToolsVersion="14.0">
+
+  <Rules AnalyzerId="Microsoft.ApiDesignGuidelines.Analyzers" RuleNamespace="Microsoft.ApiDesignGuidelines.Analyzers">
+    <!-- DoNotDecreaseInheritedMemberVisibility - blocked by https://github.com/dotnet/roslyn-analyzers/issues/940 -->
+    <Rule Id="CA2222" Action="None" />
+  </Rules>
+
+  <Rules AnalyzerId="Microsoft.ApiDesignGuidelines.Analyzers" RuleNamespace="Microsoft.ApiDesignGuidelines.Analyzers">
+    <!-- MarkAssembliesWithAssemblyVersion - suppressed because assembly versions for our analyzers are stored in https://github.com/dotnet/roslyn-analyzers/blob/master/build/Targets/Analyzers.Versions.targets -->
+    <Rule Id="CA1016" Action="None" />
+  </Rules>
+
+  <Rules AnalyzerId="Microsoft.ApiDesignGuidelines.Analyzers" RuleNamespace="Microsoft.ApiDesignGuidelines.Analyzers">
+    <!-- IdentifiersShouldNotContainTypeNames - not valuable as we don't plan to ship or support our public API surface. -->
+    <Rule Id="CA1720" Action="None" />
+  </Rules>
+
 </RuleSet>

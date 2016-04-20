@@ -23,7 +23,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             // This is to get rid of warning CS1998, please remove when implementing this analyzer
-            await new Task(() => { });
+            await new Task(() => { }).ConfigureAwait(false);
             throw new NotImplementedException();
         }
     }

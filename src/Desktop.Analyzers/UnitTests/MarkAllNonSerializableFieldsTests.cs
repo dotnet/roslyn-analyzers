@@ -385,17 +385,16 @@ namespace Desktop.Analyzers.UnitTests
                 GetCA2235BasicResultAt(12, 37, "s2", "CA2235WithNonSerializableAutoProperties", "NonSerializableType"));
         }
 
-        internal static readonly string CA2235Name = SerializationRulesDiagnosticAnalyzer.RuleCA2235Id;
         internal static readonly string CA2235Message = DesktopAnalyzersResources.MarkAllNonSerializableFieldsMessage;
 
         private static DiagnosticResult GetCA2235CSharpResultAt(int line, int column, string fieldName, string containerName, string typeName)
         {
-            return GetCSharpResultAt(line, column, CA2235Name, string.Format(CA2235Message, fieldName, containerName, typeName));
+            return GetCSharpResultAt(line, column, SerializationRulesDiagnosticAnalyzer.RuleCA2235Id, string.Format(CA2235Message, fieldName, containerName, typeName));
         }
 
         private static DiagnosticResult GetCA2235BasicResultAt(int line, int column, string fieldName, string containerName, string typeName)
         {
-            return GetBasicResultAt(line, column, CA2235Name, string.Format(CA2235Message, fieldName, containerName, typeName));
+            return GetBasicResultAt(line, column, SerializationRulesDiagnosticAnalyzer.RuleCA2235Id, string.Format(CA2235Message, fieldName, containerName, typeName));
         }
         #endregion
     }

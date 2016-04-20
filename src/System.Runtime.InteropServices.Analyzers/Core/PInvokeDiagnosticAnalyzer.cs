@@ -80,18 +80,18 @@ namespace System.Runtime.InteropServices.Analyzers
                         return;
                     }
 
-                    context.RegisterSymbolAction(new Analyzer(dllImportType, marshalAsType, stringBuilderType, unmanagedType).AnalyzeSymbol, SymbolKind.Method);
+                    context.RegisterSymbolAction(new SymbolAnalyzer(dllImportType, marshalAsType, stringBuilderType, unmanagedType).AnalyzeSymbol, SymbolKind.Method);
                 });
         }
 
-        private sealed class Analyzer
+        private sealed class SymbolAnalyzer
         {
             private readonly INamedTypeSymbol _dllImportType;
             private readonly INamedTypeSymbol _marshalAsType;
             private readonly INamedTypeSymbol _stringBuilderType;
             private readonly INamedTypeSymbol _unmanagedType;
 
-            public Analyzer(
+            public SymbolAnalyzer(
                 INamedTypeSymbol dllImportType,
                 INamedTypeSymbol marshalAsType,
                 INamedTypeSymbol stringBuilderType,

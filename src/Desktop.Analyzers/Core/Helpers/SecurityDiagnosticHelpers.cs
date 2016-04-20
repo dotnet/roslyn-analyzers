@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.Semantics;
 
 namespace Desktop.Analyzers
 {
-    public class SecurityDiagnosticHelpers
+    public static class SecurityDiagnosticHelpers
     {
         public static bool IsXslCompiledTransformLoad(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {

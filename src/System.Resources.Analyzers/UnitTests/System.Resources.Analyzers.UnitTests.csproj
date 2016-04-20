@@ -35,9 +35,9 @@
       <Project>{0A0621F2-D1DC-47FF-B643-C6646557505E}</Project>
       <Name>DiagnosticsTestUtilities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Core\System.Resources.Analyzers.csproj">
+    <ProjectReference Include="..\Core\System.Resources.Analyzers.Core.csproj">
       <Project>{4D517B34-C3D1-4358-9CF0-2240B6AA7A75}</Project>
-      <Name>System.Resources.Analyzers</Name>
+      <Name>System.Resources.Analyzers.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\CSharp\System.Resources.CSharp.Analyzers.csproj">
       <Project>{BE7781F6-3A4A-4458-9C8C-2703D6B255CA}</Project>

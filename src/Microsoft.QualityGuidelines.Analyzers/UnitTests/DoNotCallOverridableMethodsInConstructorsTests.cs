@@ -359,17 +359,14 @@ End Class
 ");
         }
 
-        internal static readonly string CA2214Name = DoNotCallOverridableMethodsInConstructorsAnalyzer.RuleId;
-        internal static readonly string CA2214Message = MicrosoftQualityGuidelinesAnalyzersResources.DoNotCallOverridableMethodsInConstructors;
-
         private static DiagnosticResult GetCA2214CSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA2214Name, CA2214Message);
+            return GetCSharpResultAt(line, column, DoNotCallOverridableMethodsInConstructorsAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.DoNotCallOverridableMethodsInConstructors);
         }
 
         private static DiagnosticResult GetCA2214BasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA2214Name, CA2214Message);
+            return GetBasicResultAt(line, column, DoNotCallOverridableMethodsInConstructorsAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.DoNotCallOverridableMethodsInConstructors);
         }
     }
 }

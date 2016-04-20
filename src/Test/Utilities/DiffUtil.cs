@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Microsoft.CodeAnalysis.Test.Utilities
 {
-    public class DiffUtil
+    public static class DiffUtil
     {
         private enum EditKind
         {
@@ -212,6 +212,9 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
                 return 1.0 - (double)lcsLength / (double)max;
             }
 
+            // CA1814: Prefer jagged arrays over multidimensional
+            // TODO: Change the implementation of this method to return jagged array.
+#pragma warning disable CA1814
             /// <summary>
             /// Calculates costs of all paths in an edit graph starting from vertex (0,0) and ending in vertex (lengthA, lengthB). 
             /// </summary>
@@ -265,6 +268,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
 
                 return d;
             }
+#pragma warning restore CA1814
         }
     }
 }

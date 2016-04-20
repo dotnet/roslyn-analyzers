@@ -79,7 +79,7 @@ namespace System.Runtime.Analyzers
                 if (HasMessageOrParameterNameConstructor(creation.Type))
                 {
                     // Call the {0} constructor that contains a message and/ or paramName parameter
-                    ReportDiagnostic(context, s_localizableMessageNoArguments, creation.Type);
+                    ReportDiagnostic(context, s_localizableMessageNoArguments, creation.Type.Name);
                 }
             }
             else
@@ -122,7 +122,7 @@ namespace System.Runtime.Analyzers
 
             if (format != null)
             {
-                ReportDiagnostic(context, format, targetSymbol, stringArgument, parameter.Name, exceptionType);
+                ReportDiagnostic(context, format, targetSymbol.Name, stringArgument, parameter.Name, exceptionType.Name);
             }
         }
 

@@ -38,20 +38,21 @@
     <None Include="ThirdPartyNotices.rtf" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DoNotUseInsecureCryptographicAlgorithms.cs" />
     <Compile Include="Helpers\CompilationSecurityTypes.cs" />
     <Compile Include="Helpers\SecurityTypes.cs" />
     <Compile Include="DiagnosticCategory.cs" />
-    <Compile Include="Resources.Designer.cs">
+    <Compile Include="SystemSecurityCryptographyResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
+      <DependentUpon>SystemSecurityCryptographyResources.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources.resx">
+    <EmbeddedResource Include="SystemSecurityCryptographyResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <LastGenOutput>SystemSecurityCryptographyResources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

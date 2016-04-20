@@ -9,9 +9,9 @@ namespace Desktop.Analyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class CSharpDoNotUseInsecureCryptographicAlgorithmsAnalyzer : DoNotUseInsecureCryptographicAlgorithmsAnalyzer
     {
-        protected override Analyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes cryptTypes)
+        protected override SyntaxNodeAnalyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes cryptTypes)
         {
-            Analyzer analyzer = new Analyzer(cryptTypes);
+            SyntaxNodeAnalyzer analyzer = new SyntaxNodeAnalyzer(cryptTypes);
             context.RegisterSyntaxNodeAction(analyzer.AnalyzeNode,
                                              SyntaxKind.InvocationExpression,
                                              SyntaxKind.ObjectCreationExpression);

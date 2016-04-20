@@ -2752,48 +2752,46 @@ End Class
 
         #endregion
 
-        internal static readonly string CA1019Name = "CA1019";
-
         private static DiagnosticResult GetCA1019CSharpDefaultResultAt(int line, int column, string paramName, string attributeTypeName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
             string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageDefault, paramName, attributeTypeName);
-            return GetCSharpResultAt(line, column, CA1019Name, message);
+            return GetCSharpResultAt(line, column, DefineAccessorsForAttributeArgumentsAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1019BasicDefaultResultAt(int line, int column, string paramName, string attributeTypeName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
             string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageDefault, paramName, attributeTypeName);
-            return GetBasicResultAt(line, column, CA1019Name, message);
+            return GetBasicResultAt(line, column, DefineAccessorsForAttributeArgumentsAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1019CSharpIncreaseVisibilityResultAt(int line, int column, string propertyName, string paramName)
         {
             // If '{0}' is the property accessor for positional argument '{1}', make it public.
             string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageIncreaseVisibility, propertyName, paramName);
-            return GetCSharpResultAt(line, column, CA1019Name, message);
+            return GetCSharpResultAt(line, column, DefineAccessorsForAttributeArgumentsAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1019BasicIncreaseVisibilityResultAt(int line, int column, string propertyName, string paramName)
         {
             // If '{0}' is the property accessor for positional argument '{1}', make it public.
             string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageIncreaseVisibility, propertyName, paramName);
-            return GetBasicResultAt(line, column, CA1019Name, message);
+            return GetBasicResultAt(line, column, DefineAccessorsForAttributeArgumentsAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1019CSharpRemoveSetterResultAt(int line, int column, string propertyName, string paramName)
         {
             // Remove the property setter from '{0}' or reduce its accessibility because it corresponds to positional argument '{1}'.
             string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageRemoveSetter, propertyName, paramName);
-            return GetCSharpResultAt(line, column, CA1019Name, message);
+            return GetCSharpResultAt(line, column, DefineAccessorsForAttributeArgumentsAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1019BasicRemoveSetterResultAt(int line, int column, string propertyName, string paramName)
         {
             // Remove the property setter from '{0}' or reduce its accessibility because it corresponds to positional argument '{1}'.
             string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageRemoveSetter, propertyName, paramName);
-            return GetBasicResultAt(line, column, CA1019Name, message);
+            return GetBasicResultAt(line, column, DefineAccessorsForAttributeArgumentsAnalyzer.RuleId, message);
         }
     }
 }

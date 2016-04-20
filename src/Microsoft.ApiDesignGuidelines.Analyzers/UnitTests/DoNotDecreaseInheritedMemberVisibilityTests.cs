@@ -259,16 +259,14 @@ public sealed class DerivedClass : BaseClass
 }");
         }
 
-        private const string CA2222RuleName = DoNotDecreaseInheritedMemberVisibilityAnalyzer.RuleId;
-
         private DiagnosticResult GetCSharpCA2222RuleNameResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA2222RuleName, MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDecreaseInheritedMemberVisibilityMessage);
+            return GetCSharpResultAt(line, column, DoNotDecreaseInheritedMemberVisibilityAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDecreaseInheritedMemberVisibilityMessage);
         }
 
         private DiagnosticResult GetBasicCA2222RuleNameResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA2222RuleName, MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDecreaseInheritedMemberVisibilityMessage);
+            return GetBasicResultAt(line, column, DoNotDecreaseInheritedMemberVisibilityAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDecreaseInheritedMemberVisibilityMessage);
         }
     }
 }

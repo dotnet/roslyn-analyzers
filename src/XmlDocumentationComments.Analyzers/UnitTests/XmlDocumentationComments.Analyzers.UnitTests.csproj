@@ -35,9 +35,9 @@
       <Project>{0A0621F2-D1DC-47FF-B643-C6646557505E}</Project>
       <Name>DiagnosticsTestUtilities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Core\XmlDocumentationComments.Analyzers.csproj">
+    <ProjectReference Include="..\Core\XmlDocumentationComments.Analyzers.Core.csproj">
       <Project>{1B37C044-D0F9-4C32-A516-0EA819FC3607}</Project>
-      <Name>XmlDocumentationComments.Analyzers</Name>
+      <Name>XmlDocumentationComments.Analyzers.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\CSharp\XmlDocumentationComments.CSharp.Analyzers.csproj">
       <Project>{8D95A485-C744-4D98-BD47-A569A2CBC410}</Project>

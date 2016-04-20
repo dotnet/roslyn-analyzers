@@ -35,9 +35,9 @@
       <Project>{0A0621F2-D1DC-47FF-B643-C6646557505E}</Project>
       <Name>DiagnosticsTestUtilities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Core\Microsoft.Composition.Analyzers.csproj">
+    <ProjectReference Include="..\Core\Microsoft.Composition.Analyzers.Core.csproj">
       <Project>{60468C17-CEB5-4469-B47C-B092DF7A410D}</Project>
-      <Name>Microsoft.Composition.Analyzers</Name>
+      <Name>Microsoft.Composition.Analyzers.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\CSharp\Microsoft.Composition.CSharp.Analyzers.csproj">
       <Project>{66793D7D-5E5D-42D7-8408-352FC5B43D8D}</Project>

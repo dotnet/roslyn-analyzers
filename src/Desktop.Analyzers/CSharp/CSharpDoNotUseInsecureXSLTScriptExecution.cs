@@ -11,9 +11,9 @@ namespace Desktop.Analyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class CSharpDoNotUseInsecureXSLTScriptExecutionAnalyzer : DoNotUseInsecureXSLTScriptExecutionAnalyzer<SyntaxKind>
     {
-        protected override Analyzer GetAnalyzer(CodeBlockStartAnalysisContext<SyntaxKind> context, CompilationSecurityTypes types)
+        protected override SyntaxNodeAnalyzer GetAnalyzer(CodeBlockStartAnalysisContext<SyntaxKind> context, CompilationSecurityTypes types)
         {
-            Analyzer analyzer = new Analyzer(types, CSharpSyntaxNodeHelper.Default);
+            SyntaxNodeAnalyzer analyzer = new SyntaxNodeAnalyzer(types, CSharpSyntaxNodeHelper.Default);
             context.RegisterSyntaxNodeAction(
                 analyzer.AnalyzeNode,
                 SyntaxKind.InvocationExpression,

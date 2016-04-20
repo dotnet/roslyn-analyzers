@@ -407,19 +407,18 @@ namespace Desktop.Analyzers.UnitTests
                 GetCA2229BasicResultAt(5, 30, "CA2229SerializableProper", CA2229Message));
         }
 
-        internal static readonly string CA2229Name = SerializationRulesDiagnosticAnalyzer.RuleCA2229Id;
         internal static readonly string CA2229Message = DesktopAnalyzersResources.ImplementSerializationConstructorsMessageCreateMagicConstructor;
         internal static readonly string CA2229MessageSealed = DesktopAnalyzersResources.ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate;
         internal static readonly string CA2229MessageUnsealed = DesktopAnalyzersResources.ImplementSerializationConstructorsMessageMakeUnsealedMagicConstructorFamily;
 
         private static DiagnosticResult GetCA2229CSharpResultAt(int line, int column, string objectName, string message)
         {
-            return GetCSharpResultAt(line, column, CA2229Name, string.Format(message, objectName));
+            return GetCSharpResultAt(line, column, SerializationRulesDiagnosticAnalyzer.RuleCA2229Id, string.Format(message, objectName));
         }
 
         private static DiagnosticResult GetCA2229BasicResultAt(int line, int column, string objectName, string message)
         {
-            return GetBasicResultAt(line, column, CA2229Name, string.Format(message, objectName));
+            return GetBasicResultAt(line, column, SerializationRulesDiagnosticAnalyzer.RuleCA2229Id, string.Format(message, objectName));
         }
 
         #endregion

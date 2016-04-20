@@ -194,7 +194,11 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
 
         public object Code;// => _code;
 
+        // CA1720: Identifier 'obj' contains type name
+        // TOODO: Remove the below suppression once https://github.com/dotnet/roslyn-analyzers/issues/938 is fixed.
+#pragma warning disable CA1720
         public override bool Equals(object obj)
+#pragma warning restore CA1720
         {
             var d = obj as DiagnosticDescription;
 

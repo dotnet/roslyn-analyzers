@@ -332,8 +332,10 @@ namespace System.Runtime.Analyzers
                 Object = WellKnownTypes.Object(compilation);
             }
 
+#pragma warning disable CA1720 // Identifier contains type name
             public INamedTypeSymbol String { get; }
             public INamedTypeSymbol Object { get; }
+#pragma warning restore CA1720 // Identifier contains type name
 
             public Info TryGet(IMethodSymbol method)
             {

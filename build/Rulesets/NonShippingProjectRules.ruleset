@@ -1,4 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RuleSet Name="Common diagnostic rules for all non-shipping projects" Description="Enables/disable rules specific to all non-shipping projects." ToolsVersion="14.0">
-  <Include Path=".\Roslyn.ruleset" Action="Default" />
+  <Include Path=".\Analyzers.ruleset" Action="Default" />
+
+  <Rules AnalyzerId="Microsoft.ApiDesignGuidelines.Analyzers" RuleNamespace="Microsoft.ApiDesignGuidelines.Analyzers">
+    <!-- Identifiers should not contain underscores - suppress for non-shipping/test projects -->
+    <Rule Id="CA1707" Action="None" />
+  </Rules>
+
 </RuleSet>

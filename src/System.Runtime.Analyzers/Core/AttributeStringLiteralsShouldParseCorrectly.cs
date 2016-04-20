@@ -56,7 +56,7 @@ namespace System.Runtime.Analyzers
         {
             try
             {
-                new Guid(value);
+                var unused = new Guid(value);
                 return true;
             }
             catch (OverflowException)

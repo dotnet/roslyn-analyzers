@@ -25,9 +25,9 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\System.Runtime.InteropServices.Analyzers.csproj">
+    <ProjectReference Include="..\Core\System.Runtime.InteropServices.Analyzers.Core.csproj">
       <Project>{B806A3D0-BF66-491B-8845-A4E02050FD1E}</Project>
-      <Name>System.Runtime.InteropServices.Analyzers</Name>
+      <Name>System.Runtime.InteropServices.Analyzers.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

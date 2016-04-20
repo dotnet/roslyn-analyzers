@@ -48,7 +48,7 @@ namespace Desktop.Analyzers
             else if (symbol.Kind == SymbolKind.Method)
             {
                 context.RegisterCodeFix(new MyCodeAction(DesktopAnalyzersResources.ImplementSerializationConstructorsCodeActionTitle,
-                     async ct => await SetAccessibility(context.Document, node, symbol, ct).ConfigureAwait(false)),
+                     async ct => await SetAccessibility(context.Document, symbol, ct).ConfigureAwait(false)),
                 diagnostic);
             }
 
@@ -80,7 +80,7 @@ namespace Desktop.Analyzers
             return editor.GetChangedDocuments().First();
         }
 
-        private async Task<Document> SetAccessibility(Document document, SyntaxNode node, ISymbol symbol, CancellationToken cancellationToken)
+        private async Task<Document> SetAccessibility(Document document, ISymbol symbol, CancellationToken cancellationToken)
         {
             SymbolEditor editor = SymbolEditor.Create(document);
             var methodSymbol = symbol as IMethodSymbol;

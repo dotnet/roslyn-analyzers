@@ -363,17 +363,14 @@ End Class",
            GetCA2200BasicResultAt(12, 17));
         }
 
-        internal static readonly string CA2200Name = "CA2200";
-        internal static readonly string CA2200Message = MicrosoftQualityGuidelinesAnalyzersResources.RethrowToPreserveStackDetailsMessage;
-
         private static DiagnosticResult GetCA2200BasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA2200Name, CA2200Message);
+            return GetBasicResultAt(line, column, RethrowToPreserveStackDetailsAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RethrowToPreserveStackDetailsMessage);
         }
 
         private static DiagnosticResult GetCA2200CSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA2200Name, CA2200Message);
+            return GetCSharpResultAt(line, column, RethrowToPreserveStackDetailsAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RethrowToPreserveStackDetailsMessage);
         }
     }
 }

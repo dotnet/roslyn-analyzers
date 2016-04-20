@@ -25,7 +25,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
             VerifyFix(LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics);
         }
 
-        protected void VerifyBasicFix(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, bool continueOnError = false)
+        protected void VerifyBasicFix(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false)
         {
             VerifyFix(LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), GetBasicCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics);
         }
@@ -130,7 +130,11 @@ namespace Microsoft.CodeAnalysis.UnitTests
             return GetSortedDiagnostics(diagnostics);
         }
 
+        // TODO: Remove the suppression once method is implemented.
+        // CA1801: Remove unused parameters.
+#pragma warning disable CA1801
         private static IEnumerable<Diagnostic> GetDiagnosticsUsingIDEAnalyzerDriver(DiagnosticAnalyzer analyzer, Document document, TextSpan? span)
+#pragma warning restore CA1801
         {
             // TODO(mavasani): Uncomment the below code once FxCop Analyzers have been ported to new IDiagnosticAnalyzer API.
 

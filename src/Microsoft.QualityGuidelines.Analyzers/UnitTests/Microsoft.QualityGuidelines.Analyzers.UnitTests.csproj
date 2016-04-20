@@ -35,9 +35,9 @@
       <Project>{0A0621F2-D1DC-47FF-B643-C6646557505E}</Project>
       <Name>DiagnosticsTestUtilities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Core\Microsoft.QualityGuidelines.Analyzers.csproj">
+    <ProjectReference Include="..\Core\Microsoft.QualityGuidelines.Analyzers.Core.csproj">
       <Project>{A6D274A2-1AB2-4F0A-BC63-3BA3ACE0B970}</Project>
-      <Name>Microsoft.QualityGuidelines.Analyzers</Name>
+      <Name>Microsoft.QualityGuidelines.Analyzers.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\CSharp\Microsoft.QualityGuidelines.CSharp.Analyzers.csproj">
       <Project>{69678780-B916-452B-9107-066F714BDD69}</Project>

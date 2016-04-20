@@ -26,6 +26,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                          DiagnosticSeverity.Warning,
                                                                          isEnabledByDefault: false,
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182126.aspx",
+                                                                         description: s_localizableDescription,
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);

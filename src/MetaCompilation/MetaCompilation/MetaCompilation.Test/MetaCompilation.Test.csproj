@@ -42,10 +42,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\Test\Utilities\DiagnosticResult.cs">
+      <Link>Helpers\DiagnosticResult.cs</Link>
+    </Compile>
+    <Compile Include="Helpers\HashUtilities.cs" />
+    <Compile Include="Helpers\EnumerableExtensions.cs" />
     <Compile Include="Verifiers\CodeFixVerifier.cs" />
     <Compile Include="Verifiers\DiagnosticVerifier.cs" />
     <Compile Include="Helpers\CodeFixVerifier.Helper.cs" />
-    <Compile Include="Helpers\DiagnosticResult.cs" />
     <Compile Include="Helpers\DiagnosticVerifier.Helper.cs" />
     <Compile Include="UnitTests.cs" />
   </ItemGroup>

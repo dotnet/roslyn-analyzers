@@ -61,16 +61,16 @@ namespace Desktop.Analyzers
                                             customTags: WellKnownDiagnosticTags.Telemetry);
         }
 
-        protected abstract Analyzer GetAnalyzer(CodeBlockStartAnalysisContext<TLanguageKindEnum> context, CompilationSecurityTypes types);
+        protected abstract SyntaxNodeAnalyzer GetAnalyzer(CodeBlockStartAnalysisContext<TLanguageKindEnum> context, CompilationSecurityTypes types);
 
-        protected sealed class Analyzer
+        protected sealed class SyntaxNodeAnalyzer
         {
             private readonly CompilationSecurityTypes _xmlTypes;
             private readonly SyntaxNodeHelper _syntaxNodeHelper;
 
             private readonly Dictionary<ISymbol, XsltSettingsEnvironment> _xsltSettingsEnvironments = new Dictionary<ISymbol, XsltSettingsEnvironment>();
 
-            public Analyzer(CompilationSecurityTypes xmlTypes, SyntaxNodeHelper helper)
+            public SyntaxNodeAnalyzer(CompilationSecurityTypes xmlTypes, SyntaxNodeHelper helper)
             {
                 _xmlTypes = xmlTypes;
                 _syntaxNodeHelper = helper;

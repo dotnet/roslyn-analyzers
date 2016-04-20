@@ -25,9 +25,9 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\System.Security.Cryptography.Hashing.Algorithms.Analyzers.csproj">
+    <ProjectReference Include="..\Core\System.Security.Cryptography.Hashing.Algorithms.Analyzers.Core.csproj">
       <Project>{DAA5B1A4-9C03-4F0E-AC61-AAD0F96457F8}</Project>
-      <Name>System.Security.Cryptography.Hashing.Algorithms.Analyzers</Name>
+      <Name>System.Security.Cryptography.Hashing.Algorithms.Analyzers.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

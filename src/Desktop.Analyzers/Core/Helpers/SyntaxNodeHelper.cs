@@ -8,7 +8,7 @@ namespace Desktop.Analyzers.Common
     public abstract class SyntaxNodeHelper
     {
         [System.Flags]
-        protected enum CallKind
+        protected enum CallKinds
         {
             None = 0,
             Invocation = 1,
@@ -29,7 +29,7 @@ namespace Desktop.Analyzers.Common
         public abstract IEnumerable<SyntaxNode> GetObjectInitializerExpressionNodes(SyntaxNode node);
         // This will return true iff the SyntaxNode is either InvocationExpression or ObjectCreationExpression (in C# or VB)
         public abstract bool IsMethodInvocationNode(SyntaxNode node);
-        protected abstract IEnumerable<SyntaxNode> GetCallArgumentExpressionNodes(SyntaxNode node, CallKind callKind);
+        protected abstract IEnumerable<SyntaxNode> GetCallArgumentExpressionNodes(SyntaxNode node, CallKinds callKind);
         public abstract IEnumerable<SyntaxNode> GetDescendantAssignmentExpressionNodes(SyntaxNode node);
         public abstract IEnumerable<SyntaxNode> GetDescendantMemberAccessExpressionNodes(SyntaxNode node);
 
@@ -58,17 +58,17 @@ namespace Desktop.Analyzers.Common
 
         public IEnumerable<SyntaxNode> GetCallArgumentExpressionNodes(SyntaxNode node)
         {
-            return GetCallArgumentExpressionNodes(node, CallKind.AnyCall);
+            return GetCallArgumentExpressionNodes(node, CallKinds.AnyCall);
         }
 
         public IEnumerable<SyntaxNode> GetInvocationArgumentExpressionNodes(SyntaxNode node)
         {
-            return GetCallArgumentExpressionNodes(node, CallKind.Invocation);
+            return GetCallArgumentExpressionNodes(node, CallKinds.Invocation);
         }
 
         public IEnumerable<SyntaxNode> GetObjectCreationArgumentExpressionNodes(SyntaxNode node)
         {
-            return GetCallArgumentExpressionNodes(node, CallKind.ObjectCreation);
+            return GetCallArgumentExpressionNodes(node, CallKinds.ObjectCreation);
         }
 
         public abstract IMethodSymbol GetCalleeMethodSymbol(SyntaxNode node, SemanticModel semanticModel);

@@ -53,7 +53,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return;
                 }
 
-                var analyzer = new Analyzer(c.Compilation, @string, uri, GetInvocationExpression);
+                var analyzer = new PerCompilationAnalyzer(c.Compilation, @string, uri, GetInvocationExpression);
 
                 // REVIEW: I need to do this thing because OperationAnalysisContext doesn't give me OwningSymbol
                 c.RegisterOperationBlockStartAction(sc =>
@@ -65,7 +65,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         protected abstract SyntaxNode GetInvocationExpression(SyntaxNode invocationNode);
 
-        private struct Analyzer
+        private struct PerCompilationAnalyzer
         {
             // this type will be created per compilation 
             // this is actually a bug - https://github.com/dotnet/roslyn-analyzers/issues/845
@@ -76,7 +76,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             private readonly Func<SyntaxNode, SyntaxNode> _expressionGetter;
 #pragma warning restore RS1008
 
-            public Analyzer(
+            public PerCompilationAnalyzer(
                 Compilation compilation,
                 INamedTypeSymbol @string,
                 INamedTypeSymbol uri,

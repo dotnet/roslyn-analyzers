@@ -34,9 +34,9 @@ namespace Microsoft.CodeAnalysis.UnitTests
         private static readonly CompilationOptions s_CSharpDefaultOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
         private static readonly CompilationOptions s_visualBasicDefaultOptions = new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
 
-        internal static readonly string DefaultFilePathPrefix = "Test";
-        internal static readonly string CSharpDefaultFileExt = "cs";
-        internal static readonly string VisualBasicDefaultExt = "vb";
+        internal const string DefaultFilePathPrefix = "Test";
+        internal const string CSharpDefaultFileExt = "cs";
+        internal const string VisualBasicDefaultExt = "vb";
         internal static readonly string CSharpDefaultFilePath = DefaultFilePathPrefix + 0 + "." + CSharpDefaultFileExt;
         internal static readonly string VisualBasicDefaultFilePath = DefaultFilePathPrefix + 0 + "." + VisualBasicDefaultExt;
 
@@ -499,11 +499,14 @@ namespace Microsoft.CodeAnalysis.UnitTests
         {
             return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
         }
+    }
 
-        public struct FileAndSource
-        {
-            public string FilePath { get; set; }
-            public string Source { get; set; }
-        }
+    // Justification for suppression: We are not going to compare FileAndSource objects for equality.
+#pragma warning disable CA1815 // Override equals and operator equals on value types
+    public struct FileAndSource
+#pragma warning restore CA1815 // Override equals and operator equals on value types
+    {
+        public string FilePath { get; set; }
+        public string Source { get; set; }
     }
 }

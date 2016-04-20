@@ -148,11 +148,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                             foreach (string suffix in s_suffixToBaseTypeNamesDictionary.Keys)
                             {
-                                if (IsNotChildOfAnyButHasSuffix(
-                                        namedTypeSymbol,
-                                        suffixToBaseTypeDictionary[suffix],
-                                        suffix,
-                                        compilation))
+                                if (IsNotChildOfAnyButHasSuffix(namedTypeSymbol, suffixToBaseTypeDictionary[suffix], suffix))
                                 {
                                     symbolAnalysisContext.ReportDiagnostic(
                                         namedTypeSymbol.CreateDiagnostic(TypeNoAlternateRule, name, suffix));
@@ -267,14 +263,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return false;
         }
 
-        private bool IsNotChildOfAnyButHasSuffix(
-            INamedTypeSymbol namedTypeSymbol,
-            IEnumerable<INamedTypeSymbol> parentTypes,
-            string suffix,
-            Compilation compilation)
+        private bool IsNotChildOfAnyButHasSuffix(INamedTypeSymbol namedTypeSymbol, IEnumerable<INamedTypeSymbol> parentTypes, string suffix)
         {
             return namedTypeSymbol.Name.HasSuffix(suffix)
-                && !parentTypes.Any(parentType => namedTypeSymbol.DerivesFromOrImplementsAnyConstructionOf(parentType, compilation));
+                && !parentTypes.Any(parentType => namedTypeSymbol.DerivesFromOrImplementsAnyConstructionOf(parentType));
         }
     }
 }

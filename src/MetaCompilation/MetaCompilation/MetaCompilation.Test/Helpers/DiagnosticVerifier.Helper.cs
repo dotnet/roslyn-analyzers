@@ -24,11 +24,11 @@ namespace TestHelper
         private static readonly MetadataReference s_systemCollectionsImmutableReference = MetadataReference.CreateFromFile(typeof(ImmutableArray).Assembly.Location);
         private static readonly MetadataReference s_runtimeReference = MetadataReference.CreateFromFile(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(typeof(object).Assembly.Location), "System.Runtime.dll"));
 
-        internal static readonly string DefaultFilePathPrefix = "Test";
-        internal static readonly string CSharpDefaultFileExt = "cs";
-        internal static readonly string VisualBasicDefaultExt = "vb";
+        internal const string DefaultFilePathPrefix = "Test";
+        internal const string CSharpDefaultFileExt = "cs";
+        internal const string VisualBasicDefaultExt = "vb";
         internal static readonly string CSharpDefaultFilePath = DefaultFilePathPrefix + 0 + "." + CSharpDefaultFileExt;
-        internal static readonly string TestProjectName = "TestProject";
+        internal const string TestProjectName = "TestProject";
         internal static readonly string VisualBasicDefaultFilePath = DefaultFilePathPrefix + 0 + "." + VisualBasicDefaultExt;
 
         #region  Get Diagnostics

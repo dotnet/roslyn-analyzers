@@ -38,7 +38,7 @@ namespace Desktop.Analyzers
 
         private void RegisterAnalyzer(OperationBlockStartAnalysisContext context, CompilationSecurityTypes types, Version frameworkVersion)
         {
-            var analyzer = new Analyzer(types, frameworkVersion);
+            var analyzer = new OperationAnalyzer(types, frameworkVersion);
             context.RegisterOperationAction(
                 analyzer.AnalyzeOperation,
                 OperationKind.InvocationExpression,
@@ -77,7 +77,7 @@ namespace Desktop.Analyzers
                 });
         }
 
-        private class Analyzer
+        private class OperationAnalyzer
         {
             #region Environment classes
             private class XmlDocumentEnvironment
@@ -141,7 +141,7 @@ namespace Desktop.Analyzers
             private readonly Dictionary<ISymbol, XmlTextReaderEnvironment> _xmlTextReaderEnvironments = new Dictionary<ISymbol, XmlTextReaderEnvironment>();
             private readonly Dictionary<ISymbol, XmlReaderSettingsEnvironment> _xmlReaderSettingsEnvironments = new Dictionary<ISymbol, XmlReaderSettingsEnvironment>();
 
-            public Analyzer(CompilationSecurityTypes xmlTypes, Version targetFrameworkVersion)
+            public OperationAnalyzer(CompilationSecurityTypes xmlTypes, Version targetFrameworkVersion)
             {
                 _xmlTypes = xmlTypes;
                 _isFrameworkSecure = targetFrameworkVersion == null ? false : targetFrameworkVersion >= s_minSecureFxVersion;
@@ -368,7 +368,7 @@ namespace Desktop.Analyzers
                 }
                 else if (SecurityDiagnosticHelpers.IsXmlReaderSettingsCtor(objCreation.Constructor, _xmlTypes))
                 {
-                    AnalyzeObjectCreationForXmlReaderSettings(context, variable, objCreation);
+                    AnalyzeObjectCreationForXmlReaderSettings(variable, objCreation);
                 }
                 else
                 {
@@ -550,7 +550,7 @@ namespace Desktop.Analyzers
                 }
             }
 
-            private void AnalyzeObjectCreationForXmlReaderSettings(OperationAnalysisContext context, ISymbol variable, IObjectCreationExpression objCreation)
+            private void AnalyzeObjectCreationForXmlReaderSettings(ISymbol variable, IObjectCreationExpression objCreation)
             {
                 XmlReaderSettingsEnvironment xmlReaderSettingsEnv = new XmlReaderSettingsEnvironment(_isFrameworkSecure);
 

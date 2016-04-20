@@ -50,17 +50,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return;
                 }
 
-                var analyzer = new Analyzer(@string, attribute);
+                var analyzer = new PerCompilationAnalyzer(@string, attribute);
                 c.RegisterSymbolAction(analyzer.Analyze, SymbolKind.Property);
             });
         }
 
-        private class Analyzer
+        private class PerCompilationAnalyzer
         {
             private readonly INamedTypeSymbol _string;
             private readonly INamedTypeSymbol _attribute;
 
-            public Analyzer(INamedTypeSymbol @string, INamedTypeSymbol attribute)
+            public PerCompilationAnalyzer(INamedTypeSymbol @string, INamedTypeSymbol attribute)
             {
                 _string = @string;
                 _attribute = attribute;

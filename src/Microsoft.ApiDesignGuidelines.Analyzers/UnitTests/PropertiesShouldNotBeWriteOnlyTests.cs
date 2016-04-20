@@ -32,7 +32,7 @@ namespace CS_DesignLibrary
         public string CS_Name
         {
             get { return CS_someName; }
-            set { CS_someName = CS_value; }
+            set { CS_someName = value; }
         }
     }
 }";
@@ -51,7 +51,7 @@ namespace CS_GoodPropertiesShouldNotBeWriteOnlyTests1
         public virtual string CS_ReadableProperty1
         {
             get { return CS_field; }
-            set { CS_field = CS_value; }
+            set { CS_field = value; }
         }
     }
 }";
@@ -71,7 +71,7 @@ namespace CS_GoodPropertiesShouldNotBeWriteOnlyTests2
         public string CS_AccessibleProperty2
         {
             get { return CS_field; }
-            private set { CS_field = CS_value; }
+            private set { CS_field = value; }
         }
     }
 }";
@@ -91,7 +91,7 @@ namespace CS_GoodPropertiesShouldNotBeWriteOnlyTests3
         protected string CS_AccessibleProperty3
         {
         get { return CS_field; }
-        private set { CS_field = CS_value; }
+        private set { CS_field = value; }
     }
 }";
             VerifyCSharp(code);
@@ -110,7 +110,7 @@ namespace CS_GoodPropertiesShouldNotBeWriteOnlyTests4
         internal string CS_AccessibleProperty4
         {
             get { return CS_field; }
-            private set { CS_field = CS_value; }
+            private set { CS_field = value; }
         }
     }
 }";
@@ -150,7 +150,7 @@ namespace CS_GoodPropertiesShouldNotBeWriteOnlyTests6
         public string CS_AccessibleProperty6
         {
             get { return CS_field; }
-            internal set { CS_field = CS_value; }
+            internal set { CS_field = value; }
         }
     }
 }";
@@ -170,7 +170,7 @@ namespace CS__GoodPropertiesShouldNotBeWriteOnlyTests7
         public string CS_AccessibleProperty7
         {
             get { return CS_field; }
-            protected set { CS_field = CS_value; }
+            protected set { CS_field = value; }
         }
     }
 }";
@@ -184,12 +184,17 @@ namespace CS__GoodPropertiesShouldNotBeWriteOnlyTests7
 using System;
 namespace CS_GoodPropertiesShouldNotBeWriteOnlyTests8
 {
-    protected string CS_field;
+    public class CS_ClassWithReadableProperty
+    {
+        public virtual string CS_ReadableProperty8 { get; set; }
+    }
+
     public class CS_DerivedClassWithReadableProperty : CS_ClassWithReadableProperty
     {
+        protected string CS_field;
         public override string CS_ReadableProperty8
         {
-            set { CS_field = CS_value; }
+            set { CS_field = value; }
         }
     }
 }";
@@ -210,17 +215,7 @@ namespace CS_GoodPropertiesShouldNotBeWriteOnlyTests9
             set;
         }
     }
-}";
-            VerifyCSharp(code);
-        }
 
-        [Fact]
-        public void CS_CA1044Interface_Write()
-        {
-            var code = @"
-using System;
-namespace CS_GoodPropertiesShouldNotBeWriteOnlyTests10
-{
     public class Class1 : IInterface
     {
         string IInterface.InterfaceProperty
@@ -247,17 +242,7 @@ namespace CS_GoodPropertiesShouldNotBeWriteOnlyTests11
             set { }
         }
     }
-}";
-            VerifyCSharp(code);
-        }
 
-        [Fact]
-        public void CS_CA1044Base_Write1()
-        {
-            var code = @"
-using System;
-namespace CS_GoodPropertiesShouldNotBeWriteOnlyTests12
-{
     public class Derived : Base
     {
         public override string BaseProperty12
@@ -277,16 +262,16 @@ namespace CS_GoodPropertiesShouldNotBeWriteOnlyTests12
 Imports System
 Namespace VB_DesignLibrary
     Public Class VB_GoodClassWithReadWriteProperty
-		Private VB_someName As String
-		Public Property VB_Name() As String
-			Get
-				Return VB_someName
-			End Get
-			Set(ByVal value As String)
-				VB_someName = VB_value
-			End Set
-		End Property
-	End Class
+        Private VB_someName As String
+        Public Property VB_Name() As String
+            Get
+                Return VB_someName
+            End Get
+            Set(ByVal value As String)
+                VB_someName = Value
+            End Set
+        End Property
+    End Class
 ";
             VerifyBasic(code);
         }
@@ -298,16 +283,16 @@ Namespace VB_DesignLibrary
 Imports System
 Namespace VB_GoodPropertiesShouldNotBeWriteOnlyTests1
     Public Class VB_GoodClassWithReadWriteProperty
-		Protected VB_field As String
-		Public Overridable Property VB_ReadableProperty1() As String
-			Get
-				Return VB_field
-			End Get
-			Set(ByVal value As String)
-				VB_field = VB_value
-			End Set
-		End Property
-	End Class
+        Protected VB_field As String
+        Public Overridable Property VB_ReadableProperty1() As String
+            Get
+                Return VB_field
+            End Get
+            Set(ByVal value As String)
+                VB_field = Value
+            End Set
+        End Property
+    End Class
 ";
             VerifyBasic(code);
         }
@@ -319,16 +304,16 @@ Namespace VB_GoodPropertiesShouldNotBeWriteOnlyTests1
 Imports System
 Namespace VB_GoodPropertiesShouldNotBeWriteOnlyTests2
     Public class VB_ClassWithReadableProperty
-		Protected VB_field As String
-		Public Property VB_AccessibleProperty2() As String
-			Get
-				Return VB_field
-			End Get
-			Private Set(ByVal value As String)
-				VB_field = VB_value
-			End Set
-		End Property
-	End Class
+        Protected VB_field As String
+        Public Property VB_AccessibleProperty2() As String
+            Get
+                Return VB_field
+            End Get
+            Private Set(ByVal value As String)
+                VB_field = Value
+            End Set
+        End Property
+    End Class
 End NameSpace
 ";
             VerifyBasic(code);
@@ -341,15 +326,15 @@ End NameSpace
 Imports System
 Namespace VB_GoodPropertiesShouldNotBeWriteOnlyTests3
     Public class VB_ClassWithReadableProperty
-		Protected VB_field As String
-		Protected Property VB_AccessibleProperty3() As String
-		Get
-			Return VB_field
-		End Get
-		Private Set(ByVal value As String)
-			VB_field = VB_value
-		End Set
-		End Property
+        Protected VB_field As String
+        Protected Property VB_AccessibleProperty3() As String
+        Get
+            Return VB_field
+        End Get
+        Private Set(ByVal value As String)
+            VB_field = Value
+        End Set
+        End Property
     End Class
 End NameSpace
 ";
@@ -363,16 +348,16 @@ End NameSpace
 Imports System
 Namespace VB_GoodPropertiesShouldNotBeWriteOnlyTests4
     Public VB_class ClassWithReadableProperty
-		Protected VB_field As String
-		Friend Property VB_AccessibleProperty4() As String
-			Get
-				Return VB_field
-			End Get
-			Private Set(ByVal value As String)
-				VB_field = VB_value
-			End Set
-		End Property
-	End Class
+        Protected VB_field As String
+        Friend Property VB_AccessibleProperty4() As String
+            Get
+                Return VB_field
+            End Get
+            Private Set(ByVal value As String)
+                VB_field = Value
+            End Set
+        End Property
+    End Class
 End NameSpace
 ";
             VerifyBasic(code);
@@ -385,16 +370,16 @@ End NameSpace
 Imports System
 Namespace VB_GoodPropertiesShouldNotBeWriteOnlyTests5
     Public class VB_ClassWithReadableProperty
-		Protected VB_field As String
-		Protected Friend Property AccessibleProperty5() As String
-			Get
-				Return field
-			End Get
-			Friend Set(ByVal value As String)
-				field = value
-			End Set
-		End Property
-	End Class
+        Protected VB_field As String
+        Protected Friend Property AccessibleProperty5() As String
+            Get
+                Return field
+            End Get
+            Friend Set(ByVal value As String)
+                field = value
+            End Set
+        End Property
+    End Class
 End NameSpace
 ";
             VerifyBasic(code);
@@ -407,16 +392,16 @@ End NameSpace
 Imports System
 Namespace VB_GoodPropertiesShouldNotBeWriteOnlyTests6
     Public class VB_ClassWithReadableProperty
-		Protected VB_field As String
-		Public Property VB_AccessibleProperty6() As String
-			Get
-				Return VB_field
-			End Get
-			Friend Set(ByVal value As String)
-				VB_field = VB_value
-			End Set
-		End Property
-	End Class
+        Protected VB_field As String
+        Public Property VB_AccessibleProperty6() As String
+            Get
+                Return VB_field
+            End Get
+            Friend Set(ByVal value As String)
+                VB_field = Value
+            End Set
+        End Property
+    End Class
 End NameSpace
 ";
             VerifyBasic(code);
@@ -429,16 +414,16 @@ End NameSpace
 Imports System
 Namespace VB_GoodPropertiesShouldNotBeWriteOnlyTests7
     Public class VB_ClassWithReadableProperty
-		Protected VB_field As String
-		Public Property VB_AccessibleProperty7() As String
-			Get
-				Return VB_field
-			End Get
-			Protected Set(ByVal value As String)
-				VB_field = VB_value
-			End Set
-		End Property
-	End Class
+        Protected VB_field As String
+        Public Property VB_AccessibleProperty7() As String
+            Get
+                Return VB_field
+            End Get
+            Protected Set(ByVal value As String)
+                VB_field = Value
+            End Set
+        End Property
+    End Class
 End NameSpace
 ";
             VerifyBasic(code);
@@ -450,18 +435,27 @@ End NameSpace
             var code = @"
 Imports System
 Namespace VB_GoodPropertiesShouldNotBeWriteOnlyTests8
-	Protected VB_field As String
-	Public Class VB_DerivedClassWithReadableProperty
-		Inherits VB_ClassWithReadableProperty
-		Public Overrides WriteOnly Property VB_ReadableProperty8() As String
-			Set(ByVal value As String)
-				VB_field = VB_value
-			End Set
-		End Property
-	End Class
+    Public Class VB_ClassWithReadableProperty
+        Public Overridable WriteOnly Property VB_ReadableProperty8 As String
+            Set(ByVal value As String)
+            End Set
+        End Property
+    End Class
+
+    Public Class VB_DerivedClassWithReadableProperty
+        Inherits VB_ClassWithReadableProperty
+
+        Protected VB_field As String
+
+        Public Overrides WriteOnly Property VB_ReadableProperty8 As String
+            Set(ByVal value As String)
+                VB_field = value
+            End Set
+        End Property
+    End Class
 End NameSpace
 ";
-            VerifyBasic(code);
+            VerifyBasic(code, GetCA1044BasicResultAt(5, 47, CA1044MessageAddGetter, "VB_ReadableProperty8"));
         }
 
         [Fact]
@@ -470,33 +464,20 @@ End NameSpace
             var code = @"
 Imports System
 Namespace VB_GoodPropertiesShouldNotBeWriteOnlyTests9
-	Public Class IInterface
-		Private WriteOnly Property InterfaceProperty() As String Implements InterfaceProperty
-			Set(ByVal value As String)
-			End Set
-		End Property
-	End Class
-End NameSpace
-";
-            VerifyBasic(code);
-        }
+    Public Interface IInterface
+        WriteOnly Property InterfaceProperty As String
+    End Interface
 
-        [Fact]
-        public void VB_CA1044Interface_Write()
-        {
-            var code = @"
-Imports System
-Namespace VB_GoodPropertiesShouldNotBeWriteOnlyTests10
-	Public Class Class1
-		Implements IInterface
-		Private WriteOnly Property IInterface_InterfaceProperty() As String Implements IInterface.InterfaceProperty
-			Set(ByVal value As String)
-			End Set
-		End Property
-	End Class
+    Public Class Class1
+        Implements IInterface
+        Private WriteOnly Property IInterface_InterfaceProperty As String Implements IInterface.InterfaceProperty
+            Set(ByVal value As String)
+            End Set
+        End Property
+    End Class
 End NameSpace
 ";
-            VerifyBasic(code);
+            VerifyBasic(code, GetCA1044BasicResultAt(5, 28, CA1044MessageAddGetter, "InterfaceProperty"));
         }
 
         [Fact]
@@ -505,33 +486,23 @@ End NameSpace
             var code = @"
 Imports System
 Namespace VB_GoodPropertiesShouldNotBeWriteOnlyTests11
-	Public Class Base
+    Public Class Base
         Public Overridable Property BaseProperty11() As String
-	        Get
-			End Get
-			Set(ByVal value As String)
-			End Set
-		End Property
-	End Class
-End NameSpace
-";
-            VerifyBasic(code);
-        }
+            Get
+            End Get
+            Set(ByVal value As String)
+            End Set
+        End Property
+    End Class
 
-        [Fact]
-        public void VB_CA1044Base_Write1()
-        {
-            var code = @"
-Imports System
-Namespace VB_GoodPropertiesShouldNotBeWriteOnlyTests12
-	Public Class Derived
-		Inherits Base
-		Public Overrides WriteOnly Property BaseProperty12() As String
-			Set(ByVal value As String)
-				MyBase.BaseProperty = value
-			End Set
-		End Property
-	End Class
+    Public Class Derived
+        Inherits Base
+        Public Overrides WriteOnly Property BaseProperty12() As String
+            Set(ByVal value As String)
+                MyBase.BaseProperty = value
+            End Set
+        End Property
+    End Class
 End NameSpace
 ";
             VerifyBasic(code);
@@ -754,17 +725,17 @@ namespace CS_BadPropertiesShouldNotBeWriteOnlyTests3
             var code = @"
 Import System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests
-	Public Class VB_BadClassWithWriteOnlyProperty
-		Protected VB_someName As String
-		Public WriteOnly Property VB_WriteOnlyProperty() As String
-			Set(ByVal value As String)
-				VB_someName = value
-			End Set
-		End Property
-	End Class
+    Public Class VB_BadClassWithWriteOnlyProperty
+        Protected VB_someName As String
+        Public WriteOnly Property VB_WriteOnlyProperty As String
+            Set(ByVal value As String)
+                VB_someName = value
+            End Set
+        End Property
+    End Class
 End NameSpace
 ";
-            VerifyBasic(code, GetCA1044BasicResultAt(6, 29, CA1044MessageAddGetter, "VB_WriteOnlyProperty"));
+            VerifyBasic(code, GetCA1044BasicResultAt(6, 35, CA1044MessageAddGetter, "VB_WriteOnlyProperty"));
         }
 
         [Fact]
@@ -773,17 +744,17 @@ End NameSpace
             var code = @"
 Import System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests1
-	Public Class VB_BadClassWithWriteOnlyProperty
-		Protected VB_someName As String
-		Protected Public WriteOnly Property VB_WriteOnlyProperty1() As String
-			Set(ByVal value As String)
-				VB_someName = value
-			End Set
-		End Property
-	End Class
+    Public Class VB_BadClassWithWriteOnlyProperty
+        Protected VB_someName As String
+        Protected Public WriteOnly Property VB_WriteOnlyProperty1() As String
+            Set(ByVal value As String)
+                VB_someName = value
+            End Set
+        End Property
+    End Class
 End NameSpace
 ";
-            VerifyBasic(code, GetCA1044BasicResultAt(6, 39, CA1044MessageAddGetter, "VB_WriteOnlyProperty1"));
+            VerifyBasic(code, GetCA1044BasicResultAt(6, 45, CA1044MessageAddGetter, "VB_WriteOnlyProperty1"));
         }
 
         [Fact]
@@ -792,17 +763,17 @@ End NameSpace
             var code = @"
 Import System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests2
-	Public Class VB_BadClassWithWriteOnlyProperty
-		Protected VB_someName As String
-		Public WriteOnly Property VB_WriteOnlyProperty2() As String
-			Set(ByVal value As String)
-				VB_someName = value
-			End Set
-		End Property
-	End Class
+    Public Class VB_BadClassWithWriteOnlyProperty
+        Protected VB_someName As String
+        Public WriteOnly Property VB_WriteOnlyProperty2() As String
+            Set(ByVal value As String)
+                VB_someName = value
+            End Set
+        End Property
+    End Class
 End NameSpace
 ";
-            VerifyBasic(code, GetCA1044BasicResultAt(6, 29, CA1044MessageAddGetter, "VB_WriteOnlyProperty2"));
+            VerifyBasic(code, GetCA1044BasicResultAt(6, 35, CA1044MessageAddGetter, "VB_WriteOnlyProperty2"));
         }
 
         [Fact]
@@ -811,17 +782,17 @@ End NameSpace
             var code = @"
 Import System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests3
-	Public Class VB_BadClassWithWriteOnlyProperty
-		Protected VB_someName As String
-		Protected Friend WriteOnly Property VB_WriteOnlyProperty3() As String
-			Set(ByVal value As String)
-				VB_someName = value
-			End Set
-		End Property
-	End Class
+    Public Class VB_BadClassWithWriteOnlyProperty
+        Protected VB_someName As String
+        Protected Friend WriteOnly Property VB_WriteOnlyProperty3() As String
+            Set(ByVal value As String)
+                VB_someName = value
+            End Set
+        End Property
+    End Class
 End NameSpace
 ";
-            VerifyBasic(code, GetCA1044BasicResultAt(6, 39, CA1044MessageAddGetter, "VB_WriteOnlyProperty3"));
+            VerifyBasic(code, GetCA1044BasicResultAt(6, 45, CA1044MessageAddGetter, "VB_WriteOnlyProperty3"));
         }
 
         [Fact]
@@ -830,17 +801,17 @@ End NameSpace
             var code = @"
 Import System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests4
-	Public Class VB_BadClassWithWriteOnlyProperty
-		Protected VB_someName As String
-		Public WriteOnly Property VB_WriteOnlyProperty4() As String
-			Set(ByVal value As String)
-				VB_someName = value
-			End Set
-		End Property
-	End Class
+    Public Class VB_BadClassWithWriteOnlyProperty
+        Protected VB_someName As String
+        Public WriteOnly Property VB_WriteOnlyProperty4() As String
+            Set(ByVal value As String)
+                VB_someName = value
+            End Set
+        End Property
+    End Class
 End NameSpace
 ";
-            VerifyBasic(code, GetCA1044BasicResultAt(6, 29, CA1044MessageAddGetter, "VB_WriteOnlyProperty4"));
+            VerifyBasic(code, GetCA1044BasicResultAt(6, 35, CA1044MessageAddGetter, "VB_WriteOnlyProperty4"));
         }
 
         [Fact]
@@ -849,15 +820,15 @@ End NameSpace
             var code = @"
 Import System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests5
-	Public Class VB_Base
-		Public Overridable WriteOnly Property VB_BaseProperty5() As String
-			Set(ByVal value As String)
-			End Set
-		End Property
-	End Class
+    Public Class VB_Base
+        Public Overridable WriteOnly Property VB_BaseProperty5() As String
+            Set(ByVal value As String)
+            End Set
+        End Property
+    End Class
 End NameSpace
 ";
-            VerifyBasic(code, GetCA1044BasicResultAt(5, 41, CA1044MessageAddGetter, "VB_BaseProperty5"));
+            VerifyBasic(code, GetCA1044BasicResultAt(5, 47, CA1044MessageAddGetter, "VB_BaseProperty5"));
         }
 
         [Fact]
@@ -868,9 +839,9 @@ Import System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests6
     Public Interface VB_IInterface
         Protected WriteOnly Property VB_InterfaceProperty6() As String Implements VB_InterfaceProperty6
-		    Set(ByVal value As String)
-			End Set
-	End Interface
+            Set(ByVal value As String)
+            End Set
+    End Interface
 End NameSpace
 ";
             VerifyBasic(code, GetCA1044BasicResultAt(5, 38, CA1044MessageAddGetter, "VB_InterfaceProperty6"));
@@ -883,19 +854,19 @@ End NameSpace
             var code = @"
 Import System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests
-   	Public Class VB_BadClassWithWriteOnlyProperty
-		 Public Property VB_InaccessibleProperty() As String
-			Private Get
-				Return field
-			End Get
-			Set(ByVal value As String)
-				field = value
-			End Set
-		 End Property
-	End Class
+    Public Class VB_BadClassWithWriteOnlyProperty
+         Public Property VB_InaccessibleProperty As String
+            Private Get
+                Return field
+            End Get
+            Set(ByVal value As String)
+                field = value
+            End Set
+         End Property
+    End Class
 End NameSpace
 ";
-            VerifyBasic(code, GetCA1044BasicResultAt(5, 20, CA1044MessageMakeMoreAccessible, "VB_InaccessibleProperty"));
+            VerifyBasic(code, GetCA1044BasicResultAt(5, 26, CA1044MessageMakeMoreAccessible, "VB_InaccessibleProperty"));
         }
 
         [Fact]
@@ -904,20 +875,20 @@ End NameSpace
             var code = @"
 Import System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests1
-	Public Class VB_BadClassWithWriteOnlyProperty
-		Private field As String
-		Protected Property VB_InaccessibleProperty1() As String
-			Private Get
-				Return field
-			End Get
-			Set(ByVal value As String)
-				field = value
-			End Set
-		End Property
-	End Class
+    Public Class VB_BadClassWithWriteOnlyProperty
+        Private field As String
+        Protected Property VB_InaccessibleProperty1() As String
+            Private Get
+                Return field
+            End Get
+            Set(ByVal value As String)
+                field = value
+            End Set
+        End Property
+    End Class
 End NameSpace
 ";
-            VerifyBasic(code, GetCA1044BasicResultAt(6, 22, CA1044MessageMakeMoreAccessible, "VB_InaccessibleProperty1"));
+            VerifyBasic(code, GetCA1044BasicResultAt(6, 28, CA1044MessageMakeMoreAccessible, "VB_InaccessibleProperty1"));
         }
 
         [Fact]
@@ -926,19 +897,19 @@ End NameSpace
             var code = @"
 Import System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests2
-	Public Class VB_BadClassWithWriteOnlyProperty
-		Protected Friend Property VB_InaccessibleProperty2() As String
-			Friend Get
-				Return field
-			End Get
-			Set(ByVal value As String)
-				field = value
-			End Set
-		End Property
-	End Class
+    Public Class VB_BadClassWithWriteOnlyProperty
+        Protected Friend Property VB_InaccessibleProperty2() As String
+            Friend Get
+                Return field
+            End Get
+            Set(ByVal value As String)
+                field = value
+            End Set
+        End Property
+    End Class
 End NameSpace
 ";
-            VerifyBasic(code, GetCA1044BasicResultAt(5, 29, CA1044MessageMakeMoreAccessible, "VB_InaccessibleProperty2"));
+            VerifyBasic(code, GetCA1044BasicResultAt(5, 35, CA1044MessageMakeMoreAccessible, "VB_InaccessibleProperty2"));
         }
 
         [Fact]
@@ -947,19 +918,19 @@ End NameSpace
             var code = @"
 Import System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests3
-	Public Class VB_BadClassWithWriteOnlyProperty
-    	Public Property VB_InaccessibleProperty3() As String
-	    	Friend Get
-		    	Return field
-		    End Get
-		    Set(ByVal value As String)
-			    field = value
-		    End Set
-	    End Property
+    Public Class VB_BadClassWithWriteOnlyProperty
+        Public Property VB_InaccessibleProperty3() As String
+            Friend Get
+                Return field
+            End Get
+            Set(ByVal value As String)
+                field = value
+            End Set
+        End Property
     End Class
 End NameSpace
 ";
-            VerifyBasic(code, GetCA1044BasicResultAt(5, 22, CA1044MessageMakeMoreAccessible, "VB_InaccessibleProperty3"));
+            VerifyBasic(code, GetCA1044BasicResultAt(5, 25, CA1044MessageMakeMoreAccessible, "VB_InaccessibleProperty3"));
         }
                 
         private static readonly string CA1044MessageAddGetter = MicrosoftApiDesignGuidelinesAnalyzersResources.PropertiesShouldNotBeWriteOnlyMessageAddGetter;

@@ -52,13 +52,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private void AnalyzeSymbol(SymbolAnalysisContext context)
         {
             var property = context.Symbol as IPropertySymbol;
-            // There is no violation is the property was overwritten, so turn off scanning
+            // There is no violation if the property was overwritten, so turn off scanning
             if (property == null)
             {
                 return;
             }
             // not raising a violation for when: 
-            //     property is overwritten since the error will be in base type 
+            //     property should be overwritten because the error will be in base type 
             //     property is the implementaton of any interface member 
             if (property.IsOverride || property.IsImplementationOfAnyInterfaceMember())
             {
@@ -76,7 +76,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 context.ReportDiagnostic(property.CreateDiagnostic(AddGetterRule, property.Name));
             }
-            // Otherwise there is a setter, so check for relative accessibility
+            // Otherwise if there is a setter, check for its relative accessibility
             else if (!(property.IsReadOnly) && (property.GetMethod.DeclaredAccessibility < property.SetMethod.DeclaredAccessibility))
             {
                 context.ReportDiagnostic(property.CreateDiagnostic(MakeMoreAccessibleRule, property.Name));

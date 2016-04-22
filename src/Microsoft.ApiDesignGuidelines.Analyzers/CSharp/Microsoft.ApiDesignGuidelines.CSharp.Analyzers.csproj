@@ -74,8 +74,6 @@
     <Compile Include="CSharpImplementStandardExceptionConstructors.cs" />
     <Compile Include="CSharpAvoidEmptyInterfaces.cs" />
     <Compile Include="CSharpAvoidEmptyInterfaces.Fixer.cs" />
-    <Compile Include="CSharpPropertiesShouldNotBeWriteOnly.cs" />
-    <Compile Include="CSharpPropertiesShouldNotBeWriteOnly.Fixer.cs" />
     <Compile Include="CSharpDeclareTypesInNamespaces.Fixer.cs" />
     <Compile Include="CSharpImplementIDisposableCorrectly.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldNotContainUnderscores.Fixer.cs" />

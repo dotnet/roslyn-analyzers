@@ -42,8 +42,8 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                // Since property\event accessors cannot be marked static themselves and the associated symbol (property\event)
-                // has to be marked static, we want to report the diagnostic once on the property\event. So we make a note
+                // Since property/event accessors cannot be marked static themselves and the associated symbol (property/event)
+                // has to be marked static, we want to report the diagnostic once on the property/event. So we make a note
                 // of the associated symbols on which we've reported diagnostics for this compilation so that we don't duplicate 
                 // those.
                 var reportedAssociatedSymbols = new HashSet<ISymbol>();
@@ -71,7 +71,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
                             if (methodSymbol.IsPropertyAccessor() || methodSymbol.IsEventAccessor())
                             {
-                                // If we've already reported on this associated symbol (i.e property\event) then don't report again.
+                                // If we've already reported on this associated symbol (i.e property/event) then don't report again.
                                 if (reportedAssociatedSymbols.Contains(methodSymbol.AssociatedSymbol))
                                 {
                                     return;
@@ -102,6 +102,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                 return false;
             }
             
+            // CA1000 says one shouldn't declare static members on generic types. So don't flag such cases.
             if (methodSymbol.ContainingType.IsGenericType && methodSymbol.GetResultantVisibility() == SymbolVisibility.Public)
             {
                 return false;
@@ -116,7 +117,6 @@ namespace Microsoft.QualityGuidelines.Analyzers
                 "TestCleanupAttribute",
             };
 
-            // CA1000 says one shouldn't declare static members on generic types. So don't flag such cases.
             if (methodSymbol.GetAttributes().Any(attribute => skipAttributes.Contains(attribute.AttributeClass.Name)))
             {
                 return false;
@@ -156,7 +156,9 @@ namespace Microsoft.QualityGuidelines.Analyzers
         private static bool IsExplicitlyVisibleFromCom(IMethodSymbol methodSymbol, Compilation compilation)
         {
             if (methodSymbol.GetResultantVisibility() != SymbolVisibility.Public || methodSymbol.IsGenericMethod)
+            {
                 return false;
+            }
 
             var comVisibleAttribute = WellKnownTypes.ComVisibleAttribute(compilation);
             if (comVisibleAttribute == null)

@@ -40,9 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CSharpDoNotMixAttributesFromDifferentVersionsOfMEF.cs" />
     <Compile Include="CSharpDoNotMixAttributesFromDifferentVersionsOfMEF.Fixer.cs" />
-    <Compile Include="CSharpPartsExportedWithMEFv2MustBeMarkedAsShared.cs" />
     <Compile Include="CSharpPartsExportedWithMEFv2MustBeMarkedAsShared.Fixer.cs" />
   </ItemGroup>
   <ImportGroup Label="Targets">

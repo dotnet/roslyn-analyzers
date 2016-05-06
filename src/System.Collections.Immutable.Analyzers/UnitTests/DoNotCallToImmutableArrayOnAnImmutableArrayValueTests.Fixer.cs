@@ -10,12 +10,12 @@ namespace System.Collections.Immutable.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicDoNotCallToImmutableArrayOnAnImmutableArrayValueAnalyzer();
+            return new DoNotCallToImmutableArrayOnAnImmutableArrayValueAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpDoNotCallToImmutableArrayOnAnImmutableArrayValueAnalyzer();
+            return new DoNotCallToImmutableArrayOnAnImmutableArrayValueAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

@@ -71,7 +71,7 @@ namespace Microsoft.Composition.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #N/A.
+        ///   Looks up a localized string similar to Do not mix attributes from different versions of MEF.
         /// </summary>
         internal static string DoNotMixAttributesFromDifferentVersionsOfMEFDescription {
             get {
@@ -80,7 +80,7 @@ namespace Microsoft.Composition.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Do not mix attributes from different versions of MEF.
+        ///   Looks up a localized string similar to Attribute &apos;{0}&apos; comes from a different version of MEF than the export attribute on &apos;{1}&apos;.
         /// </summary>
         internal static string DoNotMixAttributesFromDifferentVersionsOfMEFMessage {
             get {
@@ -98,7 +98,7 @@ namespace Microsoft.Composition.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #N/A.
+        ///   Looks up a localized string similar to Part exported with MEFv2 must be marked with the Shared attribute..
         /// </summary>
         internal static string PartsExportedWithMEFv2MustBeMarkedAsSharedDescription {
             get {
@@ -107,7 +107,7 @@ namespace Microsoft.Composition.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Parts exported with MEFv2 must be marked as Shared.
+        ///   Looks up a localized string similar to &apos;{0}&apos; is exported with MEFv2 and hence must be marked as Shared.
         /// </summary>
         internal static string PartsExportedWithMEFv2MustBeMarkedAsSharedMessage {
             get {

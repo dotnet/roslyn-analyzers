@@ -60,6 +60,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
+      <Project>{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}</Project>
+      <Name>Analyzer.Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Dependencies\CodeAnalysis\CodeAnalysis.csproj">
       <Project>{434fa01f-b8cb-41f7-88d1-7906003f23bc}</Project>
       <Name>CodeAnalysis</Name>

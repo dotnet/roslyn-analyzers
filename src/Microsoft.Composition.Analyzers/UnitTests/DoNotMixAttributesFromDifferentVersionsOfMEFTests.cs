@@ -9,12 +9,12 @@ namespace Microsoft.Composition.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicDoNotMixAttributesFromDifferentVersionsOfMEFAnalyzer();
+            return new DoNotMixAttributesFromDifferentVersionsOfMEFAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpDoNotMixAttributesFromDifferentVersionsOfMEFAnalyzer();
+            return new DoNotMixAttributesFromDifferentVersionsOfMEFAnalyzer();
         }
     }
 }

@@ -58,7 +58,6 @@
     <Compile Include="CSharpTestForNaNCorrectly.Fixer.cs" />
     <Compile Include="CSharpAttributeStringLiteralsShouldParseCorrectly.Fixer.cs" />
     <Compile Include="CSharpAvoidZeroLengthArrayAllocations.cs" />
-    <Compile Include="CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.cs" />
     <Compile Include="CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.Fixer.cs" />
     <Compile Include="CSharpSpecifyCultureInfo.Fixer.cs" />
     <Compile Include="CSharpSpecifyIFormatProvider.Fixer.cs" />

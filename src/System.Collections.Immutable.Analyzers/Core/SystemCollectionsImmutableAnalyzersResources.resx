@@ -121,9 +121,6 @@
   <data name="DoNotCallToImmutableArrayOnAnImmutableArrayValueTitle" xml:space="preserve">
     <value>Do not call ToImmutableArray on an ImmutableArray value</value>
   </data>
-  <data name="DoNotCallToImmutableArrayOnAnImmutableArrayValueDescription" xml:space="preserve">
-    <value>#N/A</value>
-  </data>
   <data name="DoNotCallToImmutableArrayOnAnImmutableArrayValueMessage" xml:space="preserve">
     <value>Do not call ToImmutableArray on an ImmutableArray value</value>
   </data>

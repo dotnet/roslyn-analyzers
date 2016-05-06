@@ -1,13 +1,54 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using static Analyzer.Utilities.DiagnosticHelpers;
+using System.Linq;
+using System.Threading;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Semantics;
+using static Analyzer.Utilities.DiagnosticHelpers;
 
 namespace Analyzer.Utilities
 {
     public static class IOperationExtensions
     {
+        /// <summary>
+        /// Gets the receiver type for an invocation expression (i.e. type of 'A' in invocation 'A.B()')
+        /// If the invocation actually involves a conversion from A to some other type, say 'C', on which B is invoked,
+        /// then this method returns type A if <paramref name="beforeConversion"/> is true, and C if false.
+        /// </summary>
+        public static INamedTypeSymbol GetReceiverType(this IInvocationExpression invocation, Compilation compilation, bool beforeConversion, CancellationToken cancellationToken)
+        {
+            if (invocation.Instance != null)
+            {
+                return beforeConversion ?
+                    GetReceiverType(invocation.Instance.Syntax, compilation, cancellationToken) :
+                    invocation.Instance.Type as INamedTypeSymbol;
+            }
+            else if (invocation.TargetMethod.IsExtensionMethod && invocation.TargetMethod.Parameters.Length > 0)
+            {
+                var firstArg = invocation.ArgumentsInParameterOrder.FirstOrDefault();
+                if (firstArg != null)
+                {
+                    return beforeConversion ?
+                        GetReceiverType(firstArg.Value.Syntax, compilation, cancellationToken) :
+                        firstArg.Type as INamedTypeSymbol;
+                }
+                else if (invocation.TargetMethod.Parameters[0].IsParams)
+                {
+                    return invocation.TargetMethod.Parameters[0].Type as INamedTypeSymbol;
+                }
+            }
+
+            return null;
+        }
+
+        private static INamedTypeSymbol GetReceiverType(SyntaxNode receiverSyntax, Compilation compilation, CancellationToken cancellationToken)
+        {
+            var model = compilation.GetSemanticModel(receiverSyntax.SyntaxTree);
+            var typeInfo = model.GetTypeInfo(receiverSyntax, cancellationToken);
+            return typeInfo.Type as INamedTypeSymbol;
+        }
+
         public static bool HasConstantValue(this IOperation operation, string comparand, StringComparison comparison)
         {
             var constantValue = operation.ConstantValue;

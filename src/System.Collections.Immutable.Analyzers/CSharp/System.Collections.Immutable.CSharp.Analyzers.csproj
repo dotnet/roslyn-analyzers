@@ -40,7 +40,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CSharpDoNotCallToImmutableArrayOnAnImmutableArrayValue.cs" />
     <Compile Include="CSharpDoNotCallToImmutableArrayOnAnImmutableArrayValue.Fixer.cs" />
   </ItemGroup>
   <ImportGroup Label="Targets">

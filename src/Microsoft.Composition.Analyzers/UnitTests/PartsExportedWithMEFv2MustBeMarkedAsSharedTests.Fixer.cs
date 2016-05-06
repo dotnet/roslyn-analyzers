@@ -10,12 +10,12 @@ namespace Microsoft.Composition.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicPartsExportedWithMEFv2MustBeMarkedAsSharedAnalyzer();
+            return new PartsExportedWithMEFv2MustBeMarkedAsSharedAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpPartsExportedWithMEFv2MustBeMarkedAsSharedAnalyzer();
+            return new PartsExportedWithMEFv2MustBeMarkedAsSharedAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

@@ -38,9 +38,7 @@
     <Content Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicDoNotMixAttributesFromDifferentVersionsOfMEF.vb" />
     <Compile Include="BasicDoNotMixAttributesFromDifferentVersionsOfMEF.Fixer.vb" />
-    <Compile Include="BasicPartsExportedWithMEFv2MustBeMarkedAsShared.vb" />
     <Compile Include="BasicPartsExportedWithMEFv2MustBeMarkedAsShared.Fixer.vb" />
   </ItemGroup>
   <ImportGroup Label="Targets">

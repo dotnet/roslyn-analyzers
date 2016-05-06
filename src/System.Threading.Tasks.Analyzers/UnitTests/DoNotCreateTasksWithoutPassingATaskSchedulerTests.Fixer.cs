@@ -10,12 +10,12 @@ namespace System.Threading.Tasks.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicDoNotCreateTasksWithoutPassingATaskSchedulerAnalyzer();
+            return new DoNotCreateTasksWithoutPassingATaskSchedulerAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpDoNotCreateTasksWithoutPassingATaskSchedulerAnalyzer();
+            return new DoNotCreateTasksWithoutPassingATaskSchedulerAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

@@ -1,15 +1,18 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Linq;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.Composition.Analyzers
 {
     /// <summary>
     /// RS0023: Parts exported with MEFv2 must be marked as Shared
     /// </summary>
-    public abstract class PartsExportedWithMEFv2MustBeMarkedAsSharedAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class PartsExportedWithMEFv2MustBeMarkedAsSharedAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "RS0023";
 
@@ -23,15 +26,43 @@ namespace Microsoft.Composition.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Reliability,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: null,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
+            context.RegisterCompilationStartAction(compilationContext =>
+            {
+                var exportAttribute = compilationContext.Compilation.GetTypeByMetadataName("System.Composition.ExportAttribute");
+
+                if (exportAttribute == null)
+                {
+                    // We don't need to check assemblies unless they're referencing both MEFv2, so we're done
+                    return;
+                }
+
+                compilationContext.RegisterSymbolAction(symbolContext =>
+                {
+                    var namedType = (INamedTypeSymbol)symbolContext.Symbol;
+                    var namedTypeAttributes = namedType.GetApplicableAttributes();
+
+                    var exportAttributeApplication = namedTypeAttributes.FirstOrDefault(ad => ad.AttributeClass.DerivesFrom(exportAttribute));
+
+                    if (exportAttributeApplication != null)
+                    {
+                        if (!namedTypeAttributes.Any(ad => ad.AttributeClass.Name == "SharedAttribute" &&
+                                                           ad.AttributeClass.ContainingNamespace.Equals(exportAttribute.ContainingNamespace)))
+                        {
+                            // '{0}' is exported with MEFv2 and hence must be marked as Shared
+                            symbolContext.ReportDiagnostic(Diagnostic.Create(Rule, exportAttributeApplication.ApplicationSyntaxReference.GetSyntax().GetLocation(), namedType.Name));
+                        }
+                    }
+                }, SymbolKind.NamedType);
+            });
         }
     }
 }

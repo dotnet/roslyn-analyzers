@@ -13,5 +13,20 @@ Namespace XmlDocumentationComments.Analyzers
     Public NotInheritable Class BasicAvoidUsingCrefTagsWithAPrefixAnalyzer
         Inherits AvoidUsingCrefTagsWithAPrefixAnalyzer
 
+        Public Overrides Sub Initialize(context As AnalysisContext)
+            context.RegisterSyntaxNodeAction(AddressOf AnalyzeXmlAttribute, SyntaxKind.XmlAttribute)
+        End Sub
+
+        Private Sub AnalyzeXmlAttribute(context As SyntaxNodeAnalysisContext)
+            Dim node = DirectCast(context.Node, XmlAttributeSyntax)
+
+            If DirectCast(node.Name, XmlNameSyntax).LocalName.Text = "cref" Then
+                Dim value = TryCast(node.Value, XmlStringSyntax)
+
+                If value IsNot Nothing Then
+                    ProcessAttribute(context, value.TextTokens)
+                End If
+            End If
+        End Sub
     End Class
 End Namespace

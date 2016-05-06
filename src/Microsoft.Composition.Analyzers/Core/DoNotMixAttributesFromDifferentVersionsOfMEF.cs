@@ -73,7 +73,7 @@ namespace Microsoft.Composition.Analyzers
                 return;
             }
 
-            var badNamespaces = exportAttributes.Except(appliedExportAttributes).Select(s => s.ContainingNamespace).ToList();
+            var badNamespaces = exportAttributes.Except(appliedExportAttributes).Select(s => s.ContainingNamespace).ToSet();
 
             // Now look at all attributes and see if any are metadata attributes
             foreach (var namedTypeAttribute in namedTypeAttributes)

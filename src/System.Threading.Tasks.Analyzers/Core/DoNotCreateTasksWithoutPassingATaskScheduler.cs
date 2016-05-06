@@ -26,7 +26,7 @@ namespace System.Threading.Tasks.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Reliability,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);

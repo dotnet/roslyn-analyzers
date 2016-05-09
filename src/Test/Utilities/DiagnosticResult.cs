@@ -19,9 +19,9 @@ namespace Microsoft.CodeAnalysis.UnitTests
             this.Column = column;
         }
 
-        public string Path;
-        public int Line;
-        public int Column;
+        public string Path { get; private set; }
+        public int Line { get; private set; }
+        public int Column { get; private set; }
 
         // TODO: Remove the below suppression once https://github.com/dotnet/roslyn-analyzers/issues/938 is fixed.
 #pragma warning disable CA1720 // Identifier contains type name

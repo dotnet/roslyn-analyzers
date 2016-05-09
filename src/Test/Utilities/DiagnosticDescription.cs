@@ -192,7 +192,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
             return new DiagnosticDescription(_code, _isWarningAsError, _squiggledText, _arguments, _startPosition, syntaxPredicate, _argumentOrderDoesNotMatter, _errorCodeType);
         }
 
-        public object Code;// => _code;
+        public object Code { get; set; }
 
         // CA1720: Identifier 'obj' contains type name
         // TOODO: Remove the below suppression once https://github.com/dotnet/roslyn-analyzers/issues/938 is fixed.

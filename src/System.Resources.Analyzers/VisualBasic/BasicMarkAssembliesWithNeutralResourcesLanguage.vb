@@ -29,7 +29,8 @@ Namespace System.Resources.Analyzers
 
         Private Function CheckBasicAttribute(node As SyntaxNode) As Boolean
             Dim attribute = TryCast(node, AttributeSyntax)
-            Return (attribute?.Name?.GetLastToken().Text.Equals(GeneratedCodeAttribute) = True AndAlso attribute.ArgumentList.Arguments.Count > 0).GetValueOrDefault()
+            Return (attribute?.Name?.GetLastToken().Text.Equals(GeneratedCodeAttribute, StringComparison.Ordinal) = True AndAlso
+                attribute.ArgumentList.Arguments.Count > 0).GetValueOrDefault()
         End Function
     End Class
 End Namespace

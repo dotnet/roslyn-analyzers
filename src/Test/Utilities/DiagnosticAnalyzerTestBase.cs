@@ -90,7 +90,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
         protected bool PrintActualDiagnosticsOnFailure { get; set; }
 
         // It is assumed to be of the format, Get<RuleId>CSharpResultAt(line: {0}, column: {1}, message: {2})
-        public string ExpectedDiagnosticsAssertionTemplate { private get; set; }
+        private string ExpectedDiagnosticsAssertionTemplate { get; set; }
 
         protected static DiagnosticResult GetGlobalResult(string id, string message)
         {

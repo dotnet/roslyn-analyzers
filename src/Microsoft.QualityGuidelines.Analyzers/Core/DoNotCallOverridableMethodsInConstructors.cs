@@ -24,7 +24,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
         private static readonly LocalizableString s_localizableMessageAndTitle = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.DoNotCallOverridableMethodsInConstructors), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.DoNotCallOverridableMethodsInConstructorsDescription), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
 
-        public static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
+        public static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                          s_localizableMessageAndTitle,
                                                                          s_localizableMessageAndTitle,
                                                                          DiagnosticCategory.Usage,

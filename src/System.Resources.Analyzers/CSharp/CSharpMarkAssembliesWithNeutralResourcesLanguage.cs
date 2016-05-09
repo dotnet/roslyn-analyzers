@@ -34,7 +34,8 @@ namespace System.Resources.Analyzers
         private bool CheckAttribute(SyntaxNode node)
         {
             var attribute = node as AttributeSyntax;
-            return attribute?.Name?.GetLastToken().Text?.Equals(GeneratedCodeAttribute) == true && attribute.ArgumentList.Arguments.Count > 0;
+            return attribute?.Name?.GetLastToken().Text?.Equals(GeneratedCodeAttribute, StringComparison.Ordinal) == true &&
+                attribute.ArgumentList.Arguments.Count > 0;
         }
     }
 }

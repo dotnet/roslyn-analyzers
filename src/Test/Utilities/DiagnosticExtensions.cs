@@ -16,7 +16,7 @@ namespace Microsoft.CodeAnalysis
 {
     public static class DiagnosticExtensions
     {
-        public static Action<Exception, DiagnosticAnalyzer, Diagnostic> FailFastOnAnalyzerException = (e, a, d) => FailFast.OnFatalException(e);
+        public static readonly Action<Exception, DiagnosticAnalyzer, Diagnostic> FailFastOnAnalyzerException = (e, a, d) => FailFast.OnFatalException(e);
 
         /// <summary>
         /// This is obsolete. Use Verify instead.

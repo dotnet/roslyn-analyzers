@@ -122,7 +122,7 @@ namespace System.Runtime.Analyzers
             if (expression.Kind == OperationKind.FieldReferenceExpression)
             {
                 IFieldSymbol field = ((IFieldReferenceExpression)expression).Field;
-                return string.Equals(field.Name, StringEmptyFieldName) &&
+                return string.Equals(field.Name, StringEmptyFieldName, StringComparison.Ordinal) &&
                     field.Type.SpecialType == SpecialType.System_String;
             }
 

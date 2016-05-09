@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace Roslyn.Test.Utilities
 {
-    public class EnsureEnglishUICulture : IDisposable
+    public sealed class EnsureEnglishUICulture : IDisposable
     {
         public static CultureInfo PreferredOrNull
         {

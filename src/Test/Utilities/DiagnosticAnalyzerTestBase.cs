@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Serialization;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
@@ -31,6 +32,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
         private static readonly MetadataReference s_immutableCollectionsReference = MetadataReference.CreateFromAssemblyInternal(typeof(ImmutableArray<int>).Assembly);
         private static readonly MetadataReference s_systemDiagnosticsDebugReference = MetadataReference.CreateFromAssemblyInternal(typeof(System.Diagnostics.Debug).Assembly);
         private static readonly MetadataReference s_systemDataReference = MetadataReference.CreateFromAssemblyInternal(typeof(System.Data.DataSet).Assembly);
+        private static readonly MetadataReference s_SystemRuntimeSerializationReference = MetadataReference.CreateFromAssemblyInternal(typeof(DataMemberAttribute).Assembly);
         private static readonly CompilationOptions s_CSharpDefaultOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
         private static readonly CompilationOptions s_visualBasicDefaultOptions = new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
 
@@ -364,6 +366,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 .AddMetadataReference(projectId, s_systemXmlDataReference)
                 .AddMetadataReference(projectId, s_codeAnalysisReference)
                 .AddMetadataReference(projectId, SystemRuntimeFacadeRef)
+                .AddMetadataReference(projectId, s_SystemRuntimeSerializationReference)
                 .AddMetadataReference(projectId, SystemThreadingFacadeRef)
                 .AddMetadataReference(projectId, SystemThreadingTaskFacadeRef)
                 //.AddMetadataReference(projectId, TestBase.SystemRef)

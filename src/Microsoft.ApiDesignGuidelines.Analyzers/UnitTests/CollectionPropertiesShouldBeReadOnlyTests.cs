@@ -99,5 +99,19 @@ class A
 }
 ");
         }
+
+        [Fact]
+        public void CSharp_CA2227_DataMember()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A
+{
+    [System.Runtime.Serialization.DataMember]
+    public System.Collections.ICollection Col { get; set; }
+}
+");
+        }
     }
 }

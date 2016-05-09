@@ -45,72 +45,41 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private static void CheckForDecreasedVisibility(SymbolAnalysisContext context)
         {
-            ISymbol symbol = context.Symbol;
+            var method = (IMethodSymbol)context.Symbol;
 
             // Only look for methods hiding others (not overriding). Overriding with a different visibility is already a compiler error
-            if (symbol.IsOverride)
+            if (method.IsOverride)
             {
                 return;
             }
 
-            // Bail out if the member is publicly accessible, or sealed, or on a sealed type
-            if (IsVisibleOutsideAssembly(symbol) || symbol.IsSealed || (symbol.ContainingType?.IsSealed ?? true))
+            // Bail out if the method is publicly accessible or is sealed.
+            if (method.GetResultantVisibility() == SymbolVisibility.Public || method.IsSealed)
+            {
+                return;
+            }
+
+            // Bail out if the method's containing type is not publicly accessible or is sealed.
+            var type = method.ContainingType;
+            if (type.GetResultantVisibility() != SymbolVisibility.Public || type.IsSealed)
             {
                 return;
             }
 
             // Event accessors cannot have visibility modifiers, so don't analyze them
-            if ((symbol as IMethodSymbol)?.AssociatedSymbol as IEventSymbol != null)
+            if (method.AssociatedSymbol as IEventSymbol != null)
             {
                 return;
             }
 
             // Find members on base types that share the member's name
-            var ancestorTypes = symbol?.ContainingType?.GetBaseTypes() ?? Enumerable.Empty<INamedTypeSymbol>();
-            var hiddenOrOverriddenMembers = ancestorTypes.SelectMany(t => t.GetMembers(symbol.Name));
+            var ancestorTypes = method.ContainingType.GetBaseTypes() ?? Enumerable.Empty<INamedTypeSymbol>();
+            var hiddenOrOverriddenMembers = ancestorTypes.SelectMany(t => t.GetMembers(method.Name));
 
-            if (hiddenOrOverriddenMembers.Any(IsVisibleOutsideAssembly))
+            if (hiddenOrOverriddenMembers.Any(m => m.GetResultantVisibility() == SymbolVisibility.Public))
             {
-                context.ReportDiagnostic(symbol.CreateDiagnostic(Rule));
+                context.ReportDiagnostic(method.CreateDiagnostic(Rule));
             }
-        }
-
-        private static bool IsVisibleOutsideAssembly(ISymbol symbol)
-        {
-            // If the containing type is not visible, then neither is the contained symbol
-            if (symbol.ContainingType != null && !IsVisibleOutsideAssembly(symbol.ContainingType))
-            {
-                return false;
-            }
-
-            // Public symbols are visible outside the assembly
-            if (symbol.DeclaredAccessibility == Accessibility.Public)
-            {
-                return true;
-            }
-
-            // Protected members are visible if on unsealed types
-            if ((symbol.DeclaredAccessibility == Accessibility.Protected || symbol.DeclaredAccessibility == Accessibility.ProtectedOrInternal)
-                && (symbol.ContainingType?.IsSealed == false))
-            {
-                return true;
-            }
-
-            // Check for explicit interface implementations if the symbol is a method, property, or event
-            if ((symbol as IMethodSymbol)?.ExplicitInterfaceImplementations.Any(IsVisibleOutsideAssembly) ?? false)
-            {
-                return true;
-            }
-            if ((symbol as IPropertySymbol)?.ExplicitInterfaceImplementations.Any(IsVisibleOutsideAssembly) ?? false)
-            {
-                return true;
-            }
-            if ((symbol as IEventSymbol)?.ExplicitInterfaceImplementations.Any(IsVisibleOutsideAssembly) ?? false)
-            {
-                return true;
-            }
-
-            return false;
         }
     }
 }

@@ -2,6 +2,7 @@
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
+using Roslyn.Diagnostics.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
@@ -257,6 +258,114 @@ public sealed class DerivedClass : BaseClass
     private new int MyProperty { get; set; }
     protected new void MyMethod();
 }");
+        }
+
+        [Fact, WorkItem(940, "https://github.com/dotnet/roslyn-analyzers/issues/940")]
+        public void MembersInsideTypesThatAreNotPublicallyVisible()
+        {
+            VerifyCSharp(
+@"public class OuterClass
+{
+    public class NestedBaseClass
+    {
+        public NestedBaseClass(int x) { }
+        public int MyProperty { get; set; }
+        public void MyMethod() { }
+    }
+
+    public sealed class NestedSealedPublicDerivedClass : NestedBaseClass
+    {
+        private NestedSealedPublicDerivedClass(int x) : base(x) { }
+        private new int MyProperty { get; set; }
+        private new void MyMethod() { }
+    }
+
+    private sealed class NestedSealedPrivateDerivedClass : NestedBaseClass
+    {
+        private NestedSealedPrivateDerivedClass(int x) : base(x) { }
+        private new int MyProperty { get; set; }
+        private new void MyMethod() { }
+    }
+
+    private class NestedUnsealedPrivateDerivedClass : NestedBaseClass
+    {
+        private NestedUnsealedPrivateDerivedClass(int x) : base(x) { }
+        private new int MyProperty { get; set; }
+        private new void MyMethod() { }
+    }
+}");
+            VerifyBasic(
+@"Public Class OuterClass
+	Public Class NestedBaseClass
+		Public Sub New(x As Integer)
+		End Sub
+		Public Property MyProperty() As Integer
+			Get
+				Return m_MyProperty
+			End Get
+			Set
+				m_MyProperty = Value
+			End Set
+		End Property
+		Private m_MyProperty As Integer
+		Public Sub MyMethod()
+		End Sub
+	End Class
+
+	Public NotInheritable Class NestedSealedPublicDerivedClass
+		Inherits NestedBaseClass
+		Private Sub New(x As Integer)
+			MyBase.New(x)
+		End Sub
+		Private Shadows Property MyProperty() As Integer
+			Get
+				Return m_MyProperty
+			End Get
+			Set
+				m_MyProperty = Value
+			End Set
+		End Property
+		Private Shadows m_MyProperty As Integer
+		Private Shadows Sub MyMethod()
+		End Sub
+	End Class
+
+	Private NotInheritable Class NestedSealedPrivateDerivedClass
+		Inherits NestedBaseClass
+		Private Sub New(x As Integer)
+			MyBase.New(x)
+		End Sub
+		Private Shadows Property MyProperty() As Integer
+			Get
+				Return m_MyProperty
+			End Get
+			Set
+				m_MyProperty = Value
+			End Set
+		End Property
+		Private Shadows m_MyProperty As Integer
+		Private Shadows Sub MyMethod()
+		End Sub
+	End Class
+
+	Private Class NestedUnsealedPrivateDerivedClass
+		Inherits NestedBaseClass
+		Private Sub New(x As Integer)
+			MyBase.New(x)
+		End Sub
+		Private Shadows Property MyProperty() As Integer
+			Get
+				Return m_MyProperty
+			End Get
+			Set
+				m_MyProperty = Value
+			End Set
+		End Property
+		Private Shadows m_MyProperty As Integer
+		Private Shadows Sub MyMethod()
+		End Sub
+	End Class
+End Class");
         }
 
         private DiagnosticResult GetCSharpCA2222RuleNameResultAt(int line, int column)

@@ -49,6 +49,12 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            // TODO: Make analyzer thread-safe.
+            //analysisContext.EnableConcurrentExecution();
+
+            // Security analyzer - analyze and report diagnostics on generated code.
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
+
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {

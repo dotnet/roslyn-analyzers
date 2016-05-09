@@ -38,6 +38,9 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
                 INamedTypeSymbol webUiControlType = compilationContext.Compilation.GetTypeByMetadataName("System.Web.UI.Control");
@@ -55,7 +58,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
             });
         }
 
-        private void AnalyzeOperation(OperationAnalysisContext context, INamedTypeSymbol containingType)
+        private static void AnalyzeOperation(OperationAnalysisContext context, INamedTypeSymbol containingType)
         {
             var operation = context.Operation as IInvocationExpression;
             IMethodSymbol method = operation.TargetMethod;

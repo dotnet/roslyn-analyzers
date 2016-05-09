@@ -43,6 +43,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
@@ -135,7 +138,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             protected bool IsGenericEventHandlerInstance(INamedTypeSymbol type)
             {
-                return type.OriginalDefinition == _genericEventHandler &&
+                return type.OriginalDefinition.Equals(_genericEventHandler) &&
                     type.TypeArguments.Length == 1;
             }
 

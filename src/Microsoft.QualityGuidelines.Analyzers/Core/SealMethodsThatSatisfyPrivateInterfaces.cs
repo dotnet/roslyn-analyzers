@@ -35,10 +35,13 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterSymbolAction(CheckTypes, SymbolKind.NamedType);
         }
 
-        private void CheckTypes(SymbolAnalysisContext context)
+        private static void CheckTypes(SymbolAnalysisContext context)
         {
             var type = (ITypeSymbol)context.Symbol;
 

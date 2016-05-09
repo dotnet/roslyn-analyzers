@@ -44,13 +44,16 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            analysisContext.RegisterSymbolAction(symbolContext => AnalyzeSymbol(symbolContext), SymbolKind.Property);
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
+            analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Property);
         }
 
         /// <summary>
         /// Implementation for CA1044: Properties should not be write only
         /// </summary>
-        private void AnalyzeSymbol(SymbolAnalysisContext context)
+        private static void AnalyzeSymbol(SymbolAnalysisContext context)
         {
             var property = context.Symbol as IPropertySymbol;
             if (property == null)

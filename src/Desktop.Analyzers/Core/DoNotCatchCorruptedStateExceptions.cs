@@ -47,6 +47,11 @@ namespace Desktop.Analyzers
         /// <param name="analysisContext">Analyzer Context.</param>
         public override void Initialize(AnalysisContext analysisContext)
         {
+            // TODO: Make analyzer thread-safe.
+            //analysisContext.EnableConcurrentExecution();
+
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
+
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {

@@ -38,7 +38,13 @@ namespace System.Runtime.Analyzers
 
         public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(s_rule);
 
-        public sealed override void Initialize(AnalysisContext context) => context.RegisterOperationAction(AnalyzeNode, OperationKind.InvocationExpression, OperationKind.BinaryOperatorExpression);
+        public sealed override void Initialize(AnalysisContext context)
+        {
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
+            context.RegisterOperationAction(AnalyzeNode, OperationKind.InvocationExpression, OperationKind.BinaryOperatorExpression);
+        }
 
         private static void AnalyzeNode(OperationAnalysisContext context)
         {

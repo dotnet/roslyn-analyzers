@@ -48,6 +48,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
@@ -63,7 +66,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 });
         }
 
-        public void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol iCollectionType, INamedTypeSymbol arrayType)
+        public static void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol iCollectionType, INamedTypeSymbol arrayType)
         {
             var property = (IPropertySymbol)context.Symbol;
 
@@ -83,7 +86,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             context.ReportDiagnostic(property.CreateDiagnostic(Rule));
         }
 
-        private bool Inherits(ITypeSymbol symbol, ITypeSymbol baseType)
+        private static bool Inherits(ITypeSymbol symbol, ITypeSymbol baseType)
         {
             return symbol == null ? false : symbol.Inherits(baseType);
         }

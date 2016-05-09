@@ -33,6 +33,9 @@ namespace System.Collections.Immutable.Analyzers
 
         public override void Initialize(AnalysisContext context)
         {
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             context.RegisterCompilationStartAction(compilationStartContext =>
             {
                 var immutableArrayType = compilationStartContext.Compilation.GetTypeByMetadataName(ImmutableArrayMetadataName);

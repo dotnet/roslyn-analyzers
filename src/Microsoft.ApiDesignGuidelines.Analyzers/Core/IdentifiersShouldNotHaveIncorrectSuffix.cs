@@ -116,9 +116,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             // Analyze type names.
             analysisContext.RegisterCompilationStartAction(
-                (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
+                compilationStartAnalysisContext =>
                 {
                     var suffixToBaseTypeDictionaryBuilder = ImmutableDictionary.CreateBuilder<string, ImmutableArray<INamedTypeSymbol>>();
 
@@ -250,7 +253,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }, SymbolKind.Event, SymbolKind.Field, SymbolKind.Method, SymbolKind.Property);
         }
 
-        private bool MemberNameExistsInHierarchy(string memberName, INamedTypeSymbol containingType, SymbolKind kind)
+        private static bool MemberNameExistsInHierarchy(string memberName, INamedTypeSymbol containingType, SymbolKind kind)
         {
             for (INamedTypeSymbol baseType = containingType; baseType != null; baseType = baseType.BaseType)
             {
@@ -263,7 +266,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return false;
         }
 
-        private bool IsNotChildOfAnyButHasSuffix(INamedTypeSymbol namedTypeSymbol, IEnumerable<INamedTypeSymbol> parentTypes, string suffix)
+        private static bool IsNotChildOfAnyButHasSuffix(INamedTypeSymbol namedTypeSymbol, IEnumerable<INamedTypeSymbol> parentTypes, string suffix)
         {
             return namedTypeSymbol.Name.HasSuffix(suffix)
                 && !parentTypes.Any(parentType => namedTypeSymbol.DerivesFromOrImplementsAnyConstructionOf(parentType));

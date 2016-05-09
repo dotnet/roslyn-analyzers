@@ -74,10 +74,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            analysisContext.RegisterSymbolAction(DoAnalysis, SymbolKind.Method);
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
+            analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Method);
         }
 
-        private static void DoAnalysis(SymbolAnalysisContext symbolContext)
+        private static void AnalyzeSymbol(SymbolAnalysisContext symbolContext)
         {
             var methodSymbol = (IMethodSymbol)symbolContext.Symbol;
             var typeSymbol = methodSymbol.ContainingSymbol as ITypeSymbol;

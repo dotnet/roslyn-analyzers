@@ -15,10 +15,13 @@ namespace XmlDocumentationComments.Analyzers
     {
         public override void Initialize(AnalysisContext context)
         {
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             context.RegisterSyntaxNodeAction(AnalyzeXmlAttribute, SyntaxKind.XmlTextAttribute);
         }
 
-        private void AnalyzeXmlAttribute(SyntaxNodeAnalysisContext context)
+        private static void AnalyzeXmlAttribute(SyntaxNodeAnalysisContext context)
         {
             var textAttribute = (XmlTextAttributeSyntax)context.Node;
 

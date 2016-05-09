@@ -39,6 +39,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterSymbolAction(symbolAnalysisContext =>
             {
                 var namedType = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
@@ -51,7 +54,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }, SymbolKind.NamedType);
         }
 
-        private void CheckOperators(
+        private static void CheckOperators(
             SymbolAnalysisContext analysisContext, INamedTypeSymbol namedType,
             string memberName1, string memberName2,
             string opName1, string opName2)
@@ -62,7 +65,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             CheckOperators(analysisContext, namedType, operators2, operators1, opName2, opName1);
         }
 
-        private void CheckOperators(SymbolAnalysisContext analysisContext,
+        private static void CheckOperators(SymbolAnalysisContext analysisContext,
             INamedTypeSymbol namedType,
             ImmutableArray<ISymbol> operators1, ImmutableArray<ISymbol> operators2,
             string opName1, string opName2)
@@ -91,7 +94,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
         }
 
-        private bool HasSymmetricOperator(ISymbol operator1, ImmutableArray<ISymbol> operators2)
+        private static bool HasSymmetricOperator(ISymbol operator1, ImmutableArray<ISymbol> operators2)
         {
             foreach (var operator2 in operators2)
             {
@@ -110,7 +113,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return false;
         }
 
-        private bool HasSameParameterTypes(ISymbol operator1, ISymbol operator2)
+        private static bool HasSameParameterTypes(ISymbol operator1, ISymbol operator2)
         {
             var parameters1 = operator1.GetParameters();
             var parameters2 = operator2.GetParameters();

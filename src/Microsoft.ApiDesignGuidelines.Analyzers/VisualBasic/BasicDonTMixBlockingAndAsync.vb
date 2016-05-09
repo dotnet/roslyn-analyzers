@@ -11,7 +11,7 @@ Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' </summary>
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
     Public NotInheritable Class BasicDonTMixBlockingAndAsyncAnalyzer
-        Inherits DonTMixBlockingAndAsyncAnalyzer
+        Inherits DontMixBlockingAndAsyncAnalyzer
 
     End Class
 End Namespace

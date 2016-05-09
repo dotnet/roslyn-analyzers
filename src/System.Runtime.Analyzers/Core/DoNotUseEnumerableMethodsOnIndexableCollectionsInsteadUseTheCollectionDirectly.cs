@@ -42,10 +42,13 @@ namespace System.Runtime.Analyzers
 
         public override void Initialize(AnalysisContext context)
         {
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             context.RegisterCompilationStartAction(OnCompilationStart);
         }
 
-        private void OnCompilationStart(CompilationStartAnalysisContext context)
+        private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
             var listType = context.Compilation.GetTypeByMetadataName(IListMetadataName);
             var readonlyListType = context.Compilation.GetTypeByMetadataName(IReadOnlyListMetadataName);
@@ -92,7 +95,7 @@ namespace System.Runtime.Analyzers
         /// At this point it only identifies <see cref="IReadOnlyList{T}"/> directly but could easily be extended to support
         /// any type which has an index and count property.  
         /// </summary>
-        private bool IsTypeWithInefficientLinqMethods(ITypeSymbol targetType, ITypeSymbol readonlyListType, ITypeSymbol listType)
+        private static bool IsTypeWithInefficientLinqMethods(ITypeSymbol targetType, ITypeSymbol readonlyListType, ITypeSymbol listType)
         {
             // If this type is simply IReadOnlyList<T> then no further checking is needed.  
             if (targetType.TypeKind == TypeKind.Interface && targetType.OriginalDefinition.Equals(readonlyListType))
@@ -126,7 +129,7 @@ namespace System.Runtime.Analyzers
         /// completely appropriate to use such methods even with <see cref="IReadOnlyList{T}" />.  Only the single parameter
         /// ones are suspect
         /// </remarks>
-        private bool IsSingleParameterLinqMethod(IMethodSymbol methodSymbol, ITypeSymbol enumerableType)
+        private static bool IsSingleParameterLinqMethod(IMethodSymbol methodSymbol, ITypeSymbol enumerableType)
         {
             Debug.Assert(methodSymbol.ReducedFrom == null);
             return

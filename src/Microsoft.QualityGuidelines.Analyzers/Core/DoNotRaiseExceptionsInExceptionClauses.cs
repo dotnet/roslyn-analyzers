@@ -43,6 +43,9 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterOperationBlockAction(operationBlockContext =>
             {
                 foreach (var block in operationBlockContext.OperationBlocks)

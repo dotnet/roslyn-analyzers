@@ -38,6 +38,9 @@ namespace Microsoft.Composition.Analyzers
 
         public override void Initialize(AnalysisContext context)
         {
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             context.RegisterCompilationStartAction(compilationContext =>
             {
                 var exportAttributes = new List<INamedTypeSymbol>();
@@ -59,7 +62,7 @@ namespace Microsoft.Composition.Analyzers
             });
         }
 
-        private void AnalyzeSymbol(SymbolAnalysisContext symbolContext, IEnumerable<INamedTypeSymbol> exportAttributes)
+        private static void AnalyzeSymbol(SymbolAnalysisContext symbolContext, IEnumerable<INamedTypeSymbol> exportAttributes)
         {
             var namedType = (INamedTypeSymbol)symbolContext.Symbol;
             var namedTypeAttributes = namedType.GetApplicableAttributes();

@@ -33,7 +33,7 @@ namespace Desktop.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        private static readonly Dictionary<string, string> s_badBaseTypesToMessage = new Dictionary<string, string>
+        private static readonly ImmutableDictionary<string, string> s_badBaseTypesToMessage = new Dictionary<string, string>
                                                     {
                                                         {"System.ApplicationException", DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException},
                                                         {"System.Xml.XmlDocument", DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemXmlXmlDocument},
@@ -43,14 +43,17 @@ namespace Desktop.Analyzers
                                                         {"System.Collections.ReadOnlyCollectionBase", DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsReadOnlyCollectionBase},
                                                         {"System.Collections.SortedList", DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsSortedList},
                                                         {"System.Collections.Stack", DesktopAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsStack},
-                                                    };
+                                                    }.ToImmutableDictionary();
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(AnalyzeCompilationStart);
         }
 
-        private void AnalyzeCompilationStart(CompilationStartAnalysisContext context)
+        private static void AnalyzeCompilationStart(CompilationStartAnalysisContext context)
         {
             ImmutableHashSet<INamedTypeSymbol> badBaseTypes = s_badBaseTypesToMessage.Keys
                                 .Select(bt => context.Compilation.GetTypeByMetadataName(bt))

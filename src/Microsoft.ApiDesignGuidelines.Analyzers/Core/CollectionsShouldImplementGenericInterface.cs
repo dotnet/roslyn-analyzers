@@ -50,6 +50,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(
                (context) =>
                {
@@ -75,13 +78,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                });
         }
 
-        public void AnalyzeSymbol(SymbolAnalysisContext context,
-                                   INamedTypeSymbol iCollectionType, INamedTypeSymbol gCollectionType,
-                                   INamedTypeSymbol iEnumerableType, INamedTypeSymbol gEnumerableType,
-                                   INamedTypeSymbol iListType, INamedTypeSymbol gListType)
+        private static void AnalyzeSymbol(
+            SymbolAnalysisContext context,
+            INamedTypeSymbol iCollectionType,
+            INamedTypeSymbol gCollectionType,
+            INamedTypeSymbol iEnumerableType,
+            INamedTypeSymbol gEnumerableType,
+            INamedTypeSymbol iListType,
+            INamedTypeSymbol gListType)
         {
             var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
-            System.Collections.Generic.IEnumerable<INamedTypeSymbol> allInterfaces = namedTypeSymbol.AllInterfaces.Select(t => t.OriginalDefinition);
+            var allInterfaces = namedTypeSymbol.AllInterfaces.Select(t => t.OriginalDefinition).ToImmutableHashSet();
 
             foreach (INamedTypeSymbol @interface in allInterfaces)
             {

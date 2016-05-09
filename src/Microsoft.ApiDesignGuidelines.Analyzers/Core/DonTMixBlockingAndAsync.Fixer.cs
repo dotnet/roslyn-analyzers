@@ -12,7 +12,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// </summary>
     public abstract class DonTMixBlockingAndAsyncFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DonTMixBlockingAndAsyncAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DontMixBlockingAndAsyncAnalyzer.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

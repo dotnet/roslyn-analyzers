@@ -35,17 +35,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             // Analyze properties, methods 
-            analysisContext.RegisterSymbolAction(symbolContext =>
-            {
-                AnalyzeSymbol(symbolContext.Symbol, symbolContext);
-            }, SymbolKind.Property, SymbolKind.Method);
+            analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Property, SymbolKind.Method);
         }
 
-        private static void AnalyzeSymbol(ISymbol symbol, SymbolAnalysisContext context)
+        private static void AnalyzeSymbol(SymbolAnalysisContext context)
         {
             string identifier;
-
+            var symbol = context.Symbol;
             if (symbol.Kind == SymbolKind.Property)
             {
                 //if property then target search is to find methods that start with Get and the substring property name
@@ -66,10 +66,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             var matchFound = false;
 
             //get the collection of declaring and base types
-            System.Collections.Generic.IEnumerable<INamedTypeSymbol> types = symbol.ContainingType.GetBaseTypesAndThis();
+            var types = symbol.ContainingType.GetBaseTypesAndThis();
 
-
-            //iterate thru collection to find match
+            //iterate through the collection to find match
             foreach (INamedTypeSymbol type in types)
             {
                 ImmutableArray<ISymbol> membersFound = type.GetMembers(identifier);
@@ -93,11 +92,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                     //if no match found iterate to next in outer for loop
                     if (!matchFound)
+                    {
                         continue;
+                    }
 
                     //Reaches here only if match found. Create diagnostic
-                    Diagnostic diagnostic;
-                    diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], symbol.Name, type.Name);
+                    var diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], symbol.Name, type.Name);
                     context.ReportDiagnostic(diagnostic);
 
                     //once a match is found exit the outer for loop

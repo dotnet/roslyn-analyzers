@@ -10,7 +10,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// Async003: Don't Pass Async Lambdas as Void Returning Delegate Types
     /// </summary>
-    public abstract class DonTPassAsyncLambdasAsVoidReturningDelegateTypesAnalyzer : DiagnosticAnalyzer
+    public abstract class DontPassAsyncLambdasAsVoidReturningDelegateTypesAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "Async003";
 
@@ -33,6 +33,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         }
     }
 }

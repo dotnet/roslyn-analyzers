@@ -76,11 +76,14 @@ namespace System.Runtime.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterSymbolAction(saContext =>
             {
                 var symbol = saContext.Symbol;
                 AnalyzeSymbol(saContext.ReportDiagnostic, symbol);
-                switch(symbol.Kind)
+                switch (symbol.Kind)
                 {
                     case SymbolKind.NamedType:
                         {
@@ -109,7 +112,7 @@ namespace System.Runtime.Analyzers
                         }
 
                     case SymbolKind.Property:
-                        { 
+                        {
                             var propertySymbol = symbol as IPropertySymbol;
                             AnalyzeSymbols(saContext.ReportDiagnostic, propertySymbol.Parameters);
                             return;
@@ -126,15 +129,15 @@ namespace System.Runtime.Analyzers
             });
         }
 
-        private void AnalyzeSymbols(Action<Diagnostic> reportDiagnostic, IEnumerable<ISymbol> symbols)
+        private static void AnalyzeSymbols(Action<Diagnostic> reportDiagnostic, IEnumerable<ISymbol> symbols)
         {
-           foreach(var symbol in symbols)
+            foreach (var symbol in symbols)
             {
                 AnalyzeSymbol(reportDiagnostic, symbol);
             }
         }
 
-        private void AnalyzeSymbol(Action<Diagnostic> reportDiagnostic, ISymbol symbol)
+        private static void AnalyzeSymbol(Action<Diagnostic> reportDiagnostic, ISymbol symbol)
         {
             var attributes = symbol.GetAttributes();
 
@@ -144,7 +147,7 @@ namespace System.Runtime.Analyzers
             }
         }
 
-        private void Analyze(Action<Diagnostic> reportDiagnostic, AttributeData attributeData)
+        private static void Analyze(Action<Diagnostic> reportDiagnostic, AttributeData attributeData)
         {
             var attributeConstructor = attributeData.AttributeConstructor;
             var constructorArguments = attributeData.ConstructorArguments;
@@ -180,7 +183,7 @@ namespace System.Runtime.Analyzers
                                 parameter.Name,
                                 valueValidator.TypeName));
                         }
-                        else if(!valueValidator.IsValidValue(value))
+                        else if (!valueValidator.IsValidValue(value))
                         {
                             reportDiagnostic(syntax.CreateDiagnostic(DefaultRule,
                                 classDisplayString,
@@ -224,7 +227,7 @@ namespace System.Runtime.Analyzers
             }
         }
 
-        private ValueValidator GetValueValidator(string name)
+        private static ValueValidator GetValueValidator(string name)
         {
             foreach (var valueValidator in s_tokensToValueValidator)
             {

@@ -39,6 +39,9 @@ namespace System.Runtime.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
@@ -57,15 +60,15 @@ namespace System.Runtime.Analyzers
             OperationKind kind = context.Operation.Kind;
             if (kind == OperationKind.InvocationExpression)
             {
-                AnalyzeInvocationExpression((IInvocationExpression)context.Operation, stringComparisonType, context.ReportDiagnostic);
+                AnalyzeInvocationExpression((IInvocationExpression)context.Operation, stringComparisonType, context.ReportDiagnostic, GetMethodNameLocation);
             }
             else
             {
-                AnalyzeBinaryExpression((IBinaryOperatorExpression)context.Operation, context.ReportDiagnostic);
+                AnalyzeBinaryExpression((IBinaryOperatorExpression)context.Operation, context.ReportDiagnostic, GetOperatorTokenLocation);
             }
         }
 
-        private void AnalyzeInvocationExpression(IInvocationExpression operation, INamedTypeSymbol stringComparisonType, Action<Diagnostic> reportDiagnostic)
+        private static void AnalyzeInvocationExpression(IInvocationExpression operation, INamedTypeSymbol stringComparisonType, Action<Diagnostic> reportDiagnostic, Func<SyntaxNode, Location> getMethodNameLocation)
         {
             IMethodSymbol methodSymbol = operation.TargetMethod;
             if (methodSymbol != null &&
@@ -75,7 +78,7 @@ namespace System.Runtime.Analyzers
                 if (!IsAcceptableOverload(methodSymbol, stringComparisonType))
                 {
                     // wrong overload
-                    reportDiagnostic(Diagnostic.Create(Rule, GetMethodNameLocation(operation.Syntax)));
+                    reportDiagnostic(Diagnostic.Create(Rule, getMethodNameLocation(operation.Syntax)));
                 }
                 else
                 {
@@ -95,7 +98,7 @@ namespace System.Runtime.Analyzers
             }
         }
 
-        private void AnalyzeBinaryExpression(IBinaryOperatorExpression operation, Action<Diagnostic> reportDiagnostic)
+        private static void AnalyzeBinaryExpression(IBinaryOperatorExpression operation, Action<Diagnostic> reportDiagnostic, Func<SyntaxNode, Location> getOperatorTokenLocation)
         {
             if (operation.BinaryOperationKind == BinaryOperationKind.StringEquals || operation.BinaryOperationKind == BinaryOperationKind.StringNotEquals)
             {
@@ -104,7 +107,7 @@ namespace System.Runtime.Analyzers
                 {
                     return;
                 }
-                reportDiagnostic(Diagnostic.Create(Rule, GetOperatorTokenLocation(operation.Syntax)));
+                reportDiagnostic(Diagnostic.Create(Rule, getOperatorTokenLocation(operation.Syntax)));
             }
         }
 

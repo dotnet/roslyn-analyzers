@@ -25,8 +25,6 @@ namespace System.Runtime.InteropServices.Analyzers
             description: s_localizableDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
-        private INamedTypeSymbol _lazyPreserveSigType;
-
         public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -37,12 +35,17 @@ namespace System.Runtime.InteropServices.Analyzers
 
         public sealed override void Initialize(AnalysisContext context)
         {
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                _lazyPreserveSigType = compilationContext.Compilation.GetTypeByMetadataName("System.Runtime.InteropServices.PreserveSigAttribute");
-                if (_lazyPreserveSigType != null)
+                var preserveSigType = compilationContext.Compilation.GetTypeByMetadataName("System.Runtime.InteropServices.PreserveSigAttribute");
+                if (preserveSigType != null)
                 {
-                    compilationContext.RegisterSyntaxNodeAction(AnalyzeNode, ImmutableArray.Create(InvocationExpressionSyntaxKind));
+                    compilationContext.RegisterSyntaxNodeAction(
+                        nodeContext => AnalyzeNode(nodeContext, preserveSigType, IsExpressionStatementSyntaxKind),
+                        InvocationExpressionSyntaxKind);
                 }
             });
         }
@@ -50,15 +53,10 @@ namespace System.Runtime.InteropServices.Analyzers
         protected abstract TSyntaxKind InvocationExpressionSyntaxKind { get; }
         protected abstract bool IsExpressionStatementSyntaxKind(int rawKind);
 
-        private void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        private static void AnalyzeNode(SyntaxNodeAnalysisContext context, INamedTypeSymbol preserveSigType, Func<int, bool> isExpressionStatementSyntaxKind)
         {
-            if (_lazyPreserveSigType == null)
-            {
-                return;
-            }
-
             SyntaxNode node = context.Node;
-            if (!IsExpressionStatementSyntaxKind(node.Parent.RawKind))
+            if (!isExpressionStatementSyntaxKind(node.Parent.RawKind))
             {
                 return;
             }
@@ -71,7 +69,7 @@ namespace System.Runtime.InteropServices.Analyzers
 
             foreach (AttributeData attributeData in symbol.GetAttributes())
             {
-                if (attributeData.AttributeClass.Equals(_lazyPreserveSigType))
+                if (attributeData.AttributeClass.Equals(preserveSigType))
                 {
                     Diagnostic diagnostic = Diagnostic.Create(ConsumePreserveSigAnalyzerDescriptor, node.GetLocation(), symbol);
                     context.ReportDiagnostic(diagnostic);

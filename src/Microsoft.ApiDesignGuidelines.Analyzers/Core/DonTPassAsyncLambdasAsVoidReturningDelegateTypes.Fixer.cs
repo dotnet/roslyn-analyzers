@@ -12,7 +12,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// </summary>
     public abstract class DonTPassAsyncLambdasAsVoidReturningDelegateTypesFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DonTPassAsyncLambdasAsVoidReturningDelegateTypesAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DontPassAsyncLambdasAsVoidReturningDelegateTypesAnalyzer.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

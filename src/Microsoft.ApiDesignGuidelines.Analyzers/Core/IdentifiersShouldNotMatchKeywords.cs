@@ -95,6 +95,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            // TODO: Make this analyzer thread-safe.
+            //analysisContext.EnableConcurrentExecution();
+
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             var keywordNamedNamespaces = new HashSet<string>();
 
             analysisContext.RegisterSymbolAction(

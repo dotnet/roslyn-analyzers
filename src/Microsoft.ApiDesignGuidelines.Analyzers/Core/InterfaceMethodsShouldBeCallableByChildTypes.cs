@@ -44,14 +44,22 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public sealed override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
                 INamedTypeSymbol iDisposableTypeSymbol = WellKnownTypes.IDisposable(compilationContext.Compilation);
+                if (iDisposableTypeSymbol == null)
+                {
+                    return;
+                }
+
                 compilationContext.RegisterOperationBlockAction(operationBlockContext => AnalyzeOperationBlock(operationBlockContext, iDisposableTypeSymbol));
             });
         }
 
-        private bool ShouldExcludeOperationBlock(ImmutableArray<IOperation> operationBlocks)
+        private static bool ShouldExcludeOperationBlock(ImmutableArray<IOperation> operationBlocks)
         {
             if (operationBlocks != null && operationBlocks.Length == 1)
             {
@@ -74,7 +82,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return false;
         }
 
-        private void AnalyzeOperationBlock(OperationBlockAnalysisContext context, INamedTypeSymbol iDisposableTypeSymbol)
+        private static void AnalyzeOperationBlock(OperationBlockAnalysisContext context, INamedTypeSymbol iDisposableTypeSymbol)
         {
             if (context.OwningSymbol.Kind != SymbolKind.Method)
             {

@@ -9,7 +9,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// Async003: Don't Pass Async Lambdas as Void Returning Delegate Types
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class CSharpDonTPassAsyncLambdasAsVoidReturningDelegateTypesAnalyzer : DonTPassAsyncLambdasAsVoidReturningDelegateTypesAnalyzer
+    public sealed class CSharpDonTPassAsyncLambdasAsVoidReturningDelegateTypesAnalyzer : DontPassAsyncLambdasAsVoidReturningDelegateTypesAnalyzer
     {
     }
 }

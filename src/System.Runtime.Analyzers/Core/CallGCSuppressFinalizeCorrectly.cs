@@ -66,6 +66,11 @@ namespace System.Runtime.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            // TODO: Make analyzer thread safe.
+            //analysisContext.EnableConcurrentExecution();
+
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
                 var gcSuppressFinalizeMethodSymbol = compilationContext.Compilation

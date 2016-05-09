@@ -30,7 +30,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
             }
         }
 
-        protected Diagnostic CreateDiagnostic(SyntaxNode node)
+        protected static Diagnostic CreateDiagnostic(SyntaxNode node)
         {
             return node.CreateDiagnostic(Rule);
         }

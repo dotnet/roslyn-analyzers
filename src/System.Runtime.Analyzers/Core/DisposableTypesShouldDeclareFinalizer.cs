@@ -37,17 +37,20 @@ namespace System.Runtime.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(
                 compilationStartAnalysisContext =>
                 {
                     Compilation compilation = compilationStartAnalysisContext.Compilation;
 
-                    INamedTypeSymbol[] nativeResourceTypes = new[]
-                    {
+                    ImmutableHashSet<INamedTypeSymbol> nativeResourceTypes = ImmutableHashSet.Create(
                         WellKnownTypes.IntPtr(compilation),
                         WellKnownTypes.UIntPtr(compilation),
                         WellKnownTypes.HandleRef(compilation)
-                    };
+                    );
+                    var disposableType = WellKnownTypes.IDisposable(compilation);
 
                     compilationStartAnalysisContext.RegisterOperationAction(
                         operationAnalysisContext =>
@@ -84,7 +87,7 @@ namespace System.Runtime.Analyzers
                                 return;
                             }
 
-                            if (!containingType.AllInterfaces.Contains(WellKnownTypes.IDisposable(compilation)))
+                            if (!containingType.AllInterfaces.Contains(disposableType))
                             {
                                 return;
                             }

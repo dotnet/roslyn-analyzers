@@ -51,7 +51,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         public override void Initialize(AnalysisContext analysisContext)
         {
             analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
             analysisContext.RegisterCompilationStartAction(
                 compilationStartAnalysisContext =>

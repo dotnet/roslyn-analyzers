@@ -10,7 +10,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// Async004: Don't Store Async Lambdas as Void Returning Delegate Types
     /// </summary>
-    public abstract class DonTStoreAsyncLambdasAsVoidReturningDelegateTypesAnalyzer : DiagnosticAnalyzer
+    public abstract class DontStoreAsyncLambdasAsVoidReturningDelegateTypesAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "Async004";
 
@@ -33,6 +33,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            // TODO: Enable concurrent execution of analyzer actions.
+            //analysisContext.EnableConcurrentExecution();
+
+            // TODO: Configure generated code analysis.
+            //analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         }
     }
 }

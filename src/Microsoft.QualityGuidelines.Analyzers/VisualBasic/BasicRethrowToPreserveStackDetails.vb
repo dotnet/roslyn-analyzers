@@ -11,10 +11,13 @@ Namespace Microsoft.QualityGuidelines.Analyzers
         Inherits RethrowToPreserveStackDetailsAnalyzer
 
         Public Overrides Sub Initialize(analysisContext As AnalysisContext)
+            analysisContext.EnableConcurrentExecution()
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None)
+
             analysisContext.RegisterSyntaxNodeAction(AddressOf AnalyzeNode, SyntaxKind.ThrowStatement)
         End Sub
 
-        Public Sub AnalyzeNode(context As SyntaxNodeAnalysisContext)
+        Public Shared Sub AnalyzeNode(context As SyntaxNodeAnalysisContext)
             Dim node As SyntaxNode = context.Node
             Dim throwStatement = DirectCast(node, ThrowStatementSyntax)
             Dim throwExpression = throwStatement.Expression

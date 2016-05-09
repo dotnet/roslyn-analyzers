@@ -37,6 +37,11 @@ namespace Microsoft.Maintainability.Analyzers
 
         public override void Initialize(AnalysisContext context)
         {
+            // TODO: Consider making this analyzer thread-safe.
+            //context.EnableConcurrentExecution();
+
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             context.RegisterCompilationStartAction(compilationStartContext =>
             {
                 INamedTypeSymbol eventsArgSymbol = compilationStartContext.Compilation.GetTypeByMetadataName("System.EventArgs");

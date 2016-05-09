@@ -34,6 +34,12 @@ namespace Desktop.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            // TODO: Make analyzer thread-safe.
+            //analysisContext.EnableConcurrentExecution();
+
+            // Security analyzer - analyze and report diagnostics in generated code.
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
+
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {

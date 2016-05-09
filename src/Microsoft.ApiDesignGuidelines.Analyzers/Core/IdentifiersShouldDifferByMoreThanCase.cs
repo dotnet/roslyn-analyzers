@@ -35,11 +35,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationAction(AnalyzeCompilation);
             analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
         }
 
-        private void AnalyzeCompilation(CompilationAnalysisContext context)
+        private static void AnalyzeCompilation(CompilationAnalysisContext context)
         {
             IEnumerable<INamespaceSymbol> globalNamespaces = context.Compilation.GlobalNamespace.GetNamespaceMembers()
                 .Where(item => item.ContainingAssembly == context.Compilation.Assembly);
@@ -77,7 +80,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
         }
 
-        private void CheckNamespaceMembers(IEnumerable<INamespaceSymbol> namespaces, Compilation compilation, Action<Diagnostic> addDiagnostic)
+        private static void CheckNamespaceMembers(IEnumerable<INamespaceSymbol> namespaces, Compilation compilation, Action<Diagnostic> addDiagnostic)
         {
             HashSet<INamespaceSymbol> excludedNamespaces = new HashSet<INamespaceSymbol>();
             foreach (INamespaceSymbol @namespace in namespaces)

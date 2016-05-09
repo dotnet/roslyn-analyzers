@@ -39,47 +39,51 @@ Namespace Microsoft.Maintainability.Analyzers
         End Property
 
         Public Overrides Sub Initialize(analysisContext As AnalysisContext)
+            ' TODO: Consider making this analyzer thread-safe.
+            'analysisContext.EnableConcurrentExecution()
+
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None)
 
             analysisContext.RegisterOperationBlockStartAction(
-            Sub(operationBlockContext)
-                Dim containingMethod = TryCast(operationBlockContext.OwningSymbol, IMethodSymbol)
+                Sub(operationBlockContext)
+                    Dim containingMethod = TryCast(operationBlockContext.OwningSymbol, IMethodSymbol)
 
-                If containingMethod IsNot Nothing Then
-                    Dim mightBecomeUnusedLocals = New HashSet(Of ILocalSymbol)()
+                    If containingMethod IsNot Nothing Then
+                        Dim mightBecomeUnusedLocals = New HashSet(Of ILocalSymbol)()
 
-                    operationBlockContext.RegisterOperationAction(
-                    Sub(operationContext)
-                        Dim variables = DirectCast(operationContext.Operation, IVariableDeclarationStatement).Variables
+                        operationBlockContext.RegisterOperationAction(
+                        Sub(operationContext)
+                            Dim variables = DirectCast(operationContext.Operation, IVariableDeclarationStatement).Variables
 
-                        For Each variable In variables
-                            Dim local = variable.Variable
+                            For Each variable In variables
+                                Dim local = variable.Variable
 
-                            mightBecomeUnusedLocals.Add(local)
-                        Next
-                    End Sub, OperationKind.VariableDeclarationStatement)
+                                mightBecomeUnusedLocals.Add(local)
+                            Next
+                        End Sub, OperationKind.VariableDeclarationStatement)
 
-                    operationBlockContext.RegisterOperationAction(
-                    Sub(operationContext)
-                        Dim localReferenceExpression As ILocalReferenceExpression = DirectCast(operationContext.Operation, ILocalReferenceExpression)
-                        Dim syntax = localReferenceExpression.Syntax
+                        operationBlockContext.RegisterOperationAction(
+                        Sub(operationContext)
+                            Dim localReferenceExpression As ILocalReferenceExpression = DirectCast(operationContext.Operation, ILocalReferenceExpression)
+                            Dim syntax = localReferenceExpression.Syntax
 
-                        ' The writeonly references should be ignored
-                        If syntax.Parent.IsKind(SyntaxKind.SimpleAssignmentStatement) AndAlso
-                            DirectCast(syntax.Parent, AssignmentStatementSyntax).Left Is syntax Then
-                            Return
-                        End If
+                            ' The writeonly references should be ignored
+                            If syntax.Parent.IsKind(SyntaxKind.SimpleAssignmentStatement) AndAlso
+                                DirectCast(syntax.Parent, AssignmentStatementSyntax).Left Is syntax Then
+                                Return
+                            End If
 
-                        mightBecomeUnusedLocals.Remove(localReferenceExpression.Local)
-                    End Sub, OperationKind.LocalReferenceExpression)
+                            mightBecomeUnusedLocals.Remove(localReferenceExpression.Local)
+                        End Sub, OperationKind.LocalReferenceExpression)
 
-                    operationBlockContext.RegisterOperationBlockEndAction(
-                    Sub(operationBlockEndContext)
-                        For Each local In mightBecomeUnusedLocals
-                            operationBlockEndContext.ReportDiagnostic(Diagnostic.Create(Rule, local.Locations.FirstOrDefault()))
-                        Next
-                    End Sub)
-                End If
-            End Sub)
+                        operationBlockContext.RegisterOperationBlockEndAction(
+                        Sub(operationBlockEndContext)
+                            For Each local In mightBecomeUnusedLocals
+                                operationBlockEndContext.ReportDiagnostic(Diagnostic.Create(Rule, local.Locations.FirstOrDefault()))
+                            Next
+                        End Sub)
+                    End If
+                End Sub)
         End Sub
     End Class
 End Namespace

@@ -32,6 +32,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
                 INamedTypeSymbol attributeType = WellKnownTypes.Attribute(compilationContext.Compilation);
@@ -56,7 +59,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
-            bool hasAttributeUsageAttribute = symbol.GetAttributes().Any(attribute => attribute.AttributeClass == attributeUsageAttributeType);
+            bool hasAttributeUsageAttribute = symbol.GetAttributes().Any(attribute => attribute.AttributeClass.Equals(attributeUsageAttributeType));
             if (!hasAttributeUsageAttribute)
             {
                 addDiagnostic(symbol.CreateDiagnostic(Rule, symbol.Name));

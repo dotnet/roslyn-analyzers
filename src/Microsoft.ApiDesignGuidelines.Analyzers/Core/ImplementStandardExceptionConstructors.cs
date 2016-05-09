@@ -45,10 +45,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(MissingConstructorRule);
-        private INamedTypeSymbol _exceptionType;
-
+        
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(AnalyzeCompilationSymbol);
         }
 
@@ -59,74 +61,72 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private void AnalyzeCompilationSymbol(CompilationStartAnalysisContext context)
         {
-            _exceptionType = context.Compilation.GetTypeByMetadataName("System.Exception");
+            var exceptionType = context.Compilation.GetTypeByMetadataName("System.Exception");
+            if (exceptionType == null)
+            {
+                return;
+            }
+
             // Analyze named types 
             context.RegisterSymbolAction(symbolContext =>
             {
-                AnalyzeSymbol(symbolContext);
+                var namedTypeSymbol = (INamedTypeSymbol)symbolContext.Symbol;
+
+                //Check if type derives from Exception type
+                if (namedTypeSymbol.DerivesFrom(exceptionType))
+                {
+                    //Set flags for the 3 different constructos, that is being searched for
+                    var defaultConstructorFound = false; //flag for default constructor
+                    var secondConstructorFound = false; //flag for constructor with string type parameter
+                    var thirdConstructorFound = false; //flag for constructor with string and exception type parameter
+
+                    foreach (IMethodSymbol ctor in namedTypeSymbol.Constructors)
+                    {
+                        var parameters = ctor.GetParameters();
+
+                        //case 1: Default constructor - no parameters
+                        if (parameters.Length == 0)
+                        {
+                            defaultConstructorFound = true;
+                        }
+                        //case 2: Constructor with string type parameter
+                        else if (parameters.Length == 1 && parameters[0].Type.SpecialType == SpecialType.System_String)
+                        {
+                            secondConstructorFound = true;
+                        }
+                        //case 3: Constructor with string type and exception type parameter
+                        else if (parameters.Length == 2 && parameters[0].Type.SpecialType == SpecialType.System_String &&
+                                parameters[1].Type.Equals(exceptionType))
+                        {
+                            thirdConstructorFound = true;
+                        }
+
+                        if (defaultConstructorFound && secondConstructorFound && thirdConstructorFound)
+                        {
+                            //reaches here only when all 3 constructors are found - no diagnostic needed 
+                            return;
+                        }
+                    } //end of for loop
+
+                    if (!defaultConstructorFound) //missing default constructor
+                    {
+                        ReportDiagnostic(symbolContext, namedTypeSymbol, MissingCtorSignature.CtorWithNoParameter, GetConstructorSignatureNoParameter(namedTypeSymbol));
+                    }
+
+                    if (!secondConstructorFound) //missing constructor with string parameter
+                    {
+                        ReportDiagnostic(symbolContext, namedTypeSymbol, MissingCtorSignature.CtorWithStringParameter, GetConstructorSignatureStringTypeParameter(namedTypeSymbol));
+                    }
+
+                    if (!thirdConstructorFound) //missing constructor with string and exception type parameter - report diagnostic
+                    {
+                        ReportDiagnostic(symbolContext, namedTypeSymbol, MissingCtorSignature.CtorWithStringAndExceptionParameters, GetConstructorSignatureStringAndExceptionTypeParameter(namedTypeSymbol));
+                    }
+                }
             }, SymbolKind.NamedType);
         }
-        private void AnalyzeSymbol(SymbolAnalysisContext context)
-        {
-            var namedTypeSymbol = context.Symbol as INamedTypeSymbol;
 
-            //Check if type derives from Exception type
-            if (namedTypeSymbol.BaseType == _exceptionType)
-            {
-                //Get the list of constructors
-                ImmutableArray<IMethodSymbol> constructors = namedTypeSymbol.Constructors;
-
-                //Set flags for the 3 different constructos, that is being searched for
-                var defaultConstructorFound = false; //flag for default constructor
-                var secondConstructorFound = false; //flag for constructor with string type parameter
-                var thirdConstructorFound = false; //flag for constructor with string and exception type parameter
-
-                foreach (IMethodSymbol ctor in constructors)
-                {
-                    ImmutableArray<IParameterSymbol> parameters = ctor.GetParameters();
-
-                    //case 1: Default constructor - no parameters
-                    if (parameters.Length == 0)
-                    {
-                        defaultConstructorFound = true;
-                    }
-                    //case 2: Constructor with string type parameter
-                    else if (parameters.Length == 1 && parameters[0].Type.SpecialType == SpecialType.System_String)
-                    {
-                        secondConstructorFound = true;
-                    }
-                    //case 3: Constructor with string type and exception type parameter
-                    else if (parameters.Length == 2 && parameters[0].Type.SpecialType == SpecialType.System_String &&
-                            parameters[1].Type == _exceptionType)
-                    {
-                        thirdConstructorFound = true;
-                    }
-
-                    if (defaultConstructorFound && secondConstructorFound && thirdConstructorFound)
-                    {
-                        //reaches here only when all 3 constructors are found - no diagnostic needed 
-                        return;
-                    }
-                } //end of for loop
-
-                if (!defaultConstructorFound) //missing default constructor
-                {
-                    BuildDiagnostic(context, namedTypeSymbol, MissingCtorSignature.CtorWithNoParameter, GetConstructorSignatureNoParameter(namedTypeSymbol));
-                }
-
-                if (!secondConstructorFound) //missing constructor with string parameter
-                {
-                    BuildDiagnostic(context, namedTypeSymbol, MissingCtorSignature.CtorWithStringParameter, GetConstructorSignatureStringTypeParameter(namedTypeSymbol));
-                }
-
-                if (!thirdConstructorFound) //missing constructor with string and exception type parameter - report diagnostic
-                {
-                    BuildDiagnostic(context, namedTypeSymbol, MissingCtorSignature.CtorWithStringAndExceptionParameters, GetConstructorSignatureStringAndExceptionTypeParameter(namedTypeSymbol));
-                }
-            }
-        }
-
-        private void BuildDiagnostic(SymbolAnalysisContext context, INamedTypeSymbol namedTypeSymbol, MissingCtorSignature missingCtorSignature, string constructorSignature)
+        private static void ReportDiagnostic(SymbolAnalysisContext context, INamedTypeSymbol namedTypeSymbol, MissingCtorSignature missingCtorSignature, string constructorSignature)
         {
             //store MissingCtorSignature enum type into dictionary, to set diagnostic property. This is needed because Diagnostic is immutable
             ImmutableDictionary<string, string>.Builder builder = ImmutableDictionary.CreateBuilder<string, string>();

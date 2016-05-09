@@ -35,6 +35,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(context =>
             {
                 ImmutableArray<INamedTypeSymbol> taskTypes = GetTaskTypes(context.Compilation);
@@ -47,7 +50,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             });
         }
 
-        private void AnalyzeOperation(OperationAnalysisContext context, ImmutableArray<INamedTypeSymbol> taskTypes)
+        private static void AnalyzeOperation(OperationAnalysisContext context, ImmutableArray<INamedTypeSymbol> taskTypes)
         {
             IAwaitExpression awaitExpression = context.Operation as IAwaitExpression;
 

@@ -71,13 +71,16 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(AnalyzeCompilationStart);
         }
 
-        private void AnalyzeCompilationStart(CompilationStartAnalysisContext context)
+        private static void AnalyzeCompilationStart(CompilationStartAnalysisContext context)
         {
-            var baseTypeSuffixMap = new Dictionary<INamedTypeSymbol, SuffixInfo>();
-            var interfaceTypeSuffixMap = new Dictionary<INamedTypeSymbol, SuffixInfo>();
+            var baseTypeSuffixMapBuilder = ImmutableDictionary.CreateBuilder<INamedTypeSymbol, SuffixInfo>();
+            var interfaceTypeSuffixMapBuilder = ImmutableDictionary.CreateBuilder<INamedTypeSymbol, SuffixInfo>();
 
             foreach (var tuple in s_baseTypesAndTheirSuffix)
             {
@@ -88,17 +91,19 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     // If the type is interface
                     if (wellKnownNamedType.OriginalDefinition.TypeKind == TypeKind.Interface)
                     {
-                        interfaceTypeSuffixMap.Add(wellKnownNamedType.OriginalDefinition, SuffixInfo.Create(tuple.Item2, tuple.Item3));
+                        interfaceTypeSuffixMapBuilder.Add(wellKnownNamedType.OriginalDefinition, SuffixInfo.Create(tuple.Item2, tuple.Item3));
                     }
                     else
                     {
-                        baseTypeSuffixMap.Add(wellKnownNamedType.OriginalDefinition, SuffixInfo.Create(tuple.Item2, tuple.Item3));
+                        baseTypeSuffixMapBuilder.Add(wellKnownNamedType.OriginalDefinition, SuffixInfo.Create(tuple.Item2, tuple.Item3));
                     }
                 }
             }
 
-            if (baseTypeSuffixMap.Count > 0 || interfaceTypeSuffixMap.Count > 0)
+            if (baseTypeSuffixMapBuilder.Count > 0 || interfaceTypeSuffixMapBuilder.Count > 0)
             {
+                var baseTypeSuffixMap = baseTypeSuffixMapBuilder.ToImmutable();
+                var interfaceTypeSuffixMap = interfaceTypeSuffixMapBuilder.ToImmutable();
                 context.RegisterSymbolAction((saContext) =>
                 {
                     var namedTypeSymbol = (INamedTypeSymbol)saContext.Symbol;

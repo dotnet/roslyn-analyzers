@@ -14,10 +14,13 @@ Namespace XmlDocumentationComments.Analyzers
         Inherits AvoidUsingCrefTagsWithAPrefixAnalyzer
 
         Public Overrides Sub Initialize(context As AnalysisContext)
+            context.EnableConcurrentExecution()
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None)
+
             context.RegisterSyntaxNodeAction(AddressOf AnalyzeXmlAttribute, SyntaxKind.XmlAttribute)
         End Sub
 
-        Private Sub AnalyzeXmlAttribute(context As SyntaxNodeAnalysisContext)
+        Private Shared Sub AnalyzeXmlAttribute(context As SyntaxNodeAnalysisContext)
             Dim node = DirectCast(context.Node, XmlAttributeSyntax)
 
             If DirectCast(node.Name, XmlNameSyntax).LocalName.Text = "cref" Then

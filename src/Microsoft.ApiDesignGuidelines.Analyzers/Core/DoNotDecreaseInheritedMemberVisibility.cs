@@ -35,12 +35,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             // It may be interesting to flag field, property, and event symbols for this analyzer, but don't for now in order
             // to maintain compatibility with the old FxCop CA2222 rule which only analyzed methods.
             analysisContext.RegisterSymbolAction(CheckForDecreasedVisibility, SymbolKind.Method /*, SymbolKind.Field, SymbolKind.Property, SymbolKind.Event*/);
         }
 
-        private void CheckForDecreasedVisibility(SymbolAnalysisContext context)
+        private static void CheckForDecreasedVisibility(SymbolAnalysisContext context)
         {
             ISymbol symbol = context.Symbol;
 
@@ -63,8 +66,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
 
             // Find members on base types that share the member's name
-            System.Collections.Generic.IEnumerable<INamedTypeSymbol> ancestorTypes = symbol?.ContainingType?.GetBaseTypes() ?? Enumerable.Empty<INamedTypeSymbol>();
-            System.Collections.Generic.IEnumerable<ISymbol> hiddenOrOverriddenMembers = ancestorTypes.SelectMany(t => t.GetMembers(symbol.Name));
+            var ancestorTypes = symbol?.ContainingType?.GetBaseTypes() ?? Enumerable.Empty<INamedTypeSymbol>();
+            var hiddenOrOverriddenMembers = ancestorTypes.SelectMany(t => t.GetMembers(symbol.Name));
 
             if (hiddenOrOverriddenMembers.Any(IsVisibleOutsideAssembly))
             {
@@ -72,7 +75,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
         }
 
-        private bool IsVisibleOutsideAssembly(ISymbol symbol)
+        private static bool IsVisibleOutsideAssembly(ISymbol symbol)
         {
             // If the containing type is not visible, then neither is the contained symbol
             if (symbol.ContainingType != null && !IsVisibleOutsideAssembly(symbol.ContainingType))

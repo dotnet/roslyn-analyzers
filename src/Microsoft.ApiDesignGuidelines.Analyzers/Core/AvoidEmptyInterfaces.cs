@@ -34,10 +34,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterSymbolAction(AnalyzeInterface, SymbolKind.NamedType);
         }
 
-        private void AnalyzeInterface(SymbolAnalysisContext context)
+        private static void AnalyzeInterface(SymbolAnalysisContext context)
         {
             var symbol = (INamedTypeSymbol)context.Symbol;
             if (symbol.TypeKind == TypeKind.Interface && !symbol.GetMembers().Any() && !symbol.AllInterfaces.SelectMany(s => s.GetMembers()).Any())

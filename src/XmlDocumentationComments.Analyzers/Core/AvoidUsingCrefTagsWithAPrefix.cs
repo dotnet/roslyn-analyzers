@@ -30,7 +30,7 @@ namespace XmlDocumentationComments.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        protected void ProcessAttribute(SyntaxNodeAnalysisContext context, SyntaxTokenList textTokens)
+        protected static void ProcessAttribute(SyntaxNodeAnalysisContext context, SyntaxTokenList textTokens)
         {
             if (!textTokens.Any())
             {

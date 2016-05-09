@@ -31,6 +31,9 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
                 INamedTypeSymbol conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(compilationContext.Compilation);
@@ -56,7 +59,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
             });
         }
 
-        private bool IsEmptyFinalizer(ImmutableArray<IOperation> operationBlocks, ISymbol conditionalAttributeSymbol)
+        private static bool IsEmptyFinalizer(ImmutableArray<IOperation> operationBlocks, ISymbol conditionalAttributeSymbol)
         {
             if (operationBlocks != null && operationBlocks.Length == 1)
             {

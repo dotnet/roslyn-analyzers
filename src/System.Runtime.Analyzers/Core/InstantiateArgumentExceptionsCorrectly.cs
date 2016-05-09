@@ -39,6 +39,9 @@ namespace System.Runtime.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(
                 compilationContext =>
                 {
@@ -63,7 +66,7 @@ namespace System.Runtime.Analyzers
                 });
         }
 
-        private void AnalyzeObjectCreation(
+        private static void AnalyzeObjectCreation(
             OperationAnalysisContext context,
             ISymbol owningSymbol,
             ITypeSymbol argumentExceptionType)
@@ -101,7 +104,7 @@ namespace System.Runtime.Analyzers
                 }
             }
         }
-        private void CheckArgument(
+        private static void CheckArgument(
             ISymbol targetSymbol,
             ITypeSymbol exceptionType,
             IParameterSymbol parameter,

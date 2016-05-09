@@ -37,6 +37,9 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            // TODO: Consider making this analyzer thread-safe.
+            //analysisContext.EnableConcurrentExecution();
+
             // Don't report in generated code since that's not actionable.
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 

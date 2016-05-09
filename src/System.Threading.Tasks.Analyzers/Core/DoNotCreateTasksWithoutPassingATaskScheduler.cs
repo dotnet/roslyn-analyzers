@@ -35,6 +35,9 @@ namespace System.Threading.Tasks.Analyzers
 
         public sealed override void Initialize(AnalysisContext context)
         {
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             context.RegisterCompilationStartAction(compilationContext =>
             {
                 // Check if TPL is available before actually doing the searches
@@ -70,7 +73,7 @@ namespace System.Threading.Tasks.Analyzers
             });
         }
 
-        private bool IsMethodOfInterest(IMethodSymbol methodSymbol, INamedTypeSymbol taskType, INamedTypeSymbol taskFactoryType)
+        private static bool IsMethodOfInterest(IMethodSymbol methodSymbol, INamedTypeSymbol taskType, INamedTypeSymbol taskFactoryType)
         {
             // Check if it's a method of Task or a derived type (for Task<T>)
             if ((taskType.Equals(methodSymbol.ContainingType) ||

@@ -35,6 +35,9 @@ namespace System.Runtime.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
                 var formatInfo = new StringFormatInfo(compilationContext.Compilation);
@@ -118,7 +121,7 @@ namespace System.Runtime.Analyzers
             });
         }
 
-        private int GetFormattingArguments(string format)
+        private static int GetFormattingArguments(string format)
         {
             // code is from mscorlib
             // https://github.com/dotnet/coreclr/blob/bc146608854d1db9cdbcc0b08029a87754e12b49/src/mscorlib/src/System/Text/StringBuilder.cs#L1312
@@ -348,7 +351,7 @@ namespace System.Runtime.Analyzers
                 return null;
             }
 
-            private void AddStringFormatMap(ImmutableDictionary<IMethodSymbol, Info>.Builder builder, INamedTypeSymbol type, string methodName)
+            private static void AddStringFormatMap(ImmutableDictionary<IMethodSymbol, Info>.Builder builder, INamedTypeSymbol type, string methodName)
             {
                 if (type == null)
                 {
@@ -369,7 +372,7 @@ namespace System.Runtime.Analyzers
                 }
             }
 
-            private int GetExpectedNumberOfArguments(ImmutableArray<IParameterSymbol> parameters, int formatIndex)
+            private static int GetExpectedNumberOfArguments(ImmutableArray<IParameterSymbol> parameters, int formatIndex)
             {
                 // check params
                 IParameterSymbol nextParameter = parameters[formatIndex + 1];
@@ -381,7 +384,7 @@ namespace System.Runtime.Analyzers
                 return parameters.Length - formatIndex - 1;
             }
 
-            private int FindParameterIndexOfName(ImmutableArray<IParameterSymbol> parameters, string name)
+            private static int FindParameterIndexOfName(ImmutableArray<IParameterSymbol> parameters, string name)
             {
                 for (var i = 0; i < parameters.Length; i++)
                 {

@@ -43,10 +43,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(AnalyzeCompilationStart);
         }
 
-        private void AnalyzeCompilationStart(CompilationStartAnalysisContext csContext)
+        private static void AnalyzeCompilationStart(CompilationStartAnalysisContext csContext)
         {
             // Get named type symbols for targetted exception types
             ImmutableHashSet<INamedTypeSymbol> exceptionTypes = s_exceptionTypeNames

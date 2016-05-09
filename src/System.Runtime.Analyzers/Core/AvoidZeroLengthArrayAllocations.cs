@@ -40,6 +40,9 @@ namespace System.Runtime.Analyzers
 
         public sealed override void Initialize(AnalysisContext context)
         {
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             // When compilation begins, check whether Array.Empty<T> is available.
             // Only if it is, register the syntax node action provided by the derived implementations.
             context.RegisterCompilationStartAction(ctx =>
@@ -59,11 +62,16 @@ namespace System.Runtime.Analyzers
 
         private void AnalyzeOperation(OperationAnalysisContext context)
         {
+            AnalyzeOperation(context, IsAttributeSyntax);
+        }
+
+        private static void AnalyzeOperation(OperationAnalysisContext context, Func<SyntaxNode, bool> isAttributeSytnax)
+        {
             IArrayCreationExpression arrayCreationExpression = context.Operation as IArrayCreationExpression;
 
             // We can't replace array allocations in attributes, as they're persisted to metadata
             // TODO: Once we have operation walkers, we can replace this syntactic check with an operation-based check.
-            if (arrayCreationExpression.Syntax.Ancestors().Any(IsAttributeSyntax))
+            if (arrayCreationExpression.Syntax.Ancestors().Any(isAttributeSytnax))
             {
                 return;
             }

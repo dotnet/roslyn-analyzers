@@ -10,7 +10,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// Async006: Don't Mix Blocking and Async
     /// </summary>
-    public abstract class DonTMixBlockingAndAsyncAnalyzer : DiagnosticAnalyzer
+    public abstract class DontMixBlockingAndAsyncAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "Async006";
 
@@ -33,6 +33,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            // TODO: Enable concurrent execution of analyzer actions.
+            //analysisContext.EnableConcurrentExecution();
+
+            // TODO: Configure generated code analysis.
+            //analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         }
     }
 }

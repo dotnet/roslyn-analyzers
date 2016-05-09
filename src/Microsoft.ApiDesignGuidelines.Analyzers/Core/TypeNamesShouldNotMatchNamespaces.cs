@@ -51,6 +51,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         public override void Initialize(AnalysisContext analysisContext)
         {
             analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
+
             analysisContext.RegisterCompilationStartAction(
                 compilationStartAnalysisContext =>
                 {
@@ -102,7 +104,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 });
         }
 
-        private void AddNamespacesFromCompilation(ConcurrentBag<string> namespaceNamesInCompilation, INamespaceSymbol @namespace)
+        private static void AddNamespacesFromCompilation(ConcurrentBag<string> namespaceNamesInCompilation, INamespaceSymbol @namespace)
         {
             namespaceNamesInCompilation.Add(@namespace.ToDisplayString());
 
@@ -112,7 +114,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
         }
 
-        private void InitializeWellKnownSystemNamespaceTable()
+        private static void InitializeWellKnownSystemNamespaceTable()
         {
             if (s_wellKnownSystemNamespaceTable == null)
             {

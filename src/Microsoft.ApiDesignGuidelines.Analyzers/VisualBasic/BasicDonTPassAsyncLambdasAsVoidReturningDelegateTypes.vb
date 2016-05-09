@@ -11,7 +11,7 @@ Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' </summary>
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
     Public NotInheritable Class BasicDonTPassAsyncLambdasAsVoidReturningDelegateTypesAnalyzer
-        Inherits DonTPassAsyncLambdasAsVoidReturningDelegateTypesAnalyzer
+        Inherits DontPassAsyncLambdasAsVoidReturningDelegateTypesAnalyzer
 
     End Class
 End Namespace

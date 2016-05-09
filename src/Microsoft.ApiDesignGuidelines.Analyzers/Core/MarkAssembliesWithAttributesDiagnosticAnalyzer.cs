@@ -42,10 +42,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationAction(AnalyzeCompilation);
         }
 
-        private void AnalyzeCompilation(CompilationAnalysisContext context)
+        private static void AnalyzeCompilation(CompilationAnalysisContext context)
         {
             INamedTypeSymbol assemblyVersionAttributeSymbol = WellKnownTypes.AssemblyVersionAttribute(context.Compilation);
             INamedTypeSymbol assemblyComplianceAttributeSymbol = WellKnownTypes.CLSCompliantAttribute(context.Compilation);
@@ -73,29 +76,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
             }
 
-            // Check for the case where we do not have the target attribute defined at all in our metadata references. If so, how can they reference it
-            if (assemblyVersionAttributeSymbol == null)
+            if (!assemblyVersionAttributeFound && assemblyVersionAttributeSymbol != null)
             {
-                assemblyVersionAttributeFound = false;
+                context.ReportDiagnostic(Diagnostic.Create(CA1016Rule, Location.None));
             }
 
-            if (assemblyComplianceAttributeSymbol == null)
+            if (!assemblyComplianceAttributeFound && assemblyComplianceAttributeSymbol != null)
             {
-                assemblyComplianceAttributeFound = false;
-            }
-
-            // If there's at least one diagnostic to report, let's report them
-            if (!assemblyComplianceAttributeFound || !assemblyVersionAttributeFound)
-            {
-                if (!assemblyVersionAttributeFound)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(CA1016Rule, Location.None));
-                }
-
-                if (!assemblyComplianceAttributeFound)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(CA1014Rule, Location.None));
-                }
+                context.ReportDiagnostic(Diagnostic.Create(CA1014Rule, Location.None));
             }
         }
     }

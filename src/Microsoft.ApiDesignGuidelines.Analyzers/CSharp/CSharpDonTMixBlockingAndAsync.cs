@@ -9,7 +9,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// Async006: Don't Mix Blocking and Async
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class CSharpDonTMixBlockingAndAsyncAnalyzer : DonTMixBlockingAndAsyncAnalyzer
+    public sealed class CSharpDonTMixBlockingAndAsyncAnalyzer : DontMixBlockingAndAsyncAnalyzer
     {
     }
 }

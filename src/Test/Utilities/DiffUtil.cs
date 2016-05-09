@@ -102,9 +102,9 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
         {
             protected struct Edit
             {
-                public readonly EditKind Kind;
-                public readonly int IndexA;
-                public readonly int IndexB;
+                public EditKind Kind { get; private set; }
+                public int IndexA { get; private set; }
+                public int IndexB { get; private set; }
 
                 internal Edit(EditKind kind, int indexA, int indexB)
                 {

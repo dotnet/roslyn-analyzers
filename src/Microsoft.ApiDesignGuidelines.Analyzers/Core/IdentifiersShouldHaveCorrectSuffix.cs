@@ -120,8 +120,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         // SpecialCollectionRule - Rename 'LastInFirstOut<T>' to end in either 'Collection' or 'Stack'.
                         // DefaultRule - Rename 'MyStringObjectHashtable' to end in 'Dictionary'.
                         var rule = suffixInfo.CanSuffixBeCollection ? SpecialCollectionRule : DefaultRule;
-                        if ((suffixInfo.CanSuffixBeCollection && !namedTypeSymbol.Name.EndsWith("Collection") && !namedTypeSymbol.Name.EndsWith(suffixInfo.Suffix)) ||
-                            (!suffixInfo.CanSuffixBeCollection && !namedTypeSymbol.Name.EndsWith(suffixInfo.Suffix)))
+                        if ((suffixInfo.CanSuffixBeCollection && !namedTypeSymbol.Name.EndsWith("Collection", StringComparison.Ordinal) && !namedTypeSymbol.Name.EndsWith(suffixInfo.Suffix, StringComparison.Ordinal)) ||
+                            (!suffixInfo.CanSuffixBeCollection && !namedTypeSymbol.Name.EndsWith(suffixInfo.Suffix, StringComparison.Ordinal)))
                         {
 
                             saContext.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(rule, namedTypeSymbol.ToDisplayString(), suffixInfo.Suffix));
@@ -134,7 +134,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     if (implementedInterface != null)
                     {
                         var suffixInfo = interfaceTypeSuffixMap[implementedInterface.OriginalDefinition];
-                        if (!namedTypeSymbol.Name.EndsWith(suffixInfo.Suffix))
+                        if (!namedTypeSymbol.Name.EndsWith(suffixInfo.Suffix, StringComparison.Ordinal))
                         {
                             saContext.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(DefaultRule, namedTypeSymbol.ToDisplayString(), suffixInfo.Suffix));
                         }
@@ -146,7 +146,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 {
                     const string eventHandlerString = "EventHandler";
                     var eventSymbol = saContext.Symbol as IEventSymbol;
-                    if (!eventSymbol.Type.Name.EndsWith(eventHandlerString))
+                    if (!eventSymbol.Type.Name.EndsWith(eventHandlerString, StringComparison.Ordinal))
                     {
                         saContext.ReportDiagnostic(eventSymbol.CreateDiagnostic(DefaultRule, eventSymbol.Type.Name, eventHandlerString));
                     }

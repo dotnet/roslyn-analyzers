@@ -1810,7 +1810,7 @@ namespace MetaCompilation
                     return false;
                 }
 
-                if (expression.ArgumentList == null || expression.ArgumentList.Arguments.Count() != 2)
+                if (expression.ArgumentList == null || expression.ArgumentList.Arguments.Count != 2)
                 {
                     return false;
                 }

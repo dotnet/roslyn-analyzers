@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Analyzer.Utilities;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
@@ -51,7 +52,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 //if property then target search is to find methods that start with Get and the substring property name
                 identifier = s_get + symbol.Name;
             }
-            else if (symbol.Kind == SymbolKind.Method && symbol.Name.StartsWith(s_get))
+            else if (symbol.Kind == SymbolKind.Method && symbol.Name.StartsWith(s_get, StringComparison.Ordinal))
             {
                 //if method starts with Get then target search is to find properties that have the method name sans Get
                 identifier = symbol.Name.Substring(3);

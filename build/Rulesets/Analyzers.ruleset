@@ -18,4 +18,9 @@
     <Rule Id="CA1720" Action="None" />
   </Rules>
 
+  <!-- TODO: Remove the below suppression once https://github.com/dotnet/roslyn-analyzers/issues/965 has been fixed. -->
+  <Rules AnalyzerId="System.Runtime.Analyzers" RuleNamespace="System.Runtime.Analyzers">
+    <!-- SpecifyIFormatProvider -->
+    <Rule Id="CA1305" Action="None" />
+  </Rules>
 </RuleSet>

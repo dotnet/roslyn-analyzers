@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 
@@ -11,7 +12,7 @@ namespace AnalyzersStatusGenerator
     /// </summary>
     public sealed class DescriptorEqualityComparer : IEqualityComparer<DiagnosticDescriptor>
     {
-        public bool Equals(DiagnosticDescriptor x, DiagnosticDescriptor y) => x.Id.Equals(y.Id);
+        public bool Equals(DiagnosticDescriptor x, DiagnosticDescriptor y) => x.Id.Equals(y.Id, StringComparison.Ordinal);
 
         // CA1720: Identifier 'obj' contains type name
         // TOODO: Remove the below suppression once https://github.com/dotnet/roslyn-analyzers/issues/938 is fixed.

@@ -163,6 +163,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                             var methodSymbol = symbol as IMethodSymbol;
                             if (methodSymbol != null)
                             {
+                                if (methodSymbol.IsOperator())
+                                {
+                                    // Do not flag for operators.
+                                    return;
+                                }
+
                                 AnalyzeParameters(symbolAnalysisContext, methodSymbol.Parameters);
                                 AnalyzeTypeParameters(symbolAnalysisContext, methodSymbol.TypeParameters);
                             }

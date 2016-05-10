@@ -3,6 +3,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
+using Roslyn.Diagnostics.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
@@ -340,7 +341,28 @@ public class Der : Base
             GetCA1707CSharpResultAt(25, 28, SymbolKind.MethodTypeParameter, "Base.M1<T_>()", "T_"),
             GetCA1707CSharpResultAt(29, 29, SymbolKind.MethodTypeParameter, "Base.M2<U_>()", "U_"));
         }
+
+        [Fact, WorkItem(947, "https://github.com/dotnet/roslyn-analyzers/issues/947")]
+        public void CA1707_ForOperators_CSharp()
+        {
+            VerifyCSharp(@"
+public struct S
+{
+    public static bool operator ==(S left, S right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(S left, S right)
+    {
+        return !(left == right);
+    }
+}
+");
+        }
+
         #endregion
+
         #region Visual Basic Tests
         [Fact]
         public void CA1707_ForAssembly_VisualBasic()
@@ -700,6 +722,23 @@ End Class",
             GetCA1707BasicResultAt(25, 34, SymbolKind.MethodTypeParameter, "Base.M1(Of T_)()", "T_"),
             GetCA1707BasicResultAt(28, 35, SymbolKind.MethodTypeParameter, "Base.M2(Of U_)()", "U_"));
         }
+
+        [Fact, WorkItem(947, "https://github.com/dotnet/roslyn-analyzers/issues/947")]
+        public void CA1707_ForOperators_VisualBasic()
+        {
+            VerifyBasic(@"
+Public Structure S
+	Public Shared Operator =(left As S, right As S) As Boolean
+		Return left.Equals(right)
+	End Operator
+
+	Public Shared Operator <>(left As S, right As S) As Boolean
+		Return Not (left = right)
+	End Operator
+End Structure
+");
+        }
+
         #endregion
 
         #region Helpers

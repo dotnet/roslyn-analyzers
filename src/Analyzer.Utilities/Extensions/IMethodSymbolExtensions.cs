@@ -167,5 +167,10 @@ namespace Analyzer.Utilities
                    method.MethodKind == MethodKind.EventRaise ||
                    method.MethodKind == MethodKind.EventRemove;
         }
+
+        public static bool IsOperator(this IMethodSymbol methodSymbol)
+        {
+            return methodSymbol.MethodKind == MethodKind.UserDefinedOperator || methodSymbol.MethodKind == MethodKind.BuiltinOperator;
+        }
     }
 }

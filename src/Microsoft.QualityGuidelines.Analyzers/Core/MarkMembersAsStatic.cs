@@ -112,7 +112,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
             }
 
             // FxCop doesn't check for the fully qualified name for these attributes - so we'll do the same.
-            var skipAttributes = new string[]
+            var skipAttributes = new[]
             {
                 "WebMethodAttribute",
                 "TestInitializeAttribute",

@@ -35,13 +35,19 @@ namespace Desktop.Analyzers
                 return;
             }
 
+            INamedTypeSymbol notImplementedExceptionType = WellKnownTypes.NotImplementedException(model.Compilation);
+            if (notImplementedExceptionType == null)
+            {
+                return;
+            }
+
             Diagnostic diagnostic = context.Diagnostics.Single();
 
             // There was no constructor and so the diagnostic was on the type. Generate a serialization ctor.
             if (symbol.Kind == SymbolKind.NamedType)
             {
                 context.RegisterCodeFix(new MyCodeAction(DesktopAnalyzersResources.ImplementSerializationConstructorsCodeActionTitle,
-                     async ct => await GenerateConstructor(context.Document, node, symbol, ct).ConfigureAwait(false)),
+                     async ct => await GenerateConstructor(context.Document, node, symbol, notImplementedExceptionType, ct).ConfigureAwait(false)),
                 diagnostic);
             }
             // There is a serialization constructor but with incorrect accessibility. Set that right.
@@ -51,11 +57,9 @@ namespace Desktop.Analyzers
                      async ct => await SetAccessibility(context.Document, symbol, ct).ConfigureAwait(false)),
                 diagnostic);
             }
-
-            return;
         }
 
-        private async Task<Document> GenerateConstructor(Document document, SyntaxNode node, ISymbol symbol, CancellationToken cancellationToken)
+        private async Task<Document> GenerateConstructor(Document document, SyntaxNode node, ISymbol symbol, INamedTypeSymbol notImplementedExceptionType, CancellationToken cancellationToken)
         {
             SymbolEditor editor = SymbolEditor.Create(document);
             var typeSymbol = symbol as INamedTypeSymbol;
@@ -63,7 +67,7 @@ namespace Desktop.Analyzers
             await editor.EditOneDeclarationAsync(typeSymbol, node.GetLocation(), (docEditor, declaration) =>
             {
                 SyntaxGenerator generator = docEditor.Generator;
-                SyntaxNode throwStatement = generator.ThrowStatement(generator.ObjectCreationExpression(generator.DottedName("System.NotImplementedException")));
+                SyntaxNode throwStatement = generator.ThrowStatement(generator.ObjectCreationExpression(generator.TypeExpression(notImplementedExceptionType)));
                 SyntaxNode ctorDecl = generator.ConstructorDeclaration(
                                     typeSymbol.Name,
                                     new[]

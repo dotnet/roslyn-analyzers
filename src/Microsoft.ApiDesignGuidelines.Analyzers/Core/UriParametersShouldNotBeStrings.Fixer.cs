@@ -36,6 +36,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             var cancellationToken = context.CancellationToken;
             var span = context.Span;
 
+            SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+
+            INamedTypeSymbol uriType = WellKnownTypes.Uri(model.Compilation);
+            if (uriType == null)
+            {
+                return;
+            }
+            
             var generator = SyntaxGenerator.GetGenerator(document);
 
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
@@ -60,10 +68,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
-            context.RegisterCodeFix(CodeAction.Create(title, c => AddMethodAsync(context.Document, context.Span, methodNode, targetNode, c), equivalenceKey: title), context.Diagnostics);
+            context.RegisterCodeFix(CodeAction.Create(title, c => AddMethodAsync(context.Document, context.Span, methodNode, targetNode, uriType, c), equivalenceKey: title), context.Diagnostics);
         }
 
-        private async Task<Document> AddMethodAsync(Document document, TextSpan span, SyntaxNode methodNode, SyntaxNode targetNode, CancellationToken cancellationToken)
+        private async Task<Document> AddMethodAsync(Document document, TextSpan span, SyntaxNode methodNode, SyntaxNode targetNode, INamedTypeSymbol uriType, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
@@ -78,20 +86,20 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return document;
             }
 
-            var newMethod = CreateNewMethod(generator, methodSymbol, parameterIndex, editor.SemanticModel.Compilation);
+            var newMethod = CreateNewMethod(generator, methodSymbol, parameterIndex, editor.SemanticModel.Compilation, uriType);
             editor.AddMember(targetNode, newMethod);
 
             return editor.GetChangedDocument();
         }
 
         private static SyntaxNode CreateNewMethod(
-            SyntaxGenerator generator, IMethodSymbol methodSymbol, int parameterIndex, Compilation compilation)
+            SyntaxGenerator generator, IMethodSymbol methodSymbol, int parameterIndex, Compilation compilation, INamedTypeSymbol uriType)
         {
             // create original parameter decl
             var originalParameter = generator.ParameterDeclaration(methodSymbol.Parameters[parameterIndex]);
 
             // replace original parameter type to System.Uri
-            var newParameter = generator.ReplaceNode(originalParameter, generator.GetType(originalParameter), generator.DottedName("System.Uri"));
+            var newParameter = generator.ReplaceNode(originalParameter, generator.GetType(originalParameter), generator.TypeExpression(uriType));
 
             // create original method decl
             var original = generator.MethodDeclaration(methodSymbol, generator.DefaultMethodBody(compilation));

@@ -145,11 +145,7 @@ public class Class6<TTypeParameter>
 {
 }
 ",
-                GetCA1715CSharpResultAt(4, 25, CA1715TypeParameterMessage, "V"),
                 GetCA1715CSharpResultAt(8, 32, CA1715TypeParameterMessage, "\u672C\u8A9E"),
-                GetCA1715CSharpResultAt(12, 31, CA1715TypeParameterMessage, "V"),
-                GetCA1715CSharpResultAt(14, 21, CA1715TypeParameterMessage, "V"),
-                GetCA1715CSharpResultAt(18, 24, CA1715TypeParameterMessage, "V"),
                 GetCA1715CSharpResultAt(22, 21, CA1715TypeParameterMessage, "Type"),
                 GetCA1715CSharpResultAt(26, 24, CA1715TypeParameterMessage, "Type"),
                 GetCA1715CSharpResultAt(30, 19, CA1715TypeParameterMessage, "Key"),
@@ -159,8 +155,6 @@ public class Class6<TTypeParameter>
                 GetCA1715CSharpResultAt(38, 21, CA1715TypeParameterMessage, "Type1"),
                 GetCA1715CSharpResultAt(40, 31, CA1715TypeParameterMessage, "Type2"),
                 GetCA1715CSharpResultAt(45, 24, CA1715TypeParameterMessage, "Type2"),
-                GetCA1715CSharpResultAt(50, 24, CA1715TypeParameterMessage, "K"),
-                GetCA1715CSharpResultAt(50, 27, CA1715TypeParameterMessage, "V"),
                 GetCA1715CSharpResultAt(56, 21, CA1715TypeParameterMessage, "_Type1"),
                 GetCA1715CSharpResultAt(58, 24, CA1715TypeParameterMessage, "_K"),
                 GetCA1715CSharpResultAt(58, 28, CA1715TypeParameterMessage, "_V"));
@@ -269,11 +263,7 @@ End Class
 Public Class Class6(Of TTypeParameter)
 End Class
 ",
-                GetCA1715BasicResultAt(4, 28, CA1715TypeParameterMessage, "V"),
                 GetCA1715BasicResultAt(7, 35, CA1715TypeParameterMessage, "\u672C\u8A9E"),
-                GetCA1715BasicResultAt(10, 33, CA1715TypeParameterMessage, "V"),
-                GetCA1715BasicResultAt(12, 24, CA1715TypeParameterMessage, "V"),
-                GetCA1715BasicResultAt(15, 27, CA1715TypeParameterMessage, "V"),
                 GetCA1715BasicResultAt(18, 24, CA1715TypeParameterMessage, "Type"),
                 GetCA1715BasicResultAt(21, 27, CA1715TypeParameterMessage, "Type"),
                 GetCA1715BasicResultAt(24, 22, CA1715TypeParameterMessage, "Key"),
@@ -283,8 +273,6 @@ End Class
                 GetCA1715BasicResultAt(31, 24, CA1715TypeParameterMessage, "Type1"),
                 GetCA1715BasicResultAt(32, 33, CA1715TypeParameterMessage, "Type2"),
                 GetCA1715BasicResultAt(36, 26, CA1715TypeParameterMessage, "Type2"),
-                GetCA1715BasicResultAt(40, 26, CA1715TypeParameterMessage, "K"),
-                GetCA1715BasicResultAt(40, 29, CA1715TypeParameterMessage, "V"),
                 GetCA1715BasicResultAt(45, 24, CA1715TypeParameterMessage, "_Type1"),
                 GetCA1715BasicResultAt(46, 26, CA1715TypeParameterMessage, "_K"),
                 GetCA1715BasicResultAt(46, 30, CA1715TypeParameterMessage, "_V"));

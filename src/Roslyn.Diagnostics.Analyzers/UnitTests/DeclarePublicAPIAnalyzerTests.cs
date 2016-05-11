@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.IO;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -49,10 +50,10 @@ namespace Roslyn.Diagnostics.Analyzers.UnitTests
             return null;
         }
 
-        private DeclarePublicAPIAnalyzer CreateAnalyzer(string shippedApiText = "", string unshippedApiText = "")
+        private DeclarePublicAPIAnalyzer CreateAnalyzer(string shippedApiText = "", string unshippedApiText = "", string shippedApiFilePath = null, string unshippedApiFilePath = null)
         {
-            var shippedText = new TestAdditionalText(DeclarePublicAPIAnalyzer.ShippedFileName, shippedApiText);
-            var unshippedText = new TestAdditionalText(DeclarePublicAPIAnalyzer.UnshippedFileName, unshippedApiText);
+            var shippedText = new TestAdditionalText(shippedApiFilePath ?? DeclarePublicAPIAnalyzer.ShippedFileName, shippedApiText);
+            var unshippedText = new TestAdditionalText(unshippedApiFilePath ?? DeclarePublicAPIAnalyzer.UnshippedFileName, unshippedApiText);
             ImmutableArray<AdditionalText> array = ImmutableArray.Create<AdditionalText>(shippedText, unshippedText);
             return new DeclarePublicAPIAnalyzer(array);
         }
@@ -60,6 +61,12 @@ namespace Roslyn.Diagnostics.Analyzers.UnitTests
         private void VerifyCSharp(string source, string shippedApiText, string unshippedApiText, params DiagnosticResult[] expected)
         {
             DeclarePublicAPIAnalyzer analyzer = CreateAnalyzer(shippedApiText, unshippedApiText);
+            Verify(source, LanguageNames.CSharp, analyzer, expected);
+        }
+
+        private void VerifyCSharp(string source, string shippedApiText, string unshippedApiText, string shippedApiFilePath, string unshippedApiFilePath, params DiagnosticResult[] expected)
+        {
+            DeclarePublicAPIAnalyzer analyzer = CreateAnalyzer(shippedApiText, unshippedApiText, shippedApiFilePath, unshippedApiFilePath);
             Verify(source, LanguageNames.CSharp, analyzer, expected);
         }
 
@@ -294,6 +301,64 @@ C.Property.get -> int";
                     string.Format(DeclarePublicAPIAnalyzer.DuplicateSymbolInApiFiles.MessageFormat.ToString(), "C.Property.get -> int"),
                     DeclarePublicAPIAnalyzer.UnshippedFileName + "(2,1)",
                     DeclarePublicAPIAnalyzer.ShippedFileName + "(4,1)"));
+        }
+
+        [Fact, WorkItem(773, "https://github.com/dotnet/roslyn-analyzers/issues/773")]
+        public void ApiFileShippedWithNonExistentMembers()
+        {
+            // Type C has no public member "Method", but the shipped API has an entry for it.
+            var source = @"
+public class C
+{
+    public int Field;
+    public int Property { get; set; }
+    private void Method() { }
+}
+";
+
+            string shippedText = $@"
+C
+C.Field -> int
+C.Property.get -> int
+C.Property.set -> void
+C.Method() -> void
+";
+            string unshippedText = $@"";
+            
+            VerifyCSharp(source, shippedText, unshippedText,
+                // PublicAPI.Shipped.txt(6,1): warning RS0017: Symbol 'C.Method() -> void' is part of the declared API, but is either not public or could not be found
+                GetAdditionalFileResultAt(6, 1, DeclarePublicAPIAnalyzer.ShippedFileName, DeclarePublicAPIAnalyzer.RemoveDeletedApiRule, "C.Method() -> void"));
+        }
+
+        [Fact, WorkItem(773, "https://github.com/dotnet/roslyn-analyzers/issues/773")]
+        public void ApiFileShippedWithNonExistentMembers_TestFullPath()
+        {
+            // Type C has no public member "Method", but the shipped API has an entry for it.
+            var source = @"
+public class C
+{
+    public int Field;
+    public int Property { get; set; }
+    private void Method() { }
+}
+";
+
+            var tempPath = Path.GetTempPath();
+            string shippedText = $@"
+C
+C.Field -> int
+C.Property.get -> int
+C.Property.set -> void
+C.Method() -> void
+";
+            var shippedFilePath = Path.Combine(tempPath, DeclarePublicAPIAnalyzer.ShippedFileName);
+
+            string unshippedText = $@"";
+            var unshippedFilePath = Path.Combine(tempPath, DeclarePublicAPIAnalyzer.UnshippedFileName);
+
+            VerifyCSharp(source, shippedText, unshippedText, shippedFilePath, unshippedFilePath,
+                // <%TEMP_PATH%>\PublicAPI.Shipped.txt(6,1): warning RS0017: Symbol 'C.Method() -> void' is part of the declared API, but is either not public or could not be found
+                GetAdditionalFileResultAt(6, 1, shippedFilePath, DeclarePublicAPIAnalyzer.RemoveDeletedApiRule, "C.Method() -> void"));
         }
     }
 }

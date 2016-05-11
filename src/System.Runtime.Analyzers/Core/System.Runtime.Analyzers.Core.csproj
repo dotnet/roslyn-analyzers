@@ -70,7 +70,6 @@
     <Compile Include="TestForNaNCorrectly.cs" />
     <Compile Include="TestForNaNCorrectly.Fixer.cs" />
     <Compile Include="AttributeStringLiteralsShouldParseCorrectly.cs" />
-    <Compile Include="AttributeStringLiteralsShouldParseCorrectly.Fixer.cs" />
     <Compile Include="AvoidZeroLengthArrayAllocations.cs" />
     <Compile Include="AvoidZeroLengthArrayAllocations.Fixer.cs" />
     <Compile Include="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.cs" />

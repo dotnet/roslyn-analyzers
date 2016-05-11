@@ -90,6 +90,20 @@ class Bar
         }
 
         [Fact]
+        public void CSharp_CA1720_NoDiagnosticOnEqualsOverride()
+        {
+            VerifyCSharp(@"
+class Bar
+{
+   public override bool Equals(object obj)
+   {
+        throw new System.NotImplementedException();
+   }
+}
+");
+        }
+
+        [Fact]
         public void CSharp_CA1720_SomeDiagnostic6()
         {
             VerifyCSharp(@"
@@ -117,12 +131,6 @@ class FooBar
             return GetCSharpResultAt(line, column, IdentifiersShouldNotContainTypeNames.RuleId, message);
         }
 
-        private static DiagnosticResult GetCA1720BasicResultAt(int line, int column, string identifierName)
-        {
-            // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainTypeNamesMessage, identifierName);
-            return GetBasicResultAt(line, column, IdentifiersShouldNotContainTypeNames.RuleId, message);
-        }
         #endregion
     }
 }

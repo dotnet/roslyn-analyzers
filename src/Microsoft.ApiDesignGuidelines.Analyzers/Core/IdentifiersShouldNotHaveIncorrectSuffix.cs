@@ -130,7 +130,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         ImmutableArray<string> typeNames = s_suffixToBaseTypeNamesDictionary[suffix];
 
                         ImmutableArray<INamedTypeSymbol> namedTypeSymbolArray = ImmutableArray.CreateRange(
-                            typeNames.Select(typeName => compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(typeName).OriginalDefinition));
+                            typeNames.Select(typeName => compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(typeName)?.OriginalDefinition).WhereNotNull());
 
                         suffixToBaseTypeDictionaryBuilder.Add(suffix, namedTypeSymbolArray);
                     }
@@ -266,9 +266,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return false;
         }
 
-        private static bool IsNotChildOfAnyButHasSuffix(INamedTypeSymbol namedTypeSymbol, IEnumerable<INamedTypeSymbol> parentTypes, string suffix)
+        private static bool IsNotChildOfAnyButHasSuffix(INamedTypeSymbol namedTypeSymbol, ImmutableArray<INamedTypeSymbol> parentTypes, string suffix)
         {
-            return namedTypeSymbol.Name.HasSuffix(suffix)
+            if (parentTypes.IsEmpty)
+            {
+                // Bail out if we cannot find any well-known types with the suffix in the compilation.
+                return false;
+            }
+
+            return namedTypeSymbol.Name.HasSuffix(suffix)               
                 && !parentTypes.Any(parentType => namedTypeSymbol.DerivesFromOrImplementsAnyConstructionOf(parentType));
         }
     }

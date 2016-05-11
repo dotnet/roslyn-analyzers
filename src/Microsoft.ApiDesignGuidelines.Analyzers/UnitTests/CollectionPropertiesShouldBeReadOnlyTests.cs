@@ -106,6 +106,14 @@ class A
             VerifyCSharp(@"
 using System;
 
+namespace System.Runtime.Serialization
+{
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+    public sealed class DataMemberAttribute : Attribute
+    {
+    }
+}
+
 class A
 {
     [System.Runtime.Serialization.DataMember]

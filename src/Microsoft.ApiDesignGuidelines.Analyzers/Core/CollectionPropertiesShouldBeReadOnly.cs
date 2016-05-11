@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -56,17 +57,18 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 {
                     INamedTypeSymbol iCollectionType = WellKnownTypes.ICollection(context.Compilation);
                     INamedTypeSymbol arrayType = WellKnownTypes.Array(context.Compilation);
+                    INamedTypeSymbol dataMemberAttribute = WellKnownTypes.DataMemberAttribute(context.Compilation);
 
                     if (iCollectionType == null || arrayType == null)
                     {
                         return;
                     }
 
-                    context.RegisterSymbolAction(c => AnalyzeSymbol(c, iCollectionType, arrayType), SymbolKind.Property);
+                    context.RegisterSymbolAction(c => AnalyzeSymbol(c, iCollectionType, arrayType, dataMemberAttribute), SymbolKind.Property);
                 });
         }
 
-        public static void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol iCollectionType, INamedTypeSymbol arrayType)
+        public static void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol iCollectionType, INamedTypeSymbol arrayType, INamedTypeSymbol dataMemberAttribute)
         {
             var property = (IPropertySymbol)context.Symbol;
 
@@ -81,6 +83,16 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             if (property.IsIndexer || Inherits(property.Type, arrayType) || !Inherits(property.Type, iCollectionType))
             {
                 return;
+            }
+
+            if (dataMemberAttribute != null)
+            {
+                // Special case: the DataContractSerializer requires that a public setter exists.
+                bool hasDataMemberAttribute = property.GetAttributes().Any(a => a.AttributeClass.Equals(dataMemberAttribute));
+                if (hasDataMemberAttribute)
+                {
+                    return;
+                }
             }
 
             context.ReportDiagnostic(property.CreateDiagnostic(Rule));

@@ -58,6 +58,12 @@ namespace Roslyn.Diagnostics.Analyzers.UnitTests
             return new DeclarePublicAPIAnalyzer(array);
         }
 
+        private void VerifyBasic(string source, string shippedApiText, string unshippedApiText, params DiagnosticResult[] expected)
+        {
+            DeclarePublicAPIAnalyzer analyzer = CreateAnalyzer(shippedApiText, unshippedApiText);
+            Verify(source, LanguageNames.VisualBasic, analyzer, expected);
+        }
+
         private void VerifyCSharp(string source, string shippedApiText, string unshippedApiText, params DiagnosticResult[] expected)
         {
             DeclarePublicAPIAnalyzer analyzer = CreateAnalyzer(shippedApiText, unshippedApiText);
@@ -86,7 +92,7 @@ public class C
         }
 
         [Fact]
-        public void SimpleMissingMember()
+        public void SimpleMissingMember_CSharp()
         {
             var source = @"
 public class C
@@ -94,6 +100,7 @@ public class C
     public int Field;
     public int Property { get; set; }
     public void Method() { } 
+    public int ArrowExpressionProperty => 0;
 }
 ";
 
@@ -110,7 +117,53 @@ public class C
                 // Test0.cs(5,32): error RS0016: Symbol 'Property.set' is not part of the declared API.
                 GetCSharpResultAt(5, 32, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Property.set"),
                 // Test0.cs(6,17): error RS0016: Symbol 'Method' is not part of the declared API.
-                GetCSharpResultAt(6, 17, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Method"));
+                GetCSharpResultAt(6, 17, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Method"),
+                // Test0.cs(7,43): error RS0016: Symbol 'ArrowExpressionProperty.get' is not part of the declared API.
+                GetCSharpResultAt(7, 43, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "ArrowExpressionProperty.get"));
+        }
+
+        [Fact(Skip = "821"), WorkItem(821, "https://github.com/dotnet/roslyn-analyzers/issues/821")]
+        public void SimpleMissingMember_Basic()
+        {
+            var source = @"
+Imports System
+
+Public Class C
+    Public Field As Integer
+    
+    Public Property [Property]() As Integer
+        Get
+            Return m_Property
+        End Get
+        Set
+            m_Property = Value
+        End Set
+    End Property
+    Private m_Property As Integer
+
+    Public Sub Method()
+    End Sub
+
+    Public ReadOnly Property ReadOnlyProperty As Integer = 0
+End Class
+";
+
+            var shippedText = @"";
+            var unshippedText = @"";
+
+            VerifyBasic(source, shippedText, unshippedText,
+                // Test0.vb(4,14): warning RS0016: Symbol 'C' is not part of the declared API.
+                GetBasicResultAt(4, 14, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "C"),
+                // Test0.vb(5,12): warning RS0016: Symbol 'Field' is not part of the declared API.
+                GetBasicResultAt(5, 12, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Field"),
+                // Test0.vb(8,9): warning RS0016: Symbol 'Property' is not part of the declared API.
+                GetBasicResultAt(8, 9, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Property"),
+                // Test0.vb(11,9): warning RS0016: Symbol 'Property' is not part of the declared API.
+                GetBasicResultAt(11, 9, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Property"),
+                // Test0.vb(17,16): warning RS0016: Symbol 'Method' is not part of the declared API.
+                GetBasicResultAt(17, 16, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Method"),
+                // Test0.vb(17,60): warning RS0016: Symbol 'ReadOnlyProperty' is not part of the declared API.
+                GetBasicResultAt(20, 60, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "ReadOnlyProperty"));
         }
 
         [Fact]

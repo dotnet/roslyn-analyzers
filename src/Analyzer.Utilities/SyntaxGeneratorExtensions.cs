@@ -52,7 +52,7 @@ namespace Analyzer.Utilities
 
             return generator.OperatorDeclaration(
                 operatorKind,
-                new SyntaxNode[]
+                new[]
                 {
                         generator.ParameterDeclaration("left", generator.TypeExpression(containingType)),
                         generator.ParameterDeclaration("right", generator.TypeExpression(containingType)),
@@ -77,7 +77,7 @@ namespace Analyzer.Utilities
         {
             return generator.MethodDeclaration(
                 WellKnownMemberNames.ObjectEquals,
-                new SyntaxNode[]
+                new[]
                 {
                     generator.ParameterDeclaration("obj", generator.TypeExpression(SpecialType.System_Object))
                 },

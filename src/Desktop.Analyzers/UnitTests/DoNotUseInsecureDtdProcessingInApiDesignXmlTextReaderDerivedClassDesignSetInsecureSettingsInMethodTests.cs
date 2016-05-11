@@ -462,7 +462,7 @@ End Namespace");
         {
             DiagnosticResult diagWith2Locations = GetCA3077XmlTextReaderDerivedClassSetInsecureSettingsInMethodCSharpResultAt(17, 13, "method");
 
-            diagWith2Locations.Locations = new DiagnosticResultLocation[]
+            diagWith2Locations.Locations = new[]
                 {
                     diagWith2Locations.Locations[0],
                     new DiagnosticResultLocation(diagWith2Locations.Locations[0].Path, 18, 13)
@@ -494,7 +494,7 @@ namespace TestNamespace
 
             diagWith2Locations = GetCA3077XmlTextReaderDerivedClassSetInsecureSettingsInMethodBasicResultAt(13, 13, "method");
 
-            diagWith2Locations.Locations = new DiagnosticResultLocation[]
+            diagWith2Locations.Locations = new[]
                 {
                     diagWith2Locations.Locations[0],
                     new DiagnosticResultLocation(diagWith2Locations.Locations[0].Path, 14, 13)

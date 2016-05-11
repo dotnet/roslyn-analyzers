@@ -97,7 +97,7 @@ using System.Reflection;
         [Fact]
         public void CA1016CSharpTestWithTwoFilesWithAttribute()
         {
-            VerifyCSharp(new string[]
+            VerifyCSharp(new[]
                 {
 @"
 [assembly:System.CLSCompliantAttribute(true)]

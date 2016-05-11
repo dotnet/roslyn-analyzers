@@ -1,3 +1,4 @@
+@echo off
 @setlocal enabledelayedexpansion
 
 REM Parse Arguments.
@@ -12,9 +13,10 @@ if /I "%1" == "/release" set BuildConfiguration=Release&&shift&& goto :ParseArgu
 call :Usage && exit /b 1
 :DoneParsing
 
-call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\Tools\VsDevCmd.bat"
+call "%VS140COMNTOOLS%VsDevCmd.bat"
 
 msbuild /v:m /m %AnalyzersRoot%\BuildAndTest.proj /p:CIBuild=true /p:Configuration=%BuildConfiguration%
+
 if ERRORLEVEL 1 (
     taskkill /F /IM vbcscompiler.exe
     echo Build failed

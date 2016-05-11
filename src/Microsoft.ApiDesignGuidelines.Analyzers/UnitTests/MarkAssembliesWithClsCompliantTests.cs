@@ -115,7 +115,7 @@ class Program
         [Fact]
         public void CA1014CSharpTestWithTwoFilesWithAttribute()
         {
-            VerifyCSharp(new string[]
+            VerifyCSharp(new[]
                 {
 @"
 using System.Reflection;

@@ -67,7 +67,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             foreach (ITypeParameterSymbol parameter in symbol.TypeParameters)
             {
-                if (!HasCorrectPrefix(parameter, 'T'))
+                if (parameter.Name.Length > 1 && !HasCorrectPrefix(parameter, 'T'))
                 {
                     addDiagnostic(parameter.CreateDiagnostic(TypeParameterRule, parameter.Name));
                 }
@@ -85,7 +85,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             foreach (ITypeParameterSymbol parameter in symbol.TypeParameters)
             {
-                if (!HasCorrectPrefix(parameter, 'T'))
+                if (parameter.Name.Length > 1 && !HasCorrectPrefix(parameter, 'T'))
                 {
                     addDiagnostic(parameter.CreateDiagnostic(TypeParameterRule, parameter.Name));
                 }

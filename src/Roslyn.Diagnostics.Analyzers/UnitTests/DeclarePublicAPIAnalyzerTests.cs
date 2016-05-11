@@ -82,6 +82,7 @@ namespace Roslyn.Diagnostics.Analyzers.UnitTests
             var source = @"
 public class C
 {
+    private C() { }
 }
 ";
 
@@ -110,6 +111,8 @@ public class C
             VerifyCSharp(source, shippedText, unshippedText,
                 // Test0.cs(2,14): error RS0016: Symbol 'C' is not part of the declared API.
                 GetCSharpResultAt(2, 14, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "C"),
+                // Test0.cs(2,14): warning RS0016: Symbol 'implicit constructor for C' is not part of the declared API.
+                GetCSharpResultAt(2, 14, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "implicit constructor for C"),
                 // Test0.cs(4,16): error RS0016: Symbol 'Field' is not part of the declared API.
                 GetCSharpResultAt(4, 16, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Field"),
                 // Test0.cs(5,27): error RS0016: Symbol 'Property.get' is not part of the declared API.
@@ -166,6 +169,102 @@ End Class
                 GetBasicResultAt(20, 60, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "ReadOnlyProperty"));
         }
 
+        [Fact, WorkItem(806, "https://github.com/dotnet/roslyn-analyzers/issues/806")]
+        public void ShippedTextWithImplicitConstructor()
+        {
+            var source = @"
+public class C
+{
+    private C() { }
+}
+";
+
+            var shippedText = @"
+C
+C -> void()";
+            var unshippedText = @"";
+
+            VerifyCSharp(source, shippedText, unshippedText,
+                // PublicAPI.Shipped.txt(3,1): warning RS0017: Symbol 'C -> void()' is part of the declared API, but is either not public or could not be found
+                GetAdditionalFileResultAt(3, 1, DeclarePublicAPIAnalyzer.ShippedFileName, DeclarePublicAPIAnalyzer.RemoveDeletedApiRule, "C -> void()"));
+        }
+
+        [Fact, WorkItem(806, "https://github.com/dotnet/roslyn-analyzers/issues/806")]
+        public void ShippedTextForImplicitConstructor()
+        {
+            var source = @"
+public class C
+{
+}
+";
+
+            var shippedText = @"
+C
+C.C() -> void";
+            var unshippedText = @"";
+
+            var arg = string.Format(RoslynDiagnosticsAnalyzersResources.PublicImplicitConstructorErroMessageName, "C");
+            VerifyCSharp(source, shippedText, unshippedText);
+        }
+
+        [Fact, WorkItem(806, "https://github.com/dotnet/roslyn-analyzers/issues/806")]
+        public void UnshippedTextForImplicitConstructor()
+        {
+            var source = @"
+public class C
+{
+}
+";
+
+            var shippedText = @"
+C";
+            var unshippedText = @"
+C.C() -> void";
+
+            var arg = string.Format(RoslynDiagnosticsAnalyzersResources.PublicImplicitConstructorErroMessageName, "C");
+            VerifyCSharp(source, shippedText, unshippedText);
+        }
+
+        [Fact, WorkItem(806, "https://github.com/dotnet/roslyn-analyzers/issues/806")]
+        public void ShippedTextWithMissingImplicitConstructor()
+        {
+            var source = @"
+public class C
+{
+}
+";
+
+            var shippedText = @"
+C";
+            var unshippedText = @"";
+
+            var arg = string.Format(RoslynDiagnosticsAnalyzersResources.PublicImplicitConstructorErroMessageName, "C");
+            VerifyCSharp(source, shippedText, unshippedText,
+                // Test0.cs(2,14): warning RS0016: Symbol 'implicit constructor for C' is not part of the declared API.
+                GetCSharpResultAt(2, 14, DeclarePublicAPIAnalyzer.DeclareNewApiRule, arg));
+        }
+
+        [Fact, WorkItem(806, "https://github.com/dotnet/roslyn-analyzers/issues/806")]
+        public void ShippedTextWithImplicitConstructorAndBreakingCodeChange()
+        {
+            var source = @"
+public class C
+{
+    private C() { }
+}
+";
+
+            var shippedText = @"
+C
+C.C() -> void";
+            var unshippedText = @"";
+
+            var arg = string.Format(RoslynDiagnosticsAnalyzersResources.PublicImplicitConstructorErroMessageName, "C");
+            VerifyCSharp(source, shippedText, unshippedText,
+                // PublicAPI.Shipped.txt(3,1): warning RS0017: Symbol 'C.C() -> void' is part of the declared API, but is either not public or could not be found
+                GetAdditionalFileResultAt(3, 1, DeclarePublicAPIAnalyzer.ShippedFileName, DeclarePublicAPIAnalyzer.RemoveDeletedApiRule, "C.C() -> void"));
+        }
+
         [Fact]
         public void SimpleMember()
         {
@@ -180,6 +279,7 @@ public class C
 
             var shippedText = @"
 C
+C.C() -> void
 C.Field -> int
 C.Property.get -> int
 C.Property.set -> void
@@ -204,6 +304,7 @@ public class C
 
             var shippedText = @"
 C
+C.C() -> void
 C.Field -> int
 C.Property.get -> int
 C.Property.set -> void
@@ -253,6 +354,7 @@ public class C
 
             var shippedText = @"
 C
+C.C() -> void
 C.Field -> int
 C.Property.get -> int
 C.Property.set -> void
@@ -338,6 +440,7 @@ public class C
 
             var shippedText = @"
 C
+C.C() -> void
 C.Field -> int
 C.Property.get -> int
 C.Property.set -> void
@@ -353,7 +456,7 @@ C.Property.get -> int";
                     DeclarePublicAPIAnalyzer.DuplicateSymbolInApiFiles.Id,
                     string.Format(DeclarePublicAPIAnalyzer.DuplicateSymbolInApiFiles.MessageFormat.ToString(), "C.Property.get -> int"),
                     DeclarePublicAPIAnalyzer.UnshippedFileName + "(2,1)",
-                    DeclarePublicAPIAnalyzer.ShippedFileName + "(4,1)"));
+                    DeclarePublicAPIAnalyzer.ShippedFileName + "(5,1)"));
         }
 
         [Fact, WorkItem(773, "https://github.com/dotnet/roslyn-analyzers/issues/773")]
@@ -371,6 +474,7 @@ public class C
 
             string shippedText = $@"
 C
+C.C() -> void
 C.Field -> int
 C.Property.get -> int
 C.Property.set -> void
@@ -379,8 +483,8 @@ C.Method() -> void
             string unshippedText = $@"";
             
             VerifyCSharp(source, shippedText, unshippedText,
-                // PublicAPI.Shipped.txt(6,1): warning RS0017: Symbol 'C.Method() -> void' is part of the declared API, but is either not public or could not be found
-                GetAdditionalFileResultAt(6, 1, DeclarePublicAPIAnalyzer.ShippedFileName, DeclarePublicAPIAnalyzer.RemoveDeletedApiRule, "C.Method() -> void"));
+                // PublicAPI.Shipped.txt(7,1): warning RS0017: Symbol 'C.Method() -> void' is part of the declared API, but is either not public or could not be found
+                GetAdditionalFileResultAt(7, 1, DeclarePublicAPIAnalyzer.ShippedFileName, DeclarePublicAPIAnalyzer.RemoveDeletedApiRule, "C.Method() -> void"));
         }
 
         [Fact, WorkItem(773, "https://github.com/dotnet/roslyn-analyzers/issues/773")]
@@ -399,6 +503,7 @@ public class C
             var tempPath = Path.GetTempPath();
             string shippedText = $@"
 C
+C.C() -> void
 C.Field -> int
 C.Property.get -> int
 C.Property.set -> void
@@ -410,8 +515,8 @@ C.Method() -> void
             var unshippedFilePath = Path.Combine(tempPath, DeclarePublicAPIAnalyzer.UnshippedFileName);
 
             VerifyCSharp(source, shippedText, unshippedText, shippedFilePath, unshippedFilePath,
-                // <%TEMP_PATH%>\PublicAPI.Shipped.txt(6,1): warning RS0017: Symbol 'C.Method() -> void' is part of the declared API, but is either not public or could not be found
-                GetAdditionalFileResultAt(6, 1, shippedFilePath, DeclarePublicAPIAnalyzer.RemoveDeletedApiRule, "C.Method() -> void"));
+                // <%TEMP_PATH%>\PublicAPI.Shipped.txt(7,1): warning RS0017: Symbol 'C.Method() -> void' is part of the declared API, but is either not public or could not be found
+                GetAdditionalFileResultAt(7, 1, shippedFilePath, DeclarePublicAPIAnalyzer.RemoveDeletedApiRule, "C.Method() -> void"));
         }
     }
 }

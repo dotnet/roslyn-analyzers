@@ -257,7 +257,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return member.ToDisplayString(s_memberDisplayFormat);
         }
 
-        private readonly ImmutableHashSet<string> _caseSensitiveKeywords = new string[]
+        private readonly ImmutableHashSet<string> _caseSensitiveKeywords = new[]
         {
             // C#
             "abstract",
@@ -514,7 +514,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             "xor_eq"
         }.ToImmutableHashSet(StringComparer.Ordinal);
 
-        private readonly ImmutableDictionary<string, string> _caseInsensitiveKeywords = new string[]
+        private readonly ImmutableDictionary<string, string> _caseInsensitiveKeywords = new[]
         {
             "AddHandler",
             "AddressOf",

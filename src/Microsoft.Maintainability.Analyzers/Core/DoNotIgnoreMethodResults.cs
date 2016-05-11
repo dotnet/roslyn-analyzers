@@ -17,7 +17,7 @@ namespace Microsoft.Maintainability.Analyzers
         internal const string RuleId = "CA1806";
 
         private static readonly ImmutableHashSet<string> s_stringMethodNames = ImmutableHashSet.CreateRange(
-            new string[] {
+            new[] {
                 "ToUpper",
                 "ToLower",
                 "Trim",

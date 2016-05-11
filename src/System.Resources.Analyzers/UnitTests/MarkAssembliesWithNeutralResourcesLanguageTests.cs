@@ -97,7 +97,7 @@ End Class", LanguageNames.VisualBasic), GetGlobalResult(MarkAssembliesWithNeutra
 
         private FileAndSource[] GetSources(string code, string language)
         {
-            return new FileAndSource[] { GetDesignerFile(language), new FileAndSource { FilePath = null, Source = code } };
+            return new[] { GetDesignerFile(language), new FileAndSource { FilePath = null, Source = code } };
         }
 
         private FileAndSource GetDesignerFile(string language)

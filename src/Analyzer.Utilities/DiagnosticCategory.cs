@@ -15,7 +15,5 @@ namespace Analyzer.Utilities
         public static readonly string Naming = AnalyzerUtilitiesResources.CategoryNaming;
         public static readonly string ApiDesign = AnalyzerUtilitiesResources.CategoryApiDesign;
         public static readonly string Library = AnalyzerUtilitiesResources.CategoryLibrary;
-        // TODO: remove this
-        public static readonly string NoCategory = "NoCategory";
     }
 }

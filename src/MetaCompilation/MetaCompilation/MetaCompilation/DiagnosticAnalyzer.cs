@@ -355,8 +355,10 @@ namespace MetaCompilation
                 _branchesDict.Add("RegisterSyntaxNodeAction", "SyntaxNode");
 
                 //supported sub-branches for tutorial
-                List<string> allowedKinds = new List<string>();
-                allowedKinds.Add("IfStatement");
+                List<string> allowedKinds = new List<string>
+                {
+                    "IfStatement"
+                };
 
                 if (_analyzerClassSymbol == null)
                 {
@@ -2517,10 +2519,12 @@ namespace MetaCompilation
                                 }
                                 else if (currentArgName == "title" || currentArgName == "messageFormat" || currentArgName == "category")
                                 {
-                                    Dictionary<string, string> argDefaults = new Dictionary<string, string>();
-                                    argDefaults.Add("title", "Enter a title for this diagnostic");
-                                    argDefaults.Add("messageFormat", "Enter a message to be displayed with this diagnostic");
-                                    argDefaults.Add("category", "Enter a category for this diagnostic (e.g. Formatting)");
+                                    var argDefaults = new Dictionary<string, string>
+                                    {
+                                        { "title", "Enter a title for this diagnostic" },
+                                        { "messageFormat", "Enter a message to be displayed with this diagnostic" },
+                                        { "category", "Enter a category for this diagnostic (e.g. Formatting)" }
+                                    };
 
                                     if (currentArgExpr.IsKind(SyntaxKind.StringLiteralExpression))
                                     {

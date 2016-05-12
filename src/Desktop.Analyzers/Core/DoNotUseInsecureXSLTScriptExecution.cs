@@ -273,8 +273,10 @@ namespace Desktop.Analyzers
                         XsltSettingsEnvironment env = null;
                         if (!_xsltSettingsEnvironments.TryGetValue(lhsExpressionSymbol, out env))
                         {
-                            env = new XsltSettingsEnvironment();
-                            env.XsltSettingsSymbol = lhsExpressionSymbol;
+                            env = new XsltSettingsEnvironment
+                            {
+                                XsltSettingsSymbol = lhsExpressionSymbol
+                            };
                             _xsltSettingsEnvironments[lhsExpressionSymbol] = env;
                         }
 

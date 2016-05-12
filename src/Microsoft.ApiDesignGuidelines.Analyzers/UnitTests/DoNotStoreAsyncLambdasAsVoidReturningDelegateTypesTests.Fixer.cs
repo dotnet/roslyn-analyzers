@@ -6,26 +6,26 @@ using Microsoft.CodeAnalysis.UnitTests;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 {
-    public class DonTMixBlockingAndAsyncFixerTests : CodeFixTestBase
+    public class DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesFixerTests : CodeFixTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicDonTMixBlockingAndAsyncAnalyzer();
+            return new BasicDoNotStoreAsyncLambdasAsVoidReturningDelegateTypesAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpDonTMixBlockingAndAsyncAnalyzer();
+            return new CSharpDoNotStoreAsyncLambdasAsVoidReturningDelegateTypesAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
-            return new BasicDonTMixBlockingAndAsyncFixer();
+            return new BasicDoNotStoreAsyncLambdasAsVoidReturningDelegateTypesFixer();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new CSharpDonTMixBlockingAndAsyncFixer();
+            return new CSharpDoNotStoreAsyncLambdasAsVoidReturningDelegateTypesFixer();
         }
     }
 }

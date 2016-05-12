@@ -9,7 +9,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// Async004: Don't Store Async Lambdas as Void Returning Delegate Types
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class CSharpDonTStoreAsyncLambdasAsVoidReturningDelegateTypesAnalyzer : DontStoreAsyncLambdasAsVoidReturningDelegateTypesAnalyzer
+    public sealed class CSharpDoNotStoreAsyncLambdasAsVoidReturningDelegateTypesAnalyzer : DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesAnalyzer
     {
     }
 }

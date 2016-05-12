@@ -6,11 +6,11 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 
 Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
-    ''' Async003: Don't Pass Async Lambdas as Void Returning Delegate Types
+    ''' Async006: Don't Mix Blocking and Async
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
-    Public NotInheritable Class BasicDonTPassAsyncLambdasAsVoidReturningDelegateTypesFixer
-        Inherits DonTPassAsyncLambdasAsVoidReturningDelegateTypesFixer
+    Public NotInheritable Class BasicDoNotMixBlockingAndAsyncFixer
+        Inherits DoNotMixBlockingAndAsyncFixer
 
     End Class
 End Namespace

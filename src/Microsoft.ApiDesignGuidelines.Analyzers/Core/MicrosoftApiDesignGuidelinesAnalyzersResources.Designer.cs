@@ -576,6 +576,60 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to #N/A.
+        /// </summary>
+        internal static string DoNotMixBlockingAndAsyncDescription {
+            get {
+                return ResourceManager.GetString("DoNotMixBlockingAndAsyncDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Don&apos;t Mix Blocking and Async.
+        /// </summary>
+        internal static string DoNotMixBlockingAndAsyncMessage {
+            get {
+                return ResourceManager.GetString("DoNotMixBlockingAndAsyncMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Don&apos;t Mix Blocking and Async.
+        /// </summary>
+        internal static string DoNotMixBlockingAndAsyncTitle {
+            get {
+                return ResourceManager.GetString("DoNotMixBlockingAndAsyncTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #N/A.
+        /// </summary>
+        internal static string DoNotPassAsyncLambdasAsVoidReturningDelegateTypesDescription {
+            get {
+                return ResourceManager.GetString("DoNotPassAsyncLambdasAsVoidReturningDelegateTypesDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Don&apos;t Pass Async Lambdas as Void Returning Delegate Types.
+        /// </summary>
+        internal static string DoNotPassAsyncLambdasAsVoidReturningDelegateTypesMessage {
+            get {
+                return ResourceManager.GetString("DoNotPassAsyncLambdasAsVoidReturningDelegateTypesMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Don&apos;t Pass Async Lambdas as Void Returning Delegate Types.
+        /// </summary>
+        internal static string DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle {
+            get {
+                return ResourceManager.GetString("DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A method that is not expected to throw exceptions throws an exception..
         /// </summary>
         internal static string DoNotRaiseExceptionsInUnexpectedLocationsDescription {
@@ -623,81 +677,27 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         /// <summary>
         ///   Looks up a localized string similar to #N/A.
         /// </summary>
-        internal static string DonTMixBlockingAndAsyncDescription {
+        internal static string DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesDescription {
             get {
-                return ResourceManager.GetString("DonTMixBlockingAndAsyncDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Don&apos;t Mix Blocking and Async.
-        /// </summary>
-        internal static string DonTMixBlockingAndAsyncMessage {
-            get {
-                return ResourceManager.GetString("DonTMixBlockingAndAsyncMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Don&apos;t Mix Blocking and Async.
-        /// </summary>
-        internal static string DonTMixBlockingAndAsyncTitle {
-            get {
-                return ResourceManager.GetString("DonTMixBlockingAndAsyncTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to #N/A.
-        /// </summary>
-        internal static string DonTPassAsyncLambdasAsVoidReturningDelegateTypesDescription {
-            get {
-                return ResourceManager.GetString("DonTPassAsyncLambdasAsVoidReturningDelegateTypesDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Don&apos;t Pass Async Lambdas as Void Returning Delegate Types.
-        /// </summary>
-        internal static string DonTPassAsyncLambdasAsVoidReturningDelegateTypesMessage {
-            get {
-                return ResourceManager.GetString("DonTPassAsyncLambdasAsVoidReturningDelegateTypesMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Don&apos;t Pass Async Lambdas as Void Returning Delegate Types.
-        /// </summary>
-        internal static string DonTPassAsyncLambdasAsVoidReturningDelegateTypesTitle {
-            get {
-                return ResourceManager.GetString("DonTPassAsyncLambdasAsVoidReturningDelegateTypesTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to #N/A.
-        /// </summary>
-        internal static string DonTStoreAsyncLambdasAsVoidReturningDelegateTypesDescription {
-            get {
-                return ResourceManager.GetString("DonTStoreAsyncLambdasAsVoidReturningDelegateTypesDescription", resourceCulture);
+                return ResourceManager.GetString("DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesDescription", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Don&apos;t Store Async Lambdas as Void Returning Delegate Types.
         /// </summary>
-        internal static string DonTStoreAsyncLambdasAsVoidReturningDelegateTypesMessage {
+        internal static string DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesMessage {
             get {
-                return ResourceManager.GetString("DonTStoreAsyncLambdasAsVoidReturningDelegateTypesMessage", resourceCulture);
+                return ResourceManager.GetString("DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesMessage", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Don&apos;t Store Async Lambdas as Void Returning Delegate Types.
         /// </summary>
-        internal static string DonTStoreAsyncLambdasAsVoidReturningDelegateTypesTitle {
+        internal static string DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesTitle {
             get {
-                return ResourceManager.GetString("DonTStoreAsyncLambdasAsVoidReturningDelegateTypesTitle", resourceCulture);
+                return ResourceManager.GetString("DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesTitle", resourceCulture);
             }
         }
         

@@ -7,10 +7,10 @@ using Microsoft.CodeAnalysis.CodeFixes;
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
     /// <summary>
-    /// Async004: Don't Store Async Lambdas as Void Returning Delegate Types
+    /// Async003: Don't Pass Async Lambdas as Void Returning Delegate Types
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
-    public class CSharpDonTStoreAsyncLambdasAsVoidReturningDelegateTypesFixer : DonTStoreAsyncLambdasAsVoidReturningDelegateTypesFixer
+    public class CSharpDoNotPassAsyncLambdasAsVoidReturningDelegateTypesFixer : DoNotPassAsyncLambdasAsVoidReturningDelegateTypesFixer
     {
     }
 }

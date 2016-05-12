@@ -42,7 +42,7 @@ Namespace Desktop.Analyzers
             Protected Overrides Function GetExceptionTypeSymbolFromCatchClause(catchNode As CatchBlockSyntax, model As SemanticModel) As ISymbol
                 Debug.Assert(catchNode.CatchStatement IsNot Nothing)
                 Dim catchDeclaration As SimpleAsClauseSyntax = catchNode.CatchStatement.AsClause
-                Dim exceptionTypeSym As ISymbol = Nothing
+                Dim exceptionTypeSym As ISymbol
                 If catchDeclaration Is Nothing Then
                     exceptionTypeSym = TypesOfInterest.SystemObject
                 Else

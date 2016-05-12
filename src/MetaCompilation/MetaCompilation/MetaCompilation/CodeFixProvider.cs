@@ -1278,10 +1278,8 @@ namespace MetaCompilation
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            string methodName = CodeFixHelper.GetRegisterMethodName(declaration);
-
             ClassDeclarationSyntax classDeclaration = declaration.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
-            methodName = CodeFixHelper.GetExistingAnalysisMethodName(classDeclaration);
+            string methodName = CodeFixHelper.GetExistingAnalysisMethodName(classDeclaration);
 
             if (methodName == null)
             {
@@ -1670,7 +1668,7 @@ namespace MetaCompilation
             var oldStatementDeclaration = oldStatement as LocalDeclarationStatementSyntax;
 
             SyntaxNode root = await document.GetSyntaxRootAsync().ConfigureAwait(false);
-            SyntaxNode newRoot = root;
+            SyntaxNode newRoot;
 
             if (oldStatement == null)
             {
@@ -1679,8 +1677,7 @@ namespace MetaCompilation
             }
             else if (oldStatementDeclaration != null)
             {
-                var oldStatementDeclarator = oldStatementDeclaration.Declaration.Variables[0] as VariableDeclaratorSyntax;
-                SyntaxNode oldVariableName = generator.IdentifierName(oldStatementDeclarator.Identifier.Text);
+                var oldStatementDeclarator = oldStatementDeclaration.Declaration.Variables[0];
                 SyntaxNode newStatementDeclaration = generator.LocalDeclarationStatement(oldStatementDeclarator.Identifier.Text, invocationExpression).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n")));
                 newRoot = root.ReplaceNode(oldStatement, newStatementDeclaration);
             }
@@ -2319,15 +2316,9 @@ namespace MetaCompilation
 
                 var arguments = new ArgumentSyntax[6];
                 string whitespace = "            ";
-                SyntaxNode id = null;
-                if (idName != "")
-                {
-                    id = generator.LiteralExpression(idName);
-                }
-                else
-                {
-                    id = generator.IdentifierName("").WithTrailingTrivia(SyntaxFactory.ParseTrailingTrivia("/* The ID here should be the public constant declared above */"));
-                }
+                SyntaxNode id = idName != ""
+                    ? generator.LiteralExpression(idName) 
+                    : generator.IdentifierName("").WithTrailingTrivia(SyntaxFactory.ParseTrailingTrivia("/* The ID here should be the public constant declared above */"));
 
                 var idArg = generator.Argument("id", RefKind.None, id).WithLeadingTrivia(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.Whitespace(whitespace)) as ArgumentSyntax;
                 arguments[0] = idArg;
@@ -2435,7 +2426,6 @@ namespace MetaCompilation
             protected internal static string GetExistingAnalysisMethodName(ClassDeclarationSyntax classDeclaration)
             {
                 IEnumerable<MethodDeclarationSyntax> methods = classDeclaration.Members.OfType<MethodDeclarationSyntax>();
-                string methodName = null;
 
                 foreach (MethodDeclarationSyntax method in methods)
                 {
@@ -2443,21 +2433,18 @@ namespace MetaCompilation
                     if (parameterList != null)
                     {
                         SeparatedSyntaxList<ParameterSyntax> parameters = parameterList.Parameters;
-                        if (parameters != null)
+                        if (parameters.Count > 0)
                         {
-                            if (parameters.Count > 0)
+                            var parameterType = parameters.First().Type as IdentifierNameSyntax;
+                            if (parameterType != null && parameterType.Identifier.Text == "SyntaxNodeAnalysisContext")
                             {
-                                var parameterType = parameters.First().Type as IdentifierNameSyntax;
-                                if (parameterType != null && parameterType.Identifier.Text == "SyntaxNodeAnalysisContext")
-                                {
-                                    return methodName = method.Identifier.Text;
-                                }
+                                return method.Identifier.Text;
                             }
                         }
                     }
                 }
 
-                return methodName;
+                return null;
             }
 
             // creates a method keeping everything except for the parameters, and inserting a parameter of type SyntaxNodeAnalysisContext

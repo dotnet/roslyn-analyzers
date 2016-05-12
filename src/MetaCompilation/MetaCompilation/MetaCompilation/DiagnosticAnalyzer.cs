@@ -408,7 +408,7 @@ namespace MetaCompilation
                                 analysisMethodSymbol = (IMethodSymbol)registerArgs[0];
                             }
 
-                            IFieldSymbol kind = null;
+                            IFieldSymbol kind;
                             if (registerArgs.Count > 1)
                             {
                                 kind = (IFieldSymbol)registerArgs[1];
@@ -457,20 +457,9 @@ namespace MetaCompilation
                                         return;
                                     }
                                 }
-
-
                                 else
                                 {
-                                    Location loc = null;
-                                    if (kindName == null)
-                                    {
-                                        loc = invocationExpression.ArgumentList.GetLocation();
-                                    }
-                                    else
-                                    {
-                                        loc = invocationExpression.ArgumentList.Arguments[1].GetLocation();
-                                    }
-
+                                    Location loc = invocationExpression.ArgumentList.Arguments[1].GetLocation();
                                     ReportDiagnostic(context, IncorrectKindRule, loc);
                                 }
                             }
@@ -2283,15 +2272,9 @@ namespace MetaCompilation
             {
                 SuppDiagReturnSymbolInfo result = new SuppDiagReturnSymbolInfo();
 
-                ILocalSymbol returnSymbol = null;
-                if (returnSymbolInfo.CandidateSymbols.Count() == 0)
-                {
-                    returnSymbol = returnSymbolInfo.Symbol as ILocalSymbol;
-                }
-                else
-                {
-                    returnSymbol = returnSymbolInfo.CandidateSymbols[0] as ILocalSymbol;
-                }
+                ILocalSymbol returnSymbol = !returnSymbolInfo.CandidateSymbols.Any()
+                    ? returnSymbolInfo.Symbol as ILocalSymbol
+                    : returnSymbolInfo.CandidateSymbols[0] as ILocalSymbol;
 
                 if (returnSymbol == null)
                 {
@@ -2648,9 +2631,9 @@ namespace MetaCompilation
             private CheckInitializeInfo CheckInitialize(CompilationAnalysisContext context)
             {
                 //default values for returning
-                IMethodSymbol registerCall = null;
+                IMethodSymbol registerCall;
                 List<ISymbol> registerArgs = new List<ISymbol>();
-                InvocationExpressionSyntax invocExpr = null;
+                InvocationExpressionSyntax invocExpr;
 
                 if (_initializeSymbol == null)
                 {
@@ -2661,7 +2644,7 @@ namespace MetaCompilation
                 else
                 {
                     //checking method signature
-                    var codeBlock = InitializeOverview(context) as BlockSyntax;
+                    BlockSyntax codeBlock = InitializeOverview(context);
                     if (codeBlock == null)
                     {
                         return new CheckInitializeInfo();

@@ -129,7 +129,7 @@ namespace Microsoft.CodeAnalysis
             where TCompilation : Compilation
         {
             ImmutableArray<Diagnostic> diagnostics;
-            c = GetAnalyzerDiagnostics(c, analyzers, options, onAnalyzerException, logAnalyzerExceptionAsDiagnostics, out diagnostics);
+            GetAnalyzerDiagnostics(c, analyzers, options, onAnalyzerException, logAnalyzerExceptionAsDiagnostics, out diagnostics);
             return diagnostics;
         }
 

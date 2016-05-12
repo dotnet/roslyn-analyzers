@@ -142,6 +142,11 @@ namespace Microsoft.CodeAnalysis.UnitTests
             return GetResultAt(CSharpDefaultFilePath, line, column, rule, messageArguments);
         }
 
+        protected static DiagnosticResult GetAdditionalFileResultAt(int line, int column, string additionalFilePath, DiagnosticDescriptor rule, params object[] messageArguments)
+        {
+            return GetResultAt(additionalFilePath, line, column, rule, messageArguments);
+        }
+
         protected static DiagnosticResult GetResultAt(string path, int line, int column, string id, string message)
         {
             var location = new DiagnosticResultLocation(path, line, column);

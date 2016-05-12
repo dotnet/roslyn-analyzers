@@ -44,11 +44,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             var symbol = context.Symbol as INamedTypeSymbol;
             if (symbol.IsAbstract)
             {
-                // TODO: Should we also check symbol.GetResultantVisibility() == SymbolVisibility.Public?
-
                 bool hasAnyPublicConstructors =
                     symbol.InstanceConstructors.Any(
-                        (constructor) => constructor.DeclaredAccessibility == Accessibility.Public);
+                        constructor => constructor.DeclaredAccessibility == Accessibility.Public);
 
                 if (hasAnyPublicConstructors)
                 {

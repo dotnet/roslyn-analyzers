@@ -77,7 +77,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             SymbolDisplayFormat.CSharpShortErrorMessageFormat
                 // Turn off the EscapeKeywordIdentifiers flag (which is on by default), so that
                 // a method named "@for" is displayed as "for".
-                // Turn on the UseSpecialTypes flat (which is off by default), so that parameter
+                // Turn on the UseSpecialTypes flag (which is off by default), so that parameter
                 // names of "special" types such as Int32 are displayed as their language alias,
                 // such as int for C# and Integer for VB.
                 .WithMiscellaneousOptions(SymbolDisplayMiscellaneousOptions.UseSpecialTypes);

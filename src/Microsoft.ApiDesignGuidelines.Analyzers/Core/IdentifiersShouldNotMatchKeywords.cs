@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -95,28 +96,28 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            // TODO: Make this analyzer thread-safe.
-            //analysisContext.EnableConcurrentExecution();
-
+            analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            var keywordNamedNamespaces = new HashSet<string>();
+            analysisContext.RegisterCompilationStartAction(compilationStartAnalysisContext =>
+            {
+                var keywordNamedNamespaces = new ConcurrentDictionary<string, string>();
 
-            analysisContext.RegisterSymbolAction(
-                context => AnalyzeNamespaceRule(context, keywordNamedNamespaces),
-                SymbolKind.NamedType);
+                compilationStartAnalysisContext.RegisterSymbolAction(
+                    symbolAnalysisContext =>
+                        AnalyzeNamespaceRule(symbolAnalysisContext, keywordNamedNamespaces),
+                    SymbolKind.NamedType);
 
-            analysisContext.RegisterSymbolAction(AnalyzeTypeRule,
-                SymbolKind.NamedType);
+                compilationStartAnalysisContext.RegisterSymbolAction(AnalyzeTypeRule, SymbolKind.NamedType);
 
-            analysisContext.RegisterSymbolAction(AnalyzeMemberRule,
-                SymbolKind.Event, SymbolKind.Method, SymbolKind.Property);
+                compilationStartAnalysisContext.RegisterSymbolAction(AnalyzeMemberRule,
+                    SymbolKind.Event, SymbolKind.Method, SymbolKind.Property);
 
-            analysisContext.RegisterSymbolAction(AnalyzeMemberParameterRule,
-                SymbolKind.Method);
+                compilationStartAnalysisContext.RegisterSymbolAction(AnalyzeMemberParameterRule, SymbolKind.Method);
+            });
         }
 
-        private void AnalyzeNamespaceRule(SymbolAnalysisContext context, HashSet<string> keywordNamedNamespaces)
+        private void AnalyzeNamespaceRule(SymbolAnalysisContext context, ConcurrentDictionary<string, string> keywordNamedNamespaces)
         {
             INamedTypeSymbol type = (INamedTypeSymbol)context.Symbol;
 
@@ -133,7 +134,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
 
             string namespaceDisplayString = containingNamespace.ToDisplayString(s_namespaceDisplayFormat);
-            if (keywordNamedNamespaces.Contains(namespaceDisplayString))
+            if (keywordNamedNamespaces.ContainsKey(namespaceDisplayString))
             {
                 // We've already reported a diagnostic for this namespace.
                 return;
@@ -164,7 +165,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             if (foundKeyword)
             {
-                keywordNamedNamespaces.Add(namespaceDisplayString);
+                keywordNamedNamespaces.AddOrUpdate(namespaceDisplayString, namespaceDisplayString,
+                    (key, oldValue) => namespaceDisplayString);
             }
         }
 

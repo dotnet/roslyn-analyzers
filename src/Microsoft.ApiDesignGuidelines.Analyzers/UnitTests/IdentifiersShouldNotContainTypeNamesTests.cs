@@ -104,6 +104,28 @@ class Bar
         }
 
         [Fact]
+        public void CSharp_CA1720_NoDiagnosticOnIEqualityComparerGetHashCodeImplementation()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+public sealed class SomeEqualityComparer : IEqualityComparer<string>
+{
+    public bool Equals(string x, string y) 
+    { 
+        throw new NotImplementedException(); 
+    }
+
+    public int GetHashCode(string obj) 
+    { 
+        throw new NotImplementedException(); 
+    }
+}
+");
+        }
+
+        [Fact]
         public void CSharp_CA1720_SomeDiagnostic6()
         {
             VerifyCSharp(@"

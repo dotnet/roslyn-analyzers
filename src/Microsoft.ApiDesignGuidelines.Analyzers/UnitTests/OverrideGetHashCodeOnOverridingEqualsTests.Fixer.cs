@@ -1,8 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Immutable;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
@@ -19,7 +16,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            throw new NotSupportedException("CA2218 is not applied to C# since it already reports CS0661");
+            // Diagnostic is from the compiler.
+            return null;
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
@@ -33,13 +31,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CS0660()
+        public void CS0659()
         {
-            VerifyFix(
-                LanguageNames.CSharp,
-                DummyCS0661Analyzer.Instance,
-                GetCSharpCodeFixProvider(),
-                @"
+            VerifyCSharpFix(@"
 class C
 {
     public override bool Equals(object obj) => true;
@@ -61,13 +55,9 @@ class C
         }
 
         [Fact]
-        public void CS0660_Simplified()
+        public void CS0659_Simplified()
         {
-            VerifyFix(
-                LanguageNames.CSharp,
-                DummyCS0661Analyzer.Instance,
-                GetCSharpCodeFixProvider(),
-                @"
+            VerifyCSharpFix(@"
 using System;
 
 class C
@@ -93,7 +83,7 @@ class C
         }
 
         [Fact]
-        public void CA2224()
+        public void Basic_CA2218()
         {
             VerifyBasicFix(@"
 Class C
@@ -116,7 +106,7 @@ End Class
         }
 
         [Fact]
-        public void CA2224_Simplified()
+        public void Basic_CA2218_Simplified()
         {
             VerifyBasicFix(@"
 Imports System
@@ -140,32 +130,6 @@ Class C
     End Function
 End Class
 ");
-        }
-
-        [DiagnosticAnalyzer(LanguageNames.CSharp)]
-        private sealed class DummyCS0661Analyzer : DiagnosticAnalyzer
-        {
-            public static readonly DiagnosticAnalyzer Instance = new DummyCS0661Analyzer();
-
-            private static readonly DiagnosticDescriptor s_descriptor =
-                new DiagnosticDescriptor(
-                    "CS0660",
-                    "title",
-                    "message",
-                    "category",
-                    DiagnosticSeverity.Warning,
-                    isEnabledByDefault: true);
-
-            private DummyCS0661Analyzer() { }
-
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(s_descriptor);
-
-            public override void Initialize(AnalysisContext context)
-            {
-                context.RegisterSymbolAction(symbolContext =>
-                        symbolContext.ReportDiagnostic(Diagnostic.Create(s_descriptor, symbolContext.Symbol.Locations[0])),
-                    SymbolKind.NamedType);
-            }
         }
     }
 }

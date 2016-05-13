@@ -42,7 +42,18 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
         private const string _testProjectName = "TestProject";
 
+        /// <summary>
+        /// Return the C# diagnostic analyzer to get analyzer diagnostics.
+        /// This may return null when used in context of verifying a code fix for compiler diagnostics. 
+        /// </summary>
+        /// <returns></returns>
         protected abstract DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer();
+
+        /// <summary>
+        /// Return the VB diagnostic analyzer to get analyzer diagnostics.
+        /// This may return null when used in context of verifying a code fix for compiler diagnostics. 
+        /// </summary>
+        /// <returns></returns>
         protected abstract DiagnosticAnalyzer GetBasicDiagnosticAnalyzer();
 
         private static MetadataReference s_systemRuntimeFacadeRef;
@@ -232,6 +243,11 @@ namespace Microsoft.CodeAnalysis.UnitTests
             Verify(new[] { source }, language, analyzer, expected);
         }
 
+        protected void Verify(string source, string language, DiagnosticAnalyzer analyzer, IEnumerable<TestAdditionalDocument> additionalFiles, params DiagnosticResult[] expected)
+        {
+            Verify(new[] { source }, language, analyzer, additionalFiles, expected);
+        }
+
         protected void Verify(string source, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference, params DiagnosticResult[] expected)
         {
             Verify(new[] { source }, language, analyzer, addLanguageSpecificCodeAnalysisReference, expected);
@@ -272,9 +288,19 @@ namespace Microsoft.CodeAnalysis.UnitTests
             Verify(sources.ToFileAndSource(), language, analyzer, expected);
         }
 
+        protected void Verify(string[] sources, string language, DiagnosticAnalyzer analyzer, IEnumerable<TestAdditionalDocument> additionalFiles, params DiagnosticResult[] expected)
+        {
+            Verify(sources.ToFileAndSource(), language, analyzer, additionalFiles, expected);
+        }
+
         protected void Verify(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, params DiagnosticResult[] expected)
         {
             GetSortedDiagnostics(sources, language, analyzer).Verify(analyzer, PrintActualDiagnosticsOnFailure, ExpectedDiagnosticsAssertionTemplate, expected);
+        }
+
+        protected void Verify(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, IEnumerable<TestAdditionalDocument> additionalFiles, params DiagnosticResult[] expected)
+        {
+            GetSortedDiagnostics(sources, language, analyzer, additionalFiles: additionalFiles).Verify(analyzer, PrintActualDiagnosticsOnFailure, ExpectedDiagnosticsAssertionTemplate, expected);
         }
 
         protected void Verify(string[] sources, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference, params DiagnosticResult[] expected)
@@ -292,13 +318,13 @@ namespace Microsoft.CodeAnalysis.UnitTests
             return GetSortedDiagnostics(sources.ToFileAndSource(), language, analyzer, addLanguageSpecificCodeAnalysisReference);
         }
 
-        protected static Diagnostic[] GetSortedDiagnostics(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference = true, string projectName = _testProjectName)
+        protected static Diagnostic[] GetSortedDiagnostics(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference = true, string projectName = _testProjectName, IEnumerable<TestAdditionalDocument> additionalFiles = null)
         {
             Tuple<Document[], bool, TextSpan?[]> documentsAndUseSpan = GetDocumentsAndSpans(sources, language, addLanguageSpecificCodeAnalysisReference, projectName);
             Document[] documents = documentsAndUseSpan.Item1;
             bool useSpans = documentsAndUseSpan.Item2;
             TextSpan?[] spans = documentsAndUseSpan.Item3;
-            return GetSortedDiagnostics(analyzer, documents, useSpans ? spans : null);
+            return GetSortedDiagnostics(analyzer, documents, spans: useSpans ? spans : null, additionalFiles: additionalFiles);
         }
 
         protected static Tuple<Document[], bool, TextSpan?[]> GetDocumentsAndSpans(string[] sources, string language, bool addLanguageSpecificCodeAnalysisReference = true)
@@ -408,26 +434,32 @@ namespace Microsoft.CodeAnalysis.UnitTests
             return project;
         }
 
-        protected static Diagnostic[] GetSortedDiagnostics(DiagnosticAnalyzer analyzer, Document document, TextSpan?[] spans = null)
+        protected static Diagnostic[] GetSortedDiagnostics(DiagnosticAnalyzer analyzerOpt, Document document, TextSpan?[] spans = null, IEnumerable<TestAdditionalDocument> additionalFiles = null)
         {
-            return GetSortedDiagnostics(analyzer, new[] { document }, spans);
+            return GetSortedDiagnostics(analyzerOpt, new[] { document }, spans, additionalFiles);
         }
 
-        protected static Diagnostic[] GetSortedDiagnostics(DiagnosticAnalyzer analyzer, Document[] documents, TextSpan?[] spans = null)
+        protected static Diagnostic[] GetSortedDiagnostics(DiagnosticAnalyzer analyzerOpt, Document[] documents, TextSpan?[] spans = null, IEnumerable<TestAdditionalDocument> additionalFiles = null)
         {
+            if (analyzerOpt == null)
+            {
+                return SpecializedCollections.EmptyArray<Diagnostic>();
+            }
+
             var projects = new HashSet<Project>();
             foreach (Document document in documents)
             {
                 projects.Add(document.Project);
             }
 
+            var analyzerOptions = additionalFiles != null ? new AnalyzerOptions(additionalFiles.ToImmutableArray<AdditionalText>()) : null;
             DiagnosticBag diagnostics = DiagnosticBag.GetInstance();
             foreach (Project project in projects)
             {
                 Compilation compilation = project.GetCompilationAsync().Result;
-                compilation = EnableAnalyzer(analyzer, compilation);
+                compilation = EnableAnalyzer(analyzerOpt, compilation);
 
-                ImmutableArray<Diagnostic> diags = compilation.GetAnalyzerDiagnostics(new[] { analyzer });
+                ImmutableArray <Diagnostic> diags = compilation.GetAnalyzerDiagnostics(new[] { analyzerOpt }, analyzerOptions);
                 if (spans == null)
                 {
                     diagnostics.AddRange(diags);

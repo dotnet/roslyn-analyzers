@@ -23,21 +23,9 @@ namespace Desktop.Analyzers
                 : base(compilationTypes, owningSymbol, codeBlock)
             { }
 
-            public override SyntaxKind CatchClauseKind
-            {
-                get
-                {
-                    return SyntaxKind.CatchClause;
-                }
-            }
+            public override SyntaxKind CatchClauseKind => SyntaxKind.CatchClause;
 
-            public override SyntaxKind ThrowStatementKind
-            {
-                get
-                {
-                    return SyntaxKind.ThrowStatement;
-                }
-            }
+            public override SyntaxKind ThrowStatementKind => SyntaxKind.ThrowStatement;
 
             protected override ISymbol GetExceptionTypeSymbolFromCatchClause(CatchClauseSyntax catchNode, SemanticModel model)
             {

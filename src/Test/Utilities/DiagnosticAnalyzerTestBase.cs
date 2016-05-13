@@ -436,7 +436,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 projects.Add(document.Project);
             }
 
-            var analyzerOptions = new AnalyzerOptions(additionalFiles.ToImmutableArray<AdditionalText>());
+            var analyzerOptions = additionalFiles != null ? new AnalyzerOptions(additionalFiles.ToImmutableArray<AdditionalText>()) : null;
             DiagnosticBag diagnostics = DiagnosticBag.GetInstance();
             foreach (Project project in projects)
             {

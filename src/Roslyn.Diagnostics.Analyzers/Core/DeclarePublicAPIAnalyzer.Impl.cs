@@ -117,6 +117,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 if (!_publicApiMap.ContainsKey(publicApiName))
                 {
                     string errorMessageName = GetErrorMessageName(symbol, isImplicitlyDeclaredConstructor);
+                    // Compute public API names for any stale siblings to remove from unshipped text (e.g. during signature change of unshipped public API).
                     var siblingPublicApiNamesToRemove = GetSiblingNamesToRemoveFromUnshippedText(symbol);
                     ImmutableDictionary<string, string> propertyBag = ImmutableDictionary<string, string>.Empty
                         .Add(PublicApiNamePropertyBagKey, publicApiName)
@@ -179,8 +180,8 @@ namespace Roslyn.Diagnostics.Analyzers
                 if (containingSymbol != null)
                 {
                     // First get the lines in the unshipped text for siblings of the symbol:
-                    //  (a) Contains Public API name of containing symbol
-                    //  (b) Doesn't contain Public API name of sibling nested types/namespaces.
+                    //  (a) Contains Public API name of containing symbol.
+                    //  (b) Doesn't contain Public API name of nested types/namespaces of containing symbol.
                     var containingSymbolPublicApiName = GetPublicApiName(containingSymbol);
 
                     var nestedNamespaceOrTypeMembers = containingSymbol.GetMembers().OfType<INamespaceOrTypeSymbol>().ToImmutableArray();
@@ -203,7 +204,7 @@ namespace Roslyn.Diagnostics.Analyzers
 
                         if (!ContainsPublicApiName(apiLineText, containingSymbolPublicApiName))
                         {
-                            // Doesn't contain containing symbol public API name - not a sibling of symbol.
+                            // Doesn't contain containingSymbol public API name - not a sibling of symbol.
                             continue;
                         }
 
@@ -212,7 +213,7 @@ namespace Roslyn.Diagnostics.Analyzers
                         {
                             if (ContainsPublicApiName(apiLineText, nestedNamespaceOrTypePublicApiName + "."))
                             {
-                                // Belongs to a nested type/namespace in containing symbol - not a sibling of symbol.
+                                // Belongs to a nested type/namespace in containingSymbol - not a sibling of symbol.
                                 containedInNestedMember = true;
                                 break;
                             }
@@ -226,7 +227,7 @@ namespace Roslyn.Diagnostics.Analyzers
                         publicApiLinesForSiblingsOfSymbol.Add(apiLineText);
                     }
 
-                    // Now remove the lines for siblings which are still public APIs.
+                    // Now remove the lines for siblings which are still public APIs - we don't want to remove those.
                     if (publicApiLinesForSiblingsOfSymbol.Count > 0)
                     {
                         var siblings = containingSymbol.GetMembers();
@@ -273,6 +274,7 @@ namespace Roslyn.Diagnostics.Analyzers
                     }
                 }
 
+                // Ensure that we don't have any leading characters in matched substring, apart from whitespace.
                 var index = apiLineText.IndexOf(publicApiNameToSearch, StringComparison.Ordinal);
                 return index == 0 || (index > 0 && apiLineText[index - 1] == ' ');
             }

@@ -22,43 +22,44 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
         protected abstract CodeFixProvider GetBasicCodeFixProvider();
 
-        protected void VerifyCSharpFix(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false)
+        protected void VerifyCSharpFix(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, bool onlyFixFirstFixableDiagnostic = false)
         {
-            VerifyFix(LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics);
+            VerifyFix(LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, onlyFixFirstFixableDiagnostic);
         }
 
-        protected void VerifyBasicFix(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false)
+        protected void VerifyBasicFix(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, bool onlyFixFirstFixableDiagnostic = false)
         {
-            VerifyFix(LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), GetBasicCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics);
+            VerifyFix(LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), GetBasicCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, onlyFixFirstFixableDiagnostic);
         }
 
-        protected void VerifyCSharpAdditionalFileFix(string source, IEnumerable<TestAdditionalDocument> additionalFiles, TestAdditionalDocument newAdditionalFileToVerify, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false)
+        protected void VerifyCSharpAdditionalFileFix(string source, IEnumerable<TestAdditionalDocument> additionalFiles, TestAdditionalDocument newAdditionalFileToVerify, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, bool onlyFixFirstFixableDiagnostic = false)
         {
-            VerifyAdditionalFileFix(LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), GetCSharpCodeFixProvider(), source, additionalFiles, newAdditionalFileToVerify, codeFixIndex, allowNewCompilerDiagnostics);
+            VerifyAdditionalFileFix(LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), GetCSharpCodeFixProvider(), source, additionalFiles, newAdditionalFileToVerify, codeFixIndex, allowNewCompilerDiagnostics, onlyFixFirstFixableDiagnostic);
         }
 
-        protected void VerifyBasicAdditionalFileFix(string source, IEnumerable<TestAdditionalDocument> additionalFiles, TestAdditionalDocument newAdditionalFileToVerify, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false)
+        protected void VerifyBasicAdditionalFileFix(string source, IEnumerable<TestAdditionalDocument> additionalFiles, TestAdditionalDocument newAdditionalFileToVerify, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, bool onlyFixFirstFixableDiagnostic = false)
         {
-            VerifyAdditionalFileFix(LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), GetBasicCodeFixProvider(), source, additionalFiles, newAdditionalFileToVerify, codeFixIndex, allowNewCompilerDiagnostics);
+            VerifyAdditionalFileFix(LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), GetBasicCodeFixProvider(), source, additionalFiles, newAdditionalFileToVerify, codeFixIndex, allowNewCompilerDiagnostics, onlyFixFirstFixableDiagnostic);
         }
 
-        protected void VerifyFix(string language, DiagnosticAnalyzer analyzer, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex, bool allowNewCompilerDiagnostics)
+        protected void VerifyFix(string language, DiagnosticAnalyzer analyzerOpt, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex, bool allowNewCompilerDiagnostics, bool onlyFixFirstFixableDiagnostic)
         {
             Document document = CreateDocument(oldSource, language);
             var newSourceFileName = document.Name;
 
-            VerifyFix(document, analyzer, codeFixProvider, newSource, newSourceFileName, ImmutableArray<TestAdditionalDocument>.Empty, codeFixIndex, allowNewCompilerDiagnostics);
+            VerifyFix(document, analyzerOpt, codeFixProvider, newSource, newSourceFileName, ImmutableArray<TestAdditionalDocument>.Empty, codeFixIndex, allowNewCompilerDiagnostics, onlyFixFirstFixableDiagnostic);
         }
 
         protected void VerifyAdditionalFileFix(
             string language,
-            DiagnosticAnalyzer analyzer,
+            DiagnosticAnalyzer analyzerOpt,
             CodeFixProvider codeFixProvider,
             string source,
             IEnumerable<TestAdditionalDocument> additionalFiles,
             TestAdditionalDocument newAdditionalFileToVerify,
             int? codeFixIndex = null,
-            bool allowNewCompilerDiagnostics = false)
+            bool allowNewCompilerDiagnostics = false,
+            bool onlyFixFirstFixableDiagnostic = false)
         {
             Document document = CreateDocument(source, language);
             if (additionalFiles != null)
@@ -75,48 +76,59 @@ namespace Microsoft.CodeAnalysis.UnitTests
             var additionalFileName = newAdditionalFileToVerify.Name;
             var additionalFileText = newAdditionalFileToVerify.GetText().ToString();
 
-            VerifyFix(document, analyzer, codeFixProvider, additionalFileText, additionalFileName, additionalFiles, codeFixIndex, allowNewCompilerDiagnostics);
+            VerifyFix(document, analyzerOpt, codeFixProvider, additionalFileText, additionalFileName, additionalFiles, codeFixIndex, allowNewCompilerDiagnostics, onlyFixFirstFixableDiagnostic);
         }
 
         private void VerifyFix(
             Document document,
-            DiagnosticAnalyzer analyzer,
+            DiagnosticAnalyzer analyzerOpt,
             CodeFixProvider codeFixProvider,
             string newSource,
             string newSourceFileName,
             IEnumerable<TestAdditionalDocument> additionalFiles,
             int? codeFixIndex,
-            bool allowNewCompilerDiagnostics)
+            bool allowNewCompilerDiagnostics,
+            bool onlyFixFirstFixableDiagnostic)
         {
             var fixableDiagnosticIds = codeFixProvider.FixableDiagnosticIds.ToSet();
-            Func<IEnumerable<Diagnostic>, ImmutableArray<Diagnostic>> filterDiagnostics = diags =>
+            Func<IEnumerable<Diagnostic>, ImmutableArray<Diagnostic>> getFixableDiagnostics = diags =>
                 diags.Where(d => fixableDiagnosticIds.Contains(d.Id)).ToImmutableArrayOrEmpty();
 
-            var analyzerDiagnostics = filterDiagnostics(GetSortedDiagnostics(analyzer, document, additionalFiles: additionalFiles));
+            var analyzerDiagnostics = GetSortedDiagnostics(analyzerOpt, document, additionalFiles: additionalFiles);
             var compilerDiagnostics = document.GetSemanticModelAsync().Result.GetDiagnostics();
+            var fixableDiagnostics = getFixableDiagnostics(analyzerDiagnostics.Concat(compilerDiagnostics));
 
-            int attempts = analyzerDiagnostics.Length;
-
-            for (int i = 0; i < attempts; ++i)
+            var diagnosticIndexToFix = 0;
+            while (diagnosticIndexToFix < fixableDiagnostics.Length)
             {
                 var actions = new List<CodeAction>();
-                var context = new CodeFixContext(document, analyzerDiagnostics[0], (a, d) => actions.Add(a), CancellationToken.None);
+
+                var context = new CodeFixContext(document, fixableDiagnostics[diagnosticIndexToFix], (a, d) => actions.Add(a), CancellationToken.None);
                 codeFixProvider.RegisterCodeFixesAsync(context).Wait();
                 if (!actions.Any())
                 {
                     break;
                 }
 
-                if (codeFixIndex != null)
+                if (codeFixIndex == null)
                 {
-                    document = document.Apply(actions.ElementAt((int)codeFixIndex));
+                    codeFixIndex = 0;
+                }
+
+                if (codeFixIndex >= actions.Count)
+                {
+                    throw new Exception($"Unable to invoke code fix at index '{codeFixIndex.Value}', only '{actions.Count}' code fixes were registered.");
+                }
+
+                document = document.Apply(actions.ElementAt(codeFixIndex.Value));
+                additionalFiles = document.Project.AdditionalDocuments.Select(a => new TestAdditionalDocument(a));
+
+                if (onlyFixFirstFixableDiagnostic)
+                {
                     break;
                 }
 
-                document = document.Apply(actions.ElementAt(0));
-                additionalFiles = document.Project.AdditionalDocuments.Select(a => new TestAdditionalDocument(a));
-
-                analyzerDiagnostics = filterDiagnostics(GetSortedDiagnostics(analyzer, document, additionalFiles: additionalFiles));
+                analyzerDiagnostics = GetSortedDiagnostics(analyzerOpt, document, additionalFiles: additionalFiles);
                 var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, document.GetSemanticModelAsync().Result.GetDiagnostics());
                 if (!allowNewCompilerDiagnostics && newCompilerDiagnostics.Any())
                 {
@@ -130,14 +142,43 @@ namespace Microsoft.CodeAnalysis.UnitTests
                             document.GetSyntaxRootAsync().Result.ToFullString()));
                 }
 
-                if (analyzerDiagnostics.IsEmpty)
+                var newFixableDiagnostics = getFixableDiagnostics(analyzerDiagnostics.Concat(newCompilerDiagnostics));
+                if (fixableDiagnostics.SetEquals(newFixableDiagnostics, DiagnosticComparer.Instance))
                 {
-                    break;
+                    diagnosticIndexToFix++;
+                }
+                else
+                {
+                    fixableDiagnostics = newFixableDiagnostics;
                 }
             }
 
             var actualText = GetActualTextForNewDocument(document, newSourceFileName);
             Assert.Equal(newSource, actualText.ToString());
+        }
+
+        private sealed class DiagnosticComparer : IEqualityComparer<Diagnostic>
+        {
+            internal static readonly DiagnosticComparer Instance = new DiagnosticComparer();
+
+            public bool Equals(Diagnostic x, Diagnostic y)
+            {
+                return x.Id == y.Id &&
+                    x.GetMessage() == y.GetMessage() &&
+                    x.Location.IsInSource == y.Location.IsInSource &&
+                    x.Location.SourceSpan == y.Location.SourceSpan &&
+                    (x.Location.SourceTree?.IsEquivalentTo(y.Location.SourceTree)).GetValueOrDefault();
+            }
+
+            public int GetHashCode(Diagnostic obj)
+            {
+                return Hash.CombineValues(new[] {
+                    obj.Id.GetHashCode(),
+                    obj.GetMessage().GetHashCode(),
+                    obj.Location.IsInSource ? 1 : 0,
+                    obj.Location.SourceSpan.GetHashCode(),
+                    obj.Location.SourceTree?.ToString().GetHashCode() });
+            }
         }
 
         private static SourceText GetActualTextForNewDocument(Document documentInNewWorkspace, string newSourceFileName)

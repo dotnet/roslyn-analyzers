@@ -77,24 +77,26 @@ namespace Roslyn.Diagnostics.Analyzers.UnitTests
             Verify(source, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), additionalFiles, expected);
         }
 
-        private void VerifyCSharpAdditionalFileFix(string source, string shippedApiText, string oldUnshippedApiText, string newUnshippedApiText)
+        private void VerifyCSharpAdditionalFileFix(string source, string shippedApiText, string oldUnshippedApiText, string newUnshippedApiText, bool onlyFixFirstFixableDiagnostic = false)
         {
-            VerifyAdditionalFileFix(LanguageNames.CSharp, source, shippedApiText, oldUnshippedApiText, newUnshippedApiText);
+            VerifyAdditionalFileFix(LanguageNames.CSharp, source, shippedApiText, oldUnshippedApiText, newUnshippedApiText, onlyFixFirstFixableDiagnostic);
         }
 
-        private void VerifyBasicAdditionalFileFix(string source, string shippedApiText, string oldUnshippedApiText, string newUnshippedApiText)
+        private void VerifyBasicAdditionalFileFix(string source, string shippedApiText, string oldUnshippedApiText, string newUnshippedApiText, bool onlyFixFirstFixableDiagnostic = false)
         {
-            VerifyAdditionalFileFix(LanguageNames.VisualBasic, source, shippedApiText, oldUnshippedApiText, newUnshippedApiText);
+            VerifyAdditionalFileFix(LanguageNames.VisualBasic, source, shippedApiText, oldUnshippedApiText, newUnshippedApiText, onlyFixFirstFixableDiagnostic);
         }
 
-        private void VerifyAdditionalFileFix(string language, string source, string shippedApiText, string oldUnshippedApiText, string newUnshippedApiText)
+        private void VerifyAdditionalFileFix(string language, string source, string shippedApiText, string oldUnshippedApiText, string newUnshippedApiText, bool onlyFixFirstFixableDiagnostic)
         {
             var analyzer = language == LanguageNames.CSharp ? GetCSharpDiagnosticAnalyzer() : GetBasicDiagnosticAnalyzer();
             var fixer = language == LanguageNames.CSharp ? GetCSharpCodeFixProvider() : GetBasicCodeFixProvider();
             var additionalFiles = GetAdditionalTextFiles(shippedApiText, oldUnshippedApiText);
             var newAdditionalFileToVerify = GetUnshippedAdditionalTextFile(newUnshippedApiText);
-            VerifyAdditionalFileFix(language, analyzer, fixer, source, additionalFiles, newAdditionalFileToVerify);
+            VerifyAdditionalFileFix(language, analyzer, fixer, source, additionalFiles, newAdditionalFileToVerify, onlyFixFirstFixableDiagnostic: onlyFixFirstFixableDiagnostic);
         }
+
+        #region Diagnostic tests
 
         [Fact]
         public void SimpleMissingType()
@@ -538,6 +540,8 @@ C.Method() -> void
                 // <%TEMP_PATH%>\PublicAPI.Shipped.txt(7,1): warning RS0017: Symbol 'C.Method() -> void' is part of the declared API, but is either not public or could not be found
                 GetAdditionalFileResultAt(7, 1, shippedFilePath, DeclarePublicAPIAnalyzer.RemoveDeletedApiRule, "C.Method() -> void"));
         }
+
+        #endregion
 
         #region Fix tests
 

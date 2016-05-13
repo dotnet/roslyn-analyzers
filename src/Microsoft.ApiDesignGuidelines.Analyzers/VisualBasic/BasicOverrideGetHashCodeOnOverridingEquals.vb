@@ -10,7 +10,7 @@ Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' CA2218: Override GetHashCode on overriding Equals
     ''' </summary>
     ''' <remarks>
-    ''' CA2218 is not applied to C# since it already reports CS0661.
+    ''' CA2218 is not applied to C# since it already reports CS0569.
     ''' </remarks>
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
     Public NotInheritable Class BasicOverrideGetHashCodeOnOverridingEqualsAnalyzer

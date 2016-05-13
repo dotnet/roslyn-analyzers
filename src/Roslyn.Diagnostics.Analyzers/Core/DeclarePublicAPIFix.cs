@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -191,6 +192,7 @@ namespace Roslyn.Diagnostics.Analyzers
                             .GroupBy(d => d.Location.SourceTree);
 
                     var newSymbolNames = new List<string>();
+                    var symbolNamesToRemoveBuilder = ImmutableHashSet.CreateBuilder<string>();
 
                     foreach (IGrouping<SyntaxTree, Diagnostic> grouping in groupedDiagnostics)
                     {
@@ -209,10 +211,26 @@ namespace Roslyn.Diagnostics.Analyzers
                             string publicSurfaceAreaSymbolName = diagnostic.Properties[DeclarePublicAPIAnalyzer.PublicApiNamePropertyBagKey];
 
                             newSymbolNames.Add(publicSurfaceAreaSymbolName);
+
+                            string siblingNamesToRemove = diagnostic.Properties[DeclarePublicAPIAnalyzer.PublicApiNamesOfSiblingsToRemovePropertyBagKey];
+                            if (siblingNamesToRemove.Length > 0)
+                            {
+                                var namesToRemove = siblingNamesToRemove.Split(DeclarePublicAPIAnalyzer.PublicApiNamesOfSiblingsToRemovePropertyBagValueSeparator.ToCharArray());
+                                foreach (var nameToRemove in namesToRemove)
+                                {
+                                    symbolNamesToRemoveBuilder.Add(nameToRemove);
+                                }
+                            }
                         }
                     }
 
+                    var symbolNamesToRemove = symbolNamesToRemoveBuilder.ToImmutable();
+
+                    // We shouldn't be attempting to remove any symbol name, while also adding it.
+                    Debug.Assert(newSymbolNames.All(newSymbolName => !symbolNamesToRemove.Contains(newSymbolName)));
+
                     SourceText newSourceText = AddSymbolNamesToSourceText(sourceText, newSymbolNames);
+                    newSourceText = RemoveSymbolNamesFromSourceText(newSourceText, symbolNamesToRemove);
 
                     updatedPublicSurfaceAreaText.Add(new KeyValuePair<DocumentId, SourceText>(publicSurfaceAreaAdditionalDocument.Id, newSourceText));
                 }

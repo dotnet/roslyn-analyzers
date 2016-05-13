@@ -42,7 +42,18 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
         private const string _testProjectName = "TestProject";
 
+        /// <summary>
+        /// Return the C# diagnostic analyzer to get analyzer diagnostics.
+        /// This may return null when used in context of verifying a code fix for compiler diagnostics. 
+        /// </summary>
+        /// <returns></returns>
         protected abstract DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer();
+
+        /// <summary>
+        /// Return the VB diagnostic analyzer to get analyzer diagnostics.
+        /// This may return null when used in context of verifying a code fix for compiler diagnostics. 
+        /// </summary>
+        /// <returns></returns>
         protected abstract DiagnosticAnalyzer GetBasicDiagnosticAnalyzer();
 
         private static MetadataReference s_systemRuntimeFacadeRef;
@@ -423,13 +434,18 @@ namespace Microsoft.CodeAnalysis.UnitTests
             return project;
         }
 
-        protected static Diagnostic[] GetSortedDiagnostics(DiagnosticAnalyzer analyzer, Document document, TextSpan?[] spans = null, IEnumerable<TestAdditionalDocument> additionalFiles = null)
+        protected static Diagnostic[] GetSortedDiagnostics(DiagnosticAnalyzer analyzerOpt, Document document, TextSpan?[] spans = null, IEnumerable<TestAdditionalDocument> additionalFiles = null)
         {
-            return GetSortedDiagnostics(analyzer, new[] { document }, spans, additionalFiles);
+            return GetSortedDiagnostics(analyzerOpt, new[] { document }, spans, additionalFiles);
         }
 
-        protected static Diagnostic[] GetSortedDiagnostics(DiagnosticAnalyzer analyzer, Document[] documents, TextSpan?[] spans = null, IEnumerable<TestAdditionalDocument> additionalFiles = null)
+        protected static Diagnostic[] GetSortedDiagnostics(DiagnosticAnalyzer analyzerOpt, Document[] documents, TextSpan?[] spans = null, IEnumerable<TestAdditionalDocument> additionalFiles = null)
         {
+            if (analyzerOpt == null)
+            {
+                return SpecializedCollections.EmptyArray<Diagnostic>();
+            }
+
             var projects = new HashSet<Project>();
             foreach (Document document in documents)
             {
@@ -441,9 +457,9 @@ namespace Microsoft.CodeAnalysis.UnitTests
             foreach (Project project in projects)
             {
                 Compilation compilation = project.GetCompilationAsync().Result;
-                compilation = EnableAnalyzer(analyzer, compilation);
+                compilation = EnableAnalyzer(analyzerOpt, compilation);
 
-                ImmutableArray <Diagnostic> diags = compilation.GetAnalyzerDiagnostics(new[] { analyzer }, analyzerOptions);
+                ImmutableArray <Diagnostic> diags = compilation.GetAnalyzerDiagnostics(new[] { analyzerOpt }, analyzerOptions);
                 if (spans == null)
                 {
                     diagnostics.AddRange(diags);

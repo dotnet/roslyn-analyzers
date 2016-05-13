@@ -119,7 +119,7 @@ namespace Desktop.Analyzers
 
                         SyntaxNode settingsNode = argumentExpressionNodes.ElementAt(xsltSettingsIndex);
                         ISymbol settingsSymbol = SyntaxNodeHelper.GetSymbol(settingsNode, model);
-                        XsltSettingsEnvironment env = null;
+                        XsltSettingsEnvironment env;
 
                         // 1. pass null or XsltSettings.Default as XsltSetting : secure
                         if (settingsSymbol == null || SecurityDiagnosticHelpers.IsXsltSettingsDefaultProperty(settingsSymbol as IPropertySymbol, _xmlTypes))
@@ -270,7 +270,7 @@ namespace Desktop.Analyzers
                             return;
                         }
 
-                        XsltSettingsEnvironment env = null;
+                        XsltSettingsEnvironment env;
                         if (!_xsltSettingsEnvironments.TryGetValue(lhsExpressionSymbol, out env))
                         {
                             env = new XsltSettingsEnvironment

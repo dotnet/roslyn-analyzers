@@ -24,13 +24,12 @@ namespace AnalyzersStatusGenerator
                 return ImmutableArray<CodeFixProvider>.Empty;
             }
 
-            IEnumerable<TypeInfo> typeInfos = null;
             ImmutableArray<CodeFixProvider>.Builder builder = null;
 
             try
             {
                 Assembly analyzerAssembly = analyzerFileReference.GetAssembly();
-                typeInfos = analyzerAssembly.DefinedTypes;
+                IEnumerable<TypeInfo> typeInfos = analyzerAssembly.DefinedTypes;
 
                 foreach (TypeInfo typeInfo in typeInfos)
                 {

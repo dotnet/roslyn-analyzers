@@ -287,7 +287,7 @@ namespace Desktop.Analyzers
                             return;
                         }
 
-                        XmlReaderSettingsEnvironment env = null;
+                        XmlReaderSettingsEnvironment env;
 
                         if (!_xmlReaderSettingsEnvironments.TryGetValue(settingsSymbol, out env))
                         {
@@ -384,7 +384,7 @@ namespace Desktop.Analyzers
 
             private void AnalyzeObjectCreationForXmlDocument(OperationAnalysisContext context, ISymbol variable, IObjectCreationExpression objCreation)
             {
-                XmlDocumentEnvironment xmlDocumentEnvironment = null;
+                XmlDocumentEnvironment xmlDocumentEnvironment;
 
                 if (variable == null || !_xmlDocumentEnvironments.ContainsKey(variable))
                 {
@@ -479,7 +479,7 @@ namespace Desktop.Analyzers
 
             private void AnalyzeObjectCreationForXmlTextReader(OperationAnalysisContext context, ISymbol variable, IObjectCreationExpression objCreation)
             {
-                XmlTextReaderEnvironment env = null;
+                XmlTextReaderEnvironment env;
 
                 if (variable == null || !_xmlTextReaderEnvironments.TryGetValue(variable, out env))
                 {
@@ -650,7 +650,7 @@ namespace Desktop.Analyzers
 
             private void AnalyzeXmlTextReaderProperties(OperationAnalysisContext context, ISymbol assignedSymbol, IAssignmentExpression expression, bool isXmlTextReaderXmlResolverProperty, bool isXmlTextReaderDtdProcessingProperty)
             {
-                XmlTextReaderEnvironment env = null;
+                XmlTextReaderEnvironment env;
 
                 if (!_xmlTextReaderEnvironments.TryGetValue(assignedSymbol, out env))
                 {
@@ -734,7 +734,7 @@ namespace Desktop.Analyzers
                         }
                         else if(SecurityDiagnosticHelpers.IsXmlReaderSettingsType(propRef.Instance.Type, _xmlTypes))
                         {
-                            XmlReaderSettingsEnvironment env = null;
+                            XmlReaderSettingsEnvironment env;
                             
                             if(!_xmlReaderSettingsEnvironments.TryGetValue(assignedSymbol, out env))
                             {

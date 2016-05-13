@@ -131,15 +131,12 @@ namespace System.Runtime.Analyzers
 
             var pos = 0;
             int len = format.Length;
-            var ch = '\x0';
 
             // main loop
             while (true)
             {
-                int p = pos;
-                int i = pos;
-
                 // loop to find starting "{"
+                char ch;
                 while (pos < len)
                 {
                     ch = format[pos];
@@ -148,15 +145,21 @@ namespace System.Runtime.Analyzers
                     if (ch == '}')
                     {
                         if (pos < len && format[pos] == '}') // Treat as escape character for }}
+                        {
                             pos++;
+                        }
                         else
+                        {
                             return -1;
+                        }
                     }
 
                     if (ch == '{')
                     {
                         if (pos < len && format[pos] == '{') // Treat as escape character for {{
+                        {
                             pos++;
+                        }
                         else
                         {
                             pos--;
@@ -264,8 +267,6 @@ namespace System.Runtime.Analyzers
                 if (ch == ':')
                 {
                     pos++;
-                    p = pos;
-                    i = pos;
 
                     while (true)
                     {

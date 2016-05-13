@@ -388,9 +388,11 @@ namespace Desktop.Analyzers
 
                 if (variable == null || !_xmlDocumentEnvironments.ContainsKey(variable))
                 {
-                    xmlDocumentEnvironment = new XmlDocumentEnvironment();
-                    xmlDocumentEnvironment.IsSecureResolver = false;
-                    xmlDocumentEnvironment.IsXmlResolverSet = false;
+                    xmlDocumentEnvironment = new XmlDocumentEnvironment
+                    {
+                        IsSecureResolver = false,
+                        IsXmlResolverSet = false
+                    };
                 }
                 else
                 {
@@ -481,8 +483,10 @@ namespace Desktop.Analyzers
 
                 if (variable == null || !_xmlTextReaderEnvironments.TryGetValue(variable, out env))
                 {
-                    env = new XmlTextReaderEnvironment(_isFrameworkSecure);
-                    env.XmlTextReaderDefinition = objCreation.Syntax;
+                    env = new XmlTextReaderEnvironment(_isFrameworkSecure)
+                    {
+                        XmlTextReaderDefinition = objCreation.Syntax
+                    };
                 }
 
                 if (objCreation.Constructor.ContainingType != _xmlTypes.XmlTextReader)

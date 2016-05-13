@@ -5,16 +5,16 @@ using Microsoft.CodeAnalysis.UnitTests;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 {
-    public class DonTMixBlockingAndAsyncTests : DiagnosticAnalyzerTestBase
+    public class DoNotMixBlockingAndAsyncTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicDonTMixBlockingAndAsyncAnalyzer();
+            return new BasicDoNotMixBlockingAndAsyncAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpDonTMixBlockingAndAsyncAnalyzer();
+            return new CSharpDoNotMixBlockingAndAsyncAnalyzer();
         }
     }
 }

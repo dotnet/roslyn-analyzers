@@ -135,22 +135,22 @@
   <data name="AsyncMethodNamesShouldEndInAsyncMessage" xml:space="preserve">
     <value>Async Method Names Should End in Async</value>
   </data>
-  <data name="DonTPassAsyncLambdasAsVoidReturningDelegateTypesTitle" xml:space="preserve">
+  <data name="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle" xml:space="preserve">
     <value>Don't Pass Async Lambdas as Void Returning Delegate Types</value>
   </data>
-  <data name="DonTPassAsyncLambdasAsVoidReturningDelegateTypesDescription" xml:space="preserve">
+  <data name="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesDescription" xml:space="preserve">
     <value>#N/A</value>
   </data>
-  <data name="DonTPassAsyncLambdasAsVoidReturningDelegateTypesMessage" xml:space="preserve">
+  <data name="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesMessage" xml:space="preserve">
     <value>Don't Pass Async Lambdas as Void Returning Delegate Types</value>
   </data>
-  <data name="DonTStoreAsyncLambdasAsVoidReturningDelegateTypesTitle" xml:space="preserve">
+  <data name="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesTitle" xml:space="preserve">
     <value>Don't Store Async Lambdas as Void Returning Delegate Types</value>
   </data>
-  <data name="DonTStoreAsyncLambdasAsVoidReturningDelegateTypesDescription" xml:space="preserve">
+  <data name="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesDescription" xml:space="preserve">
     <value>#N/A</value>
   </data>
-  <data name="DonTStoreAsyncLambdasAsVoidReturningDelegateTypesMessage" xml:space="preserve">
+  <data name="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesMessage" xml:space="preserve">
     <value>Don't Store Async Lambdas as Void Returning Delegate Types</value>
   </data>
   <data name="PropagateCancellationTokensWhenPossibleTitle" xml:space="preserve">
@@ -162,13 +162,13 @@
   <data name="PropagateCancellationTokensWhenPossibleMessage" xml:space="preserve">
     <value>Propagate CancellationTokens When Possible</value>
   </data>
-  <data name="DonTMixBlockingAndAsyncTitle" xml:space="preserve">
+  <data name="DoNotMixBlockingAndAsyncTitle" xml:space="preserve">
     <value>Don't Mix Blocking and Async</value>
   </data>
-  <data name="DonTMixBlockingAndAsyncDescription" xml:space="preserve">
+  <data name="DoNotMixBlockingAndAsyncDescription" xml:space="preserve">
     <value>#N/A</value>
   </data>
-  <data name="DonTMixBlockingAndAsyncMessage" xml:space="preserve">
+  <data name="DoNotMixBlockingAndAsyncMessage" xml:space="preserve">
     <value>Don't Mix Blocking and Async</value>
   </data>
   <data name="TypesThatOwnDisposableFieldsShouldBeDisposableTitle" xml:space="preserve">

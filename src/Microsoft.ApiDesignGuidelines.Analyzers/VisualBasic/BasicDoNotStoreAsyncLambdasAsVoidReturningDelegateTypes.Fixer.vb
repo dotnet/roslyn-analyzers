@@ -9,8 +9,8 @@ Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' Async004: Don't Store Async Lambdas as Void Returning Delegate Types
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
-    Public NotInheritable Class BasicDonTStoreAsyncLambdasAsVoidReturningDelegateTypesFixer
-        Inherits DonTStoreAsyncLambdasAsVoidReturningDelegateTypesFixer
+    Public NotInheritable Class BasicDoNotStoreAsyncLambdasAsVoidReturningDelegateTypesFixer
+        Inherits DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesFixer
 
     End Class
 End Namespace

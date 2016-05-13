@@ -5,16 +5,16 @@ using Microsoft.CodeAnalysis.UnitTests;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 {
-    public class DonTStoreAsyncLambdasAsVoidReturningDelegateTypesTests : DiagnosticAnalyzerTestBase
+    public class DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicDonTStoreAsyncLambdasAsVoidReturningDelegateTypesAnalyzer();
+            return new BasicDoNotPassAsyncLambdasAsVoidReturningDelegateTypesAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpDonTStoreAsyncLambdasAsVoidReturningDelegateTypesAnalyzer();
+            return new CSharpDoNotPassAsyncLambdasAsVoidReturningDelegateTypesAnalyzer();
         }
     }
 }

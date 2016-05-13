@@ -10,9 +10,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// Async004: Don't Store Async Lambdas as Void Returning Delegate Types
     /// </summary>
-    public abstract class DonTStoreAsyncLambdasAsVoidReturningDelegateTypesFixer : CodeFixProvider
+    public abstract class DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DontStoreAsyncLambdasAsVoidReturningDelegateTypesAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesAnalyzer.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

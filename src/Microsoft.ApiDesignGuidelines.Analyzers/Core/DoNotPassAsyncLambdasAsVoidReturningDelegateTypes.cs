@@ -8,16 +8,16 @@ using Microsoft.CodeAnalysis;
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
     /// <summary>
-    /// Async006: Don't Mix Blocking and Async
+    /// Async003: Don't Pass Async Lambdas as Void Returning Delegate Types
     /// </summary>
-    public abstract class DontMixBlockingAndAsyncAnalyzer : DiagnosticAnalyzer
+    public abstract class DoNotPassAsyncLambdasAsVoidReturningDelegateTypesAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "Async006";
+        internal const string RuleId = "Async003";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DonTMixBlockingAndAsyncTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DonTMixBlockingAndAsyncMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DonTMixBlockingAndAsyncDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotPassAsyncLambdasAsVoidReturningDelegateTypesMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotPassAsyncLambdasAsVoidReturningDelegateTypesDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,

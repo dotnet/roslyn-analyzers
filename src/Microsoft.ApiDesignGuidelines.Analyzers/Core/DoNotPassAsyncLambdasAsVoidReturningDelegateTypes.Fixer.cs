@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
     /// <summary>
-    /// Async006: Don't Mix Blocking and Async
+    /// Async003: Don't Pass Async Lambdas as Void Returning Delegate Types
     /// </summary>
-    public abstract class DonTMixBlockingAndAsyncFixer : CodeFixProvider
+    public abstract class DoNotPassAsyncLambdasAsVoidReturningDelegateTypesFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DontMixBlockingAndAsyncAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DoNotPassAsyncLambdasAsVoidReturningDelegateTypesAnalyzer.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

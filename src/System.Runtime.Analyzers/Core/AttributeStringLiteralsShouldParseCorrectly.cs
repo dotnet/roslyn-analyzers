@@ -168,7 +168,7 @@ namespace System.Runtime.Analyzers
                 }
 
                 // If the name of the parameter is not something which requires the value-passed
-                // to the parameter to be validated then we dont have to do anything
+                // to the parameter to be validated then we don't have to do anything
                 var valueValidator = GetValueValidator(parameter.Name);
                 if (valueValidator != null && !valueValidator.IsIgnoredName(parameter.Name))
                 {

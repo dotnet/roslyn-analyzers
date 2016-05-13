@@ -67,7 +67,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
                 var initializerValue = fieldInitializerValue.ConstantValue.Value;
 
-                // Though null is const we dont fire the diagnostic to be FxCop Compact
+                // Though null is const we don't fire the diagnostic to be FxCop Compact
                 if (initializerValue != null)
                 {
                     if (fieldInitializerValue.Type?.SpecialType == SpecialType.System_String &&

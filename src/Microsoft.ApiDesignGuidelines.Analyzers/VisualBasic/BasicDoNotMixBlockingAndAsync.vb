@@ -5,11 +5,11 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 
 Namespace Microsoft.ApiDesignGuidelines.Analyzers
     ''' <summary>
-    ''' Async004: Don't Store Async Lambdas as Void Returning Delegate Types
+    ''' Async006: Don't Mix Blocking and Async
     ''' </summary>
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
-    Public NotInheritable Class BasicDonTStoreAsyncLambdasAsVoidReturningDelegateTypesAnalyzer
-        Inherits DontStoreAsyncLambdasAsVoidReturningDelegateTypesAnalyzer
+    Public NotInheritable Class BasicDoNotMixBlockingAndAsyncAnalyzer
+        Inherits DoNotMixBlockingAndAsyncAnalyzer
 
     End Class
 End Namespace

@@ -110,7 +110,7 @@ class Bar
 using System;
 using System.Collections.Generic;
 
-public sealed class SomeEqualityComparer : IEqualityComparer<string>
+public sealed class SomeEqualityComparer : IEqualityComparer<string>, IEqualityComparer<int>
 {
     public bool Equals(string x, string y) 
     { 
@@ -118,6 +118,16 @@ public sealed class SomeEqualityComparer : IEqualityComparer<string>
     }
 
     public int GetHashCode(string obj) 
+    { 
+        throw new NotImplementedException(); 
+    }
+
+    public bool Equals(int x, int y) 
+    { 
+        throw new NotImplementedException(); 
+    }
+
+    public int GetHashCode(int obj) 
     { 
         throw new NotImplementedException(); 
     }

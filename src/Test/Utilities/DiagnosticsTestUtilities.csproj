@@ -44,6 +44,7 @@
     <Compile Include="DiagnosticAnalyzerTests.Extensions.cs" />
     <Compile Include="DiagnosticDescription.cs" />
     <Compile Include="DiagnosticExtensions.cs" />
+    <Compile Include="TestAdditionalDocument.cs" />
     <Compile Include="DiagnosticResult.cs" />
     <Compile Include="DiffUtil.cs" />
     <Compile Include="EnsureEnglishUICulture.cs" />

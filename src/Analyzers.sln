@@ -216,7 +216,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalyzersStatusGenerator", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{57CFC658-9390-42DA-AB5C-72B67F700B41}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\Roslyn With Spaces\src\Dependencies\ReadMe.txt = ..\..\Roslyn With Spaces\src\Dependencies\ReadMe.txt
+		..\..\Roslyn\src\Dependencies\ReadMe.txt = ..\..\Roslyn\src\Dependencies\ReadMe.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeAnalysis", "Dependencies\CodeAnalysis\CodeAnalysis.csproj", "{434FA01F-B8CB-41F7-88D1-7906003F23BC}"

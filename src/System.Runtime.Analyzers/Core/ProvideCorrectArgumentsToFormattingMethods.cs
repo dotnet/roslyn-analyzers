@@ -67,11 +67,7 @@ namespace System.Runtime.Analyzers
                     // explict parameter case
                     if (info.ExpectedStringFormatArgumentCount >= 0)
                     {
-                        // TODO: due to a bug - https://github.com/dotnet/roslyn/issues/7346
-                        //       vararg case is disabled.
-                        //       we might check this only for C# since __arglist is not supported in VB
-                        //
-                        //       we need to implement proper support for __arglist once the bug is fixed.
+                        // __arglist is not supported here
                         if (invocation.TargetMethod.IsVararg)
                         {
                             // can't deal with this for now.

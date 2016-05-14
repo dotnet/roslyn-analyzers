@@ -61,10 +61,10 @@ namespace Desktop.Analyzers
 
                     foreach (var operation in operationBlockAnalysisContext.OperationBlocks)
                     {
-                        var walker = new CatchInsideBlockWalker(compilationTypes);
+                        var walker = new EmptyThrowInsideCatchAllWalker(compilationTypes);
                         walker.Visit(operation);
 
-                        foreach (var catchClause in walker.CatchAllCatchClauses)
+                        foreach (var catchClause in walker.CatchAllCatchClausesWithoutEmptyThrow)
                         {
                             operationBlockAnalysisContext.ReportDiagnostic(catchClause.Syntax.CreateDiagnostic(Rule,
                                 method.ToDisplayString()));
@@ -82,38 +82,47 @@ namespace Desktop.Analyzers
         }
 
         /// <summary>
-        /// Walks an IOperation tree to find catch blocks that contain no empty throw statements.
+        /// Walks an IOperation tree to find catch-all blocks that contain no "throw;" statements.
         /// </summary>
-        private class CatchInsideBlockWalker : OperationWalker
+        private class EmptyThrowInsideCatchAllWalker : OperationWalker
         {
             private readonly CompilationSecurityTypes _compilationTypes;
+            private readonly Stack<bool> _seenEmptyThrowIncatchClauses = new Stack<bool>();
 
-            public IList<ICatchClause> CatchAllCatchClauses { get; } = new List<ICatchClause>();
+            public ISet<ICatchClause> CatchAllCatchClausesWithoutEmptyThrow { get; } = new HashSet<ICatchClause>();
 
-            public CatchInsideBlockWalker(CompilationSecurityTypes compilationTypes)
+            public EmptyThrowInsideCatchAllWalker(CompilationSecurityTypes compilationTypes)
             {
                 _compilationTypes = compilationTypes;
             }
 
             public override void VisitCatch(ICatchClause operation)
             {
-                Visit(operation.Filter);
+                _seenEmptyThrowIncatchClauses.Push(false);
 
-                if (IsCaughtTypeTooGeneral(operation.CaughtType))
+                Visit(operation.Filter);
+                Visit(operation.Handler);
+
+                bool seenEmptyThrow = _seenEmptyThrowIncatchClauses.Pop();
+
+                if (IsCaughtTypeTooGeneral(operation.CaughtType) && !seenEmptyThrow)
                 {
                     // TODO: Abort in case parent is a lambda.
                     // for now there doesn't seem to be any way to annotate lambdas with attributes
 
-                    var walter = new ThrowInsideCatchWalker();
-                    walter.Visit(operation.Handler);
+                    CatchAllCatchClausesWithoutEmptyThrow.Add(operation);
+                }
+            }
 
-                    if (!walter.EmptyThrowStatements.Any())
-                    {
-                        CatchAllCatchClauses.Add(operation);
-                    }
+            public override void VisitThrowStatement(IThrowStatement operation)
+            {
+                if (operation.ThrownObject == null && _seenEmptyThrowIncatchClauses.Count > 0 && !_seenEmptyThrowIncatchClauses.Peek())
+                {
+                    _seenEmptyThrowIncatchClauses.Pop();
+                    _seenEmptyThrowIncatchClauses.Push(true);
                 }
 
-                Visit(operation.Handler);
+                base.VisitThrowStatement(operation);
             }
 
             private bool IsCaughtTypeTooGeneral(ITypeSymbol caughtType)
@@ -122,36 +131,6 @@ namespace Desktop.Analyzers
                        caughtType == _compilationTypes.SystemException ||
                        caughtType == _compilationTypes.SystemSystemException ||
                        caughtType == _compilationTypes.SystemObject;
-            }
-        }
-
-        /// <summary>
-        /// Walks an IOperation tree to find empty throw statements.
-        /// </summary>
-        private class ThrowInsideCatchWalker : OperationWalker
-        {
-            private int _catchBlockNestingDepth;
-
-            public List<IThrowStatement> EmptyThrowStatements { get; } = new List<IThrowStatement>();
-
-            public override void VisitCatch(ICatchClause operation)
-            {
-                _catchBlockNestingDepth++;
-
-                Visit(operation.Filter);
-                Visit(operation.Handler);
-
-                _catchBlockNestingDepth--;
-            }
-
-            public override void VisitThrowStatement(IThrowStatement operation)
-            {
-                if (_catchBlockNestingDepth == 0 && operation.ThrownObject == null)
-                {
-                    EmptyThrowStatements.Add(operation);
-                }
-
-                base.VisitThrowStatement(operation);
             }
         }
     }

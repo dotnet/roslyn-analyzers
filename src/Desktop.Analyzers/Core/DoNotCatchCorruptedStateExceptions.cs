@@ -87,7 +87,7 @@ namespace Desktop.Analyzers
         private class EmptyThrowInsideCatchAllWalker : OperationWalker
         {
             private readonly CompilationSecurityTypes _compilationTypes;
-            private readonly Stack<bool> _seenEmptyThrowIncatchClauses = new Stack<bool>();
+            private readonly Stack<bool> _seenEmptyThrowInCatchClauses = new Stack<bool>();
 
             public ISet<ICatchClause> CatchAllCatchClausesWithoutEmptyThrow { get; } = new HashSet<ICatchClause>();
 
@@ -98,12 +98,12 @@ namespace Desktop.Analyzers
 
             public override void VisitCatch(ICatchClause operation)
             {
-                _seenEmptyThrowIncatchClauses.Push(false);
+                _seenEmptyThrowInCatchClauses.Push(false);
 
                 Visit(operation.Filter);
                 Visit(operation.Handler);
 
-                bool seenEmptyThrow = _seenEmptyThrowIncatchClauses.Pop();
+                bool seenEmptyThrow = _seenEmptyThrowInCatchClauses.Pop();
 
                 if (IsCaughtTypeTooGeneral(operation.CaughtType) && !seenEmptyThrow)
                 {
@@ -116,10 +116,10 @@ namespace Desktop.Analyzers
 
             public override void VisitThrowStatement(IThrowStatement operation)
             {
-                if (operation.ThrownObject == null && _seenEmptyThrowIncatchClauses.Count > 0 && !_seenEmptyThrowIncatchClauses.Peek())
+                if (operation.ThrownObject == null && _seenEmptyThrowInCatchClauses.Count > 0 && !_seenEmptyThrowInCatchClauses.Peek())
                 {
-                    _seenEmptyThrowIncatchClauses.Pop();
-                    _seenEmptyThrowIncatchClauses.Push(true);
+                    _seenEmptyThrowInCatchClauses.Pop();
+                    _seenEmptyThrowInCatchClauses.Push(true);
                 }
 
                 base.VisitThrowStatement(operation);

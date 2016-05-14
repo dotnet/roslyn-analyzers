@@ -10,12 +10,12 @@ namespace Desktop.Analyzers.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicDoNotCatchCorruptedStateExceptionsAnalyzer();
+            return new DoNotCatchCorruptedStateExceptionsAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpDoNotCatchCorruptedStateExceptionsAnalyzer();
+            return new DoNotCatchCorruptedStateExceptionsAnalyzer();
         }
 
         [Fact]
@@ -1357,7 +1357,7 @@ namespace Desktop.Analyzers.UnitTests
             ");
         }
 
-        private const string CA2153RuleName = CSharpDoNotCatchCorruptedStateExceptionsAnalyzer.RuleId;
+        private const string CA2153RuleName = DoNotCatchCorruptedStateExceptionsAnalyzer.RuleId;
 
         private DiagnosticResult GetCA2153CSharpResultAt(int line, int column, string signature, string typeName)
         {

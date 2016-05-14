@@ -1,24 +1,25 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
+using Microsoft.CodeAnalysis.Semantics;
 
 namespace Desktop.Analyzers
 {
-    public abstract class DoNotCatchCorruptedStateExceptionsAnalyzer<TLanguageKindEnum, TCatchClauseSyntax, TThrowStatementSyntax> : DiagnosticAnalyzer
-        where TLanguageKindEnum : struct
-        where TCatchClauseSyntax : SyntaxNode
-        where TThrowStatementSyntax : SyntaxNode
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class DoNotCatchCorruptedStateExceptionsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2153";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotCatchCorruptedStateExceptions), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotCatchCorruptedStateExceptionsMessage), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotCatchCorruptedStateExceptionsDescription), DesktopAnalyzersResources.ResourceManager, typeof(DesktopAnalyzersResources));
+
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
@@ -29,131 +30,128 @@ namespace Desktop.Analyzers
                                                                              helpLinkUri: "http://aka.ms/CA2153",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
-        protected abstract CodeBlockAnalyzer GetAnalyzer(CompilationSecurityTypes compilationTypes, ISymbol owningSymbol, SyntaxNode codeBlock);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics = ImmutableArray.Create(Rule);
-
-        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public override void Initialize(AnalysisContext analysisContext)
         {
-            get
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
+
+            analysisContext.RegisterCompilationStartAction(compilationStartAnalysisContext =>
             {
-                return s_supportedDiagnostics;
+                var compilationTypes = new CompilationSecurityTypes(compilationStartAnalysisContext.Compilation);
+                if (compilationTypes.HandleProcessCorruptedStateExceptionsAttribute == null)
+                {
+                    return;
+                }
+
+                compilationStartAnalysisContext.RegisterOperationBlockAction(operationBlockAnalysisContext =>
+                {
+                    if (operationBlockAnalysisContext.OwningSymbol.Kind != SymbolKind.Method)
+                    {
+                        return;
+                    }
+
+                    var method = (IMethodSymbol) operationBlockAnalysisContext.OwningSymbol;
+
+                    if (!ContainsHandleProcessCorruptedStateExceptionsAttribute(method, compilationTypes))
+                    {
+                        return;
+                    }
+
+                    foreach (var operation in operationBlockAnalysisContext.OperationBlocks)
+                    {
+                        var walker = new CatchInsideBlockWalker(compilationTypes);
+                        walker.Visit(operation);
+
+                        foreach (var catchClause in walker.CatchAllCatchClauses)
+                        {
+                            operationBlockAnalysisContext.ReportDiagnostic(catchClause.Syntax.CreateDiagnostic(Rule,
+                                method.ToDisplayString()));
+                        }
+                    }
+                });
+            });
+        }
+
+        private bool ContainsHandleProcessCorruptedStateExceptionsAttribute(IMethodSymbol method, CompilationSecurityTypes compilationTypes)
+        {
+            ImmutableArray<AttributeData> attributes = method.GetAttributes();
+            return attributes.Any(
+                attribute => attribute.AttributeClass.Equals(compilationTypes.HandleProcessCorruptedStateExceptionsAttribute));
+        }
+
+        /// <summary>
+        /// Walks an IOperation tree to find catch blocks that contain no empty throw statements.
+        /// </summary>
+        private class CatchInsideBlockWalker : OperationWalker
+        {
+            private readonly CompilationSecurityTypes _compilationTypes;
+
+            public IList<ICatchClause> CatchAllCatchClauses { get; } = new List<ICatchClause>();
+
+            public CatchInsideBlockWalker(CompilationSecurityTypes compilationTypes)
+            {
+                _compilationTypes = compilationTypes;
+            }
+
+            public override void VisitCatch(ICatchClause operation)
+            {
+                Visit(operation.Filter);
+
+                if (IsCaughtTypeTooGeneral(operation.CaughtType))
+                {
+                    // TODO: Abort in case parent is a lambda.
+                    // for now there doesn't seem to be any way to annotate lambdas with attributes
+
+                    var walter = new ThrowInsideCatchWalker();
+                    walter.Visit(operation.Handler);
+
+                    if (!walter.EmptyThrowStatements.Any())
+                    {
+                        CatchAllCatchClauses.Add(operation);
+                    }
+                }
+
+                Visit(operation.Handler);
+            }
+
+            private bool IsCaughtTypeTooGeneral(ITypeSymbol caughtType)
+            {
+                return caughtType == null ||
+                       caughtType == _compilationTypes.SystemException ||
+                       caughtType == _compilationTypes.SystemSystemException ||
+                       caughtType == _compilationTypes.SystemObject;
             }
         }
 
         /// <summary>
-        /// Initialize the analyzer.
+        /// Walks an IOperation tree to find empty throw statements.
         /// </summary>
-        /// <param name="analysisContext">Analyzer Context.</param>
-        public override void Initialize(AnalysisContext analysisContext)
+        private class ThrowInsideCatchWalker : OperationWalker
         {
-            // TODO: Make analyzer thread-safe.
-            //analysisContext.EnableConcurrentExecution();
+            private int _catchBlockNestingDepth;
 
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
+            public List<IThrowStatement> EmptyThrowStatements { get; } = new List<IThrowStatement>();
 
-            analysisContext.RegisterCompilationStartAction(
-                (context) =>
-                {
-                    var compilationTypes = new CompilationSecurityTypes(context.Compilation);
-                    if (compilationTypes.HandleProcessCorruptedStateExceptionsAttribute != null)
-                    {
-                        context.RegisterCodeBlockStartAction<TLanguageKindEnum>(
-                        codeBlockStartContext =>
-                        {
-                            ISymbol owningSymbol = codeBlockStartContext.OwningSymbol;
-                            if (owningSymbol.Kind == SymbolKind.Method)
-                            {
-                                var method = (IMethodSymbol)owningSymbol;
-
-                                ImmutableArray<AttributeData> attributes = method.GetAttributes();
-                                if (attributes.FirstOrDefault(attribute => attribute.AttributeClass == compilationTypes.HandleProcessCorruptedStateExceptionsAttribute) != null)
-                                {
-                                    CodeBlockAnalyzer analyzer = GetAnalyzer(compilationTypes, owningSymbol, codeBlockStartContext.CodeBlock);
-                                    codeBlockStartContext.RegisterSyntaxNodeAction(analyzer.AnalyzeCatchClause, analyzer.CatchClauseKind);
-                                    codeBlockStartContext.RegisterSyntaxNodeAction(analyzer.AnalyzeThrowStatement, analyzer.ThrowStatementKind);
-                                    codeBlockStartContext.RegisterCodeBlockEndAction(analyzer.AnalyzeCodeBlockEnd);
-                                }
-                            }
-                        });
-                    }
-                });
-        }
-
-        protected abstract class CodeBlockAnalyzer
-        {
-            private readonly ISymbol _owningSymbol;
-            private readonly SyntaxNode _codeBlock;
-            private readonly Dictionary<TCatchClauseSyntax, ISymbol> _catchAllCatchClauses;
-
-            public abstract TLanguageKindEnum CatchClauseKind { get; }
-            public abstract TLanguageKindEnum ThrowStatementKind { get; }
-            protected CompilationSecurityTypes TypesOfInterest { get; private set; }
-            protected abstract ISymbol GetExceptionTypeSymbolFromCatchClause(TCatchClauseSyntax catchNode, SemanticModel model);
-            protected abstract bool IsThrowStatementWithNoArgument(TThrowStatementSyntax throwNode);
-            protected abstract bool IsCatchClause(SyntaxNode node);
-            protected abstract bool IslambdaExpression(SyntaxNode node);
-
-            protected CodeBlockAnalyzer(CompilationSecurityTypes compilationTypes, ISymbol owningSymbol, SyntaxNode codeBlock)
+            public override void VisitCatch(ICatchClause operation)
             {
-                _owningSymbol = owningSymbol;
-                _codeBlock = codeBlock;
-                _catchAllCatchClauses = new Dictionary<TCatchClauseSyntax, ISymbol>();
-                TypesOfInterest = compilationTypes;
+                _catchBlockNestingDepth++;
+
+                Visit(operation.Filter);
+                Visit(operation.Handler);
+
+                _catchBlockNestingDepth--;
             }
 
-            public void AnalyzeCatchClause(SyntaxNodeAnalysisContext context)
+            public override void VisitThrowStatement(IThrowStatement operation)
             {
-                var catchNode = (TCatchClauseSyntax)context.Node;
-                ISymbol exceptionTypeSymbol = GetExceptionTypeSymbolFromCatchClause(catchNode, context.SemanticModel);
-
-                if (IsCatchTypeTooGeneral(exceptionTypeSymbol))
+                if (_catchBlockNestingDepth == 0 && operation.ThrownObject == null)
                 {
-                    SyntaxNode parentNode = catchNode.Parent;
-                    while (parentNode != _codeBlock)
-                    {
-                        // for now there doesn't seem to have any way to annotate lambdas with attributes
-                        if (IslambdaExpression(parentNode))
-                        {
-                            return;
-                        }
-                        parentNode = parentNode.Parent;
-                    }
-                    _catchAllCatchClauses[catchNode] = exceptionTypeSymbol;
+                    EmptyThrowStatements.Add(operation);
                 }
-            }
 
-            public void AnalyzeThrowStatement(SyntaxNodeAnalysisContext context)
-            {
-                var throwNode = (TThrowStatementSyntax)context.Node;
-
-                // throwNode is a throw statement with no argument, which is not allowed outside of a catch clause
-                if (IsThrowStatementWithNoArgument(throwNode))
-                {
-                    var enlcosingCatchClause = (TCatchClauseSyntax)throwNode.Ancestors().First(IsCatchClause);
-                    _catchAllCatchClauses.Remove(enlcosingCatchClause);
-                }
-            }
-
-            public void AnalyzeCodeBlockEnd(CodeBlockAnalysisContext context)
-            {
-                foreach (KeyValuePair<TCatchClauseSyntax, ISymbol> pair in _catchAllCatchClauses)
-                {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            Rule,
-                            pair.Key.GetLocation(),
-                            _owningSymbol.ToDisplayString(),
-                            pair.Value.ToDisplayString()));
-                }
-            }
-
-            private bool IsCatchTypeTooGeneral(ISymbol catchTypeSym)
-            {
-                return catchTypeSym == null
-                        || catchTypeSym == TypesOfInterest.SystemException
-                        || catchTypeSym == TypesOfInterest.SystemSystemException
-                        || catchTypeSym == TypesOfInterest.SystemObject;
+                base.VisitThrowStatement(operation);
             }
         }
     }

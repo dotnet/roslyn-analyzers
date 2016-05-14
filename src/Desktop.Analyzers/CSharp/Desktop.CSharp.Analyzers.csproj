@@ -45,7 +45,6 @@
   <ItemGroup>
     <Compile Include="CSharpDoNotUseInsecureDtdProcessingInApiDesigner.cs" />
     <Compile Include="CSharpDoNotUseInsecureXSLTScriptExecution.cs" />
-    <Compile Include="CSharpDoNotCatchCorruptedStateExceptions.cs" />
     <Compile Include="CSharpDoNotUseInsecureCyrptographicAlgorithms.cs" />
     <Compile Include="Helpers\SyntaxNodeHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

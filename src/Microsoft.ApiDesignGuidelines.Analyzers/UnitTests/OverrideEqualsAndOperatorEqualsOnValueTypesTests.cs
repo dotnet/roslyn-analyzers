@@ -66,7 +66,7 @@ public struct EmptyStruct
         }
 
         [WorkItem(899, "https://github.com/dotnet/roslyn-analyzers/issues/899")]
-        [Fact(Skip = "899")]
+        [Fact]
         public void CSharpNoDiagnosticForEnumerators()
         {
             VerifyCSharp(@"
@@ -261,7 +261,7 @@ End Structure
         }
 
         [WorkItem(899, "https://github.com/dotnet/roslyn-analyzers/issues/899")]
-        [Fact(Skip = "899")]
+        [Fact]
         public void BasicNoDiagnosticForEnumerators()
         {
             VerifyBasic(@"

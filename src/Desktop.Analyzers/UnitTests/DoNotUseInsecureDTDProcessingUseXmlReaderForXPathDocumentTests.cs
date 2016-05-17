@@ -162,6 +162,7 @@ End Class",
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml.XPath
 
 Class TestClass
@@ -175,7 +176,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075XPathDocumentBasicResultAt(8, 24)
+                GetCA3075XPathDocumentBasicResultAt(9, 24)
             );
         }
 
@@ -203,6 +204,7 @@ End Class",
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml.XPath
 
 Class TestClass
@@ -215,7 +217,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075XPathDocumentBasicResultAt(9, 24)
+                GetCA3075XPathDocumentBasicResultAt(10, 24)
             );
         }
 
@@ -243,6 +245,7 @@ class TestClass
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml.XPath
 
 Class TestClass
@@ -256,7 +259,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075XPathDocumentBasicResultAt(11, 24)
+                GetCA3075XPathDocumentBasicResultAt(12, 24)
             );
         }
 
@@ -298,7 +301,7 @@ Class TestClass
         End Function)
     End Function
 
-    Private Sub TestMethod2()
+    Private Async Sub TestMethod2()
         Await TestMethod()
     End Sub
 End Class",

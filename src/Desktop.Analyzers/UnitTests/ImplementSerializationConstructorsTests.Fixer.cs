@@ -70,7 +70,7 @@ Imports System.Runtime.Serialization
 Public Class CA2229NoConstructor
     Implements ISerializable
 
-    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
         throw new NotImplementedException()
     End Sub
 End Class", @"
@@ -80,7 +80,7 @@ Imports System.Runtime.Serialization
 Public Class CA2229NoConstructor
     Implements ISerializable
 
-    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
         throw new NotImplementedException()
     End Sub
 
@@ -129,7 +129,7 @@ Public Class CA2229HasConstructorWrongAccessibility
     Public Sub New(info As SerializationInfo, context As StreamingContext)
     End Sub
 
-    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
         throw new NotImplementedException()
     End Sub
 End Class", @"
@@ -142,7 +142,7 @@ Public Class CA2229HasConstructorWrongAccessibility
     Protected Sub New(info As SerializationInfo, context As StreamingContext)
     End Sub
 
-    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
         throw new NotImplementedException()
     End Sub
 End Class");
@@ -187,7 +187,7 @@ Public NotInheritable Class CA2229HasConstructorWrongAccessibility2
     Protected Friend Sub New(info As SerializationInfo, context As StreamingContext)
     End Sub
 
-    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
         throw new NotImplementedException()
     End Sub
 End Class", @"
@@ -200,7 +200,7 @@ Public NotInheritable Class CA2229HasConstructorWrongAccessibility2
     Private Sub New(info As SerializationInfo, context As StreamingContext)
     End Sub
 
-    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
         throw new NotImplementedException()
     End Sub
 End Class");

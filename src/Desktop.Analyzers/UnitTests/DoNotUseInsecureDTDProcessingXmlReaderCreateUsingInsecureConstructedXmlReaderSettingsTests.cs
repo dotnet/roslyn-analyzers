@@ -384,6 +384,7 @@ namespace TestNamespace
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml
 Namespace TestNamespace
     Public Class TestClass
@@ -428,6 +429,7 @@ namespace TestNamespace
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml
 Namespace TestNamespace
     Public Class TestClass
@@ -471,6 +473,7 @@ namespace TestNamespace
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml
 Namespace TestNamespace
     Public Class TestClass

@@ -343,7 +343,7 @@ namespace TestNamespace
 
         public void method()
         {
-            DtdProcessing = DtdProcessing.prohibit;
+            DtdProcessing = DtdProcessing.Prohibit;
         }
     }
 }"
@@ -361,7 +361,7 @@ Namespace TestNamespace
         End Sub
 
         Public Sub method()
-            DtdProcessing = DtdProcessing.prohibit
+            DtdProcessing = DtdProcessing.Prohibit
         End Sub
     End Class
 End Namespace");

@@ -152,6 +152,7 @@ namespace TestNamespace
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
+Imports System.Threading.Tasks
 
 Module TestClass
     Public Async Sub TestMethod()
@@ -160,7 +161,7 @@ Module TestClass
                        End Function)
     End Sub
 End Module",
-            GetBasicResultAt(7, 35, s_CA5351Rule, "TestMethod", "HMACMD5"));
+            GetBasicResultAt(8, 35, s_CA5351Rule, "Run", "HMACMD5"));
         }
 
         [Fact]
@@ -296,7 +297,7 @@ Imports System.Security.Cryptography
 Imports System.Threading.Tasks
 Namespace TestNamespace
 	Class TestClass
-		Private Function TestMethod() As Task
+		Private Async Function TestMethod() As Task
 			Await Task.Run(Function() 
 			DES.Create()
 End Function)
@@ -518,6 +519,7 @@ Namespace TestNamespace
 End Namespace",
 //Test1
                 @"
+Imports System
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class MyDES
@@ -727,6 +729,7 @@ Namespace TestNamespace
 End Namespace",
 //Test1
 @"
+Imports System
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class MyRC2
@@ -1068,6 +1071,7 @@ End Namespace",
 
 //Test1
                 @"
+Imports System
 Imports System.Security.Cryptography
 
 Namespace TestNamespace
@@ -1523,6 +1527,8 @@ Namespace TestNamespace
 End Namespace",
 //Test1
                 @"
+Imports System
+Imports System.Security
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class MyRIPEMD160
@@ -1601,6 +1607,7 @@ Namespace TestNamespace
 End Namespace",
 //Test1
                 @"
+Imports System
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class MyRIPEMD160
@@ -1880,6 +1887,7 @@ Namespace TestNamespace
 End Namespace",
 //Test1
                 @"
+Imports System
 Imports System.Security.Cryptography
 
 Namespace TestNamespace
@@ -2099,6 +2107,7 @@ Namespace TestNamespace
 End Namespace",
 //Test1
                 @"
+Imports System
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class MyRijndael

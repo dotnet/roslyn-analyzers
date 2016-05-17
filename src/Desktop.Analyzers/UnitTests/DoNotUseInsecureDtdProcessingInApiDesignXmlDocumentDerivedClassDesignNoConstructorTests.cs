@@ -39,6 +39,7 @@ namespace TestNamespace
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml
 
 Namespace TestNamespace
@@ -73,6 +74,7 @@ namespace TestNamespace
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml
 
 Namespace TestNamespace

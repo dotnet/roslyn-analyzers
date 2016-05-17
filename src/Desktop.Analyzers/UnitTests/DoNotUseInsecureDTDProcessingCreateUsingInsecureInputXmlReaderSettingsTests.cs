@@ -228,6 +228,7 @@ class TestClass6a
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml
 
 Class TestClass6a
@@ -242,7 +243,7 @@ Class TestClass6a
         End Try
     End Sub
 End Class",
-                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(9, 26)
+                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(10, 26)
             );
         }
 
@@ -271,6 +272,7 @@ class TestClass6a
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml
 
 Class TestClass6a
@@ -284,7 +286,7 @@ Class TestClass6a
         End Try
     End Sub
 End Class",
-                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(10, 26)
+                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(11, 26)
             );
         }
 
@@ -313,6 +315,7 @@ class TestClass6a
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml
 
 Class TestClass6a
@@ -327,7 +330,7 @@ Class TestClass6a
         End Try
     End Sub
 End Class",
-                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(12, 26)
+                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(13, 26)
             );
         }
 
@@ -372,7 +375,7 @@ Class TestClass
 End Function)
     End Function
 
-    Private Sub TestMethod2()
+    Private Async Sub TestMethod2()
         Await TestMethod()
     End Sub
 End Class",
@@ -542,6 +545,7 @@ namespace TestNamespace
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.IO
 Imports System.Xml
 
@@ -578,7 +582,7 @@ Namespace TestNamespace
         End Function
     End Class
 End Namespace",
-                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(10, 31)
+                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(11, 31)
             );
         }
     }

@@ -399,7 +399,7 @@ End Namespace");
         {
             VerifyCSharp(@"
 using System;
-using System.Xml
+using System.Xml;
 
 namespace TestNamespace
 {

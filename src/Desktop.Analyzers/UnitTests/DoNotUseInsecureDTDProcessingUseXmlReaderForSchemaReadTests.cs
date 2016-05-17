@@ -105,24 +105,24 @@ using System.Xml.Schema;
 
 class TestClass
 {
-XmlSchema privateDoc;
-public XmlSchema GetDoc
+    XmlSchema privateDoc;
+    public XmlSchema GetDoc
+    {
+        set
         {
-            set
+            if (value == null)
             {
-                if (value == null)
-                {
-                    var src = """";
-                    TextReader tr = new StreamReader(src);
-                    XmlSchema schema = XmlSchema.Read(tr, null);
-                    privateDoc = schema;
-                }
-                else
-                    privateDoc = value;
+                var src = """";
+                TextReader tr = new StreamReader(src);
+                XmlSchema schema = XmlSchema.Read(tr, null);
+                privateDoc = schema;
             }
+            else
+                privateDoc = value;
         }
+    }
 }",
-                GetCA3075SchemaReadCSharpResultAt(17, 40)
+                GetCA3075SchemaReadCSharpResultAt(17, 36)
             );
 
             VerifyBasic(@"
@@ -175,6 +175,7 @@ class TestClass
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Data
 Imports System.IO
 Imports System.Xml.Schema
@@ -190,7 +191,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075SchemaReadBasicResultAt(10, 39)
+                GetCA3075SchemaReadBasicResultAt(11, 39)
             );
         }
 
@@ -198,10 +199,10 @@ End Class",
         public void UseXmlSchemaReadWithoutXmlTextReaderInCatchBlockShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
-   using System;
-   using System.Data;
-using System.IO;
-using System.Xml.Schema;
+    using System;
+    using System.Data;
+    using System.IO;
+    using System.Xml.Schema;
     class TestClass
     {
         private void TestMethod()
@@ -220,6 +221,7 @@ using System.Xml.Schema;
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Data
 Imports System.IO
 Imports System.Xml.Schema
@@ -234,7 +236,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075SchemaReadBasicResultAt(11, 39)
+                GetCA3075SchemaReadBasicResultAt(12, 39)
             );
         }
 
@@ -242,10 +244,10 @@ End Class",
         public void UseXmlSchemaReadWithoutXmlTextReaderInFinallyBlockShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
-   using System;
-   using System.Data;
-using System.IO;
-using System.Xml.Schema;
+    using System;
+    using System.Data;
+    using System.IO;
+    using System.Xml.Schema;
     class TestClass
     {
         private void TestMethod()
@@ -264,6 +266,7 @@ using System.Xml.Schema;
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Data
 Imports System.IO
 Imports System.Xml.Schema
@@ -279,7 +282,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075SchemaReadBasicResultAt(13, 39)
+                GetCA3075SchemaReadBasicResultAt(14, 39)
             );
         }
 
@@ -325,7 +328,7 @@ Class TestClass
 End Function)
     End Function
 
-    Private Sub TestMethod2()
+    Private Async Sub TestMethod2()
         Await TestMethod()
     End Sub
 End Class",

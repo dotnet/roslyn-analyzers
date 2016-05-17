@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -31,15 +32,7 @@ namespace Desktop.Analyzers
 
         protected abstract CodeBlockAnalyzer GetAnalyzer(CompilationSecurityTypes compilationTypes, ISymbol owningSymbol, SyntaxNode codeBlock);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics = ImmutableArray.Create(Rule);
-
-        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return s_supportedDiagnostics;
-            }
-        }
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         /// <summary>
         /// Initialize the analyzer.
@@ -47,18 +40,16 @@ namespace Desktop.Analyzers
         /// <param name="analysisContext">Analyzer Context.</param>
         public override void Initialize(AnalysisContext analysisContext)
         {
-            // TODO: Make analyzer thread-safe.
-            //analysisContext.EnableConcurrentExecution();
-
+            analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
 
             analysisContext.RegisterCompilationStartAction(
-                (context) =>
+                compilationStartAnalysisContext =>
                 {
-                    var compilationTypes = new CompilationSecurityTypes(context.Compilation);
+                    var compilationTypes = new CompilationSecurityTypes(compilationStartAnalysisContext.Compilation);
                     if (compilationTypes.HandleProcessCorruptedStateExceptionsAttribute != null)
                     {
-                        context.RegisterCodeBlockStartAction<TLanguageKindEnum>(
+                        compilationStartAnalysisContext.RegisterCodeBlockStartAction<TLanguageKindEnum>(
                         codeBlockStartContext =>
                         {
                             ISymbol owningSymbol = codeBlockStartContext.OwningSymbol;
@@ -67,7 +58,7 @@ namespace Desktop.Analyzers
                                 var method = (IMethodSymbol)owningSymbol;
 
                                 ImmutableArray<AttributeData> attributes = method.GetAttributes();
-                                if (attributes.FirstOrDefault(attribute => attribute.AttributeClass == compilationTypes.HandleProcessCorruptedStateExceptionsAttribute) != null)
+                                if (attributes.Any(attribute => attribute.AttributeClass.Equals(compilationTypes.HandleProcessCorruptedStateExceptionsAttribute)))
                                 {
                                     CodeBlockAnalyzer analyzer = GetAnalyzer(compilationTypes, owningSymbol, codeBlockStartContext.CodeBlock);
                                     codeBlockStartContext.RegisterSyntaxNodeAction(analyzer.AnalyzeCatchClause, analyzer.CatchClauseKind);
@@ -84,11 +75,11 @@ namespace Desktop.Analyzers
         {
             private readonly ISymbol _owningSymbol;
             private readonly SyntaxNode _codeBlock;
-            private readonly Dictionary<TCatchClauseSyntax, ISymbol> _catchAllCatchClauses;
+            private readonly ConcurrentDictionary<TCatchClauseSyntax, ISymbol> _catchAllCatchClauses;
 
             public abstract TLanguageKindEnum CatchClauseKind { get; }
             public abstract TLanguageKindEnum ThrowStatementKind { get; }
-            protected CompilationSecurityTypes TypesOfInterest { get; private set; }
+            protected CompilationSecurityTypes TypesOfInterest { get; }
             protected abstract ISymbol GetExceptionTypeSymbolFromCatchClause(TCatchClauseSyntax catchNode, SemanticModel model);
             protected abstract bool IsThrowStatementWithNoArgument(TThrowStatementSyntax throwNode);
             protected abstract bool IsCatchClause(SyntaxNode node);
@@ -98,7 +89,7 @@ namespace Desktop.Analyzers
             {
                 _owningSymbol = owningSymbol;
                 _codeBlock = codeBlock;
-                _catchAllCatchClauses = new Dictionary<TCatchClauseSyntax, ISymbol>();
+                _catchAllCatchClauses = new ConcurrentDictionary<TCatchClauseSyntax, ISymbol>();
                 TypesOfInterest = compilationTypes;
             }
 
@@ -112,14 +103,15 @@ namespace Desktop.Analyzers
                     SyntaxNode parentNode = catchNode.Parent;
                     while (parentNode != _codeBlock)
                     {
-                        // for now there doesn't seem to have any way to annotate lambdas with attributes
+                        // for now there doesn't seem to be any way to annotate lambdas with attributes
                         if (IslambdaExpression(parentNode))
                         {
                             return;
                         }
                         parentNode = parentNode.Parent;
                     }
-                    _catchAllCatchClauses[catchNode] = exceptionTypeSymbol;
+
+                    _catchAllCatchClauses.AddOrUpdate(catchNode, exceptionTypeSymbol, (key, oldValue) => exceptionTypeSymbol);
                 }
             }
 
@@ -130,8 +122,10 @@ namespace Desktop.Analyzers
                 // throwNode is a throw statement with no argument, which is not allowed outside of a catch clause
                 if (IsThrowStatementWithNoArgument(throwNode))
                 {
-                    var enlcosingCatchClause = (TCatchClauseSyntax)throwNode.Ancestors().First(IsCatchClause);
-                    _catchAllCatchClauses.Remove(enlcosingCatchClause);
+                    TCatchClauseSyntax enclosingCatchClause = (TCatchClauseSyntax)throwNode.Ancestors().First(IsCatchClause);
+
+                    ISymbol dummy;
+                    _catchAllCatchClauses.TryRemove(enclosingCatchClause, out dummy);
                 }
             }
 

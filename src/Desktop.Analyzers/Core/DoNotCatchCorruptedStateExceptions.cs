@@ -96,6 +96,11 @@ namespace Desktop.Analyzers
                 _compilationTypes = compilationTypes;
             }
 
+            public override void VisitLambdaExpression(ILambdaExpression operation)
+            {
+                // for now there doesn't seem to be any way to annotate lambdas with attributes
+            }
+
             public override void VisitCatch(ICatchClause operation)
             {
                 _seenEmptyThrowInCatchClauses.Push(false);
@@ -107,9 +112,6 @@ namespace Desktop.Analyzers
 
                 if (IsCaughtTypeTooGeneral(operation.CaughtType) && !seenEmptyThrow)
                 {
-                    // TODO: Abort in case parent is a lambda.
-                    // for now there doesn't seem to be any way to annotate lambdas with attributes
-
                     CatchAllCatchClausesWithoutEmptyThrow.Add(operation);
                 }
             }

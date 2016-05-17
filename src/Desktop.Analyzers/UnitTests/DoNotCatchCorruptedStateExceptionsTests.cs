@@ -1357,6 +1357,67 @@ namespace Desktop.Analyzers.UnitTests
             ");
         }
 
+        [Fact]
+        public void CA2153TestCatchInsideLambdaExpression()
+        {
+            VerifyCSharp(@"
+            class TestClass
+            {
+                [HandleProcessCorruptedStateExceptions]
+                public static void TestMethod()
+                {
+                    Action action = () =>
+                    {
+                        try
+                        {
+                            FileStream fileStream = new FileStream(""name"", FileMode.Create);
+                        }
+                        catch (Exception e)
+                        {}
+                    };
+                }
+            }");
+
+            VerifyBasic(@"
+            Imports System.IO
+            Imports System.Runtime.ExceptionServices
+
+            Namespace TestNamespace
+	            Class TestClass
+		            <HandleProcessCorruptedStateExceptions> _
+		            Public Shared Sub TestMethod()
+			            Dim action As Action = Function() 
+				            Try
+					            Dim fileStream As New FileStream(""name"", FileMode.Create)
+				            Catch e As Exception
+				            End Try
+			            End Function
+		            End Sub
+	            End Class
+            End Namespace
+            ");
+
+            VerifyBasic(@"
+            Imports System.IO
+            Imports System.Runtime.ExceptionServices
+
+            Namespace TestNamespace
+	            Class TestClass
+		            <HandleProcessCorruptedStateExceptions> _
+		            Public Shared Function TestMethod() As Double
+			            Dim action As Action = Function() 
+				            Try
+					            Dim fileStream As New FileStream(""name"", FileMode.Create)
+				            Catch e As Exception
+				            End Try
+                            Return 0
+			            End Function
+		            End Function
+	            End Class
+            End Namespace
+            ");
+        }
+
         private const string CA2153RuleName = DoNotCatchCorruptedStateExceptionsAnalyzer.RuleId;
 
         private DiagnosticResult GetCA2153CSharpResultAt(int line, int column, string signature, string typeName)

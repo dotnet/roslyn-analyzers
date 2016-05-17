@@ -44,7 +44,6 @@
   <ItemGroup>
     <Compile Include="BasicDoNotUseInsecureDtdProcessingInApiDesign.vb" />
     <Compile Include="BasicDoNotUseInsecureXSLTScriptExecution.vb" />
-    <Compile Include="BasicDoNotCatchCorruptedStateExceptions.vb" />
     <Compile Include="BasicDoNotUseInsecureCryptographicAlgorithms.vb" />
     <Compile Include="BasicSpecifyMessageBoxOptions.vb" />
     <Compile Include="BasicSpecifyMessageBoxOptions.Fixer.vb" />

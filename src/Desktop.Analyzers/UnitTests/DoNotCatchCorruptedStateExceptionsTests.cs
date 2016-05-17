@@ -38,7 +38,8 @@ namespace Desktop.Analyzers.UnitTests
                             FileStream fileStream = new FileStream(""name"", FileMode.Create);
                         }
                         catch (Exception e)
-                        {}
+                        {
+                        }
                     }
                 }
             }");
@@ -101,7 +102,8 @@ namespace Desktop.Analyzers.UnitTests
                             FileStream fileStream = new FileStream(""name"", FileMode.Create);
                         }
                         catch (Exception e)
-                        {}
+                        {
+                        }
                     }
                 }
             }",
@@ -147,8 +149,7 @@ namespace Desktop.Analyzers.UnitTests
            GetCA2153BasicResultAt(11, 25, "Public Shared Function TestMethod() As Double", "System.Exception")
            );
         }
-
-
+        
         [Fact]
         public void CA2153TestCatchRethrowExceptionInMethodWithHpcseAndSecurityCriticalAttributes()
         {
@@ -219,8 +220,7 @@ namespace Desktop.Analyzers.UnitTests
             End Namespace
             ");
         }
-
-
+        
         [Fact]
         public void CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalAttributes()
         {
@@ -243,7 +243,8 @@ namespace Desktop.Analyzers.UnitTests
                             FileStream fileStream = new FileStream(""name"", FileMode.Create);
                         }
                         catch (Exception e)
-                        {}
+                        {
+                        }
                     }
                 }
             }",
@@ -339,7 +340,8 @@ namespace Desktop.Analyzers.UnitTests
                             FileStream fileStream = new FileStream(""name"", FileMode.Create);
                         }
                         catch 
-                        {}
+                        {
+                        }
                     }
                 }
             }",
@@ -412,7 +414,8 @@ namespace Desktop.Analyzers.UnitTests
                             FileStream fileStream = new FileStream(""name"", FileMode.Create);
                         }
                         catch (SystemException e)
-                        {}
+                        {
+                        }
                     }
                 }
             }",
@@ -485,7 +488,8 @@ namespace Desktop.Analyzers.UnitTests
                             FileStream fileStream = new FileStream(""name"", FileMode.Create);
                         }
                         catch (Exception e)
-                        {}
+                        {
+                        }
                     }
                 }
             }",
@@ -536,7 +540,8 @@ namespace Desktop.Analyzers.UnitTests
                             FileStream fileStream = new FileStream(""name"", FileMode.Create);
                         }
                         catch (Exception e)
-                        {}
+                        {
+                        }
                     }
                 }
             }",
@@ -566,15 +571,15 @@ namespace Desktop.Analyzers.UnitTests
                             FileStream fileStream = new FileStream(""name"", FileMode.Create);
                         }
                         catch (Exception e)
-                        {}
+                        {
+                        }
                     }
                 }
             }",
             GetCA2153CSharpResultAt(19, 25, "TestNamespace.TestClass.TestMethod()", "System.Exception")
             );
         }
-
-
+        
         [Fact]
         public void CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalL1Attributes()
         {
@@ -598,15 +603,15 @@ namespace Desktop.Analyzers.UnitTests
                             FileStream fileStream = new FileStream(""name"", FileMode.Create);
                         }
                         catch (Exception e)
-                        {}
+                        {
+                        }
                     }
                 }
             }",
             GetCA2153CSharpResultAt(20, 25, "TestNamespace.TestClass.TestMethod()", "System.Exception")
             );
         }
-
-
+        
         [Fact]
         public void CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalL2Attributes()
         {
@@ -630,15 +635,15 @@ namespace Desktop.Analyzers.UnitTests
                             FileStream fileStream = new FileStream(""name"", FileMode.Create);
                         }
                         catch (Exception e)
-                        {}
+                        {
+                        }
                     }
                 }
             }",
             GetCA2153CSharpResultAt(20, 25, "TestNamespace.TestClass.TestMethod()", "System.Exception")
             );
         }
-
-
+        
         [Fact]
         public void CA2153TestCatchExceptionInNestedClassMethodWithOuterHpcseAndSecurityCriticalScopeEverythingAttributes()
         {
@@ -663,7 +668,8 @@ namespace Desktop.Analyzers.UnitTests
                                 FileStream fileStream = new FileStream(""name"", FileMode.Create);
                             }
                             catch (Exception e)
-                            {}
+                            {
+                            }
                         }
                     }
                 }
@@ -671,8 +677,7 @@ namespace Desktop.Analyzers.UnitTests
             GetCA2153CSharpResultAt(21, 29, "TestNamespace.TestClass.NestedClass.TestMethod()", "System.Exception")
             );
         }
-
-
+        
         [Fact]
         public void CA2153TestCatchExceptionInNestedClassMethodWithInnerHpcseAndSecurityCriticalScopeEverythingAttributes()
         {
@@ -697,7 +702,8 @@ namespace Desktop.Analyzers.UnitTests
                                 FileStream fileStream = new FileStream(""name"", FileMode.Create);
                             }
                             catch (Exception e)
-                            {}
+                            {
+                            }
                         }
                     }
                 }
@@ -705,8 +711,7 @@ namespace Desktop.Analyzers.UnitTests
             GetCA2153CSharpResultAt(21, 29, "TestNamespace.TestClass.NestedClass.TestMethod()", "System.Exception")
             );
         }
-
-
+        
         [Fact]
         public void CA2153TestCatchExceptionInNestedClassMethodwithInnerHpcseAndOuterSecurityCriticalAttributes()
         {
@@ -731,7 +736,8 @@ namespace Desktop.Analyzers.UnitTests
                                 FileStream fileStream = new FileStream(""name"", FileMode.Create);
                             }
                             catch (Exception e)
-                            {}
+                            {
+                            }
                         }
                     }
                 }
@@ -739,8 +745,7 @@ namespace Desktop.Analyzers.UnitTests
             GetCA2153CSharpResultAt(21, 29, "TestNamespace.TestClass.NestedClass.TestMethod()", "System.Exception")
             );
         }
-
-
+        
         [Fact]
         public void CA2153TestCatchExceptionInGetAccessorWithHpcseAttribute()
         {
@@ -770,7 +775,10 @@ namespace Desktop.Analyzers.UnitTests
                             return ""asdf"";
                         }
                     }
-                    private static void AccessViolation(){}
+
+                    private static void AccessViolation()
+                    {
+                    }
                 }
             }",
             GetCA2153CSharpResultAt(20, 29, "TestNamespace.TestClass.SaveNewFile3.get", "System.Exception")
@@ -830,7 +838,10 @@ namespace Desktop.Analyzers.UnitTests
                             return ""asdf"";
                         }
                     }
-                    private static void AccessViolation(){}
+
+                    private static void AccessViolation()
+                    {
+                    }
                 }
             }",
             GetCA2153CSharpResultAt(20, 29, "TestNamespace.TestClass.SaveNewFile3.get", "object")
@@ -866,7 +877,10 @@ namespace Desktop.Analyzers.UnitTests
                             return ""asdf"";
                         }
                     }
-                    private static void AccessViolation(){}
+
+                    private static void AccessViolation()
+                    {
+                    }
                 }
             }",
             GetCA2153CSharpResultAt(20, 29, "TestNamespace.TestClass.SaveNewFile3.get", "System.SystemException")
@@ -901,7 +915,10 @@ namespace Desktop.Analyzers.UnitTests
                             }
                         }
                     }
-                    private static void AccessViolation(){}
+
+                    private static void AccessViolation()
+                    {
+                    }
                 }
             }",
             GetCA2153CSharpResultAt(20, 29, "TestNamespace.TestClass.SaveNewFile3.set", "object")
@@ -938,7 +955,10 @@ namespace Desktop.Analyzers.UnitTests
                             file = value;
                         }
                     } 
-                    private static void AccessViolation(){}
+
+                    private static void AccessViolation()
+                    {
+                    }
                 }
             }",
             GetCA2153CSharpResultAt(21, 29, "TestNamespace.TestClass.SaveNewFile3.set", "System.Exception")
@@ -967,8 +987,7 @@ namespace Desktop.Analyzers.UnitTests
            GetCA2153BasicResultAt(14, 29, "Public Property Set X(Value As Integer)", "System.Exception")
            );
         }
-
-
+        
         [Fact]
         public void CA2153TestCatchIOExceptionInMethodHpcseAttribute()
         {
@@ -997,7 +1016,9 @@ namespace Desktop.Analyzers.UnitTests
                         {
                             throw;
                         }
-                        finally { }
+                        finally
+                        {
+                        }
                     }
                 }
             }"
@@ -1032,16 +1053,19 @@ namespace Desktop.Analyzers.UnitTests
                         {
                             throw ex;
                         }
-                        catch {}
-                        finally { }
+                        catch
+                        {
+                        }
+                        finally
+                        {
+                        }
                     }
                 }
             }",
             GetCA2153CSharpResultAt(26, 25, "TestNamespace.TestClass.TestMethod()", "object")
             );
         }
-
-
+        
         [Fact]
         public void CA2153TestSwallowAccessViolationExceptionInMethodHpcseAttribute()
         {
@@ -1069,13 +1093,14 @@ namespace Desktop.Analyzers.UnitTests
                         {
                             // the AV is ignored here
                         }
-                        finally {}
+                        finally
+                        {
+                        }
                     }
                 }
             }");
         }
-
-
+        
         [Fact]
         public void CA2153TestSwallowAccessViolationExceptionThenSwallowOtherExceptionInMethodHpcseAttribute()
         {
@@ -1103,16 +1128,19 @@ namespace Desktop.Analyzers.UnitTests
                         {
                             // the AV is ignored here
                         }
-                        catch {}
-                        finally {}
+                        catch
+                        {
+                        }
+                        finally
+                        {
+                        }
                     }
                 }
             }",
             GetCA2153CSharpResultAt(25, 25, "TestNamespace.TestClass.SaveNewFile7(string)", "object")
             );
         }
-
-
+        
         [Fact]
         public void CA2153TestCatchExceptionThrowNotImplementedExceptionInMethodHpcseAttribute()
         {
@@ -1132,7 +1160,7 @@ namespace Desktop.Analyzers.UnitTests
                     {
                         try 
                         {
-                            FileStream fileStream= new FileStream(""name"", FileMode.Create);
+                            FileStream fileStream = new FileStream(""name"", FileMode.Create);
                         }
                         catch (Exception e)
                         {
@@ -1191,9 +1219,7 @@ namespace Desktop.Analyzers.UnitTests
             GetCA2153BasicResultAt(14, 25, "Public Shared Function TestMethod() As Double", "System.Exception")
             );
         }
-
-
-
+        
         [Fact]
         public void CA2153TestCatchExceptionInnerCatchThrowIOExceptionInMethodHpcseAttribute()
         {
@@ -1211,10 +1237,10 @@ namespace Desktop.Analyzers.UnitTests
                     [SecurityCritical]
                     public static void TestMethod()
                     {
-                        FileStream fileStream= null;
+                        FileStream fileStream = null;
                         try
                         {
-                            fileStream= new FileStream(""name"", FileMode.Create);
+                            fileStream = new FileStream(""name"", FileMode.Create);
                         }
                         catch (Exception)
                         {
@@ -1245,8 +1271,8 @@ namespace Desktop.Analyzers.UnitTests
                     Public Shared Sub TestMethod()
                         Dim fileStream As FileStream = Nothing
                         Try
-                            fileStream= New FileStream(""name"", FileMode.Create)
-                        Catch outterException As System.Exception
+                            fileStream = New FileStream(""name"", FileMode.Create)
+                        Catch outerException As System.Exception
                             Try
                                 Dim anotherFileStream = New FileStream(""newName"", FileMode.Create)
                             Catch innerException As IOException
@@ -1272,8 +1298,8 @@ namespace Desktop.Analyzers.UnitTests
                     Public Shared Function TestMethod() As Double
                         Dim fileStream As FileStream = Nothing
                         Try
-                            fileStream= New FileStream(""name"", FileMode.Create)
-                        Catch outterException As System.Exception
+                            fileStream = New FileStream(""name"", FileMode.Create)
+                        Catch outerException As System.Exception
                             Try
                                 Dim anotherFileStream = New FileStream(""newName"", FileMode.Create)
                             Catch innerException As IOException
@@ -1305,10 +1331,10 @@ namespace Desktop.Analyzers.UnitTests
                     [SecurityCritical]
                     public static void TestMethod()
                     {
-                        FileStream fileStream= null;
+                        FileStream fileStream = null;
                         try
                         {
-                            fileStream= new FileStream(""name"", FileMode.Create);
+                            fileStream = new FileStream(""name"", FileMode.Create);
                         }
                         catch (Exception)
                         {
@@ -1328,8 +1354,8 @@ namespace Desktop.Analyzers.UnitTests
                     Public Shared Sub TestMethod()
                         Dim fileStream As FileStream = Nothing
                         Try
-                            fileStream= New FileStream(""name"", FileMode.Create)
-                        Catch outterException As System.Exception
+                            fileStream = New FileStream(""name"", FileMode.Create)
+                        Catch outerException As System.Exception
                         End Try
                     End Sub
                 End Class
@@ -1347,8 +1373,8 @@ namespace Desktop.Analyzers.UnitTests
                     Public Shared Function TestMethod() As Double
                         Dim fileStream As FileStream = Nothing
                         Try
-                            fileStream= New FileStream(""name"", FileMode.Create)
-                        Catch outterException As System.Exception
+                            fileStream = New FileStream(""name"", FileMode.Create)
+                        Catch outerException As System.Exception
                         End Try
                         Return 0
                     End Function
@@ -1373,7 +1399,8 @@ namespace Desktop.Analyzers.UnitTests
                             FileStream fileStream = new FileStream(""name"", FileMode.Create);
                         }
                         catch (Exception e)
-                        {}
+                        {
+                        }
                     };
                 }
             }");

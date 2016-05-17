@@ -77,7 +77,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                         return;
                     }
 
-                    saContext.ReportDiagnostic(lastField.CreateDiagnostic(DefaultRule, lastField.Name, initializerValue));
+                    saContext.ReportDiagnostic(lastField.CreateDiagnostic(DefaultRule, lastField.Name));
                 }
             },
             OperationKind.FieldInitializerAtDeclaration);

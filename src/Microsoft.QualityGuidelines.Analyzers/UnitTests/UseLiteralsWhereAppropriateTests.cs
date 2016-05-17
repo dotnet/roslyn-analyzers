@@ -33,11 +33,11 @@ public class Class1
     internal static readonly int f8 = 8 + f6;
 }",
         GetCSharpEmptyStringResultAt(line: 4, column: 28, symbolName: "f1"),
-        GetCSharpDefaultResultAt(line: 5, column: 28, symbolName: "f2", value: "Nothing"),
-        GetCSharpDefaultResultAt(line: 6, column: 31, symbolName: "f4", value: "Message is shown only for f4"),
-        GetCSharpDefaultResultAt(line: 7, column: 25, symbolName: "f5", value: "3"),
-        GetCSharpDefaultResultAt(line: 9, column: 25, symbolName: "f7", value: "11"),
-        GetCSharpDefaultResultAt(line: 10, column: 34, symbolName: "f8", value: "11"));
+        GetCSharpDefaultResultAt(line: 5, column: 28, symbolName: "f2"),
+        GetCSharpDefaultResultAt(line: 6, column: 31, symbolName: "f4"),
+        GetCSharpDefaultResultAt(line: 7, column: 25, symbolName: "f5"),
+        GetCSharpDefaultResultAt(line: 9, column: 25, symbolName: "f7"),
+        GetCSharpDefaultResultAt(line: 10, column: 34, symbolName: "f8"));
         }
 
         [Fact]
@@ -69,11 +69,11 @@ Public Class Class1
     Friend Shared ReadOnly f8 As Integer = 8 + f6
 End Class",
         GetBasicEmptyStringResultAt(line: 3, column: 21, symbolName: "f1"),
-        GetBasicDefaultResultAt(line: 4, column: 21, symbolName: "f2", value: "Nothing"),
-        GetBasicDefaultResultAt(line: 5, column: 35, symbolName: "f4", value: "Message is shown only for f4"),
-        GetBasicDefaultResultAt(line: 6, column: 21, symbolName: "f5", value: "3"),
-        GetBasicDefaultResultAt(line: 8, column: 21, symbolName: "f7", value: "11"),
-        GetBasicDefaultResultAt(line: 9, column: 28, symbolName: "f8", value: "11"));
+        GetBasicDefaultResultAt(line: 4, column: 21, symbolName: "f2"),
+        GetBasicDefaultResultAt(line: 5, column: 35, symbolName: "f4"),
+        GetBasicDefaultResultAt(line: 6, column: 21, symbolName: "f5"),
+        GetBasicDefaultResultAt(line: 8, column: 21, symbolName: "f7"),
+        GetBasicDefaultResultAt(line: 9, column: 28, symbolName: "f8"));
         }
 
         [Fact]
@@ -96,9 +96,9 @@ Public Class Class1
 End Class");
         }
 
-        private DiagnosticResult GetCSharpDefaultResultAt(int line, int column, string symbolName, string value)
+        private DiagnosticResult GetCSharpDefaultResultAt(int line, int column, string symbolName)
         {
-            return GetCSharpResultAt(line, column, UseLiteralsWhereAppropriateAnalyzer.DefaultRule, symbolName, value);
+            return GetCSharpResultAt(line, column, UseLiteralsWhereAppropriateAnalyzer.DefaultRule, symbolName);
         }
 
         private DiagnosticResult GetCSharpEmptyStringResultAt(int line, int column, string symbolName)
@@ -106,9 +106,9 @@ End Class");
             return GetCSharpResultAt(line, column, UseLiteralsWhereAppropriateAnalyzer.EmptyStringRule, symbolName);
         }
 
-        private DiagnosticResult GetBasicDefaultResultAt(int line, int column, string symbolName, string value)
+        private DiagnosticResult GetBasicDefaultResultAt(int line, int column, string symbolName)
         {
-            return GetBasicResultAt(line, column, UseLiteralsWhereAppropriateAnalyzer.DefaultRule, symbolName, value);
+            return GetBasicResultAt(line, column, UseLiteralsWhereAppropriateAnalyzer.DefaultRule, symbolName);
         }
 
         private DiagnosticResult GetBasicEmptyStringResultAt(int line, int column, string symbolName)

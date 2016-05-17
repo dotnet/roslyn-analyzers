@@ -369,7 +369,7 @@ namespace Microsoft.QualityGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Field {0} is declared as &apos;static readonly&apos; but is initialized with a constant value &apos;{1}&apos;. Mark this field as &apos;const&apos; instead..
+        ///   Looks up a localized string similar to Field &apos;{0}&apos; is declared as &apos;static readonly&apos; but is initialized with a constant value. Mark this field as &apos;const&apos; instead..
         /// </summary>
         internal static string UseLiteralsWhereAppropriateMessageDefault {
             get {
@@ -378,7 +378,7 @@ namespace Microsoft.QualityGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Field {0} is declared as &apos;static readonly&apos; but is initialized with an empty string (&quot;&quot;). Mark this field as &apos;const&apos; instead..
+        ///   Looks up a localized string similar to Field &apos;{0}&apos; is declared as &apos;static readonly&apos; but is initialized with an empty string (&quot;&quot;). Mark this field as &apos;const&apos; instead..
         /// </summary>
         internal static string UseLiteralsWhereAppropriateMessageEmptyString {
             get {

@@ -47,12 +47,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(EqualsRule, OpEqualityRule);
 
-        protected virtual bool IsAssignableTo(INamedTypeSymbol type, INamedTypeSymbol assignableToType)
-        {
-            // TODO: Use the language specific helper for IsAssignableTo.
-            return false;
-        }
-
         public override void Initialize(AnalysisContext analysisContext)
         {
             analysisContext.EnableConcurrentExecution();
@@ -80,8 +74,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     }
 
                     // Enumerators are often ValueTypes to prevent heap allocation when enumerating
-                    if (iEnumerator != null && IsAssignableTo(namedType, iEnumerator) ||
-                        genericIEnumerator != null && IsAssignableTo(namedType, genericIEnumerator))
+                    if (iEnumerator != null && namedType.DerivesFromOrImplementsAnyConstructionOf(iEnumerator) ||
+                        genericIEnumerator != null && namedType.DerivesFromOrImplementsAnyConstructionOf(genericIEnumerator))
                     {
                         return;
                     }

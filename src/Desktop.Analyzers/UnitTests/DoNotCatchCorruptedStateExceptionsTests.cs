@@ -785,13 +785,14 @@ namespace Desktop.Analyzers.UnitTests
             );
 
             VerifyBasic(@"
+            Imports System.IO
             Imports System.Security
             Imports System.Runtime.ExceptionServices
 
             Namespace TestNamespace
                 Class TestClass
-                    private x As Integer
-                    Public Property X() As Integer
+                    private xi As Integer
+                    Public ReadOnly Property X() As Integer
                         <HandleProcessCorruptedStateExceptions> _
                         <SecurityCritical> _
                         Get
@@ -805,7 +806,7 @@ namespace Desktop.Analyzers.UnitTests
                 End Class
             End Namespace
             ",
-            GetCA2153BasicResultAt(14, 29, "Public Property Get X() As Integer", "System.Exception")
+            GetCA2153BasicResultAt(15, 29, "Public Property Get X() As Integer", "System.Exception")
             );
         }
 
@@ -965,13 +966,15 @@ namespace Desktop.Analyzers.UnitTests
             );
 
             VerifyBasic(@"
+            Imports System
+            Imports System.IO
             Imports System.Security
             Imports System.Runtime.ExceptionServices
 
             Namespace TestNamespace
                 Class TestClass
-                    private x As Integer
-                    Public Property X() As Integer
+                    private xi As Integer
+                    Public WriteOnly Property X() As Integer
                         <HandleProcessCorruptedStateExceptions> _
                         <SecurityCritical> _
                         Set
@@ -984,7 +987,7 @@ namespace Desktop.Analyzers.UnitTests
                 End Class
             End Namespace
             ",
-           GetCA2153BasicResultAt(14, 29, "Public Property Set X(Value As Integer)", "System.Exception")
+           GetCA2153BasicResultAt(16, 29, "Public Property Set X(Value As Integer)", "System.Exception")
            );
         }
         
@@ -1049,10 +1052,6 @@ namespace Desktop.Analyzers.UnitTests
                         {
                             throw ex;
                         }
-                        catch (IOException ex)
-                        {
-                            throw ex;
-                        }
                         catch
                         {
                         }
@@ -1062,7 +1061,7 @@ namespace Desktop.Analyzers.UnitTests
                     }
                 }
             }",
-            GetCA2153CSharpResultAt(26, 25, "TestNamespace.TestClass.TestMethod()", "object")
+            GetCA2153CSharpResultAt(22, 25, "TestNamespace.TestClass.TestMethod()", "object")
             );
         }
         
@@ -1387,6 +1386,10 @@ namespace Desktop.Analyzers.UnitTests
         public void CA2153TestCatchInsideLambdaExpression()
         {
             VerifyCSharp(@"
+            using System;
+            using System.IO;
+            using System.Runtime.ExceptionServices;
+
             class TestClass
             {
                 [HandleProcessCorruptedStateExceptions]
@@ -1406,6 +1409,7 @@ namespace Desktop.Analyzers.UnitTests
             }");
 
             VerifyBasic(@"
+            Imports System
             Imports System.IO
             Imports System.Runtime.ExceptionServices
 
@@ -1425,6 +1429,7 @@ namespace Desktop.Analyzers.UnitTests
             ");
 
             VerifyBasic(@"
+            Imports System
             Imports System.IO
             Imports System.Runtime.ExceptionServices
 

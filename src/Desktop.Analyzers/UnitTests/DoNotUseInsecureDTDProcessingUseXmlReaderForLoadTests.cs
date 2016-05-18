@@ -173,6 +173,7 @@ End Class",
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml
 
 Class TestClass
@@ -188,7 +189,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075LoadBasicResultAt(10, 13)
+                GetCA3075LoadBasicResultAt(11, 13)
             );
         }
 
@@ -218,6 +219,7 @@ End Class",
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml
 
 Class TestClass
@@ -232,7 +234,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075LoadBasicResultAt(11, 13)
+                GetCA3075LoadBasicResultAt(12, 13)
             );
         }
 
@@ -262,6 +264,7 @@ class TestClass
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml
 
 Class TestClass
@@ -277,7 +280,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075LoadBasicResultAt(13, 13)
+                GetCA3075LoadBasicResultAt(14, 13)
             );
         }
 
@@ -322,7 +325,7 @@ Class TestClass
             End Function)
     End Function
 
-    Private Sub TestMethod2()
+    Private Async Sub TestMethod2()
         Await TestMethod()
     End Sub
 End Class",
@@ -468,6 +471,7 @@ End Class",
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml
 
 Class TestClass
@@ -484,7 +488,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075LoadBasicResultAt(11, 13)
+                GetCA3075LoadBasicResultAt(12, 13)
             );
         }
 
@@ -513,6 +517,7 @@ End Class",
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml
 
 Class TestClass
@@ -528,7 +533,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075LoadBasicResultAt(12, 13)
+                GetCA3075LoadBasicResultAt(13, 13)
             );
         }
 
@@ -557,6 +562,7 @@ End Class",
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml
 
 Class TestClass
@@ -573,7 +579,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075LoadBasicResultAt(14, 13)
+                GetCA3075LoadBasicResultAt(15, 13)
             );
         }
 
@@ -619,7 +625,7 @@ Class TestClass
 End Function)
     End Function
 
-    Private Sub TestMethod2()
+    Private Async Sub TestMethod2()
         Await TestMethod()
     End Sub
 End Class",
@@ -690,7 +696,7 @@ Imports System.Xml
 Namespace TestNamespace
     Class TestClass
         Private Shared Sub TestMethod(reader As XmlTextReader)
-            New XmlDocument() With { _
+            Call New XmlDocument() With { _
                 .XmlResolver = Nothing _
             }.Load(reader)
         End Sub

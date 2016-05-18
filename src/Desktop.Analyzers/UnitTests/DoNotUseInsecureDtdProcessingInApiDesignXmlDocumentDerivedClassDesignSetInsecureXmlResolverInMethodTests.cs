@@ -33,7 +33,6 @@ namespace TestNamespace
     {
         public TestClass()
         {
-            DtdProcessing = DtdProcessing.Prohibit;
             XmlResolver = null;
         }
 
@@ -43,7 +42,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3077InsecureMethodCSharpResultAt(17, 13, "method")
+                GetCA3077InsecureMethodCSharpResultAt(16, 13, "method")
             );
 
             VerifyBasic(@"
@@ -53,7 +52,6 @@ Namespace TestNamespace
     Class TestClass
         Inherits XmlDocument
         Public Sub New()
-            DtdProcessing = DtdProcessing.Prohibit
             XmlResolver = Nothing
         End Sub
         Public Sub method()
@@ -61,7 +59,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-                GetCA3077InsecureMethodBasicResultAt(12, 13, "method")
+                GetCA3077InsecureMethodBasicResultAt(11, 13, "method")
             );
         }
 

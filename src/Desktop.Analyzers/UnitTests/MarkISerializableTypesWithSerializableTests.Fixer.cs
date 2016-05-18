@@ -70,7 +70,7 @@ Public Class CA2237SerializableMissingAttr
     Protected Sub New(context As StreamingContext, info As SerializationInfo)
     End Sub
 
-    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
         throw new NotImplementedException()
     End Sub
 End Class",
@@ -85,7 +85,7 @@ Public Class CA2237SerializableMissingAttr
     Protected Sub New(context As StreamingContext, info As SerializationInfo)
     End Sub
 
-    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
         throw new NotImplementedException()
     End Sub
 End Class",

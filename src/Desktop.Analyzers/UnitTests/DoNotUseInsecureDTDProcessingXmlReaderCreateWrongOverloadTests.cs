@@ -153,6 +153,7 @@ class TestClass
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml
 
 Class TestClass
@@ -165,7 +166,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(7, 26)
+                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(8, 26)
             );
         }
 
@@ -191,6 +192,7 @@ class TestClass
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml
 
 Class TestClass
@@ -202,7 +204,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(8, 26)
+                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(9, 26)
             );
         }
 
@@ -228,6 +230,7 @@ class TestClass
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml
 
 Class TestClass
@@ -240,7 +243,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(10, 26)
+                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(11, 26)
             );
         }
 
@@ -278,7 +281,7 @@ Class TestClass
 End Function)
     End Function
 
-    Private Sub TestMethod2()
+    Private Async Sub TestMethod2()
         Await TestMethod()
     End Sub
 End Class",

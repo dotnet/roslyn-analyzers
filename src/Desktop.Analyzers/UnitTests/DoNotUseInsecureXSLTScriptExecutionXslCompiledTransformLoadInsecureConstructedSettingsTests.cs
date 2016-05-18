@@ -220,6 +220,7 @@ namespace TestNamespace
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -259,6 +260,7 @@ namespace TestNamespace
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml.Xsl
 
 Namespace TestNamespace
@@ -301,6 +303,7 @@ namespace TestNamespace
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml.Xsl
 
 Namespace TestNamespace
@@ -342,6 +345,7 @@ namespace TestNamespace
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml.Xsl
 
 Namespace TestNamespace
@@ -381,6 +385,7 @@ namespace TestNamespace
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -420,6 +425,7 @@ namespace TestNamespace
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml.Xsl
 
 Namespace TestNamespace
@@ -462,6 +468,7 @@ namespace TestNamespace
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml.Xsl
 
 Namespace TestNamespace
@@ -503,6 +510,7 @@ namespace TestNamespace
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Xml.Xsl
 
 Namespace TestNamespace

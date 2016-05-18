@@ -168,6 +168,7 @@ End Class",
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Data
 
 Class TestClass
@@ -182,7 +183,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataSetReadXmlBasicResultAt(9, 13)
+                GetCA3075DataSetReadXmlBasicResultAt(10, 13)
             );
         }
 
@@ -211,6 +212,7 @@ End Class",
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Data
 
 Class TestClass
@@ -224,7 +226,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataSetReadXmlBasicResultAt(10, 13)
+                GetCA3075DataSetReadXmlBasicResultAt(11, 13)
             );
         }
 
@@ -253,6 +255,7 @@ End Class",
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Data
 
 Class TestClass
@@ -267,7 +270,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataSetReadXmlBasicResultAt(12, 13)
+                GetCA3075DataSetReadXmlBasicResultAt(13, 13)
             );
         }
 
@@ -311,7 +314,7 @@ Class TestClass
 End Function)
     End Function
 
-    Private Sub TestMethod2()
+    Private Async Sub TestMethod2()
         Await TestMethod()
     End Sub
 End Class",

@@ -1073,7 +1073,7 @@ Imports System.Xml.Xsl
 
 Namespace TestNamespace
     Class TestClass
-        Private Function TestMethod(settings As XsltSettings, resolver As XmlResolver) As Task
+        Private Async Function TestMethod(settings As XsltSettings, resolver As XmlResolver) As Task
             Await Task.Run(Function() 
             Dim xslCompiledTransform As New XslCompiledTransform()
             settings.EnableScript = True
@@ -1081,7 +1081,7 @@ Namespace TestNamespace
 
 End Function)
         End Function
-        Private Sub TestMethod2()
+        Private Async Sub TestMethod2()
             Await TestMethod(Nothing, Nothing)
         End Sub
     End Class
@@ -1308,16 +1308,15 @@ Imports System.Xml.Xsl
 
 Namespace TestNamespace
     Class TestClass
-        Private Function TestMethod(settings As XsltSettings, resolver As XmlResolver) As Task
+        Private Async Function TestMethod(settings As XsltSettings, resolver As XmlResolver) As Task
             Await Task.Run(Function() 
-            Dim xslCompiledTransform As New XslCompiledTransform()
-            settings.EnableDocumentFunction = False
-            settings.EnableScript = False
-            xslCompiledTransform.Load("""", settings, resolver)
-
-End Function)
+                Dim xslCompiledTransform As New XslCompiledTransform()
+                settings.EnableDocumentFunction = False
+                settings.EnableScript = False
+                xslCompiledTransform.Load("""", settings, resolver)
+            End Function)
         End Function
-        Private Sub TestMethod2()
+        Private Async Sub TestMethod2()
             Await TestMethod(Nothing, Nothing)
         End Sub
     End Class

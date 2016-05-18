@@ -266,17 +266,25 @@ namespace TestNamespace
         public TestClass(XmlTextReader reader)
         {
             reader.XmlResolver = null;
-            reader.DtdProcessing = DtdProcessing.Ignore
+            reader.DtdProcessing = DtdProcessing.Ignore;
         }
     }
 }"
             );
 
-            VerifyBasic(@"CONVERSION ERROR: Code could not be converted. Details:
+            VerifyBasic(@"
+Imports System.Xml
 
--- line 13 col 9: this symbol not expected in EmbeddedStatement
-
-Please check for any errors in the original code and try again."
+Namespace TestNamespace
+	Class TestClass
+		Inherits XmlTextReader
+		Public Sub New(reader As XmlTextReader)
+			reader.XmlResolver = Nothing
+			reader.DtdProcessing = DtdProcessing.Ignore
+		End Sub
+	End Class
+End Namespace
+"
             );
         }
 

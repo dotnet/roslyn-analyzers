@@ -170,6 +170,7 @@ End Class",
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Data
 
 Class TestClass
@@ -184,7 +185,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataViewBasicResultAt(9, 13)
+                GetCA3075DataViewBasicResultAt(10, 13)
             );
         }
 
@@ -213,6 +214,7 @@ End Class",
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Data
 
 Class TestClass
@@ -226,7 +228,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataViewBasicResultAt(10, 13)
+                GetCA3075DataViewBasicResultAt(11, 13)
             );
         }
 
@@ -255,6 +257,7 @@ End Class",
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Data
 
 Class TestClass
@@ -269,7 +272,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataViewBasicResultAt(12, 13)
+                GetCA3075DataViewBasicResultAt(13, 13)
             );
         }
 
@@ -313,7 +316,7 @@ Class TestClass
 End Function)
     End Function
 
-    Private Sub TestMethod2()
+    Private Async Sub TestMethod2()
         Await TestMethod()
     End Sub
 End Class",
@@ -394,14 +397,14 @@ End Namespace",
         }
 
         [Fact]
-        public void UseDataViewManagernInGetShouldGenerateDiagnostic()
+        public void UseDataViewManagerInGetShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.Data;
 
 class TestClass
 {
-    public DataSet Test
+    public DataViewManager Test
     {
         get {
             var src = """";
@@ -418,7 +421,7 @@ class TestClass
 Imports System.Data
 
 Class TestClass
-    Public ReadOnly Property Test() As DataSet
+    Public ReadOnly Property Test() As DataViewManager
         Get
             Dim src = """"
             Dim manager As New DataViewManager()
@@ -506,6 +509,7 @@ End Class",
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Data
 
 Class TestClass
@@ -520,7 +524,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataViewBasicResultAt(9, 13)
+                GetCA3075DataViewBasicResultAt(10, 13)
             );
         }
 
@@ -549,6 +553,7 @@ End Class",
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Data
 
 Class TestClass
@@ -562,7 +567,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataViewBasicResultAt(10, 13)
+                GetCA3075DataViewBasicResultAt(11, 13)
             );
         }
 
@@ -591,6 +596,7 @@ End Class",
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.Data
 
 Class TestClass
@@ -605,7 +611,7 @@ Class TestClass
         End Try
     End Sub
 End Class",
-                GetCA3075DataViewBasicResultAt(12, 13)
+                GetCA3075DataViewBasicResultAt(13, 13)
             );
         }
 
@@ -649,7 +655,7 @@ Class TestClass
 End Function)
     End Function
 
-    Private Sub TestMethod2()
+    Private Async Sub TestMethod2()
         Await TestMethod()
     End Sub
 End Class",

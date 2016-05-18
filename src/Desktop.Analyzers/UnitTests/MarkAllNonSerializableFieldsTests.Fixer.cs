@@ -181,7 +181,7 @@ codeFixIndex: 0);
 using System;
 public partial class NonSerializableType { }
 
-public class NonSerializableType { public void baz() { } }
+public partial class NonSerializableType { public void baz() { } }
 
 [Serializable]
 public class CA2235WithNonPublicNonSerializableFields
@@ -194,7 +194,7 @@ using System;
 [Serializable]
 public partial class NonSerializableType { }
 
-public class NonSerializableType { public void baz() { } }
+public partial class NonSerializableType { public void baz() { } }
 
 [Serializable]
 public class CA2235WithNonPublicNonSerializableFields

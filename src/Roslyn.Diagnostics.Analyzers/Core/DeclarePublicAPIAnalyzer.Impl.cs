@@ -223,7 +223,7 @@ namespace Roslyn.Diagnostics.Analyzers
             private static string GetErrorMessageName(ISymbol symbol, bool isImplicitlyDeclaredConstructor)
             {
                 return isImplicitlyDeclaredConstructor ?
-                    string.Format(RoslynDiagnosticsAnalyzersResources.PublicImplicitConstructorErroMessageName, symbol.ContainingSymbol.ToDisplayString(ShortSymbolNameFormat)) :
+                    string.Format(RoslynDiagnosticsAnalyzersResources.PublicImplicitConstructorErrorMessageName, symbol.ContainingSymbol.ToDisplayString(ShortSymbolNameFormat)) :
                     symbol.ToDisplayString(ShortSymbolNameFormat);
             }
 

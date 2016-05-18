@@ -225,7 +225,6 @@ C
 C.C() -> void";
             var unshippedText = @"";
 
-            var arg = string.Format(RoslynDiagnosticsAnalyzersResources.PublicImplicitConstructorErroMessageName, "C");
             VerifyCSharp(source, shippedText, unshippedText);
         }
 
@@ -243,7 +242,6 @@ C";
             var unshippedText = @"
 C.C() -> void";
 
-            var arg = string.Format(RoslynDiagnosticsAnalyzersResources.PublicImplicitConstructorErroMessageName, "C");
             VerifyCSharp(source, shippedText, unshippedText);
         }
 
@@ -260,7 +258,7 @@ public class C
 C";
             var unshippedText = @"";
 
-            var arg = string.Format(RoslynDiagnosticsAnalyzersResources.PublicImplicitConstructorErroMessageName, "C");
+            var arg = string.Format(RoslynDiagnosticsAnalyzersResources.PublicImplicitConstructorErrorMessageName, "C");
             VerifyCSharp(source, shippedText, unshippedText,
                 // Test0.cs(2,14): warning RS0016: Symbol 'implicit constructor for C' is not part of the declared API.
                 GetCSharpResultAt(2, 14, DeclarePublicAPIAnalyzer.DeclareNewApiRule, arg));
@@ -281,7 +279,6 @@ C
 C.C() -> void";
             var unshippedText = @"";
 
-            var arg = string.Format(RoslynDiagnosticsAnalyzersResources.PublicImplicitConstructorErroMessageName, "C");
             VerifyCSharp(source, shippedText, unshippedText,
                 // PublicAPI.Shipped.txt(3,1): warning RS0017: Symbol 'C.C() -> void' is part of the declared API, but is either not public or could not be found
                 GetAdditionalFileResultAt(3, 1, DeclarePublicAPIAnalyzer.ShippedFileName, DeclarePublicAPIAnalyzer.RemoveDeletedApiRule, "C.C() -> void"));

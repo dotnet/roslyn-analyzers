@@ -170,6 +170,13 @@ namespace Roslyn.Diagnostics.Analyzers
                                 continue;
                             }
 
+                            // Don't flag overloads which have identical params (e.g. overloading a generic and non-generic method with same parameter types).
+                            if (overload.Parameters.Length == method.Parameters.Length &&
+                                overload.Parameters.Select(p => p.Type).SequenceEqual(method.Parameters.Select(p => p.Type)))
+                            {
+                                continue;
+                            }
+
                             // RS0026: Symbol '{0}' violates the backcompat requirement: 'Do not add multiple overloads with optional parameters'. See '{1}' for details.
                             var overloadHasOptionalParams = overload.HasOptionalParameters();
                             if (overloadHasOptionalParams)

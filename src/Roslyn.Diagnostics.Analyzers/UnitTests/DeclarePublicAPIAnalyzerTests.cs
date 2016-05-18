@@ -571,6 +571,10 @@ public class C
     public void Method5(int p1 = 0) { }
     public void Method5(char p1 = 'a') { }
     public void Method5(string p1 = null) { }
+
+    // ok - multiple overloads with optional params, but all have same params (differ only by generic vs non-generic).
+    public object Method6(int p1 = 0) { return Method6<object>(p1); }
+    public T Method6<T>(int p1 = 0) { return default(T); }
 }
 ";
 
@@ -589,6 +593,8 @@ C.Method2(int p1 = 0) -> void
 C.Method4(int p1 = 0) -> void
 C.Method5(char p1 = 'a') -> void
 C.Method5(string p1 = null) -> void
+C.Method6(int p1 = 0) -> object
+C.Method6<T>(int p1 = 0) -> T
 ";
 
             VerifyCSharp(source, shippedText, unshippedText,

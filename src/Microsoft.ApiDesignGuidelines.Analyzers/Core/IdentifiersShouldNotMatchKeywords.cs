@@ -95,77 +95,90 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            // TODO: Make this analyzer thread-safe.
-            //analysisContext.EnableConcurrentExecution();
-
+            analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            var keywordNamedNamespaces = new HashSet<string>();
+            analysisContext.RegisterCompilationStartAction(compilationStartAnalysisContext =>
+            {
+                var namespaceRuleAnalyzer = new NamespaceRuleAnalyzer();
 
-            analysisContext.RegisterSymbolAction(
-                context => AnalyzeNamespaceRule(context, keywordNamedNamespaces),
-                SymbolKind.NamedType);
+                compilationStartAnalysisContext.RegisterSymbolAction(
+                    symbolAnalysisContext => namespaceRuleAnalyzer.Analyze(symbolAnalysisContext),
+                    SymbolKind.NamedType);
 
-            analysisContext.RegisterSymbolAction(AnalyzeTypeRule,
-                SymbolKind.NamedType);
+                compilationStartAnalysisContext.RegisterSymbolAction(AnalyzeTypeRule, SymbolKind.NamedType);
 
-            analysisContext.RegisterSymbolAction(AnalyzeMemberRule,
-                SymbolKind.Event, SymbolKind.Method, SymbolKind.Property);
+                compilationStartAnalysisContext.RegisterSymbolAction(AnalyzeMemberRule,
+                    SymbolKind.Event, SymbolKind.Method, SymbolKind.Property);
 
-            analysisContext.RegisterSymbolAction(AnalyzeMemberParameterRule,
-                SymbolKind.Method);
+                compilationStartAnalysisContext.RegisterSymbolAction(AnalyzeMemberParameterRule, SymbolKind.Method);
+            });
         }
 
-        private void AnalyzeNamespaceRule(SymbolAnalysisContext context, HashSet<string> keywordNamedNamespaces)
+        private sealed class NamespaceRuleAnalyzer
         {
-            INamedTypeSymbol type = (INamedTypeSymbol)context.Symbol;
+            private readonly ISet<string> _keywordNamedNamespaces = new HashSet<string>();
+            private readonly object _lockGuard = new object();
 
-            // Don't complain about a namespace unless it contains at least one public type.
-            if (type.GetResultantVisibility() != SymbolVisibility.Public)
+            public void Analyze(SymbolAnalysisContext context)
             {
-                return;
-            }
+                INamedTypeSymbol type = (INamedTypeSymbol)context.Symbol;
 
-            INamespaceSymbol containingNamespace = type.ContainingNamespace;
-            if (containingNamespace.IsGlobalNamespace)
-            {
-                return;
-            }
-
-            string namespaceDisplayString = containingNamespace.ToDisplayString(s_namespaceDisplayFormat);
-            if (keywordNamedNamespaces.Contains(namespaceDisplayString))
-            {
-                // We've already reported a diagnostic for this namespace.
-                return;
-            }
-
-            IEnumerable<string> namespaceNameComponents = containingNamespace.ToDisplayParts(s_namespaceDisplayFormat)
-                .Where(dp => dp.Kind == SymbolDisplayPartKind.NamespaceName)
-                .Select(dp => dp.ToString());
-
-            bool foundKeyword = false;
-            foreach (string component in namespaceNameComponents)
-            {
-                string matchingKeyword;
-                if (IsKeyword(component, out matchingKeyword))
+                // Don't complain about a namespace unless it contains at least one public type.
+                if (type.GetResultantVisibility() != SymbolVisibility.Public)
                 {
-                    foundKeyword = true;
+                    return;
+                }
 
-                    // Don't report the diagnostic at a specific location. See
-                    // dotnet/roslyn#8643.
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            NamespaceRule,
-                            Location.None,
-                            namespaceDisplayString,
-                            matchingKeyword));
+                INamespaceSymbol containingNamespace = type.ContainingNamespace;
+                if (containingNamespace.IsGlobalNamespace)
+                {
+                    return;
+                }
+
+                string namespaceDisplayString = containingNamespace.ToDisplayString(s_namespaceDisplayFormat);
+
+                lock (_lockGuard)
+                {
+                    if (_keywordNamedNamespaces.Contains(namespaceDisplayString))
+                    {
+                        // We've already reported a diagnostic for this namespace.
+                        return;
+                    }
+                }
+
+                IEnumerable<string> namespaceNameComponents = containingNamespace.ToDisplayParts(s_namespaceDisplayFormat)
+                    .Where(dp => dp.Kind == SymbolDisplayPartKind.NamespaceName)
+                    .Select(dp => dp.ToString());
+
+                bool foundKeyword = false;
+                foreach (string component in namespaceNameComponents)
+                {
+                    string matchingKeyword;
+                    if (IsKeyword(component, out matchingKeyword))
+                    {
+                        foundKeyword = true;
+
+                        // Don't report the diagnostic at a specific location. See
+                        // dotnet/roslyn#8643.
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                NamespaceRule,
+                                Location.None,
+                                namespaceDisplayString,
+                                matchingKeyword));
+                    }
+                }
+
+                if (foundKeyword)
+                {
+                    lock (_lockGuard)
+                    {
+                        _keywordNamedNamespaces.Add(namespaceDisplayString);
+                    }
                 }
             }
 
-            if (foundKeyword)
-            {
-                keywordNamedNamespaces.Add(namespaceDisplayString);
-            }
         }
 
         private void AnalyzeTypeRule(SymbolAnalysisContext context)
@@ -241,14 +254,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
         }
 
-        private bool IsKeyword(string name, out string keyword)
+        private static bool IsKeyword(string name, out string keyword)
         {
-            if (_caseSensitiveKeywords.TryGetValue(name, out keyword))
+            if (s_caseSensitiveKeywords.TryGetValue(name, out keyword))
             {
                 return true;
             }
 
-            return _caseInsensitiveKeywords.TryGetKey(name, out keyword);
+            return s_caseInsensitiveKeywords.TryGetKey(name, out keyword);
         }
 
         // Format member names in a way consistent with FxCop's display for this rule.
@@ -257,7 +270,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return member.ToDisplayString(s_memberDisplayFormat);
         }
 
-        private readonly ImmutableHashSet<string> _caseSensitiveKeywords = new[]
+        private static readonly ImmutableHashSet<string> s_caseSensitiveKeywords = new[]
         {
             // C#
             "abstract",
@@ -514,7 +527,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             "xor_eq"
         }.ToImmutableHashSet(StringComparer.Ordinal);
 
-        private readonly ImmutableDictionary<string, string> _caseInsensitiveKeywords = new[]
+        private static readonly ImmutableDictionary<string, string> s_caseInsensitiveKeywords = new[]
         {
             "AddHandler",
             "AddressOf",

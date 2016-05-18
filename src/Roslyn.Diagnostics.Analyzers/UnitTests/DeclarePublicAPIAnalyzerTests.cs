@@ -979,6 +979,42 @@ C2.C2() -> void";
         }
 
         [Fact]
+        public void TestWithExistingUnshippedNestedGenericMembers_Fix()
+        {
+            var source = @"
+public class C
+{
+    private C() { }
+    public class CC
+    {
+        public int Field;
+    }
+
+    public class CC<T>
+    {
+        private CC() { }
+        public int Field;
+    }
+}
+";
+
+            var shippedText = @"";
+            var unshippedText = @"C
+C.CC
+C.CC.Field -> int
+C.CC<T>
+C.CC<T>.Field -> int";
+            var fixedUnshippedText = @"C
+C.CC
+C.CC.CC() -> void
+C.CC.Field -> int
+C.CC<T>
+C.CC<T>.Field -> int";
+
+            VerifyCSharpAdditionalFileFix(source, shippedText, unshippedText, fixedUnshippedText, onlyFixFirstFixableDiagnostic: true);
+        }
+
+        [Fact]
         public void TestWithExistingShippedNestedMembers_Fix()
         {
             var source = @"

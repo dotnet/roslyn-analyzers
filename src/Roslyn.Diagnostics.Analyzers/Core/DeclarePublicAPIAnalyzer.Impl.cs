@@ -215,13 +215,9 @@ namespace Roslyn.Diagnostics.Analyzers
 
             private static string GetErrorMessageName(ISymbol symbol, bool isImplicitlyDeclaredConstructor)
             {
-                string errorMessageName = symbol.ToDisplayString(ShortSymbolNameFormat);
-                if (isImplicitlyDeclaredConstructor)
-                {
-                    errorMessageName = string.Format(RoslynDiagnosticsAnalyzersResources.PublicImplicitConstructorErroMessageName, errorMessageName);
-                }
-
-                return errorMessageName;
+                return isImplicitlyDeclaredConstructor ?
+                    string.Format(RoslynDiagnosticsAnalyzersResources.PublicImplicitConstructorErroMessageName, symbol.ContainingSymbol.ToDisplayString(ShortSymbolNameFormat)) :
+                    symbol.ToDisplayString(ShortSymbolNameFormat);
             }
 
             private string GetSiblingNamesToRemoveFromUnshippedText(ISymbol symbol)
@@ -267,7 +263,7 @@ namespace Roslyn.Diagnostics.Analyzers
                             continue;
                         }
 
-                        if (!ContainsPublicApiName(apiLineText, containingSymbolPublicApiName))
+                        if (!ContainsPublicApiName(apiLineText, containingSymbolPublicApiName + "."))
                         {
                             // Doesn't contain containingSymbol public API name - not a sibling of symbol.
                             continue;

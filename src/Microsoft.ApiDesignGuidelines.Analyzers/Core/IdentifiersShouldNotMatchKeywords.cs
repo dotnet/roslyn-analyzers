@@ -117,7 +117,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private sealed class NamespaceRuleAnalyzer
         {
-            private readonly ISet<string> _keywordNamedNamespaces = new HashSet<string>();
+            private readonly ISet<string> _namespaceWithKeywordSet = new HashSet<string>();
             private readonly object _lockGuard = new object();
 
             public void Analyze(SymbolAnalysisContext context)
@@ -138,47 +138,32 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                 string namespaceDisplayString = containingNamespace.ToDisplayString(s_namespaceDisplayFormat);
 
-                lock (_lockGuard)
-                {
-                    if (_keywordNamedNamespaces.Contains(namespaceDisplayString))
-                    {
-                        // We've already reported a diagnostic for this namespace.
-                        return;
-                    }
-                }
-
                 IEnumerable<string> namespaceNameComponents = containingNamespace.ToDisplayParts(s_namespaceDisplayFormat)
                     .Where(dp => dp.Kind == SymbolDisplayPartKind.NamespaceName)
                     .Select(dp => dp.ToString());
 
-                bool foundKeyword = false;
                 foreach (string component in namespaceNameComponents)
                 {
                     string matchingKeyword;
                     if (IsKeyword(component, out matchingKeyword))
                     {
-                        foundKeyword = true;
+                        bool doReportDiagnostic;
 
-                        // Don't report the diagnostic at a specific location. See
-                        // dotnet/roslyn#8643.
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                NamespaceRule,
-                                Location.None,
-                                namespaceDisplayString,
-                                matchingKeyword));
-                    }
-                }
+                        lock (_lockGuard)
+                        {
+                            string namespaceWithKeyword = namespaceDisplayString + "*" + matchingKeyword;
+                            doReportDiagnostic = _namespaceWithKeywordSet.Add(namespaceWithKeyword);
+                        }
 
-                if (foundKeyword)
-                {
-                    lock (_lockGuard)
-                    {
-                        _keywordNamedNamespaces.Add(namespaceDisplayString);
+                        if (doReportDiagnostic)
+                        {
+                            // Don't report the diagnostic at a specific location. See dotnet/roslyn#8643.
+                            var diagnostic = Diagnostic.Create(NamespaceRule, Location.None, namespaceDisplayString, matchingKeyword);
+                            context.ReportDiagnostic(diagnostic);
+                        }
                     }
                 }
             }
-
         }
 
         private void AnalyzeTypeRule(SymbolAnalysisContext context)

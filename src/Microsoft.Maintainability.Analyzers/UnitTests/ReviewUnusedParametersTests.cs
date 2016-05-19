@@ -260,7 +260,7 @@ public abstract class Derived : Base, I
     {
     }
 
-    private class MyEventArgs : EventArgs { }
+    public class MyEventArgs : EventArgs { }
 }
 
 public class Base
@@ -306,7 +306,7 @@ Public MustInherit Class Derived
     Public Sub MyEventHandler2(o As Object, e As MyEventArgs)
     End Sub
 
-    Private Class MyEventArgs
+    Public Class MyEventArgs
         Inherits EventArgs
     End Class
 End Class
@@ -329,11 +329,11 @@ End Interface
         public void NoDiagnosticForMethodsWithSpecialAttributesTest()
         {
             VerifyCSharp(@"
+#define CONDITION_1
+
 using System;
 using System.Diagnostics;
 using System.Runtime.Serialization;
-
-#define CONDITION_1
 
 public class ConditionalMethodsClass
 {
@@ -379,11 +379,11 @@ public class SerializableMethodsClass
 ");
 
             VerifyBasic(@"
+#Const CONDITION_1 = 5
+
 Imports System
 Imports System.Diagnostics
 Imports System.Runtime.Serialization
-
-#Define CONDITION_1
 
 Public Class ConditionalMethodsClass
     <Conditional(""CONDITION_1"")> _

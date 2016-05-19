@@ -157,7 +157,7 @@ internal class C6
 Friend Class B6
     Public Shared Sub Foo()
     End Sub
-EndClass
+End Class
 ");
         }
 

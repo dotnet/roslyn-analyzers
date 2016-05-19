@@ -35,7 +35,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             var code = @"
 using System;
 
-public class A : IComparable
+public class A
 {
     public static void Method(string url) { }
 }
@@ -44,7 +44,7 @@ public class A : IComparable
             var fix = @"
 using System;
 
-public class A : IComparable
+public class A
 {
     public static void Method(string url) { }
 
@@ -64,7 +64,7 @@ public class A : IComparable
             var code = @"
 using System;
 
-public class A : IComparable
+public class A
 {
     public static void Method(string url, string url2) { }
 }
@@ -72,7 +72,7 @@ public class A : IComparable
             var fixSingle = @"
 using System;
 
-public class A : IComparable
+public class A
 {
     public static void Method(string url, string url2) { }
 
@@ -88,7 +88,7 @@ public class A : IComparable
             var fixAllSequentially = @"
 using System;
 
-public class A : IComparable
+public class A
 {
     public static void Method(string url, string url2) { }
 
@@ -119,7 +119,7 @@ public class A : IComparable
             var code = @"
 using System;
 
-public class A : IComparable
+public class A
 {
     public static void Method(string url, string url2) { }
     public static void Method(Uri url, Uri url2) { }
@@ -128,7 +128,7 @@ public class A : IComparable
             var fix = @"
 using System;
 
-public class A : IComparable
+public class A
 {
     public static void Method(string url, string url2) { }
     public static void Method(Uri url, Uri url2) { }

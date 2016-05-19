@@ -416,6 +416,9 @@ public class Outer
 
     public class MyDataRow : DataRow
     {
+        public MyDataRow(DataRowBuilder builder) : base(builder)
+        {
+        }
     }
 }
 ";

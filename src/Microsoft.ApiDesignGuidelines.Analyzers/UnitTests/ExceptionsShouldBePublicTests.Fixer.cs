@@ -55,15 +55,21 @@ public class InternalException : Exception
             var original = @"
 using System;
 
-private class PrivateException : SystemException
+public class Outer
 {
+    private class PrivateException : SystemException
+    {
+    }
 }";
 
             var expected = @"
 using System;
 
-public class PrivateException : SystemException
+public class Outer
 {
+    public class PrivateException : SystemException
+    {
+    }
 }";
 
             VerifyCSharpFix(original, expected);
@@ -95,15 +101,19 @@ End Class";
             var original = @"
 Imports System
 
-Private Class PrivateException
-   Inherits SystemException
+public class Outer
+    Private Class PrivateException
+       Inherits SystemException
+    End Class
 End Class";
 
             var expected = @"
 Imports System
 
-Public Class PrivateException
-   Inherits SystemException
+public class Outer
+    Public Class PrivateException
+       Inherits SystemException
+    End Class
 End Class";
 
             VerifyBasicFix(original, expected);

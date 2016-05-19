@@ -32,6 +32,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         public static void Method(int url) { }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ");
         }
@@ -50,6 +52,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         public static void Method(int uri) { }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ");
         }
@@ -68,6 +72,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         public static void Method(int urn) { }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ");
         }
@@ -87,6 +93,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         public static void Method(int urn) { }
         public static void Method(Uri uri) { }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ");
         }
@@ -105,6 +113,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         public static void Method(string uri) { }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ");
         }
@@ -123,6 +133,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         public static void Method(string url) { }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ");
         }
@@ -141,6 +153,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         public static void Method(string urn) { }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ");
         }
@@ -160,6 +174,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         public static void Method(string uri) { }
         public static void Method(Uri uri) { }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ", GetCA2234CSharpResultAt(8, 13, "A.Method()", "A.Method(Uri)", "A.Method(string)"));
         }
@@ -179,6 +195,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         public static void Method(string url) { }
         public static void Method(Uri uri) { }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ", GetCA2234CSharpResultAt(8, 13, "A.Method()", "A.Method(Uri)", "A.Method(string)"));
         }
@@ -198,6 +216,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         public static void Method(string urn) { }
         public static void Method(Uri uri) { }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ", GetCA2234CSharpResultAt(8, 13, "A.Method()", "A.Method(Uri)", "A.Method(string)"));
         }
@@ -217,6 +237,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         public static void Method(string myUri) { }
         public static void Method(Uri uri) { }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ", GetCA2234CSharpResultAt(8, 13, "A.Method()", "A.Method(Uri)", "A.Method(string)"));
         }
@@ -236,6 +258,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         public static void Method(string myuri) { }
         public static void Method(Uri uri) { }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ");
         }
@@ -255,6 +279,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         public static void Method(string param1, string param2, string lastUrl) { }
         public static void Method(string param1, string param2, Uri lastUrl) { }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ", GetCA2234CSharpResultAt(8, 13, "A.Method()", "A.Method(string, string, Uri)", "A.Method(string, string, string)"));
         }
@@ -274,6 +300,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         public static void Method(string firstUri, int i, string lastUrl) { }
         public static void Method(Uri uri, int i, string lastUrl) { }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ", GetCA2234CSharpResultAt(8, 13, "A.Method()", "A.Method(Uri, int, string)", "A.Method(string, int, string)"));
         }
@@ -292,6 +320,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         public static void Method(string firstUri, Uri lastUri) { }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ");
         }
@@ -311,6 +341,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         public static void Method(string firstUri, Uri lastUri) { }
         public static void Method(int other, Uri lastUri) { }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ");
         }
@@ -330,7 +362,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         public static void Method(string firstUri, Uri lastUrl) { }
         public static void Method(Uri uri, Uri lastUrl) { }
-    }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
+}
 ", GetCA2234CSharpResultAt(8, 13, "A.Method()", "A.Method(Uri, Uri)", "A.Method(string, Uri)"));
         }
 
@@ -351,6 +385,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         public static void Method(Uri uri, string lastUrl) { }
         public static void Method(string uri, Uri lastUrl) { }
         public static void Method(Uri uri, Uri lastUrl) { }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ", GetCA2234CSharpResultAt(8, 13, "A.Method()", "A.Method(Uri, string)", "A.Method(string, string)")
  , GetCA2234CSharpResultAt(8, 13, "A.Method()", "A.Method(string, Uri)", "A.Method(string, string)"));
@@ -371,6 +407,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         public static void Method(string firstUri, string lastUrl) { }
         public static void Method(Uri uri) { }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ");
         }
@@ -390,6 +428,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         public static void Method(string firstUri, string lastUrl) { }
         public static void Method(Uri uri, int i) { }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ");
         }
@@ -409,6 +449,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         public static void Method(string uri) { }
         public static void Method(Uri uri) { }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ");
         }

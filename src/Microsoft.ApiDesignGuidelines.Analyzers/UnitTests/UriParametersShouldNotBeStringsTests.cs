@@ -24,7 +24,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyCSharp(@"
     using System;
 
-    public class A : IComparable
+    public class A
     {
         public static void Method(int url) { }
     }
@@ -37,7 +37,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyCSharp(@"
     using System;
 
-    public class A : IComparable
+    public class A
     {
         public static void Method(string url) { }
     }
@@ -50,7 +50,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyCSharp(@"
     using System;
 
-    public class A : IComparable
+    public class A
     {
         public static void Method(string url) { }
         public static void Method(Uri url) { }
@@ -64,7 +64,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyCSharp(@"
     using System;
 
-    public class A : IComparable
+    public class A
     {
         public static void Method(string url, string url2) { }
     }
@@ -78,7 +78,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyCSharp(@"
     using System;
 
-    public class A : IComparable
+    public class A
     {
         public static void Method(string url, string url2) { }
         public static void Method(string url, Uri url2) { }
@@ -95,7 +95,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyCSharp(@"
     using System;
 
-    public class A : IComparable
+    public class A
     {
         public static void Method(string url, string url2) { }
         public static void Method(Uri url, Uri url2) { }
@@ -111,7 +111,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyCSharp(@"
     using System;
 
-    internal class A : IComparable
+    internal class A
     {
         public static void Method(string url) { }
     }
@@ -126,7 +126,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     internal class A : Attribute
     {
-        public bool void Method(string url) { }
+        public void Method(string url) { }
     }
 ");
         }

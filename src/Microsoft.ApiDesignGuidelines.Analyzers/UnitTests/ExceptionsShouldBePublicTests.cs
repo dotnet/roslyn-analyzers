@@ -34,10 +34,13 @@ class InternalException : Exception
         {
             VerifyCSharp(@"
 using System;
-private class PrivateException : SystemException
+internal class Outer
 {
+    private class PrivateException : SystemException
+    {
+    }
 }",
-            GetCA1064CSharpResultAt(3, 15));
+            GetCA1064CSharpResultAt(5, 19));
         }
 
         [Fact]

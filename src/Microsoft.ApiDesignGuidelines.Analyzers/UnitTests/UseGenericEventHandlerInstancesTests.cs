@@ -111,6 +111,8 @@ public class EventsClass
         public void TestPublicEventInNonPublicType()
         {
             VerifyCSharp(@"
+using System;
+
 public delegate void BadEventHandler(object senderId, EventArgs e);
 
 internal class EventsClass

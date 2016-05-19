@@ -157,7 +157,7 @@ public class DerivedClass : BaseClass
 
 public class DerivedClass : BaseClass
 {
-    public new int MyProperty { private get; private set; }
+    public new int MyProperty { private get; set; }
 }",
 
 // Fixed Code

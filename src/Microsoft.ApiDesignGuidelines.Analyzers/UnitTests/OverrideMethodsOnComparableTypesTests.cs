@@ -544,7 +544,7 @@ Public Structure A : Implements IComparable
         Return True
     End Operator
 
-End Class
+End Structure
 ",
             GetCA1036BasicResultAt(4, 18));
         }
@@ -615,7 +615,7 @@ Public Structure B : Implements IComparable
         Return True
     End Operator
 
-End Class
+End Structure
 ");
         }
 
@@ -655,7 +655,7 @@ Public Structure A : Implements IComparable
         Return True
     End Operator
 
-End Class
+End Structure
 ");
         }
 
@@ -791,7 +791,7 @@ Public Structure A : Implements IComparable
         Return True
     End Operator
 
-End Class
+End Structure
 ",
             GetCA1036BasicResultAt(4, 18));
         }
@@ -824,7 +824,7 @@ Public Structure A : Implements IComparable(Of Integer)
         Return True
     End Operator
 
-End Class
+End Structure
 ",
             GetCA1036BasicResultAt(4, 18));
         }
@@ -861,7 +861,7 @@ Public Structure A : Implements IDerived
         Return True
     End Operator
 
-End Class
+End Structure
 ",
             GetCA1036BasicResultAt(8, 18));
         }

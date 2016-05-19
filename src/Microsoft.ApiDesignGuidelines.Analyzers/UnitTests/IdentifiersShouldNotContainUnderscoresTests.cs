@@ -181,6 +181,8 @@ public class Derives : ImplementI1
         public void CA1707_ForEvents_CSharp()
         {
             VerifyCSharp(@"
+using System;
+
 public class DoesNotMatter
 {
     public event EventHandler PublicE1_;
@@ -204,10 +206,10 @@ public class Derives : ImplementI1
 {
     public override event EventHandler E2_; // No diagnostic
 }",
-            GetCA1707CSharpResultAt(line: 4, column: 31, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.PublicE1_"),
-            GetCA1707CSharpResultAt(line: 7, column: 34, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.ProtectedE4_"),
-            GetCA1707CSharpResultAt(line: 12, column: 24, symbolKind: SymbolKind.Member, identifierNames: "I1.E_"),
-            GetCA1707CSharpResultAt(line: 18, column: 39, symbolKind: SymbolKind.Member, identifierNames: "ImplementI1.E2_"));
+            GetCA1707CSharpResultAt(line: 6, column: 31, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.PublicE1_"),
+            GetCA1707CSharpResultAt(line: 9, column: 34, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.ProtectedE4_"),
+            GetCA1707CSharpResultAt(line: 14, column: 24, symbolKind: SymbolKind.Member, identifierNames: "I1.E_"),
+            GetCA1707CSharpResultAt(line: 20, column: 39, symbolKind: SymbolKind.Member, identifierNames: "ImplementI1.E2_"));
         }
 
         [Fact]
@@ -368,9 +370,8 @@ public struct S
         public void CA1707_ForAssembly_VisualBasic()
         {
             VerifyBasic(@"
-public class DoesNotMatter
-{
-}
+Public Class DoesNotMatter
+End Class
 ",
             testProjectName: "AssemblyNameHasUnderScore_",
             expected: GetCA1707BasicResultAt(line: 2, column: 1, symbolKind: SymbolKind.Assembly, identifierNames: "AssemblyNameHasUnderScore_"));
@@ -380,9 +381,8 @@ public class DoesNotMatter
         public void CA1707_ForAssembly_NoDiagnostics_VisualBasic()
         {
             VerifyBasic(@"
-public class DoesNotMatter
-{
-}
+Public Class DoesNotMatter
+End Class
 ",
             testProjectName: "AssemblyNameHasNoUnderScore");
         }
@@ -412,9 +412,9 @@ End Namespace",
 Public Class OuterType
     Public Class UnderScoreInName_
     End Class
-End Class
 
-Private Class UnderScoreInNameButPrivate_
+    Private Class UnderScoreInNameButPrivate_
+    End Class
 End Class",
             GetCA1707BasicResultAt(line: 3, column: 18, symbolKind: SymbolKind.NamedType, identifierNames: "OuterType.UnderScoreInName_"));
         }

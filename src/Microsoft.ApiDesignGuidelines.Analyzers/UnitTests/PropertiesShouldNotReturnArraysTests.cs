@@ -40,13 +40,19 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         {
             //Verify if property is override, then no warning...
             VerifyCSharp(@"
-    public class Book
+    public abstract class Base
+    {
+        public virtual string[] Pages { get; }
+    }
+
+    public class Book : Base
+    {
         public override string[] Pages
         {
             get { return _Pages; }
         }
     }
-");
+", CreateCSharpResult(4, 33));
         }
 
         [Fact]
@@ -99,14 +105,22 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         {
             //No warning if property definition is override
             VerifyBasic(@"
+    Public MustInherit Class Base
+        Public Overridable ReadOnly Property Pages() As String()
+    End Class
+
     Public Class Book
+        Inherits Base
+
         Private _Pages As String()
-        Public Override Property Pages() As String()
+
+        Public Overrides ReadOnly Property Pages() As String()
             Get
                 Return _Pages
             End Get
         End Property
-    End Class");
+    End Class"
+, CreateBasicResult(3, 46));
         }
 
         [Fact]

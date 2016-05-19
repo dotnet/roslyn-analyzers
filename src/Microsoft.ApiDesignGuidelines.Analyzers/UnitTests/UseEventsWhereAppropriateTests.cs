@@ -116,7 +116,7 @@ public interface I
 Imports System
 
 Public Class InterfaceImplementation
-	Inherits I
+	Implements I
 	' Explicit interface implementation - Rule does not fire.
 	Private Sub FireOnSomething_InterfaceMethod1() Implements I.FireOnSomething_InterfaceMethod1
 		Throw New NotImplementedException()
@@ -131,7 +131,7 @@ End Class
 #Disable Warning CA1030 ' We are only testing no violations in InterfaceImplementation in this test, so suppress issues reported in the interface.
 Public Interface I
 	' Interface methods - Rule fires.
-	Sub FireOnSomething_InterfaceMethod1() Implements I.FireOnSomething_InterfaceMethod2
+	Sub FireOnSomething_InterfaceMethod1()
 	Sub FireOnSomething_InterfaceMethod2()
 End Interface
 #Enable Warning CA1030

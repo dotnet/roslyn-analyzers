@@ -125,12 +125,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             return true;
         }
 
-        public static bool operator ==(C c1, C c2)
+        public static bool operator ==(A a1, A a2)
         {
             return false;
         }
 
-        public static bool operator !=(C c1, C c2)
+        public static bool operator !=(A a1, A a2)
         {
             return false;
         }

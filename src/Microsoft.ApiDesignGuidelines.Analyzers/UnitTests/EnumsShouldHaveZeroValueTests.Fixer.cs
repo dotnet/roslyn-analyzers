@@ -112,11 +112,14 @@ public enum NoZeroValuedField
         public void CSharp_EnumsShouldZeroValueFlagsMultipleZero()
         {
             var code = @"// Some comment
-[System.Flags]
-private enum E
+public class Outer
 {
-    None = 0,
-    A = 0
+    [System.Flags]
+    private enum E
+    {
+        None = 0,
+        A = 0
+    }
 }
 // Some comment
 [System.Flags]
@@ -126,10 +129,13 @@ internal enum E2
     A = None
 }";
             var expectedFixedCode = @"// Some comment
-[System.Flags]
-private enum E
+public class Outer
 {
-    None = 0
+    [System.Flags]
+    private enum E
+    {
+        None = 0
+    }
 }
 // Some comment
 [System.Flags]
@@ -144,15 +150,18 @@ internal enum E2
         public void CSharp_EnumsShouldZeroValueNotFlagsNoZeroValue()
         {
             var code = @"
-private enum E
+public class Outer
 {
-    A = 1
-}
+    private enum E
+    {
+        A = 1
+    }
 
-private enum E2
-{
-    None = 1,
-    A = 2
+    private enum E2
+    {
+        None = 1,
+        A = 2
+    }
 }
 
 internal enum E3
@@ -169,16 +178,19 @@ internal enum E4
 ";
 
             var expectedFixedCode = @"
-private enum E
+public class Outer
 {
-    None,
-    A = 1
-}
+    private enum E
+    {
+        None,
+        A = 1
+    }
 
-private enum E2
-{
-    None,
-    A = 2
+    private enum E2
+    {
+        None,
+        A = 2
+    }
 }
 
 internal enum E3
@@ -356,14 +368,16 @@ End Enum";
         public void VisualBasic_EnumsShouldZeroValueNotFlagsNoZeroValue()
         {
             var code = @"
-Private Enum E
-    A = 1
-End Enum
+Class C
+    Private Enum E
+        A = 1
+    End Enum
 
-Private Enum E2
-    None = 1
-    A = 2
-End Enum
+    Private Enum E2
+        None = 1
+        A = 2
+    End Enum
+End Class
 
 Friend Enum E3
     None = 0
@@ -377,15 +391,17 @@ End Enum
 ";
 
             var expectedFixedCode = @"
-Private Enum E
-    None
-    A = 1
-End Enum
+Class C
+    Private Enum E
+        None
+        A = 1
+    End Enum
 
-Private Enum E2
-    None
-    A = 2
-End Enum
+    Private Enum E2
+        None
+        A = 2
+    End Enum
+End Class
 
 Friend Enum E3
     None = 0

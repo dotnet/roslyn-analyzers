@@ -93,6 +93,7 @@ class T
 {
     void M(CancellationToken t, out int i)
     {
+        i = 2;
     }
 }";
             VerifyCSharp(test);

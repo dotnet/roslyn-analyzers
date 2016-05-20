@@ -32,7 +32,7 @@ class C
         Foo();
     }
 
-    protected virtual Foo() { }
+    protected virtual void Foo() { }
 }
 ",
             GetCA2214CSharpResultAt(6, 9));
@@ -49,7 +49,7 @@ class C
         Foo();
     }
 
-    [|protected virtual Foo() { }|]
+    [|protected virtual void Foo() { }|]
 }
 ");
         }
@@ -87,14 +87,14 @@ End Class
         public void CA2214AbstractMethodCSharp()
         {
             VerifyCSharp(@"
-class C
+abstract class C
 {
     C()
     {
         Foo();
     }
 
-    protected abstract Foo();
+    protected abstract void Foo();
 }
 ",
             GetCA2214CSharpResultAt(6, 9));
@@ -104,7 +104,7 @@ class C
         public void CA2214AbstractMethodBasic()
         {
             VerifyBasic(@"
-Class C
+MustInherit Class C
     Public Sub New()
         Foo()
     End Sub
@@ -118,7 +118,7 @@ End Class
         public void CA2214MultipleInstancesCSharp()
         {
             VerifyCSharp(@"
-class C
+abstract class C
 {
     C()
     {
@@ -126,8 +126,8 @@ class C
         Bar();
     }
 
-    protected abstract Foo();
-    protected virtual Bar() { }
+    protected abstract void Foo();
+    protected virtual void Bar() { }
 }
 ",
             GetCA2214CSharpResultAt(6, 9),
@@ -138,7 +138,7 @@ class C
         public void CA2214MultipleInstancesBasic()
         {
             VerifyBasic(@"
-Class C
+MustInherit Class C
     Public Sub New()
         Foo()
         Bar()
@@ -156,7 +156,7 @@ End Class
         public void CA2214NotTopLevelCSharp()
         {
             VerifyCSharp(@"
-class C
+abstract class C
 {
     C()
     {
@@ -171,7 +171,7 @@ class C
         }
     }
 
-    protected abstract Foo();
+    protected abstract void Foo();
 }
 ",
             GetCA2214CSharpResultAt(8, 13),
@@ -182,7 +182,7 @@ class C
         public void CA2214NotTopLevelBasic()
         {
             VerifyBasic(@"
-Class C
+MustInherit Class C
     Public Sub New()
         If True Then
             Foo()
@@ -203,9 +203,9 @@ End Class
         public void CA2214NoDiagnosticsOutsideConstructorCSharp()
         {
             VerifyCSharp(@"
-class C
+abstract class C
 {
-    protected abstract Foo();
+    protected abstract void Foo();
 
     void Method()
     {
@@ -219,7 +219,7 @@ class C
         public void CA2214NoDiagnosticsOutsideConstructorBasic()
         {
             VerifyBasic(@"
-Class C
+MustInherit Class C
     MustOverride Sub Foo()
 
     Sub Method()
@@ -233,7 +233,7 @@ End Class
         public void CA2214SpecialInheritanceCSharp()
         {
             var source = @"
-class C : System.Web.UI.Control
+abstract class C : System.Web.UI.Control
 {
     C()
     {
@@ -242,10 +242,10 @@ class C : System.Web.UI.Control
         OnLoad(null);
     }
 
-    protected abstract Foo();
+    protected abstract void Foo();
 }
 
-class D : System.Windows.Forms.Control
+abstract class D : System.Windows.Forms.Control
 {
     D()
     {
@@ -254,7 +254,7 @@ class D : System.Windows.Forms.Control
         OnPaint(null);
     }
 
-    protected abstract Foo();
+    protected abstract void Foo();
 }
 
 class ControlBase : System.Windows.Forms.Control
@@ -265,7 +265,7 @@ class E : ControlBase
 {
     E()
     {
-        OnLoad(null); // no diagnostics when we're not an immediate descendant of a special class
+        OnGotFocus(null); // no diagnostics when we're not an immediate descendant of a special class
     }
 }
 ";
@@ -280,24 +280,24 @@ class E : ControlBase
         public void CA2214SpecialInheritanceBasic()
         {
             var source = @"
-Class C
+MustInherit Class C
     Inherits System.Web.UI.Control
     Public Sub New()
         ' no diagnostics because we inherit from System.Web.UI.Control
         Foo()
         OnLoad(Nothing)
     End Sub
-    MustInherit Sub Foo()
+    MustOverride Sub Foo()
 End Class
 
-Class D
+MustInherit Class D
     Inherits System.Windows.Forms.Control
     Public Sub New()
         ' no diagnostics because we inherit from System.Web.UI.Control
         Foo()
         OnPaint(Nothing)
     End Sub
-    MustInherit Sub Foo()
+    MustOverride Sub Foo()
 End Class
 
 Class ControlBase
@@ -307,7 +307,7 @@ End Class
 Class E
     Inherits ControlBase
     Public Sub New()
-        OnLoad(Nothing) ' no diagnostics when we're not an immediate descendant of a special class
+        OnGotFocus(Nothing) ' no diagnostics when we're not an immediate descendant of a special class
     End Sub
 End Class
 ";

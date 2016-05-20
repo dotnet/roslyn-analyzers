@@ -82,7 +82,7 @@ End Class",
             VerifyBasic(@"
 Public Class Class1
     ' Not Private or Friend
-    Public Shared ReadOnly f1 As String = ""
+    Public Shared ReadOnly f1 As String = """"
     ' Not Readonly
     Shared f3 As String, f4 As String = ""Message is shown only for f4""
     ' Not Shared

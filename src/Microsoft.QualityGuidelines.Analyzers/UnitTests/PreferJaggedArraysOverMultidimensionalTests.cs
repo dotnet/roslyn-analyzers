@@ -146,6 +146,7 @@ Public Class Class1
 
     Public Sub MethodWithJaggedArrayParameter(jaggedParameter As Integer()())
     End Sub
+End Class
 ");
         }
 

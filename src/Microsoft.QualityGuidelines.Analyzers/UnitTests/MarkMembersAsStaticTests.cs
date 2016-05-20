@@ -57,7 +57,7 @@ public class MembersTests
     public int MyProperty
     {
         get { return 10; }
-        set { Console.WriteLine(value); }
+        set { System.Console.WriteLine(value); }
     }
 
     public event System.EventHandler<System.EventArgs> CustomEvent { add {} remove {} }
@@ -76,6 +76,8 @@ public class MembersTests
         public void BasicSimpleMembers()
         {
             VerifyBasic(@"
+Imports System
+
 Public Class MembersTests
     Shared s_field As Integer
     Public Const Zero As Integer = 0
@@ -126,14 +128,14 @@ Public Class MembersTests
     End Event
 End Class
 ",
-                GetBasicResultAt(6, 21, "Method1"),
-                GetBasicResultAt(10, 16, "Method2"),
-                GetBasicResultAt(13, 16, "Method3"),
-                GetBasicResultAt(17, 21, "Method4"),
-                GetBasicResultAt(21, 30, "Property1"),
-                GetBasicResultAt(27, 31, "Property2"),
-                GetBasicResultAt(33, 21, "MyProperty"),
-                GetBasicResultAt(42, 25, "CustomEvent"));
+                GetBasicResultAt(8, 21, "Method1"),
+                GetBasicResultAt(12, 16, "Method2"),
+                GetBasicResultAt(15, 16, "Method3"),
+                GetBasicResultAt(19, 21, "Method4"),
+                GetBasicResultAt(23, 30, "Property1"),
+                GetBasicResultAt(29, 31, "Property2"),
+                GetBasicResultAt(35, 21, "MyProperty"),
+                GetBasicResultAt(44, 25, "CustomEvent"));
         }
 
         [Fact]
@@ -144,7 +146,7 @@ public class MembersTests
 {
     public MembersTests() { }
 
-    public ~MembersTests() { }
+    ~MembersTests() { }
 
     public int x; 
 

@@ -394,7 +394,7 @@ End Class
             var code = @"
 public class A
 {
-    float _n = 42.0;
+    float _n = 42.0F;
 
     public void F()
     {
@@ -412,7 +412,7 @@ public class A
         {
             var code = @"
 Public Class A
-    Private _n As Single = 42.0;
+    Private _n As Single = 42.0F
 
     Public Sub F()
         G(_n = Single.NaN)
@@ -430,7 +430,7 @@ End Class
             var code = @"
 public class A
 {
-    float _n = 42.0;
+    float _n = 42.0F;
 
     public int F()
     {
@@ -447,7 +447,7 @@ public class A
             // VB doesn't have the ternary operator, but we add this test for symmetry.
             var code = @"
 Public Class A
-    Private _n As Single = 42.0;
+    Private _n As Single = 42.0F
 
     Public Function F() As Integer
         Return If(_n = Single.NaN, 1, 0)

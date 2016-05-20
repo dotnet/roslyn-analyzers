@@ -34,7 +34,8 @@ namespace System.Runtime.Analyzers.UnitTests
                 @"namespace System { public class Array { public static T[] Empty<T>() { return null; } } }";
 
             const string badSource = @"
-[System.Runtime.CompilerServices.Dynamic(new bool[0])] // no
+using System.Collections.Generic;
+
 class C
 {
     unsafe void M1()
@@ -52,12 +53,13 @@ class C
         int[][,] arr11 = new int[1][,];                // no
         int[,][] arr12 = new int[0,0][];               // no
         int*[] arr13 = new int*[0];                    // no
-        List<int> list1 = new List<int>() { }          // no
+        List<int> list1 = new List<int>() { };         // no
     }
 }";
 
             const string fixedSource = @"
-[System.Runtime.CompilerServices.Dynamic(new bool[0])] // no
+using System.Collections.Generic;
+
 class C
 {
     unsafe void M1()
@@ -75,19 +77,19 @@ class C
         int[][,] arr11 = new int[1][,];                // no
         int[,][] arr12 = new int[0,0][];               // no
         int*[] arr13 = new int*[0];                    // no
-        List<int> list1 = new List<int>() { }          // no
+        List<int> list1 = new List<int>() { };         // no
     }
 }";
             string arrayEmptySource = IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
 
             VerifyCSharp(badSource + arrayEmptySource, new[]
             {
-                GetCSharpResultAt(7, 22, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
-                GetCSharpResultAt(8, 23, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
-                GetCSharpResultAt(9, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
-                GetCSharpResultAt(13, 24, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
-                GetCSharpResultAt(14, 28, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
-                GetCSharpResultAt(16, 26, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor)
+                GetCSharpResultAt(8, 22, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
+                GetCSharpResultAt(9, 23, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
+                GetCSharpResultAt(10, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
+                GetCSharpResultAt(14, 24, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
+                GetCSharpResultAt(15, 28, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
+                GetCSharpResultAt(17, 26, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor)
             });
             VerifyCSharpFix(
                 arrayEmptySource + badSource,
@@ -112,6 +114,8 @@ Namespace System
 End Namespace
 ";
             const string badSource = @"
+Imports System.Collections.Generic
+
 <System.Runtime.CompilerServices.Dynamic(new Boolean(-1) {})> _
 Class C
     Sub M1()
@@ -133,6 +137,8 @@ Class C
 End Class";
 
             const string fixedSource = @"
+Imports System.Collections.Generic
+
 <System.Runtime.CompilerServices.Dynamic(new Boolean(-1) {})> _
 Class C
     Sub M1()
@@ -157,12 +163,12 @@ End Class";
 
             VerifyBasic(badSource + arrayEmptySource, new[]
             {
-                GetBasicResultAt(5, 33, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
-                GetBasicResultAt(6, 30, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
-                GetBasicResultAt(7, 27, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
-                GetBasicResultAt(11, 35, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
-                GetBasicResultAt(12, 39, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
-                GetBasicResultAt(14, 37, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor)
+                GetBasicResultAt(7, 33, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
+                GetBasicResultAt(8, 30, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
+                GetBasicResultAt(9, 27, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
+                GetBasicResultAt(13, 35, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
+                GetBasicResultAt(14, 39, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
+                GetBasicResultAt(16, 37, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor)
             });
             VerifyBasicFix(
                 arrayEmptySource + badSource,

@@ -153,7 +153,7 @@ public struct A : IDisposable // Although disposable structs are evil
 {
     private readonly IntPtr _pi;
 
-    public A()
+    public A(int i)
     {
         _pi = NativeMethods.AllocateResource();
     }
@@ -184,7 +184,7 @@ Public Structure A
 
     Private ReadOnly _pi As IntPtr
 
-    Public Sub New()
+    Public Sub New(i As Integer)
         _pi = NativeMethods.AllocateResource()
     End Sub
 
@@ -256,7 +256,7 @@ using System;
 
 internal static class ManagedMethods
 {
-    internal static IntPtr AllocateIntPtr()
+    internal static IntPtr AllocateResource()
     {
         return IntPtr.Zero;
     }
@@ -285,16 +285,16 @@ public class A : IDisposable
             var code = @"
 Imports System
 
-Friend Shared Class ManagedMethods
-    Friend Shared Function AllocateIntPtr() As IntPtr
-        Return IntPtr.Zero;
+Friend NotInheritable Class ManagedMethods
+    Friend Shared Function AllocateResource() As IntPtr
+        Return IntPtr.Zero
     End Function
 End Class
 
 Public Class A
     Implements IDisposable
 
-    Private ReadOnly I_pi As IntPtr
+    Private ReadOnly _pi As IntPtr
 
     Public Sub New()
         _pi = ManagedMethods.AllocateResource()

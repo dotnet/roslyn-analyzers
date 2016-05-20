@@ -44,7 +44,7 @@ class C
 {
     void Method()
     {
-        string a;
+        string a = null;
 
         // equality with empty string
         string.Equals(a, """");
@@ -106,7 +106,7 @@ class C
 {
     void Method()
     {
-        string a;
+        string a = null;
 
         // equality with empty string
         a.Equals("""");
@@ -160,7 +160,7 @@ class C
 {
     void Method()
     {
-        string a;
+        string a = null;
         if (a == """") { }
         if ("""" != a) { }
         if (a == string.Empty) { }

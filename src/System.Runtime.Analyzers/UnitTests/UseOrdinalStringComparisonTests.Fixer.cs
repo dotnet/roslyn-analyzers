@@ -209,8 +209,8 @@ class C
 {
     void M(string a, string b)
     {
-        System.Globalization.CultureInfo ci;
-        System.Globalization.CompareOptions co;
+        System.Globalization.CultureInfo ci = null;
+        System.Globalization.CompareOptions co = System.Globalization.CompareOptions.None;
 
         // add or correct StringComparison
         if (string.Compare(a, b) == 0) { }
@@ -233,8 +233,8 @@ class C
 {
     void M(string a, string b)
     {
-        System.Globalization.CultureInfo ci;
-        System.Globalization.CompareOptions co;
+        System.Globalization.CultureInfo ci = null;
+        System.Globalization.CompareOptions co = System.Globalization.CompareOptions.None;
 
         // add or correct StringComparison
         if (string.Compare(a, b, System.StringComparison.Ordinal) == 0) { }

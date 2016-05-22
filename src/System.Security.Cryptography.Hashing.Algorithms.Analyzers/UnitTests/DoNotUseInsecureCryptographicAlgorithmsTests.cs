@@ -132,14 +132,14 @@ Imports System.Security.Cryptography
 Imports System.Threading.Tasks
 Namespace TestNamespace
 	Class TestClass
-		Private Function TestMethod() As Task
+		Private Async Function TestMethod() As Task
 			Await Task.Run(Function() 
-			MD5.Create()
-End Function)
+			    MD5.Create()
+            End Function)
 		End Function
 	End Class
 End Namespace",
-         GetBasicResultAt(8, 4, CA5350RuleName, _doNotUseMD5Message));
+         GetBasicResultAt(8, 8, CA5350RuleName, _doNotUseMD5Message));
         }
 
         [Fact]
@@ -234,15 +234,15 @@ Namespace TestNamespace
 	Class MyMD5
 		Inherits MD5
 		Public Overrides Sub Initialize()
-			Throw New NotImplementedException()
+			Throw New System.NotImplementedException()
 		End Sub
 
 		Protected Overrides Sub HashCore(array As Byte(), ibStart As Integer, cbSize As Integer)
-			Throw New NotImplementedException()
+			Throw New System.NotImplementedException()
 		End Sub
 
 		Protected Overrides Function HashFinal() As Byte()
-			Throw New NotImplementedException()
+			Throw New System.NotImplementedException()
 		End Function
 	End Class
 End Namespace"},
@@ -376,14 +376,14 @@ Imports System.Security.Cryptography
 Imports System.Threading.Tasks
 Namespace TestNamespace
 	Class TestClass
-		Private Function TestMethod() As Task
+		Private Async Function TestMethod() As Task
 			Await Task.Run(Function() 
-			SHA1.Create()
-End Function)
+			    SHA1.Create()
+            End Function)
 		End Function
 	End Class
 End Namespace",
-        GetBasicResultAt(8, 4, CA5351RuleName, _doNotUseSHA1Message));
+        GetBasicResultAt(8, 8, CA5351RuleName, _doNotUseSHA1Message));
         }
 
         [Fact]
@@ -476,15 +476,15 @@ Namespace TestNamespace
 	Class MySHA1
 		Inherits SHA1
 		Public Overrides Sub Initialize()
-			Throw New NotImplementedException()
+			Throw New System.NotImplementedException()
 		End Sub
 
 		Protected Overrides Sub HashCore(array As Byte(), ibStart As Integer, cbSize As Integer)
-			Throw New NotImplementedException()
+			Throw New System.NotImplementedException()
 		End Sub
 
 		Protected Overrides Function HashFinal() As Byte()
-			Throw New NotImplementedException()
+			Throw New System.NotImplementedException()
 		End Function
 	End Class
 End Namespace" },
@@ -558,7 +558,7 @@ namespace TestNamespace
 {
    class TestClass1
     {
-        public HMAC GetHMACSHA1 => new HMACSHA1;
+        public HMAC GetHMACSHA1 => new HMACSHA1();
     }
 }",
             GetCSharpResultAt(7, 36, CA5351RuleName, _doNotUseSHA1Message));
@@ -719,15 +719,15 @@ Namespace TestNamespace
 	Class MyHMACSHA1
 		Inherits HMACSHA1
 		Public Overrides Sub Initialize()
-			Throw New NotImplementedException()
+			Throw New System.NotImplementedException()
 		End Sub
 
 		Protected Overrides Sub HashCore(array As Byte(), ibStart As Integer, cbSize As Integer)
-			Throw New NotImplementedException()
+			Throw New System.NotImplementedException()
 		End Sub
 
 		Protected Overrides Function HashFinal() As Byte()
-			Throw New NotImplementedException()
+			Throw New System.NotImplementedException()
 		End Function
 	End Class
 End Namespace

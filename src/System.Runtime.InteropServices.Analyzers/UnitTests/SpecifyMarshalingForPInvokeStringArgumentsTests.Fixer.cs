@@ -78,7 +78,7 @@ Class C
     End Sub
 
     <DllImport(""user32.dll"")>
-    Private Shared Sub Foo2(<MarshalAs(CShort(0)) s As String)
+    Private Shared Sub Foo2(<MarshalAs(CShort(0))> s As String)
     End Sub
 
     Private Declare Sub Foo3 Lib ""user32.dll"" (<MarshalAs(UnmanagedType.LPStr)> s As String)
@@ -93,7 +93,7 @@ Class C
     End Sub
 
     <DllImport(""user32.dll"")>
-    Private Shared Sub Foo2(<MarshalAs(UnmanagedType.LPWStr) s As String)
+    Private Shared Sub Foo2(<MarshalAs(UnmanagedType.LPWStr)> s As String)
     End Sub
 
     Private Declare Sub Foo3 Lib ""user32.dll"" (<MarshalAs(UnmanagedType.LPWStr)> s As String)
@@ -146,7 +146,7 @@ Class C
     <DllImport(""user32.dll"", CharSet:=CharSet.Ansi)>
     Private Shared Sub Foo2(s As String)
     End Sub
-EndClass
+End Class
 ", @"
 Imports System.Runtime.InteropServices
 Imports System.Text
@@ -159,7 +159,7 @@ Class C
     <DllImport(""user32.dll"", CharSet:=CharSet.Unicode)>
     Private Shared Sub Foo2(s As String)
     End Sub
-EndClass
+End Class
 ");
         }
 
@@ -173,7 +173,7 @@ Class C
     Private Declare Sub Foo1 Lib ""user32.dll"" (s As String)
     Private Declare Ansi Sub Foo2 Lib ""user32.dll"" (s As StringBuilder)
     Private Declare Function Foo3 Lib ""user32.dll"" () As String
-EndClass
+End Class
 ", @"
 Imports System.Text
 
@@ -181,7 +181,7 @@ Class C
     Private Declare Unicode Sub Foo1 Lib ""user32.dll"" (s As String)
     Private Declare Unicode Sub Foo2 Lib ""user32.dll"" (s As StringBuilder)
     Private Declare Unicode Function Foo3 Lib ""user32.dll"" () As String
-EndClass
+End Class
 ");
         }
 

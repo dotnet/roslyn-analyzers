@@ -229,6 +229,7 @@ End Class
         public void CA1401CSharpNonPublic()
         {
             VerifyCSharp(@"
+using System;
 using System.Runtime.InteropServices;
 
 public sealed class TimerFontContainer
@@ -533,10 +534,10 @@ class C
     private static extern void Foo4(StringBuilder s);
 
     [DllImport(""user32.dll"", CharSet = CharSet.Unicode)]
-    private static extern void Foo5([MarshalAs(UnmanagedTypes.LPStr)] string s); // correct marshaling on method, not on parameter
+    private static extern void Foo5([MarshalAs(UnmanagedType.LPStr)] string s); // correct marshaling on method, not on parameter
 
     [DllImport(""user32.dll"", CharSet = CharSet.Unicode)]
-    private static extern void Foo6([MarshalAs(UnmanagedTypes.LPStr)] StringBuilder s);
+    private static extern void Foo6([MarshalAs(UnmanagedType.LPStr)] StringBuilder s);
 }
 ",
                 CSharpResult2101(7, 6),

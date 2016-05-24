@@ -624,7 +624,7 @@ namespace CS_BadPropertiesShouldNotBeWriteOnlyTests2
         public void VB_CA1044Bad_Write_with_NoRead()
         {
             var code = @"
-Import System
+Imports System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests
     Public Class VB_BadClassWithWriteOnlyProperty
         Protected VB_someName As String
@@ -643,7 +643,7 @@ End NameSpace
         public void VB_CA1044Bad_Write_with_NoRead1()
         {
             var code = @"
-Import System
+Imports System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests1
     Public Class VB_BadClassWithWriteOnlyProperty
         Protected VB_someName As String
@@ -662,7 +662,7 @@ End NameSpace
         public void VB_CA1044Bad_Write_with_NoRead2()
         {
             var code = @"
-Import System
+Imports System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests
 Public Class VB_BadClassWithWriteOnlyProperty
     Protected VB_someName As String
@@ -681,7 +681,7 @@ End NameSpace
         public void VB_CA1044Bad_Write_with_NoRead3()
         {
             var code = @"
-Import System
+Imports System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests3
     Public Class VB_BadClassWithWriteOnlyProperty
         Protected VB_someName As String
@@ -700,7 +700,7 @@ End NameSpace
         public void VB_CA1044Bad_Write_with_NoRead4()
         {
             var code = @"
-Import System
+Imports System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests4
     Public Class VB_BadClassWithWriteOnlyProperty
         Protected VB_someName As String
@@ -719,7 +719,7 @@ End NameSpace
         public void VB_CA1044Bad_Write_with_NoRead5()
         {
             var code = @"
-Import System
+Imports System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests5
     Public Class VB_BadClassWithWriteOnlyProperty
         Protected VB_someName As String
@@ -737,9 +737,9 @@ End NameSpace
         public void VB_CA1044Bad_Interface_Write()
         {
             var code = @"
-Import System
+Imports System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests
-    Public Interface IIterface
+    Public Interface IInterface
         WriteOnly Property InterfaceProperty As String
     End Interface
     Public Class Class1
@@ -758,7 +758,7 @@ End NameSpace
         public void VB_CA1044Bad_Interface_Write1()
         {
             var code = @"
-Import System
+Imports System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests1
     Public Interface VB_IInterface
         Protected WriteOnly Property VB_InterfaceProperty1() As String Implements VB_InterfaceProperty1
@@ -774,7 +774,7 @@ End NameSpace
         public void VB_CA1044Bad_Write_with_NoRead6()
         {
             var code = @"
-Import System
+Imports System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests5
     Public Interface IIterface
         WriteOnly Property InterfaceProperty As String
@@ -794,7 +794,7 @@ End NameSpace
         public void VB_CA1044Bad_Base_Write()
         {
             var code = @"
-Import System
+Imports System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests
     Public Class VB_Base
         Public Overridable WriteOnly Property VB_BaseProperty() As String
@@ -812,7 +812,7 @@ End NameSpace
         public void VB_CA1044Bad_InaccessibleRead()
         {
             var code = @"
-Import System
+Imports System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests
     Public Class VB_BadClassWithWriteOnlyProperty
          Public Property VB_InaccessibleProperty As String
@@ -833,7 +833,7 @@ End NameSpace
         public void VB_CA1044Bad_InaccessibleRead1()
         {
             var code = @"
-Import System
+Imports System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests1
     Public Class VB_BadClassWithWriteOnlyProperty
         Private field As String
@@ -855,7 +855,7 @@ End NameSpace
         public void VB_CA1044Bad_InaccessibleRead2()
         {
             var code = @"
-Import System
+Imports System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests2
     Public Class VB_BadClassWithWriteOnlyProperty
         Protected Friend Property VB_InaccessibleProperty2() As String
@@ -876,7 +876,7 @@ End NameSpace
         public void VB_CA1044Bad_InaccessibleRead3()
         {
             var code = @"
-Import System
+Imports System
 Namespace VB_BadPropertiesShouldNotBeWriteOnlyTests3
     Public Class VB_BadClassWithWriteOnlyProperty
         Public Property VB_InaccessibleProperty3() As String

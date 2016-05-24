@@ -22,6 +22,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         public void CSharp_CA1721_NoDiagnostic()
         {
             VerifyCSharp(@"
+using System;
+
 public class Test
 {
     public DateTime Today
@@ -40,6 +42,8 @@ public class Test
         public void CSharp_CA1721_SomeDiagnostic1()
         {
             VerifyCSharp(@"
+using System;
+
 public class Test
 {
     public DateTime Date
@@ -52,7 +56,7 @@ public class Test
     }
 }
 ",
-            GetCA1721CSharpDeclaringTypeResultAt(line: 4, column: 21, identifierName: "Date", typeName: "Test"));
+            GetCA1721CSharpDeclaringTypeResultAt(line: 6, column: 21, identifierName: "Date", typeName: "Test"));
         }
 
 
@@ -60,6 +64,8 @@ public class Test
         public void CSharp_CA1721_SomeDiagnostic2()
         {
             VerifyCSharp(@"
+using System;
+
 public class Foo
 {
     public class Ray
@@ -78,7 +84,7 @@ public class Foo
     }
 }
 ",
-            GetCA1721CSharpBaseTypeResultAt(line: 13, column: 25, identifierName: "Date", typeName: "Ray"));
+            GetCA1721CSharpBaseTypeResultAt(line: 15, column: 25, identifierName: "Date", typeName: "Ray"));
         }
 
 
@@ -86,6 +92,8 @@ public class Foo
         public void CSharp_CA1721_SomeDiagnostic3()
         {
             VerifyCSharp(@"
+using System;
+
 public class Foo
 {
     public class Ray
@@ -104,13 +112,15 @@ public class Foo
     }
 }
 ",
-            GetCA1721CSharpBaseTypeResultAt(line: 13, column: 23, identifierName: "GetDate", typeName: "Ray"));
+            GetCA1721CSharpBaseTypeResultAt(line: 15, column: 23, identifierName: "GetDate", typeName: "Ray"));
         }
 
         [Fact]
         public void Basic_CA1721_NoDiagnostic()
         {
             VerifyBasic(@"
+Imports System
+
 Public Class Test
     Public ReadOnly Property [Date]() As DateTime
         Get
@@ -128,6 +138,8 @@ End Class
         public void Basic_CA1721_SomeDiagnostic1()
         {
             VerifyBasic(@"
+Imports System
+
 Public Class Test
     Public ReadOnly Property [Date]() As DateTime
         Get
@@ -139,7 +151,7 @@ Public Class Test
     End Function 
 End Class
 ",
-            GetCA1721BasicDeclaringTypeResultAt(line: 3, column: 30, identifierName: "Date", typeName: "Test"));
+            GetCA1721BasicDeclaringTypeResultAt(line: 5, column: 30, identifierName: "Date", typeName: "Test"));
         }
 
 
@@ -147,6 +159,8 @@ End Class
         public void Basic_CA1721_SomeDiagnostic2()
         {
             VerifyBasic(@"
+Imports System
+
 Public Class Foo
     Public Class Ray
         Public Function GetDate() As String
@@ -163,7 +177,7 @@ Public Class Foo
     End Class
 End Class
 ",
-            GetCA1721BasicBaseTypeResultAt(line: 10, column: 34, identifierName: "Date", typeName: "Ray"));
+            GetCA1721BasicBaseTypeResultAt(line: 12, column: 34, identifierName: "Date", typeName: "Ray"));
         }
 
 
@@ -171,6 +185,8 @@ End Class
         public void Basic_CA1721_SomeDiagnostic3()
         {
             VerifyBasic(@"
+Imports System
+
 Public Class Foo
     Public Class Ray
         Public ReadOnly Property [Date]() As DateTime
@@ -187,8 +203,9 @@ Public Class Foo
     End Class
 End Class
 ",
-            GetCA1721BasicBaseTypeResultAt(line: 12, column: 25, identifierName: "GetDate", typeName: "Ray"));
+            GetCA1721BasicBaseTypeResultAt(line: 14, column: 25, identifierName: "GetDate", typeName: "Ray"));
         }
+
         #region Helpers
 
         private static DiagnosticResult GetCA1721CSharpDeclaringTypeResultAt(int line, int column, string identifierName, string typeName)

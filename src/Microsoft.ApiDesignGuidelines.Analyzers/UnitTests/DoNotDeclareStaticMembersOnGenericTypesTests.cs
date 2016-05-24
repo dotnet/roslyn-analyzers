@@ -21,7 +21,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         [Fact]
         public void CSharp_CA1000_ShouldGenerate()
         {
-            VerifyCSharp(@"public class GenericType1<T>
+            VerifyCSharp(@"
+    using System;
+
+    public class GenericType1<T>
     {
         private GenericType1()
         {
@@ -50,10 +53,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             get { return string.Empty; }
         }
     }",
-    GetCSharpResultAt(7, 28, DoNotDeclareStaticMembersOnGenericTypesAnalyzer.RuleId, DoNotDeclareStaticMembersOnGenericTypesAnalyzer.Rule.MessageFormat.ToString()),
-    GetCSharpResultAt(12, 30, DoNotDeclareStaticMembersOnGenericTypesAnalyzer.RuleId, DoNotDeclareStaticMembersOnGenericTypesAnalyzer.Rule.MessageFormat.ToString()),
-    GetCSharpResultAt(20, 28, DoNotDeclareStaticMembersOnGenericTypesAnalyzer.RuleId, DoNotDeclareStaticMembersOnGenericTypesAnalyzer.Rule.MessageFormat.ToString()),
-    GetCSharpResultAt(25, 30, DoNotDeclareStaticMembersOnGenericTypesAnalyzer.RuleId, DoNotDeclareStaticMembersOnGenericTypesAnalyzer.Rule.MessageFormat.ToString())
+    GetCSharpResultAt(10, 28, DoNotDeclareStaticMembersOnGenericTypesAnalyzer.RuleId, DoNotDeclareStaticMembersOnGenericTypesAnalyzer.Rule.MessageFormat.ToString()),
+    GetCSharpResultAt(15, 30, DoNotDeclareStaticMembersOnGenericTypesAnalyzer.RuleId, DoNotDeclareStaticMembersOnGenericTypesAnalyzer.Rule.MessageFormat.ToString()),
+    GetCSharpResultAt(23, 28, DoNotDeclareStaticMembersOnGenericTypesAnalyzer.RuleId, DoNotDeclareStaticMembersOnGenericTypesAnalyzer.Rule.MessageFormat.ToString()),
+    GetCSharpResultAt(28, 30, DoNotDeclareStaticMembersOnGenericTypesAnalyzer.RuleId, DoNotDeclareStaticMembersOnGenericTypesAnalyzer.Rule.MessageFormat.ToString())
     );
         }
 

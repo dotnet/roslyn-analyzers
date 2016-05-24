@@ -283,7 +283,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                            public class TestClass : IntermediateBaseClass
                            {
-                               public override void TestMethod(string arg1, string arg2);
+                               public override void TestMethod(string arg1, string arg2) { }
                            }",
                          GetCSharpResultAt(12, 71, "void TestClass.TestMethod(string arg1, string arg2)", "arg1", "baseArg1", "void BaseClass.TestMethod(string baseArg1, string baseArg2)"),
                          GetCSharpResultAt(12, 84, "void TestClass.TestMethod(string arg1, string arg2)", "arg2", "baseArg2", "void BaseClass.TestMethod(string baseArg1, string baseArg2)"));
@@ -316,7 +316,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                            public class TestClass : BaseClass
                            {
-                               public new void TestMethod(string arg1, string arg2);
+                               public new void TestMethod(string arg1, string arg2) { }
                            }");
 
             VerifyBasic(@"Public Class BaseClass

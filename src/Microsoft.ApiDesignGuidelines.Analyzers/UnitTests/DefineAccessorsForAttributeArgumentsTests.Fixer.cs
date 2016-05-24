@@ -68,7 +68,7 @@ public sealed class SetterOnlyTestAttribute : Attribute
 
     public string Name 
     { 
-        set { m_name = value }
+        set { m_name = value; }
     }
 }", @"
 using System;
@@ -85,7 +85,7 @@ public sealed class SetterOnlyTestAttribute : Attribute
 
     public string Name 
     {
-        internal set { m_name = value }
+        internal set { m_name = value; }
 
         get;
     }
@@ -354,7 +354,7 @@ Public NotInheritable Class InternalGetterTestAttribute
         Friend Get
             Return m_name
         End Get
-        Friend Set
+        Set
             m_name = value
         End Set
     End Property

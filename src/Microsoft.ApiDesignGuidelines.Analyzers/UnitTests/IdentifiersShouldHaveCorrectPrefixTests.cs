@@ -247,7 +247,7 @@ End Interface
         public void TestTypeParameterNamesBasic()
         {
             VerifyBasic(@"
-Import System
+Imports System
 
 Public Class IInterface(Of VSome)
 End Class
@@ -324,7 +324,7 @@ End Class
         public void TestTypeParameterNamesBasic_NoDiagnosticCases()
         {
             VerifyBasic(@"
-Import System
+Imports System
 
 Public Class IInterface(Of V)
 End Class

@@ -161,7 +161,7 @@ Public Structure C
         Public Sub New()
         End Sub
     End Class
-End Class
+End Structure
 ";
             VerifyBasic(code, GetCA1012BasicResultAt(3, 23, "D"));
         }

@@ -53,7 +53,7 @@ class A
         {
             VerifyBasic(@"
 Class A
-    field As System.String
+    Dim field As System.String
 End Class");
         }
 
@@ -72,7 +72,7 @@ class A
         {
             VerifyBasic(@"
 Class
-    Public Shared field as System.String; 
+    Public Shared field as System.String
 End Class");
         }
 
@@ -91,7 +91,7 @@ class A
         {
             VerifyBasic(@"
 Class A
-    Public Shared ReadOnly field as System.String; 
+    Public Shared ReadOnly field as System.String
 End Class");
         }
 
@@ -110,7 +110,7 @@ class A
         {
             VerifyBasic(@"
 Class A
-    Public Const field as System.String; 
+    Public Const field as System.String
 End Class");
         }
     }

@@ -268,7 +268,7 @@ Imports System.IO
       Dim newFile As FileStream
 
       Sub New()
-         newFile = New FileStream()
+         newFile = New FileStream(Nothing, FileMode.Open)
       End Sub
 
    End Class
@@ -338,7 +338,7 @@ Imports System.IO
       Dim newFile As FileStream
 
       Sub New()
-         newFile = New FileStream()
+         newFile = New FileStream(Nothing, FileMode.Open)
       End Sub
 
    End Class
@@ -364,7 +364,7 @@ Imports System.IO
       Dim newFile As FileStream
 
       Sub New()
-         newFile = New FileStream()
+         newFile = New FileStream(Nothing, FileMode.Open)
       End Sub
 
       Overloads Protected Overridable Sub Dispose(disposing As Boolean)

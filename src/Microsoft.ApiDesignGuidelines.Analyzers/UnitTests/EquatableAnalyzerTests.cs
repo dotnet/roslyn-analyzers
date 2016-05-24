@@ -258,7 +258,7 @@ using System;
 
 class C
 {
-    public override Equals(object other, int n)
+    public override bool Equals(object other, int n)
     {
         return true;
     }

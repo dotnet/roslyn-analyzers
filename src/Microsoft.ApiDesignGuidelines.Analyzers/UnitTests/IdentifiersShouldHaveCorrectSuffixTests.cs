@@ -854,7 +854,7 @@ Public Class CorrectlyNamedTypeStream
     Inherits FileStream
 
     Public Sub New()
-        MyBase.New("", FileMode.Open)
+        MyBase.New("""", FileMode.Open)
     End Sub
 End Class
 

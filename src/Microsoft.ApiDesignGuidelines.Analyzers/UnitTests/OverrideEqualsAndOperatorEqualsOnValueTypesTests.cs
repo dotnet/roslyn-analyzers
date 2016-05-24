@@ -168,7 +168,7 @@ public struct A
             VerifyCSharp(@"
 public struct A
 {
-    public override bool Equals(A other)
+    public bool Equals(A other)
     {
         return true;
     }

@@ -228,8 +228,8 @@ namespace NI
                 }
                 public interface Ci 
                 {
-                    public void foo();
-                    public void Foo();
+                    void foo();
+                    void Foo();
                 }
            }
         }

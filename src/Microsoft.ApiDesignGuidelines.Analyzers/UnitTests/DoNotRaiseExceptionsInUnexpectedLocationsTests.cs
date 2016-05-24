@@ -180,7 +180,7 @@ public class C
     }
     public override int GetHashCode()
     {
-        throw new ArgumentException("");
+        throw new ArgumentException("""");
     }
 }
 ";
@@ -201,7 +201,7 @@ Public Class C
         Throw New Exception()
     End Function
     Public Overrides Function GetHashCode() As Integer
-        Throw New ArgumentException("")
+        Throw New ArgumentException("""")
     End Function
 End Class
 ";
@@ -225,7 +225,7 @@ public class C
     }
     public new int GetHashCode()
     {
-        throw new ArgumentException("");
+        throw new ArgumentException("""");
     }
 }
 ";
@@ -244,7 +244,7 @@ Public Class C
         Throw New Exception()
     End Function
     Public Shadows Function GetHashCode() As Integer
-        Throw New ArgumentException("")
+        Throw New ArgumentException("""")
     End Function
 End Class
 ";

@@ -41,7 +41,7 @@ class A
 [Obsolete]
 interface I {}
 [Obsolete]
-delegate void del(int x)
+delegate void del(int x);
 ",
             GetCSharpResultAt(4, 2, "A"),
             GetCSharpResultAt(7, 6, ".ctor"),

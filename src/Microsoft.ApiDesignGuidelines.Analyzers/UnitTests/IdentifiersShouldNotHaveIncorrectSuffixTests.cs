@@ -150,7 +150,7 @@ End Class",
         {
             VerifyBasic(
 @"Public Class MyBadException
-Emd Class",
+End Class",
                 GetBasicResultAt(
                     1, 14,
                     IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.TypeNoAlternateRule,
@@ -428,7 +428,7 @@ End Class");
         public void CA1711_CSharp_Diagnostic_TypeNameEndsWithEnum()
         {
             VerifyCSharp(
-@"public enum MyBadEnum {}",
+@"public enum MyBadEnum { X }",
                 GetCSharpResultAt(
                     1, 13,
                     IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.TypeNoAlternateRule,
@@ -441,6 +441,7 @@ End Class");
         {
             VerifyBasic(
 @"Public Enum MyBadEnum
+    X
 End Enum",
                 GetBasicResultAt(
                     1, 13,
@@ -519,7 +520,7 @@ End Class");
         public void CA1711_Basic_Diagnostic_MisnamedTypeIsNestedPublic()
         {
             VerifyBasic(
-@"Public Class MyClass
+@"Public Class [MyClass]
     Public Class MyNestedClassImpl
     End Class
 End Class",
@@ -551,7 +552,7 @@ End Class",
         public void CA1711_Basic_Diagnostic_MisnamedTypeIsNestedProtected()
         {
             VerifyBasic(
-@"Public Class MyClass
+@"Public Class [MyClass]
     Protected Class MyNestedClassImpl
     End Class
 End Class",
@@ -577,7 +578,7 @@ End Class",
         public void CA1711_Basic_NoDiagnostic_MisnamedTypeIsNestedPrivate()
         {
             VerifyBasic(
-@"Public Class MyClass
+@"Public Class [MyClass]
     Private Class MyNestedClassImpl
     End Class
 End Class");
@@ -688,7 +689,8 @@ End Class");
         public void CA1711_CSharp_NoDiagnostic_TypeImplementsNonGenericIDictionary()
         {
             VerifyCSharp(
-@"using System.Collections;
+@"using System;
+using System.Collections;
 using System.Runtime.Serialization;
 
 public class MyNonGenericDictionary : IDictionary
@@ -1447,7 +1449,7 @@ End Class",
         public void CA1711_Basic_NoDiagnostic_MethodNameEndsWithNew()
         {
             VerifyBasic(
-@"Public Class MyClass
+@"Public Class [MyClass]
     Public Sub MyMethodNew()
     End Sub
 End Class");
@@ -1524,7 +1526,7 @@ Public Class MyDerivedClass
     Inherits MyBaseClass
 End Class
 
-Public Class MyClass
+Public Class [MyClass]
     Inherits MyDerivedClass
 
     Public Sub MyMethodNew()
@@ -1568,7 +1570,7 @@ Public Interface MyDerivedInterface
     Inherits MyBaseInterface
 End Interface
 
-Public Class MyClass
+Public Class [MyClass]
     Implements MyDerivedInterface
     Public Sub MyMethodNew() Implements MyBaseInterface.MyMethodNew
     End Sub
@@ -1595,7 +1597,7 @@ End Class");
         public void CA1711_Basic_Diagnostic_MethodNameEndsWithEx()
         {
             VerifyBasic(
-@"Public Class MyClass
+@"Public Class [MyClass]
     Public Sub MyMethodEx()
     End Sub
 End Class",
@@ -1620,7 +1622,7 @@ End Class",
         public void CA1711_Basic_NoDiagnostic_PrivateMethodNameEndsWithEx()
         {
             VerifyBasic(
-@"Public Class MyClass
+@"Public Class [MyClass]
     Private Sub MyMethodEx()
     End Sub
 End Class");
@@ -1635,7 +1637,7 @@ End Class");
     public virtual void MyMethodEx() { }
 }
 
-public class MyClass : MyBaseClasss
+public class MyClass : MyBaseClass
 {
     public override void MyMethodEx() { }
 }",
@@ -1684,7 +1686,7 @@ Public Interface MyDerivedInterface
     Inherits MyBaseInterface
 End Interface
 
-Public Class MyClass
+Public Class [MyClass]
     Implements MyDerivedInterface
     Public Sub MyMethodEx() Implements MyBaseInterface.MyMethodEx
     End Sub
@@ -1718,7 +1720,7 @@ End Class",
         public void CA1711_Basic_Diagnostic_MethodNameEndsWithImpl()
         {
             VerifyBasic(
-@"Public Class MyClass
+@"Public Class [MyClass]
     Public Sub MyMethodImpl()
     End Sub
 End Class",
@@ -1739,7 +1741,7 @@ End Class",
     End Sub
 End Class
 
-Public Class MyClass
+Public Class [MyClass]
     Inherits MyBaseClass
 
     Public Overrides Sub MyMethodEx()
@@ -1757,13 +1759,15 @@ End Class",
         public void CA1711_CSharp_Diagnostic_EventNameEndsWithEx()
         {
             VerifyCSharp(
-@"public class MyClass
+@"using System;
+
+public class MyClass
 {
     public delegate void EventCallback(object sender, EventArgs e);
     public event EventCallback MyEventEx;
 }",
                 GetCSharpResultAt(
-                    4, 32,
+                    6, 32,
                     IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.MemberNewerVersionRule,
                     IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.ExSuffix,
                     "MyEventEx"));
@@ -1773,12 +1777,14 @@ End Class",
         public void CA1711_Basic_Diagnostic_EventNameEndsWithEx()
         {
             VerifyBasic(
-@"Public Class MyClass
+@"Imports System
+
+Public Class [MyClass]
     Public Delegate Sub EventCallback(sender As Object, e As EventArgs)
     Public Event MyEventEx As EventCallback
 End Class",
                 GetBasicResultAt(
-                    3, 18,
+                    5, 18,
                     IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.MemberNewerVersionRule,
                     IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.ExSuffix,
                     "MyEventEx"));
@@ -1803,7 +1809,7 @@ End Class",
         public void CA1711_Basic_Diagnostic_PropertyNameEndsWithEx()
         {
             VerifyBasic(
-@"Public Class MyClass
+@"Public Class [MyClass]
     Public Property MyPropertyEx As Integer
         Get
             Return 0
@@ -1838,7 +1844,7 @@ End Class",
         public void CA1711_Basic_Diagnostic_FieldNameEndsWithEx()
         {
             VerifyBasic(
-@"Public Class MyClass
+@"Public Class [MyClass]
     Public MyFieldEx As Integer
 End Class",
                 GetBasicResultAt(

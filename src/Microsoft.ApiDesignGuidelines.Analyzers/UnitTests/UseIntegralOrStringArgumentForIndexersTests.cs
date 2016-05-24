@@ -22,6 +22,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         public void TestBasicUseIntegralOrStringArgumentForIndexersWarning1()
         {
             VerifyBasic(@"
+    Imports System
+
     Public Class Months
         Private month() As String = {""Jan"", ""Feb"", ""...""}
         Default ReadOnly Property Item(index As Float) As String
@@ -30,7 +32,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             End Get
         End Property
     End Class
-", CreateBasicResult(4, 35));
+", CreateBasicResult(6, 35));
         }
         [Fact]
         public void TestBasicUseIntegralOrStringArgumentForIndexersNoWarning1()
@@ -70,7 +72,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyCSharp(@"
     public class Months
     {
-        string[] month = new char[] {'J', 'F', 'M'};
+        string[] month = new string[] {""Jan"", ""Feb"", ""...""};
         public string this[int index]
         {
             get

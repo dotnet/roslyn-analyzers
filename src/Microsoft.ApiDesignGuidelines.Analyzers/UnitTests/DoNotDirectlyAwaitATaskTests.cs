@@ -28,7 +28,7 @@ public class C
 {
     public async Task M()
     {
-        Task t;
+        Task t = null;
         await t;
     }
 }
@@ -138,7 +138,7 @@ public class C
 {
     public async Task M()
     {
-        Task<Task> t;
+        Task<Task> t = null;
         await await t; // both have warnings.
         await await t.ConfigureAwait(false); // outer await is wrong.
         await (await t).ConfigureAwait(false); // inner await is wrong.

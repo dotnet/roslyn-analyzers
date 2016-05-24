@@ -24,7 +24,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyCSharp(@"
     using System;
 
-    public class A : IComparable
+    public class A
     {
         public Uri SampleUri { get; set; }
     }
@@ -37,7 +37,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyCSharp(@"
     using System;
 
-    public class A : IComparable
+    public class A
     {
         public int SampleUri { get; set; }
     }
@@ -50,7 +50,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyCSharp(@"
     using System;
 
-    public class A : IComparable
+    public class A
     {
         public string SampleUri { get; set; }
     }
@@ -63,7 +63,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyCSharp(@"
     using System;
 
-    public class A : IComparable
+    public class A
     {
         public string Sample { get; set; }
     }
@@ -76,9 +76,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyCSharp(@"
     using System;
 
-    public class A : IComparable
+    public class A
     {
         private string SampleUrl { get; set; }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
     }
 ");
         }

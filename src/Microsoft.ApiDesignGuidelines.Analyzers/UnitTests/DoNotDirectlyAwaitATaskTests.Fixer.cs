@@ -39,7 +39,7 @@ public class C
 {
     public async Task M()
     {
-        Task t;
+        Task t = null;
         await t;
     }
 }
@@ -51,7 +51,7 @@ public class C
 {
     public async Task M()
     {
-        Task t;
+        Task t = null;
         await t.ConfigureAwait(false);
     }
 }
@@ -96,7 +96,7 @@ public class C
 {
     public async Task M()
     {
-        Task t;
+        Task t = null;
         await /*leading */ t /*trailing*/; //Shouldn't matter
     }
 }
@@ -108,7 +108,7 @@ public class C
 {
     public async Task M()
     {
-        Task t;
+        Task t = null;
         await /*leading */ t.ConfigureAwait(false) /*trailing*/; //Shouldn't matter
     }
 }

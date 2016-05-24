@@ -18,7 +18,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                 GetCSharpExpectedResult(2, 30));
 
             VerifyBasic(@"
-                Public Class MyClass
+                Public Class [MyClass]
                 End Class",
                 GetBasicExpectedResult(2, 30));
         }
@@ -34,7 +34,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                 GetCSharpExpectedResult(2, 30));
 
             VerifyBasic(@"
-                Public Class MyClass
+                Public Class [MyClass]
                     Public Class Nested
                     End Class
                 End Class",
@@ -51,7 +51,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                 }");
 
             VerifyBasic(@"
-                Friend Class MyClass
+                Friend Class [MyClass]
                     Public Class Nested
                     End Class
                 End Class");
@@ -71,7 +71,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
             VerifyBasic(@"
                 Namespace NS
-                    Public Class MyClass
+                    Public Class [MyClass]
                         Public Class Nested
                         End Class
                     End Class

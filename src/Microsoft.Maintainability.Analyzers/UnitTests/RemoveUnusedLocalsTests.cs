@@ -58,6 +58,8 @@ End Class");
         public void UnusedLocal_VisualBasic()
         {
             VerifyBasic(@"
+Imports System
+
 Public Class Tester
     Public Sub Testing()
         Dim c as Integer
@@ -75,9 +77,9 @@ Public Class Tester
         debt = debt + (debt * rate / 100)
     End Sub
 End Class", 
-            GetBasicResultAt(4, 13, CA1804RuleId, _CA1804RemoveUnusedLocalMessage),
             GetBasicResultAt(6, 13, CA1804RuleId, _CA1804RemoveUnusedLocalMessage),
-            GetBasicResultAt(7, 40, CA1804RuleId, _CA1804RemoveUnusedLocalMessage));
+            GetBasicResultAt(8, 13, CA1804RuleId, _CA1804RemoveUnusedLocalMessage),
+            GetBasicResultAt(9, 40, CA1804RuleId, _CA1804RemoveUnusedLocalMessage));
         }
     }
 }

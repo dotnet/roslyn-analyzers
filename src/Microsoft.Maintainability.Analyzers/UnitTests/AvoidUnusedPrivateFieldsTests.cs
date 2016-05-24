@@ -59,11 +59,11 @@ Public Class Class1
         Return filename
     End Function
 
-    Public Property MyValue As Integer
+    Public ReadOnly Property MyValue As Integer
         Get
             Return Used1 + Used2
         End Get
-    End Function
+    End Property
 End Class
 ",
             GetCA1823BasicResultAt(6, 13, "Unused1"),

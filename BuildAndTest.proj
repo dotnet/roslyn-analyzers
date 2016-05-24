@@ -23,7 +23,7 @@
   </PropertyGroup>
 
   <Target Name="RestorePackages">
-    <Exec Command="&quot;$(NuGetExe)&quot; install xunit.runner.console -version 2.0.0 -OutputDirectory &quot;$(NuGetPackageRoot)&quot;"/>
+    <Exec Command="&quot;$(NuGetExe)&quot; install xunit.runner.console -version 2.1.0 -OutputDirectory &quot;$(NuGetPackageRoot)&quot;"/>
     <Exec Command="&quot;$(NuGetExe)&quot; restore &quot;$(SolutionFile)&quot;" />
   </Target>
 
@@ -77,7 +77,7 @@
       <TestAssemblies Include="Binaries\$(Configuration)\MetaCompilation.Test.dll" />
     </ItemGroup>
 
-    <Exec Command="&quot;$(NuGetPackageRoot)\xunit.runner.console\2.0.0\tools\xunit.console.x86.exe&quot; @(TestAssemblies, ' ') $(RunTestArgs)" />
+    <Exec Command="&quot;$(NuGetPackageRoot)\xunit.runner.console\2.1.0\tools\xunit.console.x86.exe&quot; @(TestAssemblies, ' ') $(RunTestArgs)" />
 
   </Target>
 

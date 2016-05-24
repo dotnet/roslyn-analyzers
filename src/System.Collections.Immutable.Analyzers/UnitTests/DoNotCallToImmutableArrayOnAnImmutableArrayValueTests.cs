@@ -28,13 +28,16 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using static System.Collections.Immutable.ImmutableArray;
 
-class C
+static class Extensions
 {
     public static ImmutableArray<TSource> ToImmutableArray<TSource>(this IEnumerable<TSource> items)
     {
-        return null;
+        return default(ImmutableArray<TSource>);
     }
+}
 
+class C
+{
     public void M(IEnumerable<int> p1, List<int> p2, ImmutableArray<int> p3)
     {
         // Allowed
@@ -53,12 +56,14 @@ Imports System
 Imports System.Collections.Generic
 Imports System.Collections.Immutable
 
-Class C
+Module Extensions
 	<System.Runtime.CompilerServices.Extension> _
-	Public Shared Function ToImmutableArray(Of TSource)(items As IEnumerable(Of TSource)) As ImmutableArray(Of TSource)
+	Public Function ToImmutableArray(Of TSource)(items As IEnumerable(Of TSource)) As ImmutableArray(Of TSource)
 		Return Nothing
 	End Function
+End Module
 
+Class C
 	Public Sub M(p1 As IEnumerable(Of Integer), p2 As List(Of Integer), p3 As ImmutableArray(Of Integer))
 		' Allowed
 		p1.ToImmutableArray()
@@ -83,13 +88,16 @@ End Class
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
-class C
+static class Extensions
 {
     public static ImmutableArray<TSource> ToImmutableArray<TSource>(this IEnumerable<TSource> items)
     {
-        return null;
+        return default(ImmutableArray<TSource>);
     }
+}
 
+class C
+{
     public void M(IEnumerable<int> p1, List<int> p2, ImmutableArray<int> p3)
     {
         p1.ToImmutableArray().ToImmutableArray();
@@ -98,21 +106,23 @@ class C
 }
 ",
     // Test0.cs(14,9): warning RS0012: Do not call ToImmutableArray on an ImmutableArray value
-    GetCSharpResultAt(14, 9),
+    GetCSharpResultAt(17, 9),
     // Test0.cs(15,9): warning RS0012: Do not call ToImmutableArray on an ImmutableArray value
-    GetCSharpResultAt(15, 9));
+    GetCSharpResultAt(18, 9));
 
             VerifyBasic(@"
 Imports System
 Imports System.Collections.Generic
 Imports System.Collections.Immutable
 
-Class C
+Module Extensions
 	<System.Runtime.CompilerServices.Extension> _
-	Public Shared Function ToImmutableArray(Of TSource)(items As IEnumerable(Of TSource)) As ImmutableArray(Of TSource)
+	Public Function ToImmutableArray(Of TSource)(items As IEnumerable(Of TSource)) As ImmutableArray(Of TSource)
 		Return Nothing
 	End Function
+End Module
 
+Class C
 	Public Sub M(p1 As IEnumerable(Of Integer), p2 As List(Of Integer), p3 As ImmutableArray(Of Integer))
 		p1.ToImmutableArray().ToImmutableArray()
 		p3.ToImmutableArray()
@@ -120,9 +130,9 @@ Class C
 End Class
 ",
     // Test0.vb(13,3): warning RS0012: Do not call ToImmutableArray on an ImmutableArray value
-    GetBasicResultAt(13, 3),
+    GetBasicResultAt(15, 3),
     // Test0.vb(14,3): warning RS0012: Do not call ToImmutableArray on an ImmutableArray value
-    GetBasicResultAt(14, 3));
+    GetBasicResultAt(16, 3));
         }
 
         #endregion

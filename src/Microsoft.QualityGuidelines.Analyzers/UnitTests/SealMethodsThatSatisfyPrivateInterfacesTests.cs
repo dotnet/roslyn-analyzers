@@ -295,7 +295,7 @@ Friend Interface IFace
     Sub M()
 End Interface
 
-Public MustOverride Class C
+Public MustInherit Class C
     Implements IFace
 
     Public MustOverride Sub M()

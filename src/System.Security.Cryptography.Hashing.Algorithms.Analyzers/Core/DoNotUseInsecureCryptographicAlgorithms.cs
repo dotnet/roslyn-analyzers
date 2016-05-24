@@ -28,11 +28,7 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
 
         protected abstract SyntaxNodeAnalyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes cryptTypes);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics = ImmutableArray.Create(DoNotUseMD5SpecificRule,
-                                                                                                                    DoNotUseSHA1SpecificRule);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-            => s_supportedDiagnostics;
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DoNotUseMD5SpecificRule, DoNotUseSHA1SpecificRule);
 
         private static DiagnosticDescriptor CreateDiagnosticDescriptor(string ruleId, LocalizableString title, LocalizableString description, string uri = null)
         {
@@ -49,14 +45,13 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            // TODO: Make analyzer thread-safe.
-            //analysisContext.EnableConcurrentExecution();
+            analysisContext.EnableConcurrentExecution();
 
             // Security analyzer - analyze and report diagnostics on generated code.
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
 
             analysisContext.RegisterCompilationStartAction(
-                (context) =>
+                context =>
                 {
                     var cryptTypes = new CompilationSecurityTypes(context.Compilation);
                     if (ReferencesAnyTargetType(cryptTypes))

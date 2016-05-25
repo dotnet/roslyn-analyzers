@@ -114,10 +114,34 @@ namespace System.Runtime.Analyzers
                 return false;
             }
 
+            // At this point the array creation is known to be compiler synthesized as part of a call
+            // to a method with a params parameter, and so it is probably sound to return true at this point.
+            // As a sanity check, verify that the last argument to the call is equivalent to the array creation.
+            // (Comparing for object identity does not work because the semantic model can return a fresh operation tree.)
             var lastArgument = parent.ArgumentsInParameterOrder.LastOrDefault();
-            return lastArgument.Syntax == parent.Syntax &&
-                lastArgument != null &&
-                lastArgument.ArgumentKind == ArgumentKind.ParamArray;
+            return lastArgument != null && lastArgument.Value.Syntax == arrayCreationExpression.Syntax && AreEquivalentZeroLengthArrayCreations(arrayCreationExpression, lastArgument.Value as IArrayCreationExpression);
+        }
+
+        private static bool AreEquivalentZeroLengthArrayCreations(IArrayCreationExpression first, IArrayCreationExpression second)
+        {
+            if (first == null || second == null)
+            {
+                return false;
+            }
+
+            ImmutableArray<IOperation> sizes = first.DimensionSizes;
+            if (sizes.Length != 1 || !sizes[0].HasConstantValue(0))
+            {
+                return false;
+            }
+
+            sizes = second.DimensionSizes;
+            if (sizes.Length != 1 || !sizes[0].HasConstantValue(0))
+            {
+                return false;
+            }
+
+            return first.Type.Equals(second.Type);
         }
 
         protected abstract bool IsAttributeSyntax(SyntaxNode node);

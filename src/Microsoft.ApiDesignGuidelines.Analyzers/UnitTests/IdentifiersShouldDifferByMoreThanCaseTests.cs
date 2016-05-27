@@ -26,9 +26,7 @@ namespace Microsoft.ApiDesignGuidelines.UnitTests
         [Fact]
         public void TestGlobalNamespaceNames()
         {
-            VerifyCSharp(new[]
-                {
-                @"
+            VerifyCSharp(@"
 namespace N
 {
     public class C { }
@@ -37,17 +35,14 @@ namespace n
 {
     public class C { }
 }
-"
-                },
+",
                 GetCA1708CSharpResult(Namespace, GetSymbolDisplayString("n", "N")));
         }
 
         [Fact]
         public void TestNestedNamespaceNames()
         {
-            VerifyCSharp(new[]
-                {
-                @"
+            VerifyCSharp(@"
 namespace N
 {
     class C { }
@@ -66,17 +61,14 @@ namespace n
         public class C { }
     }
 }
-"
-                },
+",
                 GetCA1708CSharpResult(Namespace, GetSymbolDisplayString("n", "N")));
         }
 
         [Fact]
         public void TestGlobalTypeNames()
         {
-            VerifyCSharp(new[]
-                {
-                    @"
+            VerifyCSharp(@"
 public class Ni
 {
 }
@@ -86,17 +78,14 @@ public struct ni
 public interface nI
 {
 }
-"
-                },
+",
                 GetCA1708CSharpResult(Type, GetSymbolDisplayString("nI", "ni", "Ni")));
         }
 
         [Fact]
         public void TestGenericClasses()
         {
-            VerifyCSharp(new[]
-                {
-                    @"
+            VerifyCSharp(@"
 public class C<T>
 {
 }
@@ -109,8 +98,7 @@ public class c
 public class C<T,X>
 {
 }
-"
-                },
+",
                 GetCA1708CSharpResult(Type, GetSymbolDisplayString("c<S>", "C<T>")));
         }
 

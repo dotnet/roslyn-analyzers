@@ -137,10 +137,11 @@ public class DerivedClass : BaseClass
 
 public class DerivedClass : BaseClass
 {
+    // error CS0507: cannot change access modifiers when overriding 'public' inherited member
     internal override void MyMethod() {}
 
     public override int MyProperty { private get; set; }
-}");
+}", TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]

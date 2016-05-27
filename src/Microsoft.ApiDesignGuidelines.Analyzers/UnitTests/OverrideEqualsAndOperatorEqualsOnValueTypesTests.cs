@@ -362,7 +362,7 @@ Public Structure A
         Return False
     End Operator
 End Structure
-",
+", TestValidationMode.AllowCompileErrors,
             GetBasicOverrideEqualsDiagnostic(2, 18, "A"));
         }
 

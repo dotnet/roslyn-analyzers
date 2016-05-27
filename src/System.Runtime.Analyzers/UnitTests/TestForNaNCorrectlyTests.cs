@@ -244,7 +244,7 @@ public class A
     }
 }
 ";
-            VerifyCSharp(code);
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
@@ -257,7 +257,7 @@ Public Class A
     End Function
 End Class
 ";
-            VerifyBasic(code);
+            VerifyBasic(code, TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]

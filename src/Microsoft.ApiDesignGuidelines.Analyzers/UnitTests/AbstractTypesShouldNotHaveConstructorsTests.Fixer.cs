@@ -143,7 +143,7 @@ Public Structure C
         Public Sub New()
         End Sub
     End Class
-End Class
+End Structure
 ";
             var fix = @"
 Public Structure C
@@ -151,7 +151,7 @@ Public Structure C
         Protected Sub New()
         End Sub
     End Class
-End Class
+End Structure
 ";
             VerifyBasicFix(code, fix);
         }

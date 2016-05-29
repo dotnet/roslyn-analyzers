@@ -478,11 +478,11 @@ Imports System
 
 Public Class A : Implements IComparable
 
-    Public Function Overrides GetHashCode() As Integer
+    Public Overrides Function GetHashCode() As Integer
         Return 1234
     End Function
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
         Return 1
     End Function
 
@@ -518,11 +518,11 @@ Imports System
 
 Public Structure A : Implements IComparable
 
-    Public Function Overrides GetHashCode() As Integer
+    Public Overrides Function GetHashCode() As Integer
         Return 1234
     End Function
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
         Return 1
     End Function
 
@@ -557,11 +557,11 @@ Imports System
 
 [|Public Class A : Implements IComparable
 
-    Public Function Overrides GetHashCode() As Integer
+    Public Overrides Function GetHashCode() As Integer
         Return 1234
     End Function
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
         Return 1
     End Function
 
@@ -589,11 +589,11 @@ End Class|]
 
 Public Structure B : Implements IComparable
 
-    Public Function Overrides GetHashCode() As Integer
+    Public Overrides Function GetHashCode() As Integer
         Return 1234
     End Function
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
         Return 1
     End Function
 
@@ -627,11 +627,11 @@ Imports System
 
 Public Structure A : Implements IComparable
 
-    Public Function Overrides GetHashCode() As Integer
+    Public Overrides Function GetHashCode() As Integer
         Return 1234
     End Function
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
         Return 1
     End Function
 
@@ -672,7 +672,7 @@ Public Class Class1
             Return 1234
         End Function
 
-        Public Function CompareTo(obj As Object) As Integer
+        Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
             Return 1
         End Function
 
@@ -701,11 +701,11 @@ Imports System
 
 Public Class A : Implements IComparable
 
-    Public Function Overrides GetHashCode() As Integer
+    Public Overrides Function GetHashCode() As Integer
         Return 1234
     End Function
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
         Return 1
     End Function
 
@@ -738,11 +738,11 @@ Imports System
 
 Public Class A : Implements IComparable
 
-    Public Function Overrides GetHashCode() As Integer
+    Public Overrides Function GetHashCode() As Integer
         Return 1234
     End Function
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
         Return 1
     End Function
 
@@ -771,11 +771,11 @@ Imports System
 
 Public Structure A : Implements IComparable
 
-    Public Function Overrides GetHashCode() As Integer
+    Public Overrides Function GetHashCode() As Integer
         Return 1234
     End Function
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
         Return 1
     End Function
 
@@ -804,11 +804,11 @@ Imports System
 
 Public Structure A : Implements IComparable(Of Integer)
 
-    Public Function Overrides GetHashCode() As Integer
+    Public Overrides Function GetHashCode() As Integer
         Return 1234
     End Function
 
-    Public Function CompareTo(obj As Integer) As Integer
+    Public Function CompareTo(other As Integer) As Integer Implements IComparable(Of Integer).CompareTo
         Return 1
     End Function
 
@@ -841,11 +841,11 @@ End Interface
 
 Public Structure A : Implements IDerived
 
-    Public Function Overrides GetHashCode() As Integer
+    Public Overrides Function GetHashCode() As Integer
         Return 1234
     End Function
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(other As Integer) As Integer  Implements IComparable(Of Integer).CompareTo
         Return 1
     End Function
 

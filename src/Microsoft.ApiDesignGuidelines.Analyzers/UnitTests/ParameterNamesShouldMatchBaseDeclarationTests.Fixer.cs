@@ -451,7 +451,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         {
             VerifyCSharpFix(@"public interface ITest1
                               {
-                                  public abstract void TestMethod(string arg1, string arg2, string arg3);
+                                  void TestMethod(string arg1, string arg2, string arg3);
                               }
 
                               public interface ITest2
@@ -461,11 +461,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : ITest1, ITest2
                               {
-                                  public override void TestMethod(string arg1, string arg2, string otherArg3) { }
+                                  public void TestMethod(string arg1, string arg2, string otherArg3) { }
                               }",
                             @"public interface ITest1
                               {
-                                  public abstract void TestMethod(string arg1, string arg2, string arg3);
+                                  void TestMethod(string arg1, string arg2, string arg3);
                               }
 
                               public interface ITest2
@@ -475,7 +475,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : ITest1, ITest2
                               {
-                                  public override void TestMethod(string arg1, string arg2, string arg3) { }
+                                  public void TestMethod(string arg1, string arg2, string arg3) { }
                               }");
 
             VerifyBasicFix(@"Public Interface ITest1

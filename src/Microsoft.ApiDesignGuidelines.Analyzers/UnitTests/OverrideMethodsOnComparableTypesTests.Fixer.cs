@@ -147,7 +147,7 @@ Imports System
 
 Public Class A : Implements IComparable
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
         Return 1
     End Function
 
@@ -156,7 +156,7 @@ Imports System
 
 Public Class A : Implements IComparable
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
         Return 1
     End Function
 
@@ -202,7 +202,7 @@ Public Class A : Implements IComparable
         Return True
     End Operator
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
         Return 1
     End Function
 
@@ -219,7 +219,7 @@ Public Class A : Implements IComparable
         Return True
     End Operator
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
         Return 1
     End Function
 

@@ -206,7 +206,7 @@ class C : IEquatable<C>
 {
     public int Equals(C x)
     {
-        return true;
+        return 1;
     }
 }
 ";
@@ -275,7 +275,7 @@ using System;
 
 class C : IEquatable<C>
 {
-    public bool IEquatable<C>.Equals(object other)
+    bool IEquatable<C>.Equals(C other)
     {
         return true;
     }

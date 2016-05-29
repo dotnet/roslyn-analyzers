@@ -37,7 +37,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                           End Class");
 
             VerifyBasic(@"Public Class TestClass
-                              Public Sub TestMethod(arg1 As String, arg2 As String) { }
+                              Public Sub TestMethod(arg1 As String, arg2 As String)
                               End Sub
                           End Class");
 
@@ -57,7 +57,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                            public class TestClass : BaseClass
                            {
-                               public override void TestMethod(string arg1, string arg2);
+                               public override void TestMethod(string arg1, string arg2) { }
                            }",
                          GetCSharpResultAt(8, 71, "void TestClass.TestMethod(string arg1, string arg2)", "arg1", "baseArg1", "void BaseClass.TestMethod(string baseArg1, string baseArg2)"),
                          GetCSharpResultAt(8, 84, "void TestClass.TestMethod(string arg1, string arg2)", "arg2", "baseArg2", "void BaseClass.TestMethod(string baseArg1, string baseArg2)"));
@@ -69,7 +69,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                            public class TestClass : BaseClass
                            {
-                               public override void TestMethod(string arg1, string arg2, __arglist);
+                               public override void TestMethod(string arg1, string arg2, __arglist) { }
                            }",
                          GetCSharpResultAt(8, 71, "void TestClass.TestMethod(string arg1, string arg2, __arglist)", "arg1", "baseArg1", "void BaseClass.TestMethod(string baseArg1, string baseArg2, __arglist)"),
                          GetCSharpResultAt(8, 84, "void TestClass.TestMethod(string arg1, string arg2, __arglist)", "arg2", "baseArg2", "void BaseClass.TestMethod(string baseArg1, string baseArg2, __arglist)"));
@@ -81,7 +81,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                            public class TestClass : BaseClass
                            {
-                               public override void TestMethod(string arg1, string arg2, params string[] arg3);
+                               public override void TestMethod(string arg1, string arg2, params string[] arg3) { }
                            }",
                          GetCSharpResultAt(8, 71, "void TestClass.TestMethod(string arg1, string arg2, params string[] arg3)", "arg1", "baseArg1", "void BaseClass.TestMethod(string baseArg1, string baseArg2, params string[] baseArg3)"),
                          GetCSharpResultAt(8, 84, "void TestClass.TestMethod(string arg1, string arg2, params string[] arg3)", "arg2", "baseArg2", "void BaseClass.TestMethod(string baseArg1, string baseArg2, params string[] baseArg3)"),
@@ -125,7 +125,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                            public class TestClass : IBase
                            {
-                               public void TestMethod(string arg1, string arg2);
+                               public void TestMethod(string arg1, string arg2) { }
                            }",
                          GetCSharpResultAt(8, 62, "void TestClass.TestMethod(string arg1, string arg2)", "arg1", "baseArg1", "void IBase.TestMethod(string baseArg1, string baseArg2)"),
                          GetCSharpResultAt(8, 75, "void TestClass.TestMethod(string arg1, string arg2)", "arg2", "baseArg2", "void IBase.TestMethod(string baseArg1, string baseArg2)"));
@@ -137,7 +137,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                            public class TestClass : IBase
                            {
-                               public void TestMethod(string arg1, string arg2, __arglist);
+                               public void TestMethod(string arg1, string arg2, __arglist) { }
                            }",
                          GetCSharpResultAt(8, 62, "void TestClass.TestMethod(string arg1, string arg2, __arglist)", "arg1", "baseArg1", "void IBase.TestMethod(string baseArg1, string baseArg2, __arglist)"),
                          GetCSharpResultAt(8, 75, "void TestClass.TestMethod(string arg1, string arg2, __arglist)", "arg2", "baseArg2", "void IBase.TestMethod(string baseArg1, string baseArg2, __arglist)"));
@@ -149,7 +149,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                            public class TestClass : IBase
                            {
-                               public void TestMethod(string arg1, string arg2, params string[] arg3);
+                               public void TestMethod(string arg1, string arg2, params string[] arg3) { }
                            }",
                          GetCSharpResultAt(8, 62, "void TestClass.TestMethod(string arg1, string arg2, params string[] arg3)", "arg1", "baseArg1", "void IBase.TestMethod(string baseArg1, string baseArg2, params string[] baseArg3)"),
                          GetCSharpResultAt(8, 75, "void TestClass.TestMethod(string arg1, string arg2, params string[] arg3)", "arg2", "baseArg2", "void IBase.TestMethod(string baseArg1, string baseArg2, params string[] baseArg3)"),
@@ -193,7 +193,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                            public class TestClass : IBase
                            {
-                               void IBase.TestMethod(string arg1, string arg2);
+                               void IBase.TestMethod(string arg1, string arg2) { }
                            }",
                          GetCSharpResultAt(8, 61, "void TestClass.TestMethod(string arg1, string arg2)", "arg1", "baseArg1", "void IBase.TestMethod(string baseArg1, string baseArg2)"),
                          GetCSharpResultAt(8, 74, "void TestClass.TestMethod(string arg1, string arg2)", "arg2", "baseArg2", "void IBase.TestMethod(string baseArg1, string baseArg2)"));
@@ -205,7 +205,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                            public class TestClass : IBase
                            {
-                               void IBase.TestMethod(string arg1, string arg2, __arglist);
+                               void IBase.TestMethod(string arg1, string arg2, __arglist) { }
                            }",
                          GetCSharpResultAt(8, 61, "void TestClass.TestMethod(string arg1, string arg2, __arglist)", "arg1", "baseArg1", "void IBase.TestMethod(string baseArg1, string baseArg2, __arglist)"),
                          GetCSharpResultAt(8, 74, "void TestClass.TestMethod(string arg1, string arg2, __arglist)", "arg2", "baseArg2", "void IBase.TestMethod(string baseArg1, string baseArg2, __arglist)"));
@@ -217,7 +217,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                            public class TestClass : IBase
                            {
-                               void IBase.TestMethod(string arg1, string arg2, params string[] arg3);
+                               void IBase.TestMethod(string arg1, string arg2, params string[] arg3) { }
                            }",
                          GetCSharpResultAt(8, 61, "void TestClass.TestMethod(string arg1, string arg2, params string[] arg3)", "arg1", "baseArg1", "void IBase.TestMethod(string baseArg1, string baseArg2, params string[] baseArg3)"),
                          GetCSharpResultAt(8, 74, "void TestClass.TestMethod(string arg1, string arg2, params string[] arg3)", "arg2", "baseArg2", "void IBase.TestMethod(string baseArg1, string baseArg2, params string[] baseArg3)"),
@@ -260,7 +260,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         {
             VerifyCSharp(@"public class TestClass
                            {
-                               public override void TestMethod(string arg1, string arg2);
+                               public override void TestMethod(string arg1, string arg2) { }
                            }");
 
             VerifyBasic(@"Public Class TestClass
@@ -323,7 +323,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                               Public Sub TestMethod(baseArg1 As String, baseArg2 As String)
                               End Sub
                           End Class
-                          }
 
                           Public Class TestClass
                               Inherits BaseClass
@@ -348,7 +347,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                            public class TestClass : BaseClass, ITest
                            {
-                               public override void TestMethod(string arg1, string arg2);
+                               public override void TestMethod(string arg1, string arg2) { }
                            }");
 
             VerifyCSharp(@"public abstract class BaseClass
@@ -363,7 +362,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                            public class TestClass : BaseClass, ITest
                            {
-                               public override void TestMethod(string interfaceArg1, string interfaceArg2);
+                               public override void TestMethod(string interfaceArg1, string interfaceArg2) { }
                            }",
                          GetCSharpResultAt(13, 71, "void TestClass.TestMethod(string interfaceArg1, string interfaceArg2)", "interfaceArg1", "arg1", "void BaseClass.TestMethod(string arg1, string arg2)"),
                          GetCSharpResultAt(13, 93, "void TestClass.TestMethod(string interfaceArg1, string interfaceArg2)", "interfaceArg2", "arg2", "void BaseClass.TestMethod(string arg1, string arg2)"));
@@ -373,7 +372,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                           End Class
 
                           Public Interface ITest
-                              Sub TestMethod(interfaceArg1 As String, interfaceArg2 As String);
+                              Sub TestMethod(interfaceArg1 As String, interfaceArg2 As String)
                           End Interface
 
                           Public Class TestClass
@@ -389,7 +388,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                           End Class
 
                           Public Interface ITest
-                              Sub TestMethod(interfaceArg1 As String, interfaceArg2 As String);
+                              Sub TestMethod(interfaceArg1 As String, interfaceArg2 As String)
                           End Interface
 
                           Public Class TestClass
@@ -418,7 +417,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                            public class TestClass : ITest1, ITest2
                            {
-                               public override void TestMethod(string arg1, string arg2);
+                               public void TestMethod(string arg1, string arg2) { }
                            }");
 
             VerifyBasic(@"Public Interface ITest1
@@ -442,7 +441,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         {
             VerifyCSharp(@"public interface ITest1
                            {
-                               public abstract void TestMethod(string arg1, string arg2, string arg3);
+                               void TestMethod(string arg1, string arg2, string arg3);
                            }
 
                            public interface ITest2
@@ -452,9 +451,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                            public class TestClass : ITest1, ITest2
                            {
-                               public override void TestMethod(string arg1, string arg2, string otherArg3);
+                               public void TestMethod(string arg1, string arg2, string otherArg3) { }
                            }",
-                         GetCSharpResultAt(13, 97, "void TestClass.TestMethod(string arg1, string arg2, string otherArg3)", "otherArg3", "arg3", "void ITest1.TestMethod(string arg1, string arg2, string arg3)"));
+                         GetCSharpResultAt(13, 88, "void TestClass.TestMethod(string arg1, string arg2, string otherArg3)", "otherArg3", "arg3", "void ITest1.TestMethod(string arg1, string arg2, string arg3)"));
 
             VerifyBasic(@"Public Interface ITest1
                               Sub TestMethod(arg1 As String, arg2 As String, arg3 As String)

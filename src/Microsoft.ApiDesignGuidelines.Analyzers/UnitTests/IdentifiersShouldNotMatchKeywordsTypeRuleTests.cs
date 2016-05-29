@@ -58,7 +58,7 @@ public struct aDdHaNdLeR {}
         public void BasicDiagnosticForCaseInsensitiveKeywordNamedPublicType()
         {
             VerifyBasic(@"
-Public Structure aDdHaNdLeR
+Public Structure [aDdHaNdLeR]
 End Structure",
                 GetBasicResultAt(2, 18, IdentifiersShouldNotMatchKeywordsAnalyzer.TypeRule, "aDdHaNdLeR", "AddHandler"));
         }
@@ -115,7 +115,8 @@ namespace N
             VerifyBasic(@"
 Namespace N
     Public Enum [Enum]
-    End Class
+        X
+    End Enum
 End Namespace
 ",
                 GetBasicResultAt(3, 17, IdentifiersShouldNotMatchKeywordsAnalyzer.TypeRule, "Enum", "Enum"));

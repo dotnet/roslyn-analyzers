@@ -52,6 +52,7 @@ End Class
             VerifyBasic(code, GetBasicResultAt(7, 15));
         }
 
+        [Fact]
         public void CSharpSimpleAwaitTaskOfT()
         {
             var code = @"
@@ -61,7 +62,7 @@ public class C
 {
     public async Task M()
     {
-        Task<int> t;
+        Task<int> t = null;
         int x = await t;
     }
 }
@@ -85,22 +86,46 @@ End Class
             VerifyBasic(code, GetBasicResultAt(7, 34));
         }
 
+        [Fact]
         public void CSharpNoDiagnostic()
         {
             var code = @"
+using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 public class C
 {
     public async Task M()
     {
-        Task t;
+        Task t = null;
         await t.ConfigureAwait(false);
 
-        SomeAwaitable s;
+        SomeAwaitable s = null;
         await s;
 
         await; // No Argument
+    }
+}
+
+public class SomeAwaitable
+{
+    public SomeAwaiter GetAwaiter()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class SomeAwaiter : INotifyCompletion
+{
+    public bool IsCompleted => true;
+
+    public void OnCompleted(Action continuation)
+    {
+    }
+
+    public void GetResult()
+    {
     }
 }
 ";
@@ -111,18 +136,41 @@ public class C
         public void BasicNoDiagnostic()
         {
             var code = @"
+Imports System
+Imports System.Runtime.CompilerServices
 Imports System.Threading.Tasks
 
 Public Class C
     Public Async Function M() As Task
-        Dim t As Task
+        Dim t As Task = Nothing
         Await t.ConfigureAwait(False)
 
-        Dim s As SomeAwaitable
+        Dim s As SomeAwaitable = Nothing
         Await s
 
         Await 'No Argument
     End Function
+End Class
+
+Public Class SomeAwaitable
+    Public Function GetAwaiter As SomeAwaiter
+        Throw New NotImplementedException()
+    End Function
+End Class
+
+Public Class SomeAwaiter
+    Implements INotifyCompletion
+    Public ReadOnly Property IsCompleted() As Boolean
+	    Get
+		    Throw New NotImplementedException()
+	    End Get
+    End Property
+
+    Public Sub OnCompleted(continuation As Action) Implements INotifyCompletion.OnCompleted
+    End Sub
+
+    Public Sub GetResult()
+    End Sub
 End Class
 ";
             VerifyBasic(code);

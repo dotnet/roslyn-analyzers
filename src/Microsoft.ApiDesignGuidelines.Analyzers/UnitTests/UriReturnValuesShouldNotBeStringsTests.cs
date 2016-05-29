@@ -26,7 +26,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A
     {
-        public Uri GetUrl() { throw new NotImplmentedException(); }
+        public Uri GetUrl() { throw new NotImplementedException(); }
     }
 ");
         }
@@ -39,7 +39,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A
     {
-        public int GetUrl() { throw new NotImplmentedException(); }
+        public int GetUrl() { throw new NotImplementedException(); }
     }
 ");
         }
@@ -52,7 +52,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A
     {
-        public string GetUrl() { throw new NotImplmentedException(); }
+        public string GetUrl() { throw new NotImplementedException(); }
     }
 ", GetCA1055CSharpResultAt(6, 23, "A.GetUrl()"));
         }
@@ -65,7 +65,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A
     {
-        public string GetMethod() { throw new NotImplmentedException(); }
+        public string GetMethod() { throw new NotImplementedException(); }
     }
 ");
         }
@@ -91,7 +91,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class A
     {
-        public string GetUrl(Uri in) { }
+        public string GetUrl(Uri u) { throw new NotImplementedException(); }
     }
 ");
         }
@@ -105,12 +105,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     public class Base
     {
-        protected virtual string GetUrl() { }
+        protected virtual string GetUrl() { throw new NotImplementedException(); }
     }
 
     public class A : Base
     {
-        public override string GetUrl() { }
+        protected override string GetUrl() { throw new NotImplementedException(); }
     }
 ", GetCA1055CSharpResultAt(6, 34, "Base.GetUrl()"));
         }

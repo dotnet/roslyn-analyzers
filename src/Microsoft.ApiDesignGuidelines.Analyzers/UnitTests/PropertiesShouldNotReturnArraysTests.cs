@@ -49,7 +49,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     {
         public override string[] Pages
         {
-            get { return _Pages; }
+            get { return null; }
         }
     }
 ", CreateCSharpResult(4, 33));
@@ -60,13 +60,16 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         {
             //No warning if property definition has no outside visibility
             VerifyCSharp(@"
+public class Outer
+{
     private class Book
     {
         public string[] Pages
         {
-            get { return _Pages; }
+            get { return null; }
         }
     }
+}
 ");
         }
 
@@ -79,7 +82,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
     {
         public string[] Pages 
         {
-            get { return _Pages; }
+            get { return null; }
         }
     }
 ");
@@ -128,6 +131,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         {
             //No warning if property has no outside visibility
             VerifyBasic(@"
+Public Class Outer
     Private Class Book
         Private _Pages As String()
         Public ReadOnly Property Pages() As String()
@@ -135,7 +139,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                 Return _Pages
             End Get
         End Property
-    End Class");
+    End Class
+End Class");
         }
 
         private static DiagnosticResult CreateCSharpResult(int line, int col)

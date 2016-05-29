@@ -232,7 +232,7 @@ End Class
         {
             var code = @"
 Public Module Outer
-    Protected Class Inner
+    Friend Class Inner
     End Class
 End Module
 ";
@@ -250,7 +250,7 @@ public class Outer
     public class MyEnumerator: IEnumerator
     {
         public bool MoveNext() { return true; }
-        public object Current { get; } => null;
+        public object Current { get; } = null;
         public void Reset() {}
     }
 }
@@ -295,17 +295,17 @@ Public Class Outer
     Public Class MyEnumerator
         Implements IEnumerator
 
-        Public Function MoveNext() As Boolean
+        Public Function MoveNext() As Boolean Implements IEnumerator.MoveNext
             Return True
         End Function
 
-        Public Property Current As Object
+        Public ReadOnly Property Current As Object Implements IEnumerator.Current
             Get
                 Return Nothing
             End Get
         End Property
 
-        Public Sub Reset()
+        Public Sub Reset() Implements IEnumerator.Reset
         End Sub
     End Class
 End Class
@@ -327,6 +327,9 @@ public class MyDataSet : DataSet
 
     public class MyDataRow : DataRow
     {
+        public MyDataRow(DataRowBuilder builder) : base(builder)
+        {
+        }
     }
 }
 ";
@@ -348,6 +351,10 @@ Public Class MyDataSet
 
     Public Class MyDataRow
         Inherits DataRow
+
+        Public Sub New(builder As DataRowBuilder)
+            MyBase.New(builder)
+        End Sub
     End Class
 End Class
 ";
@@ -368,6 +375,9 @@ public class MyDataSet : DataSet
 
     public class MyDataRow : DataRow
     {
+        public MyDataRow(DataRowBuilder builder) : base(builder)
+        {
+        }
     }
 
     public class Inner
@@ -375,7 +385,7 @@ public class MyDataSet : DataSet
     }
 }
 ";
-            VerifyCSharp(code, GetCSharpCA1034ResultAt(14, 18, "Inner"));
+            VerifyCSharp(code, GetCSharpCA1034ResultAt(17, 18, "Inner"));
         }
 
         [Fact]
@@ -393,13 +403,17 @@ Public Class MyDataSet
 
     Public Class MyDataRow
         Inherits DataRow
+
+        Public Sub New(builder As DataRowBuilder)
+            MyBase.New(builder)
+        End Sub
     End Class
 
     Public Class Inner
     End Class
 End Class
 ";
-            VerifyBasic(code, GetBasicCA1034ResultAt(15, 18, "Inner"));
+            VerifyBasic(code, GetBasicCA1034ResultAt(19, 18, "Inner"));
         }
 
         [Fact]
@@ -440,6 +454,10 @@ Public Class Outer
 
     Public Class MyDataRow
         Inherits DataRow
+
+        Public Sub New(builder As DataRowBuilder)
+            MyBase.New(builder)
+        End Sub
     End Class
 End Class
 ";

@@ -162,7 +162,7 @@ using System;
 
 public interface ITest : IDisposable
 {
-    void int Test { get; set; }
+    int Test { get; set; }
 }
 
 public class B : IDisposable
@@ -204,7 +204,7 @@ using System;
 
 public interface ITest : IDisposable
 {
-    void int Test { get; set; }
+    int Test { get; set; }
 }
 
 public class B : IDisposable
@@ -230,7 +230,7 @@ using System;
 
 public interface ITest : IDisposable
 {
-    void int Test { get; set; }
+    int Test { get; set; }
 }
 
 public class B : IDisposable

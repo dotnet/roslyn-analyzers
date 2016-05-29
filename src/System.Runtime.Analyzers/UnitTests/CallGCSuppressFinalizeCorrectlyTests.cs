@@ -887,6 +887,9 @@ Public Class DisposableComponent
 		Dispose(True)
 		' GC.SuppressFinalize(this);
 	End Sub
+
+    Protected Overridable Sub Dispose(disposing As Boolean)
+    End Sub
 End Class";
 
             var diagnosticResult = GetCA1816BasicResultAt(

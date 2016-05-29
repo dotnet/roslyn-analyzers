@@ -34,11 +34,11 @@ namespace System.Runtime.Analyzers.UnitTests
 ");
             VerifyBasic(@"
             Imports System
-            Public Class foo {
-                Public Sub Test() {
-                    Dim o As new Object();
+            Public Class foo
+                Public Sub Test()
+                    Dim o As new Object()
                     SyncLock o
-                        Console.WriteLine();
+                        Console.WriteLine()
                     End SyncLock
                 End Sub
             End Class
@@ -167,7 +167,7 @@ namespace System.Runtime.Analyzers.UnitTests
             {
                 public void Test()
                 {
-                    string s1 = "";
+                    string s1 = """";
                     lock (s1) { }
                     lock (""Hello"") { }
 
@@ -207,7 +207,7 @@ namespace System.Runtime.Analyzers.UnitTests
             Imports System
             Public Class foo
                 Public Sub Test()
-                    Dim s1 As String = """";
+                    Dim s1 As String = """"
                     SyncLock s1
                     End SyncLock
                     SyncLock (""Hello"")
@@ -226,7 +226,7 @@ namespace System.Runtime.Analyzers.UnitTests
                     SyncLock System.Threading.Thread.CurrentThread
                     End SyncLock
 
-                    SyncLock GetType foo
+                    SyncLock GetType (foo)
                     End SyncLock
 
                     Dim mi As System.Reflection.MemberInfo = Nothing

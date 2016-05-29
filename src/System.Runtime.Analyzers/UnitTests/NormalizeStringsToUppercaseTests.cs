@@ -112,7 +112,7 @@ Imports System
 Imports System.Globalization
 
 Public Class NormalizeStringsTesterClass
-    Public Sub TestMethodTwoB()
+    Public Sub TestMethodTwoA()
         Console.WriteLine(""FOO"".ToLower())
     End Sub
 

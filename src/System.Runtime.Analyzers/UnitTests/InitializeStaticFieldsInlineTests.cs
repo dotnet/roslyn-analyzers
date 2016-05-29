@@ -64,6 +64,8 @@ public class Class1
         Class1_Method();
         var field2 = 1;
     }
+
+    private static void Class1_Method() { throw new System.NotImplementedException(); }
 }
 ");
             VerifyBasic(@"
@@ -73,6 +75,10 @@ Public Class Class1
 		Class1_Method()
 		Dim field2 = 1
 	End Sub
+
+    Private Shared Sub Class1_Method()
+        Throw New System.NotImplementedException()
+    End Sub
 End Class
 ");
         }
@@ -83,7 +89,7 @@ End Class
             VerifyCSharp(@"
 public class Class1
 {
-    private static int Property { get { return 0; } }
+    private static int Property { get; set; }
 
     static Class1() // Static property initalization
     {
@@ -94,10 +100,12 @@ public class Class1
 
             VerifyBasic(@"
 Public Class Class1
-	Private Shared ReadOnly Property [Property]() As Integer
+	Private Shared Property [Property]() As Integer
 		Get
 			Return 0
 		End Get
+		Set
+		End Set
 	End Property
 
 	Shared Sub New()
@@ -114,7 +122,7 @@ End Class
             VerifyCSharp(@"
 public class Class1
 {
-    private readonly static int field = 1;
+    private static int field = 1;
     public Class1() // Non static constructor
     {
         field = 0;
@@ -128,7 +136,7 @@ public class Class1
 ");
             VerifyBasic(@"
 Public Class Class1
-	Private Shared ReadOnly field As Integer = 1
+	Private Shared field As Integer = 1
 	Public Sub New() ' Non static constructor
 		field = 0
 	End Sub

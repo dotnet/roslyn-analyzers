@@ -676,12 +676,12 @@ public class C : IDisposable
         Dispose(false);
     }
 
-    protected Dispose(bool disposing)
+    protected void Dispose(bool disposing)
     {
     }
 }
 ",
-            GetCA1063CSharpDisposeBoolSignatureResultAt(17, 15, "C", "Dispose"));
+            GetCA1063CSharpDisposeBoolSignatureResultAt(17, 20, "C", "Dispose"));
         }
 
         [Fact]
@@ -766,7 +766,7 @@ public abstract class C : IDisposable
         Dispose(false);
     }
 
-    protected abstract void Dispose(bool disposing)
+    protected abstract void Dispose(bool disposing);
 }
 ");
         }
@@ -1289,9 +1289,9 @@ End Class
     Inherits B
     Implements ITest
 
-    Public Property Test As Integer
+    Public Property Test As Integer Implements ITest.Test
 
-    Public Shadows Sub Dispose() Implements IDisposable.Dispose
+    Public Overloads Sub Dispose() Implements IDisposable.Dispose
         Dispose(True)
         GC.SuppressFinalize(Me)
     End Sub
@@ -1334,7 +1334,7 @@ End Class
     Implements ITest
     Implements IDisposable
 
-    Public Property Test As Integer
+    Public Property Test As Integer Implements ITest.Test
 
 End Class|]
 ",
@@ -1364,7 +1364,7 @@ End Class
     Inherits B
     Implements ITest
 
-    Public Property Test As Integer
+    Public Property Test As Integer Implements ITest.Test
 
 End Class|]
 ");
@@ -1480,7 +1480,7 @@ Public Class C
         MyBase.Finalize()
     End Sub
 
-    Protected Overridable Sub Dispose(disposing As Boolean)
+    Protected Overridable Overloads Sub Dispose(disposing As Boolean)
     End Sub
 
 End Class
@@ -1513,7 +1513,7 @@ Public Class C
         MyBase.Finalize()
     End Sub
 
-    Protected Overridable Sub Dispose(disposing As Boolean)
+    Protected Overridable Overloads Sub Dispose(disposing As Boolean)
     End Sub
 
 End Class
@@ -1919,13 +1919,14 @@ End Class
 Imports System
 
 Public MustInherit Class B
-    Public MustOverride Sub Dispose(disposing As Boolean)
+    Protected MustOverride Sub Dispose(disposing As Boolean)
 End Class
 
 Public Class C
+    Inherits B
     Implements IDisposable
 
-    Public Sub Dispose() Implements IDisposable.Dispose
+    Public Overloads Sub Dispose() Implements IDisposable.Dispose
         Dispose(True)
         GC.SuppressFinalize(Me)
     End Sub
@@ -1940,7 +1941,7 @@ Public Class C
 
 End Class
 ",
-            GetCA1063BasicDisposeBoolSignatureResultAt(21, 44, "C", "Dispose"));
+            GetCA1063BasicDisposeBoolSignatureResultAt(22, 44, "C", "Dispose"));
         }
 
         [Fact]
@@ -1950,13 +1951,14 @@ End Class
 Imports System
 
 Public MustInherit Class B
-    Public MustOverride Sub Dispose(disposing As Boolean)
+    Protected MustOverride Sub Dispose(disposing As Boolean)
 End Class
 
 Public Class C
+    Inherits B
     Implements IDisposable
 
-    Public Sub Dispose() Implements IDisposable.Dispose
+    Public Overloads Sub Dispose() Implements IDisposable.Dispose
         Dispose(True)
         GC.SuppressFinalize(Me)
     End Sub

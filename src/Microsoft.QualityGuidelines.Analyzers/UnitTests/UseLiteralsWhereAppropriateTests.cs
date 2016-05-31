@@ -50,8 +50,14 @@ public class Class1
     static string f3, f4 = ""Message is shown only for f4""; // Not readonly
     readonly int f5 = 3; // Not static
     const int f6 = 3; // Is already const
-    static readonly int f7 = 8 + f5; // f5 is not a const
+    static int f9 = getF9();
+    static readonly int f7 = 8 + f9; // f9 is not a const
     static readonly string f8 = null; // null value
+
+    private static int getF9()
+    {
+        throw new System.NotImplementedException();
+    }
 }");
         }
 
@@ -89,10 +95,16 @@ Public Class Class1
     ReadOnly f5 As Integer = 3
     ' Is already Const
     Const f6 As Integer = 3
-    ' f5 is not a Const
-    Shared ReadOnly f7 As Integer = 8 + f5
+    Shared f9 As Integer = getF9()
+    ' f9 is not a Const
+    Shared ReadOnly f7 As Integer = 8 + f9
     ' null value
     Shared ReadOnly f8 As String = Nothing
+
+    Private Shared Function getF9() As Integer
+        Throw New System.NotImplementedException()
+    End Function
+
 End Class");
         }
 

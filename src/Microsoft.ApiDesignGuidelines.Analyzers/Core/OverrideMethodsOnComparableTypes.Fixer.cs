@@ -42,12 +42,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             // We cannot have multiple overlapping diagnostics of this id.
             Diagnostic diagnostic = context.Diagnostics.Single();
 
-            context.RegisterCodeFix(new MyCodeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementComparable,
-                                                     async ct => await ImplementComparable(context.Document, declaration, typeSymbol, ct).ConfigureAwait(false)),
-                                    diagnostic);
+            context.RegisterCodeFix(
+                new MyCodeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementComparable,
+                    async ct => await ImplementComparableAsync(context.Document, declaration, typeSymbol, ct).ConfigureAwait(false)), diagnostic);
         }
 
-        private async Task<Document> ImplementComparable(Document document, SyntaxNode declaration, INamedTypeSymbol typeSymbol, CancellationToken cancellationToken)
+        private async Task<Document> ImplementComparableAsync(Document document, SyntaxNode declaration, INamedTypeSymbol typeSymbol, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
@@ -68,30 +68,44 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.EqualityOperatorName))
             {
-                var equalityOperator = generator.ComparisonOperatorDeclaration(OperatorKind.Equality, typeSymbol, editor.SemanticModel.Compilation);
+                var equalityOperator = generator.OperatorEqualityDeclaration(typeSymbol);
 
                 editor.AddMember(declaration, equalityOperator);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.InequalityOperatorName))
             {
-                var inequalityOperator = generator.ComparisonOperatorDeclaration(OperatorKind.Inequality, typeSymbol, editor.SemanticModel.Compilation);
+                var inequalityOperator = generator.OperatorInequalityDeclaration(typeSymbol);
 
                 editor.AddMember(declaration, inequalityOperator);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.LessThanOperatorName))
             {
-                var lessThanOperator = generator.ComparisonOperatorDeclaration(OperatorKind.LessThan, typeSymbol, editor.SemanticModel.Compilation);
+                var lessThanOperator = generator.OperatorLessThanDeclaration(typeSymbol);
 
                 editor.AddMember(declaration, lessThanOperator);
             }
 
+            if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.LessThanOrEqualOperatorName))
+            {
+                var lessThanOrEqualOperator = generator.OperatorLessThanOrEqualDeclaration(typeSymbol);
+
+                editor.AddMember(declaration, lessThanOrEqualOperator);
+            }
+
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.GreaterThanOperatorName))
             {
-                var greaterThanOperator = generator.ComparisonOperatorDeclaration(OperatorKind.GreaterThan, typeSymbol, editor.SemanticModel.Compilation);
+                var greaterThanOperator = generator.OperatorGreaterThanDeclaration(typeSymbol);
 
                 editor.AddMember(declaration, greaterThanOperator);
+            }
+
+            if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.GreaterThanOrEqualOperatorName))
+            {
+                var greaterThanOrEqualOperator = generator.OperatorGreaterThanOrEqualDeclaration(typeSymbol);
+
+                editor.AddMember(declaration, greaterThanOrEqualOperator);
             }
 
             return editor.GetChangedDocument();

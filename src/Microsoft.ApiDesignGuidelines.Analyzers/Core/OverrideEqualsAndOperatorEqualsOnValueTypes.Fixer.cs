@@ -62,7 +62,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             var editor = await DocumentEditor.CreateAsync(document, ct).ConfigureAwait(false);
             var generator = editor.Generator;
-            var language = document.Project.Language;
 
             if (!typeSymbol.OverridesEquals())
             {
@@ -82,16 +81,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.EqualityOperatorName))
             {
-                var equalityOperator = generator.ComparisonOperatorDeclaration(
-                    OperatorKind.Equality, typeSymbol, editor.SemanticModel.Compilation);
+                var equalityOperator = generator.OperatorEqualityDeclaration(typeSymbol);
 
                 editor.AddMember(declaration, equalityOperator);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.InequalityOperatorName))
             {
-                var inequalityOperator = generator.ComparisonOperatorDeclaration(
-                    OperatorKind.Inequality, typeSymbol, editor.SemanticModel.Compilation);
+                var inequalityOperator = generator.OperatorInequalityDeclaration(typeSymbol);
 
                 editor.AddMember(declaration, inequalityOperator);
             }

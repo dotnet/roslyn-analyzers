@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Editing;
 
@@ -10,57 +8,298 @@ namespace Analyzer.Utilities
 {
     public static class SyntaxGeneratorExtensions
     {
-        private static readonly OperatorKind[] s_comparisonOperators =
-        {
-            OperatorKind.Equality,
-            OperatorKind.Inequality,
-            OperatorKind.GreaterThan,
-            OperatorKind.GreaterThanOrEqual,
-            OperatorKind.LessThan,
-            OperatorKind.LessThanOrEqual
-        };
-
         /// <summary>
-        /// Creates a declaration for a comparison operator overload.
+        /// Creates a declaration for an operator equality overload.
         /// </summary>
         /// <param name="generator">
         /// The <see cref="SyntaxGenerator"/> used to create the declaration.
         /// </param>
-        /// <param name="operatorKind">
-        /// A value specifying which operator overload is to be declared. Must be one of
-        /// Equality, Inequality, GreaterThan, GreaterThanOrEqual, LessThan, or LessThanOrEqual.
+        /// <param name="containingType">
+        /// A symbol specifying the type of the operands of the comparison operator.
+        /// </param>
+        /// <returns>
+        /// A <see cref="SyntaxNode"/> representing the declaration.
+        /// </returns>
+        public static SyntaxNode OperatorEqualityDeclaration(this SyntaxGenerator generator,
+            INamedTypeSymbol containingType)
+        {
+            var leftArgument = generator.IdentifierName("left");
+            var rightArgument = generator.IdentifierName("right");
+
+            List<SyntaxNode> statements = new List<SyntaxNode>();
+
+            if (containingType.TypeKind == TypeKind.Class)
+            {
+                statements.AddRange(new[]
+                {
+                    generator.IfStatement(
+                        generator.InvocationExpression(
+                            generator.IdentifierName("ReferenceEquals"),
+                            leftArgument,
+                            rightArgument),
+                        new[]
+                        {
+                            generator.ReturnStatement(generator.TrueLiteralExpression())
+                        }),
+                    generator.IfStatement(
+                        generator.InvocationExpression(
+                            generator.IdentifierName("ReferenceEquals"),
+                            leftArgument,
+                            generator.NullLiteralExpression()),
+                        new[]
+                        {
+                            generator.ReturnStatement(generator.FalseLiteralExpression())
+                        })
+                });
+            }
+
+            statements.Add(
+                generator.ReturnStatement(
+                    generator.InvocationExpression(
+                        generator.MemberAccessExpression(
+                            leftArgument, "Equals"),
+                        rightArgument)));
+
+            return generator.ComparisonOperatorDeclaration(OperatorKind.Equality, containingType, statements.ToArray());
+        }
+
+        /// <summary>
+        /// Creates a declaration for an operator inequality overload.
+        /// </summary>
+        /// <param name="generator">
+        /// The <see cref="SyntaxGenerator"/> used to create the declaration.
         /// </param>
         /// <param name="containingType">
         /// A symbol specifying the type of the operands of the comparison operator.
         /// </param>
-        /// <param name="compilation">The compilation</param>
         /// <returns>
         /// A <see cref="SyntaxNode"/> representing the declaration.
         /// </returns>
-        /// <remarks>
-        /// A comparison operator is a public, static (Shared in VB) method with two operands,
-        /// each of the containing type, and a return type of bool (Boolean in VB).
-        /// </remarks>
-        public static SyntaxNode ComparisonOperatorDeclaration(
-            this SyntaxGenerator generator, OperatorKind operatorKind,
-            INamedTypeSymbol containingType, Compilation compilation)
+        public static SyntaxNode OperatorInequalityDeclaration(this SyntaxGenerator generator, INamedTypeSymbol containingType)
         {
-            if (!s_comparisonOperators.Contains(operatorKind))
+            var leftArgument = generator.IdentifierName("left");
+            var rightArgument = generator.IdentifierName("right");
+
+            var returnStatement = generator.ReturnStatement(
+                    generator.LogicalNotExpression(
+                        generator.ValueEqualsExpression(
+                            leftArgument,
+                            rightArgument)));
+
+            return generator.ComparisonOperatorDeclaration(OperatorKind.Inequality, containingType, returnStatement);
+        }
+
+        /// <summary>
+        /// Creates a declaration for an operator less than overload.
+        /// </summary>
+        /// <param name="generator">
+        /// The <see cref="SyntaxGenerator"/> used to create the declaration.
+        /// </param>
+        /// <param name="containingType">
+        /// A symbol specifying the type of the operands of the comparison operator.
+        /// </param>
+        /// <returns>
+        /// A <see cref="SyntaxNode"/> representing the declaration.
+        /// </returns>
+        public static SyntaxNode OperatorLessThanDeclaration(this SyntaxGenerator generator, INamedTypeSymbol containingType)
+        {
+            var leftArgument = generator.IdentifierName("left");
+            var rightArgument = generator.IdentifierName("right");
+
+            SyntaxNode expression;
+
+            if (containingType.TypeKind == TypeKind.Class)
             {
-                throw new ArgumentException($"{operatorKind} is not a comparison operator", nameof(operatorKind));
+                expression =
+                    generator.ConditionalExpression(
+                        generator.InvocationExpression(
+                            generator.IdentifierName("ReferenceEquals"),
+                            leftArgument,
+                            generator.NullLiteralExpression()),
+                        generator.LogicalNotExpression(
+                            generator.InvocationExpression(
+                                generator.IdentifierName("ReferenceEquals"),
+                                rightArgument,
+                                generator.NullLiteralExpression())),
+                        generator.LessThanExpression(
+                            generator.InvocationExpression(
+                                generator.MemberAccessExpression(leftArgument, generator.IdentifierName("CompareTo")),
+                                rightArgument),
+                            generator.LiteralExpression(0)));
+            }
+            else
+            {
+                expression =
+                    generator.LessThanExpression(
+                        generator.InvocationExpression(
+                            generator.MemberAccessExpression(leftArgument, generator.IdentifierName("CompareTo")),
+                            rightArgument),
+                        generator.LiteralExpression(0));
             }
 
+            var returnStatement = generator.ReturnStatement(expression);
+            return generator.ComparisonOperatorDeclaration(OperatorKind.LessThan, containingType, returnStatement);
+        }
+
+        /// <summary>
+        /// Creates a declaration for an operator less than or equal overload.
+        /// </summary>
+        /// <param name="generator">
+        /// The <see cref="SyntaxGenerator"/> used to create the declaration.
+        /// </param>
+        /// <param name="containingType">
+        /// A symbol specifying the type of the operands of the comparison operator.
+        /// </param>
+        /// <returns>
+        /// A <see cref="SyntaxNode"/> representing the declaration.
+        /// </returns>
+        public static SyntaxNode OperatorLessThanOrEqualDeclaration(this SyntaxGenerator generator, INamedTypeSymbol containingType)
+        {
+            var leftArgument = generator.IdentifierName("left");
+            var rightArgument = generator.IdentifierName("right");
+
+            SyntaxNode expression;
+
+            if (containingType.TypeKind == TypeKind.Class)
+            {
+                expression =
+                    generator.LogicalOrExpression(
+                        generator.InvocationExpression(
+                            generator.IdentifierName("ReferenceEquals"),
+                            leftArgument,
+                            generator.NullLiteralExpression()),
+                        generator.LessThanOrEqualExpression(
+                            generator.InvocationExpression(
+                                generator.MemberAccessExpression(leftArgument, generator.IdentifierName("CompareTo")),
+                                rightArgument),
+                            generator.LiteralExpression(0)));
+            }
+            else
+            {
+                expression =
+                    generator.LessThanOrEqualExpression(
+                        generator.InvocationExpression(
+                            generator.MemberAccessExpression(leftArgument, generator.IdentifierName("CompareTo")),
+                            rightArgument),
+                        generator.LiteralExpression(0));
+            }
+
+            var returnStatement = generator.ReturnStatement(expression);
+            return generator.ComparisonOperatorDeclaration(OperatorKind.LessThanOrEqual, containingType, returnStatement);
+        }
+
+        /// <summary>
+        /// Creates a declaration for an operator greater than overload.
+        /// </summary>
+        /// <param name="generator">
+        /// The <see cref="SyntaxGenerator"/> used to create the declaration.
+        /// </param>
+        /// <param name="containingType">
+        /// A symbol specifying the type of the operands of the comparison operator.
+        /// </param>
+        /// <returns>
+        /// A <see cref="SyntaxNode"/> representing the declaration.
+        /// </returns>
+        public static SyntaxNode OperatorGreaterThanDeclaration(this SyntaxGenerator generator, INamedTypeSymbol containingType)
+        {
+            var leftArgument = generator.IdentifierName("left");
+            var rightArgument = generator.IdentifierName("right");
+
+            SyntaxNode expression;
+
+            if (containingType.TypeKind == TypeKind.Class)
+            {
+                expression =
+                    generator.LogicalAndExpression(
+                        generator.LogicalNotExpression(
+                            generator.InvocationExpression(
+                                generator.IdentifierName("ReferenceEquals"),
+                                leftArgument,
+                                generator.NullLiteralExpression())),
+                        generator.GreaterThanExpression(
+                            generator.InvocationExpression(
+                                generator.MemberAccessExpression(leftArgument, generator.IdentifierName("CompareTo")),
+                                rightArgument),
+                            generator.LiteralExpression(0)));
+            }
+            else
+            {
+                expression =
+                    generator.GreaterThanExpression(
+                        generator.InvocationExpression(
+                            generator.MemberAccessExpression(leftArgument, generator.IdentifierName("CompareTo")),
+                            rightArgument),
+                        generator.LiteralExpression(0));
+            }
+
+            var returnStatement = generator.ReturnStatement(expression);
+            return generator.ComparisonOperatorDeclaration(OperatorKind.GreaterThan, containingType, returnStatement);
+        }
+
+        /// <summary>
+        /// Creates a declaration for an operator greater than or equal overload.
+        /// </summary>
+        /// <param name="generator">
+        /// The <see cref="SyntaxGenerator"/> used to create the declaration.
+        /// </param>
+        /// <param name="containingType">
+        /// A symbol specifying the type of the operands of the comparison operator.
+        /// </param>
+        /// <returns>
+        /// A <see cref="SyntaxNode"/> representing the declaration.
+        /// </returns>
+        public static SyntaxNode OperatorGreaterThanOrEqualDeclaration(this SyntaxGenerator generator, INamedTypeSymbol containingType)
+        {
+            var leftArgument = generator.IdentifierName("left");
+            var rightArgument = generator.IdentifierName("right");
+
+            SyntaxNode expression;
+
+            if (containingType.TypeKind == TypeKind.Class)
+            {
+                expression =
+                    generator.ConditionalExpression(
+                            generator.InvocationExpression(
+                                generator.IdentifierName("ReferenceEquals"),
+                                leftArgument,
+                                generator.NullLiteralExpression()),
+                            generator.InvocationExpression(
+                                generator.IdentifierName("ReferenceEquals"),
+                                rightArgument,
+                                generator.NullLiteralExpression()),
+                        generator.GreaterThanOrEqualExpression(
+                            generator.InvocationExpression(
+                                generator.MemberAccessExpression(leftArgument, generator.IdentifierName("CompareTo")),
+                                rightArgument),
+                            generator.LiteralExpression(0)));
+            }
+            else
+            {
+                expression =
+                    generator.GreaterThanOrEqualExpression(
+                        generator.InvocationExpression(
+                            generator.MemberAccessExpression(leftArgument, generator.IdentifierName("CompareTo")),
+                            rightArgument),
+                        generator.LiteralExpression(0));
+            }
+
+            var returnStatement = generator.ReturnStatement(expression);
+            return generator.ComparisonOperatorDeclaration(OperatorKind.GreaterThanOrEqual, containingType, returnStatement);
+        }
+
+        private static SyntaxNode ComparisonOperatorDeclaration(this SyntaxGenerator generator, OperatorKind operatorKind, INamedTypeSymbol containingType, params SyntaxNode[] statements)
+        {
             return generator.OperatorDeclaration(
                 operatorKind,
                 new[]
                 {
-                        generator.ParameterDeclaration("left", generator.TypeExpression(containingType)),
-                        generator.ParameterDeclaration("right", generator.TypeExpression(containingType)),
+                    generator.ParameterDeclaration("left", generator.TypeExpression(containingType)),
+                    generator.ParameterDeclaration("right", generator.TypeExpression(containingType))
                 },
                 generator.TypeExpression(SpecialType.System_Boolean),
                 Accessibility.Public,
                 DeclarationModifiers.Static,
-                generator.DefaultMethodBody(compilation));
+                statements);
         }
 
         /// <summary>
@@ -127,8 +366,8 @@ namespace Analyzer.Utilities
         public static SyntaxNode DefaultMethodStatement(this SyntaxGenerator generator, Compilation compilation)
         {
             return generator.ThrowStatement(generator.ObjectCreationExpression(
-                            generator.TypeExpression(
-                                compilation.GetTypeByMetadataName("System.NotImplementedException"))));
+                generator.TypeExpression(
+                    compilation.GetTypeByMetadataName("System.NotImplementedException"))));
         }
     }
 }

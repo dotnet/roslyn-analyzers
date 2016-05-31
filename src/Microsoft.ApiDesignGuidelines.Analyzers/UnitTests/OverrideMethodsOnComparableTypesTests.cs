@@ -56,12 +56,21 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             return true;
         }
 
+        public static bool operator <=(A objLeft, A objRight)
+        {
+            return true;
+        }
+
         public static bool operator >(A objLeft, A objRight)
         {
             return true;
         }
-    }
 
+        public static bool operator >=(A objLeft, A objRight)
+        {
+            return true;
+        }
+    }
 ");
         }
 
@@ -105,7 +114,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             return true;
         }
     }
-
 ", GetCA1036CSharpResultAt(4, 18, "A"));
         }
 
@@ -147,7 +155,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             return true;
         }
 
+        public static bool operator <=(A objLeft, A objRight)
+        {
+            return true;
+        }
+
         public static bool operator >(A objLeft, A objRight)
+        {
+            return true;
+        }
+
+        public static bool operator >=(A objLeft, A objRight)
         {
             return true;
         }
@@ -182,12 +200,21 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             return true;
         }
 
+        public static bool operator <=(B objLeft, B objRight)
+        {
+            return true;
+        }
+
         public static bool operator >(B objLeft, B objRight)
         {
             return true;
         }
-    }
 
+        public static bool operator >=(B objLeft, B objRight)
+        {
+            return true;
+        }
+    }
 ");
         }
 
@@ -229,12 +256,21 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             return true;
         }
 
+        public static bool operator <=(A objLeft, A objRight)
+        {
+            return true;
+        }
+
         public static bool operator >(A objLeft, A objRight)
         {
             return true;
         }
-    }
 
+        public static bool operator >=(A objLeft, A objRight)
+        {
+            return true;
+        }
+    }
 ");
         }
 
@@ -274,7 +310,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             }
         }
     }
-
 ");
         }
 
@@ -502,7 +537,15 @@ Public Class A : Implements IComparable
         Return True
     End Operator
 
+    Public Shared Operator <=(objLeft As A, objRight As A) As Boolean
+        Return True
+    End Operator
+
     Public Shared Operator >(objLeft As A, objRight As A) As Boolean
+        Return True
+    End Operator
+
+    Public Shared Operator >=(objLeft As A, objRight As A) As Boolean
         Return True
     End Operator
 
@@ -581,7 +624,15 @@ Imports System
         Return True
     End Operator
 
+    Public Shared Operator <=(objLeft As A, objRight As A) As Boolean
+        Return True
+    End Operator
+
     Public Shared Operator >(objLeft As A, objRight As A) As Boolean
+        Return True
+    End Operator
+
+    Public Shared Operator >=(objLeft As A, objRight As A) As Boolean
         Return True
     End Operator
 
@@ -651,7 +702,15 @@ Public Structure A : Implements IComparable
         Return True
     End Operator
 
+    Public Shared Operator <=(objLeft As A, objRight As A) As Boolean
+        Return True
+    End Operator
+
     Public Shared Operator >(objLeft As A, objRight As A) As Boolean
+        Return True
+    End Operator
+
+    Public Shared Operator >=(objLeft As A, objRight As A) As Boolean
         Return True
     End Operator
 

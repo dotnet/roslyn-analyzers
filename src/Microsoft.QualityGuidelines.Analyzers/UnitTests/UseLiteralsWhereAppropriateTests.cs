@@ -104,7 +104,6 @@ Public Class Class1
     Private Shared Function getF9() As Integer
         Throw New System.NotImplementedException()
     End Function
-
 End Class");
         }
 

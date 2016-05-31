@@ -104,7 +104,7 @@ class Bar
         }
 
         [Fact]
-        public void CSharp_CA1720_NoDiagnosticOnIEqualityComparerGetHashCodeImplementation()
+        public void CSharp_CA1720_NoDiagnosticOnIEqualityComparerGetHashCodeImplicitImplementation()
         {
             VerifyCSharp(@"
 using System;
@@ -112,24 +112,44 @@ using System.Collections.Generic;
 
 public sealed class SomeEqualityComparer : IEqualityComparer<string>, IEqualityComparer<int>
 {
-    public bool Equals(string x, string y) 
-    { 
-        throw new NotImplementedException(); 
+    public bool Equals(string x, string y) { throw new NotImplementedException(); }
+
+    public bool Equals(int x, int y) { throw new NotImplementedException(); }
+
+    public int GetHashCode(string obj)
+    {
+        throw new NotImplementedException();
     }
 
-    public int GetHashCode(string obj) 
-    { 
-        throw new NotImplementedException(); 
+    public int GetHashCode(int obj)
+    {
+        throw new NotImplementedException();
+    }
+}
+");
+        }
+
+        [Fact]
+        public void CSharp_CA1720_NoDiagnosticOnIEqualityComparerGetHashCodeExplicitImplementation()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+public sealed class SomeEqualityComparer : IEqualityComparer<string>, IEqualityComparer<int>
+{
+    public bool Equals(string x, string y) { throw new NotImplementedException(); }
+
+    public bool Equals(int x, int y) { throw new NotImplementedException(); }
+
+    int IEqualityComparer<string>.GetHashCode(string obj)
+    {
+        throw new NotImplementedException();
     }
 
-    public bool Equals(int x, int y) 
-    { 
-        throw new NotImplementedException(); 
-    }
-
-    public int GetHashCode(int obj) 
-    { 
-        throw new NotImplementedException(); 
+    int IEqualityComparer<int>.GetHashCode(int obj)
+    {
+        throw new NotImplementedException();
     }
 }
 ");

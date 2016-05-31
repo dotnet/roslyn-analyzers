@@ -30,8 +30,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             return new CSharpEnumsShouldHaveZeroValueFixer();
         }
 
-        [WorkItem(836193, "DevDiv")]
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1032")]
+        [Fact]
         public void CSharp_EnumsShouldZeroValueFlagsRename()
         {
             var code = @"
@@ -63,7 +62,7 @@ public enum E3
 public enum E4
 {
     A4 = 0,
-    B4 = (uint)2  // Not a constant
+    B4 = (int)2  // Sample comment
 }
 
 [System.Flags]
@@ -102,7 +101,7 @@ public enum E3
 public enum E4
 {
     None = 0,
-    B4 = (uint)2  // Not a constant
+    B4 = (int)2  // Sample comment
 }
 
 [System.Flags]

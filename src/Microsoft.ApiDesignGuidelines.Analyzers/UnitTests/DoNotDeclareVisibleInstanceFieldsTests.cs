@@ -71,7 +71,7 @@ class A
         public void PublicStaticVariableVB()
         {
             VerifyBasic(@"
-Class
+Class A
     Public Shared field as System.String
 End Class");
         }
@@ -101,7 +101,7 @@ End Class");
             VerifyCSharp(@"
 class A
 {
-    public const string field; 
+    public const string field = ""X""; 
 }");
         }
 
@@ -110,7 +110,7 @@ class A
         {
             VerifyBasic(@"
 Class A
-    Public Const field as System.String
+    Public Const field as System.String = ""X""
 End Class");
         }
     }

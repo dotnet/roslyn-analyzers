@@ -26,7 +26,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
     Public Class Months
         Private month() As String = {""Jan"", ""Feb"", ""...""}
-        Default ReadOnly Property Item(index As Float) As String
+        Default ReadOnly Property Item(index As Single) As String
             Get
                 Return month(index)
             End Get

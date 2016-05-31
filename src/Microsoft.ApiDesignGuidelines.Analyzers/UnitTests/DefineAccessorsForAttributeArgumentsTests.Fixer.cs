@@ -50,7 +50,7 @@ public sealed class NoAccessorTestAttribute : Attribute
 }");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1007")]
         public void CSharp_CA1019_AddAccessor1()
         {
             VerifyCSharpFix(@"
@@ -108,10 +108,10 @@ public sealed class InternalGetterTestAttribute : Attribute
         m_name = name;
     }
 
-    public string Name
+    internal string Name
     {
-        internal get { return m_name; }
-        internal set { m_name = value; }
+        get { return m_name; }
+        set { m_name = value; }
     }
 }", @"
 using System;
@@ -129,6 +129,7 @@ public sealed class InternalGetterTestAttribute : Attribute
     public string Name
     {
         get { return m_name; }
+
         internal set { m_name = value; }
     }
 }");
@@ -308,8 +309,8 @@ Public NotInheritable Class SetterOnlyTestAttribute
         m_name = name
     End Sub
 
-    Public WriteOnly Property Name() As String
-        Friend Set
+    Friend WriteOnly Property Name() As String
+        Set
             m_name = value
         End Set
     End Property
@@ -442,7 +443,7 @@ Public NotInheritable Class InternalGetterTestAttribute
         m_name = name
     End Sub
 
-    Friend Property Name() As String
+    Friend ReadOnly Property Name() As String
         Get
             Return m_name
         End Get
@@ -459,7 +460,7 @@ Public NotInheritable Class InternalGetterTestAttribute
         m_name = name
     End Sub
 
-    Public Property Name() As String
+    Public ReadOnly Property Name() As String
         Get
             Return m_name
         End Get

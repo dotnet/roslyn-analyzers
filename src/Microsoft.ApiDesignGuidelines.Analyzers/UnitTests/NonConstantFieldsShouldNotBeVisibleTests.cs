@@ -33,7 +33,7 @@ class A
         {
             VerifyBasic(@"
 Class A
-    field As System.String
+    Dim field As System.String
 End Class");
         }
         
@@ -70,7 +70,7 @@ class A
         public void PublicStaticVariableVB()
         {
             VerifyBasic(@"
-Class
+Class A
     Public Shared field as System.String
 End Class", GetBasicResultAt(3, 19, NonConstantFieldsShouldNotBeVisibleAnalyzer.RuleId, NonConstantFieldsShouldNotBeVisibleAnalyzer.Rule.MessageFormat.ToString()));
         }

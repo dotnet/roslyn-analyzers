@@ -63,8 +63,8 @@ public class DerivedClass : BaseClass
 
 public class DerivedClass : BaseClass
 {
-    inernal void MyMethod() {}
-}", GetCSharpCA2222RuleNameResultAt(8, 18));
+    internal void MyMethod() {}
+}", GetCSharpCA2222RuleNameResultAt(8, 19));
         }
 
         [Fact]
@@ -250,13 +250,13 @@ public class DerivedDerivedClass : DerivedClass
 @"public class BaseClass
 {
     public int MyProperty { get; set; }
-    public void MyMethod();
+    public void MyMethod() { }
 }
 
 public sealed class DerivedClass : BaseClass
 {
     private new int MyProperty { get; set; }
-    protected new void MyMethod();
+    protected new void MyMethod() { }
 }");
         }
 

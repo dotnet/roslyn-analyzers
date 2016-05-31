@@ -600,7 +600,8 @@ End Class");
         public void CA1711_Basic_Diagnostic_TypeDoesNotDeriveFromDictionary()
         {
             VerifyBasic(
-@"Public Class MyBadDictionary {}",
+@"Public Class MyBadDictionary
+End Class",
                 GetBasicResultAt(
                     1, 14,
                     IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.TypeNoAlternateRule,
@@ -612,7 +613,8 @@ End Class");
         public void CA1711_CSharp_NoDiagnostic_TypeImplementsIReadOnlyDictionary()
         {
             VerifyCSharp(
-@"using System.Collections.Generic;
+@"using System.Collections;
+using System.Collections.Generic;
 
 public class MyReadOnlyDictionary : IReadOnlyDictionary<string, int>
 {
@@ -637,10 +639,11 @@ public class MyReadOnlyDictionary : IReadOnlyDictionary<string, int>
         public void CA1711_BasicNoDiagnostic_TypeImplementsIReadOnlyDictionary()
         {
             VerifyBasic(
-@"Imports System.Collections.Generic
+@"Imports System.Collections
+Imports System.Collections.Generic
 
 Public Class MyReadOnlyDictionary
-            Implements IReadOnlyDictionary(Of String, Integer)
+    Implements IReadOnlyDictionary(Of String, Integer)
 
     Public ReadOnly Property Count As Integer Implements IReadOnlyCollection(Of KeyValuePair(Of String, Integer)).Count
         Get
@@ -736,14 +739,14 @@ public class MyNonGenericDictionary : IDictionary
         public void CA1711_Basic_NoDiagnostic_TypeImplementsNonGenericIDictionary()
         {
             VerifyBasic(
-@"Imports System.Collections
+@"Imports System
+Imports System.Collections
 Imports System.Runtime.Serialization
 
 Public Class MyNonGenericDictionary
     Implements IDictionary
 
     Protected Sub New(info As SerializationInfo, context As StreamingContext)
-        MyBase.New(info, context)
     End Sub
 
     Public ReadOnly Property Count As Integer Implements ICollection.Count
@@ -903,7 +906,7 @@ using System.Runtime.Serialization;
 [Serializable]
 public class MyStringToIntDictionary : Dictionary<string, int>
 {
-    protected MyStringDictionary(SerializationInfo info, StreamingContext context)
+    protected MyStringToIntDictionary(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {
     }
@@ -963,7 +966,7 @@ public class MyNonGenericCollection : ICollection
     public int Count => 0;
     public bool IsSynchronized => true;
     public object SyncRoot => null;
-    public void CopyTo(Array array, int index) { }
+    public void CopyTo(System.Array array, int index) { }
 
     public IEnumerator GetEnumerator()
     {
@@ -999,7 +1002,7 @@ Public Class MyNonGenericCollection
         End Get
     End Property
 
-    Public Sub CopyTo(array As Array, index As Integer) Implements ICollection.CopyTo
+    Public Sub CopyTo(array As System.Array, index As Integer) Implements ICollection.CopyTo
     End Sub
 
     Public Function GetEnumerator() As IEnumerator Implements IEnumerable.GetEnumerator
@@ -1043,7 +1046,8 @@ End Class");
         public void CA1711_CSharp_NoDiagnostic_TypeImplementsInstantiatedGenericICollection()
         {
             VerifyCSharp(
-@"using System.Collections.Generic;
+@"using System.Collections;
+using System.Collections.Generic;
 
 public class MyIntCollection : ICollection<int>
 {
@@ -1081,7 +1085,8 @@ public class MyIntCollection : ICollection<int>
         public void CA1711_Basic_NoDiagnostic_TypeImplementsInstantiatedGenericICollection()
         {
             VerifyBasic(
-@"Imports System.Collections.Generic
+@"Imports System.Collections
+Imports System.Collections.Generic
 
 Public Class MyIntCollection
     Implements ICollection(Of Integer)

@@ -196,6 +196,8 @@ public sealed class ClosedType : OpenType<String>
         public void Basic_CA1000_ShouldNotGenerate()
         {
             VerifyBasic(@"
+Imports System
+
 Public Class GenericType1(Of T)
     Private Sub New()
     End Sub

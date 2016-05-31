@@ -76,10 +76,11 @@ public class OuterType
     public class UnderScoreInName_
     {
     }
-}
 
-private class UnderScoreInNameButPrivate_
-{
+    private class UnderScoreInNameButPrivate_
+    {
+    }
+
 }",
             GetCA1707CSharpResultAt(line: 4, column: 18, symbolKind: SymbolKind.NamedType, identifierNames: "OuterType.UnderScoreInName_"));
         }
@@ -262,7 +263,7 @@ public class Der : Base
 {
     public override void M2(int int_)
     {
-        throw new NotImplementedException();
+        throw new System.NotImplementedException();
     }
 
     public override void M1(int int_)
@@ -312,7 +313,7 @@ public class implementI : I
 {
     public void M<U_>()
     {
-        throw new NotImplementedException();
+        throw new System.NotImplementedException();
     }
 }
 
@@ -329,12 +330,12 @@ public class Der : Base
 {
     public override void M2<U_>()
     {
-        throw new NotImplementedException();
+        throw new System.NotImplementedException();
     }
 
     public override void M1<T_>()
     {
-        base.M1<T_>(int1);
+        base.M1<T_>();
     }
 }",
             GetCA1707CSharpResultAt(4, 26, SymbolKind.MethodTypeParameter, "DoesNotMatter22.PublicM1<T1_>()", "T1_"),
@@ -464,7 +465,7 @@ Public Interface I1
 End Interface
 
 Public Class ImplementI1
-    Inherits I1
+    Implements I1
     Public Sub M_() Implements I1.M_
     End Sub
     ' No diagnostic
@@ -566,29 +567,29 @@ End Class",
         {
             VerifyBasic(@"
 Public Class DoesNotMatter
-    Public Event PublicE1_ As EventHandler
-    Private Event PrivateE2_ As EventHandler
+    Public Event PublicE1_ As System.EventHandler
+    Private Event PrivateE2_ As System.EventHandler
     ' No diagnostic
-    Friend Event InternalE3_ As EventHandler
+    Friend Event InternalE3_ As System.EventHandler
     ' No diagnostic
-    Protected Event ProtectedE4_ As EventHandler
+    Protected Event ProtectedE4_ As System.EventHandler
 End Class
 
 Public Interface I1
-    Event E_ As EventHandler
+    Event E_ As System.EventHandler
 End Interface
 
 Public Class ImplementI1
     Implements I1
     ' No diagnostic
-    Public Event E_ As EventHandler Implements I1.E_
-    Public Event E2_ As EventHandler
+    Public Event E_ As System.EventHandler Implements I1.E_
+    Public Event E2_ As System.EventHandler
 End Class
 
 Public Class Derives
     Inherits ImplementI1
     ' No diagnostic
-    Public Shadows Event E2_ As EventHandler
+    Public Shadows Event E2_ As System.EventHandler
 End Class",
             GetCA1707BasicResultAt(line: 3, column: 18, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.PublicE1_"),
             GetCA1707BasicResultAt(line: 8, column: 21, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.ProtectedE4_"),
@@ -647,7 +648,7 @@ End Class
 Public Class Der
     Inherits Base
     Public Overrides Sub M2(int_ As Integer)
-        Throw New NotImplementedException()
+        Throw New System.NotImplementedException()
     End Sub
 
     Public Overrides Sub M1(int_ As Integer)
@@ -695,7 +696,7 @@ End Interface
 Public Class implementI
     Implements I
     Public Sub M(Of U_)() Implements I.M
-        Throw New NotImplementedException()
+        Throw New System.NotImplementedException()
     End Sub
 End Class
 
@@ -709,7 +710,7 @@ End Class
 Public Class Der
     Inherits Base
     Public Overrides Sub M2(Of U_)()
-        Throw New NotImplementedException()
+        Throw New System.NotImplementedException()
     End Sub
 
     Public Overrides Sub M1(Of T_)()

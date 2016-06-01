@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
@@ -166,6 +168,27 @@ namespace Analyzer.Utilities
             return method.MethodKind == MethodKind.EventAdd ||
                    method.MethodKind == MethodKind.EventRaise ||
                    method.MethodKind == MethodKind.EventRemove;
+        }
+
+        public static bool IsOperator(this IMethodSymbol methodSymbol)
+        {
+            return methodSymbol.MethodKind == MethodKind.UserDefinedOperator || methodSymbol.MethodKind == MethodKind.BuiltinOperator;
+        }
+
+        public static bool HasOptionalParameters(this IMethodSymbol methodSymbol)
+        {
+            return methodSymbol.Parameters.Any(p => p.IsOptional);
+        }
+
+        public static IEnumerable<IMethodSymbol> GetOverloads(this IMethodSymbol method)
+        {
+            foreach (var member in method?.ContainingType?.GetMembers(method.Name).OfType<IMethodSymbol>())
+            {
+                if (!member.Equals(method))
+                {
+                    yield return member;
+                }
+            }
         }
     }
 }

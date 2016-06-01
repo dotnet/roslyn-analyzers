@@ -74,10 +74,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            analysisContext.RegisterSymbolAction(DoAnalysis, SymbolKind.Method);
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
+            analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Method);
         }
 
-        private static void DoAnalysis(SymbolAnalysisContext symbolContext)
+        private static void AnalyzeSymbol(SymbolAnalysisContext symbolContext)
         {
             var methodSymbol = (IMethodSymbol)symbolContext.Symbol;
             var typeSymbol = methodSymbol.ContainingSymbol as ITypeSymbol;
@@ -180,7 +183,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
         }
 
+        // CA1801: Remove unused parameters.
+        // TODO: Remove the below suppression once Roslyn bug https://github.com/dotnet/roslyn/issues/8884 is fixed.
+#pragma warning disable CA1801
         internal static ExpectedAlternateMethodGroup GetExpectedAlternateMethodGroup(string operatorName, ITypeSymbol returnType)
+#pragma warning restore CA1801
         {
             // list of operator alternate names: https://msdn.microsoft.com/en-us/library/ms182355.aspx
 

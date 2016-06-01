@@ -44,7 +44,7 @@ namespace Desktop.Analyzers.UnitTests
                     Protected Sub New(context As StreamingContext, info As SerializationInfo)
                     End Sub
 
-                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
                 End Class",
@@ -74,7 +74,7 @@ namespace Desktop.Analyzers.UnitTests
                     Protected Sub New(context As StreamingContext, info As SerializationInfo)
                     End Sub
 
-                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
                 End Class");
@@ -114,7 +114,7 @@ namespace Desktop.Analyzers.UnitTests
                     Protected Sub New(context As StreamingContext, info As SerializationInfo)
                     End Sub
 
-                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
                 End Class|]
@@ -123,7 +123,7 @@ namespace Desktop.Analyzers.UnitTests
                 Public Class CA2237SerializableProper 
                     Implements ISerializable
 
-                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
                 End Class");
@@ -154,7 +154,7 @@ namespace Desktop.Analyzers.UnitTests
                     Protected Sub New(context As StreamingContext, info As SerializationInfo)
                     End Sub
 
-                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
                 End Class
@@ -189,7 +189,7 @@ namespace Desktop.Analyzers.UnitTests
                     Protected Sub New(context As StreamingContext, info As SerializationInfo)
                     End Sub
 
-                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
                 End Class
@@ -199,17 +199,16 @@ namespace Desktop.Analyzers.UnitTests
                 GetCA2237BasicResultAt(4, 30, "CA2237SerializableWithBaseAttr"));
         }
 
-        internal static readonly string CA2237Name = SerializationRulesDiagnosticAnalyzer.RuleCA2237Id;
         internal static readonly string CA2237Message = DesktopAnalyzersResources.MarkISerializableTypesWithSerializableMessage;
 
         private static DiagnosticResult GetCA2237CSharpResultAt(int line, int column, string objectName)
         {
-            return GetCSharpResultAt(line, column, CA2237Name, string.Format(CA2237Message, objectName));
+            return GetCSharpResultAt(line, column, SerializationRulesDiagnosticAnalyzer.RuleCA2237Id, string.Format(CA2237Message, objectName));
         }
 
         private static DiagnosticResult GetCA2237BasicResultAt(int line, int column, string objectName)
         {
-            return GetBasicResultAt(line, column, CA2237Name, string.Format(CA2237Message, objectName));
+            return GetBasicResultAt(line, column, SerializationRulesDiagnosticAnalyzer.RuleCA2237Id, string.Format(CA2237Message, objectName));
         }
 
         #endregion

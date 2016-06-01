@@ -80,7 +80,7 @@ namespace Analyzer.Utilities
 
         public static bool DerivesFrom(this ITypeSymbol symbol, ITypeSymbol candidateBaseType, bool baseTypesOnly = false)
         {
-            if (candidateBaseType == null)
+            if (candidateBaseType == null || symbol == null)
             {
                 return false;
             }

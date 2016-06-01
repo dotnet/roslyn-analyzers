@@ -30,74 +30,17 @@
       <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
       <Name>Analyzer.Utilities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Core\Microsoft.ApiDesignGuidelines.Analyzers.csproj">
+    <ProjectReference Include="..\Core\Microsoft.ApiDesignGuidelines.Analyzers.Core.csproj">
       <Project>{9B5FFB24-D965-4CF1-8BB2-02C282193F4F}</Project>
-      <Name>Microsoft.ApiDesignGuidelines.Analyzers</Name>
+      <Name>Microsoft.ApiDesignGuidelines.Analyzers.Core</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.CodeAnalysis, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Common.1.2.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.1.2.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.1.2.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Collections.Immutable, Version=1.1.37.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\System.Collections.Immutable.1.1.37\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Composition.AttributedModel, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.AttributedModel.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Composition.Convention, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Convention.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Composition.Hosting, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Hosting.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Composition.Runtime, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Runtime.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Composition.TypedParts, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Reflection.Metadata, Version=1.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\System.Reflection.Metadata.1.2.0\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Microsoft.ApiDesignGuidelines.CSharp.Analyzers.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="app.config" />
-    <None Include="packages.config" />
+    <Content Include="project.json" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CSharpPassSystemUriObjectsInsteadOfStrings.cs" />
@@ -108,14 +51,14 @@
     <Compile Include="CSharpAvoidAsyncVoid.Fixer.cs" />
     <Compile Include="CSharpAsyncMethodNamesShouldEndInAsync.cs" />
     <Compile Include="CSharpAsyncMethodNamesShouldEndInAsync.Fixer.cs" />
-    <Compile Include="CSharpDonTPassAsyncLambdasAsVoidReturningDelegateTypes.cs" />
-    <Compile Include="CSharpDonTPassAsyncLambdasAsVoidReturningDelegateTypes.Fixer.cs" />
-    <Compile Include="CSharpDonTStoreAsyncLambdasAsVoidReturningDelegateTypes.cs" />
-    <Compile Include="CSharpDonTStoreAsyncLambdasAsVoidReturningDelegateTypes.Fixer.cs" />
+    <Compile Include="CSharpDoNotPassAsyncLambdasAsVoidReturningDelegateTypes.cs" />
+    <Compile Include="CSharpDoNotPassAsyncLambdasAsVoidReturningDelegateTypes.Fixer.cs" />
+    <Compile Include="CSharpDoNotStoreAsyncLambdasAsVoidReturningDelegateTypes.cs" />
+    <Compile Include="CSharpDoNotStoreAsyncLambdasAsVoidReturningDelegateTypes.Fixer.cs" />
     <Compile Include="CSharpPropagateCancellationTokensWhenPossible.cs" />
     <Compile Include="CSharpPropagateCancellationTokensWhenPossible.Fixer.cs" />
-    <Compile Include="CSharpDonTMixBlockingAndAsync.cs" />
-    <Compile Include="CSharpDonTMixBlockingAndAsync.Fixer.cs" />
+    <Compile Include="CSharpDoNotMixBlockingAndAsync.cs" />
+    <Compile Include="CSharpDoNotMixBlockingAndAsync.Fixer.cs" />
     <Compile Include="CSharpTypesThatOwnDisposableFieldsShouldBeDisposable.cs" />
     <Compile Include="CSharpUseGenericEventHandlerInstances.cs" />
     <Compile Include="CSharpUseGenericEventHandlerInstances.Fixer.cs" />
@@ -131,13 +74,10 @@
     <Compile Include="CSharpImplementStandardExceptionConstructors.cs" />
     <Compile Include="CSharpAvoidEmptyInterfaces.cs" />
     <Compile Include="CSharpAvoidEmptyInterfaces.Fixer.cs" />
-    <Compile Include="CSharpPropertiesShouldNotBeWriteOnly.cs" />
-    <Compile Include="CSharpPropertiesShouldNotBeWriteOnly.Fixer.cs" />
     <Compile Include="CSharpDeclareTypesInNamespaces.Fixer.cs" />
     <Compile Include="CSharpImplementIDisposableCorrectly.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldNotContainUnderscores.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldHaveCorrectSuffix.Fixer.cs" />
-    <Compile Include="CSharpIdentifiersShouldNotHaveIncorrectSuffix.cs" />
     <Compile Include="CSharpIdentifiersShouldNotHaveIncorrectSuffix.Fixer.cs" />
     <Compile Include="CSharpEnumsShouldHavePluralNames.Fixer.cs" />
     <Compile Include="CSharpIdentifiersShouldNotMatchKeywords.Fixer.cs" />
@@ -148,10 +88,6 @@
     <Compile Include="CSharpOverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.cs" />
     <Compile Include="CSharpOverrideGetHashCodeOnOverridingEquals.Fixer.cs" />
     <Compile Include="CSharpOverrideEqualsOnOverloadingOperatorEquals.Fixer.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
-    <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

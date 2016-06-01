@@ -37,15 +37,26 @@ namespace Microsoft.CodeAnalysis.UnitTests
         private static readonly CompilationOptions s_CSharpDefaultOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
         private static readonly CompilationOptions s_visualBasicDefaultOptions = new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
 
-        internal static readonly string DefaultFilePathPrefix = "Test";
-        internal static readonly string CSharpDefaultFileExt = "cs";
-        internal static readonly string VisualBasicDefaultExt = "vb";
+        internal const string DefaultFilePathPrefix = "Test";
+        internal const string CSharpDefaultFileExt = "cs";
+        internal const string VisualBasicDefaultExt = "vb";
         internal static readonly string CSharpDefaultFilePath = DefaultFilePathPrefix + 0 + "." + CSharpDefaultFileExt;
         internal static readonly string VisualBasicDefaultFilePath = DefaultFilePathPrefix + 0 + "." + VisualBasicDefaultExt;
 
         private const string _testProjectName = "TestProject";
 
+        /// <summary>
+        /// Return the C# diagnostic analyzer to get analyzer diagnostics.
+        /// This may return null when used in context of verifying a code fix for compiler diagnostics. 
+        /// </summary>
+        /// <returns></returns>
         protected abstract DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer();
+
+        /// <summary>
+        /// Return the VB diagnostic analyzer to get analyzer diagnostics.
+        /// This may return null when used in context of verifying a code fix for compiler diagnostics. 
+        /// </summary>
+        /// <returns></returns>
         protected abstract DiagnosticAnalyzer GetBasicDiagnosticAnalyzer();
 
         private static MetadataReference s_systemRuntimeFacadeRef;
@@ -90,10 +101,10 @@ namespace Microsoft.CodeAnalysis.UnitTests
             }
         }
 
-        protected bool PrintActualDiagnosticsOnFailure { private get; set; }
+        protected bool PrintActualDiagnosticsOnFailure { get; set; }
 
         // It is assumed to be of the format, Get<RuleId>CSharpResultAt(line: {0}, column: {1}, message: {2})
-        public string ExpectedDiagnosticsAssertionTemplate { private get; set; }
+        private string ExpectedDiagnosticsAssertionTemplate { get; set; }
 
         protected static DiagnosticResult GetGlobalResult(string id, string message)
         {
@@ -143,6 +154,11 @@ namespace Microsoft.CodeAnalysis.UnitTests
         protected static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params object[] messageArguments)
         {
             return GetResultAt(CSharpDefaultFilePath, line, column, rule, messageArguments);
+        }
+
+        protected static DiagnosticResult GetAdditionalFileResultAt(int line, int column, string additionalFilePath, DiagnosticDescriptor rule, params object[] messageArguments)
+        {
+            return GetResultAt(additionalFilePath, line, column, rule, messageArguments);
         }
 
         protected static DiagnosticResult GetResultAt(string path, int line, int column, string id, string message)
@@ -230,6 +246,11 @@ namespace Microsoft.CodeAnalysis.UnitTests
             Verify(new[] { source }, language, analyzer, expected);
         }
 
+        protected void Verify(string source, string language, DiagnosticAnalyzer analyzer, IEnumerable<TestAdditionalDocument> additionalFiles, params DiagnosticResult[] expected)
+        {
+            Verify(new[] { source }, language, analyzer, additionalFiles, expected);
+        }
+
         protected void Verify(string source, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference, params DiagnosticResult[] expected)
         {
             Verify(new[] { source }, language, analyzer, addLanguageSpecificCodeAnalysisReference, expected);
@@ -270,9 +291,19 @@ namespace Microsoft.CodeAnalysis.UnitTests
             Verify(sources.ToFileAndSource(), language, analyzer, expected);
         }
 
+        protected void Verify(string[] sources, string language, DiagnosticAnalyzer analyzer, IEnumerable<TestAdditionalDocument> additionalFiles, params DiagnosticResult[] expected)
+        {
+            Verify(sources.ToFileAndSource(), language, analyzer, additionalFiles, expected);
+        }
+
         protected void Verify(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, params DiagnosticResult[] expected)
         {
             GetSortedDiagnostics(sources, language, analyzer).Verify(analyzer, PrintActualDiagnosticsOnFailure, ExpectedDiagnosticsAssertionTemplate, expected);
+        }
+
+        protected void Verify(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, IEnumerable<TestAdditionalDocument> additionalFiles, params DiagnosticResult[] expected)
+        {
+            GetSortedDiagnostics(sources, language, analyzer, additionalFiles: additionalFiles).Verify(analyzer, PrintActualDiagnosticsOnFailure, ExpectedDiagnosticsAssertionTemplate, expected);
         }
 
         protected void Verify(string[] sources, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference, params DiagnosticResult[] expected)
@@ -290,13 +321,13 @@ namespace Microsoft.CodeAnalysis.UnitTests
             return GetSortedDiagnostics(sources.ToFileAndSource(), language, analyzer, addLanguageSpecificCodeAnalysisReference);
         }
 
-        protected static Diagnostic[] GetSortedDiagnostics(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference = true, string projectName = _testProjectName)
+        protected static Diagnostic[] GetSortedDiagnostics(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference = true, string projectName = _testProjectName, IEnumerable<TestAdditionalDocument> additionalFiles = null)
         {
             Tuple<Document[], bool, TextSpan?[]> documentsAndUseSpan = GetDocumentsAndSpans(sources, language, addLanguageSpecificCodeAnalysisReference, projectName);
             Document[] documents = documentsAndUseSpan.Item1;
             bool useSpans = documentsAndUseSpan.Item2;
             TextSpan?[] spans = documentsAndUseSpan.Item3;
-            return GetSortedDiagnostics(analyzer, documents, useSpans ? spans : null);
+            return GetSortedDiagnostics(analyzer, documents, spans: useSpans ? spans : null, additionalFiles: additionalFiles);
         }
 
         protected static Tuple<Document[], bool, TextSpan?[]> GetDocumentsAndSpans(string[] sources, string language, bool addLanguageSpecificCodeAnalysisReference = true)
@@ -409,26 +440,32 @@ namespace Microsoft.CodeAnalysis.UnitTests
             return project;
         }
 
-        protected static Diagnostic[] GetSortedDiagnostics(DiagnosticAnalyzer analyzer, Document document, TextSpan?[] spans = null)
+        protected static Diagnostic[] GetSortedDiagnostics(DiagnosticAnalyzer analyzerOpt, Document document, TextSpan?[] spans = null, IEnumerable<TestAdditionalDocument> additionalFiles = null)
         {
-            return GetSortedDiagnostics(analyzer, new[] { document }, spans);
+            return GetSortedDiagnostics(analyzerOpt, new[] { document }, spans, additionalFiles);
         }
 
-        protected static Diagnostic[] GetSortedDiagnostics(DiagnosticAnalyzer analyzer, Document[] documents, TextSpan?[] spans = null)
+        protected static Diagnostic[] GetSortedDiagnostics(DiagnosticAnalyzer analyzerOpt, Document[] documents, TextSpan?[] spans = null, IEnumerable<TestAdditionalDocument> additionalFiles = null)
         {
+            if (analyzerOpt == null)
+            {
+                return SpecializedCollections.EmptyArray<Diagnostic>();
+            }
+
             var projects = new HashSet<Project>();
             foreach (Document document in documents)
             {
                 projects.Add(document.Project);
             }
 
+            var analyzerOptions = additionalFiles != null ? new AnalyzerOptions(additionalFiles.ToImmutableArray<AdditionalText>()) : null;
             DiagnosticBag diagnostics = DiagnosticBag.GetInstance();
             foreach (Project project in projects)
             {
                 Compilation compilation = project.GetCompilationAsync().Result;
-                compilation = EnableAnalyzer(analyzer, compilation);
+                compilation = EnableAnalyzer(analyzerOpt, compilation);
 
-                ImmutableArray<Diagnostic> diags = compilation.GetAnalyzerDiagnostics(new[] { analyzer });
+                ImmutableArray <Diagnostic> diags = compilation.GetAnalyzerDiagnostics(new[] { analyzerOpt }, analyzerOptions);
                 if (spans == null)
                 {
                     diagnostics.AddRange(diags);
@@ -505,11 +542,14 @@ namespace Microsoft.CodeAnalysis.UnitTests
         {
             return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
         }
+    }
 
-        public struct FileAndSource
-        {
-            public string FilePath { get; set; }
-            public string Source { get; set; }
-        }
+    // Justification for suppression: We are not going to compare FileAndSource objects for equality.
+#pragma warning disable CA1815 // Override equals and operator equals on value types
+    public struct FileAndSource
+#pragma warning restore CA1815 // Override equals and operator equals on value types
+    {
+        public string FilePath { get; set; }
+        public string Source { get; set; }
     }
 }

@@ -45,7 +45,7 @@ public static class IFormatProviderStringTest
 
     public static string SpecifyIFormatProvider4()
     {
-        return string.Format(""Foo {0} {1} {2} {3}"", ""bar"", ""foo"", ""bar"", "");
+        return string.Format(""Foo {0} {1} {2} {3}"", ""bar"", ""foo"", ""bar"", """");
     }
 }",
 GetIFormatProviderAlternateStringRuleCSharpResultAt(10, 16, "string.Format(string, object)",
@@ -186,6 +186,7 @@ public class DerivedClass : IFormatProvider
         {
             VerifyCSharp(@"
 using System;
+using System.Globalization;
 
 public static class IFormatProviderStringTest
 {
@@ -220,16 +221,16 @@ internal static class IFormatProviderOverloads
         Console.WriteLine(string.Format(provider, format));
     }
 }",
-GetIFormatProviderAlternateRuleCSharpResultAt(8, 17, "Convert.ToInt32(string)",
+GetIFormatProviderAlternateRuleCSharpResultAt(9, 17, "Convert.ToInt32(string)",
                                                      "IFormatProviderStringTest.TestMethod()",
                                                      "Convert.ToInt32(string, IFormatProvider)"),
-GetIFormatProviderAlternateRuleCSharpResultAt(9, 18, "Convert.ToInt64(string)",
-                                                     "IFormatProviderStringTest.TestMethod()",
-                                                     "Convert.ToInt64(string, IFormatProvider)"),
-GetIFormatProviderAlternateRuleCSharpResultAt(10, 9, "IFormatProviderOverloads.LeadingIFormatProvider(string)",
+GetIFormatProviderAlternateRuleCSharpResultAt(10, 18, "Convert.ToInt64(string)",
+                                                      "IFormatProviderStringTest.TestMethod()",
+                                                      "Convert.ToInt64(string, IFormatProvider)"),
+GetIFormatProviderAlternateRuleCSharpResultAt(11, 9, "IFormatProviderOverloads.LeadingIFormatProvider(string)",
                                                      "IFormatProviderStringTest.TestMethod()",
                                                      "IFormatProviderOverloads.LeadingIFormatProvider(IFormatProvider, string)"),
-GetIFormatProviderAlternateRuleCSharpResultAt(11, 9, "IFormatProviderOverloads.TrailingIFormatProvider(string)",
+GetIFormatProviderAlternateRuleCSharpResultAt(12, 9, "IFormatProviderOverloads.TrailingIFormatProvider(string)",
                                                      "IFormatProviderStringTest.TestMethod()",
                                                      "IFormatProviderOverloads.TrailingIFormatProvider(string, IFormatProvider)"));
         }
@@ -553,7 +554,7 @@ End Class
 Public Class DerivedClass
     Implements IFormatProvider
 
-    Public Function GetFormat(formatType As Type) As Object
+    Public Function GetFormat(formatType As Type) As Object Implements IFormatProvider.GetFormat
         Throw New NotImplementedException()
     End Function
 End Class");

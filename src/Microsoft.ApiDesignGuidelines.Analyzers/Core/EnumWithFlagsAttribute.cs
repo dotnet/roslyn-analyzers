@@ -66,24 +66,31 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSymbolAction(symbolContext =>
-            {
-                AnalyzeSymbol((INamedTypeSymbol)symbolContext.Symbol, symbolContext.Compilation, symbolContext.ReportDiagnostic, symbolContext.CancellationToken);
-            }, SymbolKind.NamedType);
-        }
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-        private void AnalyzeSymbol(INamedTypeSymbol symbol, Compilation compilation, Action<Diagnostic> addDiagnostic, CancellationToken cancellationToken)
-        {
-            if (symbol != null &&
-                symbol.TypeKind == TypeKind.Enum &&
-                symbol.DeclaredAccessibility == Accessibility.Public)
+            context.RegisterCompilationStartAction(compilationStartContext =>
             {
-                INamedTypeSymbol flagsAttributeType = WellKnownTypes.FlagsAttribute(compilation);
+                var flagsAttributeType = WellKnownTypes.FlagsAttribute(compilationStartContext.Compilation);
                 if (flagsAttributeType == null)
                 {
                     return;
                 }
 
+                compilationStartContext.RegisterSymbolAction(symbolContext =>
+                {
+                    AnalyzeSymbol((INamedTypeSymbol)symbolContext.Symbol, flagsAttributeType, symbolContext.ReportDiagnostic);
+                }, SymbolKind.NamedType);
+            });
+            
+        }
+
+        private static void AnalyzeSymbol(INamedTypeSymbol symbol, INamedTypeSymbol flagsAttributeType, Action<Diagnostic> addDiagnostic)
+        {
+            if (symbol != null &&
+                symbol.TypeKind == TypeKind.Enum &&
+                symbol.DeclaredAccessibility == Accessibility.Public)
+            {
                 IList<ulong> memberValues;
                 if (EnumHelpers.TryGetEnumMemberValues(symbol, out memberValues))
                 {

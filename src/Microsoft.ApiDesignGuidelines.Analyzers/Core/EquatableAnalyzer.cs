@@ -53,20 +53,23 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(InitializeCore);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
+            context.RegisterCompilationStartAction(OnCompilationStart);
         }
 
-        private void InitializeCore(CompilationStartAnalysisContext context)
+        private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
             INamedTypeSymbol objectType = context.Compilation.GetSpecialType(SpecialType.System_Object);
             INamedTypeSymbol equatableType = context.Compilation.GetTypeByMetadataName(IEquatableMetadataName);
             if (objectType != null && equatableType != null)
             {
-                context.RegisterSymbolAction(c => AnalyzeSymbol(c, objectType, equatableType), SymbolKind.NamedType);
+                context.RegisterSymbolAction(c => AnalyzeSymbol(c, equatableType), SymbolKind.NamedType);
             }
         }
 
-        private void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol objectType, INamedTypeSymbol equatableType)
+        private static void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol equatableType)
         {
             var namedType = context.Symbol as INamedTypeSymbol;
             if (namedType == null || !(namedType.TypeKind == TypeKind.Struct || namedType.TypeKind == TypeKind.Class))

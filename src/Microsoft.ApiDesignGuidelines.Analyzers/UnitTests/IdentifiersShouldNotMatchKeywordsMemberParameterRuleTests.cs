@@ -216,7 +216,7 @@ public interface I
             VerifyBasic(@"
 Public Interface I
     Sub F([int] As Integer)
-End Class",
+End Interface",
                 GetBasicResultAt(3, 11, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberParameterRule, "I.F(Integer)", "int", "int"));
         }
 
@@ -236,7 +236,7 @@ internal interface I
             VerifyBasic(@"
 Friend Interface I
     Sub F([int] As Integer)
-End Class");
+End Interface");
         }
 
         [Fact]
@@ -250,7 +250,7 @@ public class C
 
 public class D : C
 {
-    public override void F(int @int);
+    public override void F(int @int) {}
 }",
                 // Diagnostic for the virtual in C, but none for the override in D.
                 GetCSharpResultAt(4, 31, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberParameterRule, "C.F(int)", "int", "int"));
@@ -286,7 +286,7 @@ public class C
 
 public class D : C
 {
-    public new void F(int @int);
+    public new void F(int @int) {}
 }",
                 // Diagnostic for the virtual in C, but none for the override in D.
                 GetCSharpResultAt(4, 31, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberParameterRule, "C.F(int)", "int", "int"));
@@ -322,7 +322,7 @@ public class C
 
 public class D : C
 {
-    public virtual new void F(int @int);
+    public virtual new void F(int @int) {}
 }",
                 // Diagnostics for both the virtual in C, and the virtual new method in D.
                 GetCSharpResultAt(4, 31, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberParameterRule, "C.F(int)", "int", "int"),

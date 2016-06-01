@@ -478,11 +478,11 @@ Imports System
 
 Public Class A : Implements IComparable
 
-    Public Function Overrides GetHashCode() As Integer
+    Public Overrides Function GetHashCode() As Integer
         Return 1234
     End Function
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
         Return 1
     End Function
 
@@ -518,11 +518,11 @@ Imports System
 
 Public Structure A : Implements IComparable
 
-    Public Function Overrides GetHashCode() As Integer
+    Public Overrides Function GetHashCode() As Integer
         Return 1234
     End Function
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
         Return 1
     End Function
 
@@ -544,7 +544,7 @@ Public Structure A : Implements IComparable
         Return True
     End Operator
 
-End Class
+End Structure
 ",
             GetCA1036BasicResultAt(4, 18));
         }
@@ -557,11 +557,11 @@ Imports System
 
 [|Public Class A : Implements IComparable
 
-    Public Function Overrides GetHashCode() As Integer
+    Public Overrides Function GetHashCode() As Integer
         Return 1234
     End Function
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
         Return 1
     End Function
 
@@ -589,11 +589,11 @@ End Class|]
 
 Public Structure B : Implements IComparable
 
-    Public Function Overrides GetHashCode() As Integer
+    Public Overrides Function GetHashCode() As Integer
         Return 1234
     End Function
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
         Return 1
     End Function
 
@@ -615,7 +615,7 @@ Public Structure B : Implements IComparable
         Return True
     End Operator
 
-End Class
+End Structure
 ");
         }
 
@@ -627,11 +627,11 @@ Imports System
 
 Public Structure A : Implements IComparable
 
-    Public Function Overrides GetHashCode() As Integer
+    Public Overrides Function GetHashCode() As Integer
         Return 1234
     End Function
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
         Return 1
     End Function
 
@@ -655,7 +655,7 @@ Public Structure A : Implements IComparable
         Return True
     End Operator
 
-End Class
+End Structure
 ");
         }
 
@@ -672,7 +672,7 @@ Public Class Class1
             Return 1234
         End Function
 
-        Public Function CompareTo(obj As Object) As Integer
+        Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
             Return 1
         End Function
 
@@ -701,11 +701,11 @@ Imports System
 
 Public Class A : Implements IComparable
 
-    Public Function Overrides GetHashCode() As Integer
+    Public Overrides Function GetHashCode() As Integer
         Return 1234
     End Function
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
         Return 1
     End Function
 
@@ -738,11 +738,11 @@ Imports System
 
 Public Class A : Implements IComparable
 
-    Public Function Overrides GetHashCode() As Integer
+    Public Overrides Function GetHashCode() As Integer
         Return 1234
     End Function
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
         Return 1
     End Function
 
@@ -771,11 +771,11 @@ Imports System
 
 Public Structure A : Implements IComparable
 
-    Public Function Overrides GetHashCode() As Integer
+    Public Overrides Function GetHashCode() As Integer
         Return 1234
     End Function
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
         Return 1
     End Function
 
@@ -791,7 +791,7 @@ Public Structure A : Implements IComparable
         Return True
     End Operator
 
-End Class
+End Structure
 ",
             GetCA1036BasicResultAt(4, 18));
         }
@@ -804,11 +804,11 @@ Imports System
 
 Public Structure A : Implements IComparable(Of Integer)
 
-    Public Function Overrides GetHashCode() As Integer
+    Public Overrides Function GetHashCode() As Integer
         Return 1234
     End Function
 
-    Public Function CompareTo(obj As Integer) As Integer
+    Public Function CompareTo(other As Integer) As Integer Implements IComparable(Of Integer).CompareTo
         Return 1
     End Function
 
@@ -824,7 +824,7 @@ Public Structure A : Implements IComparable(Of Integer)
         Return True
     End Operator
 
-End Class
+End Structure
 ",
             GetCA1036BasicResultAt(4, 18));
         }
@@ -841,11 +841,11 @@ End Interface
 
 Public Structure A : Implements IDerived
 
-    Public Function Overrides GetHashCode() As Integer
+    Public Overrides Function GetHashCode() As Integer
         Return 1234
     End Function
 
-    Public Function CompareTo(obj As Object) As Integer
+    Public Function CompareTo(other As Integer) As Integer  Implements IComparable(Of Integer).CompareTo
         Return 1
     End Function
 
@@ -861,7 +861,7 @@ Public Structure A : Implements IDerived
         Return True
     End Operator
 
-End Class
+End Structure
 ",
             GetCA1036BasicResultAt(8, 18));
         }
@@ -882,17 +882,14 @@ Enum MyEnum
 End Enum");
         }
 
-        internal static readonly string CA1036Name = "CA1036";
-        internal static readonly string CA1036Message = MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals;
-
         private static DiagnosticResult GetCA1036CSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA1036Name, CA1036Message);
+            return GetCSharpResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals);
         }
 
         private static DiagnosticResult GetCA1036BasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA1036Name, CA1036Message);
+            return GetBasicResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals);
         }
     }
 }

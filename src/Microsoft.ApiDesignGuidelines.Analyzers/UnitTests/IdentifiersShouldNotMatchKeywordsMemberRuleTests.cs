@@ -71,7 +71,7 @@ public class C
             VerifyBasic(@"
 Public Class C
     ' Matches VB AddHandler keyword:
-    Public Overridable Sub aDdHaNdLeR()
+    Public Overridable Sub [aDdHaNdLeR]()
     End Sub
 End Class",
                 GetBasicResultAt(4, 28, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C.aDdHaNdLeR()", "AddHandler"));
@@ -304,13 +304,13 @@ public class C
             VerifyBasic(@"
 Public Class C
     Private _for As Integer
-    Public Overridable Property [Sub] As Integer
+    Public Overridable ReadOnly Property [Sub] As Integer
         Get
             Return _for
         End Get
     End Property
 End Class",
-                GetBasicResultAt(4, 33, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C.Sub", "Sub"));
+                GetBasicResultAt(4, 42, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C.Sub", "Sub"));
         }
 
         [Fact]
@@ -337,13 +337,13 @@ public class C
             VerifyBasic(@"
 Public Class C
     Private _for As Integer
-    Public Overridable Property [Sub] As Integer
+    Public Overridable WriteOnly Property [Sub] As Integer
         Set(value As Integer)
             _for = value
         End Set
     End Property
 End Class",
-                GetBasicResultAt(4, 33, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C.Sub", "Sub"));
+                GetBasicResultAt(4, 43, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C.Sub", "Sub"));
         }
 
         [Fact]
@@ -404,7 +404,7 @@ public class C
 
 public class D : C
 {
-    public sealed override sealed void @internal() {}
+    public sealed override void @internal() {}
 }",
                 // Diagnostic for the virtual in C, but none for the sealed override in D.
                 GetCSharpResultAt(4, 25, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C.internal()", "internal"));
@@ -415,17 +415,17 @@ public class D : C
         {
             VerifyBasic(@"
 Public Class C
-    Public Overridable Sub [internal]()
+    Public Overridable Sub [friend]()
     End Sub
 End Class
 
 Public Class D
     Inherits C
-    Public NotInheritable Overrides Sub [internal]()
+    Public NotOverridable Overrides Sub [friend]()
     End Sub
 End Class",
                 // Diagnostic for the virtual in C, but none for the sealed override in D.
-                GetBasicResultAt(3, 28, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C.internal()", "internal"));
+                GetBasicResultAt(3, 28, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C.friend()", "friend"));
         }
 
         [Fact]
@@ -562,7 +562,7 @@ End Class",
             VerifyCSharp(@"
 public class C
 {
-    public delegate void Callback(object sender, EventArgs e);
+    public delegate void Callback(object sender, System.EventArgs e);
     public virtual event Callback @float;
 }",
                 // Diagnostics for both the virtual in C, and the virtual new method in D.

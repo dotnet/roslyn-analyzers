@@ -9,19 +9,19 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class CSharpUseGenericEventHandlerInstancesAnalyzer : UseGenericEventHandlerInstancesAnalyzer
     {
-        protected override AnalyzerBase GetAnalyzer(
+        protected override SymbolAnalyzer GetAnalyzer(
             Compilation compilation,
             INamedTypeSymbol eventHandler,
             INamedTypeSymbol genericEventHandler,
             INamedTypeSymbol eventArgs,
             INamedTypeSymbol comSourceInterfacesAttribute)
         {
-            return new Analyzer(compilation, eventHandler, genericEventHandler, eventArgs, comSourceInterfacesAttribute);
+            return new CSharpSymbolAnalyzer(compilation, eventHandler, genericEventHandler, eventArgs, comSourceInterfacesAttribute);
         }
 
-        private sealed class Analyzer : AnalyzerBase
+        private sealed class CSharpSymbolAnalyzer : SymbolAnalyzer
         {
-            public Analyzer(
+            public CSharpSymbolAnalyzer(
                 Compilation compilation,
                 INamedTypeSymbol eventHandler,
                 INamedTypeSymbol genericEventHandler,

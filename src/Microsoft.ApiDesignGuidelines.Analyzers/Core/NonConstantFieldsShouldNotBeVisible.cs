@@ -34,6 +34,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterSymbolAction(obj =>
             {
                 var field = (IFieldSymbol)obj.Symbol;

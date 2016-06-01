@@ -16,9 +16,7 @@ namespace Microsoft.CodeAnalysis
 {
     public static class DiagnosticExtensions
     {
-        private const int EN_US = 1033;
-
-        public static Action<Exception, DiagnosticAnalyzer, Diagnostic> FailFastOnAnalyzerException = (e, a, d) => FailFast.OnFatalException(e);
+        public static readonly Action<Exception, DiagnosticAnalyzer, Diagnostic> FailFastOnAnalyzerException = (e, a, d) => FailFast.OnFatalException(e);
 
         /// <summary>
         /// This is obsolete. Use Verify instead.
@@ -131,7 +129,7 @@ namespace Microsoft.CodeAnalysis
             where TCompilation : Compilation
         {
             ImmutableArray<Diagnostic> diagnostics;
-            c = GetAnalyzerDiagnostics(c, analyzers, options, onAnalyzerException, logAnalyzerExceptionAsDiagnostics, out diagnostics);
+            GetAnalyzerDiagnostics(c, analyzers, options, onAnalyzerException, logAnalyzerExceptionAsDiagnostics, out diagnostics);
             return diagnostics;
         }
 

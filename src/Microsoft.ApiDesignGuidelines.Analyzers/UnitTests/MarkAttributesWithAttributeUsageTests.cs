@@ -106,17 +106,16 @@ End Class
 ");
         }
 
-        internal static readonly string CA1018Name = "CA1018";
-        internal static readonly string CA1018Message = MicrosoftApiDesignGuidelinesAnalyzersResources.MarkAttributesWithAttributeUsageMessageDefault;
-
         private static DiagnosticResult GetCA1018CSharpResultAt(int line, int column, string objectName)
         {
-            return GetCSharpResultAt(line, column, CA1018Name, string.Format(CA1018Message, objectName));
+            return GetCSharpResultAt(line, column, MarkAttributesWithAttributeUsageAnalyzer.RuleId,
+                string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkAttributesWithAttributeUsageMessageDefault, objectName));
         }
 
         private static DiagnosticResult GetCA1018BasicResultAt(int line, int column, string objectName)
         {
-            return GetBasicResultAt(line, column, CA1018Name, string.Format(CA1018Message, objectName));
+            return GetBasicResultAt(line, column, MarkAttributesWithAttributeUsageAnalyzer.RuleId,
+                string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkAttributesWithAttributeUsageMessageDefault, objectName));
         }
     }
 }

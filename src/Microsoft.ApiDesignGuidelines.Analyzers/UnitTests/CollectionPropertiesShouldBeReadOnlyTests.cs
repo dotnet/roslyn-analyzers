@@ -67,9 +67,9 @@ class A
     internal System.Collections.ICollection Col { get; set; }
     protected System.Collections.ICollection Col2 { get; set; }
     private System.Collections.ICollection Col3 { get; set; }
-    public System.Collections.ICollection Col { get; }
-    public System.Collections.ICollection Col { get; protected set; }
-    public System.Collections.ICollection Col { get; private set; }
+    public System.Collections.ICollection Col4 { get; }
+    public System.Collections.ICollection Col5 { get; protected set; }
+    public System.Collections.ICollection Col6 { get; private set; }
 }
 ");
         }
@@ -95,7 +95,33 @@ using System;
 
 class A
 {
-    public System.Collections.ICollection Col[int i] { get; set; }
+    public System.Collections.ICollection this[int i]
+    {
+        get { throw new NotImplementedException(); }
+        set { }
+    }
+}
+");
+        }
+
+        [Fact]
+        public void CSharp_CA2227_DataMember()
+        {
+            VerifyCSharp(@"
+using System;
+
+namespace System.Runtime.Serialization
+{
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+    public sealed class DataMemberAttribute : Attribute
+    {
+    }
+}
+
+class A
+{
+    [System.Runtime.Serialization.DataMember]
+    public System.Collections.ICollection Col { get; set; }
 }
 ");
         }

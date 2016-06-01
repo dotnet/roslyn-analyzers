@@ -1,11 +1,9 @@
 ﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-Imports System.Diagnostics
 
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
-Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
 Imports Desktop.Analyzers.Common
 
@@ -13,8 +11,8 @@ Namespace Desktop.Analyzers
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
     Public NotInheritable Class BasicDoNotUseInsecureXSLTScriptExecutionAnalyzer
         Inherits DoNotUseInsecureXSLTScriptExecutionAnalyzer(Of SyntaxKind)
-        Protected Overrides Function GetAnalyzer(context As CodeBlockStartAnalysisContext(Of SyntaxKind), types As CompilationSecurityTypes) As Analyzer
-            Dim analyzer As New Analyzer(types, BasicSyntaxNodeHelper.DefaultInstance)
+        Protected Overrides Function GetAnalyzer(context As CodeBlockStartAnalysisContext(Of SyntaxKind), types As CompilationSecurityTypes) As SyntaxNodeAnalyzer
+            Dim analyzer As New SyntaxNodeAnalyzer(types, BasicSyntaxNodeHelper.DefaultInstance)
             context.RegisterSyntaxNodeAction(AddressOf analyzer.AnalyzeNode, SyntaxKind.InvocationExpression,
                                                                              SyntaxKind.ObjectCreationExpression,
                                                                              SyntaxKind.SimpleAssignmentStatement,

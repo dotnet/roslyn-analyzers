@@ -160,6 +160,11 @@ public struct A
     {
         throw new System.NotImplementedException();
     }
+
+    public static bool operator !=(A left, A right)
+    {
+        throw new System.NotImplementedException();
+    }
 }
 ",
 

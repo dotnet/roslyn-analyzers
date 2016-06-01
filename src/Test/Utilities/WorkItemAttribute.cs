@@ -4,6 +4,7 @@ using System;
 
 namespace Roslyn.Diagnostics.Test.Utilities
 {
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public class WorkItemAttribute : Attribute
     {
         private readonly int _id;

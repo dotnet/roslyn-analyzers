@@ -82,27 +82,30 @@ namespace System.Runtime.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(
-            compilationStartContext =>
-            {
-                HashSet<INamedTypeSymbol> tooGenericExceptionSymbols = CreateSymbolSet(compilationStartContext.Compilation, s_tooGenericExceptions);
-                HashSet<INamedTypeSymbol> reservedExceptionSymbols = CreateSymbolSet(compilationStartContext.Compilation, s_reservedExceptions); ;
-
-                if (tooGenericExceptionSymbols.Count == 0 && reservedExceptionSymbols.Count == 0)
+                compilationStartContext =>
                 {
-                    return;
-                }
+                    ImmutableHashSet<INamedTypeSymbol> tooGenericExceptionSymbols = CreateSymbolSet(compilationStartContext.Compilation, s_tooGenericExceptions);
+                    ImmutableHashSet<INamedTypeSymbol> reservedExceptionSymbols = CreateSymbolSet(compilationStartContext.Compilation, s_reservedExceptions); ;
 
-                compilationStartContext.RegisterSyntaxNodeAction(
-                syntaxNodeContext =>
-                {
-                    Analyze(syntaxNodeContext, tooGenericExceptionSymbols, reservedExceptionSymbols);
-                },
-                ObjectCreationExpressionKind);
-            });
+                    if (tooGenericExceptionSymbols.Count == 0 && reservedExceptionSymbols.Count == 0)
+                    {
+                        return;
+                    }
+
+                    compilationStartContext.RegisterSyntaxNodeAction(
+                    syntaxNodeContext =>
+                    {
+                        Analyze(syntaxNodeContext, tooGenericExceptionSymbols, reservedExceptionSymbols);
+                    },
+                    ObjectCreationExpressionKind);
+                });
         }
 
-        private static HashSet<INamedTypeSymbol> CreateSymbolSet(Compilation compilation, IEnumerable<string> exceptionNames)
+        private static ImmutableHashSet<INamedTypeSymbol> CreateSymbolSet(Compilation compilation, IEnumerable<string> exceptionNames)
         {
             HashSet<INamedTypeSymbol> set = null;
             foreach (string exp in exceptionNames)
@@ -118,10 +121,14 @@ namespace System.Runtime.Analyzers
                 }
                 set.Add(symbol);
             }
-            return set;
+
+            return set != null ? set.ToImmutableHashSet() : ImmutableHashSet<INamedTypeSymbol>.Empty;
         }
 
-        private void Analyze(SyntaxNodeAnalysisContext context, HashSet<INamedTypeSymbol> tooGenericExceptionSymbols, HashSet<INamedTypeSymbol> reservedExceptionSymbols)
+        private void Analyze(
+            SyntaxNodeAnalysisContext context,
+            ImmutableHashSet<INamedTypeSymbol> tooGenericExceptionSymbols,
+            ImmutableHashSet<INamedTypeSymbol> reservedExceptionSymbols)
         {
             var objectCreationNode = (TObjectCreationExpressionSyntax)context.Node;
             SyntaxNode targetType = GetTypeSyntaxNode(objectCreationNode);

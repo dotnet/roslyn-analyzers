@@ -19,7 +19,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : BaseClass
                               {
-                                  public override void TestMethod(string arg1, string arg2);
+                                  public override void TestMethod(string arg1, string arg2) { }
                               }",
                             @"public abstract class BaseClass
                               {
@@ -28,7 +28,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : BaseClass
                               {
-                                  public override void TestMethod(string baseArg1, string baseArg2);
+                                  public override void TestMethod(string baseArg1, string baseArg2) { }
                               }");
 
             VerifyCSharpFix(@"public abstract class BaseClass
@@ -38,7 +38,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : BaseClass
                               {
-                                  public override void TestMethod(string arg1, string arg2, __arglist);
+                                  public override void TestMethod(string arg1, string arg2, __arglist) { }
                               }",
                             @"public abstract class BaseClass
                               {
@@ -47,7 +47,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : BaseClass
                               {
-                                  public override void TestMethod(string baseArg1, string baseArg2, __arglist);
+                                  public override void TestMethod(string baseArg1, string baseArg2, __arglist) { }
                               }");
 
             VerifyCSharpFix(@"public abstract class BaseClass
@@ -57,7 +57,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : BaseClass
                               {
-                                  public override void TestMethod(string arg1, string arg2, params string[] arg3);
+                                  public override void TestMethod(string arg1, string arg2, params string[] arg3) { }
                               }",
                             @"public abstract class BaseClass
                               {
@@ -66,7 +66,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : BaseClass
                               {
-                                  public override void TestMethod(string baseArg1, string baseArg2, params string[] baseArg3);
+                                  public override void TestMethod(string baseArg1, string baseArg2, params string[] baseArg3) { }
                               }");
 
             VerifyBasicFix(@"Public MustInherit Class BaseClass
@@ -122,7 +122,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : IBase
                               {
-                                  public void TestMethod(string arg1, string arg2);
+                                  public void TestMethod(string arg1, string arg2) { }
                               }",
                             @"public interface IBase
                               {
@@ -131,7 +131,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : IBase
                               {
-                                  public void TestMethod(string baseArg1, string baseArg2);
+                                  public void TestMethod(string baseArg1, string baseArg2) { }
                               }");
 
             VerifyCSharpFix(@"public interface IBase
@@ -141,7 +141,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : IBase
                               {
-                                  public void TestMethod(string arg1, string arg2, __arglist);
+                                  public void TestMethod(string arg1, string arg2, __arglist) { }
                               }",
                             @"public interface IBase
                               {
@@ -150,7 +150,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : IBase
                               {
-                                  public void TestMethod(string baseArg1, string baseArg2, __arglist);
+                                  public void TestMethod(string baseArg1, string baseArg2, __arglist) { }
                               }");
 
             VerifyCSharpFix(@"public interface IBase
@@ -160,7 +160,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : IBase
                               {
-                                  public void TestMethod(string arg1, string arg2, params string[] arg3);
+                                  public void TestMethod(string arg1, string arg2, params string[] arg3) { }
                               }",
                             @"public interface IBase
                               {
@@ -169,7 +169,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : IBase
                               {
-                                  public void TestMethod(string baseArg1, string baseArg2, params string[] baseArg3);
+                                  public void TestMethod(string baseArg1, string baseArg2, params string[] baseArg3) { }
                               }");
 
             VerifyBasicFix(@"Public Interface IBase
@@ -225,7 +225,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : IBase
                               {
-                                  void IBase.TestMethod(string arg1, string arg2);
+                                  void IBase.TestMethod(string arg1, string arg2) { }
                               }",
                             @"public interface IBase
                               {
@@ -234,7 +234,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : IBase
                               {
-                                  void IBase.TestMethod(string baseArg1, string baseArg2);
+                                  void IBase.TestMethod(string baseArg1, string baseArg2) { }
                               }");
 
             VerifyCSharpFix(@"public interface IBase
@@ -244,7 +244,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : IBase
                               {
-                                  void IBase.TestMethod(string arg1, string arg2, __arglist);
+                                  void IBase.TestMethod(string arg1, string arg2, __arglist) { }
                               }",
                             @"public interface IBase
                               {
@@ -253,7 +253,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : IBase
                               {
-                                  void IBase.TestMethod(string baseArg1, string baseArg2, __arglist);
+                                  void IBase.TestMethod(string baseArg1, string baseArg2, __arglist) { }
                               }");
 
             VerifyCSharpFix(@"public interface IBase
@@ -263,7 +263,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : IBase
                               {
-                                  void IBase.TestMethod(string arg1, string arg2, params string[] arg3);
+                                  void IBase.TestMethod(string arg1, string arg2, params string[] arg3) { }
                               }",
                             @"public interface IBase
                               {
@@ -272,7 +272,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : IBase
                               {
-                                  void IBase.TestMethod(string baseArg1, string baseArg2, params string[] baseArg3);
+                                  void IBase.TestMethod(string baseArg1, string baseArg2, params string[] baseArg3) { }
                               }");
         }
 
@@ -336,7 +336,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : IntermediateBaseClass
                               {
-                                  public override void TestMethod(string arg1, string arg2);
+                                  public override void TestMethod(string arg1, string arg2) { }
                               }",
                             @"public abstract class BaseClass
                               {
@@ -349,7 +349,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : IntermediateBaseClass
                               {
-                                  public override void TestMethod(string baseArg1, string baseArg2);
+                                  public override void TestMethod(string baseArg1, string baseArg2) { }
                               }");
 
             VerifyBasicFix(@"Public MustInherit Class BaseClass
@@ -397,7 +397,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : BaseClass, ITest
                               {
-                                  public override void TestMethod(string interfaceArg1, string interfaceArg2);
+                                  public override void TestMethod(string interfaceArg1, string interfaceArg2) { }
                               }",
                             @"public abstract class BaseClass
                               {
@@ -411,7 +411,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : BaseClass, ITest
                               {
-                                  public override void TestMethod(string arg1, string arg2);
+                                  public override void TestMethod(string arg1, string arg2) { }
                               }");
 
             VerifyBasicFix(@"Public MustInherit Class BaseClass
@@ -419,7 +419,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                              End Class
     
                              Public Interface ITest
-                                 Sub TestMethod(interfaceArg1 As String, interfaceArg2 As String);
+                                 Sub TestMethod(interfaceArg1 As String, interfaceArg2 As String)
                              End Interface
     
                              Public Class TestClass
@@ -434,7 +434,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                              End Class
     
                              Public Interface ITest
-                                 Sub TestMethod(interfaceArg1 As String, interfaceArg2 As String);
+                                 Sub TestMethod(interfaceArg1 As String, interfaceArg2 As String)
                              End Interface
     
                              Public Class TestClass
@@ -451,7 +451,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         {
             VerifyCSharpFix(@"public interface ITest1
                               {
-                                  public abstract void TestMethod(string arg1, string arg2, string arg3);
+                                  void TestMethod(string arg1, string arg2, string arg3);
                               }
 
                               public interface ITest2
@@ -461,11 +461,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : ITest1, ITest2
                               {
-                                  public override void TestMethod(string arg1, string arg2, string otherArg3);
+                                  public void TestMethod(string arg1, string arg2, string otherArg3) { }
                               }",
                             @"public interface ITest1
                               {
-                                  public abstract void TestMethod(string arg1, string arg2, string arg3);
+                                  void TestMethod(string arg1, string arg2, string arg3);
                               }
 
                               public interface ITest2
@@ -475,7 +475,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
                               public class TestClass : ITest1, ITest2
                               {
-                                  public override void TestMethod(string arg1, string arg2, string arg3);
+                                  public void TestMethod(string arg1, string arg2, string arg3) { }
                               }");
 
             VerifyBasicFix(@"Public Interface ITest1

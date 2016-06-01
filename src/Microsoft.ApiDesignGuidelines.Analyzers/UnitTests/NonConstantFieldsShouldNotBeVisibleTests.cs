@@ -33,7 +33,7 @@ class A
         {
             VerifyBasic(@"
 Class A
-    field As System.String
+    Dim field As System.String
 End Class");
         }
         
@@ -70,8 +70,8 @@ class A
         public void PublicStaticVariableVB()
         {
             VerifyBasic(@"
-Class
-    Public Shared field as System.String; 
+Class A
+    Public Shared field as System.String
 End Class", GetBasicResultAt(3, 19, NonConstantFieldsShouldNotBeVisibleAnalyzer.RuleId, NonConstantFieldsShouldNotBeVisibleAnalyzer.Rule.MessageFormat.ToString()));
         }
 
@@ -90,7 +90,7 @@ class A
         {
             VerifyBasic(@"
 Class A
-    Public Shared ReadOnly field as System.String; 
+    Public Shared ReadOnly field as System.String
 End Class");
         }
 
@@ -100,7 +100,7 @@ End Class");
             VerifyCSharp(@"
 class A
 {
-    public const string field; 
+    public const string field = ""X""; 
 }");
         }
 
@@ -109,7 +109,7 @@ class A
         {
             VerifyBasic(@"
 Class A
-    Public Const field as System.String; 
+    Public Const field as System.String = ""X""
 End Class");
         }
     }

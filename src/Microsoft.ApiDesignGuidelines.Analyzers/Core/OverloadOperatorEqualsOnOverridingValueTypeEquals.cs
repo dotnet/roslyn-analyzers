@@ -32,19 +32,18 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterSymbolAction(context =>
             {
-                AnalyzeSymbol((INamedTypeSymbol)context.Symbol, context.ReportDiagnostic);
+                var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
+                if (namedTypeSymbol.IsValueType && namedTypeSymbol.OverridesEquals() && !namedTypeSymbol.ImplementsEqualityOperators())
+                {
+                    context.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(Rule));
+                }
             },
             SymbolKind.NamedType);
-        }
-
-        private static void AnalyzeSymbol(INamedTypeSymbol namedTypeSymbol, Action<Diagnostic> addDiagnostic)
-        {
-            if (namedTypeSymbol.IsValueType && namedTypeSymbol.OverridesEquals() && !namedTypeSymbol.ImplementsEqualityOperators())
-            {
-                addDiagnostic(namedTypeSymbol.CreateDiagnostic(Rule));
-            }
         }
     }
 }

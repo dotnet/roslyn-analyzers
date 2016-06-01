@@ -108,6 +108,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterSymbolAction(symbolAnalysisContext =>
             {
                 var symbol = symbolAnalysisContext.Symbol;
@@ -160,6 +163,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                             var methodSymbol = symbol as IMethodSymbol;
                             if (methodSymbol != null)
                             {
+                                if (methodSymbol.IsOperator())
+                                {
+                                    // Do not flag for operators.
+                                    return;
+                                }
+
                                 AnalyzeParameters(symbolAnalysisContext, methodSymbol.Parameters);
                                 AnalyzeTypeParameters(symbolAnalysisContext, methodSymbol.TypeParameters);
                             }
@@ -195,13 +204,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             });
         }
 
-        private bool IsInvalidSymbol(ISymbol symbol)
+        private static bool IsInvalidSymbol(ISymbol symbol)
         {
             return (!(symbol.GetResultantVisibility() == SymbolVisibility.Public && !symbol.IsOverride)) ||
                 symbol.IsAccessorMethod() || symbol.IsImplementationOfAnyInterfaceMember();
         }
 
-        private void AnalyzeParameters(SymbolAnalysisContext symbolAnalysisContext, IEnumerable<IParameterSymbol> parameters)
+        private static void AnalyzeParameters(SymbolAnalysisContext symbolAnalysisContext, IEnumerable<IParameterSymbol> parameters)
         {
             foreach (var parameter in parameters)
             {
@@ -225,7 +234,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
         }
 
-        private void AnalyzeTypeParameters(SymbolAnalysisContext symbolAnalysisContext, IEnumerable<ITypeParameterSymbol> typeParameters)
+        private static void AnalyzeTypeParameters(SymbolAnalysisContext symbolAnalysisContext, IEnumerable<ITypeParameterSymbol> typeParameters)
         {
             foreach (var typeParameter in typeParameters)
             {

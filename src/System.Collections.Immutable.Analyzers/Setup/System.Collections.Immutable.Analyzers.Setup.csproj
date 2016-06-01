@@ -59,9 +59,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\System.Collections.Immutable.Analyzers.csproj">
-      <Project>{36755424-5267-478c-9434-37a507e22711}</Project>
-      <Name>System.Collections.Immutable.Analyzers</Name>
+    <ProjectReference Include="..\Core\System.Collections.Immutable.Analyzers.Core.csproj">
+      <Project>{09AF1081-1906-4030-BCA9-66C6DD53FF7C}</Project>
+      <Name>System.Collections.Immutable.Analyzers.Core</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
       <ForceIncludeInVSIX>true</ForceIncludeInVSIX>

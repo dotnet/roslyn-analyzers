@@ -59,9 +59,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\Desktop.Analyzers.csproj">
-      <Project>{36755424-5267-478c-9434-37a507e22711}</Project>
-      <Name>Desktop.Analyzers</Name>
+    <ProjectReference Include="..\Core\Desktop.Analyzers.Core.csproj">
+      <Project>{FD5AAAFD-FEE5-438A-A710-EFC02510F922}</Project>
+      <Name>Desktop.Analyzers.Core</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
       <ForceIncludeInVSIX>true</ForceIncludeInVSIX>

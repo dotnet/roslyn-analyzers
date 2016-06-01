@@ -31,6 +31,12 @@ namespace Desktop.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            // TODO: Make analyzer thread-safe.
+            //analysisContext.EnableConcurrentExecution();
+
+            // Security analyzer - analyze and report diagnostics in generated code.
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
+
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
@@ -61,16 +67,16 @@ namespace Desktop.Analyzers
                                             customTags: WellKnownDiagnosticTags.Telemetry);
         }
 
-        protected abstract Analyzer GetAnalyzer(CodeBlockStartAnalysisContext<TLanguageKindEnum> context, CompilationSecurityTypes types);
+        protected abstract SyntaxNodeAnalyzer GetAnalyzer(CodeBlockStartAnalysisContext<TLanguageKindEnum> context, CompilationSecurityTypes types);
 
-        protected sealed class Analyzer
+        protected sealed class SyntaxNodeAnalyzer
         {
             private readonly CompilationSecurityTypes _xmlTypes;
             private readonly SyntaxNodeHelper _syntaxNodeHelper;
 
             private readonly Dictionary<ISymbol, XsltSettingsEnvironment> _xsltSettingsEnvironments = new Dictionary<ISymbol, XsltSettingsEnvironment>();
 
-            public Analyzer(CompilationSecurityTypes xmlTypes, SyntaxNodeHelper helper)
+            public SyntaxNodeAnalyzer(CompilationSecurityTypes xmlTypes, SyntaxNodeHelper helper)
             {
                 _xmlTypes = xmlTypes;
                 _syntaxNodeHelper = helper;
@@ -113,7 +119,7 @@ namespace Desktop.Analyzers
 
                         SyntaxNode settingsNode = argumentExpressionNodes.ElementAt(xsltSettingsIndex);
                         ISymbol settingsSymbol = SyntaxNodeHelper.GetSymbol(settingsNode, model);
-                        XsltSettingsEnvironment env = null;
+                        XsltSettingsEnvironment env;
 
                         // 1. pass null or XsltSettings.Default as XsltSetting : secure
                         if (settingsSymbol == null || SecurityDiagnosticHelpers.IsXsltSettingsDefaultProperty(settingsSymbol as IPropertySymbol, _xmlTypes))
@@ -264,11 +270,13 @@ namespace Desktop.Analyzers
                             return;
                         }
 
-                        XsltSettingsEnvironment env = null;
+                        XsltSettingsEnvironment env;
                         if (!_xsltSettingsEnvironments.TryGetValue(lhsExpressionSymbol, out env))
                         {
-                            env = new XsltSettingsEnvironment();
-                            env.XsltSettingsSymbol = lhsExpressionSymbol;
+                            env = new XsltSettingsEnvironment
+                            {
+                                XsltSettingsSymbol = lhsExpressionSymbol
+                            };
                             _xsltSettingsEnvironments[lhsExpressionSymbol] = env;
                         }
 

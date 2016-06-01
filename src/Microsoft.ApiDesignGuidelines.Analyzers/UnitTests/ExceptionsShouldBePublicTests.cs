@@ -34,10 +34,13 @@ class InternalException : Exception
         {
             VerifyCSharp(@"
 using System;
-private class PrivateException : SystemException
+internal class Outer
 {
+    private class PrivateException : SystemException
+    {
+    }
 }",
-            GetCA1064CSharpResultAt(3, 15));
+            GetCA1064CSharpResultAt(5, 19));
         }
 
         [Fact]
@@ -76,10 +79,12 @@ End Class",
         {
             VerifyBasic(@"
 Imports System
-Private Class PrivateException
-   Inherits SystemException
+Public Class Outer
+    Private Class PrivateException
+        Inherits SystemException
+    End Class
 End Class",
-            GetCA1064VBasicResultAt(3, 15));
+            GetCA1064VBasicResultAt(4, 19));
         }
 
         [Fact]
@@ -96,7 +101,8 @@ End Class");
         public void TestVBasicNonExceptionType()
         {
             VerifyBasic(@"
-Imports System
+Imports System.IO
+Imports System.Text
 Public Class NonException
    Inherits StringWriter
 End Class");

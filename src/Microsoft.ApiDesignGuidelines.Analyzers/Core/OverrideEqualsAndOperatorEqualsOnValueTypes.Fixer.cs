@@ -49,7 +49,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             context.RegisterCodeFix(
                 new MyCodeAction(
                     MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesTitle,
-                    async ct => await ImplementMissingMembersAsync(declaration, typeSymbol, context.Document, context.CancellationToken)),
+                    async ct => await ImplementMissingMembersAsync(declaration, typeSymbol, context.Document, context.CancellationToken).ConfigureAwait(false)),
                 diagnostic);
         }
 

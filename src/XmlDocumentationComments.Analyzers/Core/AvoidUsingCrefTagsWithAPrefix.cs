@@ -23,15 +23,32 @@ namespace XmlDocumentationComments.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Documentation,
                                                                              DiagnosticSeverity.Warning,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: null,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        protected static void ProcessAttribute(SyntaxNodeAnalysisContext context, SyntaxTokenList textTokens)
         {
+            if (!textTokens.Any())
+            {
+                return;
+            }
+
+            var token = textTokens.First();
+
+            if (token.Span.Length >= 2)
+            {
+                var text = token.Text;
+
+                if (text[1] == ':')
+                {
+                    var location = Location.Create(token.SyntaxTree, textTokens.Span);
+                    context.ReportDiagnostic(Diagnostic.Create(Rule, location, text.Substring(0, 2)));
+                }
+            }
         }
     }
 }

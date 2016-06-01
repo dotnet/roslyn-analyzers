@@ -34,12 +34,16 @@ namespace System.Runtime.Analyzers
                                                                          DiagnosticSeverity.Warning,
                                                                          isEnabledByDefault: true,
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182290.aspx",
+                                                                         description: s_localizableDescription,
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(compilationStartContext =>
             {
                 Compilation compilation = compilationStartContext.Compilation;
@@ -56,7 +60,7 @@ namespace System.Runtime.Analyzers
             });
         }
 
-        private bool TypeHasWeakIdentity(ITypeSymbol type, Compilation compilation)
+        private static bool TypeHasWeakIdentity(ITypeSymbol type, Compilation compilation)
         {
             switch (type.TypeKind)
             {

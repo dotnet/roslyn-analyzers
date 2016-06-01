@@ -72,15 +72,6 @@ namespace System.Collections.Immutable.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #N/A.
-        /// </summary>
-        internal static string DoNotCallToImmutableArrayOnAnImmutableArrayValueDescription {
-            get {
-                return ResourceManager.GetString("DoNotCallToImmutableArrayOnAnImmutableArrayValueDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Do not call ToImmutableArray on an ImmutableArray value.
         /// </summary>
         internal static string DoNotCallToImmutableArrayOnAnImmutableArrayValueMessage {

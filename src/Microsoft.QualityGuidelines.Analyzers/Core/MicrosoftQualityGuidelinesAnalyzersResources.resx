@@ -124,10 +124,10 @@
     <value>A field is declared static and read-only (Shared and ReadOnly in Visual Basic), and is initialized by using a value that is computable at compile time. Because the value that is assigned to the targeted field is computable at compile time, change the declaration to a const (Const in Visual Basic) field so that the value is computed at compile time instead of at run?time.</value>
   </data>
   <data name="UseLiteralsWhereAppropriateMessageDefault" xml:space="preserve">
-    <value>Field {0} is declared as 'static readonly' but is initialized with a constant value '{1}'. Mark this field as 'const' instead.</value>
+    <value>Field '{0}' is declared as 'static readonly' but is initialized with a constant value. Mark this field as 'const' instead.</value>
   </data>
   <data name="UseLiteralsWhereAppropriateMessageEmptyString" xml:space="preserve">
-    <value>Field {0} is declared as 'static readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</value>
+    <value>Field '{0}' is declared as 'static readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</value>
   </data>
   <data name="DoNotInitializeUnnecessarilyTitle" xml:space="preserve">
     <value>Do not initialize unnecessarily</value>
@@ -209,6 +209,15 @@
   </data>
   <data name="RethrowToPreserveStackDetailsTitle" xml:space="preserve">
     <value>Rethrow to preserve stack details.</value>
+  </data>
+  <data name="MakeDeclaringTypeInternal" xml:space="preserve">
+    <value>Make declaring type internal.</value>
+  </data>
+  <data name="MakeDeclaringTypeSealed" xml:space="preserve">
+    <value>Make declaring type sealed.</value>
+  </data>
+  <data name="MakeMemberNotOverridable" xml:space="preserve">
+    <value>Make member not overridable.</value>
   </data>
   <data name="DoNotRaiseExceptionsInExceptionClausesDescription" xml:space="preserve">
     <value>When an exception is raised in a finally clause, the new exception hides the active exception. This makes the original error difficult to detect and debug.</value>

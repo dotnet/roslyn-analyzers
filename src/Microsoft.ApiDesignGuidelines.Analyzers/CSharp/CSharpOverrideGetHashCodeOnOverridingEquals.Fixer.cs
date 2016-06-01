@@ -13,6 +13,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpOverrideGetHashCodeOnOverridingEqualsFixer : OverrideGetHashCodeOnOverridingEqualsFixer
     {
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create("CS0661");
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create("CS0659");
     }
 }

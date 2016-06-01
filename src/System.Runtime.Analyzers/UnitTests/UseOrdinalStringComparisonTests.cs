@@ -45,7 +45,7 @@ class C
 {
     void Method()
     {
-        string a, b;
+        string a = null, b = null;
         // wrong overload
         string.Compare(a, b);
         string.Compare(a, b, true);
@@ -137,7 +137,7 @@ class C
 {
     void Method()
     {
-        string a, b;
+        string a = null, b = null;
         // wrong overload
         string.Equals(a, b); // (string, string) is bad
         // right overload, wrong value
@@ -187,7 +187,7 @@ class C
 {
     void Method()
     {
-        string a, b;
+        string a = null, b = null;
         // wrong overload
         a.Equals(b);
         // right overload, wrong value
@@ -237,7 +237,7 @@ class C
 {
     void Method()
     {
-        string a, b;
+        string a = null, b = null;
         // not allowed
         if (a == b) { }
         if (a != b) { }

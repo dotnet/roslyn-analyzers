@@ -13,11 +13,10 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
         internal const string DoNotUseWeakCryptographicRuleId = "CA5350";
         internal const string DoNotUseBrokenCryptographicRuleId = "CA5351";
 
-        private static readonly LocalizableString s_localizableDoNotUseMD5Title = new LocalizableResourceString(nameof(Resources.DoNotUseMD5), Resources.ResourceManager, typeof(Resources));
-        private static readonly LocalizableString s_localizableDoNotUseMD5Description = new LocalizableResourceString(nameof(Resources.DoNotUseMD5Description), Resources.ResourceManager, typeof(Resources));
-        private static readonly LocalizableString s_localizableDoNotUseSHA1Title = new LocalizableResourceString(nameof(Resources.DoNotUseSHA1), Resources.ResourceManager, typeof(Resources));
-        private static readonly LocalizableString s_localizableDoNotUseSHA1Description = new LocalizableResourceString(nameof(Resources.DoNotUseSHA1Description), Resources.ResourceManager, typeof(Resources));
-
+        private static readonly LocalizableString s_localizableDoNotUseMD5Title = new LocalizableResourceString(nameof(SystemSecurityCryptographyResources.DoNotUseMD5), SystemSecurityCryptographyResources.ResourceManager, typeof(SystemSecurityCryptographyResources));
+        private static readonly LocalizableString s_localizableDoNotUseMD5Description = new LocalizableResourceString(nameof(SystemSecurityCryptographyResources.DoNotUseMD5Description), SystemSecurityCryptographyResources.ResourceManager, typeof(SystemSecurityCryptographyResources));
+        private static readonly LocalizableString s_localizableDoNotUseSHA1Title = new LocalizableResourceString(nameof(SystemSecurityCryptographyResources.DoNotUseSHA1), SystemSecurityCryptographyResources.ResourceManager, typeof(SystemSecurityCryptographyResources));
+        private static readonly LocalizableString s_localizableDoNotUseSHA1Description = new LocalizableResourceString(nameof(SystemSecurityCryptographyResources.DoNotUseSHA1Description), SystemSecurityCryptographyResources.ResourceManager, typeof(SystemSecurityCryptographyResources));
 
         internal static DiagnosticDescriptor DoNotUseMD5SpecificRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographicRuleId,
                                                                                           s_localizableDoNotUseMD5Title,
@@ -27,13 +26,9 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
                                                                                            s_localizableDoNotUseSHA1Title,
                                                                                            s_localizableDoNotUseSHA1Description);
 
-        protected abstract Analyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes cryptTypes);
+        protected abstract SyntaxNodeAnalyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes cryptTypes);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics = ImmutableArray.Create(DoNotUseMD5SpecificRule,
-                                                                                                                    DoNotUseSHA1SpecificRule);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-            => s_supportedDiagnostics;
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DoNotUseMD5SpecificRule, DoNotUseSHA1SpecificRule);
 
         private static DiagnosticDescriptor CreateDiagnosticDescriptor(string ruleId, LocalizableString title, LocalizableString description, string uri = null)
         {
@@ -50,8 +45,13 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+
+            // Security analyzer - analyze and report diagnostics on generated code.
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
+
             analysisContext.RegisterCompilationStartAction(
-                (context) =>
+                context =>
                 {
                     var cryptTypes = new CompilationSecurityTypes(context.Compilation);
                     if (ReferencesAnyTargetType(cryptTypes))
@@ -68,11 +68,11 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
                 || types.HMACSHA1 != null;
         }
 
-        protected class Analyzer
+        protected class SyntaxNodeAnalyzer
         {
             private readonly CompilationSecurityTypes _cryptTypes;
 
-            public Analyzer(CompilationSecurityTypes cryptTypes)
+            public SyntaxNodeAnalyzer(CompilationSecurityTypes cryptTypes)
             {
                 _cryptTypes = cryptTypes;
             }

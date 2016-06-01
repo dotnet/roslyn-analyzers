@@ -30,8 +30,7 @@ Namespace My.Resources
     <Global.System.CodeDom.Compiler.GeneratedCodeAttribute(""System.Resources.Tools.StronglyTypedResourceBuilder"", ""4.0.0.0"")> _
     Friend Class Resource1
     End Class
-End Namespace
-}";
+End Namespace";
 
         [Fact]
         public void TestCSharpNoResourceFile()
@@ -97,7 +96,7 @@ End Class", LanguageNames.VisualBasic), GetGlobalResult(MarkAssembliesWithNeutra
 
         private FileAndSource[] GetSources(string code, string language)
         {
-            return new FileAndSource[] { GetDesignerFile(language), new FileAndSource { FilePath = null, Source = code } };
+            return new[] { GetDesignerFile(language), new FileAndSource { FilePath = null, Source = code } };
         }
 
         private FileAndSource GetDesignerFile(string language)

@@ -57,13 +57,13 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterSymbolAction(AnalyzeField, SymbolKind.Field);
             analysisContext.RegisterSymbolAction(AnalyzeProperty, SymbolKind.Property);
             analysisContext.RegisterSymbolAction(AnalyzeMethod, SymbolKind.Method);
-            analysisContext.RegisterOperationBlockStartAction(blockContext =>
-            {
-                blockContext.RegisterOperationAction(oc => AnalyzeObjectCreation(oc, blockContext.OwningSymbol), OperationKind.ArrayCreationExpression);
-            });
+            analysisContext.RegisterOperationAction(AnalyzeObjectCreation, OperationKind.ArrayCreationExpression);
         }
 
         private static void AnalyzeField(SymbolAnalysisContext context)
@@ -109,13 +109,13 @@ namespace Microsoft.QualityGuidelines.Analyzers
             }
         }
 
-        private static void AnalyzeObjectCreation(OperationAnalysisContext context, ISymbol owningSymbol)
+        private static void AnalyzeObjectCreation(OperationAnalysisContext context)
         {
             var arrayCreationExpression = (IArrayCreationExpression)context.Operation;
 
             if (IsMultiDimensionalArray(arrayCreationExpression.Type))
             {
-                context.ReportDiagnostic(arrayCreationExpression.Syntax.CreateDiagnostic(BodyRule, owningSymbol.Name, arrayCreationExpression.Type));
+                context.ReportDiagnostic(arrayCreationExpression.Syntax.CreateDiagnostic(BodyRule, context.ContainingSymbol.Name, arrayCreationExpression.Type));
             }
         }
 

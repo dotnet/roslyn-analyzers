@@ -81,7 +81,7 @@ public interface IAmAnInterface
             VerifyCSharp(@"
 using System;
 
-public class IInterface<V>
+public class IInterface<VSome>
 {
 }
 
@@ -89,13 +89,13 @@ public class IAnotherInterface<本語>
 {
 }
 
-public delegate void Callback<V>();
+public delegate void Callback<VSome>();
 
-public class Class2<V>
+public class Class2<VSome>
 {
 }
 
-public class Class2<T, V>
+public class Class2<T, VSome>
 {
 }
 
@@ -127,7 +127,7 @@ public class Class4<Type1>
         Console.WriteLine(type);
     }
 
-    public void Method<K, V>(K key, V value)
+    public void Method<KType, VType>(KType key, VType value)
     {
         Console.WriteLine(key.ToString() + value.ToString());
     }
@@ -145,11 +145,11 @@ public class Class6<TTypeParameter>
 {
 }
 ",
-                GetCA1715CSharpResultAt(4, 25, CA1715TypeParameterMessage, "V"),
+                GetCA1715CSharpResultAt(4, 25, CA1715TypeParameterMessage, "VSome"),
                 GetCA1715CSharpResultAt(8, 32, CA1715TypeParameterMessage, "\u672C\u8A9E"),
-                GetCA1715CSharpResultAt(12, 31, CA1715TypeParameterMessage, "V"),
-                GetCA1715CSharpResultAt(14, 21, CA1715TypeParameterMessage, "V"),
-                GetCA1715CSharpResultAt(18, 24, CA1715TypeParameterMessage, "V"),
+                GetCA1715CSharpResultAt(12, 31, CA1715TypeParameterMessage, "VSome"),
+                GetCA1715CSharpResultAt(14, 21, CA1715TypeParameterMessage, "VSome"),
+                GetCA1715CSharpResultAt(18, 24, CA1715TypeParameterMessage, "VSome"),
                 GetCA1715CSharpResultAt(22, 21, CA1715TypeParameterMessage, "Type"),
                 GetCA1715CSharpResultAt(26, 24, CA1715TypeParameterMessage, "Type"),
                 GetCA1715CSharpResultAt(30, 19, CA1715TypeParameterMessage, "Key"),
@@ -159,11 +159,41 @@ public class Class6<TTypeParameter>
                 GetCA1715CSharpResultAt(38, 21, CA1715TypeParameterMessage, "Type1"),
                 GetCA1715CSharpResultAt(40, 31, CA1715TypeParameterMessage, "Type2"),
                 GetCA1715CSharpResultAt(45, 24, CA1715TypeParameterMessage, "Type2"),
-                GetCA1715CSharpResultAt(50, 24, CA1715TypeParameterMessage, "K"),
-                GetCA1715CSharpResultAt(50, 27, CA1715TypeParameterMessage, "V"),
+                GetCA1715CSharpResultAt(50, 24, CA1715TypeParameterMessage, "KType"),
+                GetCA1715CSharpResultAt(50, 31, CA1715TypeParameterMessage, "VType"),
                 GetCA1715CSharpResultAt(56, 21, CA1715TypeParameterMessage, "_Type1"),
                 GetCA1715CSharpResultAt(58, 24, CA1715TypeParameterMessage, "_K"),
                 GetCA1715CSharpResultAt(58, 28, CA1715TypeParameterMessage, "_V"));
+        }
+
+        [Fact]
+        public void TestTypeParameterNamesCSharp_NoDiagnosticCases()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class IInterface<V>
+{
+}
+
+public delegate void Callback<V>();
+
+public class Class2<T, V>
+{
+}
+
+public class Class4<T>
+{
+    public void Method<K, V>(K key, V value)
+    {
+        Console.WriteLine(key.ToString() + value.ToString());
+    }
+}
+
+public class Class6<TTypeParameter>
+{
+}
+");
         }
 
         [Fact]
@@ -217,20 +247,20 @@ End Interface
         public void TestTypeParameterNamesBasic()
         {
             VerifyBasic(@"
-Import System
+Imports System
 
-Public Class IInterface(Of V)
+Public Class IInterface(Of VSome)
 End Class
 
 Public Class IAnotherInterface(Of 本語)
 End Class
 
-Public Delegate Sub Callback(Of V)()
+Public Delegate Sub Callback(Of VSome)()
 
-Public Class Class2(Of V)
+Public Class Class2(Of VSome)
 End Class
 
-Public Class Class2(Of T, V)
+Public Class Class2(Of T, VSome)
 End Class
 
 Public Class Class3(Of Type)
@@ -255,7 +285,7 @@ Public Class Class4(Of Type1)
         Console.WriteLine(type)
     End Sub
 
-    Public Sub Method(Of K, V)(key As K, value As V)
+    Public Sub Method(Of KType, VType)(key As KType, value As VType)
         Console.WriteLine(key.ToString() + value.ToString())
     End Sub
 End Class
@@ -269,11 +299,11 @@ End Class
 Public Class Class6(Of TTypeParameter)
 End Class
 ",
-                GetCA1715BasicResultAt(4, 28, CA1715TypeParameterMessage, "V"),
+                GetCA1715BasicResultAt(4, 28, CA1715TypeParameterMessage, "VSome"),
                 GetCA1715BasicResultAt(7, 35, CA1715TypeParameterMessage, "\u672C\u8A9E"),
-                GetCA1715BasicResultAt(10, 33, CA1715TypeParameterMessage, "V"),
-                GetCA1715BasicResultAt(12, 24, CA1715TypeParameterMessage, "V"),
-                GetCA1715BasicResultAt(15, 27, CA1715TypeParameterMessage, "V"),
+                GetCA1715BasicResultAt(10, 33, CA1715TypeParameterMessage, "VSome"),
+                GetCA1715BasicResultAt(12, 24, CA1715TypeParameterMessage, "VSome"),
+                GetCA1715BasicResultAt(15, 27, CA1715TypeParameterMessage, "VSome"),
                 GetCA1715BasicResultAt(18, 24, CA1715TypeParameterMessage, "Type"),
                 GetCA1715BasicResultAt(21, 27, CA1715TypeParameterMessage, "Type"),
                 GetCA1715BasicResultAt(24, 22, CA1715TypeParameterMessage, "Key"),
@@ -283,11 +313,36 @@ End Class
                 GetCA1715BasicResultAt(31, 24, CA1715TypeParameterMessage, "Type1"),
                 GetCA1715BasicResultAt(32, 33, CA1715TypeParameterMessage, "Type2"),
                 GetCA1715BasicResultAt(36, 26, CA1715TypeParameterMessage, "Type2"),
-                GetCA1715BasicResultAt(40, 26, CA1715TypeParameterMessage, "K"),
-                GetCA1715BasicResultAt(40, 29, CA1715TypeParameterMessage, "V"),
+                GetCA1715BasicResultAt(40, 26, CA1715TypeParameterMessage, "KType"),
+                GetCA1715BasicResultAt(40, 33, CA1715TypeParameterMessage, "VType"),
                 GetCA1715BasicResultAt(45, 24, CA1715TypeParameterMessage, "_Type1"),
                 GetCA1715BasicResultAt(46, 26, CA1715TypeParameterMessage, "_K"),
                 GetCA1715BasicResultAt(46, 30, CA1715TypeParameterMessage, "_V"));
+        }
+
+        [Fact]
+        public void TestTypeParameterNamesBasic_NoDiagnosticCases()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class IInterface(Of V)
+End Class
+
+Public Delegate Sub Callback(Of V)()
+
+Public Class Class2(Of T, V)
+End Class
+
+Public Class Class4(Of T)
+    Public Sub Method(Of K, V)(key As K, value As V)
+        Console.WriteLine(key.ToString() + value.ToString())
+    End Sub
+End Class
+
+Public Class Class6(Of TTypeParameter)
+End Class
+");
         }
 
         internal static readonly string CA1715InterfaceMessage = MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectPrefixMessageInterface;

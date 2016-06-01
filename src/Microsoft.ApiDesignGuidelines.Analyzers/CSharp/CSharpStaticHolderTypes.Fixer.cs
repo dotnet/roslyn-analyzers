@@ -36,12 +36,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             if (classDeclaration != null)
             {
                 var codeAction = new MyCodeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.MakeClassStatic,
-                                                  async ct => await MakeClassStatic(document, root, classDeclaration, ct).ConfigureAwait(false));
+                                                  async ct => await MakeClassStatic(document, classDeclaration, ct).ConfigureAwait(false));
                 context.RegisterCodeFix(codeAction, context.Diagnostics);
             }
         }
 
-        private async Task<Document> MakeClassStatic(Document document, SyntaxNode root, ClassDeclarationSyntax classDeclaration, CancellationToken ct)
+        private async Task<Document> MakeClassStatic(Document document, ClassDeclarationSyntax classDeclaration, CancellationToken ct)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, ct).ConfigureAwait(false);
             DeclarationModifiers modifiers = editor.Generator.GetModifiers(classDeclaration);

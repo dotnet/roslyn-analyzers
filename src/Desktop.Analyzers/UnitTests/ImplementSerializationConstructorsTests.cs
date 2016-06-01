@@ -43,7 +43,7 @@ namespace Desktop.Analyzers.UnitTests
                 Public Class CA2229NoConstructor
                     Implements ISerializable
                 
-                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
                 End Class",
@@ -72,7 +72,7 @@ namespace Desktop.Analyzers.UnitTests
                 Friend Class CA2229NoConstructorInternal
                     Implements ISerializable
                 
-                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
                 End Class");
@@ -105,7 +105,7 @@ namespace Desktop.Analyzers.UnitTests
                     Protected Sub New(info As SerializationInfo, context As StreamingContext)
                     End Sub
 
-                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
                 End Class");
@@ -138,7 +138,7 @@ namespace Desktop.Analyzers.UnitTests
                     Private Sub New(info As SerializationInfo, context As StreamingContext)
                     End Sub
 
-                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
                 End Class");
@@ -172,7 +172,7 @@ namespace Desktop.Analyzers.UnitTests
                     Public Sub New(info As SerializationInfo, context As StreamingContext)
                     End Sub
 
-                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
                 End Class",
@@ -219,7 +219,7 @@ namespace Desktop.Analyzers.UnitTests
                     Private Sub New(info As SerializationInfo, context As StreamingContext)
                     End Sub
 
-                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
                 End Class|]
@@ -231,7 +231,7 @@ namespace Desktop.Analyzers.UnitTests
                     Public Sub New(info As SerializationInfo, context As StreamingContext)
                     End Sub
 
-                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
                 End Class");
@@ -265,7 +265,7 @@ namespace Desktop.Analyzers.UnitTests
                     Friend Sub New(info As SerializationInfo, context As StreamingContext)
                     End Sub
 
-                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
                 End Class",
@@ -300,7 +300,7 @@ namespace Desktop.Analyzers.UnitTests
                     Protected Friend Sub New(info As SerializationInfo, context As StreamingContext)
                     End Sub
 
-                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
                 End Class",
@@ -335,7 +335,7 @@ namespace Desktop.Analyzers.UnitTests
                     Protected Friend Sub New(info As SerializationInfo, context As StreamingContext)
                     End Sub
 
-                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
                 End Class",
@@ -370,7 +370,7 @@ namespace Desktop.Analyzers.UnitTests
                     Protected Sub New(context As StreamingContext, info As SerializationInfo)
                     End Sub
 
-                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
                 End Class",
@@ -400,26 +400,25 @@ namespace Desktop.Analyzers.UnitTests
                 Public Class CA2229SerializableProper 
                     Implements ISerializable
 
-                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext)
+                    Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
                 End Class",
                 GetCA2229BasicResultAt(5, 30, "CA2229SerializableProper", CA2229Message));
         }
 
-        internal static readonly string CA2229Name = SerializationRulesDiagnosticAnalyzer.RuleCA2229Id;
         internal static readonly string CA2229Message = DesktopAnalyzersResources.ImplementSerializationConstructorsMessageCreateMagicConstructor;
         internal static readonly string CA2229MessageSealed = DesktopAnalyzersResources.ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate;
         internal static readonly string CA2229MessageUnsealed = DesktopAnalyzersResources.ImplementSerializationConstructorsMessageMakeUnsealedMagicConstructorFamily;
 
         private static DiagnosticResult GetCA2229CSharpResultAt(int line, int column, string objectName, string message)
         {
-            return GetCSharpResultAt(line, column, CA2229Name, string.Format(message, objectName));
+            return GetCSharpResultAt(line, column, SerializationRulesDiagnosticAnalyzer.RuleCA2229Id, string.Format(message, objectName));
         }
 
         private static DiagnosticResult GetCA2229BasicResultAt(int line, int column, string objectName, string message)
         {
-            return GetBasicResultAt(line, column, CA2229Name, string.Format(message, objectName));
+            return GetBasicResultAt(line, column, SerializationRulesDiagnosticAnalyzer.RuleCA2229Id, string.Format(message, objectName));
         }
 
         #endregion

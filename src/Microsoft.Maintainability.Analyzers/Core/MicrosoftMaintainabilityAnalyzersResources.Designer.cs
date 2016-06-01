@@ -98,7 +98,7 @@ namespace Microsoft.Maintainability.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Avoid unused private fields.
+        ///   Looks up a localized string similar to Unused field &apos;{0}&apos;..
         /// </summary>
         internal static string AvoidUnusedPrivateFieldsMessage {
             get {

@@ -37,6 +37,9 @@ namespace System.Runtime.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(csaContext =>
             {
                 var stringComparisonType = csaContext.Compilation.GetTypeByMetadataName("System.StringComparison");
@@ -81,11 +84,12 @@ namespace System.Runtime.Analyzers
                                                                                 GetParameterInfo(integerType),
                                                                                 GetParameterInfo(stringComparisonType));
 
-                IDictionary<IMethodSymbol, IMethodSymbol> overloadMap = new Dictionary<IMethodSymbol, IMethodSymbol>();
-                overloadMap.AddKeyValueIfNotNull(stringCompareToParameterString, stringCompareParameterStringStringStringComparison);
-                overloadMap.AddKeyValueIfNotNull(stringCompareToParameterObject, stringCompareParameterStringStringStringComparison);
-                overloadMap.AddKeyValueIfNotNull(stringCompareParameterStringStringBool, stringCompareParameterStringStringStringComparison);
-                overloadMap.AddKeyValueIfNotNull(stringCompareParameterStringIntStringIntIntBool, stringCompareParameterStringIntStringIntIntComparison);
+                var overloadMapBuilder = ImmutableDictionary.CreateBuilder<IMethodSymbol, IMethodSymbol>();
+                overloadMapBuilder.AddKeyValueIfNotNull(stringCompareToParameterString, stringCompareParameterStringStringStringComparison);
+                overloadMapBuilder.AddKeyValueIfNotNull(stringCompareToParameterObject, stringCompareParameterStringStringStringComparison);
+                overloadMapBuilder.AddKeyValueIfNotNull(stringCompareParameterStringStringBool, stringCompareParameterStringStringStringComparison);
+                overloadMapBuilder.AddKeyValueIfNotNull(stringCompareParameterStringIntStringIntIntBool, stringCompareParameterStringIntStringIntIntComparison);
+                var overloadMap = overloadMapBuilder.ToImmutable();
 
                 csaContext.RegisterOperationAction(oaContext =>
                 {
@@ -130,7 +134,7 @@ namespace System.Runtime.Analyzers
             });
         }
 
-        private void ReportDiagnostic(
+        private static void ReportDiagnostic(
             OperationAnalysisContext oaContext,
             IInvocationExpression invocationExpression,
             IMethodSymbol targetMethod,
@@ -144,13 +148,13 @@ namespace System.Runtime.Analyzers
                     correctOverload.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
         }
 
-        private IMethodSymbol GetSingleOrDefaultMemberWithName(IEnumerable<IMethodSymbol> stringFormatMembers, string displayName)
+        private static IMethodSymbol GetSingleOrDefaultMemberWithName(IEnumerable<IMethodSymbol> stringFormatMembers, string displayName)
         {
             return stringFormatMembers?.Where(member => string.Equals(member.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat), displayName, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
         }
 
 
-        private ParameterInfo GetParameterInfo(INamedTypeSymbol type, bool isArray = false, int arrayRank = 0, bool isParams = false)
+        private static ParameterInfo GetParameterInfo(INamedTypeSymbol type, bool isArray = false, int arrayRank = 0, bool isParams = false)
         {
             return ParameterInfo.GetParameterInfo(type, isArray, arrayRank, isParams);
         }

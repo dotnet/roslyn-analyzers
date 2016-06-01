@@ -37,6 +37,9 @@ Namespace Microsoft.ApiDesignGuidelines.Analyzers
         Public Overrides ReadOnly Property SupportedDiagnostics As ImmutableArray(Of DiagnosticDescriptor) = ImmutableArray.Create(Rule)
 
         Public Overrides Sub Initialize(analysisContext As AnalysisContext)
+            analysisContext.EnableConcurrentExecution()
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None)
+
             analysisContext.RegisterSymbolAction(
                 Sub(symbolContext)
                     Dim method = DirectCast(symbolContext.Symbol, IMethodSymbol)

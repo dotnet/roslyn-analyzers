@@ -24,7 +24,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
         private static readonly LocalizableString s_localizableMessageAndTitle = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.DoNotCallOverridableMethodsInConstructors), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.DoNotCallOverridableMethodsInConstructorsDescription), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
 
-        public static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
+        public static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                          s_localizableMessageAndTitle,
                                                                          s_localizableMessageAndTitle,
                                                                          DiagnosticCategory.Usage,
@@ -38,6 +38,9 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
                 INamedTypeSymbol webUiControlType = compilationContext.Compilation.GetTypeByMetadataName("System.Web.UI.Control");
@@ -55,7 +58,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
             });
         }
 
-        private void AnalyzeOperation(OperationAnalysisContext context, INamedTypeSymbol containingType)
+        private static void AnalyzeOperation(OperationAnalysisContext context, INamedTypeSymbol containingType)
         {
             var operation = context.Operation as IInvocationExpression;
             IMethodSymbol method = operation.TargetMethod;

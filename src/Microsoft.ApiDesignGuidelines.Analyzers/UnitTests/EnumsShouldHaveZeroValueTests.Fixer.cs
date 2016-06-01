@@ -31,15 +31,18 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [WorkItem(836193, "DevDiv")]
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1032")]
         public void CSharp_EnumsShouldZeroValueFlagsRename()
         {
             var code = @"
-[System.Flags]
-private enum E
+public class Outer
 {
-    A = 0,
-    B = 3
+    [System.Flags]
+    private enum E
+    {
+        A = 0,
+        B = 3
+    }
 }
 
 [System.Flags]
@@ -71,11 +74,14 @@ public enum NoZeroValuedField
 }";
 
             var expectedFixedCode = @"
-[System.Flags]
-private enum E
+public class Outer
 {
-    None = 0,
-    B = 3
+    [System.Flags]
+    private enum E
+    {
+        None = 0,
+        B = 3
+    }
 }
 
 [System.Flags]
@@ -112,11 +118,14 @@ public enum NoZeroValuedField
         public void CSharp_EnumsShouldZeroValueFlagsMultipleZero()
         {
             var code = @"// Some comment
-[System.Flags]
-private enum E
+public class Outer
 {
-    None = 0,
-    A = 0
+    [System.Flags]
+    private enum E
+    {
+        None = 0,
+        A = 0
+    }
 }
 // Some comment
 [System.Flags]
@@ -126,10 +135,13 @@ internal enum E2
     A = None
 }";
             var expectedFixedCode = @"// Some comment
-[System.Flags]
-private enum E
+public class Outer
 {
-    None = 0
+    [System.Flags]
+    private enum E
+    {
+        None = 0
+    }
 }
 // Some comment
 [System.Flags]
@@ -144,15 +156,18 @@ internal enum E2
         public void CSharp_EnumsShouldZeroValueNotFlagsNoZeroValue()
         {
             var code = @"
-private enum E
+public class Outer
 {
-    A = 1
-}
+    private enum E
+    {
+        A = 1
+    }
 
-private enum E2
-{
-    None = 1,
-    A = 2
+    private enum E2
+    {
+        None = 1,
+        A = 2
+    }
 }
 
 internal enum E3
@@ -169,16 +184,19 @@ internal enum E4
 ";
 
             var expectedFixedCode = @"
-private enum E
+public class Outer
 {
-    None,
-    A = 1
-}
+    private enum E
+    {
+        None,
+        A = 1
+    }
 
-private enum E2
-{
-    None,
-    A = 2
+    private enum E2
+    {
+        None,
+        A = 2
+    }
 }
 
 internal enum E3
@@ -200,11 +218,13 @@ internal enum E4
         public void VisualBasic_EnumsShouldZeroValueFlagsRename()
         {
             var code = @"
-<System.Flags>
-Private Enum E
-    A = 0
-    B = 1
-End Enum
+Class Outer
+    <System.Flags>
+    Private Enum E
+        A = 0
+        B = 1
+    End Enum
+End Class
 
 <System.Flags>
 Public Enum E2
@@ -226,11 +246,13 @@ End Enum
 ";
 
             var expectedFixedCode = @"
-<System.Flags>
-Private Enum E
-    None = 0
-    B = 1
-End Enum
+Class Outer
+    <System.Flags>
+    Private Enum E
+        None = 0
+        B = 1
+    End Enum
+End Class
 
 <System.Flags>
 Public Enum E2
@@ -258,11 +280,13 @@ End Enum
         public void VisualBasic_EnumsShouldZeroValueFlagsRename_AttributeListHasTrivia()
         {
             var code = @"
-<System.Flags> _
-Private Enum E
-    A = 0
-    B = 1
-End Enum
+Class Outer
+    <System.Flags> _
+    Private Enum E
+        A = 0
+        B = 1
+    End Enum
+End Class
 
 <System.Flags> _
 Public Enum E2
@@ -284,11 +308,13 @@ End Enum
 ";
 
             var expectedFixedCode = @"
-<System.Flags> _
-Private Enum E
-    None = 0
-    B = 1
-End Enum
+Class Outer
+    <System.Flags> _
+    Private Enum E
+        None = 0
+        B = 1
+    End Enum
+End Class
 
 <System.Flags> _
 Public Enum E2
@@ -315,11 +341,13 @@ End Enum
         public void VisualBasic_EnumsShouldZeroValueFlagsMultipleZero()
         {
             var code = @"
-<System.Flags>
-Private Enum E
-    None = 0
-    A = 0
-End Enum
+Class Outer
+    <System.Flags>
+    Private Enum E
+        None = 0
+        A = 0
+    End Enum
+End Class
 
 <System.Flags>
 Friend Enum E2
@@ -334,10 +362,12 @@ Public Enum E3
 End Enum";
 
             var expectedFixedCode = @"
-<System.Flags>
-Private Enum E
-    None = 0
-End Enum
+Class Outer
+    <System.Flags>
+    Private Enum E
+        None = 0
+    End Enum
+End Class
 
 <System.Flags>
 Friend Enum E2
@@ -356,14 +386,16 @@ End Enum";
         public void VisualBasic_EnumsShouldZeroValueNotFlagsNoZeroValue()
         {
             var code = @"
-Private Enum E
-    A = 1
-End Enum
+Class C
+    Private Enum E
+        A = 1
+    End Enum
 
-Private Enum E2
-    None = 1
-    A = 2
-End Enum
+    Private Enum E2
+        None = 1
+        A = 2
+    End Enum
+End Class
 
 Friend Enum E3
     None = 0
@@ -377,15 +409,17 @@ End Enum
 ";
 
             var expectedFixedCode = @"
-Private Enum E
-    None
-    A = 1
-End Enum
+Class C
+    Private Enum E
+        None
+        A = 1
+    End Enum
 
-Private Enum E2
-    None
-    A = 2
-End Enum
+    Private Enum E2
+        None
+        A = 2
+    End Enum
+End Class
 
 Friend Enum E3
     None = 0

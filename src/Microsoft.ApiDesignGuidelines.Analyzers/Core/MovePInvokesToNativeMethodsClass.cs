@@ -38,13 +38,16 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext context)
         {
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             context.RegisterSymbolAction(symbolContext =>
             {
-                AnalyzeSymbol((INamedTypeSymbol)symbolContext.Symbol, symbolContext.Compilation, symbolContext.ReportDiagnostic);
+                AnalyzeSymbol((INamedTypeSymbol)symbolContext.Symbol, symbolContext.ReportDiagnostic);
             }, SymbolKind.NamedType);
         }
 
-        private void AnalyzeSymbol(INamedTypeSymbol symbol, Compilation compilation, Action<Diagnostic> addDiagnostic)
+        private static void AnalyzeSymbol(INamedTypeSymbol symbol, Action<Diagnostic> addDiagnostic)
         {
             if (symbol.GetMembers().Any(member => IsDllImport(member)) && !IsTypeNamedCorrectly(symbol.Name))
             {

@@ -376,17 +376,14 @@ End Class
                 GetCA1821BasicResultAt(6, 29));
         }
 
-        internal static readonly string CA1821Name = RemoveEmptyFinalizersAnalyzer.RuleId;
-        internal static readonly string CA1821Message = MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers;
-
         private static DiagnosticResult GetCA1821CSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA1821Name, CA1821Message);
+            return GetCSharpResultAt(line, column, RemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers);
         }
 
         private static DiagnosticResult GetCA1821BasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA1821Name, CA1821Message);
+            return GetBasicResultAt(line, column, RemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers);
         }
     }
 }

@@ -808,7 +808,7 @@ Public Class ImplementsGeneral
     Private ReadOnly Property IGeneral_Item(item_1 As Integer) As Integer Implements IGeneral.Item
         Get
             Console.WriteLine(Me)
-            Return item
+            Throw New NotImplementedException()
         End Get
     End Property
 End Class
@@ -819,14 +819,14 @@ Public Class ImplementsGeneralThree
     Private ReadOnly Property IGeneral_Item(item As Integer) As Integer Implements IGeneral.Item
         Get
             Console.WriteLine(Me)
-            Return item
+            Throw New NotImplementedException()
         End Get
     End Property
 
     Private ReadOnly Property Item(item_1 As Integer) As Integer
         Get
             Console.WriteLine(Me)
-            Return item_1
+            Throw New NotImplementedException()
         End Get
     End Property
 End Class
@@ -844,7 +844,7 @@ Public Class ImplementsGeneral
     Public ReadOnly Property Item(item_1 As Integer) As Integer Implements IGeneral.Item
         Get
             Console.WriteLine(Me)
-            Return item
+            Throw New NotImplementedException()
         End Get
     End Property
 End Class
@@ -855,14 +855,14 @@ Public Class ImplementsGeneralThree
     Private ReadOnly Property IGeneral_Item(item As Integer) As Integer Implements IGeneral.Item
         Get
             Console.WriteLine(Me)
-            Return item
+            Throw New NotImplementedException()
         End Get
     End Property
 
     Protected ReadOnly Property Item(item_1 As Integer) As Integer
         Get
             Console.WriteLine(Me)
-            Return item_1
+            Throw New NotImplementedException()
         End Get
     End Property
 End Class

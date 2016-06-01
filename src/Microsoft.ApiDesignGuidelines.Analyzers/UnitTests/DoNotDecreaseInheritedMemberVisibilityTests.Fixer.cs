@@ -157,7 +157,7 @@ public class DerivedClass : BaseClass
 
 public class DerivedClass : BaseClass
 {
-    public new int MyProperty { private get; private set; }
+    public new int MyProperty { private get; set; }
 }",
 
 // Fixed Code
@@ -196,28 +196,30 @@ public class DerivedClass : BaseClass
 
             VerifyCSharpFix(
 // Original Code
-@"public class BaseClass
+@"using System;
+public class BaseClass
 {
-    protected internal event System.EventHandler MyEvent { add{} remove{} }
+    protected internal event EventHandler MyEvent { add{} remove{} }
     protected internal int MyProperty { get; set; }
 }
 
 public class DerivedClass : BaseClass
 {
-    internal new event System.EventHandler MyEvent { add{} remove{} }
+    internal new event EventHandler MyEvent { add{} remove{} }
     protected internal int MyProperty { internal get; set; }
 }",
 
 // Fixed Code
-@"public class BaseClass
+@"using System;
+public class BaseClass
 {
-    protected internal event System.EventHandler MyEvent { add{} remove{} }
+    protected internal event EventHandler MyEvent { add{} remove{} }
     protected internal int MyProperty { get; set; }
 }
 
 public class DerivedClass : BaseClass
 {
-    internal new event System.EventHandler MyEvent { add{} remove{} }
+    internal new event EventHandler MyEvent { add{} remove{} }
     protected internal int MyProperty { get; set; }
 }");
         }
@@ -307,12 +309,15 @@ End Class");
 
             VerifyBasicFix(
 // Original Code
-@"Public Class BaseClass
-	Protected Friend Custom Event MyEvent As System.EventHandler
-		AddHandler(ByVal value As System.EventHandler)
+@"Imports System
+Public Class BaseClass
+	Protected Friend Custom Event MyEvent As EventHandler
+		AddHandler(ByVal value As EventHandler)
 		End AddHandler
-		RemoveHandler(ByVal value As System.EventHandler)
+		RemoveHandler(ByVal value As EventHandler)
 		End RemoveHandler
+        RaiseEvent(ByVal sender As Object, ByVal e As EventArgs)
+        End RaiseEvent
 	End Event
 	Protected Friend Property MyProperty() As Integer
 		Get
@@ -327,11 +332,13 @@ End Class
 
 Public Class DerivedClass
 	Inherits BaseClass
-	Friend Shadows Custom Event MyEvent As System.EventHandler
-		AddHandler(ByVal value As System.EventHandler)
+	Friend Shadows Custom Event MyEvent As EventHandler
+		AddHandler(ByVal value As EventHandler)
 		End AddHandler
-		RemoveHandler(ByVal value As System.EventHandler)
+		RemoveHandler(ByVal value As EventHandler)
 		End RemoveHandler
+        RaiseEvent(ByVal sender As Object, ByVal e As EventArgs)
+        End RaiseEvent
 	End Event
 	Protected Friend Property MyProperty() As Integer
 		Friend Get
@@ -345,12 +352,15 @@ Public Class DerivedClass
 End Class",
 
 // Fixed Code
-@"Public Class BaseClass
-	Protected Friend Custom Event MyEvent As System.EventHandler
-		AddHandler(ByVal value As System.EventHandler)
+@"Imports System
+Public Class BaseClass
+	Protected Friend Custom Event MyEvent As EventHandler
+		AddHandler(ByVal value As EventHandler)
 		End AddHandler
-		RemoveHandler(ByVal value As System.EventHandler)
+		RemoveHandler(ByVal value As EventHandler)
 		End RemoveHandler
+        RaiseEvent(ByVal sender As Object, ByVal e As EventArgs)
+        End RaiseEvent
 	End Event
 	Protected Friend Property MyProperty() As Integer
 		Get
@@ -365,11 +375,13 @@ End Class
 
 Public Class DerivedClass
 	Inherits BaseClass
-	Friend Shadows Custom Event MyEvent As System.EventHandler
-		AddHandler(ByVal value As System.EventHandler)
+	Friend Shadows Custom Event MyEvent As EventHandler
+		AddHandler(ByVal value As EventHandler)
 		End AddHandler
-		RemoveHandler(ByVal value As System.EventHandler)
+		RemoveHandler(ByVal value As EventHandler)
 		End RemoveHandler
+        RaiseEvent(ByVal sender As Object, ByVal e As EventArgs)
+        End RaiseEvent
 	End Event
 	Protected Friend Property MyProperty() As Integer
 		Get

@@ -69,6 +69,9 @@ namespace System.Runtime.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(csaContext =>
             {
                 #region "Get All the WellKnown Types and Members"
@@ -221,7 +224,7 @@ namespace System.Runtime.Analyzers
             });
         }
 
-        private IEnumerable<int> GetIndexesOfParameterType(IMethodSymbol targetMethod, INamedTypeSymbol formatProviderType)
+        private static IEnumerable<int> GetIndexesOfParameterType(IMethodSymbol targetMethod, INamedTypeSymbol formatProviderType)
         {
             return targetMethod.Parameters
                 .Select((Parameter, Index) => new { Parameter, Index })
@@ -229,7 +232,7 @@ namespace System.Runtime.Analyzers
                 .Select(x => x.Index);
         }
 
-        private ParameterInfo GetParameterInfo(INamedTypeSymbol type, bool isArray = false, int arrayRank = 0, bool isParams = false)
+        private static ParameterInfo GetParameterInfo(INamedTypeSymbol type, bool isArray = false, int arrayRank = 0, bool isParams = false)
         {
             return ParameterInfo.GetParameterInfo(type, isArray, arrayRank, isParams);
         }

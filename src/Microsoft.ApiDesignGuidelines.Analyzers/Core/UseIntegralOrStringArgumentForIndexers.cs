@@ -31,7 +31,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182180.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
-        private static readonly SpecialType[] s_allowedTypes = new SpecialType[] {
+        private static readonly SpecialType[] s_allowedTypes = new[] {
                         SpecialType.System_String,
                         SpecialType.System_Int16,
                         SpecialType.System_Int32,
@@ -46,6 +46,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Property);
         }
 
@@ -57,6 +60,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 if (symbol.GetParameters().Length == 1)
                 {
                     ITypeSymbol paramType = symbol.GetParameters()[0].Type;
+
+                    if (paramType.TypeKind == TypeKind.TypeParameter)
+                    {
+                        return;
+                    }
+
+                    if (paramType.TypeKind == TypeKind.Enum)
+                    {
+                        paramType = ((INamedTypeSymbol)paramType).EnumUnderlyingType;
+                    }
+
                     if (!s_allowedTypes.Contains(paramType.SpecialType))
                     {
                         context.ReportDiagnostic(symbol.CreateDiagnostic(Rule));

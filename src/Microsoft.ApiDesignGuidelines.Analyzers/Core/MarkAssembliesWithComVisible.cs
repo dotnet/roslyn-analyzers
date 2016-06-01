@@ -48,10 +48,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationAction(AnalyzeCompilation);
         }
 
-        private void AnalyzeCompilation(CompilationAnalysisContext context)
+        private static void AnalyzeCompilation(CompilationAnalysisContext context)
         {
             if (AssemblyHasPublicTypes(context.Compilation.Assembly))
             {

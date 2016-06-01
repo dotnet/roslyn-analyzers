@@ -97,7 +97,7 @@ using System.Reflection;
         [Fact]
         public void CA1016CSharpTestWithTwoFilesWithAttribute()
         {
-            VerifyCSharp(new string[]
+            VerifyCSharp(new[]
                 {
 @"
 [assembly:System.CLSCompliantAttribute(true)]
@@ -150,14 +150,11 @@ using System.Reflection;
 ");
         }
 
-        private static readonly string s_number = "CA1016";
-        private static readonly string s_message = MicrosoftApiDesignGuidelinesAnalyzersResources.MarkAssembliesWithAssemblyVersionMessage;
-
         private static readonly DiagnosticResult s_diagnostic = new DiagnosticResult
         {
-            Id = s_number,
+            Id = MarkAssembliesWithAttributesDiagnosticAnalyzer.CA1016RuleId,
             Severity = DiagnosticSeverity.Warning,
-            Message = s_message
+            Message = MicrosoftApiDesignGuidelinesAnalyzersResources.MarkAssembliesWithAssemblyVersionMessage
         };
     }
 }

@@ -2,6 +2,7 @@
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
+using Roslyn.Diagnostics.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
@@ -62,8 +63,8 @@ public class DerivedClass : BaseClass
 
 public class DerivedClass : BaseClass
 {
-    inernal void MyMethod() {}
-}", GetCSharpCA2222RuleNameResultAt(8, 18));
+    internal void MyMethod() {}
+}", GetCSharpCA2222RuleNameResultAt(8, 19));
         }
 
         [Fact]
@@ -249,26 +250,132 @@ public class DerivedDerivedClass : DerivedClass
 @"public class BaseClass
 {
     public int MyProperty { get; set; }
-    public void MyMethod();
+    public void MyMethod() { }
 }
 
 public sealed class DerivedClass : BaseClass
 {
     private new int MyProperty { get; set; }
-    protected new void MyMethod();
+    protected new void MyMethod() { }
 }");
         }
 
-        private const string CA2222RuleName = DoNotDecreaseInheritedMemberVisibilityAnalyzer.RuleId;
+        [Fact, WorkItem(940, "https://github.com/dotnet/roslyn-analyzers/issues/940")]
+        public void MembersInsideTypesThatAreNotPublicallyVisible()
+        {
+            VerifyCSharp(
+@"public class OuterClass
+{
+    public class NestedBaseClass
+    {
+        public NestedBaseClass(int x) { }
+        public int MyProperty { get; set; }
+        public void MyMethod() { }
+    }
+
+    public sealed class NestedSealedPublicDerivedClass : NestedBaseClass
+    {
+        private NestedSealedPublicDerivedClass(int x) : base(x) { }
+        private new int MyProperty { get; set; }
+        private new void MyMethod() { }
+    }
+
+    private sealed class NestedSealedPrivateDerivedClass : NestedBaseClass
+    {
+        private NestedSealedPrivateDerivedClass(int x) : base(x) { }
+        private new int MyProperty { get; set; }
+        private new void MyMethod() { }
+    }
+
+    private class NestedUnsealedPrivateDerivedClass : NestedBaseClass
+    {
+        private NestedUnsealedPrivateDerivedClass(int x) : base(x) { }
+        private new int MyProperty { get; set; }
+        private new void MyMethod() { }
+    }
+}");
+            VerifyBasic(
+@"Public Class OuterClass
+	Public Class NestedBaseClass
+		Public Sub New(x As Integer)
+		End Sub
+		Public Property MyProperty() As Integer
+			Get
+				Return m_MyProperty
+			End Get
+			Set
+				m_MyProperty = Value
+			End Set
+		End Property
+		Private m_MyProperty As Integer
+		Public Sub MyMethod()
+		End Sub
+	End Class
+
+	Public NotInheritable Class NestedSealedPublicDerivedClass
+		Inherits NestedBaseClass
+		Private Sub New(x As Integer)
+			MyBase.New(x)
+		End Sub
+		Private Shadows Property MyProperty() As Integer
+			Get
+				Return m_MyProperty
+			End Get
+			Set
+				m_MyProperty = Value
+			End Set
+		End Property
+		Private Shadows m_MyProperty As Integer
+		Private Shadows Sub MyMethod()
+		End Sub
+	End Class
+
+	Private NotInheritable Class NestedSealedPrivateDerivedClass
+		Inherits NestedBaseClass
+		Private Sub New(x As Integer)
+			MyBase.New(x)
+		End Sub
+		Private Shadows Property MyProperty() As Integer
+			Get
+				Return m_MyProperty
+			End Get
+			Set
+				m_MyProperty = Value
+			End Set
+		End Property
+		Private Shadows m_MyProperty As Integer
+		Private Shadows Sub MyMethod()
+		End Sub
+	End Class
+
+	Private Class NestedUnsealedPrivateDerivedClass
+		Inherits NestedBaseClass
+		Private Sub New(x As Integer)
+			MyBase.New(x)
+		End Sub
+		Private Shadows Property MyProperty() As Integer
+			Get
+				Return m_MyProperty
+			End Get
+			Set
+				m_MyProperty = Value
+			End Set
+		End Property
+		Private Shadows m_MyProperty As Integer
+		Private Shadows Sub MyMethod()
+		End Sub
+	End Class
+End Class");
+        }
 
         private DiagnosticResult GetCSharpCA2222RuleNameResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA2222RuleName, MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDecreaseInheritedMemberVisibilityMessage);
+            return GetCSharpResultAt(line, column, DoNotDecreaseInheritedMemberVisibilityAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDecreaseInheritedMemberVisibilityMessage);
         }
 
         private DiagnosticResult GetBasicCA2222RuleNameResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA2222RuleName, MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDecreaseInheritedMemberVisibilityMessage);
+            return GetBasicResultAt(line, column, DoNotDecreaseInheritedMemberVisibilityAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDecreaseInheritedMemberVisibilityMessage);
         }
     }
 }

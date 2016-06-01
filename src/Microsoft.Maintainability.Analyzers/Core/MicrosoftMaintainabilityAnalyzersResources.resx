@@ -181,7 +181,7 @@
     <value>Private fields were detected that do not appear to be accessed in the assembly.</value>
   </data>
   <data name="AvoidUnusedPrivateFieldsMessage" xml:space="preserve">
-    <value>Avoid unused private fields</value>
+    <value>Unused field '{0}'.</value>
   </data>
   <data name="CategoryMaintainability" xml:space="preserve">
     <value>Maintainability</value>

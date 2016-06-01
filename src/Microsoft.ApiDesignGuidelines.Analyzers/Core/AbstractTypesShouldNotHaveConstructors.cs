@@ -26,12 +26,16 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                          DiagnosticSeverity.Warning,
                                                                          isEnabledByDefault: false,
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182126.aspx",
+                                                                         description: s_localizableDescription,
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
         }
 
@@ -40,11 +44,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             var symbol = context.Symbol as INamedTypeSymbol;
             if (symbol.IsAbstract)
             {
-                // TODO: Should we also check symbol.GetResultantVisibility() == SymbolVisibility.Public?
-
                 bool hasAnyPublicConstructors =
                     symbol.InstanceConstructors.Any(
-                        (constructor) => constructor.DeclaredAccessibility == Accessibility.Public);
+                        constructor => constructor.DeclaredAccessibility == Accessibility.Public);
 
                 if (hasAnyPublicConstructors)
                 {

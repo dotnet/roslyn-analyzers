@@ -195,7 +195,7 @@ public class BadException6 : Exception
         public void Basic_CA1032_NoDiagnostic_NotDerivingFromException()
         {
             VerifyBasic(@"
-//example of a class that doesn't derive from Exception type
+'example of a class that doesn't derive from Exception type
 Public Class NotDerivingFromException
 End Class
 

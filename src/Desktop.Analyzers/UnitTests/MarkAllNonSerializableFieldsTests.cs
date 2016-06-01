@@ -110,28 +110,28 @@ namespace Desktop.Analyzers.UnitTests
                 <Serializable>
                 Public Class CA2235WithPrimitiveGetOnlyProperties 
 
-                    Public Property I1 As Integer
+                    Public ReadOnly Property I1 As Integer
                         Get
                             Return 42
                         End Get
                     End Property
 
-                    Friend Property I2 As Integer
+                    Friend ReadOnly Property I2 As Integer
                         Get
                             Return 54
                         End Get
                     End Property
 
-                    Private Const i3 As Integer
+                    Private ReadOnly Property I3 As Integer
                         Get
                             Return 96
                         End Get
                     End Property
 
                    ' Using auto-implemented property syntax
-                    Public Property I1 As Integer = 42
-                    Friend Property I2 As Integer = 54
-                    Private Const i3 As Integer = 96
+                    Public Property AI1 As Integer = 42
+                    Friend Property AI2 As Integer = 54
+                    Private Property AI3 As Integer = 96
                 End Class");
         }
 
@@ -184,10 +184,8 @@ namespace Desktop.Analyzers.UnitTests
 
                 <Serializable>
                 Public Class CA2235WithOnlyPrimitiveFields 
-
                         <NonSerialized>
-                        public Action<string> SomeAction;
-
+                        Public SomeAction As Action(Of String)
                 End Class");
         }
 
@@ -216,9 +214,9 @@ namespace Desktop.Analyzers.UnitTests
                 <Serializable>
                 Public Class CA2235WithOnlySerializableFields 
 
-                    Public s1 As SerializableType;
-                    Friend s2 As SerializableType;
-                    Private s3 As SerializableType;
+                    Public s1 As SerializableType
+                    Friend s2 As SerializableType
+                    Private s3 As SerializableType
                 End Class");
         }
 
@@ -252,9 +250,9 @@ namespace Desktop.Analyzers.UnitTests
 
                 <Serializable>
                 Public Class CA2235WithNonPublicNonSerializableFields 
-                    Public s1 As SerializableType;
-                    Friend s2 As NonSerializableType;
-                    Private s3 As NonSerializableType;
+                    Public s1 As SerializableType
+                    Friend s2 As NonSerializableType
+                    Private s3 As NonSerializableType
                 End Class",
                 GetCA2235BasicResultAt(12, 28, "s2", "CA2235WithNonPublicNonSerializableFields", "NonSerializableType"),
                 GetCA2235BasicResultAt(13, 29, "s3", "CA2235WithNonPublicNonSerializableFields", "NonSerializableType"));
@@ -298,16 +296,16 @@ namespace Desktop.Analyzers.UnitTests
 
                 [|<Serializable>
                 Public Class CA2235WithNonPublicNonSerializableFields 
-                    Public s1 As SerializableType;
-                    Friend s2 As NonSerializableType;
-                    Private s3 As NonSerializableType;
+                    Public s1 As SerializableType
+                    Friend s2 As NonSerializableType
+                    Private s3 As NonSerializableType
                 End Class|]
 
                 <Serializable>
                 Public Class Sample 
-                    Public s1 As SerializableType;
-                    Friend s2 As NonSerializableType;
-                    Private s3 As NonSerializableType;
+                    Public s1 As SerializableType
+                    Friend s2 As NonSerializableType
+                    Private s3 As NonSerializableType
                 End Class",
                 GetCA2235BasicResultAt(12, 28, "s2", "CA2235WithNonPublicNonSerializableFields", "NonSerializableType"),
                 GetCA2235BasicResultAt(13, 29, "s3", "CA2235WithNonPublicNonSerializableFields", "NonSerializableType"));
@@ -343,9 +341,9 @@ namespace Desktop.Analyzers.UnitTests
 
                 <Serializable>
                 Friend Class CA2235InternalWithNonPublicNonSerializableFields 
-                    Public s1 As NonSerializableType;
-                    Friend s2 As SerializableType;
-                    Private s3 As NonSerializableType;
+                    Public s1 As NonSerializableType
+                    Friend s2 As SerializableType
+                    Private s3 As NonSerializableType
                 End Class",
                 GetCA2235BasicResultAt(11, 28, "s1", "CA2235InternalWithNonPublicNonSerializableFields", "NonSerializableType"),
                 GetCA2235BasicResultAt(13, 29, "s3", "CA2235InternalWithNonPublicNonSerializableFields", "NonSerializableType"));
@@ -385,17 +383,16 @@ namespace Desktop.Analyzers.UnitTests
                 GetCA2235BasicResultAt(12, 37, "s2", "CA2235WithNonSerializableAutoProperties", "NonSerializableType"));
         }
 
-        internal static readonly string CA2235Name = SerializationRulesDiagnosticAnalyzer.RuleCA2235Id;
         internal static readonly string CA2235Message = DesktopAnalyzersResources.MarkAllNonSerializableFieldsMessage;
 
         private static DiagnosticResult GetCA2235CSharpResultAt(int line, int column, string fieldName, string containerName, string typeName)
         {
-            return GetCSharpResultAt(line, column, CA2235Name, string.Format(CA2235Message, fieldName, containerName, typeName));
+            return GetCSharpResultAt(line, column, SerializationRulesDiagnosticAnalyzer.RuleCA2235Id, string.Format(CA2235Message, fieldName, containerName, typeName));
         }
 
         private static DiagnosticResult GetCA2235BasicResultAt(int line, int column, string fieldName, string containerName, string typeName)
         {
-            return GetBasicResultAt(line, column, CA2235Name, string.Format(CA2235Message, fieldName, containerName, typeName));
+            return GetBasicResultAt(line, column, SerializationRulesDiagnosticAnalyzer.RuleCA2235Id, string.Format(CA2235Message, fieldName, containerName, typeName));
         }
         #endregion
     }

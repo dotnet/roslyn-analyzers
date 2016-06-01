@@ -33,11 +33,11 @@ public class Class1
     internal static readonly int f8 = 8 + f6;
 }",
         GetCSharpEmptyStringResultAt(line: 4, column: 28, symbolName: "f1"),
-        GetCSharpDefaultResultAt(line: 5, column: 28, symbolName: "f2", value: "Nothing"),
-        GetCSharpDefaultResultAt(line: 6, column: 31, symbolName: "f4", value: "Message is shown only for f4"),
-        GetCSharpDefaultResultAt(line: 7, column: 25, symbolName: "f5", value: "3"),
-        GetCSharpDefaultResultAt(line: 9, column: 25, symbolName: "f7", value: "11"),
-        GetCSharpDefaultResultAt(line: 10, column: 34, symbolName: "f8", value: "11"));
+        GetCSharpDefaultResultAt(line: 5, column: 28, symbolName: "f2"),
+        GetCSharpDefaultResultAt(line: 6, column: 31, symbolName: "f4"),
+        GetCSharpDefaultResultAt(line: 7, column: 25, symbolName: "f5"),
+        GetCSharpDefaultResultAt(line: 9, column: 25, symbolName: "f7"),
+        GetCSharpDefaultResultAt(line: 10, column: 34, symbolName: "f8"));
         }
 
         [Fact]
@@ -50,8 +50,14 @@ public class Class1
     static string f3, f4 = ""Message is shown only for f4""; // Not readonly
     readonly int f5 = 3; // Not static
     const int f6 = 3; // Is already const
-    static readonly int f7 = 8 + f5; // f5 is not a const
+    static int f9 = getF9();
+    static readonly int f7 = 8 + f9; // f9 is not a const
     static readonly string f8 = null; // null value
+
+    private static int getF9()
+    {
+        throw new System.NotImplementedException();
+    }
 }");
         }
 
@@ -69,11 +75,11 @@ Public Class Class1
     Friend Shared ReadOnly f8 As Integer = 8 + f6
 End Class",
         GetBasicEmptyStringResultAt(line: 3, column: 21, symbolName: "f1"),
-        GetBasicDefaultResultAt(line: 4, column: 21, symbolName: "f2", value: "Nothing"),
-        GetBasicDefaultResultAt(line: 5, column: 35, symbolName: "f4", value: "Message is shown only for f4"),
-        GetBasicDefaultResultAt(line: 6, column: 21, symbolName: "f5", value: "3"),
-        GetBasicDefaultResultAt(line: 8, column: 21, symbolName: "f7", value: "11"),
-        GetBasicDefaultResultAt(line: 9, column: 28, symbolName: "f8", value: "11"));
+        GetBasicDefaultResultAt(line: 4, column: 21, symbolName: "f2"),
+        GetBasicDefaultResultAt(line: 5, column: 35, symbolName: "f4"),
+        GetBasicDefaultResultAt(line: 6, column: 21, symbolName: "f5"),
+        GetBasicDefaultResultAt(line: 8, column: 21, symbolName: "f7"),
+        GetBasicDefaultResultAt(line: 9, column: 28, symbolName: "f8"));
         }
 
         [Fact]
@@ -82,23 +88,28 @@ End Class",
             VerifyBasic(@"
 Public Class Class1
     ' Not Private or Friend
-    Public Shared ReadOnly f1 As String = ""
+    Public Shared ReadOnly f1 As String = """"
     ' Not Readonly
     Shared f3 As String, f4 As String = ""Message is shown only for f4""
     ' Not Shared
     ReadOnly f5 As Integer = 3
     ' Is already Const
     Const f6 As Integer = 3
-    ' f5 is not a Const
-    Shared ReadOnly f7 As Integer = 8 + f5
+    Shared f9 As Integer = getF9()
+    ' f9 is not a Const
+    Shared ReadOnly f7 As Integer = 8 + f9
     ' null value
     Shared ReadOnly f8 As String = Nothing
+
+    Private Shared Function getF9() As Integer
+        Throw New System.NotImplementedException()
+    End Function
 End Class");
         }
 
-        private DiagnosticResult GetCSharpDefaultResultAt(int line, int column, string symbolName, string value)
+        private DiagnosticResult GetCSharpDefaultResultAt(int line, int column, string symbolName)
         {
-            return GetCSharpResultAt(line, column, UseLiteralsWhereAppropriateAnalyzer.DefaultRule, symbolName, value);
+            return GetCSharpResultAt(line, column, UseLiteralsWhereAppropriateAnalyzer.DefaultRule, symbolName);
         }
 
         private DiagnosticResult GetCSharpEmptyStringResultAt(int line, int column, string symbolName)
@@ -106,9 +117,9 @@ End Class");
             return GetCSharpResultAt(line, column, UseLiteralsWhereAppropriateAnalyzer.EmptyStringRule, symbolName);
         }
 
-        private DiagnosticResult GetBasicDefaultResultAt(int line, int column, string symbolName, string value)
+        private DiagnosticResult GetBasicDefaultResultAt(int line, int column, string symbolName)
         {
-            return GetBasicResultAt(line, column, UseLiteralsWhereAppropriateAnalyzer.DefaultRule, symbolName, value);
+            return GetBasicResultAt(line, column, UseLiteralsWhereAppropriateAnalyzer.DefaultRule, symbolName);
         }
 
         private DiagnosticResult GetBasicEmptyStringResultAt(int line, int column, string symbolName)

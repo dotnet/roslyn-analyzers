@@ -22,15 +22,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         public void TestBasicUseIntegralOrStringArgumentForIndexersWarning1()
         {
             VerifyBasic(@"
+    Imports System
+
     Public Class Months
         Private month() As String = {""Jan"", ""Feb"", ""...""}
-        Default ReadOnly Property Item(index As Float) As String
+        Default ReadOnly Property Item(index As Single) As String
             Get
                 Return month(index)
             End Get
         End Property
     End Class
-", CreateBasicResult(4, 35));
+", CreateBasicResult(6, 35));
         }
         [Fact]
         public void TestBasicUseIntegralOrStringArgumentForIndexersNoWarning1()
@@ -70,7 +72,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyCSharp(@"
     public class Months
     {
-        string[] month = new char[] {'J', 'F', 'M'};
+        string[] month = new string[] {""Jan"", ""Feb"", ""...""};
         public string this[int index]
         {
             get
@@ -79,6 +81,70 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             }
         }
     }");
+        }
+
+        [Fact]
+        public void TestCSharpGenericIndexer()
+        {
+            VerifyCSharp(@"
+    public class Months<T>
+    {
+        public string this[T index]
+        {
+            get
+            {
+                return null;
+            }
+        }
+    }");
+        }
+
+        [Fact]
+        public void TestBasicGenericIndexer()
+        {
+            VerifyBasic(@"
+    Public Class Months(Of T)
+        Default Public ReadOnly Property Item(index As T)
+            Get
+                Return Nothing
+            End Get
+        End Property
+    End Class");
+        }
+
+        [Fact]
+        public void TestCSharpEnumIndexer()
+        {
+            VerifyCSharp(@"
+    public class Months<T>
+    {
+        public enum Foo { }
+
+        public string this[Foo index]
+        {
+            get
+            {
+                return null;
+            }
+        }
+    }");
+        }
+
+        [Fact]
+        public void TestBasicEnumIndexer()
+        {
+            VerifyBasic(@"
+    Public Class Months(Of T)
+        Public Enum Foo
+            Val1
+        End Enum
+
+        Default Public ReadOnly Property Item(index As Foo)
+            Get
+                Return Nothing
+            End Get
+        End Property
+    End Class");
         }
 
         private static DiagnosticResult CreateCSharpResult(int line, int col)

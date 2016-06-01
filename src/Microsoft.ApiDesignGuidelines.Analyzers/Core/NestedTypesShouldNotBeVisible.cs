@@ -52,6 +52,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(
                 compilationStartContext =>
                 {
@@ -119,7 +122,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         // When you use the Visual Studio Dataset Designer to add a DataTable to a DataSet, the
         // designer generates two public nested types within the DataSet: a DataTable and a DataRow.
         // Since these are generated code, we don't want to fire on them.
-        private bool IsDataSetSpecialCase(
+        private static bool IsDataSetSpecialCase(
             INamedTypeSymbol containingType,
             INamedTypeSymbol nestedType,
             INamedTypeSymbol dataSetType,
@@ -131,8 +134,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return false;
             }
 
-            System.Collections.Generic.List<INamedTypeSymbol> nestedTypeBases = nestedType.GetBaseTypes().ToList();
-
+            var nestedTypeBases = nestedType.GetBaseTypes().ToList();
             return nestedTypeBases.Contains(dataTableType) || nestedTypeBases.Contains(dataRowType);
         }
     }

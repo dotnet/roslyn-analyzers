@@ -39,7 +39,7 @@ public class C : IDisposable
         Dispose(false);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }
@@ -65,7 +65,7 @@ public class C
         Dispose(false);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }
@@ -102,7 +102,7 @@ public class B : IDisposable
         Dispose(false);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }|]
@@ -143,7 +143,7 @@ public class B : A
         Dispose(false);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }|]
@@ -162,7 +162,7 @@ using System;
 
 public interface ITest : IDisposable
 {
-    void int Test { get; set; }
+    int Test { get; set; }
 }
 
 public class B : IDisposable
@@ -187,7 +187,7 @@ public class B : IDisposable
         Dispose(false);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }|]
@@ -204,7 +204,7 @@ using System;
 
 public interface ITest : IDisposable
 {
-    void int Test { get; set; }
+    int Test { get; set; }
 }
 
 public class B : IDisposable
@@ -230,7 +230,7 @@ using System;
 
 public interface ITest : IDisposable
 {
-    void int Test { get; set; }
+    int Test { get; set; }
 }
 
 public class B : IDisposable
@@ -270,7 +270,7 @@ public class C : IDisposable
         Dispose(false);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }  
@@ -298,7 +298,7 @@ public class C : IDisposable
         Dispose(false);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }  
@@ -332,7 +332,7 @@ public class C : B, IDisposable
         Dispose(false);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }  
@@ -366,7 +366,7 @@ public class C : B, IDisposable
         Dispose(false);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }  
@@ -396,7 +396,7 @@ public class B : IDisposable
         Dispose(false);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }
@@ -430,7 +430,7 @@ public class A : IDisposable
         Dispose(false);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }
@@ -476,7 +476,7 @@ public class B : IDisposable
         Dispose(false);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }
@@ -510,7 +510,7 @@ public class A : IDisposable
         Dispose(false);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }
@@ -622,12 +622,12 @@ public class C : IDisposable
         Dispose(false);
     }
 
-    public virtual Dispose(bool disposing)
+    public virtual void Dispose(bool disposing)
     {
     }
 }
 ",
-            GetCA1063CSharpDisposeBoolSignatureResultAt(17, 20, "C", "Dispose"));
+            GetCA1063CSharpDisposeBoolSignatureResultAt(17, 25, "C", "Dispose"));
         }
 
         [Fact]
@@ -649,12 +649,12 @@ public class C : IDisposable
         Dispose(false);
     }
 
-    protected internal virtual Dispose(bool disposing)
+    protected internal virtual void Dispose(bool disposing)
     {
     }
 }
 ",
-            GetCA1063CSharpDisposeBoolSignatureResultAt(17, 32, "C", "Dispose"));
+            GetCA1063CSharpDisposeBoolSignatureResultAt(17, 37, "C", "Dispose"));
         }
 
         [Fact]
@@ -676,12 +676,12 @@ public class C : IDisposable
         Dispose(false);
     }
 
-    protected Dispose(bool disposing)
+    protected void Dispose(bool disposing)
     {
     }
 }
 ",
-            GetCA1063CSharpDisposeBoolSignatureResultAt(17, 15, "C", "Dispose"));
+            GetCA1063CSharpDisposeBoolSignatureResultAt(17, 20, "C", "Dispose"));
         }
 
         [Fact]
@@ -692,7 +692,7 @@ using System;
 
 public abstract class B
 {
-    protected abstract Dispose(bool disposing);
+    protected abstract void Dispose(bool disposing);
 }
 
 public class C : B, IDisposable
@@ -708,12 +708,12 @@ public class C : B, IDisposable
         Dispose(false);
     }
 
-    protected sealed override Dispose(bool disposing)
+    protected sealed override void Dispose(bool disposing)
     {
     }
 }
 ",
-            GetCA1063CSharpDisposeBoolSignatureResultAt(22, 31, "C", "Dispose"));
+            GetCA1063CSharpDisposeBoolSignatureResultAt(22, 36, "C", "Dispose"));
         }
 
         [Fact]
@@ -724,7 +724,7 @@ using System;
 
 public abstract class B
 {
-    protected abstract Dispose(bool disposing);
+    protected abstract void Dispose(bool disposing);
 }
 
 public class C : B, IDisposable
@@ -740,7 +740,7 @@ public class C : B, IDisposable
         Dispose(false);
     }
 
-    protected override Dispose(bool disposing)
+    protected override void Dispose(bool disposing)
     {
     }
 }
@@ -766,7 +766,7 @@ public abstract class C : IDisposable
         Dispose(false);
     }
 
-    protected abstract Dispose(bool disposing)
+    protected abstract void Dispose(bool disposing);
 }
 ");
         }
@@ -790,7 +790,7 @@ public sealed class C : IDisposable
         Dispose(false);
     }
 
-    public Dispose(bool disposing)
+    public void Dispose(bool disposing)
     {
     }
 }
@@ -816,7 +816,7 @@ public sealed class C : IDisposable
         Dispose(false);
     }
 
-    private Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
     }
 }
@@ -845,7 +845,7 @@ public class C : IDisposable
         Dispose(false);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }
@@ -871,7 +871,7 @@ public class C : IDisposable
         Dispose(false);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }
@@ -896,7 +896,7 @@ public class C : IDisposable
         Dispose(false);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }
@@ -923,7 +923,7 @@ public class C : IDisposable
         Dispose(false);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }
@@ -955,7 +955,7 @@ public class C : IDisposable
         Dispose(false);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }
@@ -983,7 +983,7 @@ public class C : IDisposable
         Dispose(false);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }
@@ -1032,7 +1032,7 @@ public class C : IDisposable
     {
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }
@@ -1059,7 +1059,7 @@ public class C : IDisposable
         Dispose(true);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }
@@ -1091,7 +1091,7 @@ public class C : IDisposable
         }
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }
@@ -1119,7 +1119,7 @@ public class C : IDisposable
         Dispose(false);
     }
 
-    protected virtual Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
     }
 }
@@ -1289,9 +1289,9 @@ End Class
     Inherits B
     Implements ITest
 
-    Public Property Test As Integer
+    Public Property Test As Integer Implements ITest.Test
 
-    Public Shadows Sub Dispose() Implements IDisposable.Dispose
+    Public Overloads Sub Dispose() Implements IDisposable.Dispose
         Dispose(True)
         GC.SuppressFinalize(Me)
     End Sub
@@ -1334,7 +1334,7 @@ End Class
     Implements ITest
     Implements IDisposable
 
-    Public Property Test As Integer
+    Public Property Test As Integer Implements ITest.Test
 
 End Class|]
 ",
@@ -1364,7 +1364,7 @@ End Class
     Inherits B
     Implements ITest
 
-    Public Property Test As Integer
+    Public Property Test As Integer Implements ITest.Test
 
 End Class|]
 ");
@@ -1480,7 +1480,7 @@ Public Class C
         MyBase.Finalize()
     End Sub
 
-    Protected Overridable Sub Dispose(disposing As Boolean)
+    Protected Overridable Overloads Sub Dispose(disposing As Boolean)
     End Sub
 
 End Class
@@ -1513,7 +1513,7 @@ Public Class C
         MyBase.Finalize()
     End Sub
 
-    Protected Overridable Sub Dispose(disposing As Boolean)
+    Protected Overridable Overloads Sub Dispose(disposing As Boolean)
     End Sub
 
 End Class
@@ -1919,13 +1919,14 @@ End Class
 Imports System
 
 Public MustInherit Class B
-    Public MustOverride Sub Dispose(disposing As Boolean)
+    Protected MustOverride Sub Dispose(disposing As Boolean)
 End Class
 
 Public Class C
+    Inherits B
     Implements IDisposable
 
-    Public Sub Dispose() Implements IDisposable.Dispose
+    Public Overloads Sub Dispose() Implements IDisposable.Dispose
         Dispose(True)
         GC.SuppressFinalize(Me)
     End Sub
@@ -1940,7 +1941,7 @@ Public Class C
 
 End Class
 ",
-            GetCA1063BasicDisposeBoolSignatureResultAt(21, 44, "C", "Dispose"));
+            GetCA1063BasicDisposeBoolSignatureResultAt(22, 44, "C", "Dispose"));
         }
 
         [Fact]
@@ -1950,13 +1951,14 @@ End Class
 Imports System
 
 Public MustInherit Class B
-    Public MustOverride Sub Dispose(disposing As Boolean)
+    Protected MustOverride Sub Dispose(disposing As Boolean)
 End Class
 
 Public Class C
+    Inherits B
     Implements IDisposable
 
-    Public Sub Dispose() Implements IDisposable.Dispose
+    Public Overloads Sub Dispose() Implements IDisposable.Dispose
         Dispose(True)
         GC.SuppressFinalize(Me)
     End Sub

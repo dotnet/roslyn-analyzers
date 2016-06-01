@@ -268,7 +268,7 @@ Imports System.IO
       Dim newFile As FileStream
 
       Sub New()
-         newFile = New FileStream()
+         newFile = New FileStream(Nothing, FileMode.Open)
       End Sub
 
    End Class
@@ -338,7 +338,7 @@ Imports System.IO
       Dim newFile As FileStream
 
       Sub New()
-         newFile = New FileStream()
+         newFile = New FileStream(Nothing, FileMode.Open)
       End Sub
 
    End Class
@@ -364,7 +364,7 @@ Imports System.IO
       Dim newFile As FileStream
 
       Sub New()
-         newFile = New FileStream()
+         newFile = New FileStream(Nothing, FileMode.Open)
       End Sub
 
       Overloads Protected Overridable Sub Dispose(disposing As Boolean)
@@ -390,17 +390,16 @@ Imports System.IO
 ");
         }
 
-        internal static readonly string CA1001Name = "CA1001";
-        internal static readonly string CA1001Message = "Type '{0}' owns disposable fields but is not disposable";
-
         private static DiagnosticResult GetCA1001CSharpResultAt(int line, int column, string objectName)
         {
-            return GetCSharpResultAt(line, column, CA1001Name, string.Format(CA1001Message, objectName));
+            return GetCSharpResultAt(line, column, CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer.RuleId,
+                string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking, objectName));
         }
 
         private static DiagnosticResult GetCA1001BasicResultAt(int line, int column, string objectName)
         {
-            return GetBasicResultAt(line, column, CA1001Name, string.Format(CA1001Message, objectName));
+            return GetBasicResultAt(line, column, BasicTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer.RuleId,
+                string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking, objectName));
         }
     }
 }

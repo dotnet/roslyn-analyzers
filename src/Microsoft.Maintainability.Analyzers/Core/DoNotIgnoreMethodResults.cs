@@ -17,7 +17,7 @@ namespace Microsoft.Maintainability.Analyzers
         internal const string RuleId = "CA1806";
 
         private static readonly ImmutableHashSet<string> s_stringMethodNames = ImmutableHashSet.CreateRange(
-            new string[] {
+            new[] {
                 "ToUpper",
                 "ToLower",
                 "Trim",
@@ -48,9 +48,9 @@ namespace Microsoft.Maintainability.Analyzers
         private static readonly LocalizableString s_localizableMessageTryParse = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessageTryParse), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsDescription), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
 
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
+        internal static DiagnosticDescriptor ObjectCreationRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
-                                                                             "{0}",     // Use a placeholder message format as we need to display different messages based on the violation.
+                                                                             s_localizableMessageObjectCreation,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticSeverity.Warning,
                                                                              isEnabledByDefault: true,
@@ -58,10 +58,43 @@ namespace Microsoft.Maintainability.Analyzers
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182273.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        internal static DiagnosticDescriptor StringCreationRule = new DiagnosticDescriptor(RuleId,
+                                                                             s_localizableTitle,
+                                                                             s_localizableMessageStringCreation,
+                                                                             DiagnosticCategory.Performance,
+                                                                             DiagnosticSeverity.Warning,
+                                                                             isEnabledByDefault: true,
+                                                                             description: s_localizableDescription,
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182273.aspx",
+                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+
+        internal static DiagnosticDescriptor HResultOrErrorCodeRule = new DiagnosticDescriptor(RuleId,
+                                                                             s_localizableTitle,
+                                                                             s_localizableMessageHResultOrErrorCode,
+                                                                             DiagnosticCategory.Performance,
+                                                                             DiagnosticSeverity.Warning,
+                                                                             isEnabledByDefault: true,
+                                                                             description: s_localizableDescription,
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182273.aspx",
+                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+
+        internal static DiagnosticDescriptor TryParseRule = new DiagnosticDescriptor(RuleId,
+                                                                             s_localizableTitle,
+                                                                             s_localizableMessageTryParse,
+                                                                             DiagnosticCategory.Performance,
+                                                                             DiagnosticSeverity.Warning,
+                                                                             isEnabledByDefault: true,
+                                                                             description: s_localizableDescription,
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182273.aspx",
+                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ObjectCreationRule, StringCreationRule, HResultOrErrorCodeRule, TryParseRule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterOperationBlockStartAction(osContext =>
             {
                 var method = osContext.OwningSymbol as IMethodSymbol;
@@ -73,7 +106,7 @@ namespace Microsoft.Maintainability.Analyzers
                 osContext.RegisterOperationAction(opContext =>
                 {
                     IOperation expression = ((IExpressionStatement)opContext.Operation).Expression;
-                    string messageFormat = null;
+                    DiagnosticDescriptor rule = null;
                     string targetMethodName = null;
                     switch (expression.Kind)
                     {
@@ -81,7 +114,7 @@ namespace Microsoft.Maintainability.Analyzers
                             IMethodSymbol ctor = ((IObjectCreationExpression)expression).Constructor;
                             if (ctor != null)
                             {
-                                messageFormat = MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessageObjectCreation;
+                                rule = ObjectCreationRule;
                                 targetMethodName = ctor.ContainingType.Name;
                             }
                             break;
@@ -96,25 +129,24 @@ namespace Microsoft.Maintainability.Analyzers
 
                             if (IsStringCreatingMethod(targetMethod))
                             {
-                                messageFormat = MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessageStringCreation;
+                                rule = StringCreationRule;
                             }
                             else if (IsTryParseMethod(targetMethod))
                             {
-                                messageFormat = MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessageTryParse;
+                                rule = TryParseRule;
                             }
                             else if (IsHResultOrErrorCodeReturningMethod(targetMethod))
                             {
-                                messageFormat = MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessageHResultOrErrorCode;
+                                rule = HResultOrErrorCodeRule;
                             }
 
                             targetMethodName = targetMethod.Name;
                             break;
                     }
 
-                    if (messageFormat != null)
+                    if (rule != null)
                     {
-                        string message = string.Format(messageFormat, method.Name, targetMethodName);
-                        Diagnostic diagnostic = Diagnostic.Create(Rule, expression.Syntax.GetLocation(), message);
+                        Diagnostic diagnostic = Diagnostic.Create(rule, expression.Syntax.GetLocation(), method.Name, targetMethodName);
                         opContext.ReportDiagnostic(diagnostic);
                     }
                 }, OperationKind.ExpressionStatement);

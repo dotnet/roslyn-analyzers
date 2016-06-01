@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace a2md
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {

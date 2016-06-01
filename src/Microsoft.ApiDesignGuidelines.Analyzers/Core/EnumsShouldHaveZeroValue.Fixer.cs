@@ -153,14 +153,5 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             return nodeToFix;
         }
-
-        private Document GetUpdatedDocumentWithFix(Document document, SyntaxNode root, SyntaxNode nodeToFix, IList<SyntaxNode> newFields, CancellationToken cancellationToken)
-        {
-            nodeToFix = GetParentNodeOrSelfToFix(nodeToFix);
-            SyntaxGenerator g = SyntaxGenerator.GetGenerator(document);
-            SyntaxNode newEnumSyntax = g.AddMembers(nodeToFix, newFields);
-            SyntaxNode newRoot = root.ReplaceNode(nodeToFix, newEnumSyntax);
-            return document.WithSyntaxRoot(newRoot);
-        }
     }
 }

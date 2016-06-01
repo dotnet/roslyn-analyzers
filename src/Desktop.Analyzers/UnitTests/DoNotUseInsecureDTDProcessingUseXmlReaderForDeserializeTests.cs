@@ -175,6 +175,7 @@ public class UseXmlReaderForDeserialize
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.IO
 Imports System.Xml.Serialization
 
@@ -190,7 +191,7 @@ Public Class UseXmlReaderForDeserialize
         End Try
     End Sub
 End Class",
-                GetCA3075DeserializeBasicResultAt(10, 13)
+                GetCA3075DeserializeBasicResultAt(11, 13)
             );
         }
 
@@ -219,6 +220,7 @@ public class UseXmlReaderForDeserialize
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.IO
 Imports System.Xml.Serialization
 
@@ -233,7 +235,7 @@ Public Class UseXmlReaderForDeserialize
         End Try
     End Sub
 End Class",
-                GetCA3075DeserializeBasicResultAt(11, 13)
+                GetCA3075DeserializeBasicResultAt(12, 13)
             );
         }
 
@@ -262,6 +264,7 @@ public class UseXmlReaderForDeserialize
             );
 
             VerifyBasic(@"
+Imports System
 Imports System.IO
 Imports System.Xml.Serialization
 
@@ -277,7 +280,7 @@ Public Class UseXmlReaderForDeserialize
         End Try
     End Sub
 End Class",
-                GetCA3075DeserializeBasicResultAt(13, 13)
+                GetCA3075DeserializeBasicResultAt(14, 13)
             );
         }
 
@@ -362,7 +365,7 @@ Class UseXmlReaderForDeserialize
 End Function)
     End Function
 
-    Private Sub TestMethod2()
+    Private Async Sub TestMethod2()
         Await TestMethod(Nothing)
     End Sub
 End Class",

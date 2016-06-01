@@ -239,7 +239,7 @@ End Namespace",
         }
 
         [Fact]
-        public void XmlDocumentNoCtorDontSetResolverShouldNotGenerateDiagnostic()
+        public void XmlDocumentNoCtorDoNotSetResolverShouldNotGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.Xml;

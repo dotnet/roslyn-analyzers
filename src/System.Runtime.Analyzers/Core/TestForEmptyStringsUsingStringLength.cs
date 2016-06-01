@@ -38,7 +38,13 @@ namespace System.Runtime.Analyzers
 
         public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(s_rule);
 
-        public sealed override void Initialize(AnalysisContext context) => context.RegisterOperationAction(AnalyzeNode, OperationKind.InvocationExpression, OperationKind.BinaryOperatorExpression);
+        public sealed override void Initialize(AnalysisContext context)
+        {
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
+            context.RegisterOperationAction(AnalyzeNode, OperationKind.InvocationExpression, OperationKind.BinaryOperatorExpression);
+        }
 
         private static void AnalyzeNode(OperationAnalysisContext context)
         {
@@ -122,7 +128,7 @@ namespace System.Runtime.Analyzers
             if (expression.Kind == OperationKind.FieldReferenceExpression)
             {
                 IFieldSymbol field = ((IFieldReferenceExpression)expression).Field;
-                return string.Equals(field.Name, StringEmptyFieldName) &&
+                return string.Equals(field.Name, StringEmptyFieldName, StringComparison.Ordinal) &&
                     field.Type.SpecialType == SpecialType.System_String;
             }
 

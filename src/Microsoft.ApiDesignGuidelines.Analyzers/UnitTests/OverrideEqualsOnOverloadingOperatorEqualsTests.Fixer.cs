@@ -19,7 +19,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            throw new NotSupportedException("CA2224 is not applied to C# since it already reports CS0660");
+            // Fixer fixes compiler diagnostics.
+            return null;
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
@@ -35,11 +36,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         [Fact]
         public void CS0660()
         {
-            VerifyFix(
-                LanguageNames.CSharp,
-                DummyCS0660Analyzer.Instance,
-                GetCSharpCodeFixProvider(),
-                @"
+            VerifyCSharpFix(@"
 class C
 {
     public static bool operator ==(C c1, C c2) => true;
@@ -65,11 +62,7 @@ class C
         [Fact]
         public void CS0660_Simplified()
         {
-            VerifyFix(
-                LanguageNames.CSharp,
-                DummyCS0660Analyzer.Instance,
-                GetCSharpCodeFixProvider(),
-                @"
+            VerifyCSharpFix(@"
 using System;
 
 class C
@@ -160,32 +153,6 @@ Class C
     End Function
 End Class
 ");
-        }
-
-        [DiagnosticAnalyzer(LanguageNames.CSharp)]
-        private sealed class DummyCS0660Analyzer : DiagnosticAnalyzer
-        {
-            public static readonly DiagnosticAnalyzer Instance = new DummyCS0660Analyzer();
-
-            private static readonly DiagnosticDescriptor s_descriptor =
-                new DiagnosticDescriptor(
-                    "CS0660",
-                    "title",
-                    "message",
-                    "category",
-                    DiagnosticSeverity.Warning,
-                    isEnabledByDefault: true);
-
-            private DummyCS0660Analyzer() { }
-
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(s_descriptor);
-
-            public override void Initialize(AnalysisContext context)
-            {
-                context.RegisterSymbolAction(symbolContext =>
-                        symbolContext.ReportDiagnostic(Diagnostic.Create(s_descriptor, symbolContext.Symbol.Locations[0])),
-                    SymbolKind.NamedType);
-            }
         }
     }
 }

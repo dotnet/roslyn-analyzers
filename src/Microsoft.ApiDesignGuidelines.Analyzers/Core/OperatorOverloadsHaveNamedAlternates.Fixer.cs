@@ -88,9 +88,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     ISymbol badVisibilitySymbol = semanticModel.GetDeclaredSymbol(badVisibilityNode, cancellationToken);
                     SymbolEditor symbolEditor = SymbolEditor.Create(context.Document);
                     ISymbol newSymbol = await symbolEditor.EditOneDeclarationAsync(badVisibilitySymbol,
-                        (documentEditor, syntaxNode) => documentEditor.SetAccessibility(badVisibilityNode, Accessibility.Public));
+                        (documentEditor, syntaxNode) => documentEditor.SetAccessibility(badVisibilityNode, Accessibility.Public)).ConfigureAwait(false);
                     Document newDocument = symbolEditor.GetChangedDocuments().Single();
-                    SyntaxNode newRoot = await newDocument.GetSyntaxRootAsync(cancellationToken);
+                    SyntaxNode newRoot = await newDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
                     return context.Document.WithSyntaxRoot(newRoot);
                 default:
                     return context.Document;

@@ -38,7 +38,7 @@ namespace Desktop.Analyzers
 
         private void RegisterAnalyzer(OperationBlockStartAnalysisContext context, CompilationSecurityTypes types, Version frameworkVersion)
         {
-            var analyzer = new Analyzer(types, frameworkVersion);
+            var analyzer = new OperationAnalyzer(types, frameworkVersion);
             context.RegisterOperationAction(
                 analyzer.AnalyzeOperation,
                 OperationKind.InvocationExpression,
@@ -55,6 +55,12 @@ namespace Desktop.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            // TODO: Make analyzer thread-safe
+            //analysisContext.EnableConcurrentExecution();
+
+            // Security analyzer - analyze and report diagnostics in generated code.
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
+
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
@@ -77,7 +83,7 @@ namespace Desktop.Analyzers
                 });
         }
 
-        private class Analyzer
+        private class OperationAnalyzer
         {
             #region Environment classes
             private class XmlDocumentEnvironment
@@ -141,7 +147,7 @@ namespace Desktop.Analyzers
             private readonly Dictionary<ISymbol, XmlTextReaderEnvironment> _xmlTextReaderEnvironments = new Dictionary<ISymbol, XmlTextReaderEnvironment>();
             private readonly Dictionary<ISymbol, XmlReaderSettingsEnvironment> _xmlReaderSettingsEnvironments = new Dictionary<ISymbol, XmlReaderSettingsEnvironment>();
 
-            public Analyzer(CompilationSecurityTypes xmlTypes, Version targetFrameworkVersion)
+            public OperationAnalyzer(CompilationSecurityTypes xmlTypes, Version targetFrameworkVersion)
             {
                 _xmlTypes = xmlTypes;
                 _isFrameworkSecure = targetFrameworkVersion == null ? false : targetFrameworkVersion >= s_minSecureFxVersion;
@@ -281,7 +287,7 @@ namespace Desktop.Analyzers
                             return;
                         }
 
-                        XmlReaderSettingsEnvironment env = null;
+                        XmlReaderSettingsEnvironment env;
 
                         if (!_xmlReaderSettingsEnvironments.TryGetValue(settingsSymbol, out env))
                         {
@@ -368,7 +374,7 @@ namespace Desktop.Analyzers
                 }
                 else if (SecurityDiagnosticHelpers.IsXmlReaderSettingsCtor(objCreation.Constructor, _xmlTypes))
                 {
-                    AnalyzeObjectCreationForXmlReaderSettings(context, variable, objCreation);
+                    AnalyzeObjectCreationForXmlReaderSettings(variable, objCreation);
                 }
                 else
                 {
@@ -378,13 +384,15 @@ namespace Desktop.Analyzers
 
             private void AnalyzeObjectCreationForXmlDocument(OperationAnalysisContext context, ISymbol variable, IObjectCreationExpression objCreation)
             {
-                XmlDocumentEnvironment xmlDocumentEnvironment = null;
+                XmlDocumentEnvironment xmlDocumentEnvironment;
 
                 if (variable == null || !_xmlDocumentEnvironments.ContainsKey(variable))
                 {
-                    xmlDocumentEnvironment = new XmlDocumentEnvironment();
-                    xmlDocumentEnvironment.IsSecureResolver = false;
-                    xmlDocumentEnvironment.IsXmlResolverSet = false;
+                    xmlDocumentEnvironment = new XmlDocumentEnvironment
+                    {
+                        IsSecureResolver = false,
+                        IsXmlResolverSet = false
+                    };
                 }
                 else
                 {
@@ -471,12 +479,14 @@ namespace Desktop.Analyzers
 
             private void AnalyzeObjectCreationForXmlTextReader(OperationAnalysisContext context, ISymbol variable, IObjectCreationExpression objCreation)
             {
-                XmlTextReaderEnvironment env = null;
+                XmlTextReaderEnvironment env;
 
                 if (variable == null || !_xmlTextReaderEnvironments.TryGetValue(variable, out env))
                 {
-                    env = new XmlTextReaderEnvironment(_isFrameworkSecure);
-                    env.XmlTextReaderDefinition = objCreation.Syntax;
+                    env = new XmlTextReaderEnvironment(_isFrameworkSecure)
+                    {
+                        XmlTextReaderDefinition = objCreation.Syntax
+                    };
                 }
 
                 if (objCreation.Constructor.ContainingType != _xmlTypes.XmlTextReader)
@@ -550,7 +560,7 @@ namespace Desktop.Analyzers
                 }
             }
 
-            private void AnalyzeObjectCreationForXmlReaderSettings(OperationAnalysisContext context, ISymbol variable, IObjectCreationExpression objCreation)
+            private void AnalyzeObjectCreationForXmlReaderSettings(ISymbol variable, IObjectCreationExpression objCreation)
             {
                 XmlReaderSettingsEnvironment xmlReaderSettingsEnv = new XmlReaderSettingsEnvironment(_isFrameworkSecure);
 
@@ -640,7 +650,7 @@ namespace Desktop.Analyzers
 
             private void AnalyzeXmlTextReaderProperties(OperationAnalysisContext context, ISymbol assignedSymbol, IAssignmentExpression expression, bool isXmlTextReaderXmlResolverProperty, bool isXmlTextReaderDtdProcessingProperty)
             {
-                XmlTextReaderEnvironment env = null;
+                XmlTextReaderEnvironment env;
 
                 if (!_xmlTextReaderEnvironments.TryGetValue(assignedSymbol, out env))
                 {
@@ -724,7 +734,7 @@ namespace Desktop.Analyzers
                         }
                         else if(SecurityDiagnosticHelpers.IsXmlReaderSettingsType(propRef.Instance.Type, _xmlTypes))
                         {
-                            XmlReaderSettingsEnvironment env = null;
+                            XmlReaderSettingsEnvironment env;
                             
                             if(!_xmlReaderSettingsEnvironments.TryGetValue(assignedSymbol, out env))
                             {

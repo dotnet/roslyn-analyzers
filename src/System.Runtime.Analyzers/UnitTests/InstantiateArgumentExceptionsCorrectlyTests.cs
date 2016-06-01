@@ -8,7 +8,6 @@ namespace System.Runtime.Analyzers.UnitTests
 {
     public class InstantiateArgumentExceptionsCorrectlyTests : DiagnosticAnalyzerTestBase
     {
-        private static readonly string s_ruleId = InstantiateArgumentExceptionsCorrectlyAnalyzer.RuleId;
         private static readonly string s_noArguments = SystemRuntimeAnalyzersResources.InstantiateArgumentExceptionsCorrectlyMessageNoArguments;
         private static readonly string s_incorrectMessage = SystemRuntimeAnalyzersResources.InstantiateArgumentExceptionsCorrectlyMessageIncorrectMessage;
         private static readonly string s_incorrectParameterName = SystemRuntimeAnalyzersResources.InstantiateArgumentExceptionsCorrectlyMessageIncorrectParameterName;
@@ -34,15 +33,15 @@ namespace System.Runtime.Analyzers.UnitTests
                         throw new System.ArgumentException();
                     }
                 }",
-                GetCSharpExpectedResult(6, 31, s_noArguments, "System.ArgumentException"));
+                GetCSharpExpectedResult(6, 31, s_noArguments, "ArgumentException"));
 
             VerifyBasic(@"
-                Public Class MyClass
-                    Public Sub Test(Dim first As String)
+                Public Class [MyClass]
+                    Public Sub Test(first As String)
                         Throw New System.ArgumentException()
                     End Sub
                 End Class",
-              GetBasicExpectedResult(4, 31, s_noArguments, "System.ArgumentException"));
+              GetBasicExpectedResult(4, 31, s_noArguments, "ArgumentException"));
         }
 
         [Fact]
@@ -56,15 +55,15 @@ namespace System.Runtime.Analyzers.UnitTests
                         throw new System.ArgumentNullException("""");
                     }
                 }",
-                GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Class.Test(string)", "", "paramName", "System.ArgumentNullException"));
+                GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Test", "", "paramName", "ArgumentNullException"));
 
             VerifyBasic(@"
-                Public Class MyClass
-                    Public Sub Test(Dim first As String)
+                Public Class [MyClass]
+                    Public Sub Test(first As String)
                         Throw New System.ArgumentNullException("""")
                     End Sub
                 End Class",
-                GetBasicExpectedResult(4, 31, s_incorrectParameterName, "Public Sub Test(first As String)", "", "paramName", "System.ArgumentNullException"));
+                GetBasicExpectedResult(4, 31, s_incorrectParameterName, "Test", "", "paramName", "ArgumentNullException"));
         }
 
         [Fact]
@@ -78,15 +77,15 @@ namespace System.Runtime.Analyzers.UnitTests
                         throw new System.ArgumentNullException("" "");
                     }
                 }",
-                GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Class.Test(string)", " ", "paramName", "System.ArgumentNullException"));
+                GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Test", " ", "paramName", "ArgumentNullException"));
 
             VerifyBasic(@"
-                Public Class MyClass
-                    Public Sub Test(Dim first As String)
+                Public Class [MyClass]
+                    Public Sub Test(first As String)
                         Throw New System.ArgumentNullException("" "")
                     End Sub
                 End Class",
-                GetBasicExpectedResult(4, 31, s_incorrectParameterName, "Public Sub Test(first As String)", " ", "paramName", "System.ArgumentNullException"));
+                GetBasicExpectedResult(4, 31, s_incorrectParameterName, "Test", " ", "paramName", "ArgumentNullException"));
         }
 
         [Fact]
@@ -101,16 +100,16 @@ namespace System.Runtime.Analyzers.UnitTests
                         throw new System.ArgumentNullException(nameof(foo));
                     }
                 }",
-                GetCSharpExpectedResult(7, 31, s_incorrectParameterName, "Class.Test(string)", "foo", "paramName", "System.ArgumentNullException"));
+                GetCSharpExpectedResult(7, 31, s_incorrectParameterName, "Test", "foo", "paramName", "ArgumentNullException"));
 
             VerifyBasic(@"
-                Public Class MyClass
-                    Public Sub Test(Dim first As String)
+                Public Class [MyClass]
+                    Public Sub Test(first As String)
                         Dim foo As New Object()
                         Throw New System.ArgumentNullException(NameOf(foo))
                     End Sub
                 End Class",
-                GetBasicExpectedResult(5, 31, s_incorrectParameterName, "Public Sub Test(first As String)", "foo", "paramName", "System.ArgumentNullException"));
+                GetBasicExpectedResult(5, 31, s_incorrectParameterName, "Test", "foo", "paramName", "ArgumentNullException"));
         }
 
         [Fact]
@@ -124,15 +123,15 @@ namespace System.Runtime.Analyzers.UnitTests
                         throw new System.ArgumentException(""first"");
                     }
                 }",
-                GetCSharpExpectedResult(6, 31, s_incorrectMessage, "Class.Test(string)", "first", "message", "System.ArgumentException"));
+                GetCSharpExpectedResult(6, 31, s_incorrectMessage, "Test", "first", "message", "ArgumentException"));
 
             VerifyBasic(@"
-                Public Class MyClass
-                    Public Sub Test(Dim first As String)
+                Public Class [MyClass]
+                    Public Sub Test(first As String)
                         Throw New System.ArgumentException(""first"")
                     End Sub
                 End Class",
-                GetBasicExpectedResult(4, 31, s_incorrectMessage, "Public Sub Test(first As String)", "first", "message", "System.ArgumentException"));
+                GetBasicExpectedResult(4, 31, s_incorrectMessage, "Test", "first", "message", "ArgumentException"));
         }
 
         [Fact]
@@ -146,17 +145,17 @@ namespace System.Runtime.Analyzers.UnitTests
                         throw new System.ArgumentException(""first"", ""first is incorrect"");
                     }
                 }",
-                GetCSharpExpectedResult(6, 31, s_incorrectMessage, "Class.Test(string)", "first", "message", "System.ArgumentException"),
-                GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Class.Test(string)", "first is incorrect", "paramName", "System.ArgumentException"));
+                GetCSharpExpectedResult(6, 31, s_incorrectMessage, "Test", "first", "message", "ArgumentException"),
+                GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Test", "first is incorrect", "paramName", "ArgumentException"));
 
             VerifyBasic(@"
-                Public Class MyClass
-                    Public Sub Test(Dim first As String)
+                Public Class [MyClass]
+                    Public Sub Test(first As String)
                         Throw New System.ArgumentException(""first"", ""first is incorrect"")
                     End Sub
                 End Class",
-                GetBasicExpectedResult(4, 31, s_incorrectMessage, "Public Sub Test(first As String)", "first", "message", "System.ArgumentException"),
-                GetBasicExpectedResult(4, 31, s_incorrectParameterName, "Public Sub Test(first As String)", "first is incorrect", "paramName", "System.ArgumentException"));
+                GetBasicExpectedResult(4, 31, s_incorrectMessage, "Test", "first", "message", "ArgumentException"),
+                GetBasicExpectedResult(4, 31, s_incorrectParameterName, "Test", "first is incorrect", "paramName", "ArgumentException"));
         }
 
         [Fact]
@@ -170,15 +169,15 @@ namespace System.Runtime.Analyzers.UnitTests
                         throw new System.ArgumentNullException();
                     }
                 }",
-                GetCSharpExpectedResult(6, 31, s_noArguments, "System.ArgumentNullException"));
+                GetCSharpExpectedResult(6, 31, s_noArguments, "ArgumentNullException"));
 
             VerifyBasic(@"
-                Public Class MyClass
-                    Public Sub Test(Dim first As String)
+                Public Class [MyClass]
+                    Public Sub Test(first As String)
                         Throw New System.ArgumentNullException()
                     End Sub
                 End Class",
-                 GetBasicExpectedResult(4, 31, s_noArguments, "System.ArgumentNullException"));
+                 GetBasicExpectedResult(4, 31, s_noArguments, "ArgumentNullException"));
         }
 
         [Fact]
@@ -192,7 +191,7 @@ namespace System.Runtime.Analyzers.UnitTests
                         throw new System.ArgumentNullException(""first is null"");
                     }
                 }",
-                GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Class.Test(string)", "first is null", "paramName", "System.ArgumentNullException"));
+                GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Test", "first is null", "paramName", "ArgumentNullException"));
         }
 
         [Fact]
@@ -206,17 +205,17 @@ namespace System.Runtime.Analyzers.UnitTests
                         throw new System.ArgumentNullException(""first is null"", ""first"");
                     }
                 }",
-                GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Class.Test(string)", "first is null", "paramName", "System.ArgumentNullException"),
-                GetCSharpExpectedResult(6, 31, s_incorrectMessage, "Class.Test(string)", "first", "message", "System.ArgumentNullException"));
+                GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Test", "first is null", "paramName", "ArgumentNullException"),
+                GetCSharpExpectedResult(6, 31, s_incorrectMessage, "Test", "first", "message", "ArgumentNullException"));
 
             VerifyBasic(@"
-                Public Class MyClass
-                    Public Sub Test(Dim first As String)
+                Public Class [MyClass]
+                    Public Sub Test(first As String)
                         Throw New System.ArgumentNullException(""first is null"", ""first"")
                     End Sub
                 End Class",
-                GetBasicExpectedResult(4, 31, s_incorrectParameterName, "Public Sub Test(first As String)", "first is null", "paramName", "System.ArgumentNullException"),
-                GetBasicExpectedResult(4, 31, s_incorrectMessage, "Public Sub Test(first As String)", "first", "message", "System.ArgumentNullException"));
+                GetBasicExpectedResult(4, 31, s_incorrectParameterName, "Test", "first is null", "paramName", "ArgumentNullException"),
+                GetBasicExpectedResult(4, 31, s_incorrectMessage, "Test", "first", "message", "ArgumentNullException"));
         }
 
         [Fact]
@@ -230,15 +229,15 @@ namespace System.Runtime.Analyzers.UnitTests
                         throw new System.ArgumentOutOfRangeException();
                     }
                 }",
-                GetCSharpExpectedResult(6, 31, s_noArguments, "System.ArgumentOutOfRangeException"));
+                GetCSharpExpectedResult(6, 31, s_noArguments, "ArgumentOutOfRangeException"));
 
             VerifyBasic(@"
-                Public Class MyClass
-                    Public Sub Test(Dim first As String)
+                Public Class [MyClass]
+                    Public Sub Test(first As String)
                         Throw New System.ArgumentOutOfRangeException()
                     End Sub
                 End Class",
-                GetBasicExpectedResult(4, 31, s_noArguments, "System.ArgumentOutOfRangeException"));
+                GetBasicExpectedResult(4, 31, s_noArguments, "ArgumentOutOfRangeException"));
         }
 
         [Fact]
@@ -252,15 +251,15 @@ namespace System.Runtime.Analyzers.UnitTests
                         throw new System.ArgumentOutOfRangeException(""first is out of range"");
                     }
                 }",
-                GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Class.Test(string)", "first is out of range", "paramName", "System.ArgumentOutOfRangeException"));
+                GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Test", "first is out of range", "paramName", "ArgumentOutOfRangeException"));
 
             VerifyBasic(@"
-                Public Class MyClass
-                    Public Sub Test(Dim first As String)
+                Public Class [MyClass]
+                    Public Sub Test(first As String)
                         Throw New System.ArgumentOutOfRangeException(""first is out of range"")
                     End Sub
                 End Class",
-                GetBasicExpectedResult(4, 31, s_incorrectParameterName, "Public Sub Test(first As String)", "first is out of range", "paramName", "System.ArgumentOutOfRangeException"));
+                GetBasicExpectedResult(4, 31, s_incorrectParameterName, "Test", "first is out of range", "paramName", "ArgumentOutOfRangeException"));
         }
 
         [Fact]
@@ -274,17 +273,17 @@ namespace System.Runtime.Analyzers.UnitTests
                         throw new System.ArgumentOutOfRangeException(""first is out of range"", ""first"");
                     }
                 }",
-                GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Class.Test(string)", "first is out of range", "paramName", "System.ArgumentOutOfRangeException"),
-                GetCSharpExpectedResult(6, 31, s_incorrectMessage, "Class.Test(string)", "first", "message", "System.ArgumentOutOfRangeException"));
+                GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Test", "first is out of range", "paramName", "ArgumentOutOfRangeException"),
+                GetCSharpExpectedResult(6, 31, s_incorrectMessage, "Test", "first", "message", "ArgumentOutOfRangeException"));
 
             VerifyBasic(@"
-                Public Class MyClass
-                    Public Sub Test(Dim first As String)
+                Public Class [MyClass]
+                    Public Sub Test(first As String)
                         Throw New System.ArgumentOutOfRangeException(""first is out of range"", ""first"")
                     End Sub
                 End Class",
-                GetBasicExpectedResult(4, 31, s_incorrectParameterName, "Public Sub Test(first As String)", "first is out of range", "paramName", "System.ArgumentOutOfRangeException"),
-                GetBasicExpectedResult(4, 31, s_incorrectMessage, "Public Sub Test(first As String)", "first", "message", "System.ArgumentOutOfRangeException"));
+                GetBasicExpectedResult(4, 31, s_incorrectParameterName, "Test", "first is out of range", "paramName", "ArgumentOutOfRangeException"),
+                GetBasicExpectedResult(4, 31, s_incorrectMessage, "Test", "first", "message", "ArgumentOutOfRangeException"));
         }
 
         [Fact]
@@ -298,15 +297,15 @@ namespace System.Runtime.Analyzers.UnitTests
                         throw new System.DuplicateWaitObjectException();
                     }
                 }",
-                GetCSharpExpectedResult(6, 31, s_noArguments, "System.DuplicateWaitObjectException"));
+                GetCSharpExpectedResult(6, 31, s_noArguments, "DuplicateWaitObjectException"));
 
             VerifyBasic(@"
-                Public Class MyClass
-                    Public Sub Test(Dim first As String)
+                Public Class [MyClass]
+                    Public Sub Test(first As String)
                         Throw New System.DuplicateWaitObjectException()
                     End Sub
                 End Class",
-                GetBasicExpectedResult(4, 31, s_noArguments, "System.DuplicateWaitObjectException"));
+                GetBasicExpectedResult(4, 31, s_noArguments, "DuplicateWaitObjectException"));
         }
 
         [Fact]
@@ -320,15 +319,15 @@ namespace System.Runtime.Analyzers.UnitTests
                         throw new System.DuplicateWaitObjectException(""first is duplicate"");
                     }
                 }",
-                GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Class.Test(string)", "first is duplicate", "parameterName", "System.DuplicateWaitObjectException"));
+                GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Test", "first is duplicate", "parameterName", "DuplicateWaitObjectException"));
 
             VerifyBasic(@"
-                Public Class MyClass
-                    Public Sub Test(Dim first As String)
+                Public Class [MyClass]
+                    Public Sub Test(first As String)
                         Throw New System.DuplicateWaitObjectException(""first is duplicate"")
                     End Sub
                 End Class",
-                GetBasicExpectedResult(4, 31, s_incorrectParameterName, "Public Sub Test(first As String)", "first is duplicate", "parameterName", "System.DuplicateWaitObjectException"));
+                GetBasicExpectedResult(4, 31, s_incorrectParameterName, "Test", "first is duplicate", "parameterName", "DuplicateWaitObjectException"));
         }
 
         [Fact]
@@ -342,17 +341,17 @@ namespace System.Runtime.Analyzers.UnitTests
                         throw new System.DuplicateWaitObjectException(""first is duplicate"", ""first"");
                     }
                 }",
-                GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Class.Test(string)", "first is duplicate", "parameterName", "System.DuplicateWaitObjectException"),
-                GetCSharpExpectedResult(6, 31, s_incorrectMessage, "Class.Test(string)", "first", "message", "System.DuplicateWaitObjectException"));
+                GetCSharpExpectedResult(6, 31, s_incorrectParameterName, "Test", "first is duplicate", "parameterName", "DuplicateWaitObjectException"),
+                GetCSharpExpectedResult(6, 31, s_incorrectMessage, "Test", "first", "message", "DuplicateWaitObjectException"));
 
             VerifyBasic(@"
-                Public Class MyClass
-                    Public Sub Test(Dim first As String)
+                Public Class [MyClass]
+                    Public Sub Test(first As String)
                         Throw New System.DuplicateWaitObjectException(""first is duplicate"", ""first"")
                     End Sub
                 End Class",
-                GetBasicExpectedResult(4, 31, s_incorrectParameterName, "Public Sub Test(first As String)", "first is duplicate", "parameterName", "System.DuplicateWaitObjectException"),
-                GetBasicExpectedResult(4, 31, s_incorrectMessage, "Public Sub Test(first As String)", "first", "message", "System.DuplicateWaitObjectException"));
+                GetBasicExpectedResult(4, 31, s_incorrectParameterName, "Test", "first is duplicate", "parameterName", "DuplicateWaitObjectException"),
+                GetBasicExpectedResult(4, 31, s_incorrectMessage, "Test", "first", "message", "DuplicateWaitObjectException"));
         }
 
 
@@ -369,8 +368,8 @@ namespace System.Runtime.Analyzers.UnitTests
                 }");
 
             VerifyBasic(@"
-               Public Class MyClass
-                   Public Sub Test(Dim first As String)
+               Public Class [MyClass]
+                   Public Sub Test(first As String)
                        Throw New System.ArgumentException(""first is incorrect"")
                    End Sub
                End Class");
@@ -389,8 +388,8 @@ namespace System.Runtime.Analyzers.UnitTests
                 }");
 
             VerifyBasic(@"
-               Public Class MyClass
-                   Public Sub Test(Dim first As String)
+               Public Class [MyClass]
+                   Public Sub Test(first As String)
                        Throw New System.ArgumentException(""first is incorrect"", ""first"")
                    End Sub
                End Class");
@@ -409,8 +408,8 @@ namespace System.Runtime.Analyzers.UnitTests
                 }");
 
             VerifyBasic(@"
-               Public Class MyClass
-                   Public Sub Test(Dim first As String)
+               Public Class [MyClass]
+                   Public Sub Test(first As String)
                        Throw New System.ArgumentNullException(""first"")
                    End Sub
                End Class");
@@ -431,8 +430,8 @@ namespace System.Runtime.Analyzers.UnitTests
                 }");
 
             VerifyBasic(@"
-                Public Class MyClass
-                    Public Sub Test(Dim first As String)
+                Public Class [MyClass]
+                    Public Sub Test(first As String)
                         Throw New System.ArgumentNullException(NameOf(first))
                     End Sub
                 End Class");
@@ -451,8 +450,8 @@ namespace System.Runtime.Analyzers.UnitTests
                 }");
 
             VerifyBasic(@"
-               Public Class MyClass
-                   Public Sub Test(Dim first As String)
+               Public Class [MyClass]
+                   Public Sub Test(first As String)
                        Throw New System.ArgumentNullException(""first"", ""first is null"")
                    End Sub
                End Class");
@@ -471,8 +470,8 @@ namespace System.Runtime.Analyzers.UnitTests
                 }");
 
             VerifyBasic(@"
-               Public Class MyClass
-                   Public Sub Test(Dim first As String)
+               Public Class [MyClass]
+                   Public Sub Test(first As String)
                        Throw New System.ArgumentOutOfRangeException(""first"")
                    End Sub
                End Class");
@@ -491,8 +490,8 @@ namespace System.Runtime.Analyzers.UnitTests
                 }");
 
             VerifyBasic(@"
-               Public Class MyClass
-                   Public Sub Test(Dim first As String)
+               Public Class [MyClass]
+                   Public Sub Test(first As String)
                        Throw New System.DuplicateWaitObjectException(""first"", ""first is out of range"")
                    End Sub
                End Class");
@@ -511,8 +510,8 @@ namespace System.Runtime.Analyzers.UnitTests
                 }");
 
             VerifyBasic(@"
-               Public Class MyClass
-                   Public Sub Test(Dim first As String)
+               Public Class [MyClass]
+                   Public Sub Test(first As String)
                        Throw New System.DuplicateWaitObjectException(""first"")
                    End Sub
                End Class");
@@ -531,8 +530,8 @@ namespace System.Runtime.Analyzers.UnitTests
                 }");
 
             VerifyBasic(@"
-               Public Class MyClass
-                   Public Sub Test(Dim first As String)
+               Public Class [MyClass]
+                   Public Sub Test(first As String)
                        Throw New System.DuplicateWaitObjectException(""first"", ""first is duplicate"")
                    End Sub
                End Class");
@@ -541,13 +540,13 @@ namespace System.Runtime.Analyzers.UnitTests
         private static DiagnosticResult GetCSharpExpectedResult(int line, int column, string format, params string[] args)
         {
             string message = string.Format(format, args);
-            return GetCSharpResultAt(line, column, s_ruleId, message);
+            return GetCSharpResultAt(line, column, InstantiateArgumentExceptionsCorrectlyAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetBasicExpectedResult(int line, int column, string format, params string[] args)
         {
             string message = string.Format(format, args);
-            return GetBasicResultAt(line, column, s_ruleId, message);
+            return GetBasicResultAt(line, column, InstantiateArgumentExceptionsCorrectlyAnalyzer.RuleId, message);
         }
     }
 }

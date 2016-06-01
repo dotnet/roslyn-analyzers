@@ -44,7 +44,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             CodeFixContext context, CancellationToken cancellationToken)
         {
             var document = context.Document;
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken);
+            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var semanticModel = editor.SemanticModel;
             var root = await semanticModel.SyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
             var operatorNode = root.FindNode(context.Diagnostics.First().Location.SourceSpan);

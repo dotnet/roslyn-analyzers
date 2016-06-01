@@ -30,16 +30,16 @@ public class C
 {
     void Method()
     {
-        var s = String.Format("""", 1);
-        var s = String.Format(""{0}"", 1, 2);
-        var s = String.Format(""{0} {1}"", 1, 2, 3);
-        var s = String.Format(""{0} {1} {2}"", 1, 2, 3, 4);
+        var a = String.Format("""", 1);
+        var b = String.Format(""{0}"", 1, 2);
+        var c = String.Format(""{0} {1}"", 1, 2, 3);
+        var d = String.Format(""{0} {1} {2}"", 1, 2, 3, 4);
 
         IFormatProvider p = null;
-        var s = String.Format(p, """", 1);
-        var s = String.Format(p, ""{0}"", 1, 2);
-        var s = String.Format(p, ""{0} {1}"", 1, 2, 3);
-        var s = String.Format(p, ""{0} {1} {2}"", 1, 2, 3, 4);
+        var e = String.Format(p, """", 1);
+        var f = String.Format(p, ""{0}"", 1, 2);
+        var g = String.Format(p, ""{0} {1}"", 1, 2, 3);
+        var h = String.Format(p, ""{0} {1} {2}"", 1, 2, 3, 4);
     }
 }
 ",
@@ -64,19 +64,19 @@ public class C
 {
     void Method()
     {
-        var s = Console.Write("""", 1);
-        var s = Console.Write(""{0}"", 1, 2);
-        var s = Console.Write(""{0} {1}"", 1, 2, 3);
-        var s = Console.Write(""{0} {1} {2}"", 1, 2, 3, 4);
-        var s = Console.Write(""{0} {1} {2} {3}"", 1, 2, 3, 4, 5);
+        Console.Write("""", 1);
+        Console.Write(""{0}"", 1, 2);
+        Console.Write(""{0} {1}"", 1, 2, 3);
+        Console.Write(""{0} {1} {2}"", 1, 2, 3, 4);
+        Console.Write(""{0} {1} {2} {3}"", 1, 2, 3, 4, 5);
     }
 }
 ",
-            GetCA2241CSharpResultAt(8, 17),
-            GetCA2241CSharpResultAt(9, 17),
-            GetCA2241CSharpResultAt(10, 17),
-            GetCA2241CSharpResultAt(11, 17),
-            GetCA2241CSharpResultAt(12, 17));
+            GetCA2241CSharpResultAt(8, 9),
+            GetCA2241CSharpResultAt(9, 9),
+            GetCA2241CSharpResultAt(10, 9),
+            GetCA2241CSharpResultAt(11, 9),
+            GetCA2241CSharpResultAt(12, 9));
         }
 
         [Fact]
@@ -89,19 +89,19 @@ public class C
 {
     void Method()
     {
-        var s = Console.WriteLine("""", 1);
-        var s = Console.WriteLine(""{0}"", 1, 2);
-        var s = Console.WriteLine(""{0} {1}"", 1, 2, 3);
-        var s = Console.WriteLine(""{0} {1} {2}"", 1, 2, 3, 4);
-        var s = Console.WriteLine(""{0} {1} {2} {3}"", 1, 2, 3, 4, 5);
+        Console.WriteLine("""", 1);
+        Console.WriteLine(""{0}"", 1, 2);
+        Console.WriteLine(""{0} {1}"", 1, 2, 3);
+        Console.WriteLine(""{0} {1} {2}"", 1, 2, 3, 4);
+        Console.WriteLine(""{0} {1} {2} {3}"", 1, 2, 3, 4, 5);
     }
 }
 ",
-            GetCA2241CSharpResultAt(8, 17),
-            GetCA2241CSharpResultAt(9, 17),
-            GetCA2241CSharpResultAt(10, 17),
-            GetCA2241CSharpResultAt(11, 17),
-            GetCA2241CSharpResultAt(12, 17));
+            GetCA2241CSharpResultAt(8, 9),
+            GetCA2241CSharpResultAt(9, 9),
+            GetCA2241CSharpResultAt(10, 9),
+            GetCA2241CSharpResultAt(11, 9),
+            GetCA2241CSharpResultAt(12, 9));
         }
 
         [Fact]
@@ -114,22 +114,22 @@ public class C
 {
     void Method()
     {
-        var s = String.Format(""{0}"", 1);
-        var s = String.Format(""{0} {1}"", 1, 2);
-        var s = String.Format(""{0} {1} {2}"", 1, 2, 3);
-        var s = String.Format(""{0} {1} {2} {3}"", 1, 2, 3, 4);
+        var a = String.Format(""{0}"", 1);
+        var b = String.Format(""{0} {1}"", 1, 2);
+        var c = String.Format(""{0} {1} {2}"", 1, 2, 3);
+        var d = String.Format(""{0} {1} {2} {3}"", 1, 2, 3, 4);
 
-        var s = Console.Write(""{0}"", 1);
-        var s = Console.Write(""{0} {1}"", 1, 2);
-        var s = Console.Write(""{0} {1} {2}"", 1, 2, 3);
-        var s = Console.Write(""{0} {1} {2} {3}"", 1, 2, 3, 4);
-        var s = Console.Write(""{0} {1} {2} {3} {4}"", 1, 2, 3, 4, 5);
+        Console.Write(""{0}"", 1);
+        Console.Write(""{0} {1}"", 1, 2);
+        Console.Write(""{0} {1} {2}"", 1, 2, 3);
+        Console.Write(""{0} {1} {2} {3}"", 1, 2, 3, 4);
+        Console.Write(""{0} {1} {2} {3} {4}"", 1, 2, 3, 4, 5);
 
-        var s = Console.WriteLine(""{0}"", 1);
-        var s = Console.WriteLine(""{0} {1}"", 1, 2);
-        var s = Console.WriteLine(""{0} {1} {2}"", 1, 2, 3);
-        var s = Console.WriteLine(""{0} {1} {2} {3}"", 1, 2, 3, 4);
-        var s = Console.WriteLine(""{0} {1} {2} {3} {4}"", 1, 2, 3, 4, 5);
+        Console.WriteLine(""{0}"", 1);
+        Console.WriteLine(""{0} {1}"", 1, 2);
+        Console.WriteLine(""{0} {1} {2}"", 1, 2, 3);
+        Console.WriteLine(""{0} {1} {2} {3}"", 1, 2, 3, 4);
+        Console.WriteLine(""{0} {1} {2} {3} {4}"", 1, 2, 3, 4, 5);
     }
 }
 ");
@@ -147,8 +147,8 @@ public class C
     void Method()
     {
         var s = String.Format(""{0} {1} {2} {3}"", new object[] {1, 2});
-        var s = Console.Write(""{0} {1} {2} {3}"", new object[] {1, 2, 3, 4, 5});
-        var s = Console.WriteLine(""{0} {1} {2} {3}"", new object[] {1, 2, 3, 4, 5});
+        Console.Write(""{0} {1} {2} {3}"", new object[] {1, 2, 3, 4, 5});
+        Console.WriteLine(""{0} {1} {2} {3}"", new object[] {1, 2, 3, 4, 5});
     }
 }
 ");
@@ -165,8 +165,8 @@ public class C
 {
     void Method()
     {
-        var s = Console.Write(""{0} {1} {2} {3} {4}"", 1, 2, 3, 4, _arglist(5));
-        var s = Console.WriteLine(""{0} {1} {2} {3} {4}"", 1, 2, 3, 4, _arglist(5));
+        Console.Write(""{0} {1} {2} {3} {4}"", 1, 2, 3, 4, __arglist(5));
+        Console.WriteLine(""{0} {1} {2} {3} {4}"", 1, 2, 3, 4, __arglist(5));
     }
 }
 ");
@@ -180,16 +180,16 @@ Imports System
 
 Public Class C
     Sub Method()
-        Dim s = String.Format("""", 1)
-        Dim s = String.Format(""{0}"", 1, 2)
-        Dim s = String.Format(""{0} {1}"", 1, 2, 3)
-        Dim s = String.Format(""{0} {1} {2}"", 1, 2, 3, 4)
+        Dim a = String.Format("""", 1)
+        Dim b = String.Format(""{0}"", 1, 2)
+        Dim c = String.Format(""{0} {1}"", 1, 2, 3)
+        Dim d = String.Format(""{0} {1} {2}"", 1, 2, 3, 4)
 
         Dim p as IFormatProvider = Nothing
-        Dim s = String.Format(p, """", 1)
-        Dim s = String.Format(p, ""{0}"", 1, 2)
-        Dim s = String.Format(p, ""{0} {1}"", 1, 2, 3)
-        Dim s = String.Format(p, ""{0} {1} {2}"", 1, 2, 3, 4)
+        Dim e = String.Format(p, """", 1)
+        Dim f = String.Format(p, ""{0}"", 1, 2)
+        Dim g = String.Format(p, ""{0} {1}"", 1, 2, 3)
+        Dim h = String.Format(p, ""{0} {1} {2}"", 1, 2, 3, 4)
     End Sub
 End Class
 ",
@@ -209,7 +209,7 @@ End Class
         {
             // this works in VB
             // Dim s = Console.WriteLine(""{0} {1} {2}"", 1, 2, 3, 4)
-            // since VB bind it to _arglist version where we skip analysis
+            // since VB bind it to __arglist version where we skip analysis
             // due to a bug - https://github.com/dotnet/roslyn/issues/7346
             // we might skip it only in C# since VB doesnt support __arglist
             VerifyBasic(@"
@@ -236,7 +236,7 @@ End Class
         {
             // this works in VB
             // Dim s = Console.WriteLine(""{0} {1} {2}"", 1, 2, 3, 4)
-            // since VB bind it to _arglist version where we skip analysis
+            // since VB bind it to __arglist version where we skip analysis
             // due to a bug - https://github.com/dotnet/roslyn/issues/7346
             // we might skip it only in C# since VB doesnt support __arglist
             VerifyBasic(@"
@@ -266,22 +266,22 @@ Imports System
 
 Public Class C
     Sub Method()
-        Dim s = String.Format(""{0}"", 1)
-        Dim s = String.Format(""{0} {1}"", 1, 2)
-        Dim s = String.Format(""{0} {1} {2}"", 1, 2, 3)
-        Dim s = String.Format(""{0} {1} {2} {3}"", 1, 2, 3, 4)
+        Dim a = String.Format(""{0}"", 1)
+        Dim b = String.Format(""{0} {1}"", 1, 2)
+        Dim c = String.Format(""{0} {1} {2}"", 1, 2, 3)
+        Dim d = String.Format(""{0} {1} {2} {3}"", 1, 2, 3, 4)
 
-        Dim s = Console.Write(""{0}"", 1)
-        Dim s = Console.Write(""{0} {1}"", 1, 2)
-        Dim s = Console.Write(""{0} {1} {2}"", 1, 2, 3)
-        Dim s = Console.Write(""{0} {1} {2} {3}"", 1, 2, 3, 4)
-        Dim s = Console.Write(""{0} {1} {2} {3} {4}"", 1, 2, 3, 4, 5)
+        Console.Write(""{0}"", 1)
+        Console.Write(""{0} {1}"", 1, 2)
+        Console.Write(""{0} {1} {2}"", 1, 2, 3)
+        Console.Write(""{0} {1} {2} {3}"", 1, 2, 3, 4)
+        Console.Write(""{0} {1} {2} {3} {4}"", 1, 2, 3, 4, 5)
 
-        Dim s = Console.WriteLine(""{0}"", 1)
-        Dim s = Console.WriteLine(""{0} {1}"", 1, 2)
-        Dim s = Console.WriteLine(""{0} {1} {2}"", 1, 2, 3)
-        Dim s = Console.WriteLine(""{0} {1} {2} {3}"", 1, 2, 3, 4)
-        Dim s = Console.WriteLine(""{0} {1} {2} {3} {4}"", 1, 2, 3, 4, 5)
+        Console.WriteLine(""{0}"", 1)
+        Console.WriteLine(""{0} {1}"", 1, 2)
+        Console.WriteLine(""{0} {1} {2}"", 1, 2, 3)
+        Console.WriteLine(""{0} {1} {2} {3}"", 1, 2, 3, 4)
+        Console.WriteLine(""{0} {1} {2} {3} {4}"", 1, 2, 3, 4, 5)
     End Sub
 End Class
 ");
@@ -295,9 +295,9 @@ Imports System
 
 Public Class C
     Sub Method()
-        Dim s = String.Format(""{0} {1} {2} {3}"", new object[] {1, 2})
-        Console.Write(""{0} {1} {2} {3}"", new object[] {1, 2, 3, 4, 5})
-        Console.WriteLine(""{0} {1} {2} {3}"", new object[] {1, 2, 3, 4, 5})
+        Dim s = String.Format(""{0} {1} {2} {3}"", New Object() {1, 2})
+        Console.Write(""{0} {1} {2} {3}"", New Object() {1, 2, 3, 4, 5})
+        Console.WriteLine(""{0} {1} {2} {3}"", New Object() {1, 2, 3, 4, 5})
     End Sub
 End Class
 ",
@@ -316,16 +316,16 @@ public class C
 {
     void Method()
     {
-        var s = String.Format(""{0,-4 :xd}"", 1);
-        var s = String.Format(""{0   ,    5 : d} {1}"", 1, 2);
-        var s = String.Format(""{0:d} {1} {2}"", 1, 2, 3);
-        var s = String.Format(""{0, 5} {1} {2} {3}"", 1, 2, 3, 4);
+        var a = String.Format(""{0,-4 :xd}"", 1);
+        var b = String.Format(""{0   ,    5 : d} {1}"", 1, 2);
+        var c = String.Format(""{0:d} {1} {2}"", 1, 2, 3);
+        var d = String.Format(""{0, 5} {1} {2} {3}"", 1, 2, 3, 4);
 
-        var s = Console.Write(""{0,1}"", 1);
-        var s = Console.Write(""{0:   x} {1}"", 1, 2);
-        var s = Console.Write(""{{escape}}{0} {1} {2}"", 1, 2, 3);
-        var s = Console.Write(""{0: {{escape}} x} {1} {2} {3}"", 1, 2, 3, 4);
-        var s = Console.Write(""{0 , -10  :   {{escape}}  y} {1} {2} {3} {4}"", 1, 2, 3, 4, 5);
+        Console.Write(""{0,1}"", 1);
+        Console.Write(""{0:   x} {1}"", 1, 2);
+        Console.Write(""{{escape}}{0} {1} {2}"", 1, 2, 3);
+        Console.Write(""{0: {{escape}} x} {1} {2} {3}"", 1, 2, 3, 4);
+        Console.Write(""{0 , -10  :   {{escape}}  y} {1} {2} {3} {4}"", 1, 2, 3, 4, 5);
     }
 }
 ");
@@ -333,16 +333,14 @@ public class C
 
         #endregion
 
-        internal static readonly string CA2241Name = "CA2241";
-
         private static DiagnosticResult GetCA2241CSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA2241Name, SystemRuntimeAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage);
+            return GetCSharpResultAt(line, column, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.RuleId, SystemRuntimeAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage);
         }
 
         private static DiagnosticResult GetCA2241BasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA2241Name, SystemRuntimeAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage);
+            return GetBasicResultAt(line, column, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.RuleId, SystemRuntimeAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage);
         }
     }
 }

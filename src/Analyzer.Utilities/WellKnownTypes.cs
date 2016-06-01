@@ -330,5 +330,10 @@ namespace Analyzer.Utilities
         {
             return compilation.GetTypeByMetadataName("System.Runtime.InteropServices.HandleRef");
         }
+
+        public static INamedTypeSymbol DataMemberAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Runtime.Serialization.DataMemberAttribute");
+        }
     }
 }

@@ -926,7 +926,7 @@ namespace TestNamespace
     {
         public XmlTextReader reader = new XmlTextReader(""file.xml"");
 
-        public TestMethod()
+        public TestClass()
         {
             reader.XmlResolver = null;
             reader.DtdProcessing = DtdProcessing.Ignore;
@@ -966,7 +966,7 @@ namespace TestNamespace
     {
         public XmlTextReader reader = new XmlTextReader(""file.xml"");
 
-        public TestMethod()
+        public TestClass()
         {
             reader.XmlResolver = null;
         }
@@ -1137,7 +1137,7 @@ namespace TestNamespace
     {
         public XmlTextReader reader = new XmlTextReader(""file.xml"");
 
-        public TestMethod()
+        public TestClass()
         {
             reader.DtdProcessing = DtdProcessing.Ignore;
         }

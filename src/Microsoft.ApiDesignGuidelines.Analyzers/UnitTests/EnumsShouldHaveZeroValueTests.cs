@@ -20,7 +20,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [WorkItem(836193, "DevDiv")]
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1032")]
         public void CSharp_EnumsShouldZeroValueFlagsRename()
         {
             // In enum '{0}', change the name of '{1}' to 'None'.
@@ -30,11 +30,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             string expectedMessage4 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E4", "A4");
 
             var code = @"
-[System.Flags]
-private enum E
+class Outer
 {
-    A = 0,
-    B = 3
+    [System.Flags]
+    private enum E
+    {
+        A = 0,
+        B = 3
+    }
 }
 
 [System.Flags]
@@ -65,10 +68,10 @@ public enum NoZeroValuedField
     B5 = 2
 }";
             VerifyCSharp(code,
-                GetCSharpResultAt(5, 5, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage1),
-                GetCSharpResultAt(12, 5, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage2),
-                GetCSharpResultAt(19, 5, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage3),
-                GetCSharpResultAt(26, 5, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage4));
+                GetCSharpResultAt(7, 9, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage1),
+                GetCSharpResultAt(15, 5, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage2),
+                GetCSharpResultAt(22, 5, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage3),
+                GetCSharpResultAt(29, 5, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage4));
         }
 
         [Fact]
@@ -79,12 +82,16 @@ public enum NoZeroValuedField
             string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E2");
 
             var code = @"// Some comment
-[System.Flags]
-private enum E
+class Outer
 {
-    None = 0,
-    A = 0
+    [System.Flags]
+    private enum E
+    {
+        None = 0,
+        A = 0
+    }
 }
+
 // Some comment
 [System.Flags]
 internal enum E2
@@ -93,24 +100,27 @@ internal enum E2
     A = None
 }";
             VerifyCSharp(code,
-                GetCSharpResultAt(3, 14, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage1),
-                GetCSharpResultAt(10, 15, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage2));
+                GetCSharpResultAt(5, 18, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage1),
+                GetCSharpResultAt(14, 15, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage2));
         }
 
         [Fact]
         public void CSharp_EnumsShouldZeroValueFlagsMultipleZeroWithScope()
         {
             // Remove all members that have the value zero from {0} except for one member that is named 'None'.
-            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E");
-            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E2");
+            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E2");
 
             var code = @"// Some comment
-[System.Flags]
-private enum E
+class Outer
 {
-    None = 0,
-    A = 0
+    [System.Flags]
+    private enum E
+    {
+        None = 0,
+        A = 0
+    }
 }
+
 [|// Some comment
 [System.Flags]
 internal enum E2
@@ -119,7 +129,7 @@ internal enum E2
     A = None
 }|]";
             VerifyCSharp(code,
-                GetCSharpResultAt(10, 15, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage2));
+                GetCSharpResultAt(14, 15, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage));
         }
 
         [Fact]
@@ -130,15 +140,18 @@ internal enum E2
             string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E2");
 
             var code = @"
-private enum E
+class Outer
 {
-    A = 1
-}
+    private enum E
+    {
+        A = 1
+    }
 
-private enum E2
-{
-    None = 1,
-    A = 2
+    private enum E2
+    {
+        None = 1,
+        A = 2
+    }
 }
 
 internal enum E3
@@ -154,16 +167,15 @@ internal enum E4
 }
 ";
             VerifyCSharp(code,
-                GetCSharpResultAt(2, 14, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage1),
-                GetCSharpResultAt(7, 14, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage2));
+                GetCSharpResultAt(4, 18, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage1),
+                GetCSharpResultAt(9, 18, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage2));
         }
 
         [Fact]
         public void CSharp_EnumsShouldZeroValueNotFlagsNoZeroValueWithScope()
         {
             // Add a member to {0} that has a value of zero with a suggested name of 'None'.
-            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E");
-            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E2");
+            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E2");
 
             var code = @"
 class C
@@ -193,7 +205,7 @@ class C
 }
 ";
             VerifyCSharp(code,
-                GetCSharpResultAt(9, 18, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage2));
+                GetCSharpResultAt(9, 18, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage));
         }
 
         [Fact]
@@ -203,25 +215,26 @@ class C
             string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E", "A");
             string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E2", "A2");
             string expectedMessage3 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E3", "A3");
-            string expectedMessage4 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E4", "A4");
 
             var code = @"
-<System.Flags>
-Private Enum E
-	A = 0
-	B = 1
-End Enum
+Public Class C
+    <System.Flags>
+    Private Enum E
+        A = 0
+        B = 1
+    End Enum
+End Class
 
 <System.Flags>
 Public Enum E2
-	A2 = 0
-	B2 = 1
+    A2 = 0
+    B2 = 1
 End Enum
 
 <System.Flags>
 Public Enum E3
-	A3 = CUShort(0)
-	B3 = CUShort(1)
+    A3 = CUShort(0)
+    B3 = CUShort(1)
 End Enum
 
 <System.Flags>
@@ -231,26 +244,26 @@ Public Enum NoZeroValuedField
 End Enum
 ";
             VerifyBasic(code,
-                GetBasicResultAt(4, 2, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage1),
-                GetBasicResultAt(10, 2, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage2),
-                GetBasicResultAt(16, 2, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage3));
+                GetBasicResultAt(5, 9, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage1),
+                GetBasicResultAt(12, 5, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage2),
+                GetBasicResultAt(18, 5, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage3));
         }
 
         [Fact]
         public void VisualBasic_EnumsShouldZeroValueFlagsRenameScope()
         {
             // In enum '{0}', change the name of '{1}' to 'None'.
-            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E", "A");
-            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E2", "A2");
-            string expectedMessage3 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E3", "A3");
-            string expectedMessage4 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E4", "A4");
+            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E2", "A2");
+            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E3", "A3");
 
             var code = @"
-<System.Flags>
-Private Enum E
-	A = 0
-	B = 1
-End Enum
+Class Outer
+    <System.Flags>
+    Private Enum E
+	    A = 0
+	    B = 1
+    End Enum
+End Class
 
 [|<System.Flags>
 Public Enum E2
@@ -271,8 +284,8 @@ Public Enum NoZeroValuedField
 End Enum
 ";
             VerifyBasic(code,
-                GetBasicResultAt(10, 2, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage2),
-                GetBasicResultAt(16, 2, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage3));
+                GetBasicResultAt(12, 2, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage1),
+                GetBasicResultAt(18, 2, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage2));
         }
 
         [WorkItem(836193, "DevDiv")]
@@ -283,14 +296,15 @@ End Enum
             string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E", "A");
             string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E2", "A2");
             string expectedMessage3 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E3", "A3");
-            string expectedMessage4 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E4", "A4");
 
             var code = @"
-<System.Flags> _
-Private Enum E
-	A = 0
-	B = 1
-End Enum
+Class Outer
+    <System.Flags> _
+    Private Enum E
+	    A = 0
+	    B = 1
+    End Enum
+End Class
 
 <System.Flags> _
 Public Enum E2
@@ -311,9 +325,9 @@ Public Enum NoZeroValuedField
 End Enum
 ";
             VerifyBasic(code,
-                GetBasicResultAt(4, 2, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage1),
-                GetBasicResultAt(10, 2, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage2),
-                GetBasicResultAt(16, 2, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage3));
+                GetBasicResultAt(5, 6, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage1),
+                GetBasicResultAt(12, 2, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage2),
+                GetBasicResultAt(18, 2, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage3));
         }
 
         [Fact]
@@ -325,11 +339,13 @@ End Enum
             string expectedMessage3 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E3");
 
             var code = @"
-<System.Flags>
-Private Enum E
-	None = 0
-	A = 0
-End Enum
+Class Outer
+    <System.Flags>
+    Private Enum E
+	    None = 0
+	    A = 0
+    End Enum
+End Class
 
 <System.Flags>
 Friend Enum E2
@@ -344,9 +360,9 @@ Public Enum E3
 End Enum";
 
             VerifyBasic(code,
-                GetBasicResultAt(3, 14, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage1),
-                GetBasicResultAt(9, 13, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage2),
-                GetBasicResultAt(15, 13, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage3));
+                GetBasicResultAt(4, 18, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage1),
+                GetBasicResultAt(11, 13, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage2),
+                GetBasicResultAt(17, 13, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage3));
         }
 
         [Fact]
@@ -357,14 +373,16 @@ End Enum";
             string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E2");
 
             var code = @"
-Private Enum E
-	A = 1
-End Enum
+Class Outer
+    Private Enum E
+	    A = 1
+    End Enum
 
-Private Enum E2
-	None = 1
-	A = 2
-End Enum
+    Private Enum E2
+	    None = 1
+	    A = 2
+    End Enum
+End Class
 
 Friend Enum E3
     None = 0
@@ -378,26 +396,27 @@ End Enum
 ";
 
             VerifyBasic(code,
-                GetBasicResultAt(2, 14, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage1),
-                GetBasicResultAt(6, 14, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage2));
+                GetBasicResultAt(3, 18, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage1),
+                GetBasicResultAt(7, 18, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage2));
         }
 
         [Fact]
         public void VisualBasic_EnumsShouldZeroValueNotFlagsNoZeroValueWithScope()
         {
             // Add a member to {0} that has a value of zero with a suggested name of 'None'.
-            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E");
-            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E2");
+            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E2");
 
             var code = @"
-Private Enum E
-	A = 1
-End Enum
+Class Outer
+    Private Enum E
+	    A = 1
+    End Enum
 
-[|Private Enum E2
-	None = 1
-	A = 2
-End Enum
+    [|Private Enum E2
+	    None = 1
+	    A = 2
+    End Enum
+End Class
 
 Friend Enum E3
     None = 0
@@ -411,7 +430,7 @@ End Enum
 ";
 
             VerifyBasic(code,
-                GetBasicResultAt(6, 14, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage2));
+                GetBasicResultAt(7, 18, EnumsShouldHaveZeroValueAnalyzer.RuleId, expectedMessage));
         }
     }
 }

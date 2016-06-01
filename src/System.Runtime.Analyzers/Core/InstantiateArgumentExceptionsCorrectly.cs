@@ -39,6 +39,9 @@ namespace System.Runtime.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(
                 compilationContext =>
                 {
@@ -63,7 +66,7 @@ namespace System.Runtime.Analyzers
                 });
         }
 
-        private void AnalyzeObjectCreation(
+        private static void AnalyzeObjectCreation(
             OperationAnalysisContext context,
             ISymbol owningSymbol,
             ITypeSymbol argumentExceptionType)
@@ -79,7 +82,7 @@ namespace System.Runtime.Analyzers
                 if (HasMessageOrParameterNameConstructor(creation.Type))
                 {
                     // Call the {0} constructor that contains a message and/ or paramName parameter
-                    ReportDiagnostic(context, s_localizableMessageNoArguments, creation.Type);
+                    ReportDiagnostic(context, s_localizableMessageNoArguments, creation.Type.Name);
                 }
             }
             else
@@ -101,7 +104,7 @@ namespace System.Runtime.Analyzers
                 }
             }
         }
-        private void CheckArgument(
+        private static void CheckArgument(
             ISymbol targetSymbol,
             ITypeSymbol exceptionType,
             IParameterSymbol parameter,
@@ -122,7 +125,7 @@ namespace System.Runtime.Analyzers
 
             if (format != null)
             {
-                ReportDiagnostic(context, format, targetSymbol, stringArgument, parameter.Name, exceptionType);
+                ReportDiagnostic(context, format, targetSymbol.Name, stringArgument, parameter.Name, exceptionType.Name);
             }
         }
 

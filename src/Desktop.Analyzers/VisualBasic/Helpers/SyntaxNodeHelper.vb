@@ -165,7 +165,7 @@ Namespace Desktop.Analyzers.Common
             Return Nothing
         End Function
 
-        Protected Overrides Function GetCallArgumentExpressionNodes(node As SyntaxNode, callKind As CallKind) As IEnumerable(Of SyntaxNode)
+        Protected Overrides Function GetCallArgumentExpressionNodes(node As SyntaxNode, callKind As CallKinds) As IEnumerable(Of SyntaxNode)
             If (node Is Nothing) Then
                 Return Nothing
             End If
@@ -173,9 +173,9 @@ Namespace Desktop.Analyzers.Common
             Dim argList As ArgumentListSyntax = Nothing
             Dim kind As SyntaxKind = node.Kind()
 
-            If (kind = SyntaxKind.InvocationExpression AndAlso ((callKind And CallKind.Invocation) <> 0)) Then
+            If (kind = SyntaxKind.InvocationExpression AndAlso ((callKind And CallKinds.Invocation) <> 0)) Then
                 argList = CType(node, InvocationExpressionSyntax).ArgumentList
-            ElseIf ((kind = SyntaxKind.ObjectCreationExpression) AndAlso ((callKind And CallKind.ObjectCreation) <> 0))
+            ElseIf ((kind = SyntaxKind.ObjectCreationExpression) AndAlso ((callKind And CallKinds.ObjectCreation) <> 0))
                 argList = CType(node, ObjectCreationExpressionSyntax).ArgumentList
             End If
 
@@ -209,7 +209,11 @@ Namespace Desktop.Analyzers.Common
                 Return empty
             End If
 
+            ' CA1804: Remove unused locals
+            ' TODO: Remove the below suppression once https://github.com/dotnet/roslyn-analyzers/issues/935 is fixed.
+#Disable Warning CA1804
             Dim initializer As ObjectMemberInitializerSyntax = CType(objectCreationNode.Initializer, ObjectMemberInitializerSyntax)
+#Enable Warning CA1804
             Return From fieldInitializer In initializer.Initializers
                    Where fieldInitializer.Kind() = SyntaxKind.NamedFieldInitializer
                    Select CType(fieldInitializer, NamedFieldInitializerSyntax)

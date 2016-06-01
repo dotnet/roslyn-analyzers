@@ -32,7 +32,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             helpLinkUri: "http://msdn.microsoft.com/library/ms182178.aspx",
             customTags: WellKnownDiagnosticTags.Telemetry);
 
-        protected abstract AnalyzerBase GetAnalyzer(
+        protected abstract SymbolAnalyzer GetAnalyzer(
             Compilation compilation,
             INamedTypeSymbol eventHandler,
             INamedTypeSymbol genericEventHandler,
@@ -43,6 +43,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
@@ -74,7 +77,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 });
         }
 
-        protected abstract class AnalyzerBase
+        protected abstract class SymbolAnalyzer
         {
             private readonly Compilation _compilation;
             private readonly INamedTypeSymbol _eventHandler;
@@ -82,7 +85,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             private readonly INamedTypeSymbol _eventArgs;
             private readonly INamedTypeSymbol _comSourceInterfacesAttribute;
 
-            public AnalyzerBase(
+            public SymbolAnalyzer(
                 Compilation compilation,
                 INamedTypeSymbol eventHandler,
                 INamedTypeSymbol genericEventHandler,
@@ -135,7 +138,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             protected bool IsGenericEventHandlerInstance(INamedTypeSymbol type)
             {
-                return type.OriginalDefinition == _genericEventHandler &&
+                return type.OriginalDefinition.Equals(_genericEventHandler) &&
                     type.TypeArguments.Length == 1;
             }
 

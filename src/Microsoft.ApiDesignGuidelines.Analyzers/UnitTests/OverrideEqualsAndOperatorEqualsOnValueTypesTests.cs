@@ -66,11 +66,12 @@ public struct EmptyStruct
         }
 
         [WorkItem(899, "https://github.com/dotnet/roslyn-analyzers/issues/899")]
-        [Fact(Skip = "899")]
+        [Fact]
         public void CSharpNoDiagnosticForEnumerators()
         {
             VerifyCSharp(@"
 using System;
+using System.Collections;
 
 public struct MyEnumerator : System.Collections.IEnumerator
 {
@@ -168,7 +169,7 @@ public struct A
             VerifyCSharp(@"
 public struct A
 {
-    public override bool Equals(A other)
+    public bool Equals(A other)
     {
         return true;
     }
@@ -192,7 +193,7 @@ public struct A
             VerifyCSharp(@"
 public struct A
 {
-    public new bool Equals(obj other)
+    public new bool Equals(object other)
     {
         return true;
     }
@@ -261,32 +262,34 @@ End Structure
         }
 
         [WorkItem(899, "https://github.com/dotnet/roslyn-analyzers/issues/899")]
-        [Fact(Skip = "899")]
+        [Fact]
         public void BasicNoDiagnosticForEnumerators()
         {
             VerifyBasic(@"
 Imports System
+Imports System.Collections
+Imports System.Collections.Generic
 
 Public Structure MyEnumerator
-	Implements System.Collections.IEnumerator
-	Public ReadOnly Property Current() As Object
+	Implements IEnumerator
+	Public ReadOnly Property Current As Object Implements IEnumerator.Current
 		Get
 			Throw New NotImplementedException()
 		End Get
 	End Property
 
-	Public Function MoveNext() As Boolean
+	Public Function MoveNext() As Boolean Implements IEnumerator.MoveNext
 		Throw New NotImplementedException()
 	End Function
 
-	Public Sub Reset()
+	Public Sub Reset() Implements IEnumerator.Reset
 		Throw New NotImplementedException()
 	End Sub
 End Structure
 
 Public Structure MyGenericEnumerator(Of T)
-	Implements System.Collections.Generic.IEnumerator(Of T)
-	Public ReadOnly Property Current() As T
+	Implements IEnumerator(Of T)
+	Public ReadOnly Property Current As T Implements IEnumerator(Of T).Current
 		Get
 			Throw New NotImplementedException()
 		End Get
@@ -298,15 +301,15 @@ Public Structure MyGenericEnumerator(Of T)
 		End Get
 	End Property
 
-	Public Sub Dispose()
+	Public Sub Dispose() Implements IEnumerator(Of T).Dispose
 		Throw New NotImplementedException()
 	End Sub
 
-	Public Function MoveNext() As Boolean
+	Public Function MoveNext() As Boolean Implements IEnumerator(Of T).MoveNext
 		Throw New NotImplementedException()
 	End Function
 
-	Public Sub Reset()
+	Public Sub Reset() Implements IEnumerator(Of T).Reset
 		Throw New NotImplementedException()
 	End Sub
 End Structure

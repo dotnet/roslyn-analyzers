@@ -51,8 +51,11 @@ using System;
 {
 }|]
 
-private class AttributeClass2: Attribute
+public class Outer
 {
+    private class AttributeClass2: Attribute
+    {
+    }
 }
 ",
             GetCA1813CSharpResultAt(4, 14));
@@ -83,12 +86,14 @@ Public Class AttributeClass
     Inherits Attribute
 End Class
 
-Private Class AttributeClass2
-    Inherits Attribute
+Public Class Outer
+    Private Class AttributeClass2
+        Inherits Attribute
+    End Class
 End Class
 ",
             GetCA1813BasicResultAt(4, 14),
-            GetCA1813BasicResultAt(8, 15));
+            GetCA1813BasicResultAt(9, 19));
         }
 
         [Fact]
@@ -101,11 +106,13 @@ Public Class AttributeClass
     Inherits Attribute
 End Class
 
-[|Private Class AttributeClass2
-    Inherits Attribute
-End Class|]
+Public Class Outer
+    [|Private Class AttributeClass2
+        Inherits Attribute
+    End Class|]
+End Class
 ",
-            GetCA1813BasicResultAt(8, 15));
+            GetCA1813BasicResultAt(9, 19));
         }
 
         [Fact]
@@ -127,16 +134,14 @@ End Class
 
         #endregion
 
-        internal static readonly string CA1813Name = "CA1813";
-
         private static DiagnosticResult GetCA1813CSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA1813Name, SystemRuntimeAnalyzersResources.AvoidUnsealedAttributesMessage);
+            return GetCSharpResultAt(line, column, AvoidUnsealedAttributesAnalyzer.RuleId, SystemRuntimeAnalyzersResources.AvoidUnsealedAttributesMessage);
         }
 
         private static DiagnosticResult GetCA1813BasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA1813Name, SystemRuntimeAnalyzersResources.AvoidUnsealedAttributesMessage);
+            return GetBasicResultAt(line, column, AvoidUnsealedAttributesAnalyzer.RuleId, SystemRuntimeAnalyzersResources.AvoidUnsealedAttributesMessage);
         }
     }
 }

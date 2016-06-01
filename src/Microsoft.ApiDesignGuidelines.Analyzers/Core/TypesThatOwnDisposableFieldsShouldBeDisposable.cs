@@ -33,21 +33,19 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
                 INamedTypeSymbol disposableType = WellKnownTypes.IDisposable(compilationContext.Compilation);
-
                 if (disposableType == null)
                 {
                     return;
                 }
 
                 DisposableFieldAnalyzer analyzer = GetAnalyzer(disposableType);
-                compilationContext.RegisterSymbolAction(context =>
-                {
-                    analyzer.AnalyzeSymbol(context);
-                },
-                SymbolKind.NamedType);
+                compilationContext.RegisterSymbolAction(analyzer.AnalyzeSymbol, SymbolKind.NamedType);
             });
         }
 

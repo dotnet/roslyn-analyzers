@@ -94,6 +94,7 @@ class C
     GetCSharpStringCreationResultAt(11, 9, "DoesNotAssignStringToVariable", "ToLower"));
 
             VerifyBasic(@"
+Imports System
 Imports System.Globalization
 
 Class C
@@ -105,7 +106,7 @@ Class C
     End Sub
 End Class
 ",
-    GetBasicStringCreationResultAt(8, 9, "DoesNotAssignStringToVariable", "ToLower"));
+    GetBasicStringCreationResultAt(9, 9, "DoesNotAssignStringToVariable", "ToLower"));
         }
 
         [Fact]
@@ -151,7 +152,7 @@ public class C
     private static void M(string x, out int y)
     {
         // Try parse
-        int.TryParse(x, out y));
+        int.TryParse(x, out y);
     }
 }
 ",
@@ -181,6 +182,7 @@ public class C
 {
     private static void M(string x, out int y)
     {
+        y = 1;
         NativeMethod();
     }
 
@@ -188,7 +190,7 @@ public class C
     private static extern int NativeMethod();
 }
 ",
-    GetCSharpHResultOrErrorCodeResultAt(8, 9, "M", "NativeMethod"));
+    GetCSharpHResultOrErrorCodeResultAt(9, 9, "M", "NativeMethod"));
 
             VerifyBasic(@"
 Imports System.Runtime.InteropServices

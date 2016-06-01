@@ -14,13 +14,17 @@
     <RunTestArgs Condition="'$(CIBuild)' == 'true'">$(RunTestArgs) -xml TestResults.xml</RunTestArgs>
 
     <NuGetExe>$(MSBuildThisFileDirectory)\Src\.nuget\Nuget.exe</NuGetExe>
-    <PackagesDirectory>$(MSBuildThisFileDirectory)\packages</PackagesDirectory>
+    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == ''">$(NUGET_PACKAGES)</NuGetPackageRoot>
+    <!-- Respect environment variable if set -->
+    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and
+                                 '$(OS)' == 'Windows_NT'">$(UserProfile)\.nuget\packages</NuGetPackageRoot>
+    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and
+                                 '$(OS)' != 'Windows_NT'">$(HOME)\.nuget\packages</NuGetPackageRoot>
   </PropertyGroup>
 
   <Target Name="RestorePackages">
-    <Exec Command="&quot;$(NuGetExe)&quot; install xunit.runner.console -version 2.0.0 -OutputDirectory &quot;$(PackagesDirectory)&quot;"/>
-    <Exec Command="&quot;$(NuGetExe)&quot; restore &quot;$(MSBuildThisFileDirectory)\Src\.nuget\packages.config&quot; -PackagesDirectory &quot;$(PackagesDirectory)&quot;" />
-    <Exec Command="&quot;$(NuGetExe)&quot; restore &quot;$(SolutionFile)&quot; -PackagesDirectory &quot;$(PackagesDirectory)&quot;" />
+    <Exec Command="&quot;$(NuGetExe)&quot; install xunit.runner.console -version 2.1.0 -OutputDirectory &quot;$(NuGetPackageRoot)&quot;"/>
+    <Exec Command="&quot;$(NuGetExe)&quot; restore &quot;$(SolutionFile)&quot;" />
   </Target>
 
   <Target Name="Build" DependsOnTargets="RestorePackages">
@@ -73,7 +77,7 @@
       <TestAssemblies Include="Binaries\$(Configuration)\MetaCompilation.Test.dll" />
     </ItemGroup>
 
-    <Exec Command="&quot;$(PackagesDirectory)\xunit.runner.console.2.0.0\tools\xunit.console.x86.exe&quot; @(TestAssemblies, ' ') $(RunTestArgs)" />
+    <Exec Command="&quot;$(NuGetPackageRoot)\xunit.runner.console\2.1.0\tools\xunit.console.x86.exe&quot; @(TestAssemblies, ' ') $(RunTestArgs)" />
 
   </Target>
 

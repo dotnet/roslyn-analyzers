@@ -125,12 +125,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             return true;
         }
 
-        public static bool operator ==(C c1, C c2)
+        public static bool operator ==(A a1, A a2)
         {
             return false;
         }
 
-        public static bool operator !=(C c1, C c2)
+        public static bool operator !=(A a1, A a2)
         {
             return false;
         }
@@ -231,17 +231,14 @@ End Structure
 ");
         }
 
-        internal static readonly string CA2231Name = "CA2231";
-        internal static readonly string CA2231Message = MicrosoftApiDesignGuidelinesAnalyzersResources.OverloadOperatorEqualsOnOverridingValueTypeEqualsMessage;
-
         private static DiagnosticResult GetCA2231CSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA2231Name, CA2231Message);
+            return GetCSharpResultAt(line, column, OverloadOperatorEqualsOnOverridingValueTypeEqualsAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.OverloadOperatorEqualsOnOverridingValueTypeEqualsMessage);
         }
 
         private static DiagnosticResult GetCA2231BasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA2231Name, CA2231Message);
+            return GetBasicResultAt(line, column, OverloadOperatorEqualsOnOverridingValueTypeEqualsAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.OverloadOperatorEqualsOnOverridingValueTypeEqualsMessage);
         }
     }
 }

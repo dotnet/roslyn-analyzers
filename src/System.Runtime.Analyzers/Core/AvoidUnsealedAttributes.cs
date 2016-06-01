@@ -33,6 +33,9 @@ namespace System.Runtime.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
                 INamedTypeSymbol attributeType = WellKnownTypes.Attribute(compilationContext.Compilation);

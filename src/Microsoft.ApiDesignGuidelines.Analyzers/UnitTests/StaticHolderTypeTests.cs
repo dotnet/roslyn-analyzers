@@ -107,7 +107,7 @@ public class C4
 Public Class B4
     Public Shared Sub Foo()
     End Sub
-EndClass
+End Class
 ",
                 BasicResult(2, 14, "B4"));
         }
@@ -134,7 +134,7 @@ Public Class B5
 
     Public Shared Sub Foo()
     End Sub
-EndClass
+End Class
 ");
         }
 
@@ -157,7 +157,7 @@ internal class C6
 Friend Class B6
     Public Shared Sub Foo()
     End Sub
-EndClass
+End Class
 ");
         }
 
@@ -338,7 +338,7 @@ End Class
             VerifyCSharp(@"
 public class C13
 {
-    public C13(int i = 0, string s = "") { }
+    public C13(int i = 0, string s = """") { }
 
     public static void Foo() { }
 }
@@ -350,7 +350,7 @@ public class C13
         {
             VerifyBasic(@"
 Public Class B13
-    Public Sub New(Optional i as Integer = 0, Optional s as String = "")
+    Public Sub New(Optional i as Integer = 0, Optional s as String = """")
     End Sub
 
     Public Shared Sub Foo()
@@ -535,6 +535,7 @@ public class C21
 Public Class B21
     Public Sub New()
     End Sub
+End Class
 ");
         }
 
@@ -640,10 +641,10 @@ public interface IC25Base
 {
     void Moo();
 }
-public class C25 : IC24Base
+public class C25 : IC25Base
 {
     public static void Foo() { }
-    void C25Base.Moo() { }
+    void IC25Base.Moo() { }
 }
 ");
         }
@@ -659,7 +660,7 @@ Public Class B25
 	Implements IB25Base
 	Public Shared Sub Foo()
 	End Sub
-	Private Sub B25Base_Moo() Implements B25Base.Moo
+	Private Sub B25Base_Moo() Implements IB25Base.Moo
 	End Sub
 End Class
 ");

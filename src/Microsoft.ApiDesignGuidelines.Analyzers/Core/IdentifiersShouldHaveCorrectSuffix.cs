@@ -71,13 +71,16 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(AnalyzeCompilationStart);
         }
 
-        private void AnalyzeCompilationStart(CompilationStartAnalysisContext context)
+        private static void AnalyzeCompilationStart(CompilationStartAnalysisContext context)
         {
-            var baseTypeSuffixMap = new Dictionary<INamedTypeSymbol, SuffixInfo>();
-            var interfaceTypeSuffixMap = new Dictionary<INamedTypeSymbol, SuffixInfo>();
+            var baseTypeSuffixMapBuilder = ImmutableDictionary.CreateBuilder<INamedTypeSymbol, SuffixInfo>();
+            var interfaceTypeSuffixMapBuilder = ImmutableDictionary.CreateBuilder<INamedTypeSymbol, SuffixInfo>();
 
             foreach (var tuple in s_baseTypesAndTheirSuffix)
             {
@@ -88,17 +91,19 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     // If the type is interface
                     if (wellKnownNamedType.OriginalDefinition.TypeKind == TypeKind.Interface)
                     {
-                        interfaceTypeSuffixMap.Add(wellKnownNamedType.OriginalDefinition, SuffixInfo.Create(tuple.Item2, tuple.Item3));
+                        interfaceTypeSuffixMapBuilder.Add(wellKnownNamedType.OriginalDefinition, SuffixInfo.Create(tuple.Item2, tuple.Item3));
                     }
                     else
                     {
-                        baseTypeSuffixMap.Add(wellKnownNamedType.OriginalDefinition, SuffixInfo.Create(tuple.Item2, tuple.Item3));
+                        baseTypeSuffixMapBuilder.Add(wellKnownNamedType.OriginalDefinition, SuffixInfo.Create(tuple.Item2, tuple.Item3));
                     }
                 }
             }
 
-            if (baseTypeSuffixMap.Count > 0 || interfaceTypeSuffixMap.Count > 0)
+            if (baseTypeSuffixMapBuilder.Count > 0 || interfaceTypeSuffixMapBuilder.Count > 0)
             {
+                var baseTypeSuffixMap = baseTypeSuffixMapBuilder.ToImmutable();
+                var interfaceTypeSuffixMap = interfaceTypeSuffixMapBuilder.ToImmutable();
                 context.RegisterSymbolAction((saContext) =>
                 {
                     var namedTypeSymbol = (INamedTypeSymbol)saContext.Symbol;
@@ -115,8 +120,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         // SpecialCollectionRule - Rename 'LastInFirstOut<T>' to end in either 'Collection' or 'Stack'.
                         // DefaultRule - Rename 'MyStringObjectHashtable' to end in 'Dictionary'.
                         var rule = suffixInfo.CanSuffixBeCollection ? SpecialCollectionRule : DefaultRule;
-                        if ((suffixInfo.CanSuffixBeCollection && !namedTypeSymbol.Name.EndsWith("Collection") && !namedTypeSymbol.Name.EndsWith(suffixInfo.Suffix)) ||
-                            (!suffixInfo.CanSuffixBeCollection && !namedTypeSymbol.Name.EndsWith(suffixInfo.Suffix)))
+                        if ((suffixInfo.CanSuffixBeCollection && !namedTypeSymbol.Name.EndsWith("Collection", StringComparison.Ordinal) && !namedTypeSymbol.Name.EndsWith(suffixInfo.Suffix, StringComparison.Ordinal)) ||
+                            (!suffixInfo.CanSuffixBeCollection && !namedTypeSymbol.Name.EndsWith(suffixInfo.Suffix, StringComparison.Ordinal)))
                         {
 
                             saContext.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(rule, namedTypeSymbol.ToDisplayString(), suffixInfo.Suffix));
@@ -129,7 +134,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     if (implementedInterface != null)
                     {
                         var suffixInfo = interfaceTypeSuffixMap[implementedInterface.OriginalDefinition];
-                        if (!namedTypeSymbol.Name.EndsWith(suffixInfo.Suffix))
+                        if (!namedTypeSymbol.Name.EndsWith(suffixInfo.Suffix, StringComparison.Ordinal))
                         {
                             saContext.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(DefaultRule, namedTypeSymbol.ToDisplayString(), suffixInfo.Suffix));
                         }
@@ -141,7 +146,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 {
                     const string eventHandlerString = "EventHandler";
                     var eventSymbol = saContext.Symbol as IEventSymbol;
-                    if (!eventSymbol.Type.Name.EndsWith(eventHandlerString))
+                    if (!eventSymbol.Type.Name.EndsWith(eventHandlerString, StringComparison.Ordinal))
                     {
                         saContext.ReportDiagnostic(eventSymbol.CreateDiagnostic(DefaultRule, eventSymbol.Type.Name, eventHandlerString));
                     }

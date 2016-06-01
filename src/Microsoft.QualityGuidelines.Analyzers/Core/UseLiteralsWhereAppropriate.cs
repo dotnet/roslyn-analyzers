@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Linq;
@@ -47,6 +47,9 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterOperationAction(saContext =>
             {
                 var fieldInitializer = saContext.Operation as IFieldInitializer;
@@ -64,17 +67,17 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
                 var initializerValue = fieldInitializerValue.ConstantValue.Value;
 
-                // Though null is const we dont fire the diagnostic to be FxCop Compact
+                // Though null is const we don't fire the diagnostic to be FxCop Compact
                 if (initializerValue != null)
                 {
-                    if (fieldInitializerValue.Type == saContext.Compilation.GetSpecialType(SpecialType.System_String) &&
+                    if (fieldInitializerValue.Type?.SpecialType == SpecialType.System_String &&
                         ((string)initializerValue)?.Length == 0)
                     {
                         saContext.ReportDiagnostic(lastField.CreateDiagnostic(EmptyStringRule, lastField.Name));
                         return;
                     }
 
-                    saContext.ReportDiagnostic(lastField.CreateDiagnostic(DefaultRule, lastField.Name, initializerValue));
+                    saContext.ReportDiagnostic(lastField.CreateDiagnostic(DefaultRule, lastField.Name));
                 }
             },
             OperationKind.FieldInitializerAtDeclaration);

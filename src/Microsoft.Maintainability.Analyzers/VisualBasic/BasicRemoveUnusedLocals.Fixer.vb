@@ -2,11 +2,8 @@
 
 Imports System.Collections.Immutable
 Imports System.Composition
-Imports System.Linq
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
-Imports Microsoft.CodeAnalysis.VisualBasic
-Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
 Namespace Microsoft.Maintainability.Analyzers
     ''' <summary>

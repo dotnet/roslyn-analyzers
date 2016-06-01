@@ -188,6 +188,8 @@ public class Class
         public void VisualBasic_CA1024NoDiagnosticCases()
         {
             VerifyBasic(@"
+Imports System.Collections
+
 Public Class Base
 	Public Overridable Function GetSomething() As Integer
 		Return 0
@@ -240,11 +242,11 @@ Public Class Class1
 	End Function
 
 	' 8) Method with overloads
-	Public Overrides Function GetOverloadedMethod() As Integer
+	Public Function GetOverloadedMethod() As Integer
 		Return 1
 	End Function
 
-	Public Overrides Function GetOverloadedMethod(i As Integer) As Integer
+	Public Function GetOverloadedMethod(i As Integer) As Integer
 		Return i
 	End Function
 
@@ -264,7 +266,7 @@ Public Class Class1
 	End Function
 
 	' 11) Method named 'Get'
-	Public Function Get() As String
+	Public Function [Get]() As String
 		Return fileName
 	End Function
 
@@ -278,6 +280,9 @@ Public Class Class1
 		Return fileName
 	End Function
 End Class
+
+Public Class GenericType(Of T)
+End Class
 ");
         }
 
@@ -285,6 +290,8 @@ End Class
         public void CSharp_CA1024NoDiagnosticOnUnboundMethodCaller()
         {
             VerifyCSharp(@"
+using System;
+
 public class class1
 {
     public int GetSomethingWithUnboundInvocation()
@@ -339,16 +346,16 @@ End Class
             GetCA1024BasicResultAt(17, 24, "GetFileNameProtected"));
         }
 
-        internal static readonly string CA1024Name = "CA1024";
-
         private static DiagnosticResult GetCA1024CSharpResultAt(int line, int column, string methodName)
         {
-            return GetCSharpResultAt(line, column, CA1024Name, string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.UsePropertiesWhereAppropriateMessage, methodName));
+            return GetCSharpResultAt(line, column, UsePropertiesWhereAppropriateAnalyzer.RuleId,
+                string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.UsePropertiesWhereAppropriateMessage, methodName));
         }
 
         private static DiagnosticResult GetCA1024BasicResultAt(int line, int column, string methodName)
         {
-            return GetBasicResultAt(line, column, CA1024Name, string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.UsePropertiesWhereAppropriateMessage, methodName));
+            return GetBasicResultAt(line, column, UsePropertiesWhereAppropriateAnalyzer.RuleId,
+                string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.UsePropertiesWhereAppropriateMessage, methodName));
         }
     }
 }

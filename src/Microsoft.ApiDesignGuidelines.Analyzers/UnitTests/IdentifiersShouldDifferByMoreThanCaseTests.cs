@@ -26,7 +26,7 @@ namespace Microsoft.ApiDesignGuidelines.UnitTests
         [Fact]
         public void TestGlobalNamespaceNames()
         {
-            VerifyCSharp(new string[]
+            VerifyCSharp(new[]
                 {
                 @"
 namespace N
@@ -45,7 +45,7 @@ namespace n
         [Fact]
         public void TestNestedNamespaceNames()
         {
-            VerifyCSharp(new string[]
+            VerifyCSharp(new[]
                 {
                 @"
 namespace N
@@ -74,7 +74,7 @@ namespace n
         [Fact]
         public void TestGlobalTypeNames()
         {
-            VerifyCSharp(new string[]
+            VerifyCSharp(new[]
                 {
                     @"
 public class Ni
@@ -94,7 +94,7 @@ public interface nI
         [Fact]
         public void TestGenericClasses()
         {
-            VerifyCSharp(new string[]
+            VerifyCSharp(new[]
                 {
                     @"
 public class C<T>
@@ -117,7 +117,7 @@ public class C<T,X>
         [Fact]
         public void TestPartialTypes()
         {
-            VerifyCSharp(new string[]
+            VerifyCSharp(new[]
                 {
                     @"
 namespace N
@@ -228,8 +228,8 @@ namespace NI
                 }
                 public interface Ci 
                 {
-                    public void foo();
-                    public void Foo();
+                    void foo();
+                    void Foo();
                 }
            }
         }

@@ -34,7 +34,7 @@ namespace System.Runtime.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        private readonly BinaryOperationKind[] _comparisonOperators = new BinaryOperationKind[]
+        private readonly BinaryOperationKind[] _comparisonOperators = new[]
         {
             BinaryOperationKind.FloatingEquals,
             BinaryOperationKind.FloatingGreaterThan,

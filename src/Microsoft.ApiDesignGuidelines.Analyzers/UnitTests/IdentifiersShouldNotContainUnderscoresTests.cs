@@ -3,6 +3,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
+using Roslyn.Diagnostics.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
@@ -75,10 +76,11 @@ public class OuterType
     public class UnderScoreInName_
     {
     }
-}
 
-private class UnderScoreInNameButPrivate_
-{
+    private class UnderScoreInNameButPrivate_
+    {
+    }
+
 }",
             GetCA1707CSharpResultAt(line: 4, column: 18, symbolKind: SymbolKind.NamedType, identifierNames: "OuterType.UnderScoreInName_"));
         }
@@ -180,6 +182,8 @@ public class Derives : ImplementI1
         public void CA1707_ForEvents_CSharp()
         {
             VerifyCSharp(@"
+using System;
+
 public class DoesNotMatter
 {
     public event EventHandler PublicE1_;
@@ -203,10 +207,10 @@ public class Derives : ImplementI1
 {
     public override event EventHandler E2_; // No diagnostic
 }",
-            GetCA1707CSharpResultAt(line: 4, column: 31, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.PublicE1_"),
-            GetCA1707CSharpResultAt(line: 7, column: 34, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.ProtectedE4_"),
-            GetCA1707CSharpResultAt(line: 12, column: 24, symbolKind: SymbolKind.Member, identifierNames: "I1.E_"),
-            GetCA1707CSharpResultAt(line: 18, column: 39, symbolKind: SymbolKind.Member, identifierNames: "ImplementI1.E2_"));
+            GetCA1707CSharpResultAt(line: 6, column: 31, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.PublicE1_"),
+            GetCA1707CSharpResultAt(line: 9, column: 34, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.ProtectedE4_"),
+            GetCA1707CSharpResultAt(line: 14, column: 24, symbolKind: SymbolKind.Member, identifierNames: "I1.E_"),
+            GetCA1707CSharpResultAt(line: 20, column: 39, symbolKind: SymbolKind.Member, identifierNames: "ImplementI1.E2_"));
         }
 
         [Fact]
@@ -259,7 +263,7 @@ public class Der : Base
 {
     public override void M2(int int_)
     {
-        throw new NotImplementedException();
+        throw new System.NotImplementedException();
     }
 
     public override void M1(int int_)
@@ -309,7 +313,7 @@ public class implementI : I
 {
     public void M<U_>()
     {
-        throw new NotImplementedException();
+        throw new System.NotImplementedException();
     }
 }
 
@@ -326,12 +330,12 @@ public class Der : Base
 {
     public override void M2<U_>()
     {
-        throw new NotImplementedException();
+        throw new System.NotImplementedException();
     }
 
     public override void M1<T_>()
     {
-        base.M1<T_>(int1);
+        base.M1<T_>();
     }
 }",
             GetCA1707CSharpResultAt(4, 26, SymbolKind.MethodTypeParameter, "DoesNotMatter22.PublicM1<T1_>()", "T1_"),
@@ -340,15 +344,35 @@ public class Der : Base
             GetCA1707CSharpResultAt(25, 28, SymbolKind.MethodTypeParameter, "Base.M1<T_>()", "T_"),
             GetCA1707CSharpResultAt(29, 29, SymbolKind.MethodTypeParameter, "Base.M2<U_>()", "U_"));
         }
+
+        [Fact, WorkItem(947, "https://github.com/dotnet/roslyn-analyzers/issues/947")]
+        public void CA1707_ForOperators_CSharp()
+        {
+            VerifyCSharp(@"
+public struct S
+{
+    public static bool operator ==(S left, S right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(S left, S right)
+    {
+        return !(left == right);
+    }
+}
+");
+        }
+
         #endregion
+
         #region Visual Basic Tests
         [Fact]
         public void CA1707_ForAssembly_VisualBasic()
         {
             VerifyBasic(@"
-public class DoesNotMatter
-{
-}
+Public Class DoesNotMatter
+End Class
 ",
             testProjectName: "AssemblyNameHasUnderScore_",
             expected: GetCA1707BasicResultAt(line: 2, column: 1, symbolKind: SymbolKind.Assembly, identifierNames: "AssemblyNameHasUnderScore_"));
@@ -358,9 +382,8 @@ public class DoesNotMatter
         public void CA1707_ForAssembly_NoDiagnostics_VisualBasic()
         {
             VerifyBasic(@"
-public class DoesNotMatter
-{
-}
+Public Class DoesNotMatter
+End Class
 ",
             testProjectName: "AssemblyNameHasNoUnderScore");
         }
@@ -390,9 +413,9 @@ End Namespace",
 Public Class OuterType
     Public Class UnderScoreInName_
     End Class
-End Class
 
-Private Class UnderScoreInNameButPrivate_
+    Private Class UnderScoreInNameButPrivate_
+    End Class
 End Class",
             GetCA1707BasicResultAt(line: 3, column: 18, symbolKind: SymbolKind.NamedType, identifierNames: "OuterType.UnderScoreInName_"));
         }
@@ -442,7 +465,7 @@ Public Interface I1
 End Interface
 
 Public Class ImplementI1
-    Inherits I1
+    Implements I1
     Public Sub M_() Implements I1.M_
     End Sub
     ' No diagnostic
@@ -544,29 +567,29 @@ End Class",
         {
             VerifyBasic(@"
 Public Class DoesNotMatter
-    Public Event PublicE1_ As EventHandler
-    Private Event PrivateE2_ As EventHandler
+    Public Event PublicE1_ As System.EventHandler
+    Private Event PrivateE2_ As System.EventHandler
     ' No diagnostic
-    Friend Event InternalE3_ As EventHandler
+    Friend Event InternalE3_ As System.EventHandler
     ' No diagnostic
-    Protected Event ProtectedE4_ As EventHandler
+    Protected Event ProtectedE4_ As System.EventHandler
 End Class
 
 Public Interface I1
-    Event E_ As EventHandler
+    Event E_ As System.EventHandler
 End Interface
 
 Public Class ImplementI1
     Implements I1
     ' No diagnostic
-    Public Event E_ As EventHandler Implements I1.E_
-    Public Event E2_ As EventHandler
+    Public Event E_ As System.EventHandler Implements I1.E_
+    Public Event E2_ As System.EventHandler
 End Class
 
 Public Class Derives
     Inherits ImplementI1
     ' No diagnostic
-    Public Shadows Event E2_ As EventHandler
+    Public Shadows Event E2_ As System.EventHandler
 End Class",
             GetCA1707BasicResultAt(line: 3, column: 18, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.PublicE1_"),
             GetCA1707BasicResultAt(line: 8, column: 21, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.ProtectedE4_"),
@@ -625,7 +648,7 @@ End Class
 Public Class Der
     Inherits Base
     Public Overrides Sub M2(int_ As Integer)
-        Throw New NotImplementedException()
+        Throw New System.NotImplementedException()
     End Sub
 
     Public Overrides Sub M1(int_ As Integer)
@@ -673,7 +696,7 @@ End Interface
 Public Class implementI
     Implements I
     Public Sub M(Of U_)() Implements I.M
-        Throw New NotImplementedException()
+        Throw New System.NotImplementedException()
     End Sub
 End Class
 
@@ -687,7 +710,7 @@ End Class
 Public Class Der
     Inherits Base
     Public Overrides Sub M2(Of U_)()
-        Throw New NotImplementedException()
+        Throw New System.NotImplementedException()
     End Sub
 
     Public Overrides Sub M1(Of T_)()
@@ -700,6 +723,23 @@ End Class",
             GetCA1707BasicResultAt(25, 34, SymbolKind.MethodTypeParameter, "Base.M1(Of T_)()", "T_"),
             GetCA1707BasicResultAt(28, 35, SymbolKind.MethodTypeParameter, "Base.M2(Of U_)()", "U_"));
         }
+
+        [Fact, WorkItem(947, "https://github.com/dotnet/roslyn-analyzers/issues/947")]
+        public void CA1707_ForOperators_VisualBasic()
+        {
+            VerifyBasic(@"
+Public Structure S
+	Public Shared Operator =(left As S, right As S) As Boolean
+		Return left.Equals(right)
+	End Operator
+
+	Public Shared Operator <>(left As S, right As S) As Boolean
+		Return Not (left = right)
+	End Operator
+End Structure
+");
+        }
+
         #endregion
 
         #region Helpers

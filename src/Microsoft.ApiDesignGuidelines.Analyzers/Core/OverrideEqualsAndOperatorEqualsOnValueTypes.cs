@@ -23,41 +23,35 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
         private static readonly string s_category = DiagnosticCategory.Performance;
-        private static readonly DiagnosticSeverity s_severity = DiagnosticSeverity.Warning;
-        private static readonly bool s_isEnabledByDefault = true;
-        private static readonly string s_helpLinkUri = "https://msdn.microsoft.com/en-us/library/ms182276.aspx";
-        private static readonly string s_customTags = WellKnownDiagnosticTags.Telemetry;
-
+        private const string s_helpLinkUri = "https://msdn.microsoft.com/en-us/library/ms182276.aspx";
+        
         internal static DiagnosticDescriptor EqualsRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageEquals,
                                                                              s_category,
-                                                                             s_severity,
-                                                                             s_isEnabledByDefault,
+                                                                             DiagnosticSeverity.Warning,
+                                                                             true,
                                                                              s_localizableDescription,
                                                                              s_helpLinkUri,
-                                                                             s_customTags);
+                                                                             WellKnownDiagnosticTags.Telemetry);
 
         internal static DiagnosticDescriptor OpEqualityRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageOpEquality,
                                                                              s_category,
-                                                                             s_severity,
-                                                                             s_isEnabledByDefault,
+                                                                             DiagnosticSeverity.Warning,
+                                                                             true,
                                                                              s_localizableDescription,
                                                                              s_helpLinkUri,
-                                                                             s_customTags);
+                                                                             WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(EqualsRule, OpEqualityRule);
 
-        protected virtual bool IsAssignableTo(INamedTypeSymbol type, INamedTypeSymbol assignableToType)
-        {
-            // TODO: Use the language specific helper for IsAssignableTo.
-            return false;
-        }
-
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             analysisContext.RegisterCompilationStartAction(compilationStartContext =>
             {
                 var iEnumerator = WellKnownTypes.IEnumerator(compilationStartContext.Compilation);
@@ -80,8 +74,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     }
 
                     // Enumerators are often ValueTypes to prevent heap allocation when enumerating
-                    if (iEnumerator != null && IsAssignableTo(namedType, iEnumerator) ||
-                        genericIEnumerator != null && IsAssignableTo(namedType, genericIEnumerator))
+                    if (iEnumerator != null && namedType.DerivesFromOrImplementsAnyConstructionOf(iEnumerator) ||
+                        genericIEnumerator != null && namedType.DerivesFromOrImplementsAnyConstructionOf(genericIEnumerator))
                     {
                         return;
                     }

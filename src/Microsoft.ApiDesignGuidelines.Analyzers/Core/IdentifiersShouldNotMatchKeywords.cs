@@ -70,18 +70,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              helpLinkUri: HelpLinkUri,
                                                                              customTags: s_customTags);
 
-        // Define the format in which this rule displays member names. The format is chosen to be
-        // consistent with FxCop's display format for this rule.
-        private static readonly SymbolDisplayFormat s_memberDisplayFormat =
-            // This format omits the namespace.
-            SymbolDisplayFormat.CSharpShortErrorMessageFormat
-                // Turn off the EscapeKeywordIdentifiers flag (which is on by default), so that
-                // a method named "@for" is displayed as "for".
-                // Turn on the UseSpecialTypes flag (which is off by default), so that parameter
-                // names of "special" types such as Int32 are displayed as their language alias,
-                // such as int for C# and Integer for VB.
-                .WithMiscellaneousOptions(SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
-
         // Define the format in which this rule displays namespace names. The format is chosen to be
         // consistent with FxCop's display format for this rule.
         private static readonly SymbolDisplayFormat s_namespaceDisplayFormat =
@@ -180,7 +168,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 context.ReportDiagnostic(
                     type.CreateDiagnostic(
                         TypeRule,
-                        FormatMemberName(type),
+                        type.FormatMemberName(),
                         matchingKeyword));
             }
         }
@@ -205,7 +193,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 context.ReportDiagnostic(
                     symbol.CreateDiagnostic(
                         MemberRule,
-                        FormatMemberName(symbol),
+                        symbol.FormatMemberName(),
                         matchingKeyword));
             }
         }
@@ -232,7 +220,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     context.ReportDiagnostic(
                         parameter.CreateDiagnostic(
                             MemberParameterRule,
-                            FormatMemberName(method),
+                            method.FormatMemberName(),
                             parameter.Name,
                             matchingKeyword));
                 }
@@ -247,12 +235,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
 
             return s_caseInsensitiveKeywords.TryGetKey(name, out keyword);
-        }
-
-        // Format member names in a way consistent with FxCop's display for this rule.
-        private static string FormatMemberName(ISymbol member)
-        {
-            return member.ToDisplayString(s_memberDisplayFormat);
         }
 
         private static readonly ImmutableHashSet<string> s_caseSensitiveKeywords = new[]

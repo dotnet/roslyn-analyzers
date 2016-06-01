@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.ApiDesignGuidelines.Analyzers", "Microsoft.ApiDesignGuidelines.Analyzers", "{385D5936-8AB5-4E7B-9E88-0F725999CA5A}"
 EndProject
@@ -158,7 +158,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "System.Security.Cryptograph
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Security.Cryptography.Hashing.Algorithms.Analyzers.Core", "System.Security.Cryptography.Hashing.Algorithms.Analyzers\Core\System.Security.Cryptography.Hashing.Algorithms.Analyzers.Core.csproj", "{DAA5B1A4-9C03-4F0E-AC61-AAD0F96457F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Security.Cryptography.Hashing.CSharp.Algorithms", "System.Security.Cryptography.Hashing.Algorithms.Analyzers\CSharp\System.Security.Cryptography.Hashing.CSharp.Algorithms.csproj", "{9C86C9DB-6A03-487A-8A38-9D09DB7DFDFB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Security.Cryptography.Hashing.Algorithms.CSharp.Analyzers", "System.Security.Cryptography.Hashing.Algorithms.Analyzers\CSharp\System.Security.Cryptography.Hashing.Algorithms.CSharp.Analyzers.csproj", "{9C86C9DB-6A03-487A-8A38-9D09DB7DFDFB}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "System.Security.Cryptography.Hashing.Algorithms.VisualBasic.Analyzers", "System.Security.Cryptography.Hashing.Algorithms.Analyzers\VisualBasic\System.Security.Cryptography.Hashing.Algorithms.VisualBasic.Analyzers.vbproj", "{857233D3-88FC-4CE5-9913-0456929A1B6E}"
 EndProject
@@ -222,6 +222,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeAnalysis", "Dependencies\CodeAnalysis\CodeAnalysis.csproj", "{434FA01F-B8CB-41F7-88D1-7906003F23BC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xUnit", "Dependencies\xUnit\xUnit.csproj", "{F21BC39A-3C97-4D8F-BFA8-9E4BD9B56413}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Security.Cryptography.Hashing.Algorithms.Analyzers.Setup", "System.Security.Cryptography.Hashing.Algorithms.Analyzers\Setup\System.Security.Cryptography.Hashing.Algorithms.Analyzers.Setup.csproj", "{989CDCD1-9031-4922-895B-8EB4D18D7A2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -935,6 +937,14 @@ Global
 		{F21BC39A-3C97-4D8F-BFA8-9E4BD9B56413}.Release|Any CPU.Build.0 = Debug|Any CPU
 		{F21BC39A-3C97-4D8F-BFA8-9E4BD9B56413}.Release|x86.ActiveCfg = Debug|Any CPU
 		{F21BC39A-3C97-4D8F-BFA8-9E4BD9B56413}.Release|x86.Build.0 = Debug|Any CPU
+		{989CDCD1-9031-4922-895B-8EB4D18D7A2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{989CDCD1-9031-4922-895B-8EB4D18D7A2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{989CDCD1-9031-4922-895B-8EB4D18D7A2D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{989CDCD1-9031-4922-895B-8EB4D18D7A2D}.Debug|x86.Build.0 = Debug|Any CPU
+		{989CDCD1-9031-4922-895B-8EB4D18D7A2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{989CDCD1-9031-4922-895B-8EB4D18D7A2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{989CDCD1-9031-4922-895B-8EB4D18D7A2D}.Release|x86.ActiveCfg = Release|Any CPU
+		{989CDCD1-9031-4922-895B-8EB4D18D7A2D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1028,5 +1038,6 @@ Global
 		{7ED0990C-5642-481D-89BC-3AFC88C38A2D} = {87CF7748-CEB9-4D1A-9A56-F4364B73AB55}
 		{434FA01F-B8CB-41F7-88D1-7906003F23BC} = {57CFC658-9390-42DA-AB5C-72B67F700B41}
 		{F21BC39A-3C97-4D8F-BFA8-9E4BD9B56413} = {57CFC658-9390-42DA-AB5C-72B67F700B41}
+		{989CDCD1-9031-4922-895B-8EB4D18D7A2D} = {FB4EA164-223A-418C-932B-026FE0234089}
 	EndGlobalSection
 EndGlobal

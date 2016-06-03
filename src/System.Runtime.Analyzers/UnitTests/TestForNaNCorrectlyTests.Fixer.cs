@@ -327,6 +327,214 @@ End Class
 ");
         }
 
+        [Fact]
+        public void CA2242_FixForComparisonWithNaNInThrowStatement()
+        {
+            VerifyCSharpFix(@"
+public class A
+{
+    float _n = 42.0F;
+
+    public void F()
+    {
+        throw _n != float.NaN ? new Exception() : new ArgumentException();
+    }
+}
+", @"
+public class A
+{
+    float _n = 42.0F;
+
+    public void F()
+    {
+        throw !float.IsNaN(_n) ? new Exception() : new ArgumentException();
+    }
+}
+");
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/11741")]
+        public void CA2242_FixForComparisonWithNaNInCatchFilterClause()
+        {
+            VerifyCSharpFix(@"
+public class A
+{
+    float _n = 42.0F;
+
+    public void F()
+    {
+        try { }
+        catch (Exception ex) when (_n != float.NaN) { }
+    }
+}
+", @"
+public class A
+{
+    float _n = 42.0F;
+
+    public void F()
+    {
+        try { }
+        catch (Exception ex) when (!float.IsNaN(_n)) { }
+    }
+}
+");
+        }
+        
+        [Fact]
+        public void CA2242_FixForComparisonWithNaNInYieldReturnStatement()
+        {
+            VerifyCSharpFix(@"
+public class A
+{
+    float _n = 42.0F;
+
+    public IEnumerable<bool> F()
+    {
+        yield return _n != float.NaN;
+    }
+}
+", @"
+public class A
+{
+    float _n = 42.0F;
+
+    public IEnumerable<bool> F()
+    {
+        yield return !float.IsNaN(_n);
+    }
+}
+");
+        }
+
+        [Fact]
+        public void CA2242_FixForComparisonWithNaNInSwitchStatement()
+        {
+            VerifyCSharpFix(@"
+public class A
+{
+    float _n = 42.0F;
+
+    public void F()
+    {
+        switch (_n != float.NaN)
+        {
+            default:
+                throw new NotImplementedException();
+        }
+    }
+}
+", @"
+public class A
+{
+    float _n = 42.0F;
+
+    public void F()
+    {
+        switch (!float.IsNaN(_n))
+        {
+            default:
+                throw new NotImplementedException();
+        }
+    }
+}
+");
+        }
+
+        [Fact]
+        public void CA2242_FixForComparisonWithNaNInForLoop()
+        {
+            VerifyCSharpFix(@"
+public class A
+{
+    float _n = 42.0F;
+
+    public void F()
+    {
+        for (; _n != float.NaN; )
+        {
+            throw new Exception();
+        }
+    }
+}
+", @"
+public class A
+{
+    float _n = 42.0F;
+
+    public void F()
+    {
+        for (; !float.IsNaN(_n); )
+        {
+            throw new Exception();
+        }
+    }
+}
+");
+        }
+
+        [Fact]
+        public void CA2242_FixForComparisonWithNaNInWhileLoop()
+        {
+            VerifyCSharpFix(@"
+public class A
+{
+    float _n = 42.0F;
+
+    public void F()
+    {
+        while (_n != float.NaN)
+        {
+        }
+    }
+}
+", @"
+public class A
+{
+    float _n = 42.0F;
+
+    public void F()
+    {
+        while (!float.IsNaN(_n))
+        {
+        }
+    }
+}
+");
+        }
+
+        [Fact]
+        public void CA2242_FixForComparisonWithNaNInDoWhileLoop()
+        {
+            VerifyCSharpFix(@"
+public class A
+{
+    float _n = 42.0F;
+
+    public void F()
+    {
+        do
+        {
+        }
+        while (_n != float.NaN);
+    }
+}
+", @"
+public class A
+{
+    float _n = 42.0F;
+
+    public void F()
+    {
+        do
+        {
+        }
+        while (!float.IsNaN(_n));
+    }
+}
+");
+        }
+        
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new TestForNaNCorrectlyAnalyzer();

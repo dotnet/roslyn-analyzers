@@ -458,6 +458,142 @@ End Class
             VerifyBasic(code, GetBasicResultAt(6, 19));
         }
 
+        [Fact]
+        public void CSharpDiagnosticForComparisonWithNaNInThrowStatement()
+        {
+            var code = @"
+public class A
+{
+    float _n = 42.0F;
+
+    public void F()
+    {
+        throw _n != float.NaN ? new Exception() : new ArgumentException();
+    }
+}
+";
+            VerifyCSharp(code, GetCSharpResultAt(8, 15));
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/11741")]
+        public void CSharpDiagnosticForComparisonWithNaNInCatchFilterClause()
+        {
+            var code = @"
+public class A
+{
+    float _n = 42.0F;
+
+    public void F()
+    {
+        try
+        {
+        }
+        catch (Exception ex) when (_n != float.NaN)
+        {
+        }
+    }
+}
+";
+            VerifyCSharp(code, GetCSharpResultAt(11, 36));
+        }
+
+        [Fact]
+        public void CSharpDiagnosticForComparisonWithNaNInYieldReturnStatement()
+        {
+            var code = @"
+public class A
+{
+    float _n = 42.0F;
+
+    public IEnumerable<bool> F()
+    {
+        yield return _n != float.NaN;
+    }
+}
+";
+            VerifyCSharp(code, GetCSharpResultAt(8, 22));
+        }
+
+        [Fact]
+        public void CSharpDiagnosticForComparisonWithNaNInSwitchStatement()
+        {
+            var code = @"
+public class A
+{
+    float _n = 42.0F;
+
+    public void F()
+    {
+        switch (_n != float.NaN)
+        {
+            default:
+                throw new NotImplementedException();
+        }
+    }
+}
+";
+            VerifyCSharp(code, GetCSharpResultAt(8, 17));
+        }
+
+        [Fact]
+        public void CSharpDiagnosticForComparisonWithNaNInForLoop()
+        {
+            var code = @"
+public class A
+{
+    float _n = 42.0F;
+
+    public void F()
+    {
+        for (; _n != float.NaN; )
+        {
+            throw new Exception();
+        }
+    }
+}
+";
+            VerifyCSharp(code, GetCSharpResultAt(8, 16));
+        }
+
+        [Fact]
+        public void CSharpDiagnosticForComparisonWithNaNInWhileLoop()
+        {
+            var code = @"
+public class A
+{
+    float _n = 42.0F;
+
+    public void F()
+    {
+        while (_n != float.NaN)
+        {
+        }
+    }
+}
+";
+            VerifyCSharp(code, GetCSharpResultAt(8, 16));
+        }
+
+        [Fact]
+        public void CSharpDiagnosticForComparisonWithNaNInDoWhileLoop()
+        {
+            var code = @"
+public class A
+{
+    float _n = 42.0F;
+
+    public void F()
+    {
+        do
+        {
+        }
+        while (_n != float.NaN);
+    }
+}
+";
+            VerifyCSharp(code, GetCSharpResultAt(11, 16));
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new TestForNaNCorrectlyAnalyzer();

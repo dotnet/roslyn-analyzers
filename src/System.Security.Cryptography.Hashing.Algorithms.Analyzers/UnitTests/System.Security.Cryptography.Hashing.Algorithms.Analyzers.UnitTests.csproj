@@ -39,9 +39,9 @@
       <Project>{DAA5B1A4-9C03-4F0E-AC61-AAD0F96457F8}</Project>
       <Name>System.Security.Cryptography.Hashing.Algorithms.Analyzers.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CSharp\System.Security.Cryptography.Hashing.CSharp.Algorithms.csproj">
+    <ProjectReference Include="..\CSharp\System.Security.Cryptography.Hashing.Algorithms.CSharp.Analyzers.csproj">
       <Project>{9C86C9DB-6A03-487A-8A38-9D09DB7DFDFB}</Project>
-      <Name>System.Security.Cryptography.Hashing.CSharp.Algorithms</Name>
+      <Name>System.Security.Cryptography.Hashing.Algorithms.CSharp.Analyzers</Name>
     </ProjectReference>
     <ProjectReference Include="..\VisualBasic\System.Security.Cryptography.Hashing.Algorithms.VisualBasic.Analyzers.vbproj">
       <Project>{857233D3-88FC-4CE5-9913-0456929A1B6E}</Project>

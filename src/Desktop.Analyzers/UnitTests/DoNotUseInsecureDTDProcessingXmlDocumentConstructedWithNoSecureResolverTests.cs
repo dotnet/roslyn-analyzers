@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureDTDProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
     {
         private static readonly string s_CA3075XmlDocumentWithNoSecureResolverMessage = DesktopAnalyzersResources.XmlDocumentWithNoSecureResolverMessage;
 

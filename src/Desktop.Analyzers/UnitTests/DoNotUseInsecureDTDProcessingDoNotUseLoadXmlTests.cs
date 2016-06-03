@@ -6,20 +6,20 @@ using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureDTDProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private const string CA3075RuleId = DoNotUseInsecureDTDProcessingAnalyzer.RuleId;
+        private const string CA3075RuleId = DoNotUseInsecureDtdProcessingAnalyzer.RuleId;
 
         private readonly string _CA3075LoadXmlMessage = DesktopAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage;
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new DoNotUseInsecureDTDProcessingAnalyzer();
+            return new DoNotUseInsecureDtdProcessingAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new DoNotUseInsecureDTDProcessingAnalyzer();
+            return new DoNotUseInsecureDtdProcessingAnalyzer();
         }
 
         private DiagnosticResult GetCA3075LoadXmlCSharpResultAt(int line, int column)

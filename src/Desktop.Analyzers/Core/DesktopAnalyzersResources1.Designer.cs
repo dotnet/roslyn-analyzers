@@ -235,18 +235,18 @@ namespace Desktop.Analyzers {
         /// <summary>
         ///   Looks up a localized string similar to Using XmlTextReader.Load(), creating an insecure XmlReaderSettings instance when invoking XmlReader.Create(), setting the InnerXml property of the XmlDocument and enabling DTD processing using XmlUrlResolver insecurely can lead to information disclosure. Replace it with a call to the Load() method overload that takes an XmlReader instance, use XmlReader.Create() to accept XmlReaderSettings arguments or consider explicitly setting secure values. The DataViewSettingCollectionString property of DataViewManager [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DoNotUseInsecureDTDProcessingDescription {
+        internal static string DoNotUseInsecureDtdProcessingDescription {
             get {
-                return ResourceManager.GetString("DoNotUseInsecureDTDProcessingDescription", resourceCulture);
+                return ResourceManager.GetString("DoNotUseInsecureDtdProcessingDescription", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to {0}.
         /// </summary>
-        internal static string DoNotUseInsecureDTDProcessingGenericMessage {
+        internal static string DoNotUseInsecureDtdProcessingGenericMessage {
             get {
-                return ResourceManager.GetString("DoNotUseInsecureDTDProcessingGenericMessage", resourceCulture);
+                return ResourceManager.GetString("DoNotUseInsecureDtdProcessingGenericMessage", resourceCulture);
             }
         }
         

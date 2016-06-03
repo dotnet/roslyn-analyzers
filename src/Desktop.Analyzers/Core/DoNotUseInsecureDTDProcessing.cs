@@ -16,17 +16,17 @@ namespace Desktop.Analyzers
     /// Secure DTD processing and entity resolution in XML
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotUseInsecureDTDProcessingAnalyzer : DiagnosticAnalyzer
+    public sealed class DoNotUseInsecureDtdProcessingAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA3075";
         private const string HelpLink = "http://aka.ms/CA3075";
         
-        internal static DiagnosticDescriptor RuleDoNotUseInsecureDTDProcessing = CreateDiagnosticDescriptor(
-                                                                                    SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDTDProcessingGenericMessage)),
-                                                                                    SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDTDProcessingDescription)),
+        internal static DiagnosticDescriptor RuleDoNotUseInsecureDtdProcessing = CreateDiagnosticDescriptor(
+                                                                                    SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDtdProcessingGenericMessage)),
+                                                                                    SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDtdProcessingDescription)),
                                                                                     HelpLink);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleDoNotUseInsecureDTDProcessing);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleDoNotUseInsecureDtdProcessing);
 
         private void RegisterAnalyzer(OperationBlockStartAnalysisContext context, CompilationSecurityTypes types, Version frameworkVersion)
         {
@@ -153,7 +153,7 @@ namespace Desktop.Analyzers
                     if (!(env.IsXmlResolverSet | env.IsSecureResolver))
                     {
                         Diagnostic diag = Diagnostic.Create(
-                            RuleDoNotUseInsecureDTDProcessing,
+                            RuleDoNotUseInsecureDtdProcessing,
                             env.XmlDocumentDefinition.GetLocation(),
                             SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                 nameof(DesktopAnalyzersResources.XmlDocumentWithNoSecureResolverMessage)
@@ -171,7 +171,7 @@ namespace Desktop.Analyzers
                         !(env.IsDtdProcessingSet | env.IsDtdProcessingDisabled))
                     {
                         Diagnostic diag = Diagnostic.Create(
-                            RuleDoNotUseInsecureDTDProcessing,
+                            RuleDoNotUseInsecureDtdProcessing,
                             env.XmlTextReaderDefinition.GetLocation(),
                             SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                 nameof(DesktopAnalyzersResources.XmlTextReaderConstructedWithNoSecureResolutionMessage)
@@ -239,7 +239,7 @@ namespace Desktop.Analyzers
                 {
                     if (SecurityDiagnosticHelpers.HasXmlReaderParameter(method, _xmlTypes) < 0)
                     {
-                        DiagnosticDescriptor rule = RuleDoNotUseInsecureDTDProcessing;
+                        DiagnosticDescriptor rule = RuleDoNotUseInsecureDtdProcessing;
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 rule,
@@ -258,9 +258,9 @@ namespace Desktop.Analyzers
 
                     if (xmlReaderSettingsIndex < 0)
                     {
-                        DiagnosticDescriptor rule = RuleDoNotUseInsecureDTDProcessing;
+                        DiagnosticDescriptor rule = RuleDoNotUseInsecureDtdProcessing;
                         Diagnostic diag = Diagnostic.Create(
-                                RuleDoNotUseInsecureDTDProcessing,
+                                RuleDoNotUseInsecureDtdProcessing,
                                 expression.Syntax.GetLocation(),
                                 SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                     nameof(DesktopAnalyzersResources.XmlReaderCreateWrongOverloadMessage)
@@ -285,7 +285,7 @@ namespace Desktop.Analyzers
                         {
                             // symbol for settings is not found => passed in without any change => assume insecure
                             Diagnostic diag = Diagnostic.Create(
-                                RuleDoNotUseInsecureDTDProcessing,
+                                RuleDoNotUseInsecureDtdProcessing,
                                 expression.Syntax.GetLocation(),
                                 SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                     nameof(DesktopAnalyzersResources.XmlReaderCreateInsecureInputMessage)
@@ -299,7 +299,7 @@ namespace Desktop.Analyzers
                             if (env.IsConstructedInCodeBlock)
                             {
                                 diag = Diagnostic.Create(
-                                    RuleDoNotUseInsecureDTDProcessing,
+                                    RuleDoNotUseInsecureDtdProcessing,
                                     expression.Syntax.GetLocation(),
                                     SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                         nameof(DesktopAnalyzersResources.XmlReaderCreateInsecureConstructedMessage)
@@ -309,7 +309,7 @@ namespace Desktop.Analyzers
                             else
                             {
                                 diag = Diagnostic.Create(
-                                    RuleDoNotUseInsecureDTDProcessing,
+                                    RuleDoNotUseInsecureDtdProcessing,
                                     expression.Syntax.GetLocation(),
                                     SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                         nameof(DesktopAnalyzersResources.XmlReaderCreateInsecureInputMessage)
@@ -430,7 +430,7 @@ namespace Desktop.Analyzers
                                 if (xmlResolverObjCreated != null)
                                 {
                                     Diagnostic diag = Diagnostic.Create(
-                                        RuleDoNotUseInsecureDTDProcessing,
+                                        RuleDoNotUseInsecureDtdProcessing,
                                         prop.Syntax.GetLocation(),
                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                             nameof(DesktopAnalyzersResources.XmlDocumentWithNoSecureResolverMessage)
@@ -459,7 +459,7 @@ namespace Desktop.Analyzers
                 else if (!xmlDocumentEnvironment.IsSecureResolver) // Insecure temp object
                 {
                     Diagnostic diag = Diagnostic.Create(
-                                        RuleDoNotUseInsecureDTDProcessing,
+                                        RuleDoNotUseInsecureDtdProcessing,
                                         node.GetLocation(),
                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                             nameof(DesktopAnalyzersResources.XmlDocumentWithNoSecureResolverMessage)
@@ -525,7 +525,7 @@ namespace Desktop.Analyzers
                     (env.IsDtdProcessingSet && !env.IsDtdProcessingDisabled))
                 {
                     Diagnostic diag = Diagnostic.Create(
-                        RuleDoNotUseInsecureDTDProcessing,
+                        RuleDoNotUseInsecureDtdProcessing,
                         env.XmlTextReaderDefinition.GetLocation(),
                         SecurityDiagnosticHelpers.GetLocalizableResourceString(
                             nameof(DesktopAnalyzersResources.XmlTextReaderSetInsecureResolutionMessage)
@@ -542,7 +542,7 @@ namespace Desktop.Analyzers
                 else if (variable == null && !(env.IsDtdProcessingSet && env.IsXmlResolverSet && env.IsDtdProcessingDisabled && env.IsSecureResolver))
                 {
                     Diagnostic diag = Diagnostic.Create(
-                        RuleDoNotUseInsecureDTDProcessing,
+                        RuleDoNotUseInsecureDtdProcessing,
                         env.XmlTextReaderDefinition.GetLocation(),
                         SecurityDiagnosticHelpers.GetLocalizableResourceString(
                             nameof(DesktopAnalyzersResources.XmlTextReaderConstructedWithNoSecureResolutionMessage)
@@ -623,7 +623,7 @@ namespace Desktop.Analyzers
                 else // Assigning XmlDocument's XmlResolver to an insecure value
                 {
                     Diagnostic diag = Diagnostic.Create(
-                                RuleDoNotUseInsecureDTDProcessing,
+                                RuleDoNotUseInsecureDtdProcessing,
                                 context.Operation.Syntax.GetLocation(),
                                 SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                     nameof(DesktopAnalyzersResources.XmlDocumentWithNoSecureResolverMessage)
@@ -676,7 +676,7 @@ namespace Desktop.Analyzers
                 {
                     // Generate a warning whenever the XmlResolver or DtdProcessing property is set to an insecure value
                     Diagnostic diag = Diagnostic.Create(
-                        RuleDoNotUseInsecureDTDProcessing,
+                        RuleDoNotUseInsecureDtdProcessing,
                         expression.Syntax.GetLocation(),
                         SecurityDiagnosticHelpers.GetLocalizableResourceString(
                             nameof(DesktopAnalyzersResources.XmlTextReaderSetInsecureResolutionMessage)
@@ -772,7 +772,7 @@ namespace Desktop.Analyzers
             {
                 if (property.MatchPropertyDerivedByName(_xmlTypes.XmlDocument, SecurityMemberNames.InnerXml))
                 {
-                    DiagnosticDescriptor rule = RuleDoNotUseInsecureDTDProcessing;
+                    DiagnosticDescriptor rule = RuleDoNotUseInsecureDtdProcessing;
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             rule,
@@ -785,7 +785,7 @@ namespace Desktop.Analyzers
                 }
                 else if (property.MatchPropertyDerivedByName(_xmlTypes.DataViewManager, SecurityMemberNames.DataViewSettingCollectionString))
                 {
-                    DiagnosticDescriptor rule = RuleDoNotUseInsecureDTDProcessing;
+                    DiagnosticDescriptor rule = RuleDoNotUseInsecureDtdProcessing;
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             rule,

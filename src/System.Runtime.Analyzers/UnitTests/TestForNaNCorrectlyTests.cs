@@ -424,6 +424,7 @@ End Class
 ";
             VerifyBasic(code, GetBasicResultAt(6, 11));
         }
+
         [Fact]
         public void CSharpDiagnosticForComparisonWithNaNInTernaryOperator()
         {

@@ -18,7 +18,7 @@ namespace System.Runtime.Analyzers
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            SyntaxGenerator syntaxFactoryService = SyntaxGenerator.GetGenerator(context.Document);
+            SyntaxGenerator syntaxGenerator = SyntaxGenerator.GetGenerator(context.Document);
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             SyntaxNode node = root.FindNode(context.Span);
 
@@ -30,7 +30,7 @@ namespace System.Runtime.Analyzers
                 // StringComparison.CurrentCulture => StringComparison.Ordinal
                 // StringComparison.CurrentCultureIgnoreCase => StringComparison.OrdinalIgnoreCase
                 context.RegisterCodeFix(new MyCodeAction(SystemRuntimeAnalyzersResources.UseOrdinalStringComparisonTitle,
-                                                         async ct => await FixArgument(context.Document, syntaxFactoryService, root, node).ConfigureAwait(false)),
+                                                         async ct => await FixArgument(context.Document, syntaxGenerator, root, node).ConfigureAwait(false)),
                                                     diagnostic);
             }
             else if (IsInIdentifierNameContext(node))
@@ -38,7 +38,7 @@ namespace System.Runtime.Analyzers
                 // string.Equals(a, b) => string.Equals(a, b, StringComparison.Ordinal)
                 // string.Compare(a, b) => string.Compare(a, b, StringComparison.Ordinal)
                 context.RegisterCodeFix(new MyCodeAction(SystemRuntimeAnalyzersResources.UseOrdinalStringComparisonTitle,
-                                                         async ct => await FixIdentifierName(context.Document, syntaxFactoryService, root, node, context.CancellationToken).ConfigureAwait(false)),
+                                                         async ct => await FixIdentifierName(context.Document, syntaxGenerator, root, node, context.CancellationToken).ConfigureAwait(false)),
                                                     diagnostic);
             }
             else if (IsInEqualsContext(node))
@@ -46,28 +46,28 @@ namespace System.Runtime.Analyzers
                 // "a == b" => "string.Equals(a, b, StringComparison.Ordinal)"
                 // "a != b" => "!string.Equals(a, b, StringComparison.Ordinal)"
                 context.RegisterCodeFix(new MyCodeAction(SystemRuntimeAnalyzersResources.UseOrdinalStringComparisonTitle,
-                                async ct => await FixEquals(context.Document, syntaxFactoryService, root, node, context.CancellationToken).ConfigureAwait(false)),
+                                async ct => await FixEquals(context.Document, syntaxGenerator, root, node, context.CancellationToken).ConfigureAwait(false)),
                         diagnostic);
             }
         }
 
         protected abstract bool IsInArgumentContext(SyntaxNode node);
-        protected abstract Task<Document> FixArgument(Document document, SyntaxGenerator syntaxFactoryService, SyntaxNode root, SyntaxNode argument);
+        protected abstract Task<Document> FixArgument(Document document, SyntaxGenerator generator, SyntaxNode root, SyntaxNode argument);
 
         protected abstract bool IsInIdentifierNameContext(SyntaxNode node);
-        protected abstract Task<Document> FixIdentifierName(Document document, SyntaxGenerator syntaxFactoryService, SyntaxNode root, SyntaxNode identifier, CancellationToken cancellationToken);
+        protected abstract Task<Document> FixIdentifierName(Document document, SyntaxGenerator generator, SyntaxNode root, SyntaxNode identifier, CancellationToken cancellationToken);
 
         protected abstract bool IsInEqualsContext(SyntaxNode node);
-        protected abstract Task<Document> FixEquals(Document document, SyntaxGenerator syntaxFactoryService, SyntaxNode root, SyntaxNode node, CancellationToken cancellationToken);
+        protected abstract Task<Document> FixEquals(Document document, SyntaxGenerator generator, SyntaxNode root, SyntaxNode node, CancellationToken cancellationToken);
 
-        internal SyntaxNode CreateEqualsExpression(SyntaxGenerator syntaxFactoryService, SemanticModel model, SyntaxNode operand1, SyntaxNode operand2, bool isEquals)
+        internal SyntaxNode CreateEqualsExpression(SyntaxGenerator generator, SemanticModel model, SyntaxNode operand1, SyntaxNode operand2, bool isEquals)
         {
             INamedTypeSymbol stringType = model.Compilation.GetSpecialType(SpecialType.System_String);
-            SyntaxNode memberAccess = syntaxFactoryService.MemberAccessExpression(
-                        syntaxFactoryService.TypeExpression(stringType),
-                        syntaxFactoryService.IdentifierName(UseOrdinalStringComparisonAnalyzer.EqualsMethodName));
-            SyntaxNode ordinal = CreateOrdinalMemberAccess(syntaxFactoryService, model);
-            SyntaxNode invocation = syntaxFactoryService.InvocationExpression(
+            SyntaxNode memberAccess = generator.MemberAccessExpression(
+                        generator.TypeExpression(stringType),
+                        generator.IdentifierName(UseOrdinalStringComparisonAnalyzer.EqualsMethodName));
+            SyntaxNode ordinal = CreateOrdinalMemberAccess(generator, model);
+            SyntaxNode invocation = generator.InvocationExpression(
                 memberAccess,
                 operand1,
                 operand2.WithoutTrailingTrivia(),
@@ -75,7 +75,7 @@ namespace System.Runtime.Analyzers
                 .WithAdditionalAnnotations(Formatter.Annotation);
             if (!isEquals)
             {
-                invocation = syntaxFactoryService.LogicalNotExpression(invocation);
+                invocation = generator.LogicalNotExpression(invocation);
             }
 
             invocation = invocation.WithTrailingTrivia(operand2.GetTrailingTrivia());
@@ -83,12 +83,12 @@ namespace System.Runtime.Analyzers
             return invocation;
         }
 
-        internal SyntaxNode CreateOrdinalMemberAccess(SyntaxGenerator syntaxFactoryService, SemanticModel model)
+        internal SyntaxNode CreateOrdinalMemberAccess(SyntaxGenerator generator, SemanticModel model)
         {
             INamedTypeSymbol stringComparisonType = WellKnownTypes.StringComparison(model.Compilation);
-            return syntaxFactoryService.MemberAccessExpression(
-                syntaxFactoryService.TypeExpression(stringComparisonType),
-                syntaxFactoryService.IdentifierName(UseOrdinalStringComparisonAnalyzer.OrdinalText));
+            return generator.MemberAccessExpression(
+                generator.TypeExpression(stringComparisonType),
+                generator.IdentifierName(UseOrdinalStringComparisonAnalyzer.OrdinalText));
         }
 
         protected bool CanAddStringComparison(IMethodSymbol methodSymbol, SemanticModel model)

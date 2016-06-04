@@ -41,15 +41,7 @@ namespace System.Runtime.InteropServices.Analyzers
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182319.aspx",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics = ImmutableArray.Create(RuleCA1401, RuleCA2101);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return s_supportedDiagnostics;
-            }
-        }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleCA1401, RuleCA2101);
 
         public override void Initialize(AnalysisContext analysisContext)
         {

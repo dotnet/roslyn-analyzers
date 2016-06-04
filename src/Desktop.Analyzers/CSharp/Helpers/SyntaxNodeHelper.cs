@@ -11,9 +11,7 @@ namespace Desktop.Analyzers.Common
 {
     public sealed class CSharpSyntaxNodeHelper : SyntaxNodeHelper
     {
-        private static readonly CSharpSyntaxNodeHelper s_instance = new CSharpSyntaxNodeHelper();
-
-        public static CSharpSyntaxNodeHelper Default { get { return s_instance; } }
+        public static CSharpSyntaxNodeHelper Default { get; } = new CSharpSyntaxNodeHelper();
 
         private CSharpSyntaxNodeHelper()
         { }

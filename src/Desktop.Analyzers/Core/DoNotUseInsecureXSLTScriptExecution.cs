@@ -19,15 +19,7 @@ namespace Desktop.Analyzers
                                                                                                                 SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureXSLTScriptExecutionDescription)),
                                                                                                                  HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> s_supportDiagnostics = ImmutableArray.Create(RuleDoNotUseInsecureXSLTScriptExecution);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return DoNotUseInsecureXSLTScriptExecutionAnalyzer<TLanguageKindEnum>.s_supportDiagnostics;
-            }
-        }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleDoNotUseInsecureXSLTScriptExecution);
 
         public override void Initialize(AnalysisContext analysisContext)
         {

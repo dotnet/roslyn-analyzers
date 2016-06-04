@@ -20,10 +20,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class InterfaceMethodsShouldBeCallableByChildTypesFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds
-        {
-            get { return ImmutableArray.Create(InterfaceMethodsShouldBeCallableByChildTypesAnalyzer.RuleId); }
-        }
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(InterfaceMethodsShouldBeCallableByChildTypesAnalyzer.RuleId);
 
         public override FixAllProvider GetFixAllProvider()
         {

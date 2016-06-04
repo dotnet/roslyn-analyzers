@@ -111,23 +111,11 @@ namespace Analyzer.Utilities
             _prefix = prefix;
         }
 
-        private bool SkipMnemonics
-        {
-            get
-            {
-                return (_options & WordParserOptions.IgnoreMnemonicsIndicators)
-                  == WordParserOptions.IgnoreMnemonicsIndicators;
-            }
-        }
+        private bool SkipMnemonics => 
+            (_options & WordParserOptions.IgnoreMnemonicsIndicators) == WordParserOptions.IgnoreMnemonicsIndicators;
 
-        private bool SplitCompoundWords
-        {
-            get
-            {
-                return (_options & WordParserOptions.SplitCompoundWords)
-                  == WordParserOptions.SplitCompoundWords;
-            }
-        }
+        private bool SplitCompoundWords => 
+            (_options & WordParserOptions.SplitCompoundWords) == WordParserOptions.SplitCompoundWords;
 
         /// <summary>
         ///     Returns the words contained in the specified text, delimiting based on the specified options.

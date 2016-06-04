@@ -10,19 +10,15 @@ namespace Analyzer.Utilities
 {
     public class DocumentChangeAction : CodeAction
     {
-        private readonly string _title;
         private readonly Func<CancellationToken, Task<Document>> _createChangedDocument;
 
         public DocumentChangeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
         {
-            _title = title;
+            Title = title;
             _createChangedDocument = createChangedDocument;
         }
 
-        public override string Title
-        {
-            get { return _title; }
-        }
+        public override string Title { get; }
 
         protected override Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)
         {

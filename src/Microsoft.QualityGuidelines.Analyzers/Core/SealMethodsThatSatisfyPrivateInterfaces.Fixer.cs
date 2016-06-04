@@ -87,38 +87,18 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
         private abstract class ChangeSymbolAction :  CodeAction
         {
-            private readonly string _title;
-            private readonly string _equalenceKey;
-            private readonly Solution _solution;
-            private readonly ISymbol _symbol;
-
             public ChangeSymbolAction(string title, string equivalenceKey, Solution solution, ISymbol symbol)
             {
-                _title = title;
-                _equalenceKey = equivalenceKey;
-                _solution = solution;
-                _symbol = symbol;
+                Title = title;
+                EquivalenceKey = equivalenceKey;
+                Solution = solution;
+                Symbol = symbol;
             }
 
-            public override string Title
-            {
-                get { return _title; }
-            }
-
-            public override string EquivalenceKey
-            {
-                get { return _equalenceKey; }
-            }
-
-            public Solution Solution
-            {
-                get { return _solution; }
-            }
-
-            public ISymbol Symbol
-            {
-                get { return _symbol; }
-            }
+            public override string Title { get; }
+            public override string EquivalenceKey { get; }
+            public Solution Solution { get; }
+            public ISymbol Symbol { get; }
         }
 
         private class ChangeModifierAction : ChangeSymbolAction
@@ -150,7 +130,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
         private class ChangeAccessibilityAction : ChangeSymbolAction
         {
-            private Accessibility _newAccessibility;
+            private readonly Accessibility _newAccessibility;
 
             public ChangeAccessibilityAction(string title, string equivalenceKey, Solution solution, ISymbol symbol, Accessibility newAccessibilty)
                 : base(title, equivalenceKey, solution, symbol)

@@ -82,29 +82,11 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
         public string Message { get; set; }
 
-        public string Path
-        {
-            get
-            {
-                return this.Locations.Length > 0 ? this.Locations[0].Path : "";
-            }
-        }
+        public string Path => this.Locations.Length > 0 ? this.Locations[0].Path : "";
 
-        public int Line
-        {
-            get
-            {
-                return this.Locations.Length > 0 ? this.Locations[0].Line : -1;
-            }
-        }
+        public int Line => this.Locations.Length > 0 ? this.Locations[0].Line : -1;
 
-        public int Column
-        {
-            get
-            {
-                return this.Locations.Length > 0 ? this.Locations[0].Column : -1;
-            }
-        }
+        public int Column => this.Locations.Length > 0 ? this.Locations[0].Column : -1;
 
         private string GetSeverityString(DiagnosticSeverity severity)
         {

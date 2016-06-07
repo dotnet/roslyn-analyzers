@@ -344,7 +344,15 @@ End Namespace",
         public void CA1812_CSharp_NoDiagnostic_UninstantiatedInternalMef1ExportedClass()
         {
             VerifyCSharp(
-@"using System.ComponentModel.Composition;
+@"using System;
+using System.ComponentModel.Composition;
+
+namespace System.ComponentModel.Composition
+{
+    public class ExportAttribute: Attribute
+    {
+    }
+}
 
 [Export]
 internal class C
@@ -356,7 +364,14 @@ internal class C
         public void CA1812_Basic_NoDiagnostic_UninstantiatedInternalMef1ExportedClass()
         {
             VerifyBasic(
-@"Imports System.ComponentModel.Composition
+@"Imports System
+Imports System.ComponentModel.Composition
+
+Namespace System.ComponentModel.Composition
+    Public Class ExportAttribute
+        Inherits Attribute
+    End Class
+End Namespace
 
 <Export>
 Friend Class C
@@ -367,7 +382,15 @@ End Class");
         public void CA1812_CSharp_NoDiagnostic_UninstantiatedInternalMef2ExportedClass()
         {
             VerifyCSharp(
-@"using System.Composition;
+@"using System;
+using System.ComponentModel.Composition;
+
+namespace System.ComponentModel.Composition
+{
+    public class ExportAttribute: Attribute
+    {
+    }
+}
 
 [Export]
 internal class C
@@ -379,7 +402,14 @@ internal class C
         public void CA1812_Basic_NoDiagnostic_UninstantiatedInternalMef2ExportedClass()
         {
             VerifyBasic(
-@"Imports System.Composition
+@"Imports System
+Imports System.ComponentModel.Composition
+
+Namespace System.ComponentModel.Composition
+    Public Class ExportAttribute
+        Inherits Attribute
+    End Class
+End Namespace
 
 <Export>
 Friend Class C

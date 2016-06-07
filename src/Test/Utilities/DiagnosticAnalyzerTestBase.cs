@@ -23,8 +23,6 @@ namespace Microsoft.CodeAnalysis.UnitTests
         private static readonly MetadataReference s_systemCoreReference = MetadataReference.CreateFromAssemblyInternal(typeof(Enumerable).Assembly);
         private static readonly MetadataReference s_systemXmlReference = MetadataReference.CreateFromAssemblyInternal(typeof(System.Xml.XmlDocument).Assembly);
         private static readonly MetadataReference s_systemXmlDataReference = MetadataReference.CreateFromAssemblyInternal(typeof(System.Data.Rule).Assembly);
-        private static readonly MetadataReference s_compositionReference = MetadataReference.CreateFromAssemblyInternal(typeof(System.Composition.ExportAttribute).Assembly);
-        private static readonly MetadataReference s_componentModelReference = MetadataReference.CreateFromAssemblyInternal(typeof(System.ComponentModel.Composition.ExportAttribute).Assembly);
         private static readonly MetadataReference s_configurationReference = MetadataReference.CreateFromAssemblyInternal(typeof(System.Configuration.ConfigurationSection).Assembly);
         private static readonly MetadataReference s_csharpSymbolsReference = MetadataReference.CreateFromAssemblyInternal(typeof(CSharpCompilation).Assembly);
         private static readonly MetadataReference s_visualBasicSymbolsReference = MetadataReference.CreateFromAssemblyInternal(typeof(VisualBasicCompilation).Assembly);
@@ -396,8 +394,6 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 .AddMetadataReference(projectId, s_systemCoreReference)
                 .AddMetadataReference(projectId, s_systemXmlReference)
                 .AddMetadataReference(projectId, s_systemXmlDataReference)
-                .AddMetadataReference(projectId, s_compositionReference)
-                .AddMetadataReference(projectId, s_componentModelReference)
                 .AddMetadataReference(projectId, s_configurationReference)
                 .AddMetadataReference(projectId, s_codeAnalysisReference)
                 .AddMetadataReference(projectId, SystemRuntimeFacadeRef)

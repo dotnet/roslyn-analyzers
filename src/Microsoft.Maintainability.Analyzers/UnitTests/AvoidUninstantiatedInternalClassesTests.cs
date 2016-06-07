@@ -453,6 +453,13 @@ End Class");
             VerifyCSharp(
 @"using System.Configuration;
 
+namespace System.Configuration
+{
+    public class ConfigurationSection
+    {
+    }
+}
+
 internal class C : ConfigurationSection
 {
 }");
@@ -463,6 +470,11 @@ internal class C : ConfigurationSection
         {
             VerifyBasic(
 @"Imports System.Configuration
+
+Namespace System.Configuration
+    Public Class ConfigurationSection
+    End Class
+End Namespace
 
 Friend Class C
     Inherits ConfigurationSection

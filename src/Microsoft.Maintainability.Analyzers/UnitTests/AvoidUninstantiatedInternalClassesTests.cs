@@ -625,7 +625,7 @@ End Class",
         [Fact]
         public void CA1812_Basic_NoDiagnostic_StaticHolderClass()
         {
-            VerifyCSharp(
+            VerifyBasic(
 @"Friend Shared Class C
     Friend Shared Sub F()
     End Sub
@@ -644,6 +644,31 @@ End Class");
                     1, 23,
                     AvoidUninstantiatedInternalClassesAnalyzer.Rule,
                     "S"));
+        }
+
+        [Fact]
+        public void CA1812_CSharp_NoDiagnostic_UninstantiatedInternalClassInFriendlyAssembly()
+        {
+            VerifyCSharp(
+@"using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo(""TestProject"")]
+
+internal class C { }"
+                );
+        }
+
+        [Fact]
+        public void CA1812_Basic_NoDiagnostic_UninstantiatedInternalClassInFriendlyAssembly()
+        {
+            VerifyBasic(
+@"Imports System.Runtime.CompilerServices
+
+<Assembly: InternalsVisibleToAttribute(""TestProject"")>
+
+Friend Class C
+End Class"
+                );
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

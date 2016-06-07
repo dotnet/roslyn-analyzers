@@ -48,6 +48,19 @@ namespace Microsoft.Maintainability.Analyzers
                 var instantiatedTypes = new List<INamedTypeSymbol>();
                 var internalTypes = new List<INamedTypeSymbol>();
 
+                // If the assembly being built by this compilation exposes its internals to
+                // any other assembly, don't report any "uninstantiated internal class" errors.
+                // If we were to report an error for an internal type that is not instantiated
+                // by this assembly, and then it turned out that the friend assembly did
+                // instantiate the type, that would be a false positive. We've decided it's
+                // better to have false negatives (which would happen if the type were *not*
+                // instantiated by any friend assembly, but we didn't report the issue) than
+                // to have false positives.
+                if (AssemblyExposesInternals(startContext.Compilation))
+                {
+                    return;
+                }
+
                 startContext.RegisterOperationAction(context =>
                 {
                     IObjectCreationExpression expr = (IObjectCreationExpression)context.Operation;
@@ -79,6 +92,14 @@ namespace Microsoft.Maintainability.Analyzers
                     }
                 });
             });
+        }
+
+        private bool AssemblyExposesInternals(Compilation compilation)
+        {
+            ISymbol assemblySymbol = compilation.Assembly;
+            ImmutableArray<AttributeData> attributes = assemblySymbol.GetAttributes();
+            return attributes.Any(
+                attr => attr.AttributeClass.Name.Equals("InternalsVisibleToAttribute", StringComparison.Ordinal));
         }
 
         private bool HasInstantiatedNestedType(INamedTypeSymbol type, List<INamedTypeSymbol> instantiatedTypes)

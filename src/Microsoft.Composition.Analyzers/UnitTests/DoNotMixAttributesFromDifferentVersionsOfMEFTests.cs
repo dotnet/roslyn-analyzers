@@ -325,7 +325,7 @@ End Class
 " + BasicWellKnownAttributesDefinition);
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
         public void NoDiagnosticCases_UnresolvedTypes()
         {
             VerifyCSharp(@"

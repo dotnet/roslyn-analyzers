@@ -33,10 +33,7 @@ namespace System.Runtime.Analyzers
             isEnabledByDefault: true);
 
         /// <summary>Gets the set of supported diagnostic descriptors from this analyzer.</summary>
-        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get { return ImmutableArray.Create(UseArrayEmptyDescriptor); }
-        }
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(UseArrayEmptyDescriptor);
 
         public sealed override void Initialize(AnalysisContext context)
         {

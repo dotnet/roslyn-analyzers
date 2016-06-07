@@ -43,13 +43,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             description: s_localizableDescriptionOverridesObjectEquals,
             helpLinkUri: "http://go.microsoft.com/fwlink/?LinkId=734909");
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return ImmutableArray.Create(s_implementIEquatableDescriptor, s_overridesObjectEqualsDescriptor);
-            }
-        }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(s_implementIEquatableDescriptor, s_overridesObjectEqualsDescriptor);
 
         public override void Initialize(AnalysisContext context)
         {

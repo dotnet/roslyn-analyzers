@@ -25,13 +25,7 @@ namespace System.Runtime.InteropServices.Analyzers
             description: s_localizableDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return ImmutableArray.Create(ConsumePreserveSigAnalyzerDescriptor);
-            }
-        }
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ConsumePreserveSigAnalyzerDescriptor);
 
         public sealed override void Initialize(AnalysisContext context)
         {

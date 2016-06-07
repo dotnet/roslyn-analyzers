@@ -10,10 +10,7 @@ namespace System.Runtime.InteropServices.Analyzers
     public class CSharpAlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeAnalyzer
         : AlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeAnalyzer<SyntaxKind>
     {
-        protected override SyntaxKind InvocationExpressionSyntaxKind
-        {
-            get { return SyntaxKind.InvocationExpression; }
-        }
+        protected override SyntaxKind InvocationExpressionSyntaxKind => SyntaxKind.InvocationExpression;
 
         protected override bool IsExpressionStatementSyntaxKind(int rawKind)
         {

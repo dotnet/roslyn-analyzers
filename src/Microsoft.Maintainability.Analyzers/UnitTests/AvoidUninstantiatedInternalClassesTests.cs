@@ -495,7 +495,7 @@ internal class MySafeHandle : SafeHandle
     {
     }
 
-    protected override bool IsInvalid => true;
+    public override bool IsInvalid => true;
 
     protected override bool ReleaseHandle()
     {
@@ -508,7 +508,8 @@ internal class MySafeHandle : SafeHandle
         public void CA1812_Basic_NoDiagnostic_DerivesFromSafeHandle()
         {
             VerifyBasic(
-@"Imports System.Runtime.InteropServices
+@"Imports System
+Imports System.Runtime.InteropServices
 
 Friend Class MySafeHandle
     Inherits SafeHandle
@@ -668,10 +669,10 @@ End Class",
         public void CA1812_Basic_NoDiagnostic_StaticHolderClass()
         {
             VerifyBasic(
-@"Friend Shared Class C
-    Friend Shared Sub F()
+@"Friend Module C
+    Friend Sub F()
     End Sub
-End Class");
+End Module");
         }
 
         [Fact]

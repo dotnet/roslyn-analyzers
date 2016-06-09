@@ -32,6 +32,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
         private static readonly MetadataReference s_systemDiagnosticsDebugReference = MetadataReference.CreateFromAssemblyInternal(typeof(System.Diagnostics.Debug).Assembly);
         private static readonly MetadataReference s_systemDataReference = MetadataReference.CreateFromAssemblyInternal(typeof(System.Data.DataSet).Assembly);
         private static readonly CompilationOptions s_CSharpDefaultOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
+        private static readonly CompilationOptions s_CSharpUnsafeCodeDefaultOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary).WithAllowUnsafe(true);
         private static readonly CompilationOptions s_visualBasicDefaultOptions = new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
 
         internal const string DefaultFilePathPrefix = "Test";
@@ -40,7 +41,9 @@ namespace Microsoft.CodeAnalysis.UnitTests
         internal static readonly string CSharpDefaultFilePath = DefaultFilePathPrefix + 0 + "." + CSharpDefaultFileExt;
         internal static readonly string VisualBasicDefaultFilePath = DefaultFilePathPrefix + 0 + "." + VisualBasicDefaultExt;
 
-        private const string _testProjectName = "TestProject";
+        private const string TestProjectName = "TestProject";
+
+        protected const TestValidationMode DefaultTestValidationMode = TestValidationMode.AllowCompileWarnings;
 
         /// <summary>
         /// Return the C# diagnostic analyzer to get analyzer diagnostics.
@@ -119,18 +122,13 @@ namespace Microsoft.CodeAnalysis.UnitTests
             {
                 Id = rule.Id,
                 Severity = rule.DefaultSeverity,
-                Message = String.Format(rule.MessageFormat.ToString(), messageArguments)
+                Message = string.Format(rule.MessageFormat.ToString(), messageArguments)
             };
         }
 
         protected static DiagnosticResult GetBasicResultAt(int line, int column, string id, string message)
         {
             return GetResultAt(VisualBasicDefaultFilePath, line, column, id, message);
-        }
-
-        protected static DiagnosticResult GetBasicResultAt(string id, string message, params string[] locationStrings)
-        {
-            return GetResultAt(VisualBasicDefaultFilePath, id, message, locationStrings);
         }
 
         protected static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params object[] messageArguments)
@@ -158,7 +156,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
             return GetResultAt(additionalFilePath, line, column, rule, messageArguments);
         }
 
-        protected static DiagnosticResult GetResultAt(string path, int line, int column, string id, string message)
+        private static DiagnosticResult GetResultAt(string path, int line, int column, string id, string message)
         {
             var location = new DiagnosticResultLocation(path, line, column);
 
@@ -171,18 +169,18 @@ namespace Microsoft.CodeAnalysis.UnitTests
             };
         }
 
-        protected static DiagnosticResult GetResultAt(string defaultPath, string id, string message, params string[] locationStrings)
+        protected static DiagnosticResult GetResultAt(string path, string id, string message, params string[] locationStrings)
         {
             return new DiagnosticResult
             {
-                Locations = ParseResultLocations(defaultPath, locationStrings),
+                Locations = ParseResultLocations(path, locationStrings),
                 Id = id,
                 Severity = DiagnosticSeverity.Warning,
                 Message = message
             };
         }
 
-        protected static DiagnosticResult GetResultAt(string path, int line, int column, DiagnosticDescriptor rule, params object[] messageArguments)
+        private static DiagnosticResult GetResultAt(string path, int line, int column, DiagnosticDescriptor rule, params object[] messageArguments)
         {
             var location = new DiagnosticResultLocation(path, line, column);
 
@@ -195,7 +193,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
             };
         }
 
-        protected static DiagnosticResultLocation[] ParseResultLocations(string defaultPath, string[] locationStrings)
+        private static DiagnosticResultLocation[] ParseResultLocations(string defaultPath, string[] locationStrings)
         {
             var builder = new List<DiagnosticResultLocation>();
 
@@ -218,121 +216,80 @@ namespace Microsoft.CodeAnalysis.UnitTests
             return builder.ToArray();
         }
 
+        protected void VerifyCSharpUnsafeCode(string source, params DiagnosticResult[] expected)
+        {
+            Verify(new[] { source }.ToFileAndSource(), LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), DefaultTestValidationMode, true, expected);
+        }
+
         protected void VerifyCSharp(string source, params DiagnosticResult[] expected)
         {
-            Verify(source, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), expected);
+            Verify(new[] { source }.ToFileAndSource(), LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), DefaultTestValidationMode, false, expected);
         }
 
-        protected void VerifyCSharp(string source, bool addLanguageSpecificCodeAnalysisReference, params DiagnosticResult[] expected)
+        protected void VerifyCSharp(string source, TestValidationMode validationMode, params DiagnosticResult[] expected)
         {
-            Verify(source, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), addLanguageSpecificCodeAnalysisReference, expected);
+            Verify(new[] { source }.ToFileAndSource(), LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), validationMode, false, expected);
         }
 
-        protected void VerifyBasic(string source, params DiagnosticResult[] expected)
+        protected void VerifyCSharp(string source, bool addLanguageSpecificCodeAnalysisReference, TestValidationMode validationMode = DefaultTestValidationMode, params DiagnosticResult[] expected)
         {
-            Verify(source, LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), expected);
-        }
-
-        protected void VerifyBasic(string source, bool addLanguageSpecificCodeAnalysisReference, params DiagnosticResult[] expected)
-        {
-            Verify(source, LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), addLanguageSpecificCodeAnalysisReference, expected);
-        }
-
-        protected void Verify(string source, string language, DiagnosticAnalyzer analyzer, params DiagnosticResult[] expected)
-        {
-            Verify(new[] { source }, language, analyzer, expected);
-        }
-
-        protected void Verify(string source, string language, DiagnosticAnalyzer analyzer, IEnumerable<TestAdditionalDocument> additionalFiles, params DiagnosticResult[] expected)
-        {
-            Verify(new[] { source }, language, analyzer, additionalFiles, expected);
-        }
-
-        protected void Verify(string source, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference, params DiagnosticResult[] expected)
-        {
-            Verify(new[] { source }, language, analyzer, addLanguageSpecificCodeAnalysisReference, expected);
-        }
-
-        protected void VerifyBasic(string[] sources, params DiagnosticResult[] expected)
-        {
-            VerifyBasic(sources.ToFileAndSource(), expected);
-        }
-
-        protected void VerifyBasic(FileAndSource[] sources, params DiagnosticResult[] expected)
-        {
-            Verify(sources, LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), expected);
-        }
-
-        protected void VerifyBasic(string[] sources, bool addLanguageSpecificCodeAnalysisReference, params DiagnosticResult[] expected)
-        {
-            Verify(sources, LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), addLanguageSpecificCodeAnalysisReference, expected);
+            Verify(source, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), addLanguageSpecificCodeAnalysisReference, validationMode, expected);
         }
 
         protected void VerifyCSharp(string[] sources, params DiagnosticResult[] expected)
         {
-            VerifyCSharp(sources.ToFileAndSource(), expected);
+            Verify(sources.ToFileAndSource(), LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), DefaultTestValidationMode, false, expected);
         }
 
         protected void VerifyCSharp(FileAndSource[] sources, params DiagnosticResult[] expected)
         {
-            Verify(sources, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), expected);
+            Verify(sources, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), DefaultTestValidationMode, false, expected);
         }
 
-        protected void VerifyCSharp(string[] sources, bool addLanguageSpecificCodeAnalysisReference, params DiagnosticResult[] expected)
+        protected void VerifyBasic(string source, params DiagnosticResult[] expected)
         {
-            Verify(sources, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), addLanguageSpecificCodeAnalysisReference, expected);
+            Verify(new[] { source }.ToFileAndSource(), LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), DefaultTestValidationMode, false, expected);
         }
 
-        protected void Verify(string[] sources, string language, DiagnosticAnalyzer analyzer, params DiagnosticResult[] expected)
+        protected void VerifyBasic(string source, TestValidationMode validationMode, params DiagnosticResult[] expected)
         {
-            Verify(sources.ToFileAndSource(), language, analyzer, expected);
+            Verify(new[] { source }.ToFileAndSource(), LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), validationMode, false, expected);
         }
 
-        protected void Verify(string[] sources, string language, DiagnosticAnalyzer analyzer, IEnumerable<TestAdditionalDocument> additionalFiles, params DiagnosticResult[] expected)
+        protected void VerifyBasic(string source, bool addLanguageSpecificCodeAnalysisReference, TestValidationMode validationMode = DefaultTestValidationMode, params DiagnosticResult[] expected)
         {
-            Verify(sources.ToFileAndSource(), language, analyzer, additionalFiles, expected);
+            Verify(source, LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), addLanguageSpecificCodeAnalysisReference, validationMode, expected);
         }
 
-        protected void Verify(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, params DiagnosticResult[] expected)
+        protected void VerifyBasic(string[] sources, params DiagnosticResult[] expected)
         {
-            GetSortedDiagnostics(sources, language, analyzer).Verify(analyzer, PrintActualDiagnosticsOnFailure, ExpectedDiagnosticsAssertionTemplate, expected);
+            Verify(sources.ToFileAndSource(), LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), DefaultTestValidationMode, false, expected);
         }
 
-        protected void Verify(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, IEnumerable<TestAdditionalDocument> additionalFiles, params DiagnosticResult[] expected)
+        protected void VerifyBasic(FileAndSource[] sources, params DiagnosticResult[] expected)
         {
-            GetSortedDiagnostics(sources, language, analyzer, additionalFiles: additionalFiles).Verify(analyzer, PrintActualDiagnosticsOnFailure, ExpectedDiagnosticsAssertionTemplate, expected);
+            Verify(sources, LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), DefaultTestValidationMode, false, expected);
         }
 
-        protected void Verify(string[] sources, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference, params DiagnosticResult[] expected)
+        protected void Verify(string source, string language, DiagnosticAnalyzer analyzer, IEnumerable<TestAdditionalDocument> additionalFiles, params DiagnosticResult[] expected)
         {
-            Verify(sources.ToFileAndSource(), language, analyzer, addLanguageSpecificCodeAnalysisReference, expected);
+            var diagnostics = GetSortedDiagnostics(new[] { source }.ToFileAndSource(), language, analyzer, additionalFiles: additionalFiles);
+            diagnostics.Verify(analyzer, PrintActualDiagnosticsOnFailure, ExpectedDiagnosticsAssertionTemplate, expected);
         }
 
-        protected void Verify(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference, params DiagnosticResult[] expected)
+        private void Verify(string source, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference, TestValidationMode validationMode, params DiagnosticResult[] expected)
         {
-            GetSortedDiagnostics(sources, language, analyzer, addLanguageSpecificCodeAnalysisReference).Verify(analyzer, PrintActualDiagnosticsOnFailure, ExpectedDiagnosticsAssertionTemplate, expected);
+            var diagnostics = GetSortedDiagnostics(new[] { source }.ToFileAndSource(), language, analyzer, addLanguageSpecificCodeAnalysisReference: addLanguageSpecificCodeAnalysisReference, validationMode: validationMode);
+            diagnostics.Verify(analyzer, PrintActualDiagnosticsOnFailure, ExpectedDiagnosticsAssertionTemplate, expected);
         }
 
-        protected static Diagnostic[] GetSortedDiagnostics(string[] sources, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference = true)
+        private void Verify(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, TestValidationMode validationMode, bool allowUnsafeCode, params DiagnosticResult[] expected)
         {
-            return GetSortedDiagnostics(sources.ToFileAndSource(), language, analyzer, addLanguageSpecificCodeAnalysisReference);
+            var diagnostics = GetSortedDiagnostics(sources, language, analyzer, validationMode, allowUnsafeCode: allowUnsafeCode);
+            diagnostics.Verify(analyzer, PrintActualDiagnosticsOnFailure, ExpectedDiagnosticsAssertionTemplate, expected);
         }
 
-        protected static Diagnostic[] GetSortedDiagnostics(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, bool addLanguageSpecificCodeAnalysisReference = true, string projectName = _testProjectName, IEnumerable<TestAdditionalDocument> additionalFiles = null)
-        {
-            Tuple<Document[], bool, TextSpan?[]> documentsAndUseSpan = GetDocumentsAndSpans(sources, language, addLanguageSpecificCodeAnalysisReference, projectName);
-            Document[] documents = documentsAndUseSpan.Item1;
-            bool useSpans = documentsAndUseSpan.Item2;
-            TextSpan?[] spans = documentsAndUseSpan.Item3;
-            return GetSortedDiagnostics(analyzer, documents, spans: useSpans ? spans : null, additionalFiles: additionalFiles);
-        }
-
-        protected static Tuple<Document[], bool, TextSpan?[]> GetDocumentsAndSpans(string[] sources, string language, bool addLanguageSpecificCodeAnalysisReference = true)
-        {
-            return GetDocumentsAndSpans(sources.ToFileAndSource(), language, addLanguageSpecificCodeAnalysisReference);
-        }
-
-        protected static Tuple<Document[], bool, TextSpan?[]> GetDocumentsAndSpans(FileAndSource[] sources, string language, bool addLanguageSpecificCodeAnalysisReference = true, string projectName = _testProjectName)
+        private static Tuple<Document[], bool, TextSpan?[]> GetDocumentsAndSpans(FileAndSource[] sources, string language, bool addLanguageSpecificCodeAnalysisReference = true, string projectName = TestProjectName, bool allowUnsafeCode = false)
         {
             Assert.True(language == LanguageNames.CSharp || language == LanguageNames.VisualBasic, "Unsupported language");
 
@@ -341,8 +298,6 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
             for (int i = 0; i < sources.Length; i++)
             {
-                string fileName = language == LanguageNames.CSharp ? "Test" + i + ".cs" : "Test" + i + ".vb";
-
                 string source;
                 int? pos;
                 TextSpan? span;
@@ -357,16 +312,16 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 }
             }
 
-            Project project = CreateProject(sources, language, addLanguageSpecificCodeAnalysisReference, null, projectName);
+            Project project = CreateProject(sources, language, addLanguageSpecificCodeAnalysisReference, null, projectName, allowUnsafeCode);
             Document[] documents = project.Documents.ToArray();
             Assert.Equal(sources.Length, documents.Length);
 
             return Tuple.Create(documents, useSpans, spans);
         }
 
-        protected static Document CreateDocument(string source, string language = LanguageNames.CSharp, bool addLanguageSpecificCodeAnalysisReference = true)
+        protected static Document CreateDocument(string source, string language = LanguageNames.CSharp, bool addLanguageSpecificCodeAnalysisReference = true, bool allowUnsafeCode = false)
         {
-            return CreateProject(new[] { source }, language, addLanguageSpecificCodeAnalysisReference).Documents.First();
+            return CreateProject(new[] { source }.ToFileAndSource(), language, addLanguageSpecificCodeAnalysisReference, allowUnsafeCode: allowUnsafeCode).Documents.First();
         }
 
         protected static Project CreateProject(string[] sources, string language = LanguageNames.CSharp, bool addLanguageSpecificCodeAnalysisReference = true, Solution addToSolution = null)
@@ -374,16 +329,19 @@ namespace Microsoft.CodeAnalysis.UnitTests
             return CreateProject(sources.ToFileAndSource(), language, addLanguageSpecificCodeAnalysisReference, addToSolution);
         }
 
-        protected static Project CreateProject(
+        private static Project CreateProject(
             FileAndSource[] sources,
             string language = LanguageNames.CSharp,
             bool addLanguageSpecificCodeAnalysisReference = true,
             Solution addToSolution = null,
-            string projectName = _testProjectName)
+            string projectName = TestProjectName,
+            bool allowUnsafeCode = false)
         {
             string fileNamePrefix = DefaultFilePathPrefix;
             string fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;
-            CompilationOptions options = language == LanguageNames.CSharp ? s_CSharpDefaultOptions : s_visualBasicDefaultOptions;
+            CompilationOptions options = language == LanguageNames.CSharp
+                ? (allowUnsafeCode ? s_CSharpUnsafeCodeDefaultOptions : s_CSharpDefaultOptions)
+                : s_visualBasicDefaultOptions;
 
             ProjectId projectId = ProjectId.CreateNewId(debugName: projectName);
 
@@ -397,10 +355,6 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 .AddMetadataReference(projectId, SystemRuntimeFacadeRef)
                 .AddMetadataReference(projectId, SystemThreadingFacadeRef)
                 .AddMetadataReference(projectId, SystemThreadingTaskFacadeRef)
-                //.AddMetadataReference(projectId, TestBase.SystemRef)
-                //.AddMetadataReference(projectId, TestBase.SystemRuntimeFacadeRef)
-                //.AddMetadataReference(projectId, TestBase.SystemThreadingFacadeRef)
-                //.AddMetadataReference(projectId, TestBase.SystemThreadingTaskFacadeRef)
                 .AddMetadataReference(projectId, s_immutableCollectionsReference)
                 .AddMetadataReference(projectId, s_workspacesReference)
                 .AddMetadataReference(projectId, s_systemDiagnosticsDebugReference)
@@ -434,12 +388,21 @@ namespace Microsoft.CodeAnalysis.UnitTests
             return project;
         }
 
-        protected static Diagnostic[] GetSortedDiagnostics(DiagnosticAnalyzer analyzerOpt, Document document, TextSpan?[] spans = null, IEnumerable<TestAdditionalDocument> additionalFiles = null)
+        protected static Diagnostic[] GetSortedDiagnostics(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, TestValidationMode validationMode = DefaultTestValidationMode, bool addLanguageSpecificCodeAnalysisReference = true, bool allowUnsafeCode = false, string projectName = TestProjectName, IEnumerable<TestAdditionalDocument> additionalFiles = null)
         {
-            return GetSortedDiagnostics(analyzerOpt, new[] { document }, spans, additionalFiles);
+            Tuple<Document[], bool, TextSpan?[]> documentsAndUseSpan = GetDocumentsAndSpans(sources, language, addLanguageSpecificCodeAnalysisReference, projectName, allowUnsafeCode);
+            Document[] documents = documentsAndUseSpan.Item1;
+            bool useSpans = documentsAndUseSpan.Item2;
+            TextSpan?[] spans = documentsAndUseSpan.Item3;
+            return GetSortedDiagnostics(analyzer, documents, useSpans ? spans : null, validationMode, additionalFiles);
         }
 
-        protected static Diagnostic[] GetSortedDiagnostics(DiagnosticAnalyzer analyzerOpt, Document[] documents, TextSpan?[] spans = null, IEnumerable<TestAdditionalDocument> additionalFiles = null)
+        protected static Diagnostic[] GetSortedDiagnostics(DiagnosticAnalyzer analyzerOpt, Document document, TextSpan?[] spans = null, IEnumerable<TestAdditionalDocument> additionalFiles = null)
+        {
+            return GetSortedDiagnostics(analyzerOpt, new[] { document }, spans, additionalFiles: additionalFiles);
+        }
+
+        protected static Diagnostic[] GetSortedDiagnostics(DiagnosticAnalyzer analyzerOpt, Document[] documents, TextSpan?[] spans = null, TestValidationMode validationMode = DefaultTestValidationMode, IEnumerable<TestAdditionalDocument> additionalFiles = null)
         {
             if (analyzerOpt == null)
             {
@@ -459,7 +422,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 Compilation compilation = project.GetCompilationAsync().Result;
                 compilation = EnableAnalyzer(analyzerOpt, compilation);
 
-                ImmutableArray <Diagnostic> diags = compilation.GetAnalyzerDiagnostics(new[] { analyzerOpt }, analyzerOptions);
+                ImmutableArray <Diagnostic> diags = compilation.GetAnalyzerDiagnostics(new[] { analyzerOpt }, validationMode, analyzerOptions);
                 if (spans == null)
                 {
                     diagnostics.AddRange(diags);
@@ -493,48 +456,21 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 }
             }
 
-            Diagnostic[] results = GetSortedDiagnostics(diagnostics.AsEnumerable());
+            Diagnostic[] results = diagnostics.AsEnumerable().OrderBy(d => d.Location.SourceSpan.Start).ToArray();
             diagnostics.Free();
             return results;
         }
 
         private static Compilation EnableAnalyzer(DiagnosticAnalyzer analyzer, Compilation compilation)
         {
-            return compilation
-                .WithOptions(
-                    compilation
-                        .Options
-                        .WithSpecificDiagnosticOptions(
-                            analyzer
-                                .SupportedDiagnostics
-                                .Select(x =>
-                                    KeyValuePair.Create(x.Id, ReportDiagnostic.Default))
-                                    .ToImmutableDictionaryOrEmpty()));
-        }
-
-        protected static void AnalyzeDocumentCore(DiagnosticAnalyzer analyzer, Document document, Action<Diagnostic> addDiagnostic, TextSpan? span = null, Action<Exception, DiagnosticAnalyzer, Diagnostic> onAnalyzerException = null, bool logAnalyzerExceptionAsDiagnostics = true)
-        {
-            SemanticModel semanticModel = document.GetSemanticModelAsync().Result;
-            Compilation compilation = semanticModel.Compilation;
-            compilation = EnableAnalyzer(analyzer, compilation);
-
-            ImmutableArray<Diagnostic> diagnostics = compilation.GetAnalyzerDiagnostics(new[] { analyzer }, onAnalyzerException: onAnalyzerException, logAnalyzerExceptionAsDiagnostics: logAnalyzerExceptionAsDiagnostics);
-            foreach (Diagnostic diagnostic in diagnostics)
-            {
-                if (!span.HasValue ||
-                    diagnostic.Location == Location.None ||
-                    diagnostic.Location.IsInMetadata ||
-                    (diagnostic.Location.SourceTree == semanticModel.SyntaxTree &&
-                    span.Value.Contains(diagnostic.Location.SourceSpan)))
-                {
-                    addDiagnostic(diagnostic);
-                }
-            }
-        }
-
-        protected static Diagnostic[] GetSortedDiagnostics(IEnumerable<Diagnostic> diagnostics)
-        {
-            return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
+            return compilation.WithOptions(
+                compilation
+                    .Options
+                    .WithSpecificDiagnosticOptions(
+                        analyzer
+                            .SupportedDiagnostics
+                            .Select(x => KeyValuePair.Create(x.Id, ReportDiagnostic.Default))
+                            .ToImmutableDictionaryOrEmpty()));
         }
     }
 

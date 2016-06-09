@@ -462,11 +462,11 @@ class C
     {
     }
 
-    public void UnusedErrorTypeParamMethod(UndefinedType param1)
+    public void UnusedErrorTypeParamMethod(UndefinedType param1) // error CS0246: The type or namespace name 'UndefinedType' could not be found.
     {
     }
 }
-",
+", TestValidationMode.AllowCompileErrors,
       // Test0.cs(6,18): warning CA1801: Parameter param of method .ctor is never used. Remove the parameter or use it in the method body.
       GetCSharpUnusedParameterResultAt(6, 18, "param", ".ctor"),
       // Test0.cs(10,39): warning CA1801: Parameter param of method UnusedParamMethod is never used. Remove the parameter or use it in the method body.
@@ -509,10 +509,10 @@ Class C
     Private Sub UnusedRefParamMethod(ByRef param1 As Integer)
     End Sub
 
-    Public Sub UnusedErrorTypeParamMethod(param1 As UndefinedType)
+    Public Sub UnusedErrorTypeParamMethod(param1 As UndefinedType) ' error BC30002: Type 'UndefinedType' is not defined.
     End Sub
 End Class
-",
+", TestValidationMode.AllowCompileErrors,
       // Test0.vb(3,20): warning CA1801: Parameter param of method .ctor is never used. Remove the parameter or use it in the method body.
       GetBasicUnusedParameterResultAt(3, 20, "param", ".ctor"),
       // Test0.vb(6,34): warning CA1801: Parameter param of method UnusedParamMethod is never used. Remove the parameter or use it in the method body.

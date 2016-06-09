@@ -28,7 +28,7 @@ namespace System.Composition
 
     public class ImportingConstructorAttribute : System.Attribute
     {
-        public ImportManyAttribute() { }
+        public ImportingConstructorAttribute() { }
     }
 }
 
@@ -52,7 +52,7 @@ public class SystemCompositionMetadataAttribute : System.Attribute
 
     public class ImportingConstructorAttribute : System.Attribute
     {
-        public ImportManyAttribute() { }
+        public ImportingConstructorAttribute() { }
     }
 }
 
@@ -75,7 +75,7 @@ namespace System.ComponentModel.Composition
 
     public class ImportingConstructorAttribute : System.Attribute
     {
-        public ImportManyAttribute() { }
+        public ImportingConstructorAttribute() { }
     }
 }
 
@@ -292,7 +292,7 @@ public class C
 public class C2
 {
     [System.ComponentModel.Composition.ImportingConstructor]
-    public C([System.ComponentModel.Composition.Import]B b) { }
+    public C2([System.ComponentModel.Composition.Import]B b) { }
 
     [System.ComponentModel.Composition.Import]
     public B PropertyB { get; }
@@ -339,7 +339,7 @@ public class C
     [System.ComponentModel.Composition.Import]
     public B PropertyB { get; }
 }
-");
+", TestValidationMode.AllowCompileErrors);
 
             VerifyBasic(@"
 Public Class B
@@ -350,7 +350,7 @@ Public Class C
 	<System.ComponentModel.Composition.Import> _
 	Public ReadOnly Property PropertyB() As B
 End Class
-");
+", TestValidationMode.AllowCompileErrors);
         }
 
         #endregion
@@ -421,7 +421,7 @@ public class C
 public class C2
 {
     [System.Composition.ImportingConstructor]
-    public C([System.ComponentModel.Composition.Import]B b) { }
+    public C2([System.ComponentModel.Composition.Import]B b) { }
 
     [System.Composition.Import]
     public B PropertyB { get; }

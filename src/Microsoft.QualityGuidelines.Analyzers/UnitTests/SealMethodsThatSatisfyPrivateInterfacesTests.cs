@@ -299,6 +299,9 @@ Public MustInherit Class C
     Implements IFace
 
     Public MustOverride Sub M()
+
+    Public Sub IFace_M() Implements IFace.M
+    End Sub
 End Class
 ");
         }

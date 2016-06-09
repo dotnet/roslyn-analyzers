@@ -107,7 +107,7 @@ public struct A
         throw new System.NotImplementedException();
     }
 
-    public static bool operator !=(A left, A right)
+    public static bool operator !=(A left, A right)   // error CS0216: The operator requires a matching operator '==' to also be defined
     {
         throw new System.NotImplementedException();
     }
@@ -127,7 +127,7 @@ public struct A
         throw new System.NotImplementedException();
     }
 
-    public static bool operator !=(A left, A right)
+    public static bool operator !=(A left, A right)   // error CS0216: The operator requires a matching operator '==' to also be defined
     {
         throw new System.NotImplementedException();
     }
@@ -137,7 +137,7 @@ public struct A
         throw new System.NotImplementedException();
     }
 }
-");
+", validationMode: TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
@@ -156,12 +156,7 @@ public struct A
         throw new System.NotImplementedException();
     }
 
-    public static bool operator ==(A left, A right)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public static bool operator !=(A left, A right)
+    public static bool operator ==(A left, A right)   // error CS0216: The operator requires a matching operator '!=' to also be defined
     {
         throw new System.NotImplementedException();
     }
@@ -181,7 +176,7 @@ public struct A
         throw new System.NotImplementedException();
     }
 
-    public static bool operator ==(A left, A right)
+    public static bool operator ==(A left, A right)   // error CS0216: The operator requires a matching operator '!=' to also be defined
     {
         throw new System.NotImplementedException();
     }
@@ -191,7 +186,7 @@ public struct A
         throw new System.NotImplementedException();
     }
 }
-");
+", validationMode: TestValidationMode.AllowCompileErrors);
         }
         [Fact]
         public void BasicCodeFixNoEqualsOverrideOrEqualityOperators()
@@ -274,7 +269,7 @@ Public Structure A
         Throw New System.NotImplementedException()
     End Function
 
-    Public Shared Operator <>(left As A, right As A) As Boolean
+    Public Shared Operator <>(left As A, right As A) As Boolean   ' error BC33033: Matching '=' operator is required
         Throw New System.NotImplementedException()
     End Operator
 End Structure
@@ -290,7 +285,7 @@ Public Structure A
         Throw New System.NotImplementedException()
     End Function
 
-    Public Shared Operator <>(left As A, right As A) As Boolean
+    Public Shared Operator <>(left As A, right As A) As Boolean   ' error BC33033: Matching '=' operator is required
         Throw New System.NotImplementedException()
     End Operator
 
@@ -298,7 +293,7 @@ Public Structure A
         Throw New System.NotImplementedException()
     End Operator
 End Structure
-");
+", validationMode: TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
@@ -314,7 +309,7 @@ Public Structure A
         Throw New System.NotImplementedException()
     End Function
 
-    Public Shared Operator =(left As A, right As A) As Boolean
+    Public Shared Operator =(left As A, right As A) As Boolean   ' error BC33033: Matching '<>' operator is required
         Throw New System.NotImplementedException()
     End Operator
 End Structure
@@ -330,7 +325,7 @@ Public Structure A
         Throw New System.NotImplementedException()
     End Function
 
-    Public Shared Operator =(left As A, right As A) As Boolean
+    Public Shared Operator =(left As A, right As A) As Boolean   ' error BC33033: Matching '<>' operator is required
         Throw New System.NotImplementedException()
     End Operator
 
@@ -338,7 +333,7 @@ Public Structure A
         Throw New System.NotImplementedException()
     End Operator
 End Structure
-");
+", validationMode: TestValidationMode.AllowCompileErrors);
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

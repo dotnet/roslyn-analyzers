@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.UnitTests;
 using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
@@ -91,7 +92,7 @@ public class A : IComparable
         return 1;
     }
 
-    public static bool operator !=(A objLeft, A objRight)
+    public static bool operator !=(A objLeft, A objRight)   // error CS0216: The operator requires a matching operator '==' to also be defined
     {
         return true;
     }
@@ -111,7 +112,7 @@ public class A : IComparable
         return 1;
     }
 
-    public static bool operator !=(A objLeft, A objRight)
+    public static bool operator !=(A objLeft, A objRight)   // error CS0216: The operator requires a matching operator '==' to also be defined
     {
         return true;
     }
@@ -136,7 +137,7 @@ public class A : IComparable
         throw new NotImplementedException();
     }
 }
-");
+", validationMode: TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
@@ -198,7 +199,7 @@ Public Class A : Implements IComparable
         Return 1234
     End Function
 
-    Public Shared Operator <(objLeft As A, objRight As A) As Boolean
+    Public Shared Operator <(objLeft As A, objRight As A) As Boolean   ' error BC33033: Matching '>' operator is required
         Return True
     End Operator
 
@@ -215,7 +216,7 @@ Public Class A : Implements IComparable
         Return 1234
     End Function
 
-    Public Shared Operator <(objLeft As A, objRight As A) As Boolean
+    Public Shared Operator <(objLeft As A, objRight As A) As Boolean   ' error BC33033: Matching '>' operator is required
         Return True
     End Operator
 
@@ -238,7 +239,7 @@ Public Class A : Implements IComparable
     Public Shared Operator >(left As A, right As A) As Boolean
         Throw New NotImplementedException()
     End Operator
-End Class");
+End Class", validationMode: TestValidationMode.AllowCompileErrors);
         }
     }
 }

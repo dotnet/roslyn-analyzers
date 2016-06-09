@@ -134,20 +134,20 @@ class C
             VerifyCSharpFix(@"
 class C
 {
-    public static bool operator <(C left, C right) { return true; }
+    public static bool operator <(C left, C right) { return true; }   // error CS0216: The operator requires a matching operator '>' to also be defined
 }
 ",
 @"
 class C
 {
-    public static bool operator <(C left, C right) { return true; }
+    public static bool operator <(C left, C right) { return true; }   // error CS0216: The operator requires a matching operator '>' to also be defined
 
     public int CompareTo(C other)
     {
         throw new System.NotImplementedException();
     }
 }
-");
+", validationMode: TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
@@ -323,14 +323,14 @@ End Class
         {
             VerifyBasicFix(@"
 Class C
-    Public Shared Operator <(left As C, right As C) As Boolean
+    Public Shared Operator <(left As C, right As C) As Boolean   ' error BC33033: Matching '>' operator is required
         Return True
     End Operator
 End Class
 ",
 @"
 Class C
-    Public Shared Operator <(left As C, right As C) As Boolean
+    Public Shared Operator <(left As C, right As C) As Boolean   ' error BC33033: Matching '>' operator is required
         Return True
     End Operator
 
@@ -338,7 +338,7 @@ Class C
         Throw New System.NotImplementedException()
     End Function
 End Class
-");
+", validationMode: TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]

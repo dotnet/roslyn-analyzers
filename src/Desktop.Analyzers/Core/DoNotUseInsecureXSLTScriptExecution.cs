@@ -15,19 +15,11 @@ namespace Desktop.Analyzers
     {
         internal const string RuleId = "CA3076";
         private const string HelpLink = "http://aka.ms/CA3076";
-        internal static DiagnosticDescriptor RuleDoNotUseInsecureXSLTScriptExecution = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDTDProcessingGenericMessage)),
+        internal static DiagnosticDescriptor RuleDoNotUseInsecureXSLTScriptExecution = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDtdProcessingGenericMessage)),
                                                                                                                 SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureXSLTScriptExecutionDescription)),
                                                                                                                  HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> s_supportDiagnostics = ImmutableArray.Create(RuleDoNotUseInsecureXSLTScriptExecution);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return DoNotUseInsecureXSLTScriptExecutionAnalyzer<TLanguageKindEnum>.s_supportDiagnostics;
-            }
-        }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleDoNotUseInsecureXSLTScriptExecution);
 
         public override void Initialize(AnalysisContext analysisContext)
         {

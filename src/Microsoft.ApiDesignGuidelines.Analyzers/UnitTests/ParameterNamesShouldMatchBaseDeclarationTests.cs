@@ -261,12 +261,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             VerifyCSharp(@"public class TestClass
                            {
                                public override void TestMethod(string arg1, string arg2) { }
-                           }");
+                           }", TestValidationMode.AllowCompileErrors);
 
             VerifyBasic(@"Public Class TestClass
                               Public Overrides Sub TestMethod(arg1 As String, arg2 As String)
                               End Sub
-                          End Class");
+                          End Class", TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]

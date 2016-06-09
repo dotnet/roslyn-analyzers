@@ -116,7 +116,7 @@ class C : IEquatable<C>
 }
 ";
             string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code,
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
                 GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
@@ -135,7 +135,7 @@ class C : IEquatable<C>
 }
 ";
             string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code,
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
                 GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
@@ -154,7 +154,7 @@ class C : IEquatable<C>
 }
 ";
             string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code,
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
                 GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
@@ -173,7 +173,7 @@ class C : IEquatable<C>
 }
 ";
             string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code,
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
                 GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
@@ -192,7 +192,7 @@ class C : IEquatable<C>
 }
 ";
             string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code,
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
                 GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
@@ -211,7 +211,7 @@ class C : IEquatable<C>
 }
 ";
             string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code,
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
                 GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
@@ -227,7 +227,7 @@ class C : IEquatable<C>
 }
 ";
             string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code,
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
                 GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
@@ -246,7 +246,7 @@ class C : IEquatable<C>
 }
 ";
             string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code,
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
                 GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
@@ -264,7 +264,7 @@ class C
     }
 }
 ";
-            VerifyCSharp(code);
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
@@ -310,7 +310,7 @@ struct C : B
 ";
             string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "B");
             string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "C");
-            VerifyCSharp(code,
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
                 GetCSharpResultAt(4, 8, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage1),
                 GetCSharpResultAt(12, 8, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage2));
         }

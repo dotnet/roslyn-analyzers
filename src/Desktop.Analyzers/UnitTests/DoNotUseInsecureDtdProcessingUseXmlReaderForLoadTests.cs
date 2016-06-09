@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Desktop.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureDTDProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
     {
         private DiagnosticResult GetCA3075LoadCSharpResultAt(int line, int column)
         {

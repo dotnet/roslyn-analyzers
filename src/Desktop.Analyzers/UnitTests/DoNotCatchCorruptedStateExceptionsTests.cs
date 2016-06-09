@@ -1068,7 +1068,7 @@ namespace Desktop.Analyzers.UnitTests
         [Fact]
         public void CA2153TestSwallowAccessViolationExceptionInMethodHpcseAttribute()
         {
-            VerifyCSharp(@"
+            VerifyCSharpUnsafeCode(@"
             using System;
             using System.IO;
             using System.Security;
@@ -1103,7 +1103,7 @@ namespace Desktop.Analyzers.UnitTests
         [Fact]
         public void CA2153TestSwallowAccessViolationExceptionThenSwallowOtherExceptionInMethodHpcseAttribute()
         {
-            VerifyCSharp(@"
+            VerifyCSharpUnsafeCode(@"
             using System;
             using System.IO;
             using System.Security;

@@ -18,19 +18,11 @@ namespace Desktop.Analyzers
         internal const string RuleId = "CA3077";
         private const string HelpLink = "http://aka.ms/CA3077";
 
-        internal static DiagnosticDescriptor RuleDoNotUseInsecureDtdProcessingInApiDesign = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDTDProcessingGenericMessage)),
+        internal static DiagnosticDescriptor RuleDoNotUseInsecureDtdProcessingInApiDesign = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDtdProcessingGenericMessage)),
                                                                                                                         SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.DoNotUseInsecureDtdProcessingInApiDesignDescription)),
                                                                                                                          HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> s_supportedDiagnostics = ImmutableArray.Create(RuleDoNotUseInsecureDtdProcessingInApiDesign);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return DoNotUseInsecureDtdProcessingInApiDesignAnalyzer.s_supportedDiagnostics;
-            }
-        }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleDoNotUseInsecureDtdProcessingInApiDesign);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -325,7 +317,7 @@ namespace Desktop.Analyzers
 
                 List<Location> locs = null;
                 Location insecureXmlResolverAssignLoc = null;
-                Location issecureDTDProcessingLoc = null;
+                Location issecureDtdProcessingLoc = null;
 
                 IEnumerable<SyntaxNode> assignments = _syntaxNodeHelper.GetDescendantAssignmentExpressionNodes(node);
                 foreach (SyntaxNode assignment in assignments)
@@ -407,9 +399,9 @@ namespace Desktop.Analyzers
                     {
                         locs.Add(insecureXmlResolverAssignLoc);
                     }
-                    if (issecureDTDProcessingLoc != null)
+                    if (issecureDtdProcessingLoc != null)
                     {
-                        locs.Add(issecureDTDProcessingLoc);
+                        locs.Add(issecureDtdProcessingLoc);
                     }
                     DiagnosticDescriptor rule = RuleDoNotUseInsecureDtdProcessingInApiDesign;
                     // TODO: Only first location is shown in error, maybe we want to report on method instead?

@@ -82,7 +82,7 @@ using System.Composition;
 public class C
 {
 }
-");
+", TestValidationMode.AllowCompileErrors);
 
             VerifyBasic(@"
 Imports System
@@ -91,7 +91,7 @@ Imports System.Composition
 <Export(GetType(C)), [Shared]> _
 Public Class C
 End Class
-");
+", TestValidationMode.AllowCompileErrors);
         }
 
         #endregion
@@ -146,7 +146,7 @@ public class SharedAttribute: Attribute
             VerifyBasic(@"
 Imports System
 
-<System.Composition.Export(GetType(C)), Shared> _
+<System.Composition.Export(GetType(C)), [Shared]> _
 Public Class C
 End Class
 

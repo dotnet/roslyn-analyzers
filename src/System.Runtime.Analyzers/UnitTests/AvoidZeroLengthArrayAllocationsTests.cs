@@ -36,9 +36,6 @@ namespace System.Runtime.Analyzers.UnitTests
             const string badSource = @"
 using System.Collections.Generic;
 
-// This is a compile error but we want to ensure analyzer doesn't complain for it.
-[System.Runtime.CompilerServices.Dynamic(new bool[0])] // no
-
 class C
 {
     unsafe void M1()
@@ -63,9 +60,6 @@ class C
             const string fixedSource = @"
 using System.Collections.Generic;
 
-// This is a compile error but we want to ensure analyzer doesn't complain for it.
-[System.Runtime.CompilerServices.Dynamic(new bool[0])] // no
-
 class C
 {
     unsafe void M1()
@@ -88,23 +82,34 @@ class C
 }";
             string arrayEmptySource = IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
 
-            VerifyCSharp(badSource + arrayEmptySource, new[]
+            VerifyCSharpUnsafeCode(badSource + arrayEmptySource, new[]
             {
-                GetCSharpResultAt(11, 22, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
-                GetCSharpResultAt(12, 23, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
-                GetCSharpResultAt(13, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
-                GetCSharpResultAt(17, 24, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
-                GetCSharpResultAt(18, 28, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
-                GetCSharpResultAt(20, 26, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor)
+                GetCSharpResultAt(8, 22, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
+                GetCSharpResultAt(9, 23, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
+                GetCSharpResultAt(10, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
+                GetCSharpResultAt(14, 24, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
+                GetCSharpResultAt(15, 28, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor),
+                GetCSharpResultAt(17, 26, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor)
             });
-            VerifyCSharpFix(
+            VerifyCSharpUnsafeCodeFix(
                 arrayEmptySource + badSource,
                 arrayEmptySource + fixedSource,
                 allowNewCompilerDiagnostics: true);
-            VerifyCSharpFix(
+            VerifyCSharpUnsafeCodeFix(
                 "using System;\r\n" + arrayEmptySource + badSource,
                 "using System;\r\n" + arrayEmptySource + fixedSource.Replace("System.Array.Empty", "Array.Empty"),
                 allowNewCompilerDiagnostics: true);
+        }
+
+        [Fact]
+        public void EmptyArrayCSharpError()
+        {
+            const string badSource = @"
+// This is a compile error but we want to ensure analyzer doesn't complain for it.
+[System.Runtime.CompilerServices.Dynamic(new bool[0])]
+";
+
+            VerifyCSharp(badSource, TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]

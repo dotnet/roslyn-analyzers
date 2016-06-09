@@ -2181,7 +2181,7 @@ Public NotInheritable Class PublicPropertyPrivateAccessorTestAttribute
 		End Get
 	End Property
 End Class
-",
+", TestValidationMode.AllowCompileErrors,
             GetCA1019BasicIncreaseVisibilityResultAt(14, 3, "Name", "name"),
             GetCA1019BasicIncreaseVisibilityResultAt(30, 3, "Name", "name"),
             GetCA1019BasicIncreaseVisibilityResultAt(54, 3, "Name", "name"),

@@ -674,7 +674,7 @@ public class C26 :
 {
     public static void Foo() { }
 }
-");
+", TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
@@ -686,7 +686,7 @@ Public Class B26
 	Public Shared Sub Foo()
 	End Sub
 End Class
-");
+", TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
@@ -696,7 +696,7 @@ End Class
 public class C27 :
 {
 }
-");
+", TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
@@ -706,7 +706,7 @@ public class C27 :
 Public Class B27
 	Inherits
 End Class
-");
+", TestValidationMode.AllowCompileErrors);
         }
     }
 }

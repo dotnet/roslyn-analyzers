@@ -65,7 +65,7 @@ class Program
 }");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1016")]
         public void CA2200CSharpTestWithLegalExceptionThrowNested()
         {
             VerifyCSharp(@"
@@ -256,7 +256,7 @@ Class Program
 End Class");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1016")]
         public void CA2200VisualBasicTestWithLegalExceptionThrowNested()
         {
             VerifyBasic(@"

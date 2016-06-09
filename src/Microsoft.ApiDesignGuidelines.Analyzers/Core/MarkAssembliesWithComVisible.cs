@@ -38,13 +38,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                                        helpLinkUri: "http://msdn.microsoft.com/library/ms182157.aspx",
                                                                                        customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return ImmutableArray.Create(RuleA, RuleB);
-            }
-        }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleA, RuleB);
 
         public override void Initialize(AnalysisContext analysisContext)
         {

@@ -777,7 +777,7 @@ End Structure
         private void Verify(string source, string language, DiagnosticAnalyzer analyzer, string testProjectName, DiagnosticResult[] expected)
         {
             var sources = new[] { source };
-            var diagnostics = GetSortedDiagnostics(sources.ToFileAndSource(), language, analyzer, true, testProjectName);
+            var diagnostics = GetSortedDiagnostics(sources.ToFileAndSource(), language, analyzer, addLanguageSpecificCodeAnalysisReference: true, projectName: testProjectName);
             diagnostics.Verify(analyzer, expected);
         }
 

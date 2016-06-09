@@ -126,38 +126,5 @@ namespace Analyzer.Utilities
                 .Cast<IMethodSymbol>()
                 .Any(IMethodSymbolExtensions.IsFinalizer);
         }
-
-        private static bool IsEqualsOverride(IMethodSymbol method)
-        {
-            return method.IsOverride &&
-                   method.ReturnType.SpecialType == SpecialType.System_Boolean &&
-                   method.Parameters.Length == 1 &&
-                   method.Parameters[0].Type.SpecialType == SpecialType.System_Object &&
-                   IsObjectMethodOverride(method);
-        }
-
-        private static bool IsGetHashCodeOverride(IMethodSymbol method)
-        {
-            return method.IsOverride &&
-                   method.ReturnType.SpecialType == SpecialType.System_Int32 &&
-                   method.Parameters.Length == 0 &&
-                   IsObjectMethodOverride(method);
-        }
-
-        private static bool IsObjectMethodOverride(IMethodSymbol method)
-        {
-            IMethodSymbol overriddenMethod = method.OverriddenMethod;
-            while (overriddenMethod != null)
-            {
-                if (overriddenMethod.ContainingType.SpecialType == SpecialType.System_Object)
-                {
-                    return true;
-                }
-
-                overriddenMethod = overriddenMethod.OverriddenMethod;
-            }
-
-            return false;
-        }
     }
 }

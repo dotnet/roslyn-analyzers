@@ -71,7 +71,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 if (!(namedTypeSymbol.OverridesEquals() && namedTypeSymbol.ImplementsComparisonOperators()))
                 {
-                    addDiagnostic(namedTypeSymbol.CreateDiagnostic(Rule));
+                    // CA1036: {0} should override Equals since it implements IComparable.
+                    addDiagnostic(namedTypeSymbol.CreateDiagnostic(Rule, namedTypeSymbol.Name));
                 }
             }
         }

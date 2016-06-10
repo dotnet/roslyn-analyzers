@@ -106,7 +106,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
     }
 
-", GetCA1036CSharpResultAt(4, 18));
+", GetCA1036CSharpResultAt(4, 18, "A"));
         }
 
         [Fact]
@@ -317,7 +317,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
     }
 ",
-            GetCA1036CSharpResultAt(4, 18));
+            GetCA1036CSharpResultAt(4, 18, "A"));
         }
 
         [Fact]
@@ -354,7 +354,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
     }
 ",
-            GetCA1036CSharpResultAt(4, 18));
+            GetCA1036CSharpResultAt(4, 18, "A"));
         }
 
         [Fact]
@@ -391,7 +391,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
     }
 ",
-            GetCA1036CSharpResultAt(4, 19));
+            GetCA1036CSharpResultAt(4, 19, "A"));
         }
 
         [Fact]
@@ -428,7 +428,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
     }
 ",
-            GetCA1036CSharpResultAt(4, 18));
+            GetCA1036CSharpResultAt(4, 18, "A"));
         }
 
         [Fact]
@@ -467,7 +467,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
     }
 ",
-            GetCA1036CSharpResultAt(6, 18));
+            GetCA1036CSharpResultAt(6, 18, "A"));
         }
 
         [Fact]
@@ -546,7 +546,7 @@ Public Structure A : Implements IComparable
 
 End Structure
 ",
-            GetCA1036BasicResultAt(4, 18));
+            GetCA1036BasicResultAt(4, 18, "A"));
         }
 
         [Fact]
@@ -727,7 +727,7 @@ Public Class A : Implements IComparable
 
 End Class
 ",
-            GetCA1036BasicResultAt(4, 14));
+            GetCA1036BasicResultAt(4, 14, "A"));
         }
 
         [Fact]
@@ -760,7 +760,7 @@ Public Class A : Implements IComparable
 
 End Class
 ",
-            GetCA1036BasicResultAt(4, 14));
+            GetCA1036BasicResultAt(4, 14, "A"));
         }
 
         [Fact]
@@ -793,7 +793,7 @@ Public Structure A : Implements IComparable
 
 End Structure
 ",
-            GetCA1036BasicResultAt(4, 18));
+            GetCA1036BasicResultAt(4, 18, "A"));
         }
 
         [Fact]
@@ -826,7 +826,7 @@ Public Structure A : Implements IComparable(Of Integer)
 
 End Structure
 ",
-            GetCA1036BasicResultAt(4, 18));
+            GetCA1036BasicResultAt(4, 18, "A"));
         }
 
         [Fact]
@@ -863,7 +863,7 @@ Public Structure A : Implements IDerived
 
 End Structure
 ",
-            GetCA1036BasicResultAt(8, 18));
+            GetCA1036BasicResultAt(8, 18, "A"));
         }
 
         [Fact]
@@ -882,14 +882,16 @@ Enum MyEnum
 End Enum");
         }
 
-        private static DiagnosticResult GetCA1036CSharpResultAt(int line, int column)
+        private static DiagnosticResult GetCA1036CSharpResultAt(int line, int column, string typeName)
         {
-            return GetCSharpResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals);
+            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals, typeName);
+            return GetCSharpResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, message);
         }
 
-        private static DiagnosticResult GetCA1036BasicResultAt(int line, int column)
+        private static DiagnosticResult GetCA1036BasicResultAt(int line, int column, string typeName)
         {
-            return GetBasicResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals);
+            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals, typeName);
+            return GetBasicResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, message);
         }
     }
 }

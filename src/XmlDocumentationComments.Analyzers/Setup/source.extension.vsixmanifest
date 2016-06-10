@@ -16,5 +16,8 @@
     <Asset Type="Microsoft.VisualStudio.Analyzer" Path="XmlDocumentationComments.Analyzers.dll" />
     <Asset Type="Microsoft.VisualStudio.Analyzer" Path="XmlDocumentationComments.CSharp.Analyzers.dll" />
     <Asset Type="Microsoft.VisualStudio.Analyzer" Path="XmlDocumentationComments.VisualBasic.Analyzers.dll" />
+    <Asset Type="Microsoft.VisualStudio.MefComponent" Path="XmlDocumentationComments.Analyzers.dll" />
+    <Asset Type="Microsoft.VisualStudio.MefComponent" Path="XmlDocumentationComments.CSharp.Analyzers.dll" />
+    <Asset Type="Microsoft.VisualStudio.MefComponent" Path="XmlDocumentationComments.VisualBasic.Analyzers.dll" />
   </Assets>
 </PackageManifest>

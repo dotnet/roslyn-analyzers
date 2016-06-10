@@ -16,5 +16,8 @@
     <Asset Type="Microsoft.VisualStudio.Analyzer" Path="Microsoft.Composition.Analyzers.dll" />
     <Asset Type="Microsoft.VisualStudio.Analyzer" Path="Microsoft.Composition.CSharp.Analyzers.dll" />
     <Asset Type="Microsoft.VisualStudio.Analyzer" Path="Microsoft.Composition.VisualBasic.Analyzers.dll" />
+    <Asset Type="Microsoft.VisualStudio.MefComponent" Path="Microsoft.Composition.Analyzers.dll" />
+    <Asset Type="Microsoft.VisualStudio.MefComponent" Path="Microsoft.Composition.CSharp.Analyzers.dll" />
+    <Asset Type="Microsoft.VisualStudio.MefComponent" Path="Microsoft.Composition.VisualBasic.Analyzers.dll" />
   </Assets>
 </PackageManifest>

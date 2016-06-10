@@ -29,6 +29,7 @@
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework="" />
     </frameworkAssemblies>
+    <developmentDependency>true</developmentDependency>
   </metadata>
   <files>
     <file src="Microsoft.Net.RoslynDiagnostics.props" target="build" />

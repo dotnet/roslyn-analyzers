@@ -75,7 +75,7 @@ namespace System.Runtime.Analyzers
             {
                 var gcSuppressFinalizeMethodSymbol = compilationContext.Compilation
                                                         .GetTypeByMetadataName("System.GC")
-                                                        .GetMembers("SuppressFinalize")
+                                                        ?.GetMembers("SuppressFinalize")
                                                         .OfType<IMethodSymbol>()
                                                         .SingleOrDefault();
 

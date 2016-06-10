@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MetaCompilation {
+namespace MetaCompilation.Analyzers {
     using System;
     using System.Reflection;
     
@@ -40,7 +40,7 @@ namespace MetaCompilation {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MetaCompilation.MetaCompilationResources", typeof(MetaCompilationResources).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MetaCompilation.Analyzers.MetaCompilationResources", typeof(MetaCompilationResources).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

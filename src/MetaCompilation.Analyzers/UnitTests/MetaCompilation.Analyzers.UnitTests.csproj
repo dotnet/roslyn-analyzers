@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="Settings">
-    <Import Project="..\..\..\..\build\Targets\Analyzers.Settings.targets" />
+    <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
   </ImportGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -11,14 +11,14 @@
     <ProjectGuid>{45D60761-2694-4084-9B23-B8D1660B6712}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MetaCompilation.Test</RootNamespace>
-    <AssemblyName>MetaCompilation.Test</AssemblyName>
+    <RootNamespace>MetaCompilation.Analyzers.UnitTests</RootNamespace>
+    <AssemblyName>MetaCompilation.Analyzers.UnitTests</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SolutionDir Condition="'$(SolutionDir)' == '' OR '$(SolutionDir)' == '*Undefined*'">..\..\..\..\</SolutionDir>
+    <SolutionDir Condition="'$(SolutionDir)' == '' OR '$(SolutionDir)' == '*Undefined*'">..\..\..\</SolutionDir>
     <Nonshipping>true</Nonshipping>
-    <SemanticVersion>$(MetaCompilationSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(MetaCompilationPreReleaseVersion)</PreReleaseVersion>
+    <SemanticVersion>$(MetaCompilationAnalyzersSemanticVersion)</SemanticVersion>
+    <PreReleaseVersion>$(MetaCompilationAnalyzersPreReleaseVersion)</PreReleaseVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\Test\Utilities\DiagnosticResult.cs">
+    <Compile Include="..\..\Test\Utilities\DiagnosticResult.cs">
       <Link>Helpers\DiagnosticResult.cs</Link>
     </Compile>
     <Compile Include="Helpers\HashUtilities.cs" />
@@ -58,17 +58,17 @@
     <Content Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Dependencies\CodeAnalysis\CodeAnalysis.csproj">
+    <ProjectReference Include="..\..\Dependencies\CodeAnalysis\CodeAnalysis.csproj">
       <Project>{434fa01f-b8cb-41f7-88d1-7906003f23bc}</Project>
       <Name>CodeAnalysis</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Dependencies\xUnit\xUnit.csproj">
+    <ProjectReference Include="..\..\Dependencies\xUnit\xUnit.csproj">
       <Project>{f21bc39a-3c97-4d8f-bfa8-9e4bd9b56413}</Project>
       <Name>xUnit</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MetaCompilation\MetaCompilation.csproj">
+    <ProjectReference Include="..\Core\MetaCompilation.Analyzers.Core.csproj">
       <Project>{6CD505A6-60D7-4C35-AE53-694AFDEB3A64}</Project>
-      <Name>MetaCompilation</Name>
+      <Name>MetaCompilation.Analyzers.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -78,6 +78,6 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ImportGroup Label="Targets">
-    <Import Project="..\..\..\..\build\Targets\Analyzers.Imports.targets" />
+    <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />
   </ImportGroup>
 </Project>

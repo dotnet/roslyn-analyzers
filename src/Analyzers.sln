@@ -124,7 +124,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Collections.Immutabl
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{80E410B3-D8D1-4C67-93FF-078530E20816}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiagnosticsTestUtilities", "Test\Utilities\DiagnosticsTestUtilities.csproj", "{0A0621F2-D1DC-47FF-B643-C6646557505E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Utilities", "Test\Utilities\Test.Utilities.csproj", "{0A0621F2-D1DC-47FF-B643-C6646557505E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}"
 EndProject
@@ -132,27 +132,27 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analyzer.Utilities", "Analy
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.CodeAnalysis.Analyzers", "Microsoft.CodeAnalysis.Analyzers", "{041E93F2-E703-4AB1-B6DF-13EC899D1C6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeAnalysisDiagnosticAnalyzers", "Microsoft.CodeAnalysis.Analyzers\Core\CodeAnalysisDiagnosticAnalyzers.csproj", "{D8762A0A-3832-47BE-BCF6-8B1060BE6B28}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.CodeAnalysis.Analyzers.Core", "Microsoft.CodeAnalysis.Analyzers\Core\Microsoft.CodeAnalysis.Analyzers.Core.csproj", "{D8762A0A-3832-47BE-BCF6-8B1060BE6B28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpCodeAnalysisDiagnosticAnalyzers", "Microsoft.CodeAnalysis.Analyzers\CSharp\CSharpCodeAnalysisDiagnosticAnalyzers.csproj", "{921B412A-5551-4853-82B4-46AD5A05A03E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.CodeAnalysis.CSharp.Analyzers", "Microsoft.CodeAnalysis.Analyzers\CSharp\Microsoft.CodeAnalysis.CSharp.Analyzers.csproj", "{921B412A-5551-4853-82B4-46AD5A05A03E}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "BasicCodeAnalysisDiagnosticAnalyzers", "Microsoft.CodeAnalysis.Analyzers\VisualBasic\BasicCodeAnalysisDiagnosticAnalyzers.vbproj", "{B1A6A74B-E484-48FB-8745-7A30A06DB631}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Microsoft.CodeAnalysis.VisualBasic.Analyzers", "Microsoft.CodeAnalysis.Analyzers\VisualBasic\Microsoft.CodeAnalysis.VisualBasic.Analyzers.vbproj", "{B1A6A74B-E484-48FB-8745-7A30A06DB631}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeAnalysisDiagnosticAnalyzersTest", "Microsoft.CodeAnalysis.Analyzers\Test\CodeAnalysisDiagnosticAnalyzersTest.csproj", "{0C2925AD-CD97-46FA-A686-E2C1AD19DAD8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.CodeAnalysis.Analyzers.UnitTests", "Microsoft.CodeAnalysis.Analyzers\UnitTests\Microsoft.CodeAnalysis.Analyzers.UnitTests.csproj", "{0C2925AD-CD97-46FA-A686-E2C1AD19DAD8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeAnalysisDiagnosticsSetup", "Microsoft.CodeAnalysis.Analyzers\Setup\CodeAnalysisDiagnosticsSetup.csproj", "{54F6AE18-B0CD-4799-9DF0-9B1AAD6A78AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.CodeAnalysis.Analyzers.Setup", "Microsoft.CodeAnalysis.Analyzers\Setup\Microsoft.CodeAnalysis.Analyzers.Setup.csproj", "{54F6AE18-B0CD-4799-9DF0-9B1AAD6A78AF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{87CF7748-CEB9-4D1A-9A56-F4364B73AB55}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "a2md", "Tools\a2md\a2md.csproj", "{AD31451B-0D31-41A9-8447-66569D2E07B6}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MetaCompilation", "MetaCompilation", "{602C97EB-B947-4532-9DBC-EB735E3BCD8A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MetaCompilation.Analyzers", "MetaCompilation.Analyzers", "{602C97EB-B947-4532-9DBC-EB735E3BCD8A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaCompilation", "MetaCompilation\MetaCompilation\MetaCompilation\MetaCompilation.csproj", "{6CD505A6-60D7-4C35-AE53-694AFDEB3A64}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaCompilation.Analyzers.Core", "MetaCompilation.Analyzers\Core\MetaCompilation.Analyzers.Core.csproj", "{6CD505A6-60D7-4C35-AE53-694AFDEB3A64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaCompilation.Test", "MetaCompilation\MetaCompilation\MetaCompilation.Test\MetaCompilation.Test.csproj", "{45D60761-2694-4084-9B23-B8D1660B6712}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaCompilation.Analyzers.UnitTests", "MetaCompilation.Analyzers\UnitTests\MetaCompilation.Analyzers.UnitTests.csproj", "{45D60761-2694-4084-9B23-B8D1660B6712}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaCompilation.Vsix", "MetaCompilation\MetaCompilation\MetaCompilation.Vsix\MetaCompilation.Vsix.csproj", "{AEDFBCB1-8D38-4148-B9D5-E31FB6087E14}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaCompilation.Analyzers.Setup", "MetaCompilation.Analyzers\Setup\MetaCompilation.Analyzers.Setup.csproj", "{AEDFBCB1-8D38-4148-B9D5-E31FB6087E14}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "System.Security.Cryptography.Hashing.Algorithms.Analyzers", "System.Security.Cryptography.Hashing.Algorithms.Analyzers", "{FB4EA164-223A-418C-932B-026FE0234089}"
 EndProject
@@ -164,7 +164,7 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "System.Security.Cryptograph
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Security.Cryptography.Hashing.Algorithms.Analyzers.UnitTests", "System.Security.Cryptography.Hashing.Algorithms.Analyzers\UnitTests\System.Security.Cryptography.Hashing.Algorithms.Analyzers.UnitTests.csproj", "{811DBEC8-EC7E-43E9-ACAD-A59FF524B79E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.Maintainability", "Microsoft.Maintainability", "{AB30A658-EF83-4F4F-ABFD-1FD85DFAAF9A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.Maintainability.Analyzers", "Microsoft.Maintainability.Analyzers", "{AB30A658-EF83-4F4F-ABFD-1FD85DFAAF9A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Maintainability.Analyzers.Core", "Microsoft.Maintainability.Analyzers\Core\Microsoft.Maintainability.Analyzers.Core.csproj", "{69F09F58-97C4-4070-9348-9A6A6D1C81F9}"
 EndProject

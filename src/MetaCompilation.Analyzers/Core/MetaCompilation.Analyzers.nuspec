@@ -1,25 +1,29 @@
 ﻿<?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
-    <id>MetaCompilation</id>
-    <summary>TODO: Update summary</summary>
-    <description>TODO: Update description</description>
+    <id>MetaCompilation.Analyzers</id>
+    <summary>MetaCompilation Analyzers</summary>
+    <description>
+      MetaCompilation Analyzers
+    </description>
+    <dependencies>
+    </dependencies>
 
+    <language>en-US</language>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <version>$currentVersion$</version>
     <authors>$authors$</authors>
     <licenseUrl>$licenseUrl$</licenseUrl>
     <projectUrl>$projectUrl$</projectUrl>
     <releaseNotes>$releaseNotes$</releaseNotes>
-    <tags>$tags$ MetaCompilation analyzers</tags>
-
+    <tags>$tags$ analyzers</tags>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework="" />
     </frameworkAssemblies>
     <developmentDependency>true</developmentDependency>
   </metadata>
   <files>
-    <file src="$binaries$MetaCompilation.dll" target="tools\analyzers\" />
+    <file src="$binaries$MetaCompilation.Analyzers.dll" target="tools\analyzers\" />
     <file src="tools\Install.ps1" target="tools\" />
     <file src="tools\Uninstall.ps1" target="tools\" />
   </files>

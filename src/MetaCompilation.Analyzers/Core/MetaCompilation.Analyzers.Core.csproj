@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="Settings">
-    <Import Project="..\..\..\..\build\Targets\Analyzers.Settings.targets" />
+    <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
   </ImportGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,15 +9,15 @@
     <ProjectGuid>{6CD505A6-60D7-4C35-AE53-694AFDEB3A64}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MetaCompilation</RootNamespace>
-    <AssemblyName>MetaCompilation</AssemblyName>
+    <RootNamespace>MetaCompilation.Analyzers</RootNamespace>
+    <AssemblyName>MetaCompilation.Analyzers</AssemblyName>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
-    <SolutionDir Condition="'$(SolutionDir)' == '' OR '$(SolutionDir)' == '*Undefined*'">..\..\</SolutionDir>
-    <SemanticVersion>$(MetaCompilationSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(MetaCompilationPreReleaseVersion)</PreReleaseVersion>
+    <SolutionDir Condition="'$(SolutionDir)' == '' OR '$(SolutionDir)' == '*Undefined*'">..\</SolutionDir>
+    <SemanticVersion>$(MetaCompilationAnalyzersSemanticVersion)</SemanticVersion>
+    <PreReleaseVersion>$(MetaCompilationAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
   </PropertyGroup>
@@ -41,7 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Diagnostic.nuspec">
+    <None Include="MetaCompilation.Analyzers.nuspec">
       <SubType>Designer</SubType>
     </None>
     <Content Include="project.json" />
@@ -55,23 +55,12 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Dependencies\CodeAnalysis\CodeAnalysis.csproj">
+    <ProjectReference Include="..\..\Dependencies\CodeAnalysis\CodeAnalysis.csproj">
       <Project>{434fa01f-b8cb-41f7-88d1-7906003f23bc}</Project>
       <Name>CodeAnalysis</Name>
     </ProjectReference>
   </ItemGroup>
   <ImportGroup Label="Targets">
-    <Import Project="..\..\..\..\build\Targets\Analyzers.Imports.targets" />
+    <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />
   </ImportGroup>
-  <!--<PropertyGroup>
-    <PostBuildEvent>"$(SolutionDir)\packages\NuGet.CommandLine.2.8.2\tools\NuGet.exe" pack Diagnostic.nuspec -NoPackageAnalysis -OutputDirectory .</PostBuildEvent>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
-  </PropertyGroup>-->
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

@@ -10,7 +10,7 @@
     <ProjectGuid>{0A0621F2-D1DC-47FF-B643-C6646557505E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Roslyn.Diagnostics.Test.Utilities</RootNamespace>
+    <RootNamespace>Test.Utilities</RootNamespace>
     <AssemblyName>Roslyn.Diagnostics.Test.Utilities</AssemblyName>
     <NonShipping>true</NonShipping>
     <SolutionDir Condition="'$(SolutionDir)' == '' OR '$(SolutionDir)' == '*Undefined*'">..\..\..\..\</SolutionDir>

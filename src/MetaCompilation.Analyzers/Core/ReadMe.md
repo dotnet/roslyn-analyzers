@@ -23,8 +23,8 @@ Writing an analyzer can be broken down into the following high-level steps
 1. If the analysis finds an error, create and report a diagnostic to inform the user of this error.
 
 The syntax diagram for a sample if-statement can be found below. You will a write a diagnostic that will surface when the whitespace circled in red is either absent or anything other than a single space. 
-For more information on visualizing syntax trees see [Syntax Trees](https://github.com/dotnet/roslyn-analyzers/blob/master/src/MetaCompilation/MetaCompilation/MetaCompilation/ReadMe.md#syntax-trees).
-![If Statement Syntax Tree](https://github.com/dotnet/roslyn-analyzers/blob/master/src/MetaCompilation/MetaCompilation/MetaCompilation/IfSyntaxTree.jpg)
+For more information on visualizing syntax trees see [Syntax Trees](https://github.com/dotnet/roslyn-analyzers/blob/master/src/MetaCompilation.Analyzers/Core/ReadMe.md#syntax-trees).
+![If Statement Syntax Tree](https://github.com/dotnet/roslyn-analyzers/blob/master/src/MetaCompilation.Analyzers/Core/IfSyntaxTree.jpg)
 
 Instructions
 ------------
@@ -36,11 +36,11 @@ Instructions
 * Then type `powershell -executionpolicy bypass src\.nuget\NuGetRestore.ps1`
 * Restart Visual Studio
 * Clone the [roslyn-analyzers](https://github.com/dotnet/roslyn-analyzers) repository on your local machine
-* Open roslyn-analyzers/src/MetaCompilation/MetaCompilation.sln
+* Open src/Analyzers.sln
 * Build the solution
 * Close Visual Studio
 * Navigate to roslyn-analyzers/Binaries. There may be multiple folders here. You want the one that has the same name as your configuration in Visual Studio (probably either Debug or Release)
-* In the appropriate folder, there will be a file called MetaCompilation.Vsix. Double click on this file to begin the installation of the tutorial
+* In the appropriate folder, there will be a file called MetaCompilation.Analyzers.Setup.vsix. Double click on this file to begin the installation of the tutorial
 * After the extension has been installed, go to *File -> New -> Project -> Visual C# -> Analyzer Tutorial Template*
 * Give your project a name and location, and click OK
 * Rebuild the solution

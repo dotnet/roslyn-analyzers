@@ -3,6 +3,8 @@
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
+using XmlDocumentationComments.CSharp.Analyzers;
+using XmlDocumentationComments.VisualBasic.Analyzers;
 
 namespace XmlDocumentationComments.Analyzers.UnitTests
 {

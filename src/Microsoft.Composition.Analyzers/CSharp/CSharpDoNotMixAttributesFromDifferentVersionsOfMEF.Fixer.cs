@@ -3,8 +3,9 @@
 using System.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.Composition.Analyzers;
 
-namespace Microsoft.Composition.Analyzers
+namespace Microsoft.Composition.CSharp.Analyzers
 {
     /// <summary>
     /// RS0006: Do not mix attributes from different versions of MEF

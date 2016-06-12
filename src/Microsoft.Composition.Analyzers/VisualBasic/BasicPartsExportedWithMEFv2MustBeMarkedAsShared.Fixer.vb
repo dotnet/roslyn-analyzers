@@ -3,8 +3,9 @@
 Imports System.Composition
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
+Imports Microsoft.Composition.Analyzers
 
-Namespace Microsoft.Composition.Analyzers
+Namespace Microsoft.Composition.VisualBasic.Analyzers
     ''' <summary>
     ''' RS0023: Parts exported with MEFv2 must be marked as Shared
     ''' </summary>

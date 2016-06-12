@@ -7,8 +7,9 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.Semantics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
+Imports Microsoft.Maintainability.Analyzers
 
-Namespace Microsoft.Maintainability.Analyzers
+Namespace Microsoft.Maintainability.VisualBasic.Analyzers
     ''' <summary>
     ''' CA1804: Remove unused locals
     ''' </summary>

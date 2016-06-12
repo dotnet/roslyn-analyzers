@@ -3,17 +3,18 @@
 using System;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Analyzer.Utilities;
+using Microsoft.ApiDesignGuidelines.Analyzers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Linq;
 using Microsoft.CodeAnalysis.Editing;
-using Analyzer.Utilities;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.ApiDesignGuidelines.CSharp.Analyzers
 {
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public class CSharpStaticHolderTypesFixer : CodeFixProvider

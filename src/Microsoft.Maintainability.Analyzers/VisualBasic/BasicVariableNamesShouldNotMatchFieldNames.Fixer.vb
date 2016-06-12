@@ -3,8 +3,9 @@
 Imports System.Composition
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
+Imports Microsoft.Maintainability.Analyzers
 
-Namespace Microsoft.Maintainability.Analyzers
+Namespace Microsoft.Maintainability.VisualBasic.Analyzers
     ''' <summary>
     ''' CA1500: Variable names should not match field names
     ''' </summary>

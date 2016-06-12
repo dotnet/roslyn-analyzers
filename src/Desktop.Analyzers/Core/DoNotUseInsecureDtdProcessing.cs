@@ -3,13 +3,12 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Semantics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Desktop.Analyzers.Helpers;
 
 namespace Desktop.Analyzers
 {

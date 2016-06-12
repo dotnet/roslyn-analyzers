@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Composition;
+using System.Runtime.Analyzers;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -9,9 +10,8 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Formatting;
-using Microsoft.CodeAnalysis.Shared.Extensions;
 
-namespace System.Runtime.Analyzers
+namespace System.Runtime.CSharp.Analyzers
 {
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public class CSharpUseOrdinalStringComparisonFixer : UseOrdinalStringComparisonFixerBase

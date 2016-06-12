@@ -2,6 +2,8 @@
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
+using XmlDocumentationComments.CSharp.Analyzers;
+using XmlDocumentationComments.VisualBasic.Analyzers;
 using Xunit;
 
 namespace XmlDocumentationComments.Analyzers.UnitTests

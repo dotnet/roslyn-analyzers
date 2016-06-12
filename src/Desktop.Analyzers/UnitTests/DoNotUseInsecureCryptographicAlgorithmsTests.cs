@@ -3,6 +3,8 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
+using Desktop.CSharp.Analyzers;
+using Desktop.VisualBasic.Analyzers;
 using Test.Utilities;
 using Xunit;
 

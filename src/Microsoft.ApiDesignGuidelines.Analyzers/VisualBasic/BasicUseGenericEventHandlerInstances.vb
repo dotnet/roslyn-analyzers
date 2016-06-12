@@ -1,12 +1,13 @@
 ﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 Imports System.Linq
+Imports Microsoft.ApiDesignGuidelines.Analyzers
 
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers
+Namespace Microsoft.ApiDesignGuidelines.VisualBasic.Analyzers
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
     Public Class BasicUseGenericEventHandlerInstancesAnalyzer
         Inherits UseGenericEventHandlerInstancesAnalyzer

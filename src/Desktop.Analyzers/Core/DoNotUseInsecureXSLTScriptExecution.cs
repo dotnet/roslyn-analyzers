@@ -6,8 +6,8 @@ using System.Linq;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Desktop.Analyzers.Common;
 using Analyzer.Utilities;
+using Desktop.Analyzers.Helpers;
 
 namespace Desktop.Analyzers
 {

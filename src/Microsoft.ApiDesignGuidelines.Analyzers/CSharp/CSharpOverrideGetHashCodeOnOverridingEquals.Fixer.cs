@@ -2,10 +2,11 @@
 
 using System.Collections.Immutable;
 using System.Composition;
+using Microsoft.ApiDesignGuidelines.Analyzers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.ApiDesignGuidelines.CSharp.Analyzers
 {
     /// <summary>
     /// CA2218: Override GetHashCode on overriding Equals

@@ -4,8 +4,6 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
-using System.Linq;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Analyzer.Utilities.Extensions;
 

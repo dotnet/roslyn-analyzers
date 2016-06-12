@@ -4,8 +4,9 @@ Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
+Imports XmlDocumentationComments.Analyzers
 
-Namespace XmlDocumentationComments.Analyzers
+Namespace XmlDocumentationComments.VisualBasic.Analyzers
     ''' <summary>
     ''' RS0010: Avoid using cref tags with a prefix
     ''' </summary>

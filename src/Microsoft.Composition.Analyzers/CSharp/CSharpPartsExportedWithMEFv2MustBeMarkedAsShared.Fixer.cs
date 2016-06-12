@@ -3,8 +3,9 @@
 using System.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.Composition.Analyzers;
 
-namespace Microsoft.Composition.Analyzers
+namespace Microsoft.Composition.CSharp.Analyzers
 {
     /// <summary>
     /// RS0023: Parts exported with MEFv2 must be marked as Shared

@@ -5,12 +5,11 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Microsoft.ApiDesignGuidelines.Analyzers.Helpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Roslyn.Utilities;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {

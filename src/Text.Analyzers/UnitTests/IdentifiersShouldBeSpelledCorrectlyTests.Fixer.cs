@@ -3,6 +3,8 @@
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
+using Text.CSharp.Analyzers;
+using Text.VisualBasic.Analyzers;
 
 namespace Text.Analyzers.UnitTests
 {

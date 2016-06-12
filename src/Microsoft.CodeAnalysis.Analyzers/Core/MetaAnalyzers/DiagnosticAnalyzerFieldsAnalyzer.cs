@@ -4,7 +4,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers

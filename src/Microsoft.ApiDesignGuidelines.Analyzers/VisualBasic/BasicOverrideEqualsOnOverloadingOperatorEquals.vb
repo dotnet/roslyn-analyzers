@@ -3,10 +3,11 @@
 Imports System.Collections.Immutable
 Imports Analyzer.Utilities
 Imports Analyzer.Utilities.Extensions
+Imports Microsoft.ApiDesignGuidelines.Analyzers
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers
+Namespace Microsoft.ApiDesignGuidelines.VisualBasic.Analyzers
     ''' <summary>
     ''' CA2224: Override Equals on overloading operator equals
     ''' </summary>

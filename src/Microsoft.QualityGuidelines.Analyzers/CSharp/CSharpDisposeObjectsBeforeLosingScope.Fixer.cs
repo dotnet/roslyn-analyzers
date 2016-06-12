@@ -3,8 +3,9 @@
 using System.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.QualityGuidelines.Analyzers;
 
-namespace Microsoft.QualityGuidelines.Analyzers
+namespace Microsoft.QualityGuidelines.CSharp.Analyzers
 {
     /// <summary>
     /// CA2000: Dispose Objects Before Losing Scope

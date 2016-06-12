@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
-namespace MetaCompilation
+namespace MetaCompilation.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class MetaCompilationAnalyzer : DiagnosticAnalyzer

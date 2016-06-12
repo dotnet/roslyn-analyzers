@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Composition;
 using System.Linq;
+using System.Runtime.InteropServices.Analyzers;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -10,7 +11,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace System.Runtime.InteropServices.Analyzers
+namespace System.Runtime.InteropServices.CSharp.Analyzers
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = PInvokeDiagnosticAnalyzer.RuleCA2101Id), Shared]
     public class CSharpSpecifyMarshalingForPInvokeStringArgumentsFixer : SpecifyMarshalingForPInvokeStringArgumentsFixer

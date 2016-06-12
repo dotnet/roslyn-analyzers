@@ -1,10 +1,12 @@
 ﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+Imports Desktop.Analyzers
+Imports Desktop.Analyzers.Helpers
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 
-Namespace Desktop.Analyzers
+Namespace Desktop.VisualBasic.Analyzers
 
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
     Public Class BasicDoNotUseInsecureCryptographicAlgorithmsAnalyzer

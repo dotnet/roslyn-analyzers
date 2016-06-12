@@ -3,11 +3,10 @@
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.QualityGuidelines.Analyzers;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.QualityGuidelines.UnitTests
+namespace Microsoft.QualityGuidelines.Analyzers.UnitTests
 {
     public partial class DoNotCallOverridableMethodsInConstructorsTests : DiagnosticAnalyzerTestBase
     {

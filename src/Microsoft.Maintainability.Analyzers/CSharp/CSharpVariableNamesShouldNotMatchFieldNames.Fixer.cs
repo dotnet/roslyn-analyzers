@@ -3,8 +3,9 @@
 using System.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.Maintainability.Analyzers;
 
-namespace Microsoft.Maintainability.Analyzers
+namespace Microsoft.Maintainability.CSharp.Analyzers
 {
     /// <summary>
     /// CA1500: Variable names should not match field names

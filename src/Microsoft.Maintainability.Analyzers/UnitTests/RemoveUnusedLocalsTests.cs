@@ -2,6 +2,7 @@
 
 using System;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.Maintainability.VisualBasic.Analyzers;
 using Test.Utilities;
 using Xunit;
 

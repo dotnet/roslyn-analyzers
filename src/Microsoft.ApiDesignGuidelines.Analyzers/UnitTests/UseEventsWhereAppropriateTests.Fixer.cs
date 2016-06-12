@@ -3,7 +3,7 @@
 using Microsoft.ApiDesignGuidelines.Analyzers;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.UnitTests;
+using Test.Utilities;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 {

@@ -5,17 +5,17 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis.VisualBasic;
 using Microsoft.VisualBasic.Devices;
-using Roslyn.Test.Utilities;
 using Roslyn.Utilities;
-using Xunit;
 using TestResources.NetFX;
+using Xunit;
 
-namespace Microsoft.CodeAnalysis.UnitTests
+namespace Test.Utilities
 {
     public abstract class DiagnosticAnalyzerTestBase
     {

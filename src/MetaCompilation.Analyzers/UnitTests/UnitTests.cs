@@ -3,11 +3,10 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.UnitTests;
-using TestHelper;
+using Test.Utilities;
 using Xunit;
 
-namespace MetaCompilation.Test
+namespace MetaCompilation.Analyzers.UnitTests
 {
     public class UnitTest : CodeFixVerifier
     {

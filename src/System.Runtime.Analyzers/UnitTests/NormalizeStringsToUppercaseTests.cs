@@ -2,7 +2,7 @@
 
 using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.UnitTests;
+using Test.Utilities;
 using Xunit;
 
 namespace System.Runtime.Analyzers.UnitTests

@@ -3,8 +3,7 @@
 using Microsoft.ApiDesignGuidelines.Analyzers;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.UnitTests;
-using Roslyn.Diagnostics.Test.Utilities;
+using Test.Utilities;
 using Xunit;
 
 namespace Microsoft.ApiDesignGuidelines.UnitTests

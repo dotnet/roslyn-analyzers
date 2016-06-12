@@ -3,8 +3,8 @@
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.UnitTests;
 using Microsoft.QualityGuidelines.Analyzers;
+using Test.Utilities;
 using Xunit;
 
 namespace Microsoft.QualityGuidelines.UnitTests

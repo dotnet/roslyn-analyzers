@@ -6,10 +6,10 @@ using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.UnitTests;
+using Test.Utilities;
 using Xunit;
 
-namespace TestHelper
+namespace MetaCompilation.Analyzers.UnitTests
 {
     /// <summary>
     /// Superclass of all Unit Tests for DiagnosticAnalyzers

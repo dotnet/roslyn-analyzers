@@ -2,6 +2,7 @@
 
 Imports System.Collections.Immutable
 Imports Analyzer.Utilities
+Imports Analyzer.Utilities.Extensions
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic

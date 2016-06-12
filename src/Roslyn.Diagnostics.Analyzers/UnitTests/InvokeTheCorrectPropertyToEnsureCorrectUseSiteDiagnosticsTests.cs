@@ -2,6 +2,7 @@
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.UnitTests;
+using Test.Utilities;
 
 namespace Roslyn.Diagnostics.Analyzers.UnitTests
 {

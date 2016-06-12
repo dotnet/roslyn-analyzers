@@ -42,11 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\Test\Utilities\DiagnosticResult.cs">
-      <Link>Helpers\DiagnosticResult.cs</Link>
-    </Compile>
-    <Compile Include="Helpers\HashUtilities.cs" />
-    <Compile Include="Helpers\EnumerableExtensions.cs" />
     <Compile Include="Verifiers\CodeFixVerifier.cs" />
     <Compile Include="Verifiers\DiagnosticVerifier.cs" />
     <Compile Include="Helpers\CodeFixVerifier.Helper.cs" />
@@ -65,6 +60,10 @@
     <ProjectReference Include="..\..\Dependencies\xUnit\xUnit.csproj">
       <Project>{f21bc39a-3c97-4d8f-bfa8-9e4bd9b56413}</Project>
       <Name>xUnit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Test\Utilities\Test.Utilities.csproj">
+      <Project>{0a0621f2-d1dc-47ff-b643-c6646557505e}</Project>
+      <Name>Test.Utilities</Name>
     </ProjectReference>
     <ProjectReference Include="..\Core\MetaCompilation.Analyzers.Core.csproj">
       <Project>{6CD505A6-60D7-4C35-AE53-694AFDEB3A64}</Project>

@@ -2,7 +2,7 @@
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.UnitTests;
+using Test.Utilities;
 
 namespace System.Runtime.InteropServices.Analyzers.UnitTests
 {

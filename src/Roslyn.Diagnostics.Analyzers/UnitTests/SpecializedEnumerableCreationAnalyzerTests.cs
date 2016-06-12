@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Roslyn.Diagnostics.Analyzers;
 using Roslyn.Diagnostics.Analyzers.CSharp;
 using Roslyn.Diagnostics.Analyzers.VisualBasic;
+using Test.Utilities;
 using Xunit;
 
 namespace Microsoft.CodeAnalysis.UnitTests.Performance

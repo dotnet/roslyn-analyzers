@@ -2,7 +2,7 @@
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Xunit;
-using Microsoft.CodeAnalysis.UnitTests;
+using Test.Utilities;
 
 namespace Desktop.Analyzers.UnitTests
 {

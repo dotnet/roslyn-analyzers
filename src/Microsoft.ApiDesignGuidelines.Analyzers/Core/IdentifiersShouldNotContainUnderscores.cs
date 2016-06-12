@@ -7,6 +7,7 @@ using Analyzer.Utilities;
 using System.Linq;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {

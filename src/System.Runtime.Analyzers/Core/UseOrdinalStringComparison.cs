@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Semantics;
 using System.Linq;
+using Analyzer.Utilities.Extensions;
 
 namespace System.Runtime.Analyzers
 {

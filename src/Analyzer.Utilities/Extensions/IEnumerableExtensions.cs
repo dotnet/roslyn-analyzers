@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace Analyzer.Utilities
+namespace Analyzer.Utilities.Extensions
 {
     public static class IEnumerableExtensions
     {

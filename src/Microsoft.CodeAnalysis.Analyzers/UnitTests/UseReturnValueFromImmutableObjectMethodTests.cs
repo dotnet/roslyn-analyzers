@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.Analyzers;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.CSharp.Analyzers;
+using Test.Utilities;
 
 namespace Microsoft.CodeAnalysis.UnitTests
 {

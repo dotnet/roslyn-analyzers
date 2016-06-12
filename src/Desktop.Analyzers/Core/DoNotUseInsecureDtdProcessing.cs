@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Semantics;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 
 namespace Desktop.Analyzers
 {

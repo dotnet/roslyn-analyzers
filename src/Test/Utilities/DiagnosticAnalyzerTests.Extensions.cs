@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Roslyn.Utilities;
 using Xunit;
 
-namespace Microsoft.CodeAnalysis.UnitTests
+namespace Test.Utilities
 {
     public static class DiagnosticAnalyzerTestsExtensions
     {
@@ -153,7 +153,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 string.Format("Expected diagnostic to be in file \"{0}\" was actually in file \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
                     expected.Path, actualSpan.Path, FormatDiagnostics(analyzer, diagnostic)));
 
-            Text.LinePosition actualLinePosition = actualSpan.StartLinePosition;
+            Microsoft.CodeAnalysis.Text.LinePosition actualLinePosition = actualSpan.StartLinePosition;
 
             // Only check line position if there is an actual line in the real diagnostic
             if (actualLinePosition.Line > 0)
@@ -206,7 +206,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
                                 "Test base does not currently handle diagnostics in metadata locations. Diagnostic in metadata:\r\n" + diagnostics[i]);
 
                             string resultMethodName = GetResultMethodName(diagnostics[i]);
-                            Text.LinePosition linePosition = diagnostics[i].Location.GetLineSpan().StartLinePosition;
+                            Microsoft.CodeAnalysis.Text.LinePosition linePosition = diagnostics[i].Location.GetLineSpan().StartLinePosition;
 
                             builder.AppendFormat("{0}({1}, {2}, {3}.{4})",
                                 resultMethodName,

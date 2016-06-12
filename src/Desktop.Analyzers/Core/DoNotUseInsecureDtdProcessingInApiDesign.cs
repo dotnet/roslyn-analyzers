@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Desktop.Analyzers.Common;
 using Analyzer.Utilities;
 using System.Collections.Concurrent;
+using Analyzer.Utilities.Extensions;
 
 namespace Desktop.Analyzers
 {

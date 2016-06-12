@@ -3,7 +3,7 @@
 using System;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.UnitTests;
+using Test.Utilities;
 
 namespace Microsoft.Maintainability.Analyzers.UnitTests
 {

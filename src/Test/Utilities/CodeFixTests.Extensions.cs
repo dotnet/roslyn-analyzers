@@ -2,9 +2,10 @@
 
 using System.Linq;
 using System.Threading;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 
-namespace Microsoft.CodeAnalysis.UnitTests
+namespace Test.Utilities
 {
     public static class DiagnosticFixerTestsExtensions
     {

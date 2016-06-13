@@ -20,7 +20,7 @@ namespace Microsoft.QualityGuidelines.UnitTests
         }
 
         [Fact]
-        public void CA2200CSharpTestWithLegalExceptionThrow()
+        public void CA2200_NoDiagnosticsForRethrow()
         {
             VerifyCSharp(@"
 using System;
@@ -38,11 +38,25 @@ class Program
             throw;
         }
     }
-}");
+}
+");
+
+            VerifyBasic(@"
+Imports System
+Class Program
+    Sub CatchAndRethrowExplicitly()
+        Try
+            Throw New ArithmeticException()
+        Catch ex As Exception
+            Throw
+        End Try
+    End Sub
+End Class
+");
         }
 
         [Fact]
-        public void CA2200CSharpTestWithLegalExceptionThrowMultiple()
+        public void CA2200_NoDiagnosticsForThrowAnotherException()
         {
             VerifyCSharp(@"
 using System;
@@ -62,50 +76,27 @@ class Program
             throw i;
         }
     }
-}");
-        }
+}
+");
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1016")]
-        public void CA2200CSharpTestWithLegalExceptionThrowNested()
-        {
-            VerifyCSharp(@"
-using System;
-
-class Program
-{
-    void CatchAndRethrowExplicitly()
-    {   
-        try
-        {
-            try
-            {
-                throw new ArithmeticException();
-            }
-            catch (ArithmeticException e)
-            {
-                throw;
-            }
-            catch (ArithmeticException)
-                try
-                {
-                    throw new ArithmeticException();
-                }
-                catch (ArithmeticException i)
-                {
-                    throw e;
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            throw;
-        }
-    }
-}");
+            VerifyBasic(@"
+Imports System
+Class Program
+    Sub CatchAndRethrowExplicitly()
+        Try
+            Throw New ArithmeticException()
+            Throw New Exception()
+        Catch ex As Exception
+            Dim i As New Exception()
+            Throw i
+        End Try
+    End Sub
+End Class
+");
         }
 
         [Fact]
-        public void CA2200CSharpTestWithIllegalExceptionThrow()
+        public void CA2200_DiagnosticForThrowCaughtException()
         {
             VerifyCSharp(@"
 using System;
@@ -128,12 +119,28 @@ class Program
     {
         throw new ArithmeticException();
     }
-}",
+}
+",
            GetCA2200CSharpResultAt(14, 13));
+
+            VerifyBasic(@"
+Imports System
+Class Program
+    Sub CatchAndRethrowExplicitly()
+
+        Try
+            Throw New ArithmeticException()
+        Catch e As ArithmeticException
+            Throw e
+        End Try
+    End Sub
+End Class
+",
+            GetCA2200BasicResultAt(9, 13));
         }
 
         [Fact]
-        public void CA2200CSharpTestWithIllegalExceptionThrowwithScope()
+        public void CA2200_NoDiagnosticsForThrowCaughtExceptionInAnotherScope()
         {
             VerifyCSharp(@"
 using System;
@@ -156,11 +163,33 @@ class Program
     {
         throw new ArithmeticException();
     }|]
-}");
+}
+");
         }
 
         [Fact]
-        public void CA2200CSharpTestWithIllegalExceptionThrowMultiple()
+        public void CA2200_SingleDiagnosticForThrowCaughtExceptionInSpecificScope()
+        {
+            VerifyBasic(@"
+Imports System
+Class Program
+    Sub CatchAndRethrowExplicitly()
+
+        Try
+            Throw New ArithmeticException()
+        Catch e As ArithmeticException
+            Throw e
+        [|Catch e As Exception
+            Throw e
+        End Try|]
+    End Sub
+End Class
+",
+            GetCA2200BasicResultAt(11, 13));
+        }
+
+        [Fact]
+        public void CA2200_MultipleDiagnosticsForThrowCaughtExceptionAtMultiplePlaces()
         {
             VerifyCSharp(@"
 using System;
@@ -187,13 +216,32 @@ class Program
     {
         throw new ArithmeticException();
     }
-}",
-           GetCA2200CSharpResultAt(14, 13),
-           GetCA2200CSharpResultAt(18, 13));
+}
+",
+            GetCA2200CSharpResultAt(14, 13),
+            GetCA2200CSharpResultAt(18, 13));
+
+            VerifyBasic(@"
+Imports System
+Class Program
+    Sub CatchAndRethrowExplicitly()
+
+        Try
+            Throw New ArithmeticException()
+        Catch e As ArithmeticException
+            Throw e
+        Catch e As Exception
+            Throw e
+        End Try
+    End Sub
+End Class
+",
+            GetCA2200BasicResultAt(9, 13),
+            GetCA2200BasicResultAt(11, 13));
         }
 
         [Fact]
-        public void CA2200CSharpTestWithIllegalExceptionThrowNested()
+        public void CA2200_DiagnosticForThrowOuterCaughtException()
         {
             VerifyCSharp(@"
 using System;
@@ -218,132 +266,10 @@ class Program
             }
         }
     }
-}",
-           GetCA2200CSharpResultAt(20, 17));
-        }
+}
+",
+            GetCA2200CSharpResultAt(20, 17));
 
-        [Fact]
-        public void CA2200yVisualBasicTestWithLegalExceptionThrow()
-        {
-            VerifyBasic(@"
-Imports System
-Class Program
-    Sub CatchAndRethrowExplicitly()
-        Try
-            Throw New ArithmeticException()
-        Catch ex As Exception
-            Throw
-        End Try
-    End Sub
-End Class");
-        }
-
-        [Fact]
-        public void CA2200VisualBasicTestWithLegalExceptionThrowMultiple()
-        {
-            VerifyBasic(@"
-Imports System
-Class Program
-    Sub CatchAndRethrowExplicitly()
-        Try
-            Throw New ArithmeticException()
-            Throw New Exception()
-        Catch ex As Exception
-            Dim i As New Exception()
-            Throw i
-        End Try
-    End Sub
-End Class");
-        }
-
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1016")]
-        public void CA2200VisualBasicTestWithLegalExceptionThrowNested()
-        {
-            VerifyBasic(@"
-Imports System
-Class Program
-    Sub CatchAndRethrowExplicitly()
-        Try
-            Try
-                Throw New ArithmeticException()
-            Catch ex As ArithmeticException
-                Throw
-            Catch i As ArithmeticException
-                Try
-                    Throw New ArithmeticException()
-                Catch e As Exception
-                    Throw ex
-                End Try
-            End Try
-        Catch ex As Exception
-            Throw
-        End Try
-    End Sub
-End Class");
-        }
-
-        [Fact]
-        public void CA2200VisualBasicTestWithIllegalExceptionThrow()
-        {
-            VerifyBasic(@"
-Imports System
-Class Program
-    Sub CatchAndRethrowExplicitly()
-
-        Try
-            Throw New ArithmeticException()
-        Catch e As ArithmeticException
-            Throw e
-        End Try
-    End Sub
-End Class",
-           GetCA2200BasicResultAt(9, 13));
-        }
-
-        [Fact]
-        public void CA2200VisualBasicTestWithIllegalExceptionThrowMultiple()
-        {
-            VerifyBasic(@"
-Imports System
-Class Program
-    Sub CatchAndRethrowExplicitly()
-
-        Try
-            Throw New ArithmeticException()
-        Catch e As ArithmeticException
-            Throw e
-        Catch e As Exception
-            Throw e
-        End Try
-    End Sub
-End Class",
-           GetCA2200BasicResultAt(9, 13),
-           GetCA2200BasicResultAt(11, 13));
-        }
-
-        [Fact]
-        public void CA2200VisualBasicTestWithIllegalExceptionThrowMultipleWithScope()
-        {
-            VerifyBasic(@"
-Imports System
-Class Program
-    Sub CatchAndRethrowExplicitly()
-
-        Try
-            Throw New ArithmeticException()
-        Catch e As ArithmeticException
-            Throw e
-        [|Catch e As Exception
-            Throw e
-        End Try|]
-    End Sub
-End Class",
-           GetCA2200BasicResultAt(11, 13));
-        }
-
-        [Fact]
-        public void CA2200VisualBasicTestWithIllegalExceptionThrowNested()
-        {
             VerifyBasic(@"
 Imports System
 Class Program
@@ -359,8 +285,73 @@ Class Program
             End Try
         End Try
     End Sub
-End Class",
-           GetCA2200BasicResultAt(12, 17));
+End Class
+",
+            GetCA2200BasicResultAt(12, 17));
+        }
+
+        [Fact]
+        public void CA2200_NoDiagnosticsForNestingWithCompileErrors()
+        {
+            VerifyCSharp(@"
+using System;
+
+class Program
+{
+    void CatchAndRethrowExplicitly()
+    {   
+        try
+        {
+            try
+            {
+                throw new ArithmeticException();
+            }
+            catch (ArithmeticException e)
+            {
+                throw;
+            }
+            catch (ArithmeticException)   // error CS0160: A previous catch clause already catches all exceptions of this or of a super type ('ArithmeticException')
+            {
+                try
+                {
+                    throw new ArithmeticException();
+                }
+                catch (ArithmeticException i)
+                {
+                    throw e;   // error CS0103: The name 'e' does not exist in the current context
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            throw;
+        }
+    }
+}
+", TestValidationMode.AllowCompileErrors);
+
+            VerifyBasic(@"
+Imports System
+Class Program
+    Sub CatchAndRethrowExplicitly()
+        Try
+            Try
+                Throw New ArithmeticException()
+            Catch ex As ArithmeticException
+                Throw
+            Catch i As ArithmeticException
+                Try
+                    Throw New ArithmeticException()
+                Catch e As Exception
+                    Throw ex   ' error BC30451: 'ex' is not declared. It may be inaccessible due to its protection level.
+                End Try
+            End Try
+        Catch ex As Exception
+            Throw
+        End Try
+    End Sub
+End Class
+", TestValidationMode.AllowCompileErrors);
         }
 
         private static DiagnosticResult GetCA2200BasicResultAt(int line, int column)

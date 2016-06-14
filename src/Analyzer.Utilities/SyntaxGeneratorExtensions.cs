@@ -309,21 +309,44 @@ namespace Analyzer.Utilities
         /// The <see cref="SyntaxGenerator"/> used to create the declaration.
         /// </param>
         /// <param name="compilation">The compilation</param>
+        /// <param name="containingType">
+        /// A symbol specifying the type in which the declaration is to be created.
+        /// </param>
         /// <returns>
         /// A <see cref="SyntaxNode"/> representing the declaration.
         /// </returns>
-        public static SyntaxNode EqualsOverrideDeclaration(this SyntaxGenerator generator, Compilation compilation)
+        public static SyntaxNode EqualsOverrideDeclaration(this SyntaxGenerator generator, Compilation compilation, INamedTypeSymbol containingType)
         {
+            var argumentName = generator.IdentifierName("obj");
+
+            List<SyntaxNode> statements = new List<SyntaxNode>();
+
+            if (containingType.TypeKind == TypeKind.Class)
+            {
+                statements.Add(
+                    generator.IfStatement(
+                        generator.InvocationExpression(
+                            generator.IdentifierName("ReferenceEquals"),
+                            argumentName,
+                            generator.NullLiteralExpression()),
+                        new[]
+                        {
+                            generator.ReturnStatement(generator.FalseLiteralExpression())
+                        }));
+            }
+
+            statements.AddRange(generator.DefaultMethodBody(compilation));
+
             return generator.MethodDeclaration(
                 WellKnownMemberNames.ObjectEquals,
                 new[]
                 {
-                    generator.ParameterDeclaration("obj", generator.TypeExpression(SpecialType.System_Object))
+                    generator.ParameterDeclaration(argumentName.ToString(), generator.TypeExpression(SpecialType.System_Object))
                 },
                 returnType: generator.TypeExpression(SpecialType.System_Boolean),
                 accessibility: Accessibility.Public,
                 modifiers: DeclarationModifiers.Override,
-                statements: generator.DefaultMethodBody(compilation));
+                statements: statements);
         }
 
         /// <summary>

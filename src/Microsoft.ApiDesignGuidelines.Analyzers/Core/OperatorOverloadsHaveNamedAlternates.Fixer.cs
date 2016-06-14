@@ -20,15 +20,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class OperatorOverloadsHaveNamedAlternatesFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(OperatorOverloadsHaveNamedAlternatesAnalyzer.RuleId);
+        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(OperatorOverloadsHaveNamedAlternatesAnalyzer.RuleId);
 
-        public sealed override FixAllProvider GetFixAllProvider()
+        public override FixAllProvider GetFixAllProvider()
         {
             // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             SemanticModel semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
@@ -53,11 +53,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     // For C# the following `typeDeclarationSyntax` and `typeDeclaration` nodes are identical, but for VB they're different so in
                     // an effort to keep this as language-agnostic as possible, the heavy-handed approach is used.
                     SyntaxNode typeDeclarationSyntax = typeSymbol.DeclaringSyntaxReferences.First().GetSyntax(cancellationToken);
-                    SyntaxNode typeDeclaration = generator.GetDeclaration(typeDeclarationSyntax, DeclarationKind.Class);
+                    SyntaxNode typeDeclaration = generator.GetDeclaration(typeDeclarationSyntax,
+                        typeSymbol.TypeKind == TypeKind.Struct ? DeclarationKind.Struct : DeclarationKind.Class);
 
                     SyntaxNode addedMember;
-                    ImmutableArray<SyntaxNode> bodyStatements = ImmutableArray.Create(
-                        generator.ThrowStatement(generator.ObjectCreationExpression(semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException"))));
+                    IEnumerable<SyntaxNode> bodyStatements = generator.DefaultMethodBody(semanticModel.Compilation);
                     if (OperatorOverloadsHaveNamedAlternatesAnalyzer.IsPropertyExpected(operatorOverloadSymbol.Name))
                     {
                         // add a property
@@ -72,6 +72,22 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     {
                         // add a method
                         ExpectedMethodSignature expectedSignature = GetExpectedMethodSignature(operatorOverloadSymbol, semanticModel.Compilation);
+
+                        if (expectedSignature.Name == "CompareTo" && operatorOverloadSymbol.ContainingType.TypeKind == TypeKind.Class)
+                        {
+                            var nullCheck = generator.IfStatement(
+                                generator.InvocationExpression(
+                                    generator.IdentifierName("ReferenceEquals"),
+                                    generator.IdentifierName(expectedSignature.Parameters.First().Item1),
+                                    generator.NullLiteralExpression()),
+                                new[]
+                                {
+                                    generator.ReturnStatement(generator.LiteralExpression(1))
+                                });
+
+                            bodyStatements = new[] {nullCheck}.Concat(bodyStatements);
+                        }
+
                         addedMember = generator.MethodDeclaration(
                             name: expectedSignature.Name,
                             parameters: expectedSignature.Parameters.Select(p => generator.ParameterDeclaration(p.Item1, generator.TypeExpression(p.Item2))),
@@ -88,7 +104,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     ISymbol badVisibilitySymbol = semanticModel.GetDeclaredSymbol(badVisibilityNode, cancellationToken);
                     SymbolEditor symbolEditor = SymbolEditor.Create(context.Document);
                     ISymbol newSymbol = await symbolEditor.EditOneDeclarationAsync(badVisibilitySymbol,
-                        (documentEditor, syntaxNode) => documentEditor.SetAccessibility(badVisibilityNode, Accessibility.Public)).ConfigureAwait(false);
+                        (documentEditor, syntaxNode) => documentEditor.SetAccessibility(badVisibilityNode, Accessibility.Public), cancellationToken).ConfigureAwait(false);
                     Document newDocument = symbolEditor.GetChangedDocuments().Single();
                     SyntaxNode newRoot = await newDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
                     return context.Document.WithSyntaxRoot(newRoot);

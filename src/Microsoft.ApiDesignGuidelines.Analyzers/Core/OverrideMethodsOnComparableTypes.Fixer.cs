@@ -54,7 +54,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             if (!typeSymbol.OverridesEquals())
             {
-                var equalsMethod = generator.EqualsOverrideDeclaration(editor.SemanticModel.Compilation);
+                var equalsMethod = generator.EqualsOverrideDeclaration(editor.SemanticModel.Compilation, typeSymbol);
 
                 editor.AddMember(declaration, equalsMethod);
             }

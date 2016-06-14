@@ -43,6 +43,11 @@ public class A : IComparable
 
     public override bool Equals(object obj)
     {
+        if (ReferenceEquals(obj, null))
+        {
+            return false;
+        }
+
         throw new NotImplementedException();
     }
 
@@ -205,6 +210,11 @@ public class A : IComparable
 
     public override bool Equals(object obj)
     {
+        if (ReferenceEquals(obj, null))
+        {
+            return false;
+        }
+
         throw new NotImplementedException();
     }
 
@@ -347,6 +357,10 @@ Public Class A : Implements IComparable
     End Function
 
     Public Overrides Function Equals(obj As Object) As Boolean
+        If ReferenceEquals(obj, Nothing) Then
+            Return False
+        End If
+
         Throw New NotImplementedException()
     End Function
 
@@ -485,6 +499,10 @@ Public Class A : Implements IComparable
     End Function
 
     Public Overrides Function Equals(obj As Object) As Boolean
+        If ReferenceEquals(obj, Nothing) Then
+            Return False
+        End If
+
         Throw New NotImplementedException()
     End Function
 

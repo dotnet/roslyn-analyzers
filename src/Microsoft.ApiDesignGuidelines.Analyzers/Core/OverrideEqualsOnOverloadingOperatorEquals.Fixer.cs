@@ -33,6 +33,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
+            SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            var typeSymbol = model.GetDeclaredSymbol(typeDeclaration) as INamedTypeSymbol;
+            if (typeSymbol?.TypeKind != TypeKind.Class &&
+                typeSymbol?.TypeKind != TypeKind.Struct)
+            {
+                return;
+            }
+
             // CONSIDER: Do we need to confirm that System.Object.Equals isn't shadowed in a base type?
 
             // We cannot have multiple overlapping diagnostics of this id.
@@ -41,16 +49,16 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             context.RegisterCodeFix(
                 new MyCodeAction(
                     MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsOnOverloadingOperatorEqualsCodeActionTitle,
-                    cancellationToken => OverrideObjectEquals(context.Document, typeDeclaration, cancellationToken)),
+                    cancellationToken => OverrideObjectEquals(context.Document, typeDeclaration, typeSymbol, cancellationToken)),
                 diagnostic);
         }
 
-        private async Task<Document> OverrideObjectEquals(Document document, SyntaxNode typeDeclaration, CancellationToken cancellationToken)
+        private async Task<Document> OverrideObjectEquals(Document document, SyntaxNode typeDeclaration, INamedTypeSymbol typeSymbol, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
 
-            var methodDeclaration = generator.EqualsOverrideDeclaration(editor.SemanticModel.Compilation);
+            var methodDeclaration = generator.EqualsOverrideDeclaration(editor.SemanticModel.Compilation, typeSymbol);
 
             editor.AddMember(typeDeclaration, methodDeclaration);
             return editor.GetChangedDocument();

@@ -50,6 +50,11 @@ class C
 
     public override bool Equals(object obj)
     {
+        if (ReferenceEquals(obj, null))
+        {
+            return false;
+        }
+
         throw new System.NotImplementedException();
     }
 }
@@ -80,6 +85,11 @@ class C
 
     public override bool Equals(object obj)
     {
+        if (ReferenceEquals(obj, null))
+        {
+            return false;
+        }
+
         throw new NotImplementedException();
     }
 }
@@ -113,6 +123,10 @@ Class C
     End Operator
 
     Public Overrides Function Equals(obj As Object) As Boolean
+        If ReferenceEquals(obj, Nothing) Then
+            Return False
+        End If
+
         Throw New System.NotImplementedException()
     End Function
 End Class
@@ -148,6 +162,10 @@ Class C
     End Operator
 
     Public Overrides Function Equals(obj As Object) As Boolean
+        If ReferenceEquals(obj, Nothing) Then
+            Return False
+        End If
+
         Throw New NotImplementedException()
     End Function
 End Class

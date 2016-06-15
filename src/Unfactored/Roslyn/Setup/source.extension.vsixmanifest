@@ -16,5 +16,8 @@
     <Asset Type="Microsoft.VisualStudio.Analyzer" Path="|RoslynDiagnosticAnalyzers|" />
     <Asset Type="Microsoft.VisualStudio.Analyzer" Path="|BasicRoslynDiagnosticAnalyzers|" />
     <Asset Type="Microsoft.VisualStudio.Analyzer" Path="|CSharpRoslynDiagnosticAnalyzers|" />
+    <Asset Type="Microsoft.VisualStudio.MefComponent" Path="|RoslynDiagnosticAnalyzers|" />
+    <Asset Type="Microsoft.VisualStudio.MefComponent" Path="|BasicRoslynDiagnosticAnalyzers|" />
+    <Asset Type="Microsoft.VisualStudio.MefComponent" Path="|CSharpRoslynDiagnosticAnalyzers|" />
   </Assets>
 </PackageManifest>

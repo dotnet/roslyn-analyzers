@@ -16,6 +16,7 @@
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework="" />
     </frameworkAssemblies>
+    <developmentDependency>true</developmentDependency>
   </metadata>
   <files>
     <file src="$binaries$MetaCompilation.dll" target="tools\analyzers\" />

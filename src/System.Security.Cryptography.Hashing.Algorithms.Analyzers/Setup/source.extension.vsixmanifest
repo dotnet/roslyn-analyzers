@@ -16,5 +16,8 @@
     <Asset Type="Microsoft.VisualStudio.Analyzer" Path="System.Security.Cryptography.Hashing.Algorithms.Analyzers.dll" />
     <Asset Type="Microsoft.VisualStudio.Analyzer" Path="System.Security.Cryptography.Hashing.Algorithms.CSharp.Analyzers.dll" />
     <Asset Type="Microsoft.VisualStudio.Analyzer" Path="System.Security.Cryptography.Hashing.Algorithms.VisualBasic.Analyzers.dll" />
+    <Asset Type="Microsoft.VisualStudio.MefComponent" Path="System.Security.Cryptography.Hashing.Algorithms.Analyzers.dll" />
+    <Asset Type="Microsoft.VisualStudio.MefComponent" Path="System.Security.Cryptography.Hashing.Algorithms.CSharp.Analyzers.dll" />
+    <Asset Type="Microsoft.VisualStudio.MefComponent" Path="System.Security.Cryptography.Hashing.Algorithms.VisualBasic.Analyzers.dll" />
   </Assets>
 </PackageManifest>

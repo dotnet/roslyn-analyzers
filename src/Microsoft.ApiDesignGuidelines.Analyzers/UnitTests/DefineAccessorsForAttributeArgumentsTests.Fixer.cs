@@ -50,7 +50,7 @@ public sealed class NoAccessorTestAttribute : Attribute
 }");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1007")]
+        [Fact]
         public void CSharp_CA1019_AddAccessor1()
         {
             VerifyCSharpFix(@"
@@ -87,7 +87,10 @@ public sealed class SetterOnlyTestAttribute : Attribute
     {
         internal set { m_name = value; }
 
-        get;
+        get
+        {
+            throw new NotImplementedException();
+        }
     }
 }", allowNewCompilerDiagnostics: true);
         }
@@ -331,6 +334,7 @@ Public NotInheritable Class SetterOnlyTestAttribute
             m_name = value
         End Set
         Get
+            Throw New NotImplementedException()
         End Get
     End Property
 End Class", allowNewCompilerDiagnostics: true);

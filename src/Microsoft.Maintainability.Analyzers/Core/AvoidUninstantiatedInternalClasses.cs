@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -38,15 +38,15 @@ namespace Microsoft.Maintainability.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            // TODO: Enable concurrent execution of analyzer actions.
-            //analysisContext.EnableConcurrentExecution();
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
 
-            // TODO: Configure generated code analysis.
-            //analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             analysisContext.RegisterCompilationStartAction(startContext =>
             {
-                var instantiatedTypes = new List<INamedTypeSymbol>();
-                var internalTypes = new List<INamedTypeSymbol>();
+                var instantiatedTypes = new ConcurrentBag<INamedTypeSymbol>();
+                var internalTypes = new ConcurrentBag<INamedTypeSymbol>();
+
+                Compilation compilation = startContext.Compilation;
 
                 // If the assembly being built by this compilation exposes its internals to
                 // any other assembly, don't report any "uninstantiated internal class" errors.
@@ -56,10 +56,19 @@ namespace Microsoft.Maintainability.Analyzers
                 // better to have false negatives (which would happen if the type were *not*
                 // instantiated by any friend assembly, but we didn't report the issue) than
                 // to have false positives.
-                if (AssemblyExposesInternals(startContext.Compilation))
+                INamedTypeSymbol internalsVisibleToAttributeSymbol = compilation.GetTypeByMetadataName("System.Runtime.CompilerServices.InternalsVisibleToAttribute");
+                if (AssemblyExposesInternals(compilation, internalsVisibleToAttributeSymbol))
                 {
                     return;
                 }
+
+                INamedTypeSymbol systemAttributeSymbol = compilation.GetTypeByMetadataName("System.Attribute");
+                INamedTypeSymbol iConfigurationSectionHandlerSymbol = compilation.GetTypeByMetadataName("System.Configuration.IConfigurationSectionHandler");
+                INamedTypeSymbol configurationSectionSymbol = compilation.GetTypeByMetadataName("System.Configuration.ConfigurationSection");
+                INamedTypeSymbol safeHandleSymbol = compilation.GetTypeByMetadataName("System.Runtime.InteropServices.SafeHandle");
+                INamedTypeSymbol traceListenerSymbol = compilation.GetTypeByMetadataName("System.Diagnostics.TraceListener");
+                INamedTypeSymbol mef1ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.ComponentModel.Composition.ExportAttribute");
+                INamedTypeSymbol mef2ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.Composition.ExportAttribute");
 
                 startContext.RegisterOperationAction(context =>
                 {
@@ -74,7 +83,15 @@ namespace Microsoft.Maintainability.Analyzers
                 startContext.RegisterSymbolAction(context =>
                 {
                     INamedTypeSymbol type = (INamedTypeSymbol)context.Symbol;
-                    if (type.GetResultantVisibility() != SymbolVisibility.Public && !IsOkToBeUnused(type, context.Compilation))
+                    if (type.GetResultantVisibility() != SymbolVisibility.Public &&
+                        !IsOkToBeUnused(type, compilation,
+                            systemAttributeSymbol,
+                            iConfigurationSectionHandlerSymbol,
+                            configurationSectionSymbol,
+                            safeHandleSymbol,
+                            traceListenerSymbol,
+                            mef1ExportAttributeSymbol,
+                            mef2ExportAttributeSymbol))
                     {
                         internalTypes.Add(type);
                     }
@@ -94,15 +111,17 @@ namespace Microsoft.Maintainability.Analyzers
             });
         }
 
-        private bool AssemblyExposesInternals(Compilation compilation)
+        private bool AssemblyExposesInternals(
+            Compilation compilation,
+            INamedTypeSymbol internalsVisibleToAttributeSymbol)
         {
             ISymbol assemblySymbol = compilation.Assembly;
             ImmutableArray<AttributeData> attributes = assemblySymbol.GetAttributes();
             return attributes.Any(
-                attr => attr.AttributeClass.Name.Equals("InternalsVisibleToAttribute", StringComparison.Ordinal));
+                attr => attr.AttributeClass.Equals(internalsVisibleToAttributeSymbol));
         }
 
-        private bool HasInstantiatedNestedType(INamedTypeSymbol type, List<INamedTypeSymbol> instantiatedTypes)
+        private bool HasInstantiatedNestedType(INamedTypeSymbol type, IEnumerable<INamedTypeSymbol> instantiatedTypes)
         {
             // We don't care whether a private nested type is instantiated, because if it
             // is, it can only have happened within the type itself.
@@ -125,7 +144,16 @@ namespace Microsoft.Maintainability.Analyzers
             return false;
         }
 
-        public static bool IsOkToBeUnused(INamedTypeSymbol type, Compilation compilation)
+        public bool IsOkToBeUnused(
+            INamedTypeSymbol type,
+            Compilation compilation,
+            INamedTypeSymbol systemAttributeSymbol,
+            INamedTypeSymbol iConfigurationSectionHandlerSymbol,
+            INamedTypeSymbol configurationSectionSymbol,
+            INamedTypeSymbol safeHandleSymbol,
+            INamedTypeSymbol traceListenerSymbol,
+            INamedTypeSymbol mef1ExportAttributeSymbol,
+            INamedTypeSymbol mef2ExportAttributeSymbol)
         {
             if (type.TypeKind != TypeKind.Class || type.IsAbstract)
             {
@@ -133,8 +161,7 @@ namespace Microsoft.Maintainability.Analyzers
             }
 
             // Attributes are not instantiated in IL but are created by reflection.
-            INamedTypeSymbol attributeSymbol = compilation.GetTypeByMetadataName("System.Attribute");
-            if (type.Inherits(attributeSymbol))
+            if (type.Inherits(systemAttributeSymbol))
             {
                 return true;
             }
@@ -146,35 +173,31 @@ namespace Microsoft.Maintainability.Analyzers
             }
 
             // MEF exported classes are instantiated by MEF, by reflection.
-            if (IsMefExported(type, compilation))
+            if (IsMefExported(type, mef1ExportAttributeSymbol, mef2ExportAttributeSymbol))
             {
                 return true;
             }
 
             // Types implementing the (deprecated) IConfigurationSectionHandler interface
             // are OK because they are instantiated by the configuration system.
-            INamedTypeSymbol iConfigurationSectionHandlerSymbol = compilation.GetTypeByMetadataName("System.Configuration.IConfigurationSectionHandler");
             if (type.Inherits(iConfigurationSectionHandlerSymbol))
             {
                 return true;
             }
 
             // Likewise for types derived from ConfigurationSection.
-            INamedTypeSymbol configurationSection = compilation.GetTypeByMetadataName("System.Configuration.ConfigurationSection");
-            if (type.Inherits(configurationSection))
+            if (type.Inherits(configurationSectionSymbol))
             {
                 return true;
             }
 
             // SafeHandles can be created from within the type itself by native code.
-            INamedTypeSymbol safeHandle = compilation.GetTypeByMetadataName("System.Runtime.InteropServices.SafeHandle");
-            if (type.Inherits(safeHandle))
+            if (type.Inherits(safeHandleSymbol))
             {
                 return true;
             }
 
-            INamedTypeSymbol traceListener = compilation.GetTypeByMetadataName("System.Diagnostics.TraceListener");
-            if (type.Inherits(traceListener))
+            if (type.Inherits(traceListenerSymbol))
             {
                 return true;
             }
@@ -187,11 +210,11 @@ namespace Microsoft.Maintainability.Analyzers
             return false;
         }
 
-        public static bool IsMefExported(INamedTypeSymbol type, Compilation compilation)
+        public static bool IsMefExported(
+            INamedTypeSymbol type,
+            INamedTypeSymbol mef1ExportAttributeSymbol,
+            INamedTypeSymbol mef2ExportAttributeSymbol)
         {
-            INamedTypeSymbol mef1ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.ComponentModel.Composition.ExportAttribute");
-            INamedTypeSymbol mef2ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.Composition.ExportAttribute");
-
             return (mef1ExportAttributeSymbol != null && type.HasAttribute(mef1ExportAttributeSymbol))
                 || (mef2ExportAttributeSymbol != null && type.HasAttribute(mef2ExportAttributeSymbol));
         }

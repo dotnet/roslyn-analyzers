@@ -71,7 +71,7 @@ namespace Microsoft.Maintainability.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Avoid uninstantiated internal classes.
+        ///   Looks up a localized string similar to {0} is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it static (Shared in Visual Basic)..
         /// </summary>
         internal static string AvoidUninstantiatedInternalClassesMessage {
             get {

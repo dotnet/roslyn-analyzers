@@ -124,7 +124,131 @@ namespace Analyzer.Utilities
             return symbol.GetMembers()
                 .Where(m => m.Kind == SymbolKind.Method)
                 .Cast<IMethodSymbol>()
-                .Any(IMethodSymbolExtensions.IsFinalizer);
+                .Any(m => m.IsFinalizer());
+        }
+
+        /// <summary>
+        /// Returns a value indicating whether the specified symbol has the specified
+        /// attribute.
+        /// </summary>
+        /// <param name="symbol">
+        /// The symbol being examined.
+        /// </param>
+        /// <param name="attribute">
+        /// The attribute in question.
+        /// </param>
+        /// <returns>
+        /// <c>true</c> if <paramref name="symbol"/> has an attribute of type
+        /// <paramref name="attribute"/>; otherwise <c>false</c>.
+        /// </returns>
+        /// <remarks>
+        /// If <paramref name="symbol"/> is a type, this method does not find attributes
+        /// on its base types.
+        /// </remarks>
+        public static bool HasAttribute(this INamedTypeSymbol symbol, INamedTypeSymbol attribute)
+        {
+            return symbol.GetAttributes().Any(attr => attr.AttributeClass.Equals(attribute));
+        }
+
+        /// <summary>
+        /// Returns a value indicating whether the specified symbol is a static
+        /// holder type.
+        /// </summary>
+        /// <param name="symbol">
+        /// The symbol being examined.
+        /// </param>
+        /// <returns>
+        /// <c>true</c> if <paramref name="symbol"/> is a static holder type;
+        /// otherwise <c>false</c>.
+        /// </returns>
+        /// <remarks>
+        /// A symbol is a static holder type if it is a class with at least one
+        /// "qualifying member" (<see cref="IsQualifyingMember(ISymbol)"/>) and no
+        /// "disqualifying members" (<see cref="IsDisqualifyingMember(ISymbol)"/>).
+        /// </remarks>
+        public static bool IsStaticHolderType(this INamedTypeSymbol symbol)
+        {
+            if (symbol.TypeKind != TypeKind.Class)
+            {
+                return false;
+            }
+
+            if (symbol.BaseType == null || symbol.BaseType.SpecialType != SpecialType.System_Object)
+            {
+                return false;
+            }
+
+            IEnumerable<ISymbol> declaredMembers = symbol.GetMembers().Where(m => !m.IsImplicitlyDeclared);
+
+            return declaredMembers.Any(IsQualifyingMember) && !declaredMembers.Any(IsDisqualifyingMember);
+        }
+
+        /// <summary>
+        /// Returns a value indicating whether the specified symbol qualifies as a
+        /// member of a static holder class.
+        /// </summary>
+        /// <param name="member">
+        /// The member being examined.
+        /// </param>
+        /// <returns>
+        /// <c>true</c> if <paramref name="member"/> qualifies as a member of
+        /// a static holder class; otherwise <c>false</c>.
+        /// </returns>
+        private static bool IsQualifyingMember(ISymbol member)
+        {
+            // A type member *does* qualify as a member of a static holder class,
+            // because even though it is *not* static, it is nevertheless not
+            // per-instance.
+            if (member.IsType())
+            {
+                return true;
+            }
+
+            // An user-defined operator method is not a valid member of a static holder
+            // class, because even though it is static, it takes instances as
+            // parameters, so presumably the author of the class intended for it to be
+            // instantiated.
+            if (member.IsUserDefinedOperator())
+            {
+                return false;
+            }
+
+            return member.IsStatic;
+        }
+
+        /// <summary>
+        /// Returns a value indicating whether the presence of the specified symbol
+        /// disqualifies a class from being considered a static holder class.
+        /// </summary>
+        /// <param name="member">
+        /// The member being examined.
+        /// </param>
+        /// <returns>
+        /// <c>true</c> if the presence of <paramref name="member"/> disqualifies the
+        /// current type as a static holder class; otherwise <c>false</c>.
+        /// </returns>
+        private static bool IsDisqualifyingMember(ISymbol member)
+        {
+            // An user-defined operator method disqualifies a class from being considered
+            // a static holder, because even though it is static, it takes instances as
+            // parameters, so presumably the author of the class intended for it to be
+            // instantiated.
+            if (member.IsUserDefinedOperator())
+            {
+                return true;
+            }
+
+            // A type member does *not* disqualify a class from being considered a static
+            // holder, because even though it is *not* static, it is nevertheless not
+            // per-instance.
+            if (member.IsType())
+            {
+                return false;
+            }
+
+            // Any instance member other than a default constructor disqualifies a class
+            // from being considered a static holder class.
+            return !member.IsStatic && !member.IsDefaultConstructor();
         }
     }
 }

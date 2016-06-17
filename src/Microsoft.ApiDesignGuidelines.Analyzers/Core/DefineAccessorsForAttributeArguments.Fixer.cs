@@ -78,7 +78,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             string propName = char.ToUpper(parameterSymbol.Name[0]).ToString() + parameterSymbol.Name.Substring(1);
 
             INamedTypeSymbol typeSymbol = parameterSymbol.ContainingType;
-            ISymbol propertySymbol = typeSymbol.GetMembers(propName).Where(m => m.Kind == SymbolKind.Property).FirstOrDefault();
+            ISymbol propertySymbol = typeSymbol.GetMembers(propName).FirstOrDefault(m => m.Kind == SymbolKind.Property);
 
             // Add a new property
             if (propertySymbol == null)
@@ -101,7 +101,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 await symbolEditor.EditOneDeclarationAsync(propertySymbol,
                                                           (editor, propertyDeclaration) =>
                                                           {
-                                                              editor.SetGetAccessorStatements(propertyDeclaration, null);
+                                                              editor.SetGetAccessorStatements(propertyDeclaration, editor.Generator.DefaultMethodBody(model.Compilation));
                                                               editor.SetModifiers(propertyDeclaration, editor.Generator.GetModifiers(propertyDeclaration) - DeclarationModifiers.WriteOnly);
                                                           },
                                                           cancellationToken).ConfigureAwait(false);

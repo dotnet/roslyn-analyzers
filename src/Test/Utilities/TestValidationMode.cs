@@ -1,4 +1,4 @@
-﻿namespace Microsoft.CodeAnalysis.UnitTests
+﻿namespace Test.Utilities
 {
     public enum TestValidationMode
     {

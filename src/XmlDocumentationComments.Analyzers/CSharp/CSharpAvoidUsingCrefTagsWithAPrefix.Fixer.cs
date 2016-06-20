@@ -3,8 +3,9 @@
 using System.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using XmlDocumentationComments.Analyzers;
 
-namespace XmlDocumentationComments.Analyzers
+namespace XmlDocumentationComments.CSharp.Analyzers
 {
     /// <summary>
     /// RS0010: Avoid using cref tags with a prefix

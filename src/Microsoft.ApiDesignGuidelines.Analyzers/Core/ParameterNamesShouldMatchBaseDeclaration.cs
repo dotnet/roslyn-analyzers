@@ -4,9 +4,8 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
-using System;
 using System.Linq;
-using System.Collections.Generic;
+using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {

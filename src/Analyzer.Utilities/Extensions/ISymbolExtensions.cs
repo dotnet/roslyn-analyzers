@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 
-namespace Analyzer.Utilities
+namespace Analyzer.Utilities.Extensions
 {
     public static class ISymbolExtensions
     {

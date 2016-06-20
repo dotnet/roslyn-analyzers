@@ -4,8 +4,9 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.VisualBasic
+Imports Microsoft.QualityGuidelines.Analyzers
 
-Namespace Microsoft.QualityGuidelines.Analyzers
+Namespace Microsoft.QualityGuidelines.VisualBasic.Analyzers
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
     Public Class BasicRethrowToPreserveStackDetailsAnalyzer
         Inherits RethrowToPreserveStackDetailsAnalyzer

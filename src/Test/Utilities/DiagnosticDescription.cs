@@ -9,9 +9,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
 using Xunit;
-using Roslyn.Test.Utilities;
 
-namespace Microsoft.CodeAnalysis.Test.Utilities
+namespace Test.Utilities
 {
     public sealed class DiagnosticDescription
     {

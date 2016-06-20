@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="Settings">
+    <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
+  </ImportGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0A0621F2-D1DC-47FF-B643-C6646557505E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Test.Utilities</RootNamespace>
+    <AssemblyName>Roslyn.Diagnostics.Test.Utilities</AssemblyName>
+    <NonShipping>true</NonShipping>
+    <SolutionDir Condition="'$(SolutionDir)' == '' OR '$(SolutionDir)' == '*Undefined*'">..\..\..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <SemanticVersion>$(SharedTestSemanticVersion)</SemanticVersion>
+    <PreReleaseVersion>$(SharedTestPreReleaseVersion)</PreReleaseVersion>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CodeFixTestBase.cs" />
+    <Compile Include="CodeFixTests.Extensions.cs" />
+    <Compile Include="TestValidationMode.cs" />
+    <Compile Include="DiagnosticAnalyzerTestBase.cs" />
+    <Compile Include="DiagnosticAnalyzerTests.Extensions.cs" />
+    <Compile Include="DiagnosticDescription.cs" />
+    <Compile Include="DiagnosticExtensions.cs" />
+    <Compile Include="TestAdditionalDocument.cs" />
+    <Compile Include="DiagnosticResult.cs" />
+    <Compile Include="DiffUtil.cs" />
+    <Compile Include="EnsureEnglishUICulture.cs" />
+    <Compile Include="MarkupTestFile.cs" />
+    <Compile Include="WorkItemAttribute.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <Content Include="project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Dependencies\CodeAnalysis\CodeAnalysis.csproj">
+      <Project>{434fa01f-b8cb-41f7-88d1-7906003f23bc}</Project>
+      <Name>CodeAnalysis</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Dependencies\xUnit\xUnit.csproj">
+      <Project>{f21bc39a-3c97-4d8f-bfa8-9e4bd9b56413}</Project>
+      <Name>xUnit</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ImportGroup Label="Targets">
+    <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />
+  </ImportGroup>
+</Project>

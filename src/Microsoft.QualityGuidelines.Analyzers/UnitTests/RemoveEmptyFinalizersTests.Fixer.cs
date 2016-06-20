@@ -2,11 +2,10 @@
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.UnitTests;
-using Microsoft.QualityGuidelines.Analyzers;
+using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.QualityGuidelines.UnitTests
+namespace Microsoft.QualityGuidelines.Analyzers.UnitTests
 {
     public partial class RemoveEmptyFinalizersFixerTests : CodeFixTestBase
     {

@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using System;
 using System.Diagnostics;
+using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {

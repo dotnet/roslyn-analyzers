@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Roslyn.Diagnostics.Test.Utilities
+namespace Test.Utilities
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public class WorkItemAttribute : Attribute

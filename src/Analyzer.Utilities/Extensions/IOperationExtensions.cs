@@ -5,9 +5,8 @@ using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Semantics;
-using static Analyzer.Utilities.DiagnosticHelpers;
 
-namespace Analyzer.Utilities
+namespace Analyzer.Utilities.Extensions
 {
     public static class IOperationExtensions
     {
@@ -112,7 +111,7 @@ namespace Analyzer.Utilities
             }
 
             ulong convertedValue;
-            return TryConvertToUInt64(constantValue.Value, constantValueType.SpecialType, out convertedValue) &&
+            return DiagnosticHelpers.TryConvertToUInt64(constantValue.Value, constantValueType.SpecialType, out convertedValue) &&
                 convertedValue == comparand;
         }
     }

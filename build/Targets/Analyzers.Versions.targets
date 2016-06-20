@@ -1,7 +1,7 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <PropertyGroup>
-      <MetaCompilationSemanticVersion>1.2.0</MetaCompilationSemanticVersion>
-      <MetaCompilationPreReleaseVersion>beta3</MetaCompilationPreReleaseVersion>
+      <MetaCompilationAnalyzersSemanticVersion>1.2.0</MetaCompilationAnalyzersSemanticVersion>
+      <MetaCompilationAnalyzersPreReleaseVersion>beta3</MetaCompilationAnalyzersPreReleaseVersion>
 
       <MicrosoftCodeAnalysisAnalyzersSemanticVersion>1.2.0</MicrosoftCodeAnalysisAnalyzersSemanticVersion>
       <MicrosoftCodeAnalysisAnalyzersPreReleaseVersion>beta3</MicrosoftCodeAnalysisAnalyzersPreReleaseVersion>

@@ -1,11 +1,12 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.UnitTests;
-using Microsoft.QualityGuidelines.Analyzers;
+using Microsoft.QualityGuidelines.CSharp.Analyzers;
+using Microsoft.QualityGuidelines.VisualBasic.Analyzers;
+using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.QualityGuidelines.UnitTests
+namespace Microsoft.QualityGuidelines.Analyzers.UnitTests
 {
     public partial class RethrowToPreserveStackDetailsTests : DiagnosticAnalyzerTestBase
     {

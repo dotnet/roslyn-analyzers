@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Microsoft.CodeAnalysis.Test.Utilities
+namespace Test.Utilities
 {
     public static class DiffUtil
     {

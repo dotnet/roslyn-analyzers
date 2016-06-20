@@ -2,12 +2,12 @@
 
 using System.Collections.Generic;
 using System.Linq;
-
+using Desktop.Analyzers.Helpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Desktop.Analyzers.Common
+namespace Desktop.CSharp.Analyzers.Helpers
 {
     public sealed class CSharpSyntaxNodeHelper : SyntaxNodeHelper
     {

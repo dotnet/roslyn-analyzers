@@ -2,7 +2,7 @@
 
 using Microsoft.CodeAnalysis;
 
-namespace Desktop.Analyzers
+namespace Desktop.Analyzers.Helpers
 {
     public class CompilationSecurityTypes
     {

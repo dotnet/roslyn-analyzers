@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 
-namespace Roslyn.Test.Utilities
+namespace Test.Utilities
 {
     public sealed class EnsureEnglishUICulture : IDisposable
     {

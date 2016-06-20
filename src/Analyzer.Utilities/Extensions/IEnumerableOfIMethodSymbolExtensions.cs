@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
-namespace Analyzer.Utilities
+namespace Analyzer.Utilities.Extensions
 {
     public static class IEnumerableOfIMethodSymbolExtensions
     {

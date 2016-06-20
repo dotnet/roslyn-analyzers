@@ -3,8 +3,9 @@
 Imports System.Composition
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
+Imports Microsoft.QualityGuidelines.Analyzers
 
-Namespace Microsoft.QualityGuidelines.Analyzers
+Namespace Microsoft.QualityGuidelines.VisualBasic.Analyzers
     ''' <summary>
     ''' CA1814: Prefer jagged arrays over multidimensional
     ''' </summary>

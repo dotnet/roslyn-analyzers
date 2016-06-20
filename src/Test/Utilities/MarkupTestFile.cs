@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
 
-namespace Roslyn.Test.Utilities
+namespace Test.Utilities
 {
     /// <summary>
     /// To aid with testing, we define a special type of text file that can encode additional

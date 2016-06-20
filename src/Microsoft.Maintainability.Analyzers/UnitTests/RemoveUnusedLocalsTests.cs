@@ -2,7 +2,8 @@
 
 using System;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.UnitTests;
+using Microsoft.Maintainability.VisualBasic.Analyzers;
+using Test.Utilities;
 using Xunit;
 
 namespace Microsoft.Maintainability.Analyzers.UnitTests

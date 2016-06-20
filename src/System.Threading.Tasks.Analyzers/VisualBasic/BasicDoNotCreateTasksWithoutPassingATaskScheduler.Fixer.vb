@@ -1,10 +1,11 @@
 ' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 Imports System.Composition
+Imports System.Threading.Tasks.Analyzers
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
 
-Namespace System.Threading.Tasks.Analyzers
+Namespace System.Threading.Tasks.VisualBasic.Analyzers
     ''' <summary>
     ''' RS0018: Do not create tasks without passing a TaskScheduler
     ''' </summary>

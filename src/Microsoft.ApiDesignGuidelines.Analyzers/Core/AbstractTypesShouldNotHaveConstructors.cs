@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {

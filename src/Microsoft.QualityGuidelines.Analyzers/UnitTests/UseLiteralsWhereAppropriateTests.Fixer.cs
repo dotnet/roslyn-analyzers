@@ -2,7 +2,9 @@
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.UnitTests;
+using Microsoft.QualityGuidelines.CSharp.Analyzers;
+using Microsoft.QualityGuidelines.VisualBasic.Analyzers;
+using Test.Utilities;
 
 namespace Microsoft.QualityGuidelines.Analyzers.UnitTests
 {

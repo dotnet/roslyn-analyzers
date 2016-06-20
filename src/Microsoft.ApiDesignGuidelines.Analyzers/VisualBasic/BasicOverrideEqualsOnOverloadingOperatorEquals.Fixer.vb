@@ -2,10 +2,11 @@
 
 Imports System.Collections.Immutable
 Imports System.Composition
+Imports Microsoft.ApiDesignGuidelines.Analyzers
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
 
-Namespace Microsoft.ApiDesignGuidelines.Analyzers
+Namespace Microsoft.ApiDesignGuidelines.VisualBasic.Analyzers
     ''' <summary>
     ''' CA2224: Override Equals on overloading operator equals
     ''' </summary>

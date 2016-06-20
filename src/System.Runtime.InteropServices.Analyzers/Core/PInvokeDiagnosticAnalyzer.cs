@@ -2,11 +2,9 @@
 
 using System.Collections.Immutable;
 using System.Linq;
-
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-
-using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 
 namespace System.Runtime.InteropServices.Analyzers
 {

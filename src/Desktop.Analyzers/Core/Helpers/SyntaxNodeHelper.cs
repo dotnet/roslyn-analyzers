@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 
-namespace Desktop.Analyzers.Common
+namespace Desktop.Analyzers.Helpers
 {
     public abstract class SyntaxNodeHelper
     {

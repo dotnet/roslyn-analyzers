@@ -7,9 +7,10 @@ using System.Linq;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Desktop.Analyzers.Common;
 using Analyzer.Utilities;
 using System.Collections.Concurrent;
+using Analyzer.Utilities.Extensions;
+using Desktop.Analyzers.Helpers;
 
 namespace Desktop.Analyzers
 {

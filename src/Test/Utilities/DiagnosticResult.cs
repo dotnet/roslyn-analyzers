@@ -2,10 +2,11 @@
 
 using System;
 using System.Linq;
+using Microsoft.CodeAnalysis;
 using Roslyn.Utilities;
 using Xunit;
 
-namespace Microsoft.CodeAnalysis.UnitTests
+namespace Test.Utilities
 {
     public struct DiagnosticResultLocation: IEquatable<DiagnosticResultLocation>
     {

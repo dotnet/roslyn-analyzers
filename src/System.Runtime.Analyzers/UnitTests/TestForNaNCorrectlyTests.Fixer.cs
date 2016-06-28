@@ -337,7 +337,7 @@ public class A
 
     public void F()
     {
-        throw _n != float.NaN ? new Exception() : new ArgumentException();
+        throw _n != float.NaN ? new System.Exception() : new System.ArgumentException();
     }
 }
 ", @"
@@ -347,7 +347,7 @@ public class A
 
     public void F()
     {
-        throw !float.IsNaN(_n) ? new Exception() : new ArgumentException();
+        throw !float.IsNaN(_n) ? new System.Exception() : new System.ArgumentException();
     }
 }
 ");
@@ -385,6 +385,8 @@ public class A
         public void CA2242_FixForComparisonWithNaNInYieldReturnStatement()
         {
             VerifyCSharpFix(@"
+using System.Collections.Generic;
+
 public class A
 {
     float _n = 42.0F;
@@ -395,6 +397,8 @@ public class A
     }
 }
 ", @"
+using System.Collections.Generic;
+
 public class A
 {
     float _n = 42.0F;
@@ -420,7 +424,7 @@ public class A
         switch (_n != float.NaN)
         {
             default:
-                throw new NotImplementedException();
+                throw new System.NotImplementedException();
         }
     }
 }
@@ -434,7 +438,7 @@ public class A
         switch (!float.IsNaN(_n))
         {
             default:
-                throw new NotImplementedException();
+                throw new System.NotImplementedException();
         }
     }
 }
@@ -453,7 +457,7 @@ public class A
     {
         for (; _n != float.NaN; )
         {
-            throw new Exception();
+            throw new System.Exception();
         }
     }
 }
@@ -466,7 +470,7 @@ public class A
     {
         for (; !float.IsNaN(_n); )
         {
-            throw new Exception();
+            throw new System.Exception();
         }
     }
 }

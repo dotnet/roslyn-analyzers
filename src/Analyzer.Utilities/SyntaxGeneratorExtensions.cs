@@ -37,17 +37,7 @@ namespace Analyzer.Utilities
 
             if (containingType.TypeKind == TypeKind.Class)
             {
-                statements.AddRange(new[]
-                {
-                    generator.IfStatement(
-                        generator.InvocationExpression(
-                            generator.IdentifierName(ReferenceEqualsMethodName),
-                            leftArgument,
-                            rightArgument),
-                        new[]
-                        {
-                            generator.ReturnStatement(generator.TrueLiteralExpression())
-                        }),
+                statements.Add(
                     generator.IfStatement(
                         generator.InvocationExpression(
                             generator.IdentifierName(ReferenceEqualsMethodName),
@@ -56,8 +46,7 @@ namespace Analyzer.Utilities
                         new[]
                         {
                             generator.ReturnStatement(generator.FalseLiteralExpression())
-                        })
-                });
+                        }));
             }
 
             statements.Add(
@@ -330,7 +319,17 @@ namespace Analyzer.Utilities
 
             if (containingType.TypeKind == TypeKind.Class)
             {
-                statements.Add(
+                statements.AddRange(new[]
+                {
+                    generator.IfStatement(
+                        generator.InvocationExpression(
+                            generator.IdentifierName(ReferenceEqualsMethodName),
+                            generator.ThisExpression(),
+                            argumentName),
+                        new[]
+                        {
+                            generator.ReturnStatement(generator.TrueLiteralExpression())
+                        }),
                     generator.IfStatement(
                         generator.InvocationExpression(
                             generator.IdentifierName(ReferenceEqualsMethodName),
@@ -339,7 +338,8 @@ namespace Analyzer.Utilities
                         new[]
                         {
                             generator.ReturnStatement(generator.FalseLiteralExpression())
-                        }));
+                        })
+                });
             }
 
             statements.AddRange(generator.DefaultMethodBody(compilation));

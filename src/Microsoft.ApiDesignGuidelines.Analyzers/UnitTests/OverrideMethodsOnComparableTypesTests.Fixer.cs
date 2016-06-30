@@ -43,6 +43,11 @@ public class A : IComparable
 
     public override bool Equals(object obj)
     {
+        if (ReferenceEquals(this, obj))
+        {
+            return true;
+        }
+
         if (ReferenceEquals(obj, null))
         {
             return false;
@@ -58,11 +63,6 @@ public class A : IComparable
 
     public static bool operator ==(A left, A right)
     {
-        if (ReferenceEquals(left, right))
-        {
-            return true;
-        }
-
         if (ReferenceEquals(left, null))
         {
             return false;
@@ -210,6 +210,11 @@ public class A : IComparable
 
     public override bool Equals(object obj)
     {
+        if (ReferenceEquals(this, obj))
+        {
+            return true;
+        }
+
         if (ReferenceEquals(obj, null))
         {
             return false;
@@ -220,11 +225,6 @@ public class A : IComparable
 
     public static bool operator ==(A left, A right)
     {
-        if (ReferenceEquals(left, right))
-        {
-            return true;
-        }
-
         if (ReferenceEquals(left, null))
         {
             return false;
@@ -357,6 +357,10 @@ Public Class A : Implements IComparable
     End Function
 
     Public Overrides Function Equals(obj As Object) As Boolean
+        If ReferenceEquals(Me, obj) Then
+            Return True
+        End If
+
         If ReferenceEquals(obj, Nothing) Then
             Return False
         End If
@@ -369,10 +373,6 @@ Public Class A : Implements IComparable
     End Function
 
     Public Shared Operator =(left As A, right As A) As Boolean
-        If ReferenceEquals(left, right) Then
-            Return True
-        End If
-
         If ReferenceEquals(left, Nothing) Then
             Return False
         End If
@@ -499,6 +499,10 @@ Public Class A : Implements IComparable
     End Function
 
     Public Overrides Function Equals(obj As Object) As Boolean
+        If ReferenceEquals(Me, obj) Then
+            Return True
+        End If
+
         If ReferenceEquals(obj, Nothing) Then
             Return False
         End If
@@ -507,10 +511,6 @@ Public Class A : Implements IComparable
     End Function
 
     Public Shared Operator =(left As A, right As A) As Boolean
-        If ReferenceEquals(left, right) Then
-            Return True
-        End If
-
         If ReferenceEquals(left, Nothing) Then
             Return False
         End If

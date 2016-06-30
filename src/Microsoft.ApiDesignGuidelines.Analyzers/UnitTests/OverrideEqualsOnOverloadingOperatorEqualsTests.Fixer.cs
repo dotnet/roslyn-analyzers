@@ -50,6 +50,11 @@ class C
 
     public override bool Equals(object obj)
     {
+        if (ReferenceEquals(this, obj))
+        {
+            return true;
+        }
+
         if (ReferenceEquals(obj, null))
         {
             return false;
@@ -85,6 +90,11 @@ class C
 
     public override bool Equals(object obj)
     {
+        if (ReferenceEquals(this, obj))
+        {
+            return true;
+        }
+
         if (ReferenceEquals(obj, null))
         {
             return false;
@@ -123,6 +133,10 @@ Class C
     End Operator
 
     Public Overrides Function Equals(obj As Object) As Boolean
+        If ReferenceEquals(Me, obj) Then
+            Return True
+        End If
+
         If ReferenceEquals(obj, Nothing) Then
             Return False
         End If
@@ -162,6 +176,10 @@ Class C
     End Operator
 
     Public Overrides Function Equals(obj As Object) As Boolean
+        If ReferenceEquals(Me, obj) Then
+            Return True
+        End If
+
         If ReferenceEquals(obj, Nothing) Then
             Return False
         End If

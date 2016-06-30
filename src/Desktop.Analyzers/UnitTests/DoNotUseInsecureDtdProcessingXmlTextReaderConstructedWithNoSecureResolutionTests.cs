@@ -19,6 +19,44 @@ namespace Desktop.Analyzers.UnitTests
             return GetBasicResultAt(line, column, CA3075RuleId, s_CA3075XmlTextReaderConstructedWithNoSecureResolutionMessage);
         }
 
+        [WorkItem(998, "https://github.com/dotnet/roslyn-analyzers/issues/998")]
+        [Fact]
+        public void StaticPropertyAssignmentShouldNotGenerateDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+namespace TestNamespace
+{
+    public static class SystemContext
+    {
+        public static Func<DateTime> UtcNow { get; set; }
+
+        static SystemContext()
+        {
+            UtcNow = () => DateTime.UtcNow;
+        }
+    }
+}
+"
+            );
+
+            VerifyBasic(@"
+Imports System
+
+Namespace TestNamespace
+    Module SystemContext
+        Public Property UtcNow As Func(Of DateTime)
+
+        Sub New()
+            UtcNow = Function() DateTime.UtcNow
+        End Sub
+    End Module
+End Namespace
+"
+            );
+        }
+
         [Fact]
         public void ConstructXmlTextReaderShouldGenerateDiagnostic()
         {

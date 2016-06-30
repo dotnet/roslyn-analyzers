@@ -50,7 +50,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
 
-            var methodDeclaration = generator.GetHashCodeOverrideDeclaration(editor.SemanticModel.Compilation);
+            var methodDeclaration = generator.DefaultGetHashCodeOverrideDeclaration(editor.SemanticModel.Compilation);
 
             editor.AddMember(typeDeclaration, methodDeclaration);
             return editor.GetChangedDocument();

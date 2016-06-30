@@ -58,7 +58,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
 
-            var methodDeclaration = generator.EqualsOverrideDeclaration(editor.SemanticModel.Compilation, typeSymbol);
+            var methodDeclaration = generator.DefaultEqualsOverrideDeclaration(editor.SemanticModel.Compilation, typeSymbol);
 
             editor.AddMember(typeDeclaration, methodDeclaration);
             return editor.GetChangedDocument();

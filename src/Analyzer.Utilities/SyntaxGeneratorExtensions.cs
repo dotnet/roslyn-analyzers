@@ -16,7 +16,7 @@ namespace Analyzer.Utilities
         private const string SystemNotImplementedExceptionTypeName = "System.NotImplementedException";
 
         /// <summary>
-        /// Creates a declaration for an operator equality overload.
+        /// Creates a default declaration for an operator equality overload.
         /// </summary>
         /// <param name="generator">
         /// The <see cref="SyntaxGenerator"/> used to create the declaration.
@@ -27,7 +27,7 @@ namespace Analyzer.Utilities
         /// <returns>
         /// A <see cref="SyntaxNode"/> representing the declaration.
         /// </returns>
-        public static SyntaxNode OperatorEqualityDeclaration(this SyntaxGenerator generator,
+        public static SyntaxNode DefaultOperatorEqualityDeclaration(this SyntaxGenerator generator,
             INamedTypeSymbol containingType)
         {
             var leftArgument = generator.IdentifierName(LeftIdentifierName);
@@ -71,7 +71,7 @@ namespace Analyzer.Utilities
         }
 
         /// <summary>
-        /// Creates a declaration for an operator inequality overload.
+        /// Creates a default declaration for an operator inequality overload.
         /// </summary>
         /// <param name="generator">
         /// The <see cref="SyntaxGenerator"/> used to create the declaration.
@@ -82,7 +82,7 @@ namespace Analyzer.Utilities
         /// <returns>
         /// A <see cref="SyntaxNode"/> representing the declaration.
         /// </returns>
-        public static SyntaxNode OperatorInequalityDeclaration(this SyntaxGenerator generator, INamedTypeSymbol containingType)
+        public static SyntaxNode DefaultOperatorInequalityDeclaration(this SyntaxGenerator generator, INamedTypeSymbol containingType)
         {
             var leftArgument = generator.IdentifierName(LeftIdentifierName);
             var rightArgument = generator.IdentifierName(RightIdentifierName);
@@ -97,7 +97,7 @@ namespace Analyzer.Utilities
         }
 
         /// <summary>
-        /// Creates a declaration for an operator less than overload.
+        /// Creates a default declaration for an operator less than overload.
         /// </summary>
         /// <param name="generator">
         /// The <see cref="SyntaxGenerator"/> used to create the declaration.
@@ -108,7 +108,7 @@ namespace Analyzer.Utilities
         /// <returns>
         /// A <see cref="SyntaxNode"/> representing the declaration.
         /// </returns>
-        public static SyntaxNode OperatorLessThanDeclaration(this SyntaxGenerator generator, INamedTypeSymbol containingType)
+        public static SyntaxNode DefaultOperatorLessThanDeclaration(this SyntaxGenerator generator, INamedTypeSymbol containingType)
         {
             var leftArgument = generator.IdentifierName(LeftIdentifierName);
             var rightArgument = generator.IdentifierName(RightIdentifierName);
@@ -149,7 +149,7 @@ namespace Analyzer.Utilities
         }
 
         /// <summary>
-        /// Creates a declaration for an operator less than or equal overload.
+        /// Creates a default declaration for an operator less than or equal overload.
         /// </summary>
         /// <param name="generator">
         /// The <see cref="SyntaxGenerator"/> used to create the declaration.
@@ -160,7 +160,7 @@ namespace Analyzer.Utilities
         /// <returns>
         /// A <see cref="SyntaxNode"/> representing the declaration.
         /// </returns>
-        public static SyntaxNode OperatorLessThanOrEqualDeclaration(this SyntaxGenerator generator, INamedTypeSymbol containingType)
+        public static SyntaxNode DefaultOperatorLessThanOrEqualDeclaration(this SyntaxGenerator generator, INamedTypeSymbol containingType)
         {
             var leftArgument = generator.IdentifierName(LeftIdentifierName);
             var rightArgument = generator.IdentifierName(RightIdentifierName);
@@ -196,7 +196,7 @@ namespace Analyzer.Utilities
         }
 
         /// <summary>
-        /// Creates a declaration for an operator greater than overload.
+        /// Creates a default declaration for an operator greater than overload.
         /// </summary>
         /// <param name="generator">
         /// The <see cref="SyntaxGenerator"/> used to create the declaration.
@@ -207,7 +207,7 @@ namespace Analyzer.Utilities
         /// <returns>
         /// A <see cref="SyntaxNode"/> representing the declaration.
         /// </returns>
-        public static SyntaxNode OperatorGreaterThanDeclaration(this SyntaxGenerator generator, INamedTypeSymbol containingType)
+        public static SyntaxNode DefaultOperatorGreaterThanDeclaration(this SyntaxGenerator generator, INamedTypeSymbol containingType)
         {
             var leftArgument = generator.IdentifierName(LeftIdentifierName);
             var rightArgument = generator.IdentifierName(RightIdentifierName);
@@ -244,7 +244,7 @@ namespace Analyzer.Utilities
         }
 
         /// <summary>
-        /// Creates a declaration for an operator greater than or equal overload.
+        /// Creates a default declaration for an operator greater than or equal overload.
         /// </summary>
         /// <param name="generator">
         /// The <see cref="SyntaxGenerator"/> used to create the declaration.
@@ -255,7 +255,7 @@ namespace Analyzer.Utilities
         /// <returns>
         /// A <see cref="SyntaxNode"/> representing the declaration.
         /// </returns>
-        public static SyntaxNode OperatorGreaterThanOrEqualDeclaration(this SyntaxGenerator generator, INamedTypeSymbol containingType)
+        public static SyntaxNode DefaultOperatorGreaterThanOrEqualDeclaration(this SyntaxGenerator generator, INamedTypeSymbol containingType)
         {
             var leftArgument = generator.IdentifierName(LeftIdentifierName);
             var rightArgument = generator.IdentifierName(RightIdentifierName);
@@ -310,7 +310,7 @@ namespace Analyzer.Utilities
         }
 
         /// <summary>
-        /// Creates a declaration for an override of <see cref="object.Equals(object)"/>.
+        /// Creates a default declaration for an override of <see cref="object.Equals(object)"/>.
         /// </summary>
         /// <param name="generator">
         /// The <see cref="SyntaxGenerator"/> used to create the declaration.
@@ -322,7 +322,7 @@ namespace Analyzer.Utilities
         /// <returns>
         /// A <see cref="SyntaxNode"/> representing the declaration.
         /// </returns>
-        public static SyntaxNode EqualsOverrideDeclaration(this SyntaxGenerator generator, Compilation compilation, INamedTypeSymbol containingType)
+        public static SyntaxNode DefaultEqualsOverrideDeclaration(this SyntaxGenerator generator, Compilation compilation, INamedTypeSymbol containingType)
         {
             var argumentName = generator.IdentifierName("obj");
 
@@ -357,7 +357,7 @@ namespace Analyzer.Utilities
         }
 
         /// <summary>
-        /// Creates a declaration for an override of <see cref="object.GetHashCode()"/>.
+        /// Creates a default declaration for an override of <see cref="object.GetHashCode()"/>.
         /// </summary>
         /// <param name="generator">
         /// The <see cref="SyntaxGenerator"/> used to create the declaration.
@@ -366,7 +366,7 @@ namespace Analyzer.Utilities
         /// <returns>
         /// A <see cref="SyntaxNode"/> representing the declaration.
         /// </returns>
-        public static SyntaxNode GetHashCodeOverrideDeclaration(
+        public static SyntaxNode DefaultGetHashCodeOverrideDeclaration(
             this SyntaxGenerator generator, Compilation compilation)
         {
             return generator.MethodDeclaration(

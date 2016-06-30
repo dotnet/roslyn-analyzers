@@ -65,7 +65,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             if (!typeSymbol.OverridesEquals())
             {
-                var equalsMethod = generator.EqualsOverrideDeclaration(
+                var equalsMethod = generator.DefaultEqualsOverrideDeclaration(
                     editor.SemanticModel.Compilation, typeSymbol);
 
                 editor.AddMember(declaration, equalsMethod);
@@ -73,7 +73,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             if (!typeSymbol.OverridesGetHashCode())
             {
-                var getHashCodeMethod = generator.GetHashCodeOverrideDeclaration(
+                var getHashCodeMethod = generator.DefaultGetHashCodeOverrideDeclaration(
                     editor.SemanticModel.Compilation);
 
                 editor.AddMember(declaration, getHashCodeMethod);
@@ -81,14 +81,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.EqualityOperatorName))
             {
-                var equalityOperator = generator.OperatorEqualityDeclaration(typeSymbol);
+                var equalityOperator = generator.DefaultOperatorEqualityDeclaration(typeSymbol);
 
                 editor.AddMember(declaration, equalityOperator);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.InequalityOperatorName))
             {
-                var inequalityOperator = generator.OperatorInequalityDeclaration(typeSymbol);
+                var inequalityOperator = generator.DefaultOperatorInequalityDeclaration(typeSymbol);
 
                 editor.AddMember(declaration, inequalityOperator);
             }

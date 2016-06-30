@@ -54,56 +54,56 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             if (!typeSymbol.OverridesEquals())
             {
-                var equalsMethod = generator.EqualsOverrideDeclaration(editor.SemanticModel.Compilation, typeSymbol);
+                var equalsMethod = generator.DefaultEqualsOverrideDeclaration(editor.SemanticModel.Compilation, typeSymbol);
 
                 editor.AddMember(declaration, equalsMethod);
             }
 
             if (!typeSymbol.OverridesGetHashCode())
             {
-                var getHashCodeMethod = generator.GetHashCodeOverrideDeclaration(editor.SemanticModel.Compilation);
+                var getHashCodeMethod = generator.DefaultGetHashCodeOverrideDeclaration(editor.SemanticModel.Compilation);
 
                 editor.AddMember(declaration, getHashCodeMethod);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.EqualityOperatorName))
             {
-                var equalityOperator = generator.OperatorEqualityDeclaration(typeSymbol);
+                var equalityOperator = generator.DefaultOperatorEqualityDeclaration(typeSymbol);
 
                 editor.AddMember(declaration, equalityOperator);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.InequalityOperatorName))
             {
-                var inequalityOperator = generator.OperatorInequalityDeclaration(typeSymbol);
+                var inequalityOperator = generator.DefaultOperatorInequalityDeclaration(typeSymbol);
 
                 editor.AddMember(declaration, inequalityOperator);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.LessThanOperatorName))
             {
-                var lessThanOperator = generator.OperatorLessThanDeclaration(typeSymbol);
+                var lessThanOperator = generator.DefaultOperatorLessThanDeclaration(typeSymbol);
 
                 editor.AddMember(declaration, lessThanOperator);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.LessThanOrEqualOperatorName))
             {
-                var lessThanOrEqualOperator = generator.OperatorLessThanOrEqualDeclaration(typeSymbol);
+                var lessThanOrEqualOperator = generator.DefaultOperatorLessThanOrEqualDeclaration(typeSymbol);
 
                 editor.AddMember(declaration, lessThanOrEqualOperator);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.GreaterThanOperatorName))
             {
-                var greaterThanOperator = generator.OperatorGreaterThanDeclaration(typeSymbol);
+                var greaterThanOperator = generator.DefaultOperatorGreaterThanDeclaration(typeSymbol);
 
                 editor.AddMember(declaration, greaterThanOperator);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.GreaterThanOrEqualOperatorName))
             {
-                var greaterThanOrEqualOperator = generator.OperatorGreaterThanOrEqualDeclaration(typeSymbol);
+                var greaterThanOrEqualOperator = generator.DefaultOperatorGreaterThanOrEqualDeclaration(typeSymbol);
 
                 editor.AddMember(declaration, greaterThanOrEqualOperator);
             }

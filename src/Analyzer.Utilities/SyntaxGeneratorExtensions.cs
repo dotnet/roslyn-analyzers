@@ -8,6 +8,13 @@ namespace Analyzer.Utilities
 {
     public static class SyntaxGeneratorExtensions
     {
+        private const string LeftIdentifierName = "left";
+        private const string RightIdentifierName = "right";
+        private const string ReferenceEqualsMethodName = "ReferenceEquals";
+        private const string EqualsMethodName = "Equals";
+        private const string CompareToMethodName = "CompareTo";
+        private const string SystemNotImplementedExceptionTypeName = "System.NotImplementedException";
+
         /// <summary>
         /// Creates a declaration for an operator equality overload.
         /// </summary>
@@ -23,8 +30,8 @@ namespace Analyzer.Utilities
         public static SyntaxNode OperatorEqualityDeclaration(this SyntaxGenerator generator,
             INamedTypeSymbol containingType)
         {
-            var leftArgument = generator.IdentifierName("left");
-            var rightArgument = generator.IdentifierName("right");
+            var leftArgument = generator.IdentifierName(LeftIdentifierName);
+            var rightArgument = generator.IdentifierName(RightIdentifierName);
 
             List<SyntaxNode> statements = new List<SyntaxNode>();
 
@@ -34,7 +41,7 @@ namespace Analyzer.Utilities
                 {
                     generator.IfStatement(
                         generator.InvocationExpression(
-                            generator.IdentifierName("ReferenceEquals"),
+                            generator.IdentifierName(ReferenceEqualsMethodName),
                             leftArgument,
                             rightArgument),
                         new[]
@@ -43,7 +50,7 @@ namespace Analyzer.Utilities
                         }),
                     generator.IfStatement(
                         generator.InvocationExpression(
-                            generator.IdentifierName("ReferenceEquals"),
+                            generator.IdentifierName(ReferenceEqualsMethodName),
                             leftArgument,
                             generator.NullLiteralExpression()),
                         new[]
@@ -57,7 +64,7 @@ namespace Analyzer.Utilities
                 generator.ReturnStatement(
                     generator.InvocationExpression(
                         generator.MemberAccessExpression(
-                            leftArgument, "Equals"),
+                            leftArgument, EqualsMethodName),
                         rightArgument)));
 
             return generator.ComparisonOperatorDeclaration(OperatorKind.Equality, containingType, statements.ToArray());
@@ -77,8 +84,8 @@ namespace Analyzer.Utilities
         /// </returns>
         public static SyntaxNode OperatorInequalityDeclaration(this SyntaxGenerator generator, INamedTypeSymbol containingType)
         {
-            var leftArgument = generator.IdentifierName("left");
-            var rightArgument = generator.IdentifierName("right");
+            var leftArgument = generator.IdentifierName(LeftIdentifierName);
+            var rightArgument = generator.IdentifierName(RightIdentifierName);
 
             var returnStatement = generator.ReturnStatement(
                     generator.LogicalNotExpression(
@@ -103,8 +110,8 @@ namespace Analyzer.Utilities
         /// </returns>
         public static SyntaxNode OperatorLessThanDeclaration(this SyntaxGenerator generator, INamedTypeSymbol containingType)
         {
-            var leftArgument = generator.IdentifierName("left");
-            var rightArgument = generator.IdentifierName("right");
+            var leftArgument = generator.IdentifierName(LeftIdentifierName);
+            var rightArgument = generator.IdentifierName(RightIdentifierName);
 
             SyntaxNode expression;
 
@@ -113,17 +120,17 @@ namespace Analyzer.Utilities
                 expression =
                     generator.ConditionalExpression(
                         generator.InvocationExpression(
-                            generator.IdentifierName("ReferenceEquals"),
+                            generator.IdentifierName(ReferenceEqualsMethodName),
                             leftArgument,
                             generator.NullLiteralExpression()),
                         generator.LogicalNotExpression(
                             generator.InvocationExpression(
-                                generator.IdentifierName("ReferenceEquals"),
+                                generator.IdentifierName(ReferenceEqualsMethodName),
                                 rightArgument,
                                 generator.NullLiteralExpression())),
                         generator.LessThanExpression(
                             generator.InvocationExpression(
-                                generator.MemberAccessExpression(leftArgument, generator.IdentifierName("CompareTo")),
+                                generator.MemberAccessExpression(leftArgument, generator.IdentifierName(CompareToMethodName)),
                                 rightArgument),
                             generator.LiteralExpression(0)));
             }
@@ -132,7 +139,7 @@ namespace Analyzer.Utilities
                 expression =
                     generator.LessThanExpression(
                         generator.InvocationExpression(
-                            generator.MemberAccessExpression(leftArgument, generator.IdentifierName("CompareTo")),
+                            generator.MemberAccessExpression(leftArgument, generator.IdentifierName(CompareToMethodName)),
                             rightArgument),
                         generator.LiteralExpression(0));
             }
@@ -155,8 +162,8 @@ namespace Analyzer.Utilities
         /// </returns>
         public static SyntaxNode OperatorLessThanOrEqualDeclaration(this SyntaxGenerator generator, INamedTypeSymbol containingType)
         {
-            var leftArgument = generator.IdentifierName("left");
-            var rightArgument = generator.IdentifierName("right");
+            var leftArgument = generator.IdentifierName(LeftIdentifierName);
+            var rightArgument = generator.IdentifierName(RightIdentifierName);
 
             SyntaxNode expression;
 
@@ -165,12 +172,12 @@ namespace Analyzer.Utilities
                 expression =
                     generator.LogicalOrExpression(
                         generator.InvocationExpression(
-                            generator.IdentifierName("ReferenceEquals"),
+                            generator.IdentifierName(ReferenceEqualsMethodName),
                             leftArgument,
                             generator.NullLiteralExpression()),
                         generator.LessThanOrEqualExpression(
                             generator.InvocationExpression(
-                                generator.MemberAccessExpression(leftArgument, generator.IdentifierName("CompareTo")),
+                                generator.MemberAccessExpression(leftArgument, generator.IdentifierName(CompareToMethodName)),
                                 rightArgument),
                             generator.LiteralExpression(0)));
             }
@@ -179,7 +186,7 @@ namespace Analyzer.Utilities
                 expression =
                     generator.LessThanOrEqualExpression(
                         generator.InvocationExpression(
-                            generator.MemberAccessExpression(leftArgument, generator.IdentifierName("CompareTo")),
+                            generator.MemberAccessExpression(leftArgument, generator.IdentifierName(CompareToMethodName)),
                             rightArgument),
                         generator.LiteralExpression(0));
             }
@@ -202,8 +209,8 @@ namespace Analyzer.Utilities
         /// </returns>
         public static SyntaxNode OperatorGreaterThanDeclaration(this SyntaxGenerator generator, INamedTypeSymbol containingType)
         {
-            var leftArgument = generator.IdentifierName("left");
-            var rightArgument = generator.IdentifierName("right");
+            var leftArgument = generator.IdentifierName(LeftIdentifierName);
+            var rightArgument = generator.IdentifierName(RightIdentifierName);
 
             SyntaxNode expression;
 
@@ -213,12 +220,12 @@ namespace Analyzer.Utilities
                     generator.LogicalAndExpression(
                         generator.LogicalNotExpression(
                             generator.InvocationExpression(
-                                generator.IdentifierName("ReferenceEquals"),
+                                generator.IdentifierName(ReferenceEqualsMethodName),
                                 leftArgument,
                                 generator.NullLiteralExpression())),
                         generator.GreaterThanExpression(
                             generator.InvocationExpression(
-                                generator.MemberAccessExpression(leftArgument, generator.IdentifierName("CompareTo")),
+                                generator.MemberAccessExpression(leftArgument, generator.IdentifierName(CompareToMethodName)),
                                 rightArgument),
                             generator.LiteralExpression(0)));
             }
@@ -227,7 +234,7 @@ namespace Analyzer.Utilities
                 expression =
                     generator.GreaterThanExpression(
                         generator.InvocationExpression(
-                            generator.MemberAccessExpression(leftArgument, generator.IdentifierName("CompareTo")),
+                            generator.MemberAccessExpression(leftArgument, generator.IdentifierName(CompareToMethodName)),
                             rightArgument),
                         generator.LiteralExpression(0));
             }
@@ -250,8 +257,8 @@ namespace Analyzer.Utilities
         /// </returns>
         public static SyntaxNode OperatorGreaterThanOrEqualDeclaration(this SyntaxGenerator generator, INamedTypeSymbol containingType)
         {
-            var leftArgument = generator.IdentifierName("left");
-            var rightArgument = generator.IdentifierName("right");
+            var leftArgument = generator.IdentifierName(LeftIdentifierName);
+            var rightArgument = generator.IdentifierName(RightIdentifierName);
 
             SyntaxNode expression;
 
@@ -260,16 +267,16 @@ namespace Analyzer.Utilities
                 expression =
                     generator.ConditionalExpression(
                             generator.InvocationExpression(
-                                generator.IdentifierName("ReferenceEquals"),
+                                generator.IdentifierName(ReferenceEqualsMethodName),
                                 leftArgument,
                                 generator.NullLiteralExpression()),
                             generator.InvocationExpression(
-                                generator.IdentifierName("ReferenceEquals"),
+                                generator.IdentifierName(ReferenceEqualsMethodName),
                                 rightArgument,
                                 generator.NullLiteralExpression()),
                         generator.GreaterThanOrEqualExpression(
                             generator.InvocationExpression(
-                                generator.MemberAccessExpression(leftArgument, generator.IdentifierName("CompareTo")),
+                                generator.MemberAccessExpression(leftArgument, generator.IdentifierName(CompareToMethodName)),
                                 rightArgument),
                             generator.LiteralExpression(0)));
             }
@@ -278,7 +285,7 @@ namespace Analyzer.Utilities
                 expression =
                     generator.GreaterThanOrEqualExpression(
                         generator.InvocationExpression(
-                            generator.MemberAccessExpression(leftArgument, generator.IdentifierName("CompareTo")),
+                            generator.MemberAccessExpression(leftArgument, generator.IdentifierName(CompareToMethodName)),
                             rightArgument),
                         generator.LiteralExpression(0));
             }
@@ -293,8 +300,8 @@ namespace Analyzer.Utilities
                 operatorKind,
                 new[]
                 {
-                    generator.ParameterDeclaration("left", generator.TypeExpression(containingType)),
-                    generator.ParameterDeclaration("right", generator.TypeExpression(containingType))
+                    generator.ParameterDeclaration(LeftIdentifierName, generator.TypeExpression(containingType)),
+                    generator.ParameterDeclaration(RightIdentifierName, generator.TypeExpression(containingType))
                 },
                 generator.TypeExpression(SpecialType.System_Boolean),
                 Accessibility.Public,
@@ -326,7 +333,7 @@ namespace Analyzer.Utilities
                 statements.Add(
                     generator.IfStatement(
                         generator.InvocationExpression(
-                            generator.IdentifierName("ReferenceEquals"),
+                            generator.IdentifierName(ReferenceEqualsMethodName),
                             argumentName,
                             generator.NullLiteralExpression()),
                         new[]
@@ -390,7 +397,7 @@ namespace Analyzer.Utilities
         {
             return generator.ThrowStatement(generator.ObjectCreationExpression(
                 generator.TypeExpression(
-                    compilation.GetTypeByMetadataName("System.NotImplementedException"))));
+                    compilation.GetTypeByMetadataName(SystemNotImplementedExceptionTypeName))));
         }
     }
 }

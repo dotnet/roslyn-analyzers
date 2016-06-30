@@ -144,6 +144,33 @@ class C
 
     public int CompareTo(C other)
     {
+        if (ReferenceEquals(other, null))
+        {
+            return 1;
+        }
+
+        throw new System.NotImplementedException();
+    }
+}
+", validationMode: TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact]
+        public void AddAlternateForStructCompare_CSharp()
+        {
+            VerifyCSharpFix(@"
+struct C
+{
+    public static bool operator <(C left, C right) { return true; }   // error CS0216: The operator requires a matching operator '>' to also be defined
+}
+",
+@"
+struct C
+{
+    public static bool operator <(C left, C right) { return true; }   // error CS0216: The operator requires a matching operator '>' to also be defined
+
+    public int CompareTo(C other)
+    {
         throw new System.NotImplementedException();
     }
 }
@@ -335,9 +362,36 @@ Class C
     End Operator
 
     Public Function CompareTo(other As C) As Integer
+        If ReferenceEquals(other, Nothing) Then
+            Return 1
+        End If
+
         Throw New System.NotImplementedException()
     End Function
 End Class
+", validationMode: TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact]
+        public void AddAlternateForStructCompare_Basic()
+        {
+            VerifyBasicFix(@"
+Structure C
+    Public Shared Operator <(left As C, right As C) As Boolean   ' error BC33033: Matching '>' operator is required
+        Return True
+    End Operator
+End Structure
+",
+@"
+Structure C
+    Public Shared Operator <(left As C, right As C) As Boolean   ' error BC33033: Matching '>' operator is required
+        Return True
+    End Operator
+
+    Public Function CompareTo(other As C) As Integer
+        Throw New System.NotImplementedException()
+    End Function
+End Structure
 ", validationMode: TestValidationMode.AllowCompileErrors);
         }
 

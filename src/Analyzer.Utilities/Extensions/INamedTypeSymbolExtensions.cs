@@ -69,7 +69,7 @@ namespace Analyzer.Utilities.Extensions
         public static bool ImplementsOperator(this INamedTypeSymbol symbol, string op)
         {
             // TODO: should this filter on the right-hand-side operator type?
-            return symbol.GetMembers(op).OfType<IMethodSymbol>().Where(m => m.MethodKind == MethodKind.UserDefinedOperator).Any();
+            return symbol.GetMembers(op).OfType<IMethodSymbol>().Any(m => m.MethodKind == MethodKind.UserDefinedOperator);
         }
 
         /// <summary>
@@ -104,19 +104,21 @@ namespace Analyzer.Utilities.Extensions
         {
             return symbol.ImplementsEqualityOperators() &&
                    symbol.ImplementsOperator(WellKnownMemberNames.LessThanOperatorName) &&
-                   symbol.ImplementsOperator(WellKnownMemberNames.GreaterThanOperatorName);
+                   symbol.ImplementsOperator(WellKnownMemberNames.LessThanOrEqualOperatorName) &&
+                   symbol.ImplementsOperator(WellKnownMemberNames.GreaterThanOperatorName) &&
+                   symbol.ImplementsOperator(WellKnownMemberNames.GreaterThanOrEqualOperatorName);
         }
 
         public static bool OverridesEquals(this INamedTypeSymbol symbol)
         {
             // Does the symbol override Object.Equals?
-            return symbol.GetMembers(WellKnownMemberNames.ObjectEquals).OfType<IMethodSymbol>().Where(m => m.IsEqualsOverride()).Any();
+            return symbol.GetMembers(WellKnownMemberNames.ObjectEquals).OfType<IMethodSymbol>().Any(m => m.IsEqualsOverride());
         }
 
         public static bool OverridesGetHashCode(this INamedTypeSymbol symbol)
         {
             // Does the symbol override Object.GetHashCode?
-            return symbol.GetMembers(WellKnownMemberNames.ObjectGetHashCode).OfType<IMethodSymbol>().Where(m => m.IsGetHashCodeOverride()).Any();
+            return symbol.GetMembers(WellKnownMemberNames.ObjectGetHashCode).OfType<IMethodSymbol>().Any(m => m.IsGetHashCodeOverride());
         }
 
         public static bool HasFinalizer(this INamedTypeSymbol symbol)

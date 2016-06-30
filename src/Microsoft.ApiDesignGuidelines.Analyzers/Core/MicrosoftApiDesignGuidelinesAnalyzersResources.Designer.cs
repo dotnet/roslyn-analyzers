@@ -1954,7 +1954,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A public or protected type implements the System.IComparable interface. It does not override Object.Equals nor does it overload the language-specific operator for equality, inequality, less than, or greater than..
+        ///   Looks up a localized string similar to A public or protected type implements the System.IComparable interface. It does not override Object.Equals nor does it overload the language-specific operator for equality, inequality, less than, less than or equal, greater than or greater than or equal..
         /// </summary>
         internal static string OverrideMethodsOnComparableTypesDescription {
             get {

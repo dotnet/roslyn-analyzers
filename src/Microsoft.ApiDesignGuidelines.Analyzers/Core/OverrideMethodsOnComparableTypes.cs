@@ -13,8 +13,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     /// <summary>
     /// CA1036: A public or protected type implements the System.IComparable interface and 
     /// does not override Object.Equals or does not overload the language-specific operator
-    /// for equality, inequality, less than, or greater than. The rule does not report a
-    /// violation if the type inherits only an implementation of the interface.
+    /// for equality, inequality, less than, less than or equal, greater than or 
+    /// greater than or equal. The rule does not report a violation if the type inherits 
+    /// only an implementation of the interface.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class OverrideMethodsOnComparableTypesAnalyzer : DiagnosticAnalyzer

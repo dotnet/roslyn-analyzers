@@ -44,9 +44,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             // We cannot have multiple overlapping diagnostics of this id.
             Diagnostic diagnostic = context.Diagnostics.Single();
 
-            context.RegisterCodeFix(new MyCodeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle,
-                                                     async ct => await ImplementOperatorEquals(context.Document, declaration, typeSymbol, ct).ConfigureAwait(false)),
-                                    diagnostic);
+            context.RegisterCodeFix(
+                new MyCodeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle,
+                    async ct => await ImplementOperatorEquals(context.Document, declaration, typeSymbol, ct).ConfigureAwait(false)), diagnostic);
         }
 
         private async Task<Document> ImplementOperatorEquals(Document document, SyntaxNode declaration, INamedTypeSymbol typeSymbol, CancellationToken cancellationToken)
@@ -56,16 +56,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.EqualityOperatorName))
             {
-                var equalityOperator = generator.ComparisonOperatorDeclaration(
-                    OperatorKind.Equality, typeSymbol, editor.SemanticModel.Compilation);
+                var equalityOperator = generator.DefaultOperatorEqualityDeclaration(typeSymbol);
 
                 editor.AddMember(declaration, equalityOperator);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.InequalityOperatorName))
             {
-                var inequalityOperator = generator.ComparisonOperatorDeclaration(
-                    OperatorKind.Inequality, typeSymbol, editor.SemanticModel.Compilation);
+                var inequalityOperator = generator.DefaultOperatorInequalityDeclaration(typeSymbol);
 
                 editor.AddMember(declaration, inequalityOperator);
             }

@@ -46,12 +46,12 @@ public struct A
 
     public static bool operator ==(A left, A right)
     {
-        throw new NotImplementedException();
+        return left.Equals(right);
     }
 
     public static bool operator !=(A left, A right)
     {
-        throw new NotImplementedException();
+        return !(left == right);
     }
 }
 ",
@@ -82,11 +82,11 @@ Public Structure A
     End Function
 
     Public Shared Operator =(left As A, right As A) As Boolean
-        Throw New NotImplementedException()
+        Return left.Equals(right)
     End Operator
 
     Public Shared Operator <>(left As A, right As A) As Boolean
-        Throw New NotImplementedException()
+        Return Not left = right
     End Operator
 End Structure
 ");

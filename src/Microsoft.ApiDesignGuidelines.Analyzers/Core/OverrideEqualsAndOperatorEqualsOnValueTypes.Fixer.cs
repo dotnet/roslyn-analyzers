@@ -62,19 +62,18 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             var editor = await DocumentEditor.CreateAsync(document, ct).ConfigureAwait(false);
             var generator = editor.Generator;
-            var language = document.Project.Language;
 
             if (!typeSymbol.OverridesEquals())
             {
-                var equalsMethod = generator.EqualsOverrideDeclaration(
-                    editor.SemanticModel.Compilation);
+                var equalsMethod = generator.DefaultEqualsOverrideDeclaration(
+                    editor.SemanticModel.Compilation, typeSymbol);
 
                 editor.AddMember(declaration, equalsMethod);
             }
 
             if (!typeSymbol.OverridesGetHashCode())
             {
-                var getHashCodeMethod = generator.GetHashCodeOverrideDeclaration(
+                var getHashCodeMethod = generator.DefaultGetHashCodeOverrideDeclaration(
                     editor.SemanticModel.Compilation);
 
                 editor.AddMember(declaration, getHashCodeMethod);
@@ -82,16 +81,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.EqualityOperatorName))
             {
-                var equalityOperator = generator.ComparisonOperatorDeclaration(
-                    OperatorKind.Equality, typeSymbol, editor.SemanticModel.Compilation);
+                var equalityOperator = generator.DefaultOperatorEqualityDeclaration(typeSymbol);
 
                 editor.AddMember(declaration, equalityOperator);
             }
 
             if (!typeSymbol.ImplementsOperator(WellKnownMemberNames.InequalityOperatorName))
             {
-                var inequalityOperator = generator.ComparisonOperatorDeclaration(
-                    OperatorKind.Inequality, typeSymbol, editor.SemanticModel.Compilation);
+                var inequalityOperator = generator.DefaultOperatorInequalityDeclaration(typeSymbol);
 
                 editor.AddMember(declaration, inequalityOperator);
             }

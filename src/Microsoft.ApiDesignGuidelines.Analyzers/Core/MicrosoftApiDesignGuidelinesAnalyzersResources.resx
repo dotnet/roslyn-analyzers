@@ -307,7 +307,7 @@
     <value>Override methods on comparable types</value>
   </data>
   <data name="OverrideMethodsOnComparableTypesDescription" xml:space="preserve">
-    <value>A public or protected type implements the System.IComparable interface. It does not override Object.Equals nor does it overload the language-specific operator for equality, inequality, less than, or greater than.</value>
+    <value>A public or protected type implements the System.IComparable interface. It does not override Object.Equals nor does it overload the language-specific operator for equality, inequality, less than, less than or equal, greater than or greater than or equal.</value>
   </data>
   <data name="OverrideMethodsOnComparableTypesMessageEquals" xml:space="preserve">
     <value>{0} should override Equals since it implements IComparable.</value>

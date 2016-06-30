@@ -12,7 +12,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class EquatableAnalyzer : DiagnosticAnalyzer
     {
-        private const string IEquatableMetadataName = "System.IEquatable`1";
         internal const string ImplementIEquatableRuleId = "CA1066";
         internal const string OverrideObjectEqualsRuleId = "CA1067";
 
@@ -57,7 +56,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
             INamedTypeSymbol objectType = context.Compilation.GetSpecialType(SpecialType.System_Object);
-            INamedTypeSymbol equatableType = context.Compilation.GetTypeByMetadataName(IEquatableMetadataName);
+            INamedTypeSymbol equatableType = WellKnownTypes.GenericIEquatable(context.Compilation);
             if (objectType != null && equatableType != null)
             {
                 context.RegisterSymbolAction(c => AnalyzeSymbol(c, equatableType), SymbolKind.NamedType);
@@ -77,8 +76,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             INamedTypeSymbol constructedEquatable = equatableType.Construct(namedType);
             INamedTypeSymbol implementation = namedType
                 .Interfaces
-                .Where(x => x.Equals(constructedEquatable))
-                .FirstOrDefault();
+                .FirstOrDefault(x => x.Equals(constructedEquatable));
             bool implementsEquatable = implementation != null;
 
             if (overridesObjectEquals && !implementsEquatable && namedType.TypeKind == TypeKind.Struct)

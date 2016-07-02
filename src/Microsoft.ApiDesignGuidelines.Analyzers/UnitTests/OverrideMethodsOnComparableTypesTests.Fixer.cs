@@ -65,7 +65,7 @@ public class A : IComparable
     {
         if (ReferenceEquals(left, null))
         {
-            return false;
+            return ReferenceEquals(right, null);
         }
 
         return left.Equals(right);
@@ -227,7 +227,7 @@ public class A : IComparable
     {
         if (ReferenceEquals(left, null))
         {
-            return false;
+            return ReferenceEquals(right, null);
         }
 
         return left.Equals(right);
@@ -253,7 +253,7 @@ public class A : IComparable
         return ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
     }
 }
-", 
+",
             validationMode: TestValidationMode.AllowCompileErrors);
         }
 
@@ -330,7 +330,7 @@ public struct A : IComparable
         return left.CompareTo(right) >= 0;
     }
 }
-", 
+",
             validationMode: TestValidationMode.AllowCompileErrors);
         }
 
@@ -374,7 +374,7 @@ Public Class A : Implements IComparable
 
     Public Shared Operator =(left As A, right As A) As Boolean
         If ReferenceEquals(left, Nothing) Then
-            Return False
+            Return ReferenceEquals(right, Nothing)
         End If
 
         Return left.Equals(right)
@@ -512,7 +512,7 @@ Public Class A : Implements IComparable
 
     Public Shared Operator =(left As A, right As A) As Boolean
         If ReferenceEquals(left, Nothing) Then
-            Return False
+            Return ReferenceEquals(right, Nothing)
         End If
 
         Return left.Equals(right)
@@ -534,7 +534,7 @@ Public Class A : Implements IComparable
         Return If(ReferenceEquals(left, Nothing), ReferenceEquals(right, Nothing), left.CompareTo(right) >= 0)
     End Operator
 End Class
-", 
+",
             validationMode: TestValidationMode.AllowCompileErrors);
         }
 
@@ -600,7 +600,7 @@ Public Structure A : Implements IComparable
         Return left.CompareTo(right) >= 0
     End Operator
 End Structure
-", 
+",
             validationMode: TestValidationMode.AllowCompileErrors);
         }
     }

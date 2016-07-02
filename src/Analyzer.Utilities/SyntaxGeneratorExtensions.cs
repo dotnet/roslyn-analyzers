@@ -45,7 +45,11 @@ namespace Analyzer.Utilities
                             generator.NullLiteralExpression()),
                         new[]
                         {
-                            generator.ReturnStatement(generator.FalseLiteralExpression())
+                            generator.ReturnStatement(
+                                generator.InvocationExpression(
+                                    generator.IdentifierName(ReferenceEqualsMethodName),
+                                    rightArgument,
+                                    generator.NullLiteralExpression()))
                         }));
             }
 

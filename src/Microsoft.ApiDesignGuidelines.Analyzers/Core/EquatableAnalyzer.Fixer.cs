@@ -62,7 +62,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementEquatable,
                     async ct =>
                         await ImplementEquatableInStructAsync(context.Document, declaration, type, model.Compilation,
-                            equatableType, ct).ConfigureAwait(false)), diagnostic);
+                            equatableType, ct).ConfigureAwait(false),
+                    equivalenceKey: MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementEquatable), diagnostic);
             }
 
             if (!type.OverridesEquals())
@@ -71,7 +72,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsOnImplementingIEquatableCodeActionTitle,
                     async ct =>
                         await OverrideObjectEqualsAsync(context.Document, declaration, type, equatableType,
-                            ct).ConfigureAwait(false)), diagnostic);
+                            ct).ConfigureAwait(false),
+                    equivalenceKey: MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsOnImplementingIEquatableCodeActionTitle), diagnostic);
             }
         }
 
@@ -232,9 +234,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
+            public override string EquivalenceKey { get; }
+
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument,
+                string equivalenceKey)
                 : base(title, createChangedDocument)
             {
+                EquivalenceKey = equivalenceKey;
             }
         }
     }

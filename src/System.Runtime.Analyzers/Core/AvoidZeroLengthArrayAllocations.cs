@@ -21,6 +21,11 @@ namespace System.Runtime.Analyzers
         /// <summary>The name of the Empty method on System.Array.</summary>
         internal const string ArrayEmptyMethodName = "Empty";
 
+        private static readonly SymbolDisplayFormat ReportFormat = new SymbolDisplayFormat(
+            memberOptions: SymbolDisplayMemberOptions.IncludeContainingType | SymbolDisplayMemberOptions.IncludeParameters,
+            genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
+            miscellaneousOptions: SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
+
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.AvoidZeroLengthArrayAllocationsTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.AvoidZeroLengthArrayAllocationsMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
 
@@ -63,9 +68,9 @@ namespace System.Runtime.Analyzers
             AnalyzeOperation(context, IsAttributeSyntax);
         }
 
-        private static void AnalyzeOperation(OperationAnalysisContext context, Func<SyntaxNode, bool> isAttributeSytnax)
+        private void AnalyzeOperation(OperationAnalysisContext context, Func<SyntaxNode, bool> isAttributeSytnax)
         {
-            IArrayCreationExpression arrayCreationExpression = context.Operation as IArrayCreationExpression;
+            IArrayCreationExpression arrayCreationExpression = (IArrayCreationExpression)context.Operation;
 
             // We can't replace array allocations in attributes, as they're persisted to metadata
             // TODO: Once we have operation walkers, we can replace this syntactic check with an operation-based check.
@@ -90,7 +95,12 @@ namespace System.Runtime.Analyzers
                     // pointers can't be used as generic arguments
                     if (arrayCreationExpression.ElementType.TypeKind != TypeKind.Pointer)
                     {
-                        context.ReportDiagnostic(context.Operation.Syntax.CreateDiagnostic(UseArrayEmptyDescriptor));
+                        var arrayType = context.Compilation.GetTypeByMetadataName(ArrayTypeName);
+                        IMethodSymbol emptyMethod = (IMethodSymbol)arrayType.GetMembers(ArrayEmptyMethodName).First();
+                        var constructed = emptyMethod.Construct(arrayCreationExpression.ElementType);
+
+                        string typeName = constructed.ToDisplayString(ReportFormat);
+                        context.ReportDiagnostic(context.Operation.Syntax.CreateDiagnostic(UseArrayEmptyDescriptor, typeName));
                     }
                 }
             }
@@ -102,7 +112,7 @@ namespace System.Runtime.Analyzers
 
             // Compiler generated array creation seems to just use the syntax from the parent.
             var parent = model.GetOperation(arrayCreationExpression.Syntax, context.CancellationToken) as IInvocationExpression;
-            if (parent == null || parent.TargetMethod == null || parent.TargetMethod.Parameters.Length == 0)
+            if (parent?.TargetMethod == null || parent.TargetMethod.Parameters.Length == 0)
             {
                 return false;
             }

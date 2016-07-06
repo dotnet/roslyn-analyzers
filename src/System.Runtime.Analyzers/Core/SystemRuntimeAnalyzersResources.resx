@@ -289,7 +289,7 @@
     <value>Avoid zero-length array allocations.</value>
   </data>
   <data name="AvoidZeroLengthArrayAllocationsMessage" xml:space="preserve">
-    <value>Avoid unnecessary zero-length array allocations.  Use Array.Empty&lt;T&gt;() instead.</value>
+    <value>Avoid unnecessary zero-length array allocations.  Use {0} instead.</value>
   </data>
   <data name="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyTitle" xml:space="preserve">
     <value>Do not use Enumerable methods on indexable collections. Instead use the collection directly</value>

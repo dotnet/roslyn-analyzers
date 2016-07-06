@@ -125,7 +125,7 @@ namespace System.Runtime.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Avoid unnecessary zero-length array allocations.  Use Array.Empty&lt;T&gt;() instead..
+        ///   Looks up a localized string similar to Avoid unnecessary zero-length array allocations.  Use {0} instead..
         /// </summary>
         internal static string AvoidZeroLengthArrayAllocationsMessage {
             get {

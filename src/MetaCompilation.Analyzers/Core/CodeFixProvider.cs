@@ -1361,32 +1361,6 @@ namespace MetaCompilation.Analyzers
             return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("// defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document).ConfigureAwait(false);
         }
 
-        // sets the diagnosticSeverity parameter to hidden
-        private async Task<Document> DiagnosticSeverityHidden(Document document, ArgumentSyntax argument, CancellationToken c)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            SyntaxNode expression = generator.IdentifierName("DiagnosticSeverity");
-            var newExpression = generator.MemberAccessExpression(expression, "Hidden") as ExpressionSyntax;
-            FieldDeclarationSyntax rule = argument.FirstAncestorOrSelf<FieldDeclarationSyntax>();
-            FieldDeclarationSyntax newRule = rule.ReplaceNode(argument.Expression, newExpression);
-
-            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("// defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document).ConfigureAwait(false);
-        }
-
-        // sets the diagnosticSeverity parameter to info
-        private async Task<Document> DiagnosticSeverityInfo(Document document, ArgumentSyntax argument, CancellationToken c)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            SyntaxNode expression = generator.IdentifierName("DiagnosticSeverity");
-            var newExpression = generator.MemberAccessExpression(expression, "Info") as ExpressionSyntax;
-            FieldDeclarationSyntax rule = argument.FirstAncestorOrSelf<FieldDeclarationSyntax>();
-            FieldDeclarationSyntax newRule = rule.ReplaceNode(argument.Expression, newExpression);
-
-            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("// defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document).ConfigureAwait(false);
-        }
-
         // sets the diagnosticSeverity parameter to error
         private async Task<Document> DiagnosticSeverityError(Document document, ArgumentSyntax argument, CancellationToken c)
         {

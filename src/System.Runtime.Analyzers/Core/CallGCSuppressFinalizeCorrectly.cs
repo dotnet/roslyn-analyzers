@@ -121,7 +121,7 @@ namespace System.Runtime.Analyzers
             private readonly IMethodSymbol _gcSuppressFinalizeMethodSymbol;
             private readonly SuppressFinalizeUsage _expectedUsage;
 
-            private bool _suppressFinalizeCalled = false;
+            private bool _suppressFinalizeCalled;
             private SemanticModel _semanticModel;
 
             public SuppressFinalizeAnalyzer(IMethodSymbol methodSymbol, IMethodSymbol gcSuppressFinalizeMethodSymbol, Compilation compilation)

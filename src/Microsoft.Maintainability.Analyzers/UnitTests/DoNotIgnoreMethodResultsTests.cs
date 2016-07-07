@@ -284,12 +284,6 @@ End Interface
             return GetCSharpResultAt(line, column, DoNotIgnoreMethodResultsAnalyzer.RuleId, message);
         }
 
-        private static DiagnosticResult GetBasicObjectCreationResultAt(int line, int column, string containingMethodName, string invokedMethodName)
-        {
-            string message = string.Format(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessageObjectCreation, containingMethodName, invokedMethodName);
-            return GetBasicResultAt(line, column, DoNotIgnoreMethodResultsAnalyzer.RuleId, message);
-        }
-
         private static DiagnosticResult GetCSharpTryParseResultAt(int line, int column, string containingMethodName, string invokedMethodName)
         {
             string message = string.Format(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessageTryParse, containingMethodName, invokedMethodName);

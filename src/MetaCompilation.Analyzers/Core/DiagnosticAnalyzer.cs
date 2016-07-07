@@ -334,14 +334,11 @@ namespace MetaCompilation.Analyzers
             private List<IPropertySymbol> _analyzerPropertySymbols = new List<IPropertySymbol>();
             private List<IFieldSymbol> _analyzerFieldSymbols = new List<IFieldSymbol>();
             private List<INamedTypeSymbol> _otherAnalyzerClassSymbols = new List<INamedTypeSymbol>();
-            private IMethodSymbol _initializeSymbol = null;
-            private IPropertySymbol _propertySymbol = null;
-            private INamedTypeSymbol _analyzerClassSymbol = null;
+            private IMethodSymbol _initializeSymbol;
+            private IPropertySymbol _propertySymbol;
+            private INamedTypeSymbol _analyzerClassSymbol;
             private Dictionary<string, string> _branchesDict = new Dictionary<string, string>();
-            private IPropertySymbol _codeFixFixableDiagnostics = null;
             private readonly List<IMethodSymbol> _codeFixMethodSymbols = new List<IMethodSymbol>();
-            private IMethodSymbol _registerCodeFixesAsync = null;
-            private INamedTypeSymbol _codeFixClassSymbol = null;
 
             //"main" method, performs the analysis once state has been collected
             internal protected void ReportCompilationEndDiagnostics(CompilationAnalysisContext context)
@@ -2877,7 +2874,6 @@ namespace MetaCompilation.Analyzers
 
                     if (sym.Name == "RegisterCodeFixesAsync")
                     {
-                        _registerCodeFixesAsync = sym;
                         return;
                     }
                     else
@@ -2930,7 +2926,6 @@ namespace MetaCompilation.Analyzers
 
                     if (sym.Name == "FixableDiagnosticIds")
                     {
-                        _codeFixFixableDiagnostics = sym;
                         return;
                     }
 
@@ -3029,29 +3024,8 @@ namespace MetaCompilation.Analyzers
                 {
                     _analyzerClassSymbol = sym;
                 }
-                else if (sym.BaseType == context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider"))
-                {
-                    _codeFixClassSymbol = sym;
-                }
-                else
-                {
-                    return;
-                }
             }
             #endregion
-
-            // Clears all state
-            internal protected void ClearState()
-            {
-                _analyzerClassSymbol = null;
-                _analyzerFieldSymbols = new List<IFieldSymbol>();
-                _analyzerMethodSymbols = new List<IMethodSymbol>();
-                _analyzerPropertySymbols = new List<IPropertySymbol>();
-                _otherAnalyzerClassSymbols = new List<INamedTypeSymbol>();
-                _initializeSymbol = null;
-                _propertySymbol = null;
-                _branchesDict = new Dictionary<string, string>();
-            }
 
             //reports a diagnostics
             private static void ReportDiagnostic(CompilationAnalysisContext context, DiagnosticDescriptor rule, Location location, params string[] messageArgs)

@@ -148,12 +148,6 @@ namespace System.Runtime.Analyzers
                     correctOverload.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
         }
 
-        private static IMethodSymbol GetSingleOrDefaultMemberWithName(IEnumerable<IMethodSymbol> stringFormatMembers, string displayName)
-        {
-            return stringFormatMembers?.Where(member => string.Equals(member.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat), displayName, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
-        }
-
-
         private static ParameterInfo GetParameterInfo(INamedTypeSymbol type, bool isArray = false, int arrayRank = 0, bool isParams = false)
         {
             return ParameterInfo.GetParameterInfo(type, isArray, arrayRank, isParams);

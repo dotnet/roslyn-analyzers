@@ -152,7 +152,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         return;
                     }
 
-                    var analyzer = new PerCompilationAnalyzer(context.Compilation, disposableType, disposeInterfaceMethod, suppressFinalizeMethod);
+                    var analyzer = new PerCompilationAnalyzer(disposableType, disposeInterfaceMethod, suppressFinalizeMethod);
                     analyzer.Initialize(context);
                 });
         }
@@ -177,14 +177,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         /// </summary>
         private class PerCompilationAnalyzer
         {
-            private readonly Compilation _compilation;
             private readonly INamedTypeSymbol _disposableType;
             private readonly IMethodSymbol _disposeInterfaceMethod;
             private readonly IMethodSymbol _suppressFinalizeMethod;
 
-            public PerCompilationAnalyzer(Compilation compilation, INamedTypeSymbol disposableType, IMethodSymbol disposeInterfaceMethod, IMethodSymbol suppressFinalizeMethod)
+            public PerCompilationAnalyzer(INamedTypeSymbol disposableType, IMethodSymbol disposeInterfaceMethod, IMethodSymbol suppressFinalizeMethod)
             {
-                _compilation = compilation;
                 _disposableType = disposableType;
                 _disposeInterfaceMethod = disposeInterfaceMethod;
                 _suppressFinalizeMethod = suppressFinalizeMethod;

@@ -388,19 +388,9 @@ namespace N
             return GetGlobalResult(RuleName, string.Format(s_message, typeName, objectName));
         }
 
-        private static DiagnosticResult GetCA1708BasicResult(string typeName, string objectName)
-        {
-            return GetGlobalResult(RuleName, string.Format(s_message, typeName, objectName));
-        }
-
         private static DiagnosticResult GetCA1708CSharpResultAt(string typeName, string objectName, int line, int column)
         {
             return GetCSharpResultAt(line, column, RuleName, string.Format(s_message, typeName, objectName));
-        }
-
-        private static DiagnosticResult GetCA1708BasicResultAt(string typeName, string objectName, int line, int column)
-        {
-            return GetBasicResultAt(line, column, RuleName, string.Format(s_message, typeName, objectName));
         }
 
         private static DiagnosticResult GetCA1708CSharpResultAt(string typeName, string objectName, params string[] locations)

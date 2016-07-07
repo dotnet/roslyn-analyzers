@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Test.Utilities
@@ -120,31 +119,6 @@ namespace Test.Utilities
 
             protected abstract bool ItemsEqual(TSequence sequenceA, int indexA, TSequence sequenceB, int indexB);
 
-            protected IEnumerable<KeyValuePair<int, int>> GetMatchingPairs(TSequence sequenceA, int lengthA, TSequence sequenceB, int lengthB)
-            {
-                int[,] d = ComputeCostMatrix(sequenceA, lengthA, sequenceB, lengthB);
-                int i = lengthA;
-                int j = lengthB;
-
-                while (i != 0 && j != 0)
-                {
-                    if (d[i, j] == d[i - 1, j] + DeleteCost)
-                    {
-                        i--;
-                    }
-                    else if (d[i, j] == d[i, j - 1] + InsertCost)
-                    {
-                        j--;
-                    }
-                    else
-                    {
-                        i--;
-                        j--;
-                        yield return new KeyValuePair<int, int>(i, j);
-                    }
-                }
-            }
-
             protected IEnumerable<Edit> GetEdits(TSequence sequenceA, int lengthA, TSequence sequenceB, int lengthB)
             {
                 int[,] d = ComputeCostMatrix(sequenceA, lengthA, sequenceB, lengthB);
@@ -182,34 +156,6 @@ namespace Test.Utilities
                     j--;
                     yield return new Edit(EditKind.Insert, -1, j);
                 }
-            }
-
-            /// <summary>
-            /// Returns a distance [0..1] of the specified sequences.
-            /// The smaller distance the more of their elements match.
-            /// </summary>
-            /// <summary>
-            /// Returns a distance [0..1] of the specified sequences.
-            /// The smaller distance the more of their elements match.
-            /// </summary>
-            protected double ComputeDistance(TSequence sequenceA, int lengthA, TSequence sequenceB, int lengthB)
-            {
-                Debug.Assert(lengthA >= 0 && lengthB >= 0);
-
-                if (lengthA == 0 || lengthB == 0)
-                {
-                    return (lengthA == lengthB) ? 0.0 : 1.0;
-                }
-
-                int lcsLength = 0;
-                foreach (KeyValuePair<int, int> pair in GetMatchingPairs(sequenceA, lengthA, sequenceB, lengthB))
-                {
-                    lcsLength++;
-                }
-
-                int max = Math.Max(lengthA, lengthB);
-                Debug.Assert(lcsLength <= max);
-                return 1.0 - (double)lcsLength / (double)max;
             }
 
             // CA1814: Prefer jagged arrays over multidimensional

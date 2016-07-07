@@ -63,11 +63,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
         }
 
-        private static SyntaxNode GetDeclaration(ISymbol symbol)
-        {
-            return (symbol.DeclaringSyntaxReferences.Length > 0) ? symbol.DeclaringSyntaxReferences[0].GetSyntax() : null;
-        }
-
         private SyntaxNode GetExplicitlyAssignedField(IFieldSymbol originalField, SyntaxNode declaration, SyntaxGenerator generator)
         {
             SyntaxNode originalInitializer = generator.GetExpression(declaration);

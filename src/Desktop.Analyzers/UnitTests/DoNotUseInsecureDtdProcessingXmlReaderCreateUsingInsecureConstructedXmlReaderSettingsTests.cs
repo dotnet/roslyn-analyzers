@@ -7,18 +7,6 @@ namespace Desktop.Analyzers.UnitTests
 {
     public partial class DoNotUseInsecureDtdProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        private static readonly string s_CA3075XmlReaderCreateUsingInsecureConstructedXmlReaderSettingsMessage = DesktopAnalyzersResources.XmlReaderCreateInsecureConstructedMessage;
-
-        private DiagnosticResult GetCA3075XmlReaderCreateUsingInsecureConstructedXmlReaderSettingsCSharpResultAt(int line, int column)
-        {
-            return GetCSharpResultAt(line, column, CA3075RuleId, s_CA3075XmlReaderCreateUsingInsecureConstructedXmlReaderSettingsMessage);
-        }
-
-        private DiagnosticResult GetCA3075XmlReaderCreateUsingInsecureConstructedXmlReaderSettingsBasicResultAt(int line, int column)
-        {
-            return GetBasicResultAt(line, column, CA3075RuleId, s_CA3075XmlReaderCreateUsingInsecureConstructedXmlReaderSettingsMessage);
-        }
-
         [Fact]
         public void DefaultXmlReaderSettingsShouldNotGenerateDiagnostic()
         {

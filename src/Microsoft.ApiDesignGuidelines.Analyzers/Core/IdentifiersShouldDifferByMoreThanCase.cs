@@ -156,23 +156,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         #region NameCheck Methods
 
-        private static void CheckParameterNames(IEnumerable<IParameterSymbol> parameters, Action<Diagnostic> addDiagnostic)
-        {
-            // If there is only one parameter, then return
-            if (!parameters.Skip(1).Any())
-            {
-                return;
-            }
-
-            IEnumerable<IGrouping<string, IParameterSymbol>> parameterList = parameters.GroupBy((item) => item.Name, StringComparer.OrdinalIgnoreCase).Where((group) => group.Count() > 1);
-
-            foreach (IGrouping<string, IParameterSymbol> group in parameterList)
-            {
-                ISymbol symbol = group.First().ContainingSymbol;
-                addDiagnostic(symbol.CreateDiagnostic(Rule, Parameter, symbol.ToDisplayString()));
-            }
-        }
-
         private static bool HasViolatingParameters(ISymbol symbol)
         {
             ImmutableArray<IParameterSymbol> parameters = symbol.GetParameters();

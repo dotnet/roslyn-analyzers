@@ -56,12 +56,11 @@ namespace Microsoft.QualityGuidelines.Analyzers
                 var fieldInitializer = saContext.Operation as IFieldInitializer;
 
                 // Diagnostics are reported on the last initialized field to retain the previous FxCop behavior
-                var lastField = fieldInitializer.InitializedFields.LastOrDefault();
-                var fieldInitializerValue = fieldInitializer.Value;
-                if (fieldInitializerValue == null||
-                    lastField.IsConst ||
-                    lastField.GetResultantVisibility() == SymbolVisibility.Public ||!lastField.IsStatic || !lastField.IsReadOnly ||
-                    !fieldInitializerValue.ConstantValue.HasValue)
+                var lastField = fieldInitializer?.InitializedFields.LastOrDefault();
+                var fieldInitializerValue = fieldInitializer?.Value;
+                if (fieldInitializerValue == null || lastField.IsConst ||
+                    lastField.GetResultantVisibility() == SymbolVisibility.Public || !lastField.IsStatic ||
+                    !lastField.IsReadOnly || !fieldInitializerValue.ConstantValue.HasValue)
                 {
                     return;
                 }
@@ -72,7 +71,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                 if (initializerValue != null)
                 {
                     if (fieldInitializerValue.Type?.SpecialType == SpecialType.System_String &&
-                        ((string)initializerValue)?.Length == 0)
+                        ((string)initializerValue).Length == 0)
                     {
                         saContext.ReportDiagnostic(lastField.CreateDiagnostic(EmptyStringRule, lastField.Name));
                         return;

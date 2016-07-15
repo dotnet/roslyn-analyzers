@@ -2,8 +2,14 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Analyzer.Utilities;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.Formatting;
 
 namespace Microsoft.QualityGuidelines.Analyzers
 {
@@ -20,11 +26,84 @@ namespace Microsoft.QualityGuidelines.Analyzers
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            // Fixer not yet implemented.
-            return Task.CompletedTask;
-            
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
+            SyntaxNode declaration = root.FindNode(context.Span);
+            declaration = SyntaxGenerator.GetGenerator(context.Document).GetDeclaration(declaration, DeclarationKind.Field);
+            var fieldFeclaration = GetFieldDeclaration(declaration);
+            if (fieldFeclaration == null)
+            {
+                return;
+            }
+
+            // We cannot have multiple overlapping diagnostics of this id.
+            Diagnostic diagnostic = context.Diagnostics.Single();
+
+            context.RegisterCodeFix(
+                new MyCodeAction(
+                    MicrosoftQualityGuidelinesAnalyzersResources.UseLiteralsWhereAppropriateCodeActionTitle,
+                    cancellationToken => ToConstantDeclarationAsync(context.Document, fieldFeclaration, cancellationToken)),
+                diagnostic);
+        }
+
+        private async Task<Document> ToConstantDeclarationAsync(Document document, SyntaxNode fieldDeclaration, CancellationToken cancellationToken)
+        {
+            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+
+            SyntaxTriviaList leadingTrivia = new SyntaxTriviaList();
+            SyntaxTriviaList trailingTrivia = new SyntaxTriviaList();
+
+            SyntaxTokenList newModifiers = new SyntaxTokenList();
+            foreach (SyntaxToken modifier in GetModifiers(fieldDeclaration))
+            {
+                if (IsStaticKeyword(modifier) || IsReadonlyKeyword(modifier))
+                {
+                    if (leadingTrivia.Count == 0 && trailingTrivia.Count == 0)
+                    {
+                        leadingTrivia = leadingTrivia.AddRange(modifier.LeadingTrivia);
+                        trailingTrivia = trailingTrivia.AddRange(modifier.TrailingTrivia);
+                    }
+                    else
+                    {
+                        trailingTrivia = trailingTrivia.AddRange(modifier.LeadingTrivia);
+                        trailingTrivia = trailingTrivia.AddRange(modifier.TrailingTrivia);
+
+                        var constModifier =
+                            GetConstKeywordToken().WithLeadingTrivia(leadingTrivia).WithTrailingTrivia(trailingTrivia);
+                        newModifiers = newModifiers.Add(constModifier);
+                    }
+                }
+                else
+                {
+                    newModifiers = newModifiers.Add(modifier);
+                }
+            }
+
+            var constFieldDeclaration = WithModifiers(fieldDeclaration, newModifiers).WithAdditionalAnnotations(Formatter.Annotation);
+            editor.ReplaceNode(fieldDeclaration, constFieldDeclaration);
+            return editor.GetChangedDocument();
+        }
+
+        protected abstract SyntaxNode GetFieldDeclaration(SyntaxNode syntaxNode);
+        protected abstract bool IsStaticKeyword(SyntaxToken syntaxToken);
+        protected abstract bool IsReadonlyKeyword(SyntaxToken syntaxToken);
+        protected abstract SyntaxToken GetConstKeywordToken();
+
+        protected abstract SyntaxTokenList GetModifiers(SyntaxNode fieldSyntax);
+        protected abstract SyntaxNode WithModifiers(SyntaxNode fieldSyntax, SyntaxTokenList modifiers);
+        
+        /// <remarks>
+        /// This type exists for telemetry purposes - it has the same functionality as 
+        /// <see cref="DocumentChangeAction"/> but different metadata.
+        /// </remarks>
+        private sealed class MyCodeAction : DocumentChangeAction
+        {
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
+                : base(title, createChangedDocument)
+            {
+            }
         }
     }
 }

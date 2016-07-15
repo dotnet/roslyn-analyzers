@@ -360,6 +360,15 @@ namespace Microsoft.QualityGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Change to constant.
+        /// </summary>
+        internal static string UseLiteralsWhereAppropriateCodeActionTitle {
+            get {
+                return ResourceManager.GetString("UseLiteralsWhereAppropriateCodeActionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A field is declared static and read-only (Shared and ReadOnly in Visual Basic), and is initialized by using a value that is computable at compile time. Because the value that is assigned to the targeted field is computable at compile time, change the declaration to a const (Const in Visual Basic) field so that the value is computed at compile time instead of at run?time..
         /// </summary>
         internal static string UseLiteralsWhereAppropriateDescription {

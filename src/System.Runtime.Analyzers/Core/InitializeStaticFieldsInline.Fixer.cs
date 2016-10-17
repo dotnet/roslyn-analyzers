@@ -25,7 +25,7 @@ namespace System.Runtime.Analyzers
         {
             // TODO: Implement the fixer.
             // This is to get rid of warning CS1998, please remove when implementing this analyzer
-            await new Task(() => { }).ConfigureAwait(false);
+            await Task.Run(() => { }).ConfigureAwait(false);
         }
     }
 }

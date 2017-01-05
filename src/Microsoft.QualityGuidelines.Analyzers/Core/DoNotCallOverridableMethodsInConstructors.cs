@@ -45,11 +45,11 @@ namespace Microsoft.QualityGuidelines.Analyzers
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
                 INamedTypeSymbol webUiControlType = compilationContext.Compilation.GetTypeByMetadataName("System.Web.UI.Control");
-                INamedTypeSymbol windowsFormsControlType = compilationContext.Compilation.GetTypeByMetadataName("System.Windows.Forms.Control");
+                INamedTypeSymbol componentModelComponentType = compilationContext.Compilation.GetTypeByMetadataName("System.ComponentModel.Component");
 
                 compilationContext.RegisterOperationBlockStartAction(context =>
                 {
-                    if (ShouldOmitThisDiagnostic(context.OwningSymbol, webUiControlType, windowsFormsControlType))
+                    if (ShouldOmitThisDiagnostic(context.OwningSymbol, webUiControlType, componentModelComponentType))
                     {
                         return;
                     }
@@ -71,7 +71,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
             }
         }
 
-        private static bool ShouldOmitThisDiagnostic(ISymbol symbol, INamedTypeSymbol webUiControlType, INamedTypeSymbol windowsFormsControlType)
+        private static bool ShouldOmitThisDiagnostic(ISymbol symbol, INamedTypeSymbol webUiControlType, INamedTypeSymbol componentModelComponentType)
         {
             // This diagnostic is only relevant in constructors.
             // TODO: should this apply to instance field initializers for VB?
@@ -87,13 +87,13 @@ namespace Microsoft.QualityGuidelines.Analyzers
                 return true;
             }
 
-            // special case ASP.NET and WinForms constructors
+            // special case ASP.NET and Components constructors
             if (containingType.Inherits(webUiControlType))
             {
                 return true;
             }
 
-            if (containingType.Inherits(windowsFormsControlType))
+            if (containingType.Inherits(componentModelComponentType))
             {
                 return true;
             }

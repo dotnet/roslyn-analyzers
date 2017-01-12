@@ -54,8 +54,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
-            // Bail out if the method is publicly accessible or is sealed.
-            if (method.GetResultantVisibility() == SymbolVisibility.Public || method.IsSealed)
+            // Bail out if the method is publicly accessible, sealed, or a constructor.
+            if (method.GetResultantVisibility() == SymbolVisibility.Public || method.IsSealed || method.MethodKind == MethodKind.Constructor)
             {
                 return;
             }

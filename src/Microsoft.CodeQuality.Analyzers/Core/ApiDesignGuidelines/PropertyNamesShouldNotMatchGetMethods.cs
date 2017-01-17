@@ -16,24 +16,23 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     public sealed class PropertyNamesShouldNotMatchGetMethodsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1721";
+        internal const string Get = "Get";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString LocalizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString LocalizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString LocalizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
+                                                                             LocalizableTitle,
+                                                                             LocalizableMessage,
                                                                              DiagnosticCategory.Naming,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
-                                                                             description: s_localizableDescription,
+                                                                             description: LocalizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182253.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
-
-        internal const string s_get = "Get";
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -50,61 +49,55 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             var symbol = context.Symbol;
             if (symbol.Kind == SymbolKind.Property)
             {
-                //if property then target search is to find methods that start with Get and the substring property name
-                identifier = s_get + symbol.Name;
+                // Want to look for methods named the same as the property with a 'Get' prefix
+                identifier = Get + symbol.Name;
             }
-            else if (symbol.Kind == SymbolKind.Method && symbol.Name.StartsWith(s_get, StringComparison.Ordinal))
+            else if (symbol.Kind == SymbolKind.Method && symbol.Name.StartsWith(Get, StringComparison.Ordinal))
             {
-                //if method starts with Get then target search is to find properties that have the method name sans Get
+                // Want to look for properties named the same as the method sans 'Get'
                 identifier = symbol.Name.Substring(3);
             }
             else
             {
-                //if method name doesn't start with Get exit
+                // Exit if the method name doesn't start with 'Get'
                 return;
             }
 
-            //boolean variable used to exit out of the inner and outer for loops
-            var matchFound = false;
-
-            //get the collection of declaring and base types
-            var types = symbol.ContainingType.GetBaseTypesAndThis();
-
-            //iterate through the collection to find match
-            foreach (INamedTypeSymbol type in types)
+            // Iterate through all declared types, including base
+            foreach (INamedTypeSymbol type in symbol.ContainingType.GetBaseTypesAndThis())
             {
-                ImmutableArray<ISymbol> membersFound = type.GetMembers(identifier);
-                if (membersFound != null && membersFound.Length > 0)
+                Diagnostic diagnostic = null;
+
+                foreach (ISymbol member in type.GetMembers(identifier))
                 {
-                    //found a match
-                    foreach (ISymbol member in membersFound)
+                    // If the declared type is a property, was a matching method found?
+                    if (symbol.Kind == SymbolKind.Property && member.Kind == SymbolKind.Method)
                     {
-                        //valid matches are...
-                        //when property from declaring type matches with method present in declaring type - this is covered by the LHS of OR condition below
-                        //when property from declaring type matches with method present in one of the base types - this is covered by the LHS of OR condition below
-                        //when method from declaring type matches with property present in one of the base types - this is covered by the RHS of OR condition below
-                        if ((symbol.Kind == SymbolKind.Property && member.Kind == SymbolKind.Method) ||
-                            (symbol.Kind == SymbolKind.Method && member.Kind == SymbolKind.Property && symbol.ContainingType != type))
-                        {
-                            //match found and break out of inner for loop
-                            matchFound = true;
-                            break;
-                        }
+                        diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], symbol.Name, identifier);
+                        break;
                     }
 
-                    //if no match found iterate to next in outer for loop
-                    if (!matchFound)
+                    // If the declared type is a method, was a matching property found? Although this
+                    // check seems redundant, it's the only way to catch violations of this rule when the
+                    // method is declared in a more derived implementation.
+                    if (symbol.Kind == SymbolKind.Method && 
+                        member.Kind == SymbolKind.Property &&
+                        !symbol.ContainingType.Equals(type))
                     {
-                        continue;
+                        diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], identifier, symbol.Name);
+                        break;
                     }
-
-                    //Reaches here only if match found. Create diagnostic
-                    var diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], symbol.Name, type.Name);
-                    context.ReportDiagnostic(diagnostic);
-
-                    //once a match is found exit the outer for loop
-                    break;
                 }
+
+                if (diagnostic == null)
+                {
+                    continue;
+                }
+
+                context.ReportDiagnostic(diagnostic);
+
+                // Once a match is found, exit the outer for loop
+                break;
             }
         }
     }

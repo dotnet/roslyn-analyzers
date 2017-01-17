@@ -56,7 +56,7 @@ public class Test
     }
 }
 ",
-            GetCA1721CSharpDeclaringTypeResultAt(line: 6, column: 21, identifierName: "Date", typeName: "Test"));
+            GetCA1721CSharpDeclaringTypeResultAt(line: 6, column: 21, identifierName: "Date", otherIdentifierName: "GetDate"));
         }
 
 
@@ -84,7 +84,7 @@ public class Foo
     }
 }
 ",
-            GetCA1721CSharpBaseTypeResultAt(line: 15, column: 25, identifierName: "Date", typeName: "Ray"));
+            GetCA1721CSharpBaseTypeResultAt(line: 15, column: 25, identifierName: "Date", otherIdentifierName: "GetDate"));
         }
 
 
@@ -112,7 +112,7 @@ public class Foo
     }
 }
 ",
-            GetCA1721CSharpBaseTypeResultAt(line: 15, column: 23, identifierName: "GetDate", typeName: "Ray"));
+            GetCA1721CSharpBaseTypeResultAt(line: 15, column: 23, identifierName: "Date", otherIdentifierName: "GetDate"));
         }
 
         [Fact]
@@ -151,7 +151,7 @@ Public Class Test
     End Function 
 End Class
 ",
-            GetCA1721BasicDeclaringTypeResultAt(line: 5, column: 30, identifierName: "Date", typeName: "Test"));
+            GetCA1721BasicDeclaringTypeResultAt(line: 5, column: 30, identifierName: "Date", otherIdentifierName: "GetDate"));
         }
 
 
@@ -177,7 +177,7 @@ Public Class Foo
     End Class
 End Class
 ",
-            GetCA1721BasicBaseTypeResultAt(line: 12, column: 34, identifierName: "Date", typeName: "Ray"));
+            GetCA1721BasicBaseTypeResultAt(line: 12, column: 34, identifierName: "Date", otherIdentifierName: "GetDate"));
         }
 
 
@@ -203,34 +203,34 @@ Public Class Foo
     End Class
 End Class
 ",
-            GetCA1721BasicBaseTypeResultAt(line: 14, column: 25, identifierName: "GetDate", typeName: "Ray"));
+            GetCA1721BasicBaseTypeResultAt(line: 14, column: 25, identifierName: "Date", otherIdentifierName: "GetDate"));
         }
 
         #region Helpers
 
-        private static DiagnosticResult GetCA1721CSharpDeclaringTypeResultAt(int line, int column, string identifierName, string typeName)
+        private static DiagnosticResult GetCA1721CSharpDeclaringTypeResultAt(int line, int column, string identifierName, string otherIdentifierName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, typeName);
+            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, otherIdentifierName);
             return GetCSharpResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
         }
-        private static DiagnosticResult GetCA1721CSharpBaseTypeResultAt(int line, int column, string identifierName, string typeName)
+        private static DiagnosticResult GetCA1721CSharpBaseTypeResultAt(int line, int column, string identifierName, string otherIdentifierName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, typeName);
+            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, otherIdentifierName);
             return GetCSharpResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
         }
 
-        private static DiagnosticResult GetCA1721BasicDeclaringTypeResultAt(int line, int column, string identifierName, string typeName)
+        private static DiagnosticResult GetCA1721BasicDeclaringTypeResultAt(int line, int column, string identifierName, string otherIdentifierName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, typeName);
+            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, otherIdentifierName);
             return GetBasicResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
         }
-        private static DiagnosticResult GetCA1721BasicBaseTypeResultAt(int line, int column, string identifierName, string typeName)
+        private static DiagnosticResult GetCA1721BasicBaseTypeResultAt(int line, int column, string identifierName, string otherIdentifierName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, typeName);
+            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, otherIdentifierName);
             return GetBasicResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
         }
         #endregion

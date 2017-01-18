@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -47,6 +48,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             string identifier;
             var symbol = context.Symbol;
+
+            // Bail out if the method/property is not protected or public
+            if (!(symbol.DeclaredAccessibility == Accessibility.Protected ||
+                  symbol.DeclaredAccessibility == Accessibility.Public))
+            {
+                return;
+            }
+
             if (symbol.Kind == SymbolKind.Property)
             {
                 // Want to look for methods named the same as the property with a 'Get' prefix
@@ -65,10 +74,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             // Iterate through all declared types, including base
             foreach (INamedTypeSymbol type in symbol.ContainingType.GetBaseTypesAndThis())
-            {
+            {                
                 Diagnostic diagnostic = null;
 
-                foreach (ISymbol member in type.GetMembers(identifier))
+                // We only want to check against protected or public methods/properties
+                var publicMembers = type.GetMembers(identifier).Where(member => 
+                    member.DeclaredAccessibility == Accessibility.Protected || 
+                    member.DeclaredAccessibility == Accessibility.Public);
+
+                foreach (ISymbol member in publicMembers)
                 {
                     // If the declared type is a property, was a matching method found?
                     if (symbol.Kind == SymbolKind.Property && member.Kind == SymbolKind.Method)

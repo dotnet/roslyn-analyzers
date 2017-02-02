@@ -63,8 +63,7 @@ namespace System.Resources.Analyzers
                         return;
                     }
 
-                    AttributeData data;
-                    if (TryCheckNeutralResourcesLanguageAttribute(ce, out data))
+                    if (TryCheckNeutralResourcesLanguageAttribute(ce, out AttributeData data))
                     {
                         // attribute already exist
                         return;

@@ -350,20 +350,17 @@ namespace Analyzer.Utilities.Extensions
 
         public static bool IsImplementationOfAnyExplicitInterfaceMember(this ISymbol symbol)
         {
-            var methodSymbol = symbol as IMethodSymbol;
-            if (methodSymbol != null && methodSymbol.ExplicitInterfaceImplementations.Any())
+            if (symbol is IMethodSymbol methodSymbol && methodSymbol.ExplicitInterfaceImplementations.Any())
             {
                 return true;
             }
 
-            var propertySymbol = symbol as IPropertySymbol;
-            if (propertySymbol != null && propertySymbol.ExplicitInterfaceImplementations.Any())
+            if (symbol is IPropertySymbol propertySymbol && propertySymbol.ExplicitInterfaceImplementations.Any())
             {
                 return true;
             }
 
-            var eventSymbol = symbol as IEventSymbol;
-            if (eventSymbol != null && eventSymbol.ExplicitInterfaceImplementations.Any())
+            if (symbol is IEventSymbol eventSymbol && eventSymbol.ExplicitInterfaceImplementations.Any())
             {
                 return true;
             }

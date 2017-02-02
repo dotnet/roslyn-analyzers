@@ -84,8 +84,7 @@ namespace System.Runtime.Analyzers
 
         private ITypeSymbol TryGetSystemTypeForNanConstantExpression(SyntaxNode expressionSyntax, SemanticModel model, INamedTypeSymbol systemSingleType, INamedTypeSymbol systemDoubleType)
         {
-            IFieldSymbol fieldSymbol = model.GetSymbolInfo(expressionSyntax).Symbol as IFieldSymbol;
-            if (fieldSymbol != null)
+            if (model.GetSymbolInfo(expressionSyntax).Symbol is IFieldSymbol fieldSymbol)
             {
                 if (fieldSymbol.Type.Equals(systemSingleType) || fieldSymbol.Type.Equals(systemDoubleType))
                 {

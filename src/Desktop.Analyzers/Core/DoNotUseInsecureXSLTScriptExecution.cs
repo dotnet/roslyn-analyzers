@@ -111,7 +111,6 @@ namespace Desktop.Analyzers
 
                         SyntaxNode settingsNode = argumentExpressionNodes.ElementAt(xsltSettingsIndex);
                         ISymbol settingsSymbol = SyntaxNodeHelper.GetSymbol(settingsNode, model);
-                        XsltSettingsEnvironment env;
 
                         // 1. pass null or XsltSettings.Default as XsltSetting : secure
                         if (settingsSymbol == null || SecurityDiagnosticHelpers.IsXsltSettingsDefaultProperty(settingsSymbol as IPropertySymbol, _xmlTypes))
@@ -126,7 +125,7 @@ namespace Desktop.Analyzers
                             isSecureSettings = false;
                         }
                         // 3. check xsltSettingsEnvironments, if IsScriptDisabled && IsDocumentFunctionDisabled then secure, else insecure
-                        else if (_xsltSettingsEnvironments.TryGetValue(settingsSymbol, out env))
+                        else if (_xsltSettingsEnvironments.TryGetValue(settingsSymbol, out XsltSettingsEnvironment env))
                         {
                             isSetInBlock = false;
                             isSecureSettings = env.IsDocumentFunctionDisabled && env.IsScriptDisabled;
@@ -262,8 +261,7 @@ namespace Desktop.Analyzers
                             return;
                         }
 
-                        XsltSettingsEnvironment env;
-                        if (!_xsltSettingsEnvironments.TryGetValue(lhsExpressionSymbol, out env))
+                        if (!_xsltSettingsEnvironments.TryGetValue(lhsExpressionSymbol, out XsltSettingsEnvironment env))
                         {
                             env = new XsltSettingsEnvironment
                             {

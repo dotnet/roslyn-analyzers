@@ -135,10 +135,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             IEnumerable<ISymbol> violatingDelegates = members.Select(item =>
             {
-                var typeSymbol = item as INamedTypeSymbol;
-                if (typeSymbol != null &&
-                    typeSymbol.DelegateInvokeMethod != null &&
-                    HasViolatingParameters(typeSymbol.DelegateInvokeMethod))
+                if (item is INamedTypeSymbol typeSymbol &&
+    typeSymbol.DelegateInvokeMethod != null &&
+    HasViolatingParameters(typeSymbol.DelegateInvokeMethod))
                 {
                     return item;
                 }

@@ -110,9 +110,8 @@ namespace Analyzer.Utilities.Extensions
                 return (double)constantValue.Value == comparand;
             }
 
-            ulong convertedValue;
-            return DiagnosticHelpers.TryConvertToUInt64(constantValue.Value, constantValueType.SpecialType, out convertedValue) &&
-                convertedValue == comparand;
+            return DiagnosticHelpers.TryConvertToUInt64(constantValue.Value, constantValueType.SpecialType, out ulong convertedValue) &&
+    convertedValue == comparand;
         }
     }
 }

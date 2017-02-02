@@ -65,8 +65,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                             }
 
                             // if the diagnostic identified a type then it is the containing type of the member
-                            var type = symbol as INamedTypeSymbol;
-                            if (type != null)
+                            if (symbol is INamedTypeSymbol type)
                             {
                                 // cannot make abstract type sealed because they cannot be constructed
                                 if (!type.IsAbstract)

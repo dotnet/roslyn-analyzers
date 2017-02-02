@@ -96,8 +96,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     operationBlockContext.RegisterOperationAction(operationContext =>
                     {
                         IThrowStatement operation = operationContext.Operation as IThrowStatement;
-                        var type = operation.ThrownObject?.Type as INamedTypeSymbol;
-                        if (type != null && type.DerivesFrom(exceptionType))
+                        if (operation.ThrownObject?.Type is INamedTypeSymbol type && type.DerivesFrom(exceptionType))
                         {
                             // If no exceptions are allowed or if the thrown exceptions is not an allowed one..
                             if (methodCategory.AllowedExceptions.IsEmpty || !methodCategory.AllowedExceptions.Contains(type))

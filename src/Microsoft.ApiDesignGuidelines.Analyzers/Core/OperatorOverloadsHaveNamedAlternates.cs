@@ -84,8 +84,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static void AnalyzeSymbol(SymbolAnalysisContext symbolContext)
         {
             var methodSymbol = (IMethodSymbol)symbolContext.Symbol;
-            var typeSymbol = methodSymbol.ContainingSymbol as ITypeSymbol;
-            if (typeSymbol != null && (methodSymbol.MethodKind == MethodKind.UserDefinedOperator || methodSymbol.MethodKind == MethodKind.Conversion))
+            if (methodSymbol.ContainingSymbol is ITypeSymbol typeSymbol && (methodSymbol.MethodKind == MethodKind.UserDefinedOperator || methodSymbol.MethodKind == MethodKind.Conversion))
             {
                 string operatorName = methodSymbol.Name;
                 if (IsPropertyExpected(operatorName) && operatorName != OpFalseText)

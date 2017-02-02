@@ -26,9 +26,8 @@ namespace Microsoft.ApiDesignGuidelines.CSharp.Analyzers
 
             protected override bool IsDisposableFieldCreation(SyntaxNode node, SemanticModel model, HashSet<ISymbol> disposableFields, CancellationToken cancellationToken)
             {
-                if (node is AssignmentExpressionSyntax)
+                if (node is AssignmentExpressionSyntax assignment)
                 {
-                    var assignment = (AssignmentExpressionSyntax)node;
                     if (assignment.Right is ObjectCreationExpressionSyntax &&
                         disposableFields.Contains(model.GetSymbolInfo(assignment.Left, cancellationToken).Symbol))
                     {

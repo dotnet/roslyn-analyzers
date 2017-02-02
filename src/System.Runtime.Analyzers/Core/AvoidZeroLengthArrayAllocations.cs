@@ -53,9 +53,8 @@ namespace System.Runtime.Analyzers
                 INamedTypeSymbol typeSymbol = ctx.Compilation.GetTypeByMetadataName(ArrayTypeName);
                 if (typeSymbol != null && typeSymbol.DeclaredAccessibility == Accessibility.Public)
                 {
-                    IMethodSymbol methodSymbol = typeSymbol.GetMembers(ArrayEmptyMethodName).FirstOrDefault() as IMethodSymbol;
-                    if (methodSymbol != null && methodSymbol.DeclaredAccessibility == Accessibility.Public &&
-                        methodSymbol.IsStatic && methodSymbol.Arity == 1 && methodSymbol.Parameters.Length == 0)
+                    if (typeSymbol.GetMembers(ArrayEmptyMethodName).FirstOrDefault() is IMethodSymbol methodSymbol && methodSymbol.DeclaredAccessibility == Accessibility.Public &&
+    methodSymbol.IsStatic && methodSymbol.Arity == 1 && methodSymbol.Parameters.Length == 0)
                     {
                         ctx.RegisterOperationAction(AnalyzeOperation, OperationKind.ArrayCreationExpression);
                     }

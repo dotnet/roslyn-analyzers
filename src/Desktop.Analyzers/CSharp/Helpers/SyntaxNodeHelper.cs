@@ -147,8 +147,7 @@ namespace Desktop.CSharp.Analyzers.Helpers
 
         public override SyntaxNode GetDefaultValueForAnOptionalParameter(SyntaxNode declNode, int paramIndex)
         {
-            var methodDecl = declNode as BaseMethodDeclarationSyntax;
-            if (methodDecl != null)
+            if (declNode is BaseMethodDeclarationSyntax methodDecl)
             {
                 ParameterListSyntax paramList = methodDecl.ParameterList;
                 if (paramIndex < paramList.Parameters.Count)

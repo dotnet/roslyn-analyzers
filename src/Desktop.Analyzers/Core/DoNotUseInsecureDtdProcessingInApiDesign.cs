@@ -134,7 +134,6 @@ namespace Desktop.Analyzers
                 IEnumerable<SyntaxNode> assignments = _syntaxNodeHelper.GetDescendantAssignmentExpressionNodes(node);
                 foreach (SyntaxNode a in assignments)
                 {
-                    bool isTargetProperty;
                     // this is intended to be an assignment, not a bug
                     if (hasSetSecureXmlResolver = IsAssigningIntendedValueToPropertyDerivedFromType(a,
                             model,
@@ -147,7 +146,7 @@ namespace Desktop.Analyzers
                                 return SyntaxNodeHelper.NodeHasConstantValueNull(n, model) ||
                                     SecurityDiagnosticHelpers.IsXmlSecureResolverType(model.GetTypeInfo(n).Type, _xmlTypes);
                             },
-                            out isTargetProperty))
+                            out bool isTargetProperty))
                     {
                         break;
                     }
@@ -188,7 +187,6 @@ namespace Desktop.Analyzers
                 IEnumerable<SyntaxNode> assignments = _syntaxNodeHelper.GetDescendantAssignmentExpressionNodes(node);
                 foreach (SyntaxNode assignment in assignments)
                 {
-                    bool isTargetProperty;
                     // this is intended to be an assignment, not a bug
                     if (IsAssigningIntendedValueToPropertyDerivedFromType(assignment,
                             model,
@@ -201,7 +199,7 @@ namespace Desktop.Analyzers
                                 return !(SyntaxNodeHelper.NodeHasConstantValueNull(n, model) ||
                                          SecurityDiagnosticHelpers.IsXmlSecureResolverType(model.GetTypeInfo(n).Type, _xmlTypes));
                             },
-                            out isTargetProperty)
+                            out bool isTargetProperty)
                         )
                     {
                         DiagnosticDescriptor rule = RuleDoNotUseInsecureDtdProcessingInApiDesign;
@@ -324,7 +322,6 @@ namespace Desktop.Analyzers
                 foreach (SyntaxNode assignment in assignments)
                 {
                     bool ret;
-                    bool isTargetProperty;
 
                     ret = IsAssigningIntendedValueToPropertyDerivedFromType(assignment,
                             model,
@@ -337,7 +334,7 @@ namespace Desktop.Analyzers
                                 return !(SyntaxNodeHelper.NodeHasConstantValueNull(n, model) ||
                                         SecurityDiagnosticHelpers.IsXmlSecureResolverType(model.GetTypeInfo(n).Type, _xmlTypes));
                             },
-                            out isTargetProperty
+                            out bool isTargetProperty
                             );
 
                     if (isTargetProperty)

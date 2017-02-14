@@ -91,8 +91,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             if (declaration == null) return;
             ISymbol symbol = editor.SemanticModel.GetDeclaredSymbol(declaration);
-            var property = (symbol as IMethodSymbol)?.AssociatedSymbol as IPropertySymbol;
-            if (property != null && IsMoreRestrictive(property.DeclaredAccessibility, targetAccessibility))
+            if ((symbol as IMethodSymbol)?.AssociatedSymbol is IPropertySymbol property && IsMoreRestrictive(property.DeclaredAccessibility, targetAccessibility))
             {
                 // Can't explicitly set an accessor to a visibility greater than or equal to that of the containing property
                 editor.SetAccessibility(declaration, Accessibility.NotApplicable);

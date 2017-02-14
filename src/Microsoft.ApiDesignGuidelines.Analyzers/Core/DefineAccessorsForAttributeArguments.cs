@@ -141,9 +141,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 if (parameter.Type.Kind != SymbolKind.ErrorType)
                 {
-                    IPropertySymbol property;
-                    if (!propertiesMap.TryGetValue(parameter.Name, out property) ||
-                        !IsAssignableTo(parameter.Type, property.Type, compilation))
+                    if (!propertiesMap.TryGetValue(parameter.Name, out IPropertySymbol property) ||
+    !IsAssignableTo(parameter.Type, property.Type, compilation))
                     {
                         // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
                         addDiagnostic(GetDefaultDiagnostic(parameter, attributeType));

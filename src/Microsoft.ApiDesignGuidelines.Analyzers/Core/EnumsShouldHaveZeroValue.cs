@@ -166,8 +166,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private static bool IsZeroValueConstant(object value, SpecialType specialType)
         {
-            ulong convertedValue;
-            return DiagnosticHelpers.TryConvertToUInt64(value, specialType, out convertedValue) && convertedValue == 0;
+            return DiagnosticHelpers.TryConvertToUInt64(value, specialType, out ulong convertedValue) && convertedValue == 0;
         }
 
         public static bool IsMemberNamedNone(ISymbol symbol)

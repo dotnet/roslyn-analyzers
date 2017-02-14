@@ -340,8 +340,7 @@ namespace System.Runtime.Analyzers
 
             public Info TryGet(IMethodSymbol method)
             {
-                Info info;
-                if (_map.TryGetValue(method, out info))
+                if (_map.TryGetValue(method, out Info info))
                 {
                     return info;
                 }

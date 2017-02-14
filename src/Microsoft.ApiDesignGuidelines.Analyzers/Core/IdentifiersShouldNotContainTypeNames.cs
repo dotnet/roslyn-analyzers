@@ -101,8 +101,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 // Analyze properties and methods, and their parameters.
                 compilationStartAnalysisContext.RegisterSymbolAction(symbolContext =>
                 {
-                    var method = symbolContext.Symbol as IMethodSymbol;
-                    if (method != null)
+                    if (symbolContext.Symbol is IMethodSymbol method)
                     {
                         if (method.IsEqualsOverride())
                         {

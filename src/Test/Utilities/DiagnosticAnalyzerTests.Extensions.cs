@@ -192,8 +192,7 @@ namespace Test.Utilities
 
                 foreach (FieldInfo field in ruleFields)
                 {
-                    var rule = field.GetValue(null) as DiagnosticDescriptor;
-                    if (rule != null && rule.Id == diagnostics[i].Id)
+                    if (field.GetValue(null) is DiagnosticDescriptor rule && rule.Id == diagnostics[i].Id)
                     {
                         Location location = diagnostics[i].Location;
                         if (location == Location.None)

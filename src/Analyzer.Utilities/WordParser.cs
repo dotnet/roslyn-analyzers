@@ -95,17 +95,12 @@ namespace Analyzer.Utilities
         /// </exception>
         public WordParser(string text, WordParserOptions options, char prefix)
         {
-            if (text == null)
-            {
-                throw new ArgumentNullException(nameof(text));
-            }
-
             if (options < WordParserOptions.None || options > (WordParserOptions.IgnoreMnemonicsIndicators | WordParserOptions.SplitCompoundWords))
             {
                 throw new ArgumentException($"'{nameof(options)}' ({((int)options).ToString()}) is invalid for Enum type'{typeof(WordParserOptions).Name}'");
             }
 
-            _text = text;
+            _text = text ?? throw new ArgumentNullException(nameof(text));
             _options = options;
             _buffer = new StringBuilder(text.Length);
             _prefix = prefix;

@@ -279,9 +279,8 @@ namespace Desktop.Analyzers
                             return;
                         }
 
-                        XmlReaderSettingsEnvironment env;
 
-                        if (!_xmlReaderSettingsEnvironments.TryGetValue(settingsSymbol, out env))
+                        if (!_xmlReaderSettingsEnvironments.TryGetValue(settingsSymbol, out XmlReaderSettingsEnvironment env))
                         {
                             // symbol for settings is not found => passed in without any change => assume insecure
                             Diagnostic diag = Diagnostic.Create(
@@ -402,9 +401,8 @@ namespace Desktop.Analyzers
 
                 foreach (ISymbolInitializer init in objCreation.MemberInitializers)
                 {
-                    var prop = init as IPropertyInitializer;
 
-                    if (prop != null)
+                    if (init is IPropertyInitializer prop)
                     {
                         if (prop.InitializedProperty.MatchPropertyDerivedByName(_xmlTypes.XmlDocument, "XmlResolver"))
                         {
@@ -425,9 +423,8 @@ namespace Desktop.Analyzers
                             }
                             else // Non secure resolvers
                             {
-                                IObjectCreationExpression xmlResolverObjCreated = operation.Operand as IObjectCreationExpression;
 
-                                if (xmlResolverObjCreated != null)
+                                if (operation.Operand is IObjectCreationExpression xmlResolverObjCreated)
                                 {
                                     Diagnostic diag = Diagnostic.Create(
                                         RuleDoNotUseInsecureDtdProcessing,
@@ -471,9 +468,8 @@ namespace Desktop.Analyzers
 
             private void AnalyzeObjectCreationForXmlTextReader(OperationAnalysisContext context, ISymbol variable, IObjectCreationExpression objCreation)
             {
-                XmlTextReaderEnvironment env;
 
-                if (variable == null || !_xmlTextReaderEnvironments.TryGetValue(variable, out env))
+                if (variable == null || !_xmlTextReaderEnvironments.TryGetValue(variable, out XmlTextReaderEnvironment env))
                 {
                     env = new XmlTextReaderEnvironment(_isFrameworkSecure)
                     {
@@ -489,13 +485,11 @@ namespace Desktop.Analyzers
 
                 foreach (ISymbolInitializer init in objCreation.MemberInitializers)
                 {
-                    var prop = init as IPropertyInitializer;
 
-                    if (prop != null)
+                    if (init is IPropertyInitializer prop)
                     {
-                        IConversionExpression operation = prop.Value as IConversionExpression;
 
-                        if (operation != null && SecurityDiagnosticHelpers.IsXmlTextReaderXmlResolverPropertyDerived(prop.InitializedProperty, _xmlTypes))
+                        if (prop.Value is IConversionExpression operation && SecurityDiagnosticHelpers.IsXmlTextReaderXmlResolverPropertyDerived(prop.InitializedProperty, _xmlTypes))
                         {
                             env.IsXmlResolverSet = true;
 
@@ -564,9 +558,8 @@ namespace Desktop.Analyzers
                 xmlReaderSettingsEnv.XmlReaderSettingsDefinition = objCreation.Syntax;
                 foreach (ISymbolInitializer init in objCreation.MemberInitializers)
                 {
-                    var prop = init as IPropertyInitializer;
 
-                    if (prop != null)
+                    if (init is IPropertyInitializer prop)
                     {
                         if (SecurityDiagnosticHelpers.IsXmlReaderSettingsXmlResolverProperty(
                                 prop.InitializedProperty,
@@ -642,9 +635,8 @@ namespace Desktop.Analyzers
 
             private void AnalyzeXmlTextReaderProperties(OperationAnalysisContext context, ISymbol assignedSymbol, IAssignmentExpression expression, bool isXmlTextReaderXmlResolverProperty, bool isXmlTextReaderDtdProcessingProperty)
             {
-                XmlTextReaderEnvironment env;
 
-                if (!_xmlTextReaderEnvironments.TryGetValue(assignedSymbol, out env))
+                if (!_xmlTextReaderEnvironments.TryGetValue(assignedSymbol, out XmlTextReaderEnvironment env))
                 {
                     env = new XmlTextReaderEnvironment(_isFrameworkSecure);
                 }
@@ -733,17 +725,15 @@ namespace Desktop.Analyzers
                         }
                         else if (SecurityDiagnosticHelpers.IsXmlReaderSettingsType(propRef.Instance.Type, _xmlTypes))
                         {
-                            XmlReaderSettingsEnvironment env;
 
-                            if (!_xmlReaderSettingsEnvironments.TryGetValue(assignedSymbol, out env))
+                            if (!_xmlReaderSettingsEnvironments.TryGetValue(assignedSymbol, out XmlReaderSettingsEnvironment env))
                             {
                                 env = new XmlReaderSettingsEnvironment(_isFrameworkSecure);
                                 _xmlReaderSettingsEnvironments[assignedSymbol] = env;
                             }
 
-                            IConversionExpression conv = expression.Value as IConversionExpression;
 
-                            if (conv != null && SecurityDiagnosticHelpers.IsXmlReaderSettingsXmlResolverProperty(propRef.Property, _xmlTypes))
+                            if (expression.Value is IConversionExpression conv && SecurityDiagnosticHelpers.IsXmlReaderSettingsXmlResolverProperty(propRef.Property, _xmlTypes))
                             {
                                 if (SecurityDiagnosticHelpers.IsXmlSecureResolverType(conv.Operand.Type, _xmlTypes))
                                 {

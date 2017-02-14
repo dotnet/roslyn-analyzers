@@ -133,8 +133,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                 foreach (string component in namespaceNameComponents)
                 {
-                    string matchingKeyword;
-                    if (IsKeyword(component, out matchingKeyword))
+                    if (IsKeyword(component, out string matchingKeyword))
                     {
                         bool doReportDiagnostic;
 
@@ -163,8 +162,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
-            string matchingKeyword;
-            if (IsKeyword(type.Name, out matchingKeyword))
+            if (IsKeyword(type.Name, out string matchingKeyword))
             {
                 context.ReportDiagnostic(
                     type.CreateDiagnostic(
@@ -182,8 +180,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
-            string matchingKeyword;
-            if (!IsKeyword(symbol.Name, out matchingKeyword))
+            if (!IsKeyword(symbol.Name, out string matchingKeyword))
             {
                 return;
             }
@@ -215,8 +212,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             foreach (IParameterSymbol parameter in method.Parameters)
             {
-                string matchingKeyword;
-                if (IsKeyword(parameter.Name, out matchingKeyword))
+                if (IsKeyword(parameter.Name, out string matchingKeyword))
                 {
                     context.ReportDiagnostic(
                         parameter.CreateDiagnostic(

@@ -118,18 +118,21 @@ public class C
         var b = String.Format(""{0} {1}"", 1, 2);
         var c = String.Format(""{0} {1} {2}"", 1, 2, 3);
         var d = String.Format(""{0} {1} {2} {3}"", 1, 2, 3, 4);
+        var e = String.Format(""{0} {1} {2} {0}"", 1, 2, 3);
 
         Console.Write(""{0}"", 1);
         Console.Write(""{0} {1}"", 1, 2);
         Console.Write(""{0} {1} {2}"", 1, 2, 3);
         Console.Write(""{0} {1} {2} {3}"", 1, 2, 3, 4);
         Console.Write(""{0} {1} {2} {3} {4}"", 1, 2, 3, 4, 5);
+        Console.Write(""{0} {1} {2} {3} {0}"", 1, 2, 3, 4);
 
         Console.WriteLine(""{0}"", 1);
         Console.WriteLine(""{0} {1}"", 1, 2);
         Console.WriteLine(""{0} {1} {2}"", 1, 2, 3);
         Console.WriteLine(""{0} {1} {2} {3}"", 1, 2, 3, 4);
         Console.WriteLine(""{0} {1} {2} {3} {4}"", 1, 2, 3, 4, 5);
+        Console.WriteLine(""{0} {1} {2} {3} {0}"", 1, 2, 3, 4);
     }
 }
 ");

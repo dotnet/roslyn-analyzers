@@ -124,10 +124,10 @@ namespace System.Runtime.Analyzers
             // https://github.com/dotnet/coreclr/blob/bc146608854d1db9cdbcc0b08029a87754e12b49/src/mscorlib/src/System/Text/StringBuilder.cs#L1312
 
             // return count of this format - {index[,alignment][:formatString]}
-            var count = 0;
-
             var pos = 0;
             int len = format.Length;
+
+            var uniqueNumbers = new System.Collections.Generic.List<int>();
 
             // main loop
             while (true)
@@ -304,10 +304,12 @@ namespace System.Runtime.Analyzers
 
                 pos++;
 
-                count++;
+                if (!uniqueNumbers.Contains(index))
+                    uniqueNumbers.Add(index);
+
             } // end of main loop
 
-            return count;
+            return uniqueNumbers.Count;
         }
 
         private class StringFormatInfo

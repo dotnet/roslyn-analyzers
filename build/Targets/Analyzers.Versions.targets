@@ -1,73 +1,73 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <PropertyGroup>
-      <MetaCompilationAnalyzersSemanticVersion>1.2.0</MetaCompilationAnalyzersSemanticVersion>
-      <MetaCompilationAnalyzersPreReleaseVersion>beta3</MetaCompilationAnalyzersPreReleaseVersion>
+      <MetaCompilationAnalyzersSemanticVersion>1.3.0</MetaCompilationAnalyzersSemanticVersion>
+      <MetaCompilationAnalyzersPreReleaseVersion>beta1</MetaCompilationAnalyzersPreReleaseVersion>
 
-      <MicrosoftCodeAnalysisAnalyzersSemanticVersion>1.2.0</MicrosoftCodeAnalysisAnalyzersSemanticVersion>
-      <MicrosoftCodeAnalysisAnalyzersPreReleaseVersion>beta3</MicrosoftCodeAnalysisAnalyzersPreReleaseVersion>
+      <MicrosoftCodeAnalysisAnalyzersSemanticVersion>1.3.0</MicrosoftCodeAnalysisAnalyzersSemanticVersion>
+      <MicrosoftCodeAnalysisAnalyzersPreReleaseVersion>beta1</MicrosoftCodeAnalysisAnalyzersPreReleaseVersion>
 
-      <SharedLibrarySemanticVersion>1.2.0</SharedLibrarySemanticVersion>
-      <SharedLibraryPreReleaseVersion>beta3</SharedLibraryPreReleaseVersion>
+      <SharedLibrarySemanticVersion>1.3.0</SharedLibrarySemanticVersion>
+      <SharedLibraryPreReleaseVersion>beta1</SharedLibraryPreReleaseVersion>
 
-      <SharedTestSemanticVersion>1.2.0</SharedTestSemanticVersion>
-      <SharedTestPreReleaseVersion>beta3</SharedTestPreReleaseVersion>
+      <SharedTestSemanticVersion>1.3.0</SharedTestSemanticVersion>
+      <SharedTestPreReleaseVersion>beta1</SharedTestPreReleaseVersion>
 
-      <RoslynDiagnosticsAnalyzersSemanticVersion>1.2.0</RoslynDiagnosticsAnalyzersSemanticVersion>
-      <RoslynDiagnosticsAnalyzersPreReleaseVersion>beta3</RoslynDiagnosticsAnalyzersPreReleaseVersion>
+      <RoslynDiagnosticsAnalyzersSemanticVersion>1.3.0</RoslynDiagnosticsAnalyzersSemanticVersion>
+      <RoslynDiagnosticsAnalyzersPreReleaseVersion>beta1</RoslynDiagnosticsAnalyzersPreReleaseVersion>
       
       <ToolsSemanticVersion>0.0.0</ToolsSemanticVersion>
-      <ToolsPreReleaseVersion>beta3</ToolsPreReleaseVersion>
+      <ToolsPreReleaseVersion>beta1</ToolsPreReleaseVersion>
   </PropertyGroup>
 
   <!-- Version info for FxCop analyzer packages -->
   <PropertyGroup>
       <!-- Master FxCop analyzer package, which is just a collection of individual analyzer packages below. -->
-      <FxCopAnalyzersSemanticVersion>1.2.0</FxCopAnalyzersSemanticVersion>
-      <FxCopAnalyzersPreReleaseVersion>beta3</FxCopAnalyzersPreReleaseVersion>
+      <FxCopAnalyzersSemanticVersion>1.3.0</FxCopAnalyzersSemanticVersion>
+      <FxCopAnalyzersPreReleaseVersion>beta1</FxCopAnalyzersPreReleaseVersion>
 
-      <MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion>1.2.0</MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion>
-      <MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion>beta3</MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion>
+      <MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion>1.3.0</MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion>
+      <MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion>beta1</MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion>
 
-      <DesktopAnalyzersSemanticVersion>1.2.0</DesktopAnalyzersSemanticVersion>
-      <DesktopAnalyzersPreReleaseVersion>beta3</DesktopAnalyzersPreReleaseVersion>
+      <DesktopAnalyzersSemanticVersion>1.3.0</DesktopAnalyzersSemanticVersion>
+      <DesktopAnalyzersPreReleaseVersion>beta1</DesktopAnalyzersPreReleaseVersion>
 
-      <SystemRuntimeAnalyzersSemanticVersion>1.2.0</SystemRuntimeAnalyzersSemanticVersion>
-      <SystemRuntimeAnalyzersPreReleaseVersion>beta3</SystemRuntimeAnalyzersPreReleaseVersion>
+      <SystemRuntimeAnalyzersSemanticVersion>1.3.0</SystemRuntimeAnalyzersSemanticVersion>
+      <SystemRuntimeAnalyzersPreReleaseVersion>beta1</SystemRuntimeAnalyzersPreReleaseVersion>
 
-      <SystemRuntimeInteropServicesAnalyzersSemanticVersion>1.2.0</SystemRuntimeInteropServicesAnalyzersSemanticVersion>
-      <SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>beta3</SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>
+      <SystemRuntimeInteropServicesAnalyzersSemanticVersion>1.3.0</SystemRuntimeInteropServicesAnalyzersSemanticVersion>
+      <SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>beta1</SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>
 
-      <ApiReviewAnalyzersSemanticVersion>1.2.0</ApiReviewAnalyzersSemanticVersion>
-      <ApiReviewAnalyzersPreReleaseVersion>beta3</ApiReviewAnalyzersPreReleaseVersion>
+      <ApiReviewAnalyzersSemanticVersion>1.3.0</ApiReviewAnalyzersSemanticVersion>
+      <ApiReviewAnalyzersPreReleaseVersion>beta1</ApiReviewAnalyzersPreReleaseVersion>
 
-      <SystemThreadingTasksAnalyzersSemanticVersion>1.2.0</SystemThreadingTasksAnalyzersSemanticVersion>
-      <SystemThreadingTasksAnalyzersPreReleaseVersion>beta3</SystemThreadingTasksAnalyzersPreReleaseVersion>
+      <SystemThreadingTasksAnalyzersSemanticVersion>1.3.0</SystemThreadingTasksAnalyzersSemanticVersion>
+      <SystemThreadingTasksAnalyzersPreReleaseVersion>beta1</SystemThreadingTasksAnalyzersPreReleaseVersion>
 
-      <MicrosoftCompositionAnalyzersSemanticVersion>1.2.0</MicrosoftCompositionAnalyzersSemanticVersion>
-      <MicrosoftCompositionAnalyzersPreReleaseVersion>beta3</MicrosoftCompositionAnalyzersPreReleaseVersion>
+      <MicrosoftCompositionAnalyzersSemanticVersion>1.3.0</MicrosoftCompositionAnalyzersSemanticVersion>
+      <MicrosoftCompositionAnalyzersPreReleaseVersion>beta1</MicrosoftCompositionAnalyzersPreReleaseVersion>
 
-      <XmlDocumentationCommentsAnalyzersSemanticVersion>1.2.0</XmlDocumentationCommentsAnalyzersSemanticVersion>
-      <XmlDocumentationCommentsAnalyzersPreReleaseVersion>beta3</XmlDocumentationCommentsAnalyzersPreReleaseVersion>
+      <XmlDocumentationCommentsAnalyzersSemanticVersion>1.3.0</XmlDocumentationCommentsAnalyzersSemanticVersion>
+      <XmlDocumentationCommentsAnalyzersPreReleaseVersion>beta1</XmlDocumentationCommentsAnalyzersPreReleaseVersion>
 
-      <SystemCollectionsImmutableAnalyzersSemanticVersion>1.2.0</SystemCollectionsImmutableAnalyzersSemanticVersion>
-      <SystemCollectionsImmutableAnalyzersPreReleaseVersion>beta3</SystemCollectionsImmutableAnalyzersPreReleaseVersion>
+      <SystemCollectionsImmutableAnalyzersSemanticVersion>1.3.0</SystemCollectionsImmutableAnalyzersSemanticVersion>
+      <SystemCollectionsImmutableAnalyzersPreReleaseVersion>beta1</SystemCollectionsImmutableAnalyzersPreReleaseVersion>
       
-      <SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>1.2.0</SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>
-      <SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>beta3</SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>
+      <SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>1.3.0</SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion>
+      <SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>beta1</SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion>
       
-      <TextAnalyzersSemanticVersion>1.2.0</TextAnalyzersSemanticVersion>
-      <TextAnalyzersPreReleaseVersion>beta3</TextAnalyzersPreReleaseVersion>
+      <TextAnalyzersSemanticVersion>1.3.0</TextAnalyzersSemanticVersion>
+      <TextAnalyzersPreReleaseVersion>beta1</TextAnalyzersPreReleaseVersion>
       
-      <ApiReviewAnalyzersSemanticVersion>1.2.0</ApiReviewAnalyzersSemanticVersion>
-      <ApiReviewAnalyzersPreReleaseVersion>beta3</ApiReviewAnalyzersPreReleaseVersion>
+      <ApiReviewAnalyzersSemanticVersion>1.3.0</ApiReviewAnalyzersSemanticVersion>
+      <ApiReviewAnalyzersPreReleaseVersion>beta1</ApiReviewAnalyzersPreReleaseVersion>
       
-      <MicrosoftQualityGuidelinesAnalyzersSemanticVersion>1.2.0</MicrosoftQualityGuidelinesAnalyzersSemanticVersion>
-      <MicrosoftQualityGuidelinesAnalyzersPreReleaseVersion>beta3</MicrosoftQualityGuidelinesAnalyzersPreReleaseVersion>
+      <MicrosoftQualityGuidelinesAnalyzersSemanticVersion>1.3.0</MicrosoftQualityGuidelinesAnalyzersSemanticVersion>
+      <MicrosoftQualityGuidelinesAnalyzersPreReleaseVersion>beta1</MicrosoftQualityGuidelinesAnalyzersPreReleaseVersion>
       
-      <MicrosoftMaintainabilityAnalyzersSemanticVersion>1.2.0</MicrosoftMaintainabilityAnalyzersSemanticVersion>
-      <MicrosoftMaintainabilityAnalyzersPreReleaseVersion>beta3</MicrosoftMaintainabilityAnalyzersPreReleaseVersion>
+      <MicrosoftMaintainabilityAnalyzersSemanticVersion>1.3.0</MicrosoftMaintainabilityAnalyzersSemanticVersion>
+      <MicrosoftMaintainabilityAnalyzersPreReleaseVersion>beta1</MicrosoftMaintainabilityAnalyzersPreReleaseVersion>
       
-      <SystemResourcesAnalyzersSemanticVersion>1.2.0</SystemResourcesAnalyzersSemanticVersion>
-      <SystemResourcesAnalyzersPreReleaseVersion>beta3</SystemResourcesAnalyzersPreReleaseVersion>
+      <SystemResourcesAnalyzersSemanticVersion>1.3.0</SystemResourcesAnalyzersSemanticVersion>
+      <SystemResourcesAnalyzersPreReleaseVersion>beta1</SystemResourcesAnalyzersPreReleaseVersion>
    </PropertyGroup>
 </Project>

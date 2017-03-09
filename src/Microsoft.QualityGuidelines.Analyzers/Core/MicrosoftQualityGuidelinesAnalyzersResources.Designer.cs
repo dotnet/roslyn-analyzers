@@ -189,6 +189,15 @@ namespace Microsoft.QualityGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Make &apos;{0}&apos; static (Shared in VB).
+        /// </summary>
+        internal static string MarkMembersAsStaticCodeFix {
+            get {
+                return ResourceManager.GetString("MarkMembersAsStaticCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Members that do not access instance data or call instance methods can be marked as static (Shared in Visual Basic). After you mark the methods as static, the compiler will emit nonvirtual call sites to these members. This can give you a measurable performance gain for performance-sensitive code..
         /// </summary>
         internal static string MarkMembersAsStaticDescription {

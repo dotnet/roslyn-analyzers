@@ -228,4 +228,7 @@
   <data name="DoNotRaiseExceptionsInExceptionClausesTitle" xml:space="preserve">
     <value>Do not raise exceptions in finally clauses</value>
   </data>
+  <data name="MarkMembersAsStaticCodeFix" xml:space="preserve">
+    <value>Make '{0}' static (Shared in VB)</value>
+  </data>
 </root>

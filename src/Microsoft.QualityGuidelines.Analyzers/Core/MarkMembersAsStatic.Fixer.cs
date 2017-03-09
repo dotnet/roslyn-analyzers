@@ -17,7 +17,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
     /// CA1822: Mark members as static
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
-    public class MarkMembersAsStaticFixer : CodeFixProvider
+    public sealed class MarkMembersAsStaticFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(MarkMembersAsStaticAnalyzer.RuleId);
 

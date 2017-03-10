@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -126,8 +127,7 @@ namespace System.Runtime.Analyzers
             // return count of this format - {index[,alignment][:formatString]}
             var pos = 0;
             int len = format.Length;
-
-            var uniqueNumbers = new System.Collections.Generic.List<int>();
+            var uniqueNumbers = new HashSet<int>();
 
             // main loop
             while (true)
@@ -304,8 +304,7 @@ namespace System.Runtime.Analyzers
 
                 pos++;
 
-                if (!uniqueNumbers.Contains(index))
-                    uniqueNumbers.Add(index);
+                uniqueNumbers.Add(index);
 
             } // end of main loop
 

@@ -34,12 +34,13 @@ public class C
         var b = String.Format(""{0}"", 1, 2);
         var c = String.Format(""{0} {1}"", 1, 2, 3);
         var d = String.Format(""{0} {1} {2}"", 1, 2, 3, 4);
+        var e = string.Format(""{0} {0}"", 1, 2);
 
         IFormatProvider p = null;
-        var e = String.Format(p, """", 1);
-        var f = String.Format(p, ""{0}"", 1, 2);
-        var g = String.Format(p, ""{0} {1}"", 1, 2, 3);
-        var h = String.Format(p, ""{0} {1} {2}"", 1, 2, 3, 4);
+        var f = String.Format(p, """", 1);
+        var g = String.Format(p, ""{0}"", 1, 2);
+        var h = String.Format(p, ""{0} {1}"", 1, 2, 3);
+        var i = String.Formhoat(p, ""{0} {1} {2}"", 1, 2, 3, 4);
     }
 }
 ",
@@ -47,11 +48,12 @@ public class C
             GetCA2241CSharpResultAt(9, 17),
             GetCA2241CSharpResultAt(10, 17),
             GetCA2241CSharpResultAt(11, 17),
+            GetCA2241CSharpResultAt(12, 17),
 
-            GetCA2241CSharpResultAt(14, 17),
             GetCA2241CSharpResultAt(15, 17),
             GetCA2241CSharpResultAt(16, 17),
-            GetCA2241CSharpResultAt(17, 17));
+            GetCA2241CSharpResultAt(17, 17),
+            GetCA2241CSharpResultAt(18, 17));
         }
 
         [Fact]

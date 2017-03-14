@@ -195,7 +195,7 @@ namespace System.Runtime.Analyzers
                             var semanticModel = oaContext.Compilation.GetSemanticModel(argument.Syntax.SyntaxTree);
                             var symbol = semanticModel.GetSymbolInfo(argument.Syntax).Symbol;
 
-                            if (symbol != null &
+                            if (symbol != null &&
                                 (symbol.Equals(currentUICultureProperty) ||
                                  symbol.Equals(installedUICultureProperty) ||
                                  symbol.Equals(currentThreadCurrentUICultureProperty) ||

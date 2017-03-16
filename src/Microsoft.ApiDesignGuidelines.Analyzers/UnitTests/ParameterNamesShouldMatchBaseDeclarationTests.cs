@@ -472,6 +472,74 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                          GetBasicResultAt(12, 85, "Sub TestClass.TestMethod(arg1 As String, arg2 As String, otherArg3 As String)", "otherArg3", "arg3", "Sub ITest1.TestMethod(arg1 As String, arg2 As String, arg3 As String)"));
         }
 
+        [Fact]
+        public void VerifyIgnoresPropertiesWithTheSameName()
+        {
+            VerifyCSharp(@"public interface ITest1
+                           {
+                               void TestMethod(string arg1, string arg2);
+                           }
+
+                           public interface ITest2
+                           {
+                               int TestMethod { get; set; }
+                           }
+
+                           public class TestClass : ITest1, ITest2
+                           {
+                               public void TestMethod(string arg1, string arg2) { }
+                               int ITest2.TestMethod { get; set; }
+                           }");
+
+            VerifyBasic(@"Public Interface ITest1
+                              Sub TestMethod(arg1 As String, arg2 As String)
+                          End Interface
+
+                          Public Interface ITest2
+                              Property TestMethod As Integer
+                          End Interface
+
+                          Public Class TestClass
+                              Implements ITest1, ITest2
+
+                              Public Sub TestMethod(arg1 As String, arg2 As String) Implements ITest1.TestMethod
+                              End Sub
+
+                              Private Property TestMethodFromITest2 As Integer Implements ITest2.TestMethod
+                          End Class");
+        }
+
+        [Fact]
+        public void VerifyHandlesMultipleBaseMethodsWithTheSameName()
+        {
+            VerifyCSharp(@"public interface ITest
+                           {
+                               void TestMethod(string arg1);
+                               void TestMethod(string arg1, string arg2);
+                           }
+
+                           public class TestClass : ITest
+                           {
+                               public void TestMethod(string arg1) { }
+                               public void TestMethod(string arg1, string arg2) { }
+                           }");
+
+            VerifyBasic(@"Public Interface ITest
+                              Sub TestMethod(arg1 As String)
+                              Sub TestMethod(arg1 As String, arg2 As String)
+                          End Interface
+
+                          Public Class TestClass
+                              Implements ITest
+
+                              Public Sub TestMethod(arg1 As String) Implements ITest.TestMethod
+                              End Sub
+
+                              Public Sub TestMethod(arg1 As String, arg2 As String) Implements ITest.TestMethod
+                              End Sub
+                          End Class");
+        }
+
         private static DiagnosticResult GetCSharpResultAt(int line, int column, string violatingMember, string violatingParameter, string baseParameter, string baseMember)
         {
             return GetCSharpResultAt(line, column, ParameterNamesShouldMatchBaseDeclarationAnalyzer.Rule, violatingMember, violatingParameter, baseParameter, baseMember);

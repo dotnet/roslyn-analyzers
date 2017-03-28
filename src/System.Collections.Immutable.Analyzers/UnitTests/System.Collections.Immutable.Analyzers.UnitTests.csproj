@@ -1,75 +1,30 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>
   <ImportGroup Label="Settings">
     <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
   </ImportGroup>
   <PropertyGroup>
-    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
-    <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
-    <ProjectGuid>{896B533F-633C-4947-AFCA-558F9169325D}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <TargetFramework>net46</TargetFramework>
+    <TestProject>true</TestProject>
     <RootNamespace>System.Collections.Immutable.Analyzers.UnitTests</RootNamespace>
     <AssemblyName>System.Collections.Immutable.Analyzers.UnitTests</AssemblyName>
-    <Nonshipping>true</Nonshipping>
-    <SolutionDir Condition="'$(SolutionDir)' == '' OR '$(SolutionDir)' == '*Undefined*'">..\..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <SemanticVersion>$(SystemCollectionsImmutableAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(SystemCollectionsImmutableAnalyzersPreReleaseVersion)</PreReleaseVersion>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Label="Start settings">
     <StartAction>Program</StartAction>
-    <StartProgram>$(NuGetPackageRoot)\xunit.runner.console\2.1.0\tools\xunit.console.x86.exe</StartProgram>
+    <StartProgram>$(NuGetPackageRoot)\xunit.runner.console\$(XUnitVersion)\tools\xunit.console.x86.exe</StartProgram>
     <StartArguments>$(AssemblyName).dll -noshadow -wait</StartArguments>
     <StartWorkingDirectory>$(OutDir)</StartWorkingDirectory>
   </PropertyGroup>
   <ItemGroup Label="Project References">
-    <ProjectReference Include="..\..\Dependencies\xUnit\xUnit.csproj">
-      <Project>{f21bc39a-3c97-4d8f-bfa8-9e4bd9b56413}</Project>
-      <Name>xUnit</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Test\Utilities\Test.Utilities.csproj">
-      <Project>{0A0621F2-D1DC-47FF-B643-C6646557505E}</Project>
-      <Name>Test.Utilities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Core\System.Collections.Immutable.Analyzers.Core.csproj">
-      <Project>{09AF1081-1906-4030-BCA9-66C6DD53FF7C}</Project>
-      <Name>System.Collections.Immutable.Analyzers.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CSharp\System.Collections.Immutable.CSharp.Analyzers.csproj">
-      <Project>{D143DB7C-C6DA-41E8-A6CA-3550805A4AF6}</Project>
-      <Name>System.Collections.Immutable.CSharp.Analyzers</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\VisualBasic\System.Collections.Immutable.VisualBasic.Analyzers.vbproj">
-      <Project>{C8D19EED-D9CA-4C5F-9AAD-ADA55444D0FF}</Project>
-      <Name>System.Collections.Immutable.VisualBasic.Analyzers</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
+    <ProjectReference Include="..\..\Test\Utilities\Test.Utilities.csproj" />
+    <ProjectReference Include="..\Core\System.Collections.Immutable.Analyzers.Core.csproj" />
+    <ProjectReference Include="..\CSharp\System.Collections.Immutable.CSharp.Analyzers.csproj" />
+    <ProjectReference Include="..\VisualBasic\System.Collections.Immutable.VisualBasic.Analyzers.vbproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <Content Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DoNotCallToImmutableArrayOnAnImmutableArrayValueTests.cs" />
-    <Compile Include="DoNotCallToImmutableArrayOnAnImmutableArrayValueTests.Fixer.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

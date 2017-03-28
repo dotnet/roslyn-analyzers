@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "ApiReview.Analyzers.Setup": {
+      "commandName": "Project"
+    }
+  }
+}

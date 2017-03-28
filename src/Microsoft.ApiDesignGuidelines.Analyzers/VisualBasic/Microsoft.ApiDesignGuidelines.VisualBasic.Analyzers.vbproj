@@ -1,93 +1,24 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>
   <ImportGroup Label="Settings">
     <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
   </ImportGroup>
   <PropertyGroup>
-    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7888C419-EF81-4588-B844-5C1277CABF5A}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <AnalyzerProject>true</AnalyzerProject>
     <AssemblyName>Microsoft.ApiDesignGuidelines.VisualBasic.Analyzers</AssemblyName>
-    <ProjectTypeGuids>{14182A97-F7F0-4C62-8B27-98AA8AE2109A};{F184B08F-C81C-45F6-A57F-5ABD9991F28F}</ProjectTypeGuids>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
-    <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
-    <RestorePackages>true</RestorePackages>
     <SemanticVersion>$(MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-  </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
-      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
-      <Name>Analyzer.Utilities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Core\Microsoft.ApiDesignGuidelines.Analyzers.Core.csproj">
-      <Project>{9B5FFB24-D965-4CF1-8BB2-02C282193F4F}</Project>
-      <Name>Microsoft.ApiDesignGuidelines.Analyzers.Core</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj" />
+    <ProjectReference Include="..\Core\Microsoft.ApiDesignGuidelines.Analyzers.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Microsoft.ApiDesignGuidelines.VisualBasic.Analyzers.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="app.config" />
-    <Content Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="BasicAvoidAsyncVoid.vb" />
-    <Compile Include="BasicAvoidAsyncVoid.Fixer.vb" />
-    <Compile Include="BasicAsyncMethodNamesShouldEndInAsync.vb" />
-    <Compile Include="BasicAsyncMethodNamesShouldEndInAsync.Fixer.vb" />
-    <Compile Include="BasicDoNotPassAsyncLambdasAsVoidReturningDelegateTypes.vb" />
-    <Compile Include="BasicDoNotPassAsyncLambdasAsVoidReturningDelegateTypes.Fixer.vb" />
-    <Compile Include="BasicDoNotStoreAsyncLambdasAsVoidReturningDelegateTypes.vb" />
-    <Compile Include="BasicDoNotStoreAsyncLambdasAsVoidReturningDelegateTypes.Fixer.vb" />
-    <Compile Include="BasicPassSystemUriObjectsInsteadOfStrings.vb" />
-    <Compile Include="BasicEnumStorageShouldBeInt32.Fixer.vb" />
-    <Compile Include="BasicPropagateCancellationTokensWhenPossible.vb" />
-    <Compile Include="BasicPropagateCancellationTokensWhenPossible.Fixer.vb" />
-    <Compile Include="BasicDoNotMixBlockingAndAsync.vb" />
-    <Compile Include="BasicDoNotMixBlockingAndAsync.Fixer.vb" />
-    <Compile Include="BasicStaticHolderTypes.Fixer.vb" />
-    <Compile Include="BasicTypesThatOwnDisposableFieldsShouldBeDisposable.vb" />
-    <Compile Include="BasicUseGenericEventHandlerInstances.vb" />
-    <Compile Include="BasicUseGenericEventHandlerInstances.Fixer.vb" />
-    <Compile Include="BasicEnumsShouldHaveZeroValue.Fixer.vb" />
-    <Compile Include="BasicMarkAssembliesWithClsCompliant.Fixer.vb" />
-    <Compile Include="BasicMarkAssembliesWithAssemblyVersion.Fixer.vb" />
-    <Compile Include="BasicDefineAccessorsForAttributeArguments.vb" />
-    <Compile Include="BasicUsePropertiesWhereAppropriate.Fixer.vb" />
-    <Compile Include="BasicMovePInvokesToNativeMethodsClass.Fixer.vb" />
-    <Compile Include="BasicIdentifiersShouldHaveCorrectPrefix.Fixer.vb" />
-    <Compile Include="BasicCollectionsShouldImplementGenericInterface.Fixer.vb" />
-    <Compile Include="BasicUseEventsWhereAppropriate.Fixer.vb" />
-    <Compile Include="BasicImplementStandardExceptionConstructors.vb" />
-    <Compile Include="BasicAvoidEmptyInterfaces.vb" />
-    <Compile Include="BasicAvoidEmptyInterfaces.Fixer.vb" />
-    <Compile Include="BasicDeclareTypesInNamespaces.Fixer.vb" />
-    <Compile Include="BasicImplementIDisposableCorrectly.Fixer.vb" />
-    <Compile Include="BasicIdentifiersShouldNotContainUnderscores.Fixer.vb" />
-    <Compile Include="BasicIdentifiersShouldHaveCorrectSuffix.Fixer.vb" />
-    <Compile Include="BasicIdentifiersShouldNotHaveIncorrectSuffix.Fixer.vb" />
-    <Compile Include="BasicEnumsShouldHavePluralNames.Fixer.vb" />
-    <Compile Include="BasicIdentifiersShouldNotMatchKeywords.Fixer.vb" />
-    <Compile Include="BasicPropertyNamesShouldNotMatchGetMethods.Fixer.vb" />
-    <Compile Include="BasicTypeNamesShouldNotMatchNamespaces.Fixer.vb" />
-    <Compile Include="BasicUsePreferredTerms.vb" />
-    <Compile Include="BasicUsePreferredTerms.Fixer.vb" />
-    <Compile Include="BasicOverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.vb" />
-    <Compile Include="BasicOverrideGetHashCodeOnOverridingEquals.vb" />
-    <Compile Include="BasicOverrideGetHashCodeOnOverridingEquals.Fixer.vb" />
-    <Compile Include="BasicOverrideEqualsOnOverloadingOperatorEquals.vb" />
-    <Compile Include="BasicOverrideEqualsOnOverloadingOperatorEquals.Fixer.vb" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleToTest Include="Microsoft.ApiDesignGuidelines.Analyzers.UnitTests" />

@@ -401,7 +401,7 @@ namespace Test.Utilities
         {
             if (analyzerOpt == null)
             {
-                return SpecializedCollections.EmptyArray<Diagnostic>();
+                return Array.Empty<Diagnostic>();
             }
 
             var projects = new HashSet<Project>();

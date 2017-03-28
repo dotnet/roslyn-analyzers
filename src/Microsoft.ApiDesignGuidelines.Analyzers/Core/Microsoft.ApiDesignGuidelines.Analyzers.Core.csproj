@@ -1,29 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>
   <ImportGroup Label="Settings">
     <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
   </ImportGroup>
   <PropertyGroup>
-    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9B5FFB24-D965-4CF1-8BB2-02C282193F4F}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <AnalyzerProject>true</AnalyzerProject>
     <RootNamespace>Microsoft.ApiDesignGuidelines.Analyzers</RootNamespace>
     <AssemblyName>Microsoft.ApiDesignGuidelines.Analyzers</AssemblyName>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
-    <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
-    <RestorePackages>true</RestorePackages>
+    <PackageId>Microsoft.ApiDesignGuidelines.Analyzers.Core</PackageId>
     <SemanticVersion>$(MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion)</PreReleaseVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.ApiDesignGuidelines.CSharp.Analyzers" />
@@ -31,152 +19,30 @@
     <InternalsVisibleToTest Include="Microsoft.ApiDesignGuidelines.Analyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="install.ps1" />
-    <None Include="Microsoft.ApiDesignGuidelines.Analyzers.nuspec" />
-    <Content Include="project.json" />
-    <None Include="ThirdPartyNotices.rtf" />
     <Content Include="Microsoft.ApiDesignGuidelines.Analyzers.props">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DoNotDirectlyAwaitATask.cs" />
-    <Compile Include="DoNotDirectlyAwaitATask.Fixer.cs" />
-    <Compile Include="EnumWithFlagsAttribute.cs" />
-    <Compile Include="EnumWithFlagsAttribute.Fixer.cs" />
-    <Compile Include="EquatableAnalyzer.cs" />
-    <Compile Include="Helpers\EnumHelpers.cs" />
-    <Compile Include="IdentifiersShouldNotContainTypeNames.cs" />
-    <Compile Include="MarkAssembliesWithAttributesDiagnosticAnalyzer.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="MicrosoftApiDesignGuidelinesAnalyzersResources.Designer.cs">
+    <Compile Update="MicrosoftApiDesignGuidelinesAnalyzersResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>MicrosoftApiDesignGuidelinesAnalyzersResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="AvoidAsyncVoid.cs" />
-    <Compile Include="AvoidAsyncVoid.Fixer.cs" />
-    <Compile Include="AsyncMethodNamesShouldEndInAsync.cs" />
-    <Compile Include="AsyncMethodNamesShouldEndInAsync.Fixer.cs" />
-    <Compile Include="DoNotPassAsyncLambdasAsVoidReturningDelegateTypes.cs" />
-    <Compile Include="DoNotPassAsyncLambdasAsVoidReturningDelegateTypes.Fixer.cs" />
-    <Compile Include="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypes.cs" />
-    <Compile Include="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypes.Fixer.cs" />
-    <Compile Include="PropagateCancellationTokensWhenPossible.cs" />
-    <Compile Include="PropagateCancellationTokensWhenPossible.Fixer.cs" />
-    <Compile Include="DoNotMixBlockingAndAsync.cs" />
-    <Compile Include="DoNotMixBlockingAndAsync.Fixer.cs" />
-    <Compile Include="TypesThatOwnDisposableFieldsShouldBeDisposable.cs" />
-    <Compile Include="TypesThatOwnDisposableFieldsShouldBeDisposable.Fixer.cs" />
-    <Compile Include="UseGenericEventHandlerInstances.cs" />
-    <Compile Include="UseGenericEventHandlerInstances.Fixer.cs" />
-    <Compile Include="EnumsShouldHaveZeroValue.cs" />
-    <Compile Include="EnumsShouldHaveZeroValue.Fixer.cs" />
-    <Compile Include="AbstractTypesShouldNotHaveConstructors.cs" />
-    <Compile Include="AbstractTypesShouldNotHaveConstructors.Fixer.cs" />
-    <Compile Include="MarkAssembliesWithClsCompliant.Fixer.cs" />
-    <Compile Include="MarkAssembliesWithAssemblyVersion.Fixer.cs" />
-    <Compile Include="MarkAssembliesWithComVisible.cs" />
-    <Compile Include="MarkAssembliesWithComVisible.Fixer.cs" />
-    <Compile Include="MarkAttributesWithAttributeUsage.cs" />
-    <Compile Include="DefineAccessorsForAttributeArguments.cs" />
-    <Compile Include="DefineAccessorsForAttributeArguments.Fixer.cs" />
-    <Compile Include="UseIntegralOrStringArgumentForIndexers.cs" />
-    <Compile Include="UsePropertiesWhereAppropriate.cs" />
-    <Compile Include="UsePropertiesWhereAppropriate.Fixer.cs" />
-    <Compile Include="InterfaceMethodsShouldBeCallableByChildTypes.cs" />
-    <Compile Include="InterfaceMethodsShouldBeCallableByChildTypes.Fixer.cs" />
-    <Compile Include="OverrideMethodsOnComparableTypes.cs" />
-    <Compile Include="OverrideMethodsOnComparableTypes.Fixer.cs" />
-    <Compile Include="StaticHolderTypes.cs" />
-    <Compile Include="MovePInvokesToNativeMethodsClass.cs" />
-    <Compile Include="MovePInvokesToNativeMethodsClass.Fixer.cs" />
-    <Compile Include="IdentifiersShouldDifferByMoreThanCase.cs" />
-    <Compile Include="IdentifiersShouldHaveCorrectPrefix.cs" />
-    <Compile Include="IdentifiersShouldHaveCorrectPrefix.Fixer.cs" />
-    <Compile Include="NonConstantFieldsShouldNotBeVisible.cs" />
-    <Compile Include="NonConstantFieldsShouldNotBeVisible.Fixer.cs" />
-    <Compile Include="DoNotDecreaseInheritedMemberVisibility.cs" />
-    <Compile Include="DoNotDecreaseInheritedMemberVisibility.Fixer.cs" />
-    <Compile Include="OperatorOverloadsHaveNamedAlternates.cs" />
-    <Compile Include="OperatorOverloadsHaveNamedAlternates.Fixer.cs" />
-    <Compile Include="OperatorsShouldHaveSymmetricalOverloads.cs" />
-    <Compile Include="OperatorsShouldHaveSymmetricalOverloads.Fixer.cs" />
-    <Compile Include="CollectionPropertiesShouldBeReadOnly.cs" />
-    <Compile Include="OverloadOperatorEqualsOnOverridingValueTypeEquals.cs" />
-    <Compile Include="OverloadOperatorEqualsOnOverridingValueTypeEquals.Fixer.cs" />
-    <Compile Include="PassSystemUriObjectsInsteadOfStrings.cs" />
-    <Compile Include="CancellationTokenParametersMustComeLast.cs" />
-    <Compile Include="DoNotDeclareStaticMembersOnGenericTypes.cs" />
-    <Compile Include="CollectionsShouldImplementGenericInterface.cs" />
-    <Compile Include="CollectionsShouldImplementGenericInterface.Fixer.cs" />
-    <Compile Include="EnumStorageShouldBeInt32.cs" />
-    <Compile Include="EnumStorageShouldBeInt32.Fixer.cs" />
-    <Compile Include="UseEventsWhereAppropriate.cs" />
-    <Compile Include="UseEventsWhereAppropriate.Fixer.cs" />
-    <Compile Include="ImplementStandardExceptionConstructors.cs" />
-    <Compile Include="ImplementStandardExceptionConstructors.Fixer.cs" />
-    <Compile Include="NestedTypesShouldNotBeVisible.cs" />
-    <Compile Include="AvoidEmptyInterfaces.cs" />
-    <Compile Include="AvoidEmptyInterfaces.Fixer.cs" />
-    <Compile Include="ProvideObsoleteAttributeMessage.cs" />
-    <Compile Include="PropertiesShouldNotBeWriteOnly.cs" />
-    <Compile Include="PropertiesShouldNotBeWriteOnly.Fixer.cs" />
-    <Compile Include="DeclareTypesInNamespaces.cs" />
-    <Compile Include="DeclareTypesInNamespaces.Fixer.cs" />
-    <Compile Include="DoNotDeclareVisibleInstanceFields.cs" />
-    <Compile Include="UriParametersShouldNotBeStrings.cs" />
-    <Compile Include="UriParametersShouldNotBeStrings.Fixer.cs" />
-    <Compile Include="UriReturnValuesShouldNotBeStrings.cs" />
-    <Compile Include="UriPropertiesShouldNotBeStrings.cs" />
-    <Compile Include="ImplementIDisposableCorrectly.cs" />
-    <Compile Include="ImplementIDisposableCorrectly.Fixer.cs" />
-    <Compile Include="ExceptionsShouldBePublic.cs" />
-    <Compile Include="ExceptionsShouldBePublic.Fixer.cs" />
-    <Compile Include="DoNotRaiseExceptionsInUnexpectedLocations.cs" />
-    <Compile Include="IdentifiersShouldNotContainUnderscores.cs" />
-    <Compile Include="IdentifiersShouldNotContainUnderscores.Fixer.cs" />
-    <Compile Include="IdentifiersShouldHaveCorrectSuffix.cs" />
-    <Compile Include="IdentifiersShouldHaveCorrectSuffix.Fixer.cs" />
-    <Compile Include="IdentifiersShouldNotHaveIncorrectSuffix.cs" />
-    <Compile Include="IdentifiersShouldNotHaveIncorrectSuffix.Fixer.cs" />
-    <Compile Include="EnumsShouldHavePluralNames.cs" />
-    <Compile Include="EnumsShouldHavePluralNames.Fixer.cs" />
-    <Compile Include="IdentifiersShouldNotMatchKeywords.cs" />
-    <Compile Include="IdentifiersShouldNotMatchKeywords.Fixer.cs" />
-    <Compile Include="PropertyNamesShouldNotMatchGetMethods.cs" />
-    <Compile Include="PropertyNamesShouldNotMatchGetMethods.Fixer.cs" />
-    <Compile Include="TypeNamesShouldNotMatchNamespaces.cs" />
-    <Compile Include="TypeNamesShouldNotMatchNamespaces.Fixer.cs" />
-    <Compile Include="ParameterNamesShouldMatchBaseDeclaration.cs" />
-    <Compile Include="ParameterNamesShouldMatchBaseDeclaration.Fixer.cs" />
-    <Compile Include="UsePreferredTerms.cs" />
-    <Compile Include="UsePreferredTerms.Fixer.cs" />
-    <Compile Include="OverrideEqualsAndOperatorEqualsOnValueTypes.cs" />
-    <Compile Include="OverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.cs" />
-    <Compile Include="PropertiesShouldNotReturnArrays.cs" />
-    <Compile Include="OverrideGetHashCodeOnOverridingEquals.Fixer.cs" />
-    <Compile Include="OverrideEqualsOnOverloadingOperatorEquals.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="MicrosoftApiDesignGuidelinesAnalyzersResources.resx">
+    <EmbeddedResource Update="MicrosoftApiDesignGuidelinesAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MicrosoftApiDesignGuidelinesAnalyzersResources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
-      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
-      <Name>Analyzer.Utilities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Dependencies\CodeAnalysis\CodeAnalysis.csproj">
-      <Project>{434fa01f-b8cb-41f7-88d1-7906003f23bc}</Project>
-      <Name>CodeAnalysis</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

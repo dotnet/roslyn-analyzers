@@ -185,6 +185,7 @@ namespace System.Runtime.InteropServices.Analyzers
                     return null;
                 }
 
+#pragma warning disable CS0618 // Type or member is obsolete
                 switch (type)
                 {
                     case UnmanagedType.AnsiBStr:
@@ -203,6 +204,7 @@ namespace System.Runtime.InteropServices.Analyzers
                         // return null
                         return null;
                 }
+#pragma warning restore CS0618 // Type or member is obsolete
             }
 
             private static Location GetAttributeLocation(AttributeData attributeData)

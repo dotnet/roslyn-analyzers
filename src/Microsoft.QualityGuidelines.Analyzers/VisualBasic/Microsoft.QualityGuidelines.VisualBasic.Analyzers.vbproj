@@ -1,51 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project>
   <ImportGroup Label="Settings">
     <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
   </ImportGroup>
   <PropertyGroup>
-    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9CA16DC1-9D3E-449E-8D29-04CDEAD556CC}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <AnalyzerProject>true</AnalyzerProject>
     <AssemblyName>Microsoft.QualityGuidelines.VisualBasic.Analyzers</AssemblyName>
-    <ProjectTypeGuids>{14182A97-F7F0-4C62-8B27-98AA8AE2109A};{F184B08F-C81C-45F6-A57F-5ABD9991F28F}</ProjectTypeGuids>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
-    <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
-    <RestorePackages>true</RestorePackages>
     <SemanticVersion>$(MicrosoftQualityGuidelinesAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(MicrosoftQualityGuidelinesAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-  </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\Microsoft.QualityGuidelines.Analyzers.Core.csproj">
-      <Project>{A6D274A2-1AB2-4F0A-BC63-3BA3ACE0B970}</Project>
-      <Name>Microsoft.QualityGuidelines.Analyzers.Core</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\Core\Microsoft.QualityGuidelines.Analyzers.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicRethrowToPreserveStackDetails.vb" />
     <Content Include="Microsoft.QualityGuidelines.VisualBasic.Analyzers.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="app.config" />
-    <Content Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="BasicUseLiteralsWhereAppropriate.Fixer.vb" />
-    <Compile Include="BasicPreferJaggedArraysOverMultidimensional.Fixer.vb" />
-    <Compile Include="BasicMarkMembersAsStatic.Fixer.vb" />
-    <Compile Include="BasicDisposeObjectsBeforeLosingScope.vb" />
-    <Compile Include="BasicDisposeObjectsBeforeLosingScope.Fixer.vb" />
-    <Compile Include="BasicReviewVisibleEventHandlers.vb" />
-    <Compile Include="BasicReviewVisibleEventHandlers.Fixer.vb" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

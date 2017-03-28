@@ -1,135 +1,31 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>
   <ImportGroup Label="Settings">
     <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
   </ImportGroup>
   <PropertyGroup>
-    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
-    <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
-    <ProjectGuid>{4A5C6DFA-BB40-4AE5-B7EA-286B9E3756C4}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <TargetFramework>net46</TargetFramework>
+    <TestProject>true</TestProject>
     <RootNamespace>Desktop.Analyzers.UnitTests</RootNamespace>
     <AssemblyName>Desktop.Analyzers.UnitTests</AssemblyName>
-    <Nonshipping>true</Nonshipping>
-    <SolutionDir Condition="'$(SolutionDir)' == '' OR '$(SolutionDir)' == '*Undefined*'">..\..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <SemanticVersion>$(DesktopAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(DesktopAnalyzersPreReleaseVersion)</PreReleaseVersion>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Label="Start settings">
     <StartAction>Program</StartAction>
-    <StartProgram>$(NuGetPackageRoot)\xunit.runner.console\2.1.0\tools\xunit.console.x86.exe</StartProgram>
+    <StartProgram>$(NuGetPackageRoot)\xunit.runner.console\$(XUnitVersion)\tools\xunit.console.x86.exe</StartProgram>
     <StartArguments>$(AssemblyName).dll -noshadow -wait</StartArguments>
     <StartWorkingDirectory>$(OutDir)</StartWorkingDirectory>
   </PropertyGroup>
   <ItemGroup Label="Project References">
-    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
-      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
-      <Name>Analyzer.Utilities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Dependencies\CodeAnalysis\CodeAnalysis.csproj">
-      <Project>{434fa01f-b8cb-41f7-88d1-7906003f23bc}</Project>
-      <Name>CodeAnalysis</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Dependencies\xUnit\xUnit.csproj">
-      <Project>{f21bc39a-3c97-4d8f-bfa8-9e4bd9b56413}</Project>
-      <Name>xUnit</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Test\Utilities\Test.Utilities.csproj">
-      <Project>{0A0621F2-D1DC-47FF-B643-C6646557505E}</Project>
-      <Name>Test.Utilities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Core\Desktop.Analyzers.Core.csproj">
-      <Project>{FD5AAAFD-FEE5-438A-A710-EFC02510F922}</Project>
-      <Name>Desktop.Analyzers.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CSharp\Desktop.CSharp.Analyzers.csproj">
-      <Project>{363515EF-526A-4209-A1C1-480436F9C0E0}</Project>
-      <Name>Desktop.CSharp.Analyzers</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\VisualBasic\Desktop.VisualBasic.Analyzers.vbproj">
-      <Project>{D0892ED4-DAA8-4CFF-ABA5-D506CADF1FD1}</Project>
-      <Name>Desktop.VisualBasic.Analyzers</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj" />
+    <ProjectReference Include="..\..\Test\Utilities\Test.Utilities.csproj" />
+    <ProjectReference Include="..\Core\Desktop.Analyzers.Core.csproj" />
+    <ProjectReference Include="..\CSharp\Desktop.CSharp.Analyzers.csproj" />
+    <ProjectReference Include="..\VisualBasic\Desktop.VisualBasic.Analyzers.vbproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <Content Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="DoNotUseInsecureDtdProcessingDoNotUseLoadXmlTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingDoNotUseSetInnerXmlTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingReviewDataViewCollectionStringTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingUseXmlReaderForDataSetReadXmlSchemaTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingUseXmlReaderForDataSetReadXmlTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingUseXmlReaderForDataTableReadXmlSchemaTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingUseXmlReaderForDataTableReadXmlTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingUseXmlReaderForDeserializeTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingUseXmlReaderForLoadTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingUseXmlReaderForSchemaReadTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingUseXmlReaderForXPathDocumentTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingXmlDocumentConstructedWithNoSecureResolverTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingXmlDocumentSetInsecureResolverTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingXmlReaderCreateUsingInsecureConstructedXmlReaderSettingsTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingXmlReaderCreateWrongOverloadTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingXmlTextReaderConstructedWithNoSecureResolutionTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingXmlTextReaderSetInsecureResolutionTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingCreateUsingInsecureInputXmlReaderSettingsTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesignXmlDocumentDerivedClassDesignConstructorNoSecureXmlResolverTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesignXmlDocumentDerivedClassDesignNoConstructorTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesignXmlDocumentDerivedClassDesignSetInsecureXmlResolverInMethodTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesignXmlTextReaderDerivedClassDesignConstructorNoSecureSettingsTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesignXmlTextReaderDerivedClassDesignNoConstructorTests.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesignXmlTextReaderDerivedClassDesignSetInsecureSettingsInMethodTests.cs" />
-    <Compile Include="DoNotUseInsecureXSLTScriptExecutionXslCompiledTransformLoadInsecureConstructedSettingsTests.cs" />
-    <Compile Include="DoNotUseInsecureXSLTScriptExecutionXslCompiledTransformLoadInsecureInputSettingsTests.cs" />
-    <Compile Include="DoNotCatchCorruptedStateExceptionsTests.cs" />
-    <Compile Include="DoNotUseInsecureCryptographicAlgorithmsTests.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SpecifyMessageBoxOptionsTests.cs" />
-    <Compile Include="SpecifyMessageBoxOptionsTests.Fixer.cs" />
-    <Compile Include="AvoidDuplicateAcceleratorsTests.cs" />
-    <Compile Include="AvoidDuplicateAcceleratorsTests.Fixer.cs" />
-    <Compile Include="SetLocaleForDataTypesTests.cs" />
-    <Compile Include="SetLocaleForDataTypesTests.Fixer.cs" />
-    <Compile Include="DoNotMarkServicedComponentsWithWebMethodTests.cs" />
-    <Compile Include="DoNotMarkServicedComponentsWithWebMethodTests.Fixer.cs" />
-    <Compile Include="ImplementSerializationConstructorsTests.cs" />
-    <Compile Include="ImplementSerializationConstructorsTests.Fixer.cs" />
-    <Compile Include="MarkWindowsFormsEntryPointsWithStaThreadTests.cs" />
-    <Compile Include="MarkWindowsFormsEntryPointsWithStaThreadTests.Fixer.cs" />
-    <Compile Include="MarkAllNonSerializableFieldsTests.cs" />
-    <Compile Include="MarkAllNonSerializableFieldsTests.Fixer.cs" />
-    <Compile Include="CallBaseClassMethodsOnISerializableTypesTests.cs" />
-    <Compile Include="CallBaseClassMethodsOnISerializableTypesTests.Fixer.cs" />
-    <Compile Include="MarkISerializableTypesWithSerializableTests.cs" />
-    <Compile Include="MarkISerializableTypesWithSerializableTests.Fixer.cs" />
-    <Compile Include="ImplementSerializationMethodsCorrectlyTests.cs" />
-    <Compile Include="ImplementSerializationMethodsCorrectlyTests.Fixer.cs" />
-    <Compile Include="ProvideDeserializationMethodsForOptionalFieldsTests.cs" />
-    <Compile Include="ProvideDeserializationMethodsForOptionalFieldsTests.Fixer.cs" />
-    <Compile Include="ImplementISerializableCorrectlyTests.cs" />
-    <Compile Include="ImplementISerializableCorrectlyTests.Fixer.cs" />
-    <Compile Include="TypesShouldNotExtendCertainBaseTypesTests.cs" />
-    <Compile Include="TypesShouldNotExtendCertainBaseTypesTests.Fixer.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

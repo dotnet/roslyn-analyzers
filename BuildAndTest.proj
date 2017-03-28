@@ -23,8 +23,10 @@
   </PropertyGroup>
 
   <Target Name="RestorePackages">
-    <Exec Command="&quot;$(NuGetExe)&quot; install xunit.runner.console -version 2.1.0 -OutputDirectory &quot;$(NuGetPackageRoot)&quot;"/>
-    <Exec Command="&quot;$(NuGetExe)&quot; restore &quot;$(SolutionFile)&quot;" />
+    <MSBuild BuildInParallel="true"
+             Projects="$(SolutionFile)"
+             Properties="RestorePackages=true"
+             Targets="Restore"/>
   </Target>
 
   <Target Name="Build" DependsOnTargets="RestorePackages">
@@ -73,8 +75,6 @@
       <TestAssemblies Include="Binaries\$(Configuration)\Text.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\Microsoft.QualityGuidelines.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\System.Resources.Analyzers.UnitTests.dll" />
-
-      <TestAssemblies Include="Binaries\$(Configuration)\MetaCompilation.Analyzers.UnitTests.dll" />
     </ItemGroup>
 
     <Exec Command="&quot;$(NuGetPackageRoot)\xunit.runner.console\2.1.0\tools\xunit.console.x86.exe&quot; @(TestAssemblies, ' ') $(RunTestArgs)" />

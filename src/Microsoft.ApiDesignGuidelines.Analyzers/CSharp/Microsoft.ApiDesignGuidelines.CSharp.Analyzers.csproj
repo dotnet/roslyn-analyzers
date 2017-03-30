@@ -1,93 +1,25 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>
   <ImportGroup Label="Settings">
     <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
   </ImportGroup>
   <PropertyGroup>
-    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9CB337FD-D2C2-47A3-855E-0D27C00D96B8}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <AnalyzerProject>true</AnalyzerProject>
     <RootNamespace>Microsoft.ApiDesignGuidelines.CSharp.Analyzers</RootNamespace>
     <AssemblyName>Microsoft.ApiDesignGuidelines.CSharp.Analyzers</AssemblyName>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
-    <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
-    <RestorePackages>true</RestorePackages>
     <SemanticVersion>$(MicrosoftApiDesignGuidelinesAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(MicrosoftApiDesignGuidelinesAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-  </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
-      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
-      <Name>Analyzer.Utilities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Core\Microsoft.ApiDesignGuidelines.Analyzers.Core.csproj">
-      <Project>{9B5FFB24-D965-4CF1-8BB2-02C282193F4F}</Project>
-      <Name>Microsoft.ApiDesignGuidelines.Analyzers.Core</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj" />
+    <ProjectReference Include="..\Core\Microsoft.ApiDesignGuidelines.Analyzers.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Microsoft.ApiDesignGuidelines.CSharp.Analyzers.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="app.config" />
-    <Content Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="CSharpPassSystemUriObjectsInsteadOfStrings.cs" />
-    <Compile Include="CSharpEnumStorageShouldBeInt32.Fixer.cs" />
-    <Compile Include="CSharpStaticHolderTypes.Fixer.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CSharpAvoidAsyncVoid.cs" />
-    <Compile Include="CSharpAvoidAsyncVoid.Fixer.cs" />
-    <Compile Include="CSharpAsyncMethodNamesShouldEndInAsync.cs" />
-    <Compile Include="CSharpAsyncMethodNamesShouldEndInAsync.Fixer.cs" />
-    <Compile Include="CSharpDoNotPassAsyncLambdasAsVoidReturningDelegateTypes.cs" />
-    <Compile Include="CSharpDoNotPassAsyncLambdasAsVoidReturningDelegateTypes.Fixer.cs" />
-    <Compile Include="CSharpDoNotStoreAsyncLambdasAsVoidReturningDelegateTypes.cs" />
-    <Compile Include="CSharpDoNotStoreAsyncLambdasAsVoidReturningDelegateTypes.Fixer.cs" />
-    <Compile Include="CSharpPropagateCancellationTokensWhenPossible.cs" />
-    <Compile Include="CSharpPropagateCancellationTokensWhenPossible.Fixer.cs" />
-    <Compile Include="CSharpDoNotMixBlockingAndAsync.cs" />
-    <Compile Include="CSharpDoNotMixBlockingAndAsync.Fixer.cs" />
-    <Compile Include="CSharpTypesThatOwnDisposableFieldsShouldBeDisposable.cs" />
-    <Compile Include="CSharpUseGenericEventHandlerInstances.cs" />
-    <Compile Include="CSharpUseGenericEventHandlerInstances.Fixer.cs" />
-    <Compile Include="CSharpEnumsShouldHaveZeroValue.Fixer.cs" />
-    <Compile Include="CSharpMarkAssembliesWithClsCompliant.Fixer.cs" />
-    <Compile Include="CSharpMarkAssembliesWithAssemblyVersion.Fixer.cs" />
-    <Compile Include="CSharpDefineAccessorsForAttributeArguments.cs" />
-    <Compile Include="CSharpUsePropertiesWhereAppropriate.Fixer.cs" />
-    <Compile Include="CSharpMovePInvokesToNativeMethodsClass.Fixer.cs" />
-    <Compile Include="CSharpIdentifiersShouldHaveCorrectPrefix.Fixer.cs" />
-    <Compile Include="CSharpCollectionsShouldImplementGenericInterface.Fixer.cs" />
-    <Compile Include="CSharpUseEventsWhereAppropriate.Fixer.cs" />
-    <Compile Include="CSharpImplementStandardExceptionConstructors.cs" />
-    <Compile Include="CSharpAvoidEmptyInterfaces.cs" />
-    <Compile Include="CSharpAvoidEmptyInterfaces.Fixer.cs" />
-    <Compile Include="CSharpDeclareTypesInNamespaces.Fixer.cs" />
-    <Compile Include="CSharpImplementIDisposableCorrectly.Fixer.cs" />
-    <Compile Include="CSharpIdentifiersShouldNotContainUnderscores.Fixer.cs" />
-    <Compile Include="CSharpIdentifiersShouldHaveCorrectSuffix.Fixer.cs" />
-    <Compile Include="CSharpIdentifiersShouldNotHaveIncorrectSuffix.Fixer.cs" />
-    <Compile Include="CSharpEnumsShouldHavePluralNames.Fixer.cs" />
-    <Compile Include="CSharpIdentifiersShouldNotMatchKeywords.Fixer.cs" />
-    <Compile Include="CSharpPropertyNamesShouldNotMatchGetMethods.Fixer.cs" />
-    <Compile Include="CSharpTypeNamesShouldNotMatchNamespaces.Fixer.cs" />
-    <Compile Include="CSharpUsePreferredTerms.cs" />
-    <Compile Include="CSharpUsePreferredTerms.Fixer.cs" />
-    <Compile Include="CSharpOverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.cs" />
-    <Compile Include="CSharpOverrideGetHashCodeOnOverridingEquals.Fixer.cs" />
-    <Compile Include="CSharpOverrideEqualsOnOverloadingOperatorEquals.Fixer.cs" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

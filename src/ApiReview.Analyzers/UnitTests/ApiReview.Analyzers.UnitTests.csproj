@@ -1,76 +1,26 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>
   <ImportGroup Label="Settings">
     <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
   </ImportGroup>
   <PropertyGroup>
-    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
-    <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
-    <ProjectGuid>{641D8D5C-1C18-4234-8FB3-9F00D5FE434F}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>ApiReview.Analyzers.UnitTests</RootNamespace>
+    <TargetFramework>net46</TargetFramework>
+    <TestProject>true</TestProject>
     <AssemblyName>ApiReview.Analyzers.UnitTests</AssemblyName>
-    <Nonshipping>true</Nonshipping>
-    <SolutionDir Condition="'$(SolutionDir)' == '' OR '$(SolutionDir)' == '*Undefined*'">..\..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <SemanticVersion>$(ApiReviewAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(ApiReviewAnalyzersPreReleaseVersion)</PreReleaseVersion>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Label="Start settings">
     <StartAction>Program</StartAction>
-    <StartProgram>$(NuGetPackageRoot)\xunit.runner.console\2.1.0\tools\xunit.console.x86.exe</StartProgram>
+    <StartProgram>$(NuGetPackageRoot)\xunit.runner.console\$(XUnitVersion)\tools\xunit.console.x86.exe</StartProgram>
     <StartArguments>$(AssemblyName).dll -noshadow -wait</StartArguments>
     <StartWorkingDirectory>$(OutDir)</StartWorkingDirectory>
   </PropertyGroup>
   <ItemGroup Label="Project References">
-    <ProjectReference Include="..\..\Dependencies\CodeAnalysis\CodeAnalysis.csproj">
-      <Project>{434fa01f-b8cb-41f7-88d1-7906003f23bc}</Project>
-      <Name>CodeAnalysis</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Dependencies\xUnit\xUnit.csproj">
-      <Project>{f21bc39a-3c97-4d8f-bfa8-9e4bd9b56413}</Project>
-      <Name>xUnit</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Test\Utilities\Test.Utilities.csproj">
-      <Project>{0A0621F2-D1DC-47FF-B643-C6646557505E}</Project>
-      <Name>Test.Utilities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Core\ApiReview.Analyzers.Core.csproj">
-      <Project>{46A05D87-29E2-4CC9-AC07-B0AF9ADE74EC}</Project>
-      <Name>ApiReview.Analyzers.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CSharp\ApiReview.CSharp.Analyzers.csproj">
-      <Project>{0329D516-FB5C-4689-885D-5D14CBF57560}</Project>
-      <Name>ApiReview.CSharp.Analyzers</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\VisualBasic\ApiReview.VisualBasic.Analyzers.vbproj">
-      <Project>{7AF765A7-25A7-49B8-85DE-E0250E7AE43C}</Project>
-      <Name>ApiReview.VisualBasic.Analyzers</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <Content Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="AvoidCallingProblematicMethodsTests.cs" />
-    <Compile Include="AvoidCallingProblematicMethodsTests.Fixer.cs" />
+    <ProjectReference Include="..\..\Test\Utilities\Test.Utilities.csproj" />
+    <ProjectReference Include="..\Core\ApiReview.Analyzers.Core.csproj" />
+    <ProjectReference Include="..\CSharp\ApiReview.CSharp.Analyzers.csproj" />
+    <ProjectReference Include="..\VisualBasic\ApiReview.VisualBasic.Analyzers.vbproj" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

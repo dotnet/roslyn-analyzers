@@ -1,29 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>
   <ImportGroup Label="Settings">
     <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
   </ImportGroup>
   <PropertyGroup>
-    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FD5AAAFD-FEE5-438A-A710-EFC02510F922}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <AnalyzerProject>true</AnalyzerProject>
     <RootNamespace>Desktop.Analyzers</RootNamespace>
     <AssemblyName>Desktop.Analyzers</AssemblyName>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
-    <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
-    <RestorePackages>true</RestorePackages>
+    <PackageId>Desktop.Analyzers.Core</PackageId>
     <SemanticVersion>$(DesktopAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(DesktopAnalyzersPreReleaseVersion)</PreReleaseVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Desktop.CSharp.Analyzers" />
@@ -31,75 +19,27 @@
     <InternalsVisibleToTest Include="Desktop.Analyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="install.ps1" />
-    <None Include="Desktop.Analyzers.nuspec" />
-    <Content Include="project.json" />
-    <None Include="ThirdPartyNotices.rtf" />
     <Content Include="Desktop.Analyzers.props">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DoNotUseInsecureDtdProcessing.cs" />
-    <Compile Include="DoNotUseInsecureDtdProcessingInApiDesign.cs" />
-    <Compile Include="DoNotUseInsecureXSLTScriptExecution.cs" />
-    <Compile Include="DesktopAnalyzersResources1.Designer.cs">
+    <Compile Update="DesktopAnalyzersResources1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>DesktopAnalyzersResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="DoNotCatchCorruptedStateExceptions.cs" />
-    <Compile Include="DoNotUseInsecureCryptographicAlgorithms.cs" />
-    <Compile Include="Helpers\CompilationSecurityTypes.cs" />
-    <Compile Include="Helpers\SecurityDiagnosticHelpers.cs" />
-    <Compile Include="Helpers\SecurityTypes.cs" />
-    <Compile Include="Helpers\SyntaxNodeHelper.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SecurityMemberNames.cs" />
-    <Compile Include="SerializationDiagnosticAnalyzer.cs" />
-    <Compile Include="SpecifyMessageBoxOptions.cs" />
-    <Compile Include="SpecifyMessageBoxOptions.Fixer.cs" />
-    <Compile Include="AvoidDuplicateAccelerators.cs" />
-    <Compile Include="AvoidDuplicateAccelerators.Fixer.cs" />
-    <Compile Include="SetLocaleForDataTypes.cs" />
-    <Compile Include="SetLocaleForDataTypes.Fixer.cs" />
-    <Compile Include="DoNotMarkServicedComponentsWithWebMethod.cs" />
-    <Compile Include="DoNotMarkServicedComponentsWithWebMethod.Fixer.cs" />
-    <Compile Include="ImplementSerializationConstructors.Fixer.cs" />
-    <Compile Include="MarkWindowsFormsEntryPointsWithStaThread.cs" />
-    <Compile Include="MarkWindowsFormsEntryPointsWithStaThread.Fixer.cs" />
-    <Compile Include="MarkAllNonSerializableFields.Fixer.cs" />
-    <Compile Include="CallBaseClassMethodsOnISerializableTypes.cs" />
-    <Compile Include="CallBaseClassMethodsOnISerializableTypes.Fixer.cs" />
-    <Compile Include="MarkISerializableTypesWithSerializable.Fixer.cs" />
-    <Compile Include="ImplementSerializationMethodsCorrectly.cs" />
-    <Compile Include="ImplementSerializationMethodsCorrectly.Fixer.cs" />
-    <Compile Include="ProvideDeserializationMethodsForOptionalFields.cs" />
-    <Compile Include="ProvideDeserializationMethodsForOptionalFields.Fixer.cs" />
-    <Compile Include="ImplementISerializableCorrectly.cs" />
-    <Compile Include="ImplementISerializableCorrectly.Fixer.cs" />
-    <Compile Include="TypesShouldNotExtendCertainBaseTypes.cs" />
-    <Compile Include="TypesShouldNotExtendCertainBaseTypes.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DesktopAnalyzersResources.resx">
+    <EmbeddedResource Update="DesktopAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>DesktopAnalyzersResources1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
-      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
-      <Name>Analyzer.Utilities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Dependencies\CodeAnalysis\CodeAnalysis.csproj">
-      <Project>{434fa01f-b8cb-41f7-88d1-7906003f23bc}</Project>
-      <Name>CodeAnalysis</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

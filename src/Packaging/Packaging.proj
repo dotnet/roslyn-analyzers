@@ -20,7 +20,6 @@
     <Project Include = "..\Microsoft.QualityGuidelines.Analyzers\NuGet\Microsoft.QualityGuidelines.Analyzers.NuGet.proj" />
     <Project Include = "..\System.Resources.Analyzers\NuGet\System.Resources.Analyzers.NuGet.proj" />
     <Project Include = "..\Microsoft.CodeAnalysis.Analyzers\NuGet\Microsoft.CodeAnalysis.Analyzers.NuGet.proj" />
-    <Project Include = "..\MetaCompilation.Analyzers\NuGet\MetaCompilation.Analyzers.NuGet.proj" />
 
     <!-- Nuget packages which are aggregation of other core analyzer nuget packages -->
     <Project Include = "..\AggregateNugetPackages\FxCop\NuGet\FxCopAnalyzers.NuGet.proj" />

@@ -13,7 +13,10 @@ if /I "%1" == "/release" set BuildConfiguration=Release&&shift&& goto :ParseArgu
 call :Usage && exit /b 1
 :DoneParsing
 
-call "%VS150COMNTOOLS%VsDevCmd.bat"
+REM Prefer building with Dev15 and try the simple route first (we may be running from a DevCmdPrompt already)
+set CommonToolsDir=%VS150COMNTOOLS%
+if not exist "%CommonToolsDir%" set CommonToolsDir=%VS140COMNTOOLS%
+call "%CommonToolsDir%VsDevCmd.bat"
 
 msbuild /v:m /m %AnalyzersRoot%\BuildAndTest.proj /p:CIBuild=true /p:Configuration=%BuildConfiguration%
 

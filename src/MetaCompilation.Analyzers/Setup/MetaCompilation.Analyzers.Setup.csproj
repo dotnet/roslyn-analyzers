@@ -16,11 +16,6 @@
     <SemanticVersion>$(MetaCompilationAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(MetaCompilationAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartAction>Program</StartAction>
-    <StartProgram>$(DevEnvDir)devenv.exe</StartProgram>
-    <StartArguments>/rootsuffix Roslyn</StartArguments>
-  </PropertyGroup>
   <ItemGroup>
     <Content Include="ProjectTemplates\AnalyzerTutorialTemplate.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

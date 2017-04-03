@@ -92,9 +92,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     // If the declared type is a method, was a matching property found?
                     // Note: Last condition prevents reporting a diagnostic if the method matches a property 
                     // in the same type because that is already handled above (favor reporting on the property)
-                    if (symbol.Kind == SymbolKind.Method && 
-                        member.Kind == SymbolKind.Property &&
-                        !symbol.ContainingType.Equals(type))
+                    if (symbol.Kind == SymbolKind.Method 
+                        && member.Kind == SymbolKind.Property 
+                        && !symbol.ContainingType.Equals(type))
                     {
                         diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], identifier, symbol.Name);
                         break;

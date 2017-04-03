@@ -17,19 +17,20 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     public sealed class PropertyNamesShouldNotMatchGetMethodsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1721";
-        internal const string Get = "Get";
 
-        private static readonly LocalizableString LocalizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString LocalizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString LocalizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private const string Get = "Get";
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly ImmutableHashSet<Accessibility> ExposedAccessibilities = ImmutableHashSet.Create(Accessibility.Public, Accessibility.Protected, Accessibility.ProtectedOrInternal);
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
-                                                                             LocalizableTitle,
-                                                                             LocalizableMessage,
+                                                                             s_localizableTitle,
+                                                                             s_localizableMessage,
                                                                              DiagnosticCategory.Naming,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
-                                                                             description: LocalizableDescription,
+                                                                             description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182253.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
@@ -49,9 +50,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             string identifier;
             var symbol = context.Symbol;
 
-            // Bail out if the method/property is not protected or public
-            if (!(symbol.DeclaredAccessibility == Accessibility.Protected ||
-                  symbol.DeclaredAccessibility == Accessibility.Public))
+            // Bail out if the method/property is not exposed (public, protected, or protected internal)
+            if (!ExposedAccessibilities.Contains(symbol.DeclaredAccessibility))
             {
                 return;
             }
@@ -78,9 +78,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 Diagnostic diagnostic = null;
 
                 // We only want to check against protected or public methods/properties
-                var publicMembers = type.GetMembers(identifier).Where(member => 
-                    member.DeclaredAccessibility == Accessibility.Protected || 
-                    member.DeclaredAccessibility == Accessibility.Public);
+                var publicMembers = type.GetMembers(identifier).Where(member => ExposedAccessibilities.Contains(member.DeclaredAccessibility));
 
                 foreach (ISymbol member in publicMembers)
                 {
@@ -91,9 +89,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         break;
                     }
 
-                    // If the declared type is a method, was a matching property found? Although this
-                    // check seems redundant, it's the only way to catch violations of this rule when the
-                    // method is declared in a more derived implementation.
+                    // If the declared type is a method, was a matching property found?
+                    // Note: Last condition prevents reporting a diagnostic if the method matches a property 
+                    // in the same type because that is already handled above (favor reporting on the property)
                     if (symbol.Kind == SymbolKind.Method && 
                         member.Kind == SymbolKind.Property &&
                         !symbol.ContainingType.Equals(type))

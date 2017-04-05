@@ -13,9 +13,9 @@
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
   </Dependencies>
   <Assets>
-    <Asset Type="Microsoft.VisualStudio.Analyzer" Path="System.Threading.Tasks.Analyzers.dll" />
-    <Asset Type="Microsoft.VisualStudio.Analyzer" Path="System.Threading.Tasks.CSharp.Analyzers.dll" />
-    <Asset Type="Microsoft.VisualStudio.Analyzer" Path="System.Threading.Tasks.VisualBasic.Analyzers.dll" />
+    <Asset Type="Microsoft.VisualStudio.Analyzer" Path="System.Threading.Tasks.Analyzers.dll" IsOptionBased="true" />
+    <Asset Type="Microsoft.VisualStudio.Analyzer" Path="System.Threading.Tasks.CSharp.Analyzers.dll" IsOptionBased="true" />
+    <Asset Type="Microsoft.VisualStudio.Analyzer" Path="System.Threading.Tasks.VisualBasic.Analyzers.dll" IsOptionBased="true" />
     <Asset Type="Microsoft.VisualStudio.MefComponent" Path="System.Threading.Tasks.Analyzers.dll" />
     <Asset Type="Microsoft.VisualStudio.MefComponent" Path="System.Threading.Tasks.CSharp.Analyzers.dll" />
     <Asset Type="Microsoft.VisualStudio.MefComponent" Path="System.Threading.Tasks.VisualBasic.Analyzers.dll" />

@@ -30,7 +30,7 @@ Namespace Microsoft.ApiDesignGuidelines.VisualBasic.Analyzers
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.Usage,
-            DiagnosticSeverity.Warning,
+            DiagnosticHelpers.DefaultDiagnosticSeverity,
             True,
             s_localizableDescription,
             "https://msdn.microsoft.com/en-us/library/ms182357.aspx",

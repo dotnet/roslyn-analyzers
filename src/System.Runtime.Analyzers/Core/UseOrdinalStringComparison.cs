@@ -1,12 +1,12 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis;
-using Analyzer.Utilities;
-using Microsoft.CodeAnalysis.Semantics;
 using System.Linq;
+using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Semantics;
 
 namespace System.Runtime.Analyzers
 {
@@ -20,7 +20,7 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableMessageAndTitle,
                                                                              s_localizableMessageAndTitle,
                                                                              DiagnosticCategory.Globalization,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "http://msdn.microsoft.com/library/bb385972.aspx",
@@ -49,7 +49,7 @@ namespace System.Runtime.Analyzers
                     INamedTypeSymbol stringComparisonType = context.Compilation.GetTypeByMetadataName(StringComparisonTypeName);
                     if (stringComparisonType != null)
                     {
-                        context.RegisterOperationAction(operationContext => AnalyzeOperation(operationContext, stringComparisonType),
+                        context.RegisterOperationActionInternal(operationContext => AnalyzeOperation(operationContext, stringComparisonType),
                                                         OperationKind.InvocationExpression,
                                                         OperationKind.BinaryOperatorExpression);
                     }

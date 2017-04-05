@@ -29,7 +29,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                                   s_localizableTitle,
                                                                                   s_localizableMessage,
                                                                                   DiagnosticCategory.Design,
-                                                                                  DiagnosticSeverity.Warning,
+                                                                                  DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                   isEnabledByDefault: true,
                                                                                   description: s_localizableDescription,
                                                                                   helpLinkUri: "http://msdn.microsoft.com/library/ms182163.aspx",

@@ -29,7 +29,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                                                                          s_localizableMessageAndTitle,
                                                                          s_localizableMessageAndTitle,
                                                                          DiagnosticCategory.Usage,
-                                                                         DiagnosticSeverity.Warning,
+                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                          isEnabledByDefault: true,
                                                                          description: s_localizableDescription,
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182331.aspx",
@@ -47,14 +47,14 @@ namespace Microsoft.QualityGuidelines.Analyzers
                 INamedTypeSymbol webUiControlType = compilationContext.Compilation.GetTypeByMetadataName("System.Web.UI.Control");
                 INamedTypeSymbol windowsFormsControlType = compilationContext.Compilation.GetTypeByMetadataName("System.Windows.Forms.Control");
 
-                compilationContext.RegisterOperationBlockStartAction(context =>
+                compilationContext.RegisterOperationBlockStartActionInternal(context =>
                 {
                     if (ShouldOmitThisDiagnostic(context.OwningSymbol, webUiControlType, windowsFormsControlType))
                     {
                         return;
                     }
 
-                    context.RegisterOperationAction(oc => AnalyzeOperation(oc, context.OwningSymbol.ContainingType), OperationKind.InvocationExpression);
+                    context.RegisterOperationActionInternal(oc => AnalyzeOperation(oc, context.OwningSymbol.ContainingType), OperationKind.InvocationExpression);
                 });
             });
         }

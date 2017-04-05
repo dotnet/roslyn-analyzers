@@ -57,7 +57,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             s_title,
             s_messageFormat,
             DiagnosticCategory.Design,
-            DiagnosticSeverity.Warning,
+            DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: true,
             helpLinkUri: "http://msdn.microsoft.com/library/ms182168.aspx",
             customTags: WellKnownDiagnosticTags.Telemetry);

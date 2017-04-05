@@ -30,7 +30,7 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Performance,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/library/ms182279.aspx",
@@ -44,7 +44,7 @@ namespace System.Runtime.Analyzers
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            context.RegisterOperationAction(AnalyzeNode, OperationKind.InvocationExpression, OperationKind.BinaryOperatorExpression);
+            context.RegisterOperationActionInternal(AnalyzeNode, OperationKind.InvocationExpression, OperationKind.BinaryOperatorExpression);
         }
 
         private static void AnalyzeNode(OperationAnalysisContext context)

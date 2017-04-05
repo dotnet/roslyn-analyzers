@@ -3,12 +3,12 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Desktop.Analyzers.Helpers;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Semantics;
 
 namespace Desktop.Analyzers
 {
@@ -31,7 +31,7 @@ namespace Desktop.Analyzers
         private void RegisterAnalyzer(OperationBlockStartAnalysisContext context, CompilationSecurityTypes types, Version frameworkVersion)
         {
             var analyzer = new OperationAnalyzer(types, frameworkVersion);
-            context.RegisterOperationAction(
+            context.RegisterOperationActionInternal(
                 analyzer.AnalyzeOperation,
                 OperationKind.InvocationExpression,
                 OperationKind.AssignmentExpression,
@@ -65,7 +65,7 @@ namespace Desktop.Analyzers
 
                         if (version != null)
                         {
-                            context.RegisterOperationBlockStartAction(
+                            context.RegisterOperationBlockStartActionInternal(
                                 (c) =>
                                 {
                                     RegisterAnalyzer(c, xmlTypes, version);
@@ -820,7 +820,7 @@ namespace Desktop.Analyzers
                                             SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.InsecureXmlDtdProcessing)),
                                             messageFormat,
                                             DiagnosticCategory.Security,
-                                            DiagnosticSeverity.Warning,
+                                            DiagnosticHelpers.DefaultDiagnosticSeverity,
                                             isEnabledByDefault: true,
                                             description: description,
                                             helpLinkUri: helpLink,

@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using System.Security.Cryptography.Hashing.Algorithms.Analyzers.Helpers;
+using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -36,7 +37,7 @@ namespace System.Security.Cryptography.Hashing.Algorithms.Analyzers
                                             title,
                                             title,
                                             DiagnosticCategory.Security,
-                                            DiagnosticSeverity.Warning,
+                                            DiagnosticHelpers.DefaultDiagnosticSeverity,
                                             true,
                                             description: description,
                                             helpLinkUri: uri,

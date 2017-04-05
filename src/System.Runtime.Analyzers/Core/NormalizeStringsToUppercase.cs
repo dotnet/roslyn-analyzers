@@ -31,7 +31,7 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageToUpper,
                                                                              DiagnosticCategory.Globalization,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: @"https://msdn.microsoft.com/en-us/library/bb386042.aspx",
@@ -77,7 +77,7 @@ namespace System.Runtime.Analyzers
                     return;
                 }
 
-                compilationStartContext.RegisterOperationAction(operationAnalysisContext =>
+                compilationStartContext.RegisterOperationActionInternal(operationAnalysisContext =>
                 {
                     if (operationAnalysisContext.Operation.IsInvalid)
                     {

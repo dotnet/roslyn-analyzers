@@ -14,7 +14,7 @@ namespace Test.Utilities
 {
     public sealed class DiagnosticDescription
     {
-        public static readonly DiagnosticDescription[] None = new DiagnosticDescription[0];
+        public static readonly DiagnosticDescription[] None = Array.Empty<DiagnosticDescription>();
         public static readonly DiagnosticDescription[] Any = null;
 
         // common fields for all DiagnosticDescriptions

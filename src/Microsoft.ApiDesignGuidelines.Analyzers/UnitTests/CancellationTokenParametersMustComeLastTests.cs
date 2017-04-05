@@ -2,6 +2,7 @@
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Analyzer.Utilities;
 using Test.Utilities;
 using Xunit;
 
@@ -32,7 +33,7 @@ class T
             {
                 Id = CancellationTokenParametersMustComeLastAnalyzer.RuleId,
                 Message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.CancellationTokenParametersMustComeLastMessage, "T.M(System.Threading.CancellationToken, int)"),
-                Severity = DiagnosticSeverity.Warning,
+                Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
                 Locations = new[]
                 {
                     new DiagnosticResultLocation("Test0.cs", 5, 10)
@@ -147,7 +148,7 @@ class T : B
             {
                 Id = CancellationTokenParametersMustComeLastAnalyzer.RuleId,
                 Message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.CancellationTokenParametersMustComeLastMessage, "B.M(System.Threading.CancellationToken, int)"),
-                Severity = DiagnosticSeverity.Warning,
+                Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
                 Locations = new[]
                 {
                     new DiagnosticResultLocation("Test0.cs", 5, 28)
@@ -177,7 +178,7 @@ class T : I
             {
                 Id = CancellationTokenParametersMustComeLastAnalyzer.RuleId,
                 Message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.CancellationTokenParametersMustComeLastMessage, "I.M(System.Threading.CancellationToken, int)"),
-                Severity = DiagnosticSeverity.Warning,
+                Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
                 Locations = new[]
                 {
                     new DiagnosticResultLocation("Test0.cs", 5, 10)
@@ -207,7 +208,7 @@ class T : I
             {
                 Id = CancellationTokenParametersMustComeLastAnalyzer.RuleId,
                 Message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.CancellationTokenParametersMustComeLastMessage, "I.M(System.Threading.CancellationToken, int)"),
-                Severity = DiagnosticSeverity.Warning,
+                Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
                 Locations = new[]
                 {
                     new DiagnosticResultLocation("Test0.cs", 5, 10)

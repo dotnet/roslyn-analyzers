@@ -40,7 +40,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageIDisposableReimplementation,
                                                                              DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
@@ -49,7 +49,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageFinalizeOverride,
                                                                              DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
@@ -58,7 +58,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageDisposeOverride,
                                                                              DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
@@ -67,7 +67,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageDisposeSignature,
                                                                              DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
@@ -76,7 +76,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageRenameDispose,
                                                                              DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
@@ -85,7 +85,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageDisposeBoolSignature,
                                                                              DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
@@ -94,7 +94,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageDisposeImplementation,
                                                                              DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
@@ -103,7 +103,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageFinalizeImplementation,
                                                                              DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
@@ -112,7 +112,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageProvideDisposeBool,
                                                                              DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
@@ -191,7 +191,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             public void Initialize(CompilationStartAnalysisContext context)
             {
                 context.RegisterSymbolAction(AnalyzeNamedTypeSymbol, SymbolKind.NamedType);
-                context.RegisterOperationBlockAction(AnalyzeOperationBlock);
+                context.RegisterOperationBlockActionInternal(AnalyzeOperationBlock);
             }
 
             private void AnalyzeNamedTypeSymbol(SymbolAnalysisContext context)

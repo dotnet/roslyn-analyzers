@@ -30,7 +30,7 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageNotCalledWithFinalizer,
                                                                              DiagnosticCategory.Usage,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-US/library/ms182269.aspx",
@@ -39,7 +39,7 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageNotCalled,
                                                                              DiagnosticCategory.Usage,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-US/library/ms182269.aspx",
@@ -48,7 +48,7 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageNotPassedThis,
                                                                              DiagnosticCategory.Usage,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-US/library/ms182269.aspx",
@@ -57,7 +57,7 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageOutsideDispose,
                                                                              DiagnosticCategory.Usage,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-US/library/ms182269.aspx",
@@ -85,7 +85,7 @@ namespace System.Runtime.Analyzers
                     return;
                 }
 
-                compilationContext.RegisterOperationBlockStartAction(operationBlockContext =>
+                compilationContext.RegisterOperationBlockStartActionInternal(operationBlockContext =>
                 {
                     if (operationBlockContext.OwningSymbol.Kind != SymbolKind.Method)
                     {
@@ -100,7 +100,7 @@ namespace System.Runtime.Analyzers
 
                     var analyzer = new SuppressFinalizeAnalyzer(methodSymbol, gcSuppressFinalizeMethodSymbol, compilationContext.Compilation);
 
-                    operationBlockContext.RegisterOperationAction(analyzer.Analyze, OperationKind.InvocationExpression);
+                    operationBlockContext.RegisterOperationActionInternal(analyzer.Analyze, OperationKind.InvocationExpression);
                     operationBlockContext.RegisterOperationBlockEndAction(analyzer.OperationBlockEndAction);
                 });
             });

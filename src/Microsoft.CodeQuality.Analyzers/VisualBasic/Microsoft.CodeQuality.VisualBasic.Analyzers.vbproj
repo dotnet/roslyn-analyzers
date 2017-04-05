@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>
+  <ImportGroup Label="Settings">
+    <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
+  </ImportGroup>
+  <PropertyGroup>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
+    <AnalyzerProject>true</AnalyzerProject>
+    <AssemblyName>Microsoft.CodeQuality.VisualBasic.Analyzers</AssemblyName>
+    <SemanticVersion>$(MicrosoftCodeQualityAnalyzersSemanticVersion)</SemanticVersion>
+    <PreReleaseVersion>$(MicrosoftCodeQualityAnalyzersPreReleaseVersion)</PreReleaseVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\ApiReview.Analyzers\VisualBasic\BasicAvoidCallingProblematicMethods.Fixer.vb" Link="ApiReview\BasicAvoidCallingProblematicMethods.Fixer.vb" />
+    <Compile Include="..\..\ApiReview.Analyzers\VisualBasic\BasicAvoidCallingProblematicMethods.vb" Link="ApiReview\BasicAvoidCallingProblematicMethods.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicAsyncMethodNamesShouldEndInAsync.Fixer.vb" Link="ApiDesignGuidelines\BasicAsyncMethodNamesShouldEndInAsync.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicAsyncMethodNamesShouldEndInAsync.vb" Link="ApiDesignGuidelines\BasicAsyncMethodNamesShouldEndInAsync.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicAvoidAsyncVoid.Fixer.vb" Link="ApiDesignGuidelines\BasicAvoidAsyncVoid.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicAvoidAsyncVoid.vb" Link="ApiDesignGuidelines\BasicAvoidAsyncVoid.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicAvoidEmptyInterfaces.Fixer.vb" Link="ApiDesignGuidelines\BasicAvoidEmptyInterfaces.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicAvoidEmptyInterfaces.vb" Link="ApiDesignGuidelines\BasicAvoidEmptyInterfaces.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicCollectionsShouldImplementGenericInterface.Fixer.vb" Link="ApiDesignGuidelines\BasicCollectionsShouldImplementGenericInterface.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicDeclareTypesInNamespaces.Fixer.vb" Link="ApiDesignGuidelines\BasicDeclareTypesInNamespaces.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicDefineAccessorsForAttributeArguments.vb" Link="ApiDesignGuidelines\BasicDefineAccessorsForAttributeArguments.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicDoNotMixBlockingAndAsync.Fixer.vb" Link="ApiDesignGuidelines\BasicDoNotMixBlockingAndAsync.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicDoNotMixBlockingAndAsync.vb" Link="ApiDesignGuidelines\BasicDoNotMixBlockingAndAsync.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicDoNotPassAsyncLambdasAsVoidReturningDelegateTypes.Fixer.vb" Link="ApiDesignGuidelines\BasicDoNotPassAsyncLambdasAsVoidReturningDelegateTypes.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicDoNotPassAsyncLambdasAsVoidReturningDelegateTypes.vb" Link="ApiDesignGuidelines\BasicDoNotPassAsyncLambdasAsVoidReturningDelegateTypes.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicDoNotStoreAsyncLambdasAsVoidReturningDelegateTypes.Fixer.vb" Link="ApiDesignGuidelines\BasicDoNotStoreAsyncLambdasAsVoidReturningDelegateTypes.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicDoNotStoreAsyncLambdasAsVoidReturningDelegateTypes.vb" Link="ApiDesignGuidelines\BasicDoNotStoreAsyncLambdasAsVoidReturningDelegateTypes.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicEnumsShouldHavePluralNames.Fixer.vb" Link="ApiDesignGuidelines\BasicEnumsShouldHavePluralNames.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicEnumsShouldHaveZeroValue.Fixer.vb" Link="ApiDesignGuidelines\BasicEnumsShouldHaveZeroValue.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicEnumStorageShouldBeInt32.Fixer.vb" Link="ApiDesignGuidelines\BasicEnumStorageShouldBeInt32.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicIdentifiersShouldHaveCorrectPrefix.Fixer.vb" Link="ApiDesignGuidelines\BasicIdentifiersShouldHaveCorrectPrefix.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicIdentifiersShouldHaveCorrectSuffix.Fixer.vb" Link="ApiDesignGuidelines\BasicIdentifiersShouldHaveCorrectSuffix.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicIdentifiersShouldNotContainUnderscores.Fixer.vb" Link="ApiDesignGuidelines\BasicIdentifiersShouldNotContainUnderscores.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicIdentifiersShouldNotHaveIncorrectSuffix.Fixer.vb" Link="ApiDesignGuidelines\BasicIdentifiersShouldNotHaveIncorrectSuffix.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicIdentifiersShouldNotMatchKeywords.Fixer.vb" Link="ApiDesignGuidelines\BasicIdentifiersShouldNotMatchKeywords.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicImplementIDisposableCorrectly.Fixer.vb" Link="ApiDesignGuidelines\BasicImplementIDisposableCorrectly.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicImplementStandardExceptionConstructors.vb" Link="ApiDesignGuidelines\BasicImplementStandardExceptionConstructors.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicMarkAssembliesWithAssemblyVersion.Fixer.vb" Link="ApiDesignGuidelines\BasicMarkAssembliesWithAssemblyVersion.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicMarkAssembliesWithClsCompliant.Fixer.vb" Link="ApiDesignGuidelines\BasicMarkAssembliesWithClsCompliant.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicMovePInvokesToNativeMethodsClass.Fixer.vb" Link="ApiDesignGuidelines\BasicMovePInvokesToNativeMethodsClass.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicOverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.vb" Link="ApiDesignGuidelines\BasicOverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicOverrideEqualsOnOverloadingOperatorEquals.Fixer.vb" Link="ApiDesignGuidelines\BasicOverrideEqualsOnOverloadingOperatorEquals.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicOverrideEqualsOnOverloadingOperatorEquals.vb" Link="ApiDesignGuidelines\BasicOverrideEqualsOnOverloadingOperatorEquals.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicOverrideGetHashCodeOnOverridingEquals.Fixer.vb" Link="ApiDesignGuidelines\BasicOverrideGetHashCodeOnOverridingEquals.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicOverrideGetHashCodeOnOverridingEquals.vb" Link="ApiDesignGuidelines\BasicOverrideGetHashCodeOnOverridingEquals.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicPassSystemUriObjectsInsteadOfStrings.vb" Link="ApiDesignGuidelines\BasicPassSystemUriObjectsInsteadOfStrings.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicPropagateCancellationTokensWhenPossible.Fixer.vb" Link="ApiDesignGuidelines\BasicPropagateCancellationTokensWhenPossible.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicPropagateCancellationTokensWhenPossible.vb" Link="ApiDesignGuidelines\BasicPropagateCancellationTokensWhenPossible.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicPropertyNamesShouldNotMatchGetMethods.Fixer.vb" Link="ApiDesignGuidelines\BasicPropertyNamesShouldNotMatchGetMethods.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicStaticHolderTypes.Fixer.vb" Link="ApiDesignGuidelines\BasicStaticHolderTypes.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicTypeNamesShouldNotMatchNamespaces.Fixer.vb" Link="ApiDesignGuidelines\BasicTypeNamesShouldNotMatchNamespaces.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicTypesThatOwnDisposableFieldsShouldBeDisposable.vb" Link="ApiDesignGuidelines\BasicTypesThatOwnDisposableFieldsShouldBeDisposable.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicUseEventsWhereAppropriate.Fixer.vb" Link="ApiDesignGuidelines\BasicUseEventsWhereAppropriate.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicUseGenericEventHandlerInstances.Fixer.vb" Link="ApiDesignGuidelines\BasicUseGenericEventHandlerInstances.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicUseGenericEventHandlerInstances.vb" Link="ApiDesignGuidelines\BasicUseGenericEventHandlerInstances.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicUsePreferredTerms.Fixer.vb" Link="ApiDesignGuidelines\BasicUsePreferredTerms.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicUsePreferredTerms.vb" Link="ApiDesignGuidelines\BasicUsePreferredTerms.vb" />
+    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\VisualBasic\BasicUsePropertiesWhereAppropriate.Fixer.vb" Link="ApiDesignGuidelines\BasicUsePropertiesWhereAppropriate.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.Maintainability.Analyzers\VisualBasic\BasicAvoidUninstantiatedInternalClasses.Fixer.vb" Link="Maintainability\BasicAvoidUninstantiatedInternalClasses.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.Maintainability.Analyzers\VisualBasic\BasicRemoveUnusedLocals.Fixer.vb" Link="Maintainability\BasicRemoveUnusedLocals.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.Maintainability.Analyzers\VisualBasic\BasicRemoveUnusedLocals.vb" Link="Maintainability\BasicRemoveUnusedLocals.vb" />
+    <Compile Include="..\..\Microsoft.Maintainability.Analyzers\VisualBasic\BasicReviewUnusedParameters.Fixer.vb" Link="Maintainability\BasicReviewUnusedParameters.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.Maintainability.Analyzers\VisualBasic\BasicVariableNamesShouldNotMatchFieldNames.Fixer.vb" Link="Maintainability\BasicVariableNamesShouldNotMatchFieldNames.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.Maintainability.Analyzers\VisualBasic\BasicVariableNamesShouldNotMatchFieldNames.vb" Link="Maintainability\BasicVariableNamesShouldNotMatchFieldNames.vb" />
+    <Compile Include="..\..\Microsoft.QualityGuidelines.Analyzers\VisualBasic\BasicDisposeObjectsBeforeLosingScope.Fixer.vb" Link="QualityGuidelines\BasicDisposeObjectsBeforeLosingScope.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.QualityGuidelines.Analyzers\VisualBasic\BasicDisposeObjectsBeforeLosingScope.vb" Link="QualityGuidelines\BasicDisposeObjectsBeforeLosingScope.vb" />
+    <Compile Include="..\..\Microsoft.QualityGuidelines.Analyzers\VisualBasic\BasicMarkMembersAsStatic.Fixer.vb" Link="QualityGuidelines\BasicMarkMembersAsStatic.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.QualityGuidelines.Analyzers\VisualBasic\BasicPreferJaggedArraysOverMultidimensional.Fixer.vb" Link="QualityGuidelines\BasicPreferJaggedArraysOverMultidimensional.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.QualityGuidelines.Analyzers\VisualBasic\BasicRethrowToPreserveStackDetails.vb" Link="QualityGuidelines\BasicRethrowToPreserveStackDetails.vb" />
+    <Compile Include="..\..\Microsoft.QualityGuidelines.Analyzers\VisualBasic\BasicReviewVisibleEventHandlers.Fixer.vb" Link="QualityGuidelines\BasicReviewVisibleEventHandlers.Fixer.vb" />
+    <Compile Include="..\..\Microsoft.QualityGuidelines.Analyzers\VisualBasic\BasicReviewVisibleEventHandlers.vb" Link="QualityGuidelines\BasicReviewVisibleEventHandlers.vb" />
+    <Compile Include="..\..\Microsoft.QualityGuidelines.Analyzers\VisualBasic\BasicUseLiteralsWhereAppropriate.Fixer.vb" Link="QualityGuidelines\BasicUseLiteralsWhereAppropriate.Fixer.vb" />
+    <Compile Include="..\..\XmlDocumentationComments.Analyzers\VisualBasic\BasicAvoidUsingCrefTagsWithAPrefix.Fixer.vb" Link="Documentation\BasicAvoidUsingCrefTagsWithAPrefix.Fixer.vb" />
+    <Compile Include="..\..\XmlDocumentationComments.Analyzers\VisualBasic\BasicAvoidUsingCrefTagsWithAPrefix.vb" Link="Documentation\BasicAvoidUsingCrefTagsWithAPrefix.vb" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Microsoft.CodeQuality.Analyzers.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Microsoft.CodeQuality.VisualBasic.Analyzers.props">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ApiReview\" />
+    <Folder Include="ApiDesignGuidelines\" />
+    <Folder Include="Documentation\" />
+    <Folder Include="Maintainability\" />
+    <Folder Include="QualityGuidelines\" />
+  </ItemGroup>
+  <ImportGroup Label="Targets">
+    <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />
+  </ImportGroup>
+</Project>

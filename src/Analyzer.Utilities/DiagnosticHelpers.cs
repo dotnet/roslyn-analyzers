@@ -9,6 +9,13 @@ namespace Analyzer.Utilities
 {
     public static class DiagnosticHelpers
     {
+        public const DiagnosticSeverity DefaultDiagnosticSeverity =
+#if DEFAULT_SEVERITY_SUGGESTION
+            DiagnosticSeverity.Info;
+#else
+            DiagnosticHelpers.Warning;
+#endif
+
         public static bool TryConvertToUInt64(object value, SpecialType specialType, out ulong convertedValue)
         {
             bool success = false;

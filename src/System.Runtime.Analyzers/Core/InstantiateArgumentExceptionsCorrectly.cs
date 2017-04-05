@@ -1,13 +1,11 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-
+using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Semantics;
-
-using Analyzer.Utilities;
-using Analyzer.Utilities.Extensions;
 
 namespace System.Runtime.Analyzers
 {
@@ -31,7 +29,7 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableTitle,
                                                                              "{0}",
                                                                              DiagnosticCategory.Usage,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpUri,
@@ -54,10 +52,10 @@ namespace System.Runtime.Analyzers
                         return;
                     }
 
-                    compilationContext.RegisterOperationBlockStartAction(
+                    compilationContext.RegisterOperationBlockStartActionInternal(
                         operationBlockStartContext =>
                         {
-                            operationBlockStartContext.RegisterOperationAction(
+                            operationBlockStartContext.RegisterOperationActionInternal(
                                 operationContext => AnalyzeObjectCreation(
                                     operationContext,
                                     operationBlockStartContext.OwningSymbol,

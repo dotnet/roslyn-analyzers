@@ -33,7 +33,7 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Performance,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,     // TODO: add MSDN url
@@ -59,7 +59,7 @@ namespace System.Runtime.Analyzers
                 return;
             }
 
-            context.RegisterOperationAction(operationContext =>
+            context.RegisterOperationActionInternal(operationContext =>
             {
                 var invocation = (IInvocationExpression)operationContext.Operation;
                 if (!IsPossibleLinqInvocation(invocation))

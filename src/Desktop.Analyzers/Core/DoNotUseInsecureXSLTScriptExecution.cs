@@ -3,11 +3,10 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using Desktop.Analyzers.Helpers;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Desktop.Analyzers
 {
@@ -52,7 +51,7 @@ namespace Desktop.Analyzers
                                             SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.InsecureXsltScriptProcessingMessage)),
                                             messageFormat,
                                             DiagnosticCategory.Security,
-                                            DiagnosticSeverity.Warning,
+                                            DiagnosticHelpers.DefaultDiagnosticSeverity,
                                             isEnabledByDefault: true,
                                             description: description,
                                             helpLinkUri: helpLink,

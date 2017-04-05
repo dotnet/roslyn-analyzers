@@ -65,7 +65,7 @@ namespace Test.Utilities
             {
                 if (_locations == null)
                 {
-                    _locations = new DiagnosticResultLocation[] { };
+                    _locations = Array.Empty<DiagnosticResultLocation>();
                 }
 
                 return _locations;

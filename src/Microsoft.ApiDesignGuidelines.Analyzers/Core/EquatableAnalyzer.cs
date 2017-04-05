@@ -25,7 +25,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             s_localizableTitleImplementIEquatable,
             s_localizableMessageImplementIEquatable,
             DiagnosticCategory.Design,
-            DiagnosticSeverity.Warning,
+            DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: true,
             description: s_localizableDescriptionImplementIEquatable,
             helpLinkUri: "http://go.microsoft.com/fwlink/?LinkId=734907");
@@ -39,7 +39,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             s_localizableTitleOverridesObjectEquals,
             s_localizableMessageOverridesObjectEquals,
             DiagnosticCategory.Design,
-            DiagnosticSeverity.Warning,
+            DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: true,
             description: s_localizableDescriptionOverridesObjectEquals,
             helpLinkUri: "http://go.microsoft.com/fwlink/?LinkId=734909");

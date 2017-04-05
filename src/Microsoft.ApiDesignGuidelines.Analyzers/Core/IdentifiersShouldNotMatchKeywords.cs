@@ -29,7 +29,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         // Properties common to all DiagnosticDescriptors for this rule:
         private static readonly string s_category = DiagnosticCategory.Naming;
-        private const DiagnosticSeverity Severity = DiagnosticSeverity.Warning;
+        private const DiagnosticSeverity Severity = DiagnosticHelpers.DefaultDiagnosticSeverity;
         private const bool IsEnabledByDefault = true;
         private const string HelpLinkUri = "https://msdn.microsoft.com/en-us/library/ms182248.aspx";
         private static readonly string[] s_customTags = new[] { WellKnownDiagnosticTags.Telemetry };

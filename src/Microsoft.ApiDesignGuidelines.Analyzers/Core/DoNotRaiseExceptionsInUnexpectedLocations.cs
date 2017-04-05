@@ -32,7 +32,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessagePropertyGetter,
                                                                              DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: helpLinkUri,
@@ -41,7 +41,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageHasAllowedExceptions,
                                                                              DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: helpLinkUri,
@@ -50,7 +50,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageNoAllowedExceptions,
                                                                              DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: helpLinkUri,
@@ -75,7 +75,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 // Get a list of interesting categories of methods to analyze.
                 List<MethodCategory> methodCategories = GetMethodCategories(compilation);
 
-                compilationStartContext.RegisterOperationBlockStartAction(operationBlockContext =>
+                compilationStartContext.RegisterOperationBlockStartActionInternal(operationBlockContext =>
                 {
                     var methodSymbol = operationBlockContext.OwningSymbol as IMethodSymbol;
                     if (methodSymbol == null)
@@ -93,7 +93,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                     // For the interesting methods, register an operation action to catch all
                     // Throw statements.
-                    operationBlockContext.RegisterOperationAction(operationContext =>
+                    operationBlockContext.RegisterOperationActionInternal(operationContext =>
                     {
                         IThrowStatement operation = operationContext.Operation as IThrowStatement;
                         if (operation.ThrownObject?.Type is INamedTypeSymbol type && type.DerivesFrom(exceptionType))

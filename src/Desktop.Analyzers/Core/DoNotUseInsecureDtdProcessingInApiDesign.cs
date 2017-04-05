@@ -1,16 +1,15 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
-using System.Collections.Concurrent;
 using Analyzer.Utilities.Extensions;
 using Desktop.Analyzers.Helpers;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Desktop.Analyzers
 {
@@ -65,7 +64,7 @@ namespace Desktop.Analyzers
                                             SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(DesktopAnalyzersResources.InsecureDtdProcessingInApiDesign)),
                                             messageFormat,
                                             DiagnosticCategory.Security,
-                                            DiagnosticSeverity.Warning,
+                                            DiagnosticHelpers.DefaultDiagnosticSeverity,
                                             isEnabledByDefault: true,
                                             description: description,
                                             helpLinkUri: helpLink,

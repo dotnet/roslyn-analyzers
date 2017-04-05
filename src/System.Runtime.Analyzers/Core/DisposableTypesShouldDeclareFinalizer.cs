@@ -28,7 +28,7 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Usage,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182329.aspx",
@@ -53,7 +53,7 @@ namespace System.Runtime.Analyzers
                     );
                     var disposableType = WellKnownTypes.IDisposable(compilation);
 
-                    compilationStartAnalysisContext.RegisterOperationAction(
+                    compilationStartAnalysisContext.RegisterOperationActionInternal(
                         operationAnalysisContext =>
                         {
                             var assignment = (IAssignmentExpression)operationAnalysisContext.Operation;

@@ -27,7 +27,7 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Globalization,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb386080.aspx",
@@ -91,7 +91,7 @@ namespace System.Runtime.Analyzers
                 overloadMapBuilder.AddKeyValueIfNotNull(stringCompareParameterStringIntStringIntIntBool, stringCompareParameterStringIntStringIntIntComparison);
                 var overloadMap = overloadMapBuilder.ToImmutable();
 
-                csaContext.RegisterOperationAction(oaContext =>
+                csaContext.RegisterOperationActionInternal(oaContext =>
                 {
                     var invocationExpression = (IInvocationExpression)oaContext.Operation;
                     var targetMethod = invocationExpression.TargetMethod;

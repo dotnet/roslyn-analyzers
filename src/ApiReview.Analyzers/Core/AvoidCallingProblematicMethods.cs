@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 
@@ -31,7 +33,7 @@ namespace ApiReview.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageSystemGCCollect,
                                                                              DiagnosticCategory.Reliability,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,     // TODO: add MSDN url
@@ -40,7 +42,7 @@ namespace ApiReview.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageSystemThreadingThreadResume,
                                                                              DiagnosticCategory.Reliability,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,     // TODO: add MSDN url
@@ -49,7 +51,7 @@ namespace ApiReview.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageSystemThreadingThreadSuspend,
                                                                              DiagnosticCategory.Reliability,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,     // TODO: add MSDN url
@@ -58,7 +60,7 @@ namespace ApiReview.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageSystemTypeInvokeMember,
                                                                              DiagnosticCategory.Reliability,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,     // TODO: add MSDN url
@@ -67,7 +69,7 @@ namespace ApiReview.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageCoInitializeSecurity,
                                                                              DiagnosticCategory.Reliability,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,     // TODO: add MSDN url
@@ -76,7 +78,7 @@ namespace ApiReview.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageCoSetProxyBlanket,
                                                                              DiagnosticCategory.Reliability,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,     // TODO: add MSDN url
@@ -85,7 +87,7 @@ namespace ApiReview.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageSystemRuntimeInteropServicesSafeHandleDangerousGetHandle,
                                                                              DiagnosticCategory.Reliability,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,     // TODO: add MSDN url
@@ -94,7 +96,7 @@ namespace ApiReview.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageSystemReflectionAssemblyLoadFrom,
                                                                              DiagnosticCategory.Reliability,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,     // TODO: add MSDN url
@@ -103,7 +105,7 @@ namespace ApiReview.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageSystemReflectionAssemblyLoadFile,
                                                                              DiagnosticCategory.Reliability,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,     // TODO: add MSDN url
@@ -112,7 +114,7 @@ namespace ApiReview.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageSystemReflectionAssemblyLoadWithPartialName,
                                                                              DiagnosticCategory.Reliability,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,     // TODO: add MSDN url

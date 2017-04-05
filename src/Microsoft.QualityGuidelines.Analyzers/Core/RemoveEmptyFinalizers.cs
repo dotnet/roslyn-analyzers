@@ -22,7 +22,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                                                                          s_localizableTitle,
                                                                          s_localizableMessage,
                                                                          DiagnosticCategory.Performance,
-                                                                         DiagnosticSeverity.Warning,
+                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                          isEnabledByDefault: true,
                                                                          description: s_localizableDescription,
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/bb264476.aspx",
@@ -39,7 +39,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
             {
                 INamedTypeSymbol conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(compilationContext.Compilation);
 
-                compilationContext.RegisterOperationBlockAction(context =>
+                compilationContext.RegisterOperationBlockActionInternal(context =>
                 {
                     var method = context.OwningSymbol as IMethodSymbol;
                     if (method == null)

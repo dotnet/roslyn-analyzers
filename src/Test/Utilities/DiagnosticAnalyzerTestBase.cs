@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -111,7 +112,7 @@ namespace Test.Utilities
             return new DiagnosticResult
             {
                 Id = id,
-                Severity = DiagnosticSeverity.Warning,
+                Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
                 Message = message
             };
         }
@@ -164,7 +165,7 @@ namespace Test.Utilities
             {
                 Locations = new[] { location },
                 Id = id,
-                Severity = DiagnosticSeverity.Warning,
+                Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
                 Message = message
             };
         }
@@ -175,7 +176,7 @@ namespace Test.Utilities
             {
                 Locations = ParseResultLocations(path, locationStrings),
                 Id = id,
-                Severity = DiagnosticSeverity.Warning,
+                Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
                 Message = message
             };
         }
@@ -357,9 +358,11 @@ namespace Test.Utilities
                 .WithProjectCompilationOptions(projectId, options)
                 .GetProject(projectId);
 
+#if !USE_INTERNAL_IOPERATION_APIS
             // Enable IOperation Feature on the project
             var parseOptions = project.ParseOptions.WithFeatures(project.ParseOptions.Features.Concat(SpecializedCollections.SingletonEnumerable(KeyValuePair.Create("IOperation", "true"))));
             project = project.WithParseOptions(parseOptions);
+#endif
 
             if (addLanguageSpecificCodeAnalysisReference)
             {

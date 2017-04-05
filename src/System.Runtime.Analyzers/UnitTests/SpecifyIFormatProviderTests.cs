@@ -385,6 +385,32 @@ GetIFormatProviderUICultureRuleCSharpResultAt(13, 9, "UICultureAsIFormatProvider
                                                      "IFormatProviderOverloads.IFormatProviderReturningNonString(string, IFormatProvider, IFormatProvider)"));
         }
 
+
+        [Fact]
+        public void CA1305_AcceptNullForIFormatProvider_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Globalization;
+using System.Threading;
+
+public static class UICultureAsIFormatProviderReturningStringTest
+{
+    public static void TestMethod()
+    {
+        IFormatProviderOverloads.IFormatProviderReturningString(""1"", null);
+    }
+}
+
+internal static class IFormatProviderOverloads
+{
+    public static string IFormatProviderReturningString(string format, IFormatProvider provider)
+    {
+        return null;
+    }
+}");
+        }
+
         [Fact]
         public void CA1305_RuleException_NoDiagnostics_CSharp()
         {

@@ -165,6 +165,33 @@ public class CultureInfoTestClass2
         }
 
         [Fact]
+        public void CA1304_DoesNotRecommendObsoleteOverload_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Globalization;
+
+public class CultureInfoTestClass2
+{
+    public static void Method()
+    {
+        MethodOverloadHasJustCultureInfo();
+    }
+
+    public static void MethodOverloadHasJustCultureInfo()
+    {
+        MethodOverloadHasJustCultureInfo(CultureInfo.CurrentCulture);
+    }
+
+    [Obsolete]
+    public static void MethodOverloadHasJustCultureInfo(CultureInfo provider)
+    {
+        Console.WriteLine(string.Format(provider, """"));
+    }
+}");
+        }
+
+        [Fact]
         public void CA1304_TargetMethodIsGenericsAndNonGenerics_CSharp()
         {
             VerifyCSharp(@"

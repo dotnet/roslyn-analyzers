@@ -42,8 +42,7 @@ namespace Microsoft.QualityGuidelines.CSharp.Analyzers
 
                             // if (local.LocalKind != LocalKind.Catch) return; // TODO: expose LocalKind in the symbol model?
 
-                            var catchClause = syntax as CatchClauseSyntax;
-                            if (catchClause != null && catchClause.Declaration.Span.Contains(local.Locations[0].SourceSpan))
+                            if (syntax is CatchClauseSyntax catchClause && catchClause.Declaration.Span.Contains(local.Locations[0].SourceSpan))
                             {
                                 context.ReportDiagnostic(CreateDiagnostic(throwStatement));
                                 return;

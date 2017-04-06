@@ -1,77 +1,29 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>
   <ImportGroup Label="Settings">
     <Import Project="..\..\build\Targets\Analyzers.Settings.targets" />
   </ImportGroup>
   <PropertyGroup>
-    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
+    <AnalyzerProject>true</AnalyzerProject>
     <RootNamespace>Analyzer.Utilities</RootNamespace>
     <AssemblyName>Analyzer.Utilities</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
-    <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
-    <RestorePackages>true</RestorePackages>
     <SemanticVersion>$(SharedLibrarySemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(SharedLibraryPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-  </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
-    <None Include="app.config" />
-    <Content Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AnalyzerUtilitiesResources.Designer.cs">
+    <Compile Update="AnalyzerUtilitiesResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>AnalyzerUtilitiesResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="CommonAccessibilityUtilities.cs" />
-    <Compile Include="DiagnosticCategory.cs" />
-    <Compile Include="DiagnosticHelpers.cs" />
-    <Compile Include="DocumentChangeAction.cs" />
-    <Compile Include="Extensions\DiagnosticExtensions.cs" />
-    <Compile Include="Extensions\IDictionaryExtensions.cs" />
-    <Compile Include="Extensions\IEnumerableExtensions.cs" />
-    <Compile Include="Extensions\IEnumerableOfIMethodSymbolExtensions.cs" />
-    <Compile Include="Extensions\IMethodSymbolExtensions.cs" />
-    <Compile Include="Extensions\INamedTypeSymbolExtensions.cs" />
-    <Compile Include="Extensions\ISymbolExtensions.cs" />
-    <Compile Include="Extensions\ITypeSymbolExtensions.cs" />
-    <Compile Include="Extensions\IOperationExtensions.cs" />
-    <Compile Include="Extensions\ObjectExtensions.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Extensions\SyntaxNodeExtensions.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SymbolDisplayFormats.cs" />
-    <Compile Include="SyntaxGeneratorExtensions.cs" />
-    <Compile Include="Extensions\UriExtensions.cs" />
-    <Compile Include="WellKnownTypes.cs" />
-    <Compile Include="WordParser.cs" />
-    <Compile Include="WordParserOptions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AnalyzerUtilitiesResources.resx">
+    <EmbeddedResource Update="AnalyzerUtilitiesResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>AnalyzerUtilitiesResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Dependencies\CodeAnalysis\CodeAnalysis.csproj">
-      <Project>{434fa01f-b8cb-41f7-88d1-7906003f23bc}</Project>
-      <Name>CodeAnalysis</Name>
-    </ProjectReference>
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\build\Targets\Analyzers.Imports.targets" />

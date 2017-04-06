@@ -1,71 +1,24 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>
   <ImportGroup Label="Settings">
     <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
   </ImportGroup>
   <PropertyGroup>
-    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D0892ED4-DAA8-4CFF-ABA5-D506CADF1FD1}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <AnalyzerProject>true</AnalyzerProject>
     <AssemblyName>Desktop.VisualBasic.Analyzers</AssemblyName>
-    <ProjectTypeGuids>{14182A97-F7F0-4C62-8B27-98AA8AE2109A};{F184B08F-C81C-45F6-A57F-5ABD9991F28F}</ProjectTypeGuids>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
-    <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
-    <RestorePackages>true</RestorePackages>
     <SemanticVersion>$(DesktopAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(DesktopAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-  </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
-      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
-      <Name>Analyzer.Utilities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Core\Desktop.Analyzers.Core.csproj">
-      <Project>{FD5AAAFD-FEE5-438A-A710-EFC02510F922}</Project>
-      <Name>Desktop.Analyzers.Core</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj" />
+    <ProjectReference Include="..\Core\Desktop.Analyzers.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Desktop.VisualBasic.Analyzers.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="app.config" />
-    <Content Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="BasicDoNotUseInsecureDtdProcessingInApiDesign.vb" />
-    <Compile Include="BasicDoNotUseInsecureXSLTScriptExecution.vb" />
-    <Compile Include="BasicDoNotUseInsecureCryptographicAlgorithms.vb" />
-    <Compile Include="BasicSpecifyMessageBoxOptions.vb" />
-    <Compile Include="BasicSpecifyMessageBoxOptions.Fixer.vb" />
-    <Compile Include="BasicAvoidDuplicateAccelerators.vb" />
-    <Compile Include="BasicAvoidDuplicateAccelerators.Fixer.vb" />
-    <Compile Include="BasicSetLocaleForDataTypes.vb" />
-    <Compile Include="BasicSetLocaleForDataTypes.Fixer.vb" />
-    <Compile Include="BasicDoNotMarkServicedComponentsWithWebMethod.vb" />
-    <Compile Include="BasicDoNotMarkServicedComponentsWithWebMethod.Fixer.vb" />
-    <Compile Include="BasicMarkWindowsFormsEntryPointsWithStaThread.vb" />
-    <Compile Include="BasicMarkWindowsFormsEntryPointsWithStaThread.Fixer.vb" />
-    <Compile Include="BasicMarkAllNonSerializableFields.Fixer.vb" />
-    <Compile Include="BasicCallBaseClassMethodsOnISerializableTypes.vb" />
-    <Compile Include="BasicCallBaseClassMethodsOnISerializableTypes.Fixer.vb" />
-    <Compile Include="BasicImplementSerializationMethodsCorrectly.vb" />
-    <Compile Include="BasicImplementSerializationMethodsCorrectly.Fixer.vb" />
-    <Compile Include="BasicProvideDeserializationMethodsForOptionalFields.vb" />
-    <Compile Include="BasicProvideDeserializationMethodsForOptionalFields.Fixer.vb" />
-    <Compile Include="BasicImplementISerializableCorrectly.vb" />
-    <Compile Include="BasicImplementISerializableCorrectly.Fixer.vb" />
-    <Compile Include="BasicTypesShouldNotExtendCertainBaseTypes.Fixer.vb" />
-    <Compile Include="Helpers\SyntaxNodeHelper.vb" />
   </ItemGroup>
   <ItemGroup />
   <ImportGroup Label="Targets">

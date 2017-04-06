@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 
   <!-- This file is imported by all projects at the end of the project files -->
@@ -47,6 +47,10 @@
   <Target Name="GetBuildVersion" Outputs="$(BuildVersion)" />
   
   <!-- Update common properties -->
+  <PropertyGroup Condition="'$(TestProject)' == 'true'">
+    <NonShipping>true</NonShipping>
+  </PropertyGroup>
+
   <PropertyGroup>
     <OutputPath>$(OutDir)</OutputPath>
     <DocumentationFile Condition="'$(DocumentationFile)' == '' AND '$(NoDocumentationFile)' != 'true' AND '$(Nonshipping)' != 'true' AND '$(ProjectLanguage)' == 'VB' AND '$(AssemblyName)' != ''">$(AssemblyName).xml</DocumentationFile>
@@ -100,10 +104,17 @@
     </When>
   </Choose>
 
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.VisualBasic.targets" Condition="'$(ProjectLanguage)' == 'VB' And '$(TargetFrameworkIdentifier)' == '.NETPortable'"/>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" Condition="'$(ProjectLanguage)' == 'CSharp' And '$(TargetFrameworkIdentifier)' == '.NETPortable'"/>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" Condition="'$(ProjectLanguage)' == 'VB' And '$(TargetFrameworkIdentifier)' != '.NETPortable'" />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" Condition="'$(ProjectLanguage)' == 'CSharp' And '$(TargetFrameworkIdentifier)' != '.NETPortable'" />
+  <!-- VSIX projects generate a temp project file which doesnt have any extension and needs to be built as C# projects. The .NET SDK
+       just imporrts Microsoft.Common.CurrentVersion.targets. So set LanguageTargets to import CSharp.targets if the 
+       extension is unknown -->
+  <PropertyGroup Condition="'$(LanguageTargets)' == ''">
+    <LanguageTargets Condition="'$(MSBuildProjectExtension)' == '.csproj'">$(MSBuildToolsPath)\Microsoft.CSharp.targets</LanguageTargets>
+    <LanguageTargets Condition="'$(MSBuildProjectExtension)' == '.vbproj'">$(MSBuildToolsPath)\Microsoft.VisualBasic.targets</LanguageTargets>
+    <LanguageTargets Condition="'$(LanguageTargets)' == ''">$(MSBuildToolsPath)\Microsoft.CSharp.targets</LanguageTargets>
+  </PropertyGroup>
+  
+  <Import Project="References.targets" />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" Condition="'$(DotnetProject)' == 'true'" />
 
   <!-- Verify some build flags are correct -->
   <PropertyGroup>
@@ -136,7 +147,8 @@
           AfterTargets="CoreCompile"
           DependsOnTargets="FakeSign"
           Inputs="@(IntermediateAssembly)"
-          Outputs="@(IntermediateAssembly);$(PostCompileBinaryModificationSentinelFile)">
+          Outputs="@(IntermediateAssembly);$(PostCompileBinaryModificationSentinelFile)"
+          Condition="'$(DesignTimeBuild)' != 'true'">
 
     <!-- Write out a sentinel timestamp file to prevent unnecessary work in incremental builds. -->
     <Touch AlwaysCreate="true" Files="$(PostCompileBinaryModificationSentinelFile)" />
@@ -157,7 +169,7 @@
   </PropertyGroup>
 
   <Target Name="FakeSign"
-          Condition="'$(DelaySign)' == 'true' AND '$(ShouldSignBuild)' != 'true' AND ('$(Language)' == 'C#' OR '$(Language)' == 'VB')"
+          Condition="'$(DesignTimeBuild)' != 'true' AND '$(DelaySign)' == 'true' AND '$(ShouldSignBuild)' != 'true' AND ('$(Language)' == 'C#' OR '$(Language)' == 'VB')"
           Inputs="@(IntermediateAssembly)"
           Outputs="@(IntermediateAssembly);$(PostCompileBinaryModificationSentinelFile)">
     
@@ -180,14 +192,6 @@
 
   <!-- ====================================================================================
        
-         Generation of AssemblyVersion attributes from the BuildVersion property
-       
-       ==================================================================================== -->
-
-  <Import Project="GenerateAssemblyInfo.targets" Condition="'$(ProjectLanguage)' == 'CSharp' OR '$(ProjectLanguage)' == 'VB'" />
-  
-  <!-- ====================================================================================
-       
          Generation of InternalsVisibleTo attributes from the project
        
        ==================================================================================== -->
@@ -201,4 +205,11 @@
        ==================================================================================== -->
 
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != '' AND '$(ImportVSSDKTargets)' == 'true' AND '$(CIBuild)' == ''" />
+
+  <!-- The VSSDK immplements some targets which are run during design time builds per convention. 
+       If the Project is not a VSIX project and sets $CreateVSIXContainer=false these targets should be 
+       a no-op. However they dont check for that and that's a bug. To workaround, we override them
+       with empty targets and conditionally import these if CreateVSIXContainer is false.
+       Tracked by https://devdiv.visualstudio.com/DevDiv/_workitems?id=365685&fullScreen=false&_a=edit   -->
+  <Import Project="VSSDKDesignTimeBuildWorkaround.targets" Condition="'$(CreateVsixContainer)'=='false'" />
 </Project>

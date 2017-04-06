@@ -76,8 +76,7 @@ namespace Analyzer.Utilities
                     return false;
                 }
 
-                ulong convertedValue;
-                if (!TryConvertToUInt64(field.ConstantValue, enumType.EnumUnderlyingType.SpecialType, out convertedValue))
+                if (!TryConvertToUInt64(field.ConstantValue, enumType.EnumUnderlyingType.SpecialType, out ulong convertedValue))
                 {
                     return false;
                 }

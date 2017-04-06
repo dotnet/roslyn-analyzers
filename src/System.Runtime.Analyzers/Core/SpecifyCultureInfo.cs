@@ -43,6 +43,8 @@ namespace System.Runtime.Analyzers
 
             analysisContext.RegisterCompilationStartAction(csaContext =>
             {
+                var obsoleteAttributeType = WellKnownTypes.ObsoleteAttribute(csaContext.Compilation);
+
                 var cultureInfoType = csaContext.Compilation.GetTypeByMetadataName("System.Globalization.CultureInfo");
                 if (cultureInfoType != null)
                 {
@@ -55,19 +57,17 @@ namespace System.Runtime.Analyzers
                             return;
                         }
 
-                        IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType.GetMembers(targetMethod.Name).OfType<IMethodSymbol>();
+                        IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType.GetMembers(targetMethod.Name).OfType<IMethodSymbol>().WhereMethodDoesNotContainAttribute(obsoleteAttributeType).ToList();
                         if (methodsWithSameNameAsTargetMethod.Count() < 2)
                         {
                             return;
                         }
 
-                        var correctOverloads = methodsWithSameNameAsTargetMethod.GetMethodOverloadsWithDesiredParameterAtLeadingOrTrailing(targetMethod, cultureInfoType);
+                        var correctOverloads = methodsWithSameNameAsTargetMethod.GetMethodOverloadsWithDesiredParameterAtLeadingOrTrailing(targetMethod, cultureInfoType).ToList();
 
                         // If there are two matching overloads, one with CultureInfo as the first parameter and one with CultureInfo as the last parameter,
                         // report the diagnostic on the overload with CultureInfo as the last parameter, to match the behavior of FxCop.
-                        var correctOverload = correctOverloads
-                                              .Where(overload => overload.Parameters.Last().Type.Equals(cultureInfoType))
-                                              .FirstOrDefault() ?? correctOverloads.FirstOrDefault();
+                        var correctOverload = correctOverloads.FirstOrDefault(overload => overload.Parameters.Last().Type.Equals(cultureInfoType)) ?? correctOverloads.FirstOrDefault();
 
                         if (correctOverload != null)
                         {

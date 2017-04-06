@@ -105,8 +105,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 var eventSymbol = (IEventSymbol)context.Symbol;
                 if (eventSymbol != null)
                 {
-                    var eventType = eventSymbol.Type as INamedTypeSymbol;
-                    if (eventType != null &&
+                    if (eventSymbol.Type is INamedTypeSymbol eventType &&
                         eventSymbol.GetResultantVisibility() == SymbolVisibility.Public &&
                         !eventSymbol.IsOverride &&
                         !eventSymbol.IsImplementationOfAnyInterfaceMember() &&

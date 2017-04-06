@@ -196,8 +196,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             private void AnalyzeNamedTypeSymbol(SymbolAnalysisContext context)
             {
-                var type = context.Symbol as INamedTypeSymbol;
-                if (type != null && type.TypeKind == TypeKind.Class)
+                if (context.Symbol is INamedTypeSymbol type && type.TypeKind == TypeKind.Class)
                 {
                     bool implementsDisposableInBaseType = ImplementsDisposableInBaseType(type);
 
@@ -440,8 +439,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             /// </summary>
             private IMethodSymbol FindDisposeMethod(INamedTypeSymbol type)
             {
-                var disposeMethod = type.FindImplementationForInterfaceMember(_disposeInterfaceMethod) as IMethodSymbol;
-                if (disposeMethod != null && disposeMethod.ContainingType == type)
+                if (type.FindImplementationForInterfaceMember(_disposeInterfaceMethod) is IMethodSymbol disposeMethod && disposeMethod.ContainingType == type)
                 {
                     return disposeMethod;
                 }

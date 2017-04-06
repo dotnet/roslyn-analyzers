@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "NuGet.CommandLine" : "2.8.2"
-  },
-  "frameworks": {
-    ".NETPortable, Version=v4.5, Profile=Profile7": { }
-  }
-}

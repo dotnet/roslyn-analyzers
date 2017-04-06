@@ -13,7 +13,7 @@ if /I "%1" == "/release" set BuildConfiguration=Release&&shift&& goto :ParseArgu
 call :Usage && exit /b 1
 :DoneParsing
 
-call "%VS140COMNTOOLS%VsDevCmd.bat"
+call "%VS150COMNTOOLS%VsDevCmd.bat"
 
 msbuild /v:m /m %AnalyzersRoot%\BuildAndTest.proj /p:CIBuild=true /p:Configuration=%BuildConfiguration%
 

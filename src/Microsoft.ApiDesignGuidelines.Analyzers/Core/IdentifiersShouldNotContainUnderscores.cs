@@ -159,8 +159,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                     default:
                         {
-                            var methodSymbol = symbol as IMethodSymbol;
-                            if (methodSymbol != null)
+                            if (symbol is IMethodSymbol methodSymbol)
                             {
                                 if (methodSymbol.IsOperator())
                                 {
@@ -172,8 +171,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                 AnalyzeTypeParameters(symbolAnalysisContext, methodSymbol.TypeParameters);
                             }
 
-                            var propertySymbol = symbol as IPropertySymbol;
-                            if (propertySymbol != null)
+                            if (symbol is IPropertySymbol propertySymbol)
                             {
                                 AnalyzeParameters(symbolAnalysisContext, propertySymbol.Parameters);
                             }

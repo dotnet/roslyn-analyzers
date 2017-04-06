@@ -82,10 +82,12 @@ namespace System.Runtime.Analyzers
             return null;
         }
 
+        // TODO: Remove the below suppression once the following Roslyn bug is fixed: https://github.com/dotnet/roslyn/issues/8884
+#pragma warning disable CA1801
         private ITypeSymbol TryGetSystemTypeForNanConstantExpression(SyntaxNode expressionSyntax, SemanticModel model, INamedTypeSymbol systemSingleType, INamedTypeSymbol systemDoubleType)
+#pragma warning restore CA1801
         {
-            IFieldSymbol fieldSymbol = model.GetSymbolInfo(expressionSyntax).Symbol as IFieldSymbol;
-            if (fieldSymbol != null)
+            if (model.GetSymbolInfo(expressionSyntax).Symbol is IFieldSymbol fieldSymbol)
             {
                 if (fieldSymbol.Type.Equals(systemSingleType) || fieldSymbol.Type.Equals(systemDoubleType))
                 {

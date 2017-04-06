@@ -136,11 +136,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
 
             var typeSymbol = methodSymbol.ContainingType;
+            var methodSymbolName = methodSymbol.Name;
 
             originalDefinitionsBuilder.AddRange(typeSymbol.AllInterfaces
-                .SelectMany(m => m.GetMembers(methodSymbol.Name))
-                .Where(m => typeSymbol.FindImplementationForInterfaceMember(m) != null)
-                .Cast<IMethodSymbol>());
+                .SelectMany(m => m.GetMembers(methodSymbolName))
+                .OfType<IMethodSymbol>()
+                .Where(m => methodSymbol.Parameters.Length == m.Parameters.Length
+                            && methodSymbol.Arity == m.Arity
+                            && typeSymbol.FindImplementationForInterfaceMember(m) != null));
 
             return originalDefinitionsBuilder.ToImmutable();
         }

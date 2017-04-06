@@ -2036,9 +2036,8 @@ namespace MetaCompilation.Analyzers
 
                 Location getAccessorKeywordLocation = propertyDeclaration.AccessorList.Accessors.First().Keyword.GetLocation();
 
-                var throwStatement = statements.First() as ThrowStatementSyntax;
 
-                if (throwStatement != null)
+                if (statements.First() is ThrowStatementSyntax throwStatement)
                 {
                     ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessorKeywordLocation);
                     return false;
@@ -2243,8 +2242,7 @@ namespace MetaCompilation.Analyzers
                     bool foundRule = false;
                     foreach (string ruleName in ruleNames)
                     {
-                        var argExpression = arg.Expression as IdentifierNameSyntax;
-                        if (argExpression != null)
+                        if (arg.Expression is IdentifierNameSyntax argExpression)
                         {
                             if (argExpression.Identifier.Text == ruleName)
                             {

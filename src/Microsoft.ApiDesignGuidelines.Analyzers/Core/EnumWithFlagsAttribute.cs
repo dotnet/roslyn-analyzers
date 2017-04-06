@@ -91,15 +91,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 symbol.TypeKind == TypeKind.Enum &&
                 symbol.DeclaredAccessibility == Accessibility.Public)
             {
-                IList<ulong> memberValues;
-                if (EnumHelpers.TryGetEnumMemberValues(symbol, out memberValues))
+                if (EnumHelpers.TryGetEnumMemberValues(symbol, out IList<ulong> memberValues))
                 {
                     bool hasFlagsAttribute = symbol.GetAttributes().Any(a => a.AttributeClass == flagsAttributeType);
                     if (hasFlagsAttribute)
                     {
                         // Check "CA2217: Do not mark enums with FlagsAttribute"
-                        IEnumerable<ulong> missingValues;
-                        if (!ShouldBeFlags(memberValues, out missingValues))
+                        if (!ShouldBeFlags(memberValues, out IEnumerable<ulong> missingValues))
                         {
                             Debug.Assert(missingValues != null);
 

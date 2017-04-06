@@ -213,8 +213,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                     // If this is a method, and it's actually the getter or setter of a property,
                     // then don't complain. We'll complain about the property itself.
-                    var methodSymbol = memberSymbol as IMethodSymbol;
-                    if (methodSymbol != null && methodSymbol.IsPropertyAccessor())
+                    if (memberSymbol is IMethodSymbol methodSymbol && methodSymbol.IsPropertyAccessor())
                     {
                         return;
                     }

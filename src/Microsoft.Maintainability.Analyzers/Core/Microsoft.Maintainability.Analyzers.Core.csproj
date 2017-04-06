@@ -1,29 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>
   <ImportGroup Label="Settings">
     <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
   </ImportGroup>
   <PropertyGroup>
-    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{69F09F58-97C4-4070-9348-9A6A6D1C81F9}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <AnalyzerProject>true</AnalyzerProject>
     <RootNamespace>Microsoft.Maintainability.Analyzers</RootNamespace>
     <AssemblyName>Microsoft.Maintainability.Analyzers</AssemblyName>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
-    <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
-    <RestorePackages>true</RestorePackages>
+    <PackageId>Microsoft.Maintainability.Analyzers.Core</PackageId>
     <SemanticVersion>$(MicrosoftMaintainabilityAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(MicrosoftMaintainabilityAnalyzersPreReleaseVersion)</PreReleaseVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.Maintainability.CSharp.Analyzers" />
@@ -31,49 +19,26 @@
     <InternalsVisibleToTest Include="Microsoft.Maintainability.Analyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="install.ps1" />
-    <None Include="Microsoft.Maintainability.Analyzers.nuspec">
-      <SubType>Designer</SubType>
-    </None>
-    <Content Include="project.json" />
-    <None Include="ThirdPartyNotices.rtf" />
     <Content Include="Microsoft.Maintainability.Analyzers.props">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="MicrosoftMaintainabilityAnalyzersResources.Designer.cs">
+    <Compile Update="MicrosoftMaintainabilityAnalyzersResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>MicrosoftMaintainabilityAnalyzersResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="VariableNamesShouldNotMatchFieldNames.cs" />
-    <Compile Include="VariableNamesShouldNotMatchFieldNames.Fixer.cs" />
-    <Compile Include="ReviewUnusedParameters.cs" />
-    <Compile Include="ReviewUnusedParameters.Fixer.cs" />
-    <Compile Include="RemoveUnusedLocals.Fixer.cs" />
-    <Compile Include="DoNotIgnoreMethodResults.cs" />
-    <Compile Include="AvoidUninstantiatedInternalClasses.cs" />
-    <Compile Include="AvoidUninstantiatedInternalClasses.Fixer.cs" />
-    <Compile Include="AvoidUnusedPrivateFields.cs" />
-    <Compile Include="AvoidUnusedPrivateFields.Fixer.cs" />
-    <Compile Include="DiagnosticCategory.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="MicrosoftMaintainabilityAnalyzersResources.resx">
+    <EmbeddedResource Update="MicrosoftMaintainabilityAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MicrosoftMaintainabilityAnalyzersResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
-      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
-      <Name>Analyzer.Utilities</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

@@ -124,6 +124,40 @@ internal class EventsClass
         }
 
         [Fact]
+        public void TestIgnoreEventsThatAreInterfaceImplementations()
+        {
+            VerifyCSharp(@"
+using System;
+
+public delegate void BadEventHandler(object senderId, EventArgs e);
+
+public interface ITest
+{
+    event BadEventHandler TestEvent;
+}
+
+public class EventsClassImplicit : ITest
+{
+    public event BadEventHandler TestEvent;
+}
+
+public class EventsClassExplicit : ITest
+{
+    event BadEventHandler ITest.TestEvent
+    {
+        add
+        {
+        }
+        remove
+        {
+        }
+    }
+}
+",
+                GetCA1003CSharpResultAt(8, 27));
+        }
+
+        [Fact]
         public void TestOverrideEvent()
         {
             VerifyCSharp(@"

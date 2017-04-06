@@ -109,6 +109,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     if (eventType != null &&
                         eventSymbol.GetResultantVisibility() == SymbolVisibility.Public &&
                         !eventSymbol.IsOverride &&
+                        !eventSymbol.IsImplementationOfAnyInterfaceMember() &&
                         !HasComSourceInterfacesAttribute(eventSymbol.ContainingType) &&
                         IsViolatingEventHandler(eventType))
                     {

@@ -412,6 +412,37 @@ internal static class IFormatProviderOverloads
         }
 
         [Fact]
+        public void CA1305_DoesNotRecommendObsoleteOverload_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Globalization;
+using System.Threading;
+
+public static class TestClass
+{
+    public static void TestMethod()
+    {
+        IFormatProviderOverloads.TrailingObsoleteIFormatProvider(""1"");
+    }
+}
+
+internal static class IFormatProviderOverloads
+{
+    public static string TrailingObsoleteIFormatProvider(string format)
+    {
+        return null;
+    }
+
+    [Obsolete]
+    public static string TrailingObsoleteIFormatProvider(string format, IFormatProvider provider)
+    {
+        return null;
+    }
+}");
+        }
+
+        [Fact]
         public void CA1305_RuleException_NoDiagnostics_CSharp()
         {
             VerifyCSharp(@"

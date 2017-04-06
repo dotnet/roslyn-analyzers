@@ -119,6 +119,8 @@ namespace System.Runtime.Analyzers
 
                 var computerInfoType = csaContext.Compilation.GetTypeByMetadataName("Microsoft.VisualBasic.Devices.ComputerInfo");
                 var installedUICulturePropertyOfComputerInfoType = computerInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().SingleOrDefault();
+                
+                var obsoleteAttributeType = WellKnownTypes.ObsoleteAttribute(csaContext.Compilation);
                 #endregion
 
                 csaContext.RegisterOperationAction(oaContext =>
@@ -157,16 +159,15 @@ namespace System.Runtime.Analyzers
                     #endregion
 
                     #region "IFormatProviderAlternateStringRule & IFormatProviderAlternateRule"
-                    IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType.GetMembers(targetMethod.Name).OfType<IMethodSymbol>();
+
+                    IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType.GetMembers(targetMethod.Name).OfType<IMethodSymbol>().WhereMethodDoesNotContainAttribute(obsoleteAttributeType).ToList();
                     if (methodsWithSameNameAsTargetMethod.Count() > 1)
                     {
-                        var correctOverloads = methodsWithSameNameAsTargetMethod.GetMethodOverloadsWithDesiredParameterAtLeadingOrTrailing(targetMethod, iformatProviderType);
+                        var correctOverloads = methodsWithSameNameAsTargetMethod.GetMethodOverloadsWithDesiredParameterAtLeadingOrTrailing(targetMethod, iformatProviderType).ToList();
                         
                         // If there are two matching overloads, one with CultureInfo as the first parameter and one with CultureInfo as the last parameter,
                         // report the diagnostic on the overload with CultureInfo as the last parameter, to match the behavior of FxCop.
-                        var correctOverload = correctOverloads
-                                              .Where(overload => overload.Parameters.Last().Type.Equals(iformatProviderType))
-                                              .FirstOrDefault() ?? correctOverloads.FirstOrDefault();
+                        var correctOverload = correctOverloads.FirstOrDefault(overload => overload.Parameters.Last().Type.Equals(iformatProviderType)) ?? correctOverloads.FirstOrDefault();
 
                         // Sample message for IFormatProviderAlternateRule: Because the behavior of Convert.ToInt64(string) could vary based on the current user's locale settings,
                         // replace this call in IFormatProviderStringTest.TestMethod() with a call to Convert.ToInt64(string, IFormatProvider).

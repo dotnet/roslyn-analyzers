@@ -19,6 +19,37 @@ namespace Microsoft.QualityGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
+        public void TestCSharp_ClassesThatCannotBeSubClassedOutsideThisAssembly_HasNoDiagnostic()
+        {
+            VerifyCSharp(@"
+internal interface IFace
+{
+    void M();
+}
+
+// Declaring type only accessible to this assembly
+internal class C : IFace
+{
+    public virtual void M()
+    {
+    }
+}
+
+// Declaring type can only be instantiated in this assembly
+public class D : IFace
+{
+    internal D()
+    {
+    }
+
+    public virtual void M()
+    {
+    }
+}
+");
+        }
+
+        [Fact]
         public void TestCSharp_VirtualImplicit_HasDiagnostic()
         {
             VerifyCSharp(@"
@@ -181,10 +212,10 @@ public class B
     }
 }
 
-class C : B, IFace
+public class C : B, IFace
 {
 }
-", GetCSharpResultAt(14, 7, SealMethodsThatSatisfyPrivateInterfacesAnalyzer.Rule));
+", GetCSharpResultAt(14, 14, SealMethodsThatSatisfyPrivateInterfacesAnalyzer.Rule));
         }
 
         [Fact]

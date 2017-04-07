@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -39,13 +41,15 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
             analysisContext.RegisterSymbolAction(CheckTypes, SymbolKind.NamedType);
         }
-
+        
         private static void CheckTypes(SymbolAnalysisContext context)
         {
-            var type = (ITypeSymbol)context.Symbol;
+            var type = (INamedTypeSymbol)context.Symbol;
 
-            // only classes can have overridable members
-            if (type.TypeKind == TypeKind.Class)
+            // Only classes can have overridable members, and furthermore, only consider classes that can be subclassed outside this assembly.
+            if (type.TypeKind == TypeKind.Class &&
+                type.GetResultantVisibility().IsAtLeastAsVisibleAs(SymbolVisibility.Public) &&
+                (!type.Constructors.Any() || type.Constructors.Any(c => c.GetResultantVisibility().IsAtLeastAsVisibleAs(SymbolVisibility.Public))))
             {
                 // look for implementations of interfaces members declared on this type
                 foreach (var iface in type.Interfaces)
@@ -65,7 +69,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                                 {
                                     context.ReportDiagnostic(Diagnostic.Create(Rule, member.Locations[0]));
                                 }
-                                else 
+                                else
                                 {
                                     // we have a member and its not declared on this type?  
                                     // must be implicit implementation of base member

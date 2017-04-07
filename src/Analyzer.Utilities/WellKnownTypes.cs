@@ -335,5 +335,10 @@ namespace Analyzer.Utilities
         {
             return compilation.GetTypeByMetadataName("System.Runtime.Serialization.DataMemberAttribute");
         }
+
+        public static INamedTypeSymbol ObsoleteAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.ObsoleteAttribute");
+        }
     }
 }

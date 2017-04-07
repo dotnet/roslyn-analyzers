@@ -17,11 +17,16 @@ def branch = GithubBranchName
                 // Indicates that a batch script should be run with the build string (see above)
                 // Also available is:
                 // shell (for unix scripting)
-                batchFile("cibuild.cmd /${configuration.toLowerCase()}")
+                batchFile("""
+SET VS150COMNTOOLS=%ProgramFiles(x86)%\\Microsoft Visual Studio\\2017\\Enterprise\\Common7\\Tools\\
+SET VSSDK150Install=%ProgramFiles(x86)%\\Microsoft Visual Studio\\2017\\Enterprise\\VSSDK\\
+SET VSSDKInstall=%ProgramFiles(x86)%\\Microsoft Visual Studio\\2017\\Enterprise\\VSSDK\\
+
+cibuild.cmd /${configuration.toLowerCase()}""")
             }
         }
         
-        Utilities.setMachineAffinity(newJob, 'Windows_NT', 'latest-or-auto')
+        Utilities.setMachineAffinity(newJob, 'Windows_NT', 'latest-or-auto-dev15-0')
         Utilities.standardJobSetup(newJob, project, isPR, "*/${branch}")
         Utilities.addXUnitDotNETResults(newJob, "**/*TestResults.xml")
         if (isPR) {

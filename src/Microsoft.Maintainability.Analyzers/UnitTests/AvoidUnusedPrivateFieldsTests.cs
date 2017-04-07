@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
@@ -18,8 +19,46 @@ namespace Microsoft.Maintainability.Analyzers.UnitTests
             return new AvoidUnusedPrivateFieldsAnalyzer();
         }
 
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/933")]
+        public void CA1823_CSharp_AttributeUsage_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+[System.Obsolete(Message)]
+public class Class
+{
+    private const string Message = ""Test"";
+}
+");
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/933")]
+        public void CA1823_CSharp_InterpolatedStringUsage_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public class Class
+{
+    private const string Message = ""Test"";
+    public string PublicMessage = $""Test: {Message}"";
+}
+");
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/933")]
+        public void CA1823_CSharp_CollectionInitializerUsage_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+
+public class Class
+{
+    private const string Message = ""Test"";
+    public List<string> PublicMessage = new List<string> { Message };
+}
+");
+        }
+
         [Fact]
-        public void CA1823_CSharp_DiagnosticCases()
+        public void CA1823_CSharp_SimpleUsages_DiagnosticCases()
         {
             VerifyCSharp(@"
 public class Class

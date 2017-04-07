@@ -1,42 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>
   <ImportGroup Label="Settings">
     <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
   </ImportGroup>
   <PropertyGroup>
-    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9C86C9DB-6A03-487A-8A38-9D09DB7DFDFB}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <AnalyzerProject>true</AnalyzerProject>
     <RootNamespace>System.Security.Cryptography.Hashing.Algorithms.CSharp.Analyzers</RootNamespace>
     <AssemblyName>System.Security.Cryptography.Hashing.Algorithms.CSharp.Analyzers</AssemblyName>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
-    <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
-    <RestorePackages>true</RestorePackages>
     <SemanticVersion>$(SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-  </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\System.Security.Cryptography.Hashing.Algorithms.Analyzers.Core.csproj">
-      <Project>{DAA5B1A4-9C03-4F0E-AC61-AAD0F96457F8}</Project>
-      <Name>System.Security.Cryptography.Hashing.Algorithms.Analyzers.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <Content Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="CSharpDoNotUseInsecureCryptographicAlgorithms.cs" />
+    <ProjectReference Include="..\Core\System.Security.Cryptography.Hashing.Algorithms.Analyzers.Core.csproj" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

@@ -204,11 +204,9 @@ namespace Test.Utilities
 
                 string path = tokens[0] == "" ? defaultPath : tokens[0];
 
-                int line;
-                Assert.True(int.TryParse(tokens[1], out line) && line >= -1, "Line must be >= -1 in location string: " + str);
+                Assert.True(int.TryParse(tokens[1], out int line) && line >= -1, "Line must be >= -1 in location string: " + str);
 
-                int column;
-                Assert.True(int.TryParse(tokens[2], out column) && line >= -1, "Column must be >= -1 in location string: " + str);
+                Assert.True(int.TryParse(tokens[2], out int column) && line >= -1, "Column must be >= -1 in location string: " + str);
 
                 builder.Add(new DiagnosticResultLocation(path, line, column));
             }
@@ -298,10 +296,7 @@ namespace Test.Utilities
 
             for (int i = 0; i < sources.Length; i++)
             {
-                string source;
-                int? pos;
-                TextSpan? span;
-                MarkupTestFile.GetPositionAndSpan(sources[i].Source, out source, out pos, out span);
+                MarkupTestFile.GetPositionAndSpan(sources[i].Source, out string source, out int? pos, out TextSpan? span);
 
                 sources[i].Source = source;
                 spans[i] = span;
@@ -406,7 +401,7 @@ namespace Test.Utilities
         {
             if (analyzerOpt == null)
             {
-                return SpecializedCollections.EmptyArray<Diagnostic>();
+                return Array.Empty<Diagnostic>();
             }
 
             var projects = new HashSet<Project>();

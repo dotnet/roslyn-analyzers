@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
@@ -65,8 +66,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                             }
 
                             // if the diagnostic identified a type then it is the containing type of the member
-                            var type = symbol as INamedTypeSymbol;
-                            if (type != null)
+                            if (symbol is INamedTypeSymbol type)
                             {
                                 // cannot make abstract type sealed because they cannot be constructed
                                 if (!type.IsAbstract)
@@ -117,7 +117,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
                     if (this.Symbol.IsAbstract && !_newModifiers.IsAbstract && this.Symbol.Kind == SymbolKind.Method)
                     {
-                        e.ReplaceNode(d, (_d, g) => g.WithStatements(_d, new SyntaxNode[] { }));
+                        e.ReplaceNode(d, (_d, g) => g.WithStatements(_d, Array.Empty<SyntaxNode>()));
                     }
                 }
                 , cancellationToken).ConfigureAwait(false);

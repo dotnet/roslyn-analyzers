@@ -711,8 +711,7 @@ namespace MetaCompilation.Analyzers
             if (declaration.Body.Statements[2].Kind() == SyntaxKind.IfStatement)
             {
                 var ifDeclaration = declaration.Body.Statements[2] as IfStatementSyntax;
-                var ifBlock = ifDeclaration.Statement as BlockSyntax;
-                if (ifBlock != null)
+                if (ifDeclaration.Statement is BlockSyntax ifBlock)
                 {
                     ifBlockStatements = ifBlock.Statements;
                 }
@@ -771,12 +770,10 @@ namespace MetaCompilation.Analyzers
             if (ifStatement != null)
             {
                 var ifDeclaration = ifStatement.Statement as BlockSyntax;
-                var ifBlockStatement = ifDeclaration.Statements[0] as IfStatementSyntax;
 
-                if (ifBlockStatement != null)
+                if (ifDeclaration.Statements[0] is IfStatementSyntax ifBlockStatement)
                 {
-                    var ifBlock = ifBlockStatement.Statement as BlockSyntax;
-                    if (ifBlock != null)
+                    if (ifBlockStatement.Statement is BlockSyntax ifBlock)
                     {
                         ifBlockStatements = ifBlock.Statements;
                     }
@@ -846,8 +843,7 @@ namespace MetaCompilation.Analyzers
             else
             {
                 ifStatement = declaration.Parent.Parent as IfStatementSyntax;
-                var ifBlock = declaration.Statement as BlockSyntax;
-                if (ifBlock != null)
+                if (declaration.Statement is BlockSyntax ifBlock)
                 {
                     ifBlockStatements = ifBlock.Statements;
                 }
@@ -893,8 +889,7 @@ namespace MetaCompilation.Analyzers
             else
             {
                 ifStatement = declaration.Parent.Parent as IfStatementSyntax;
-                var ifBlock = declaration.Statement as BlockSyntax;
-                if (ifBlock != null)
+                if (declaration.Statement is BlockSyntax ifBlock)
                 {
                     ifBlockStatements = ifBlock.Statements;
                 }
@@ -1422,8 +1417,7 @@ namespace MetaCompilation.Analyzers
                     continue;
                 }
 
-                var fieldType = fieldDeclaration.Declaration.Type as IdentifierNameSyntax;
-                if (fieldType != null && fieldType.Identifier.Text == "DiagnosticDescriptor")
+                if (fieldDeclaration.Declaration.Type is IdentifierNameSyntax fieldType && fieldType.Identifier.Text == "DiagnosticDescriptor")
                 {
                     rule = fieldDeclaration;
 
@@ -1883,8 +1877,7 @@ namespace MetaCompilation.Analyzers
                         if (args.Count > 0)
                         {
                             ArgumentSyntax nameArg = args[0];
-                            var name = nameArg.Expression as IdentifierNameSyntax;
-                            if (name != null)
+                            if (nameArg.Expression is IdentifierNameSyntax name)
                             {
                                 methodName = name.Identifier.Text;
                             }
@@ -2243,8 +2236,7 @@ namespace MetaCompilation.Analyzers
                 }
 
                 ParameterSyntax contextParameter = parameters[0];
-                var parameterType = contextParameter.Type as IdentifierNameSyntax;
-                if (parameterType != null && parameterType.Identifier.Text != "SyntaxNodeAnalysisContext")
+                if (contextParameter.Type is IdentifierNameSyntax parameterType && parameterType.Identifier.Text != "SyntaxNodeAnalysisContext")
                 {
                     return null;
                 }
@@ -2404,8 +2396,7 @@ namespace MetaCompilation.Analyzers
                         SeparatedSyntaxList<ParameterSyntax> parameters = parameterList.Parameters;
                         if (parameters.Count > 0)
                         {
-                            var parameterType = parameters.First().Type as IdentifierNameSyntax;
-                            if (parameterType != null && parameterType.Identifier.Text == "SyntaxNodeAnalysisContext")
+                            if (parameters.First().Type is IdentifierNameSyntax parameterType && parameterType.Identifier.Text == "SyntaxNodeAnalysisContext")
                             {
                                 return method.Identifier.Text;
                             }
@@ -2435,8 +2426,7 @@ namespace MetaCompilation.Analyzers
                 IEnumerable<FieldDeclarationSyntax> fieldMembers = declaration.Members.OfType<FieldDeclarationSyntax>();
                 foreach (FieldDeclarationSyntax fieldSyntax in fieldMembers)
                 {
-                    var fieldType = fieldSyntax.Declaration.Type as IdentifierNameSyntax;
-                    if (fieldType != null && fieldType.Identifier.Text == "DiagnosticDescriptor")
+                    if (fieldSyntax.Declaration.Type is IdentifierNameSyntax fieldType && fieldType.Identifier.Text == "DiagnosticDescriptor")
                     {
                         string ruleName = fieldSyntax.Declaration.Variables[0].Identifier.Text;
                         ruleNames.Add(ruleName);

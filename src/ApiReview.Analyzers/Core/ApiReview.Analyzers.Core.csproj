@@ -1,29 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>
   <ImportGroup Label="Settings">
     <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
   </ImportGroup>
   <PropertyGroup>
-    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{46A05D87-29E2-4CC9-AC07-B0AF9ADE74EC}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <AnalyzerProject>true</AnalyzerProject>
     <RootNamespace>ApiReview.Analyzers</RootNamespace>
     <AssemblyName>ApiReview.Analyzers</AssemblyName>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
-    <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
-    <RestorePackages>true</RestorePackages>
+    <PackageId>ApiReview.Analyzers.Core</PackageId>
     <SemanticVersion>$(ApiReviewAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(ApiReviewAnalyzersPreReleaseVersion)</PreReleaseVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="ApiReview.CSharp.Analyzers" />
@@ -31,39 +19,23 @@
     <InternalsVisibleToTest Include="ApiReview.Analyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="install.ps1" />
-    <None Include="ApiReview.Analyzers.nuspec" />
-    <Content Include="project.json" />
-    <None Include="ThirdPartyNotices.rtf" />
     <Content Include="ApiReview.Analyzers.props">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ApiReviewAnalyzersResources.Designer.cs">
+    <Compile Update="ApiReviewAnalyzersResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ApiReviewAnalyzersResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="AvoidCallingProblematicMethods.cs" />
-    <Compile Include="AvoidCallingProblematicMethods.Fixer.cs" />
-    <Compile Include="DiagnosticCategory.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ApiReviewAnalyzersResources.resx">
+    <EmbeddedResource Update="ApiReviewAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ApiReviewAnalyzersResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Dependencies\CodeAnalysis\CodeAnalysis.csproj">
-      <Project>{434fa01f-b8cb-41f7-88d1-7906003f23bc}</Project>
-      <Name>CodeAnalysis</Name>
-    </ProjectReference>
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

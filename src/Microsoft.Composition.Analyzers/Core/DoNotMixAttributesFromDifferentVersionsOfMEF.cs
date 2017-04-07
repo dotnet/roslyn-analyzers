@@ -100,9 +100,8 @@ namespace Microsoft.Composition.Analyzers
                 }
 
                 // if it's a constructor, we should also check parameters since they may have [ImportMany]
-                var methodSymbol = member as IMethodSymbol;
 
-                if (methodSymbol != null && methodSymbol.MethodKind == MethodKind.Constructor)
+                if (member is IMethodSymbol methodSymbol && methodSymbol.MethodKind == MethodKind.Constructor)
                 {
                     foreach (var parameter in methodSymbol.Parameters)
                     {

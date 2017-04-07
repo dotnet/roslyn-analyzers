@@ -7,6 +7,19 @@ namespace Analyzer.Utilities.Extensions
     public static class IEnumerableOfIMethodSymbolExtensions
     {
         /// <summary>
+        /// Excludes <paramref name="methods"/> that have an attribute that precisely matches <paramref name="attributeType"/>.
+        /// </summary>
+        /// <param name="methods">List of <see cref="IMethodSymbol"/> to filter.</param>
+        /// <param name="attributeType">The <see cref="INamedTypeSymbol"/> of the attribute class to search.</param>
+        /// <returns>A filtered list of methods.</returns>
+        public static IEnumerable<IMethodSymbol> WhereMethodDoesNotContainAttribute(
+            this IEnumerable<IMethodSymbol> methods,
+            INamedTypeSymbol attributeType)
+        {
+            return methods.Where(m => !m.GetAttributes().Any(a => a.AttributeClass.Equals(attributeType)));
+        }
+
+        /// <summary>
         /// Returns a list of method symbols from a given list of the method symbols, which has its parameter type as
         /// expectedParameterType as its first parameter or the last parameter in addition to matching all the other 
         /// parameter types of the selectedOverload method symbol

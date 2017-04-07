@@ -48,12 +48,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         return;
                     }
 
-                    var methodSymbol = symbol as IMethodSymbol;
-                    if (methodSymbol != null &&
-                        (methodSymbol.IsAccessorMethod() ||
-                         (methodSymbol.MethodKind == MethodKind.UserDefinedOperator &&
-                          (methodSymbol.Name == WellKnownMemberNames.EqualityOperatorName ||
-                           methodSymbol.Name == WellKnownMemberNames.InequalityOperatorName))))
+                    if (symbol is IMethodSymbol methodSymbol &&
+    (methodSymbol.IsAccessorMethod() ||
+     (methodSymbol.MethodKind == MethodKind.UserDefinedOperator &&
+      (methodSymbol.Name == WellKnownMemberNames.EqualityOperatorName ||
+       methodSymbol.Name == WellKnownMemberNames.InequalityOperatorName))))
                     {
                         return;
                     }

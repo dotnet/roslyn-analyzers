@@ -73,8 +73,7 @@ namespace Microsoft.Maintainability.Analyzers
                 startContext.RegisterOperationAction(context =>
                 {
                     IObjectCreationExpression expr = (IObjectCreationExpression)context.Operation;
-                    var namedType = expr.Type as INamedTypeSymbol;
-                    if (namedType != null)
+                    if (expr.Type is INamedTypeSymbol namedType)
                     {
                         instantiatedTypes.Add(namedType);
                     }

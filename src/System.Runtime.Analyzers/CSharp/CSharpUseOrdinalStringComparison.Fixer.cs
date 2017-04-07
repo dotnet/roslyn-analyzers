@@ -24,8 +24,7 @@ namespace System.Runtime.CSharp.Analyzers
 
         protected override Task<Document> FixArgument(Document document, SyntaxGenerator generator, SyntaxNode root, SyntaxNode argument)
         {
-            var memberAccess = ((ArgumentSyntax)argument)?.Expression as MemberAccessExpressionSyntax;
-            if (memberAccess != null)
+            if (((ArgumentSyntax)argument)?.Expression is MemberAccessExpressionSyntax memberAccess)
             {
                 // preserve the "IgnoreCase" suffix if present
                 bool isIgnoreCase = memberAccess.Name.GetText().ToString().EndsWith(UseOrdinalStringComparisonAnalyzer.IgnoreCaseText, StringComparison.Ordinal);
@@ -51,8 +50,7 @@ namespace System.Runtime.CSharp.Analyzers
             if (invokeParent != null)
             {
                 SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-                var methodSymbol = model.GetSymbolInfo((IdentifierNameSyntax)identifier, cancellationToken).Symbol as IMethodSymbol;
-                if (methodSymbol != null && CanAddStringComparison(methodSymbol, model))
+                if (model.GetSymbolInfo((IdentifierNameSyntax)identifier, cancellationToken).Symbol is IMethodSymbol methodSymbol && CanAddStringComparison(methodSymbol, model))
                 {
                     // append a new StringComparison.Ordinal argument
                     SyntaxNode newArg = generator.Argument(CreateOrdinalMemberAccess(generator, model))

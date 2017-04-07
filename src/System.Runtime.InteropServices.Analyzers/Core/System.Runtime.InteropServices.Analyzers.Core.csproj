@@ -1,29 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>
   <ImportGroup Label="Settings">
     <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
   </ImportGroup>
   <PropertyGroup>
-    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B806A3D0-BF66-491B-8845-A4E02050FD1E}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <AnalyzerProject>true</AnalyzerProject>
     <RootNamespace>System.Runtime.InteropServices.Analyzers</RootNamespace>
     <AssemblyName>System.Runtime.InteropServices.Analyzers</AssemblyName>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
-    <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
-    <RestorePackages>true</RestorePackages>
+    <PackageId>System.Runtime.InteropServices.Analyzers.Core</PackageId>
     <SemanticVersion>$(SystemRuntimeInteropServicesAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(SystemRuntimeInteropServicesAnalyzersPreReleaseVersion)</PreReleaseVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="System.Runtime.InteropServices.CSharp.Analyzers" />
@@ -31,49 +19,27 @@
     <InternalsVisibleToTest Include="System.Runtime.InteropServices.Analyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="install.ps1" />
-    <Content Include="project.json" />
-    <None Include="System.Runtime.InteropServices.Analyzers.nuspec" />
-    <None Include="ThirdPartyNotices.rtf" />
     <Content Include="System.Runtime.InteropServices.Analyzers.props">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PInvokeDiagnosticAnalyzer.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SystemRuntimeInteropServicesAnalyzersResources.Designer.cs">
+    <Compile Update="SystemRuntimeInteropServicesAnalyzersResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SystemRuntimeInteropServicesAnalyzersResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SpecifyMarshalingForPInvokeStringArguments.Fixer.cs" />
-    <Compile Include="UseManagedEquivalentsOfWin32Api.cs" />
-    <Compile Include="UseManagedEquivalentsOfWin32Api.Fixer.cs" />
-    <Compile Include="AlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttribute.cs" />
-    <Compile Include="DiagnosticCategory.cs" />
-    <Compile Include="MarkBooleanPInvokeArgumentsWithMarshalAs.cs" />
-    <Compile Include="MarkBooleanPInvokeArgumentsWithMarshalAs.Fixer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SystemRuntimeInteropServicesAnalyzersResources.resx">
+    <EmbeddedResource Update="SystemRuntimeInteropServicesAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SystemRuntimeInteropServicesAnalyzersResources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
-      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
-      <Name>Analyzer.Utilities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Dependencies\CodeAnalysis\CodeAnalysis.csproj">
-      <Project>{434fa01f-b8cb-41f7-88d1-7906003f23bc}</Project>
-      <Name>CodeAnalysis</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

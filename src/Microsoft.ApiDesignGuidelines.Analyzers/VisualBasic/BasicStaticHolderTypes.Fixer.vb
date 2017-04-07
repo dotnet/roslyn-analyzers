@@ -26,8 +26,7 @@ Namespace Microsoft.ApiDesignGuidelines.VisualBasic.Analyzers
                 ' This is tracked by https://github.com/dotnet/roslyn/issues/3546.
                 '
                 ' Return ImmutableArray.Create(CA1052DiagnosticAnalyzer.DiagnosticId)
-                Dim diagnosticIDs() As String = {}
-                Return ImmutableArray.Create(diagnosticIDs)
+                Return ImmutableArray(Of String).Empty
             End Get
         End Property
 

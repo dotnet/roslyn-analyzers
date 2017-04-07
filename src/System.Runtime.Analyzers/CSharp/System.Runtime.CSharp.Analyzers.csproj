@@ -1,69 +1,25 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>
   <ImportGroup Label="Settings">
     <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
   </ImportGroup>
   <PropertyGroup>
-    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B7E1CE44-7AA9-4B1F-8945-A7168D4CD74B}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <AnalyzerProject>true</AnalyzerProject>
     <RootNamespace>System.Runtime.CSharp.Analyzers</RootNamespace>
     <AssemblyName>System.Runtime.CSharp.Analyzers</AssemblyName>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
-    <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
-    <RestorePackages>true</RestorePackages>
     <SemanticVersion>$(SystemRuntimeAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(SystemRuntimeAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-  </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj">
-      <Project>{f8502e24-5eb1-4cdc-8887-1a0cc8008d96}</Project>
-      <Name>Analyzer.Utilities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Core\System.Runtime.Analyzers.Core.csproj">
-      <Project>{09AE77BE-D697-4F10-B496-29A9E794CA07}</Project>
-      <Name>System.Runtime.Analyzers.Core</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj" />
+    <ProjectReference Include="..\Core\System.Runtime.Analyzers.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="System.Runtime.CSharp.Analyzers.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="app.config" />
-    <Content Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CSharpUseOrdinalStringComparison.cs" />
-    <Compile Include="CSharpUseOrdinalStringComparison.Fixer.cs" />
-    <Compile Include="CSharpDoNotUseTimersThatPreventPowerStateChanges.cs" />
-    <Compile Include="CSharpDoNotUseTimersThatPreventPowerStateChanges.Fixer.cs" />
-    <Compile Include="CSharpTestForEmptyStringsUsingStringLength.Fixer.cs" />
-    <Compile Include="CSharpDoNotRaiseReservedExceptionTypes.cs" />
-    <Compile Include="CSharpInitializeStaticFieldsInline.cs" />
-    <Compile Include="CSharpInitializeStaticFieldsInline.Fixer.cs" />
-    <Compile Include="CSharpDisposeMethodsShouldCallBaseClassDispose.cs" />
-    <Compile Include="CSharpDisposeMethodsShouldCallBaseClassDispose.Fixer.cs" />
-    <Compile Include="CSharpDisposableTypesShouldDeclareFinalizer.Fixer.cs" />
-    <Compile Include="CSharpTestForNaNCorrectly.Fixer.cs" />
-    <Compile Include="CSharpAvoidZeroLengthArrayAllocations.cs" />
-    <Compile Include="CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectly.Fixer.cs" />
-    <Compile Include="CSharpSpecifyCultureInfo.Fixer.cs" />
-    <Compile Include="CSharpSpecifyIFormatProvider.Fixer.cs" />
-    <Compile Include="CSharpSpecifyStringComparison.Fixer.cs" />
-    <Compile Include="CSharpNormalizeStringsToUppercase.Fixer.cs" />
-    <Compile Include="CSharpCallGCSuppressFinalizeCorrectly.Fixer.cs" />
-    <Compile Include="CSharpInstantiateArgumentExceptionsCorrectly.Fixer.cs" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

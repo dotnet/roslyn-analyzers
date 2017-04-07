@@ -26,8 +26,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             // We cannot have multiple overlapping diagnostics of this id.
             Diagnostic diagnostic = context.Diagnostics.Single();
-            string fixCase;
-            if (diagnostic.Properties.TryGetValue("case", out fixCase))
+            if (diagnostic.Properties.TryGetValue("case", out string fixCase))
             {
                 switch (fixCase)
                 {

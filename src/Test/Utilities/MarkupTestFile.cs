@@ -176,8 +176,7 @@ namespace Test.Utilities
         private static V GetOrAdd<K, V>(IDictionary<K, V> dictionary, K key, Func<K, V> function)
 #pragma warning restore CA1715
         {
-            V value;
-            if (!dictionary.TryGetValue(key, out value))
+            if (!dictionary.TryGetValue(key, out V value))
             {
                 value = function(key);
                 dictionary.Add(key, value);
@@ -208,8 +207,7 @@ namespace Test.Utilities
 
         private static void GetPositionAndSpans(string input, out string output, out int? cursorPositionOpt, out IList<TextSpan> spans)
         {
-            IDictionary<string, IList<TextSpan>> dictionary;
-            Parse(input, out output, out cursorPositionOpt, out dictionary);
+            Parse(input, out output, out cursorPositionOpt, out IDictionary<string, IList<TextSpan>> dictionary);
 
             spans = GetOrAdd(dictionary, string.Empty, _ => new List<TextSpan>());
         }
@@ -221,50 +219,43 @@ namespace Test.Utilities
 
         public static void GetSpans(string input, out string output, out IDictionary<string, IList<TextSpan>> spans)
         {
-            int? cursorPositionOpt;
-            GetPositionAndSpans(input, out output, out cursorPositionOpt, out spans);
+            GetPositionAndSpans(input, out output, out int? cursorPositionOpt, out spans);
         }
 
         public static void GetPositionAndSpans(string input, out string output, out int cursorPosition, out IList<TextSpan> spans)
         {
-            int? pos;
-            GetPositionAndSpans(input, out output, out pos, out spans);
+            GetPositionAndSpans(input, out output, out int? pos, out spans);
 
             cursorPosition = pos.Value;
         }
 
         public static void GetPosition(string input, out string output, out int cursorPosition)
         {
-            IList<TextSpan> spans;
-            GetPositionAndSpans(input, out output, out cursorPosition, out spans);
+            GetPositionAndSpans(input, out output, out cursorPosition, out IList<TextSpan> spans);
         }
 
         public static void GetPositionAndSpan(string input, out string output, out int? cursorPosition, out TextSpan? textSpan)
         {
-            IList<TextSpan> spans;
-            GetPositionAndSpans(input, out output, out cursorPosition, out spans);
+            GetPositionAndSpans(input, out output, out cursorPosition, out IList<TextSpan> spans);
 
             textSpan = spans.Count == 0 ? null : (TextSpan?)spans.Single();
         }
 
         public static void GetPositionAndSpan(string input, out string output, out int cursorPosition, out TextSpan textSpan)
         {
-            IList<TextSpan> spans;
-            GetPositionAndSpans(input, out output, out cursorPosition, out spans);
+            GetPositionAndSpans(input, out output, out cursorPosition, out IList<TextSpan> spans);
 
             textSpan = spans.Single();
         }
 
         public static void GetSpans(string input, out string output, out IList<TextSpan> spans)
         {
-            int? pos;
-            GetPositionAndSpans(input, out output, out pos, out spans);
+            GetPositionAndSpans(input, out output, out int? pos, out spans);
         }
 
         public static void GetSpan(string input, out string output, out TextSpan textSpan)
         {
-            IList<TextSpan> spans;
-            GetSpans(input, out output, out spans);
+            GetSpans(input, out output, out IList<TextSpan> spans);
 
             textSpan = spans.Single();
         }

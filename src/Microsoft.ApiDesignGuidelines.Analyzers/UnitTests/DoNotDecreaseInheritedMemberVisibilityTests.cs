@@ -368,6 +368,36 @@ public sealed class DerivedClass : BaseClass
 End Class");
         }
 
+        [Fact]
+        public void DecreaseCSharpConstructorVisibility()
+        {
+            VerifyCSharp(
+@"public class BaseClass
+{
+}
+
+public class DerivedClass : BaseClass
+{
+    private DerivedClass()
+    {
+    }
+}");
+        }
+
+        [Fact]
+        public void DecreaseBasicConstructorVisibility()
+        {
+            VerifyBasic(
+@"Public Class BaseClass
+End Class
+
+Public Class DerivedClass
+    Inherits BaseClass
+    Private Sub New()
+    End Sub
+End Class");
+        }
+
         private DiagnosticResult GetCSharpCA2222RuleNameResultAt(int line, int column)
         {
             return GetCSharpResultAt(line, column, DoNotDecreaseInheritedMemberVisibilityAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDecreaseInheritedMemberVisibilityMessage);

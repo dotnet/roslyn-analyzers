@@ -1,29 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>
   <ImportGroup Label="Settings">
     <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
   </ImportGroup>
   <PropertyGroup>
-    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F777D035-1513-453A-80FF-2EB16A938A60}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <AnalyzerProject>true</AnalyzerProject>
     <RootNamespace>System.Threading.Tasks.Analyzers</RootNamespace>
     <AssemblyName>System.Threading.Tasks.Analyzers</AssemblyName>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
-    <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
-    <RestorePackages>true</RestorePackages>
+    <PackageId>System.Threading.Tasks.Analyzers.Core</PackageId>
     <SemanticVersion>$(SystemThreadingTasksAnalyzersSemanticVersion)</SemanticVersion>
     <PreReleaseVersion>$(SystemThreadingTasksAnalyzersPreReleaseVersion)</PreReleaseVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="System.Threading.Tasks.CSharp.Analyzers" />
@@ -31,39 +19,23 @@
     <InternalsVisibleToTest Include="System.Threading.Tasks.Analyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="install.ps1" />
-    <Content Include="project.json" />
-    <None Include="System.Threading.Tasks.Analyzers.nuspec" />
-    <None Include="ThirdPartyNotices.rtf" />
     <Content Include="System.Threading.Tasks.Analyzers.props">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SystemThreadingTasksAnalyzersResources.Designer.cs">
+    <Compile Update="SystemThreadingTasksAnalyzersResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SystemThreadingTasksAnalyzersResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="DoNotCreateTasksWithoutPassingATaskScheduler.cs" />
-    <Compile Include="DoNotCreateTasksWithoutPassingATaskScheduler.Fixer.cs" />
-    <Compile Include="DiagnosticCategory.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SystemThreadingTasksAnalyzersResources.resx">
+    <EmbeddedResource Update="SystemThreadingTasksAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SystemThreadingTasksAnalyzersResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Dependencies\CodeAnalysis\CodeAnalysis.csproj">
-      <Project>{434fa01f-b8cb-41f7-88d1-7906003f23bc}</Project>
-      <Name>CodeAnalysis</Name>
-    </ProjectReference>
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

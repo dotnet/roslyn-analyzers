@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project>
   <ImportGroup Label="Settings">
     <Import Project="..\..\build\Targets\Analyzers.Settings.targets"/>
   </ImportGroup>
@@ -20,7 +20,6 @@
     <Project Include = "..\Microsoft.QualityGuidelines.Analyzers\NuGet\Microsoft.QualityGuidelines.Analyzers.NuGet.proj" />
     <Project Include = "..\System.Resources.Analyzers\NuGet\System.Resources.Analyzers.NuGet.proj" />
     <Project Include = "..\Microsoft.CodeAnalysis.Analyzers\NuGet\Microsoft.CodeAnalysis.Analyzers.NuGet.proj" />
-    <Project Include = "..\MetaCompilation.Analyzers\NuGet\MetaCompilation.Analyzers.NuGet.proj" />
 
     <!-- Nuget packages which are aggregation of other core analyzer nuget packages -->
     <Project Include = "..\AggregateNugetPackages\FxCop\NuGet\FxCopAnalyzers.NuGet.proj" />

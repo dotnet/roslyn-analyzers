@@ -183,11 +183,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
         }
 
-        // CA1801: Remove unused parameters.
-        // TODO: Remove the below suppression once Roslyn bug https://github.com/dotnet/roslyn/issues/8884 is fixed.
-#pragma warning disable CA1801
         internal static ExpectedAlternateMethodGroup GetExpectedAlternateMethodGroup(string operatorName, ITypeSymbol returnType)
-#pragma warning restore CA1801
         {
             // list of operator alternate names: https://msdn.microsoft.com/en-us/library/ms182355.aspx
 

@@ -299,14 +299,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
             }
 
-            // CA1801: Remove unused parameters.
-            // TODO: Remove the below suppression once Roslyn bug https://github.com/dotnet/roslyn/issues/8884 is fixed.
-#pragma warning disable CA1801
             /// <summary>
             /// Checks rule: Ensure that {0} is declared as public and sealed.
             /// </summary>
             private static void CheckDisposeSignatureRule(IMethodSymbol method, INamedTypeSymbol type, SymbolAnalysisContext context)
-#pragma warning restore CA1801
             {
                 if (!method.IsPublic() ||
                     method.IsAbstract || method.IsVirtual || (method.IsOverride && !method.IsSealed))
@@ -315,14 +311,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
             }
 
-            // CA1801: Remove unused parameters.
-            // TODO: Remove the below suppression once Roslyn bug https://github.com/dotnet/roslyn/issues/8884 is fixed.
-#pragma warning disable CA1801
             /// <summary>
             /// Checks rule: Rename {0} to 'Dispose' and ensure that it is declared as public and sealed.
             /// </summary>
             private static void CheckRenameDisposeRule(IMethodSymbol method, INamedTypeSymbol type, SymbolAnalysisContext context)
-#pragma warning restore CA1801
             {
                 if (method.Name != DisposeMethodName)
                 {
@@ -330,14 +322,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
             }
 
-            // CA1801: Remove unused parameters.
-            // TODO: Remove the below suppression once Roslyn bug https://github.com/dotnet/roslyn/issues/8884 is fixed.
-#pragma warning disable CA1801
             /// <summary>
             /// Checks rule: Remove {0}, override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.
             /// </summary>
             private void CheckDisposeOverrideRule(IMethodSymbol method, INamedTypeSymbol type, SymbolAnalysisContext context)
-#pragma warning restore CA1801
             {
                 if (method.MethodKind == MethodKind.Ordinary && method.IsOverride && method.ReturnsVoid && method.Parameters.Length == 0)
                 {
@@ -377,14 +365,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 context.ReportDiagnostic(type.CreateDiagnostic(ProvideDisposeBoolRule, type.Name));
             }
 
-            // CA1801: Remove unused parameters.
-            // TODO: Remove the below suppression once Roslyn bug https://github.com/dotnet/roslyn/issues/8884 is fixed.
-#pragma warning disable CA1801
             /// <summary>
             /// Checks rule: Ensure that {0} is declared as protected, virtual, and unsealed.
             /// </summary>
             private static void CheckDisposeBoolSignatureRule(IMethodSymbol method, INamedTypeSymbol type, SymbolAnalysisContext context)
-#pragma warning restore CA1801
             {
                 if (method.DeclaredAccessibility != Accessibility.Protected ||
                     !(method.IsVirtual || method.IsAbstract || method.IsOverride) || method.IsSealed)
@@ -405,13 +389,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
             }
 
-            // CA1801: Remove unused parameters.
-#pragma warning disable CA1801
             /// <summary>
             /// Checks rule: Modify {0} so that it calls Dispose(false) and then returns.
             /// </summary>
             private static void CheckFinalizeImplementationRule(IMethodSymbol method, INamedTypeSymbol type, ImmutableArray<IOperation> operationBlocks, OperationBlockAnalysisContext context)
-#pragma warning restore CA1801
             {
                 // TODO: Implement check of Finalize
             }

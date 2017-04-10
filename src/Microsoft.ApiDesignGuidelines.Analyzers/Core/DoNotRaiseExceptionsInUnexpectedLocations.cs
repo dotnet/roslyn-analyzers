@@ -161,10 +161,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
         }
 
-        // TODO: Remove the below suppression once the following Roslyn bug is fixed: https://github.com/dotnet/roslyn/issues/8884
-#pragma warning disable CA1801
         private static List<MethodCategory> GetMethodCategories(Compilation compilation)
-#pragma warning disable CA1801
         {
             var methodCategories = new List<MethodCategory> {
                 new MethodCategory(IsPropertyGetter, true,

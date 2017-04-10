@@ -344,13 +344,10 @@ namespace Analyzer.Utilities.Extensions
             return interfaceMember != null && symbol.Equals(symbol.ContainingType.FindImplementationForInterfaceMember(interfaceMember));
         }
 
-        // TODO: Remove the below suppression once the following Roslyn bug is fixed: https://github.com/dotnet/roslyn/issues/8884
-#pragma warning disable CA1801
         /// <summary>
         /// Checks if a given symbol implements an interface member explicitly
         /// </summary>
         public static bool IsImplementationOfAnyExplicitInterfaceMember(this ISymbol symbol)
-#pragma warning restore CA1801
         {
             if (symbol is IMethodSymbol methodSymbol && methodSymbol.ExplicitInterfaceImplementations.Any())
             {

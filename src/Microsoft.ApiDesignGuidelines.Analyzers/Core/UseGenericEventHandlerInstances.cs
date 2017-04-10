@@ -106,10 +106,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 if (eventSymbol != null)
                 {
                     if (eventSymbol.Type is INamedTypeSymbol eventType &&
-    eventSymbol.GetResultantVisibility() == SymbolVisibility.Public &&
-    !eventSymbol.IsOverride &&
-    !HasComSourceInterfacesAttribute(eventSymbol.ContainingType) &&
-    IsViolatingEventHandler(eventType))
+                        eventSymbol.GetResultantVisibility() == SymbolVisibility.Public &&
+                        !eventSymbol.IsOverride &&
+                        !eventSymbol.IsImplementationOfAnyInterfaceMember() &&
+                        !HasComSourceInterfacesAttribute(eventSymbol.ContainingType) &&
+                        IsViolatingEventHandler(eventType))
                     {
                         context.ReportDiagnostic(eventSymbol.CreateDiagnostic(Rule));
                     }

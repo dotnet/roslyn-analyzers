@@ -46,7 +46,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
         {
             var type = (INamedTypeSymbol)context.Symbol;
 
-            // Only classes can have overridable members, and furthermore, only consider classes that can be subclassed outside this assembly.
+            // Only classes can have overridable members, and furthermore, only consider classes that can be subclassed outside this assembly. Note: Internal types can still be subclassed in this assembly, and also in other assemblies that have access to internal types in this assembly via [InternalsVisibleTo] (recall that this permission must be whitelisted in this assembly). In both of these cases, there should be no security vulnerabilities introduced by overriding methods, hence these types can be ignored.
             if (type.TypeKind == TypeKind.Class &&
                 type.GetResultantVisibility().IsAtLeastAsVisibleAs(SymbolVisibility.Public) &&
                 (!type.Constructors.Any() || type.Constructors.Any(c => c.GetResultantVisibility().IsAtLeastAsVisibleAs(SymbolVisibility.Public))))

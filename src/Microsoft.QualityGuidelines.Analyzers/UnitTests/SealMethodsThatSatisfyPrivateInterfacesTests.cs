@@ -174,7 +174,7 @@ public class C : B, IFace
         }
 
         [Fact]
-        public void TestCSharp_OverriddenFromBaseButSealed_NoDiagnostic()
+        public void TestCSharp_OverriddenFromBaseButMethodIsSealed_NoDiagnostic()
         {
             VerifyCSharp(@"
 internal interface IFace
@@ -190,6 +190,29 @@ public abstract class B
 public class C : B, IFace
 {
     public sealed override void M()
+    {
+    }
+}
+");
+        }
+
+        [Fact]
+        public void TestCSharp_OverriddenFromBaseButClassIsSealed_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+internal interface IFace
+{
+    void M();
+}
+
+public abstract class B 
+{
+   public abstract void M();
+}
+
+public sealed class C : B, IFace
+{
+    public override void M()
     {
     }
 }

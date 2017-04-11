@@ -17,12 +17,6 @@ namespace Analyzer.Utilities
         private const string RegisterOperationBlockActionMethodName = "RegisterOperationBlockActionInternal";
         private const string RegisterOperationBlockStartActionMethodName = "RegisterOperationBlockStartActionInternal";
         private const string GetOperationMethodName = "GetOperationInternal";
-#else
-        private const string RegisterOperationActionMethodName = "RegisterOperationAction";
-        private const string RegisterOperationBlockActionMethodName = "RegisterOperationBlockAction";
-        private const string RegisterOperationBlockStartActionMethodName = "RegisterOperationBlockStartAction";
-        private const string GetOperationMethodName = "GetOperation";
-#endif
 
         // AnalysisContext.RegisterOperationAction
         private static MethodInfo s_registerOperationActionOnAnalysisContext =
@@ -51,35 +45,60 @@ namespace Analyzer.Utilities
         // SemanticModel.GetOperation
         private static MethodInfo s_getOperationOnSemanticModel =
             typeof(SemanticModel).GetTypeInfo().GetDeclaredMethod(GetOperationMethodName);
+#endif
 
         public static void RegisterOperationActionInternal(this AnalysisContext context, Action<OperationAnalysisContext> analyzerOperationCallback, params OperationKind[] operationKinds)
         {
+#if USE_INTERNAL_IOPERATION_APIS
             s_registerOperationActionOnAnalysisContext.Invoke(context, new object[] { analyzerOperationCallback, ImmutableArray.Create(operationKinds) });
+#else
+            context.RegisterOperationAction(analyzerOperationCallback, operationKinds);
+#endif
         }
 
         public static void RegisterOperationBlockActionInternal(this AnalysisContext context, Action<OperationBlockAnalysisContext> analyzerOperationCallback)
         {
+#if USE_INTERNAL_IOPERATION_APIS
             s_registerOperationBlockActionOnAnalysisContext.Invoke(context, new object[] { analyzerOperationCallback });
+#else
+            context.RegisterOperationBlockAction(analyzerOperationCallback);
+#endif
         }
 
         public static void RegisterOperationBlockStartActionInternal(this AnalysisContext context, Action<OperationBlockStartAnalysisContext> analyzerOperationCallback)
         {
+#if USE_INTERNAL_IOPERATION_APIS
             s_registerOperationBlockStartActionOnAnalysisContext.Invoke(context, new object[] { analyzerOperationCallback });
+#else
+            context.RegisterOperationBlockStartAction(analyzerOperationCallback);
+#endif
         }
 
         public static void RegisterOperationActionInternal(this CompilationStartAnalysisContext context, Action<OperationAnalysisContext> analyzerOperationCallback, params OperationKind[] operationKinds)
         {
+#if USE_INTERNAL_IOPERATION_APIS
             s_registerOperationActionOnCompilationStartAnalysisContext.Invoke(context, new object[] { analyzerOperationCallback, ImmutableArray.Create(operationKinds) });
+#else
+            context.RegisterOperationAction(analyzerOperationCallback, operationKinds);
+#endif
         }
 
         public static void RegisterOperationBlockActionInternal(this CompilationStartAnalysisContext context, Action<OperationBlockAnalysisContext> analyzerOperationCallback)
         {
+#if USE_INTERNAL_IOPERATION_APIS
             s_registerOperationBlockActionOnCompilationStartAnalysisContext.Invoke(context, new object[] { analyzerOperationCallback });
+#else
+            context.RegisterOperationBlockAction(analyzerOperationCallback);
+#endif
         }
 
         public static void RegisterOperationBlockStartActionInternal(this CompilationStartAnalysisContext context, Action<OperationBlockStartAnalysisContext> analyzerOperationCallback)
         {
+#if USE_INTERNAL_IOPERATION_APIS
             s_registerOperationBlockStartActionOnCompilationStartAnalysisContext.Invoke(context, new object[] { analyzerOperationCallback });
+#else
+            context.RegisterOperationBlockStartAction(analyzerOperationCallback);
+#endif
         }
 
         public static void RegisterOperationActionInternal(this OperationBlockStartAnalysisContext context, Action<OperationAnalysisContext> analyzerOperationCallback, params OperationKind[] operationKinds)
@@ -88,9 +107,15 @@ namespace Analyzer.Utilities
             context.RegisterOperationAction(analyzerOperationCallback, operationKinds);
         }
 
-        public static IOperation GetOperationInternal(this SemanticModel model, SyntaxNode node, CancellationToken token)
+        public static IOperation GetOperationInternal(this SemanticModel model, SyntaxNode node, CancellationToken cancellationToken)
         {
+#if USE_INTERNAL_IOPERATION_APIS
             return (IOperation)s_getOperationOnSemanticModel.Invoke(model, new object[] { node, token });
+#else
+            return model.GetOperation(node, cancellationToken);
+#endif
+        }
+
+
         }
     }
-}

@@ -110,7 +110,7 @@ namespace Analyzer.Utilities
         public static IOperation GetOperationInternal(this SemanticModel model, SyntaxNode node, CancellationToken cancellationToken)
         {
 #if USE_INTERNAL_IOPERATION_APIS
-            return (IOperation)s_getOperationOnSemanticModel.Invoke(model, new object[] { node, token });
+            return (IOperation)s_getOperationOnSemanticModel.Invoke(model, new object[] { node, cancellationToken });
 #else
             return model.GetOperation(node, cancellationToken);
 #endif

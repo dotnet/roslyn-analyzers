@@ -11,6 +11,9 @@
     <AssemblyName>Microsoft.CodeQuality.CSharp.Analyzers</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleToTest Include="Microsoft.CodeQuality.Analyzers.UnitTests" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="Microsoft.CodeQuality.CSharp.Analyzers.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

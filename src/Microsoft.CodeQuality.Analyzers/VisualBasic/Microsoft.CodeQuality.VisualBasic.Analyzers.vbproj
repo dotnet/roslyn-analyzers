@@ -10,6 +10,9 @@
     <AssemblyName>Microsoft.CodeQuality.VisualBasic.Analyzers</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleToTest Include="Microsoft.CodeQuality.Analyzers.UnitTests" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Core\Microsoft.CodeQuality.Analyzers.Core.csproj" />
   </ItemGroup>
   <ItemGroup>

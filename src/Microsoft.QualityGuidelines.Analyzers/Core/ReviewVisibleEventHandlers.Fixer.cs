@@ -24,7 +24,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
         {
             // This is to get rid of warning CS1998, please remove when implementing this analyzer
             await Task.Run(() => { }).ConfigureAwait(false);
-            throw new NotImplementedException();
+            
         }
     }
 }

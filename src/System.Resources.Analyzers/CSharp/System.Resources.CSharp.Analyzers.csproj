@@ -9,8 +9,6 @@
     <AnalyzerProject>true</AnalyzerProject>
     <RootNamespace>System.Resources.CSharp.Analyzers</RootNamespace>
     <AssemblyName>System.Resources.CSharp.Analyzers</AssemblyName>
-    <SemanticVersion>$(SystemResourcesAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(SystemResourcesAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj" />

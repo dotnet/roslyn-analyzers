@@ -9,14 +9,13 @@
     <dependencies>
       <!-- NOTE: Please add analyzer entries to Microsoft.Net.RoslynDiagnostics.props file whenever a new dependency is added here. -->
       <dependency id="Roslyn.Diagnostics.Analyzers" version="$currentVersion$" />
-      <dependency id="Microsoft.ApiDesignGuidelines.Analyzers" version="$currentVersion$" />
       <dependency id="Microsoft.CodeAnalysis.Analyzers" version="$currentVersion$" />
+      <dependency id="Microsoft.CodeQuality.Analyzers" version="$currentVersion$" />
       <dependency id="Microsoft.Composition.Analyzers" version="$currentVersion$" />
       <dependency id="System.Collections.Immutable.Analyzers" version="$currentVersion$" />
       <dependency id="System.Runtime.Analyzers" version="$currentVersion$" />
       <dependency id="System.Runtime.InteropServices.Analyzers" version="$currentVersion$" />
       <dependency id="System.Threading.Tasks.Analyzers" version="$currentVersion$" />
-      <dependency id="XmlDocumentationComments.Analyzers" version="$currentVersion$" />
     </dependencies>
     <language>en-US</language>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>

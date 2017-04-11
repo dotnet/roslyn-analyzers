@@ -9,8 +9,6 @@
     <AnalyzerProject>true</AnalyzerProject>
     <RootNamespace>System.Collections.Immutable.CSharp.Analyzers</RootNamespace>
     <AssemblyName>System.Collections.Immutable.CSharp.Analyzers</AssemblyName>
-    <SemanticVersion>$(SystemCollectionsImmutableAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(SystemCollectionsImmutableAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\System.Collections.Immutable.Analyzers.Core.csproj" />

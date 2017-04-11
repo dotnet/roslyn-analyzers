@@ -9,8 +9,6 @@
     <AnalyzerProject>true</AnalyzerProject>
     <RootNamespace>System.Runtime.InteropServices.CSharp.Analyzers</RootNamespace>
     <AssemblyName>System.Runtime.InteropServices.CSharp.Analyzers</AssemblyName>
-    <SemanticVersion>$(SystemRuntimeInteropServicesAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(SystemRuntimeInteropServicesAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\System.Runtime.InteropServices.Analyzers.Core.csproj" />

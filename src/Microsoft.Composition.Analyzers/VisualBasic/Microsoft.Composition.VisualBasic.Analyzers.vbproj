@@ -8,8 +8,6 @@
     <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <AnalyzerProject>true</AnalyzerProject>
     <AssemblyName>Microsoft.Composition.VisualBasic.Analyzers</AssemblyName>
-    <SemanticVersion>$(MicrosoftCompositionAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(MicrosoftCompositionAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Microsoft.Composition.Analyzers.Core.csproj" />

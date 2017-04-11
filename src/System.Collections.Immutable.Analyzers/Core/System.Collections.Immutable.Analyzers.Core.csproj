@@ -10,8 +10,6 @@
     <RootNamespace>System.Collections.Immutable.Analyzers</RootNamespace>
     <AssemblyName>System.Collections.Immutable.Analyzers</AssemblyName>
     <PackageId>System.Collections.Immutable.Analyzers.Core</PackageId>
-    <SemanticVersion>$(SystemCollectionsImmutableAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(SystemCollectionsImmutableAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="System.Collections.Immutable.CSharp.Analyzers" />

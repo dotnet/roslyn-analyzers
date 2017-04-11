@@ -8,8 +8,6 @@
     <TestProject>true</TestProject>
     <RootNamespace>System.Threading.Tasks.Analyzers.UnitTests</RootNamespace>
     <AssemblyName>System.Threading.Tasks.Analyzers.UnitTests</AssemblyName>
-    <SemanticVersion>$(SystemThreadingTasksAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(SystemThreadingTasksAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\..\Test\Utilities\Test.Utilities.csproj" />

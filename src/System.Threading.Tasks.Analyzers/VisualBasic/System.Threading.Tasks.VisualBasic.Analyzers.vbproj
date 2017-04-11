@@ -8,8 +8,6 @@
     <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <AnalyzerProject>true</AnalyzerProject>
     <AssemblyName>System.Threading.Tasks.VisualBasic.Analyzers</AssemblyName>
-    <SemanticVersion>$(SystemThreadingTasksAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(SystemThreadingTasksAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\System.Threading.Tasks.Analyzers.Core.csproj" />

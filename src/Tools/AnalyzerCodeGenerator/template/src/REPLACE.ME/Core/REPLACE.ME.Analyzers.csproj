@@ -18,8 +18,6 @@
     <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
     <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
     <RestorePackages>true</RestorePackages>
-    <SemanticVersion>$(REPLACEMEAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(REPLACEMEAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
   </PropertyGroup>

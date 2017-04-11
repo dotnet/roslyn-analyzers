@@ -9,8 +9,6 @@
     <AnalyzerProject>true</AnalyzerProject>
     <RootNamespace>System.Threading.Tasks.CSharp.Analyzers</RootNamespace>
     <AssemblyName>System.Threading.Tasks.CSharp.Analyzers</AssemblyName>
-    <SemanticVersion>$(SystemThreadingTasksAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(SystemThreadingTasksAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\System.Threading.Tasks.Analyzers.Core.csproj" />

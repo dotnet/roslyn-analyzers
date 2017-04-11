@@ -9,8 +9,6 @@
     <AnalyzerProject>true</AnalyzerProject>
     <RootNamespace>System.Security.Cryptography.Hashing.Algorithms.CSharp.Analyzers</RootNamespace>
     <AssemblyName>System.Security.Cryptography.Hashing.Algorithms.CSharp.Analyzers</AssemblyName>
-    <SemanticVersion>$(SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\System.Security.Cryptography.Hashing.Algorithms.Analyzers.Core.csproj" />

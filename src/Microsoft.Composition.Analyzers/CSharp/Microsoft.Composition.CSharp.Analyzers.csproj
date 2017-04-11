@@ -9,8 +9,6 @@
     <AnalyzerProject>true</AnalyzerProject>
     <RootNamespace>Microsoft.Composition.CSharp.Analyzers</RootNamespace>
     <AssemblyName>Microsoft.Composition.CSharp.Analyzers</AssemblyName>
-    <SemanticVersion>$(MicrosoftCompositionAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(MicrosoftCompositionAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Microsoft.Composition.Analyzers.Core.csproj" />

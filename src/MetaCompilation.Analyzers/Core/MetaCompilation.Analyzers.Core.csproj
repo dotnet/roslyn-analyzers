@@ -11,8 +11,6 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MetaCompilation.Analyzers</RootNamespace>
     <AssemblyName>MetaCompilation.Analyzers</AssemblyName>
-    <SemanticVersion>$(MetaCompilationAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(MetaCompilationAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Update="MetaCompilationResources.Designer.cs">

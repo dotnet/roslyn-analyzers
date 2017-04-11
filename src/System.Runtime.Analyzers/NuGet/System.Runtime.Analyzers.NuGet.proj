@@ -5,8 +5,6 @@
     <Import Project="..\..\..\build\Targets\Analyzers.NuGet.Settings.targets" />
   </ImportGroup>
   <PropertyGroup>
-    <SemanticVersion>$(SystemRuntimeAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(SystemRuntimeAnalyzersPreReleaseVersion)</PreReleaseVersion>
     <NuGetLicenseURL>$(NuGetLicenseURLRedist)</NuGetLicenseURL>
   </PropertyGroup>
   <ItemGroup>

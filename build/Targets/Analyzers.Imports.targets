@@ -120,18 +120,6 @@
   <Import Project="References.targets" />
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" Condition="'$(DotnetProject)' == 'true'" />
 
-  <!-- Verify some build flags are correct -->
-  <PropertyGroup>
-    <PrepareForBuildDependsOn>$(PrepareForBuildDependsOn);VerifyBuildFlags</PrepareForBuildDependsOn>
-  </PropertyGroup>
-
-  <Target Name="VerifyBuildFlags">
-    <Error Condition="'$(SemanticVersion)' == ''"
-           Text="Projects must specify a SemanticVersion" />
-    <Error Condition="'$(PreReleaseVersion)' == ''"
-           Text="Projects must specify a PreReleaseVersion" />
-  </Target>
-
   <!-- ====================================================================================
   
          Support for in-place modification of the compiled binary.

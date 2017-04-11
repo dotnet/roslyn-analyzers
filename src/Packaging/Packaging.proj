@@ -4,20 +4,16 @@
     <Import Project="..\..\build\Targets\Analyzers.Settings.targets"/>
   </ImportGroup>
   <ItemGroup>
-    <Project Include = "..\Microsoft.ApiDesignGuidelines.Analyzers\NuGet\Microsoft.ApiDesignGuidelines.Analyzers.NuGet.proj" />
     <Project Include = "..\Desktop.Analyzers\NuGet\Desktop.Analyzers.NuGet.proj" />
     <Project Include = "..\System.Runtime.Analyzers\NuGet\System.Runtime.Analyzers.NuGet.proj" />
     <Project Include = "..\System.Runtime.InteropServices.Analyzers\NuGet\System.Runtime.InteropServices.Analyzers.NuGet.proj" />
-    <Project Include = "..\ApiReview.Analyzers\NuGet\ApiReview.Analyzers.NuGet.proj" />
     <Project Include = "..\Roslyn.Diagnostics.Analyzers\NuGet\Roslyn.Diagnostics.Analyzers.NuGet.proj" />
     <Project Include = "..\System.Threading.Tasks.Analyzers\NuGet\System.Threading.Tasks.Analyzers.NuGet.proj" />
     <Project Include = "..\Microsoft.Composition.Analyzers\NuGet\Microsoft.Composition.Analyzers.NuGet.proj" />
-    <Project Include = "..\XmlDocumentationComments.Analyzers\NuGet\XmlDocumentationComments.Analyzers.NuGet.proj" />
     <Project Include = "..\System.Collections.Immutable.Analyzers\NuGet\System.Collections.Immutable.Analyzers.NuGet.proj" />
     <Project Include = "..\System.Security.Cryptography.Hashing.Algorithms.Analyzers\NuGet\SystemSecurityCryptographyHashingAlgorithmsAnalyzers.NuGet.proj" />
-    <Project Include = "..\Microsoft.Maintainability.Analyzers\NuGet\Microsoft.Maintainability.Analyzers.NuGet.proj" />
     <Project Include = "..\Text.Analyzers\NuGet\Text.Analyzers.NuGet.proj" />
-    <Project Include = "..\Microsoft.QualityGuidelines.Analyzers\NuGet\Microsoft.QualityGuidelines.Analyzers.NuGet.proj" />
+    <Project Include = "..\Microsoft.CodeQuality.Analyzers\NuGet\Microsoft.CodeQuality.Analyzers.NuGet.proj" />
     <Project Include = "..\System.Resources.Analyzers\NuGet\System.Resources.Analyzers.NuGet.proj" />
     <Project Include = "..\Microsoft.CodeAnalysis.Analyzers\NuGet\Microsoft.CodeAnalysis.Analyzers.NuGet.proj" />
 

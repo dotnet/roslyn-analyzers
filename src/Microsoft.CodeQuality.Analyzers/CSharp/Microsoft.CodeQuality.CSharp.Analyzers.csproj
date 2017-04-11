@@ -9,83 +9,11 @@
     <AnalyzerProject>true</AnalyzerProject>
     <RootNamespace>Microsoft.CodeQuality.CSharp.Analyzers</RootNamespace>
     <AssemblyName>Microsoft.CodeQuality.CSharp.Analyzers</AssemblyName>
-    <SemanticVersion>$(MicrosoftCodeQualityAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(MicrosoftCodeQualityAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\..\ApiReview.Analyzers\CSharp\CSharpAvoidCallingProblematicMethods.cs" Link="ApiReview\CSharpAvoidCallingProblematicMethods.cs" />
-    <Compile Include="..\..\ApiReview.Analyzers\CSharp\CSharpAvoidCallingProblematicMethods.Fixer.cs" Link="ApiReview\CSharpAvoidCallingProblematicMethods.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpAsyncMethodNamesShouldEndInAsync.cs" Link="ApiDesignGuidelines\CSharpAsyncMethodNamesShouldEndInAsync.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpAsyncMethodNamesShouldEndInAsync.Fixer.cs" Link="ApiDesignGuidelines\CSharpAsyncMethodNamesShouldEndInAsync.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpAvoidAsyncVoid.cs" Link="ApiDesignGuidelines\CSharpAvoidAsyncVoid.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpAvoidAsyncVoid.Fixer.cs" Link="ApiDesignGuidelines\CSharpAvoidAsyncVoid.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpAvoidEmptyInterfaces.cs" Link="ApiDesignGuidelines\CSharpAvoidEmptyInterfaces.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpAvoidEmptyInterfaces.Fixer.cs" Link="ApiDesignGuidelines\CSharpAvoidEmptyInterfaces.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpCollectionsShouldImplementGenericInterface.Fixer.cs" Link="ApiDesignGuidelines\CSharpCollectionsShouldImplementGenericInterface.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpDeclareTypesInNamespaces.Fixer.cs" Link="ApiDesignGuidelines\CSharpDeclareTypesInNamespaces.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpDefineAccessorsForAttributeArguments.cs" Link="ApiDesignGuidelines\CSharpDefineAccessorsForAttributeArguments.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpDoNotMixBlockingAndAsync.cs" Link="ApiDesignGuidelines\CSharpDoNotMixBlockingAndAsync.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpDoNotMixBlockingAndAsync.Fixer.cs" Link="ApiDesignGuidelines\CSharpDoNotMixBlockingAndAsync.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpDoNotPassAsyncLambdasAsVoidReturningDelegateTypes.cs" Link="ApiDesignGuidelines\CSharpDoNotPassAsyncLambdasAsVoidReturningDelegateTypes.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpDoNotPassAsyncLambdasAsVoidReturningDelegateTypes.Fixer.cs" Link="ApiDesignGuidelines\CSharpDoNotPassAsyncLambdasAsVoidReturningDelegateTypes.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpDoNotStoreAsyncLambdasAsVoidReturningDelegateTypes.cs" Link="ApiDesignGuidelines\CSharpDoNotStoreAsyncLambdasAsVoidReturningDelegateTypes.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpDoNotStoreAsyncLambdasAsVoidReturningDelegateTypes.Fixer.cs" Link="ApiDesignGuidelines\CSharpDoNotStoreAsyncLambdasAsVoidReturningDelegateTypes.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpEnumsShouldHavePluralNames.Fixer.cs" Link="ApiDesignGuidelines\CSharpEnumsShouldHavePluralNames.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpEnumsShouldHaveZeroValue.Fixer.cs" Link="ApiDesignGuidelines\CSharpEnumsShouldHaveZeroValue.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpEnumStorageShouldBeInt32.Fixer.cs" Link="ApiDesignGuidelines\CSharpEnumStorageShouldBeInt32.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpIdentifiersShouldHaveCorrectPrefix.Fixer.cs" Link="ApiDesignGuidelines\CSharpIdentifiersShouldHaveCorrectPrefix.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpIdentifiersShouldHaveCorrectSuffix.Fixer.cs" Link="ApiDesignGuidelines\CSharpIdentifiersShouldHaveCorrectSuffix.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpIdentifiersShouldNotContainUnderscores.Fixer.cs" Link="ApiDesignGuidelines\CSharpIdentifiersShouldNotContainUnderscores.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpIdentifiersShouldNotHaveIncorrectSuffix.Fixer.cs" Link="ApiDesignGuidelines\CSharpIdentifiersShouldNotHaveIncorrectSuffix.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpIdentifiersShouldNotMatchKeywords.Fixer.cs" Link="ApiDesignGuidelines\CSharpIdentifiersShouldNotMatchKeywords.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpImplementIDisposableCorrectly.Fixer.cs" Link="ApiDesignGuidelines\CSharpImplementIDisposableCorrectly.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpImplementStandardExceptionConstructors.cs" Link="ApiDesignGuidelines\CSharpImplementStandardExceptionConstructors.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpMarkAssembliesWithAssemblyVersion.Fixer.cs" Link="ApiDesignGuidelines\CSharpMarkAssembliesWithAssemblyVersion.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpMarkAssembliesWithClsCompliant.Fixer.cs" Link="ApiDesignGuidelines\CSharpMarkAssembliesWithClsCompliant.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpMovePInvokesToNativeMethodsClass.Fixer.cs" Link="ApiDesignGuidelines\CSharpMovePInvokesToNativeMethodsClass.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpOverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.cs" Link="ApiDesignGuidelines\CSharpOverrideEqualsAndOperatorEqualsOnValueTypes.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpOverrideEqualsOnOverloadingOperatorEquals.Fixer.cs" Link="ApiDesignGuidelines\CSharpOverrideEqualsOnOverloadingOperatorEquals.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpOverrideGetHashCodeOnOverridingEquals.Fixer.cs" Link="ApiDesignGuidelines\CSharpOverrideGetHashCodeOnOverridingEquals.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpPassSystemUriObjectsInsteadOfStrings.cs" Link="ApiDesignGuidelines\CSharpPassSystemUriObjectsInsteadOfStrings.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpPropagateCancellationTokensWhenPossible.cs" Link="ApiDesignGuidelines\CSharpPropagateCancellationTokensWhenPossible.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpPropagateCancellationTokensWhenPossible.Fixer.cs" Link="ApiDesignGuidelines\CSharpPropagateCancellationTokensWhenPossible.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpPropertyNamesShouldNotMatchGetMethods.Fixer.cs" Link="ApiDesignGuidelines\CSharpPropertyNamesShouldNotMatchGetMethods.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpStaticHolderTypes.Fixer.cs" Link="ApiDesignGuidelines\CSharpStaticHolderTypes.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpTypeNamesShouldNotMatchNamespaces.Fixer.cs" Link="ApiDesignGuidelines\CSharpTypeNamesShouldNotMatchNamespaces.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpTypesThatOwnDisposableFieldsShouldBeDisposable.cs" Link="ApiDesignGuidelines\CSharpTypesThatOwnDisposableFieldsShouldBeDisposable.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpUseEventsWhereAppropriate.Fixer.cs" Link="ApiDesignGuidelines\CSharpUseEventsWhereAppropriate.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpUseGenericEventHandlerInstances.cs" Link="ApiDesignGuidelines\CSharpUseGenericEventHandlerInstances.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpUseGenericEventHandlerInstances.Fixer.cs" Link="ApiDesignGuidelines\CSharpUseGenericEventHandlerInstances.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpUsePreferredTerms.cs" Link="ApiDesignGuidelines\CSharpUsePreferredTerms.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpUsePreferredTerms.Fixer.cs" Link="ApiDesignGuidelines\CSharpUsePreferredTerms.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.ApiDesignGuidelines.Analyzers\CSharp\CSharpUsePropertiesWhereAppropriate.Fixer.cs" Link="ApiDesignGuidelines\CSharpUsePropertiesWhereAppropriate.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.Maintainability.Analyzers\CSharp\CSharpAvoidUninstantiatedInternalClasses.Fixer.cs" Link="Maintainability\CSharpAvoidUninstantiatedInternalClasses.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.Maintainability.Analyzers\CSharp\CSharpRemoveUnusedLocals.Fixer.cs" Link="Maintainability\CSharpRemoveUnusedLocals.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.Maintainability.Analyzers\CSharp\CSharpReviewUnusedParameters.Fixer.cs" Link="Maintainability\CSharpReviewUnusedParameters.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.Maintainability.Analyzers\CSharp\CSharpVariableNamesShouldNotMatchFieldNames.cs" Link="Maintainability\CSharpVariableNamesShouldNotMatchFieldNames.cs" />
-    <Compile Include="..\..\Microsoft.Maintainability.Analyzers\CSharp\CSharpVariableNamesShouldNotMatchFieldNames.Fixer.cs" Link="Maintainability\CSharpVariableNamesShouldNotMatchFieldNames.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.QualityGuidelines.Analyzers\CSharp\CSharpDisposeObjectsBeforeLosingScope.cs" Link="QualityGuidelines\CSharpDisposeObjectsBeforeLosingScope.cs" />
-    <Compile Include="..\..\Microsoft.QualityGuidelines.Analyzers\CSharp\CSharpDisposeObjectsBeforeLosingScope.Fixer.cs" Link="QualityGuidelines\CSharpDisposeObjectsBeforeLosingScope.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.QualityGuidelines.Analyzers\CSharp\CSharpMarkMembersAsStatic.Fixer.cs" Link="QualityGuidelines\CSharpMarkMembersAsStatic.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.QualityGuidelines.Analyzers\CSharp\CSharpPreferJaggedArraysOverMultidimensional.Fixer.cs" Link="QualityGuidelines\CSharpPreferJaggedArraysOverMultidimensional.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.QualityGuidelines.Analyzers\CSharp\CSharpRethrowToPreserveStackDetails.cs" Link="QualityGuidelines\CSharpRethrowToPreserveStackDetails.cs" />
-    <Compile Include="..\..\Microsoft.QualityGuidelines.Analyzers\CSharp\CSharpReviewVisibleEventHandlers.cs" Link="QualityGuidelines\CSharpReviewVisibleEventHandlers.cs" />
-    <Compile Include="..\..\Microsoft.QualityGuidelines.Analyzers\CSharp\CSharpReviewVisibleEventHandlers.Fixer.cs" Link="QualityGuidelines\CSharpReviewVisibleEventHandlers.Fixer.cs" />
-    <Compile Include="..\..\Microsoft.QualityGuidelines.Analyzers\CSharp\CSharpUseLiteralsWhereAppropriate.Fixer.cs" Link="QualityGuidelines\CSharpUseLiteralsWhereAppropriate.Fixer.cs" />
-    <Compile Include="..\..\XmlDocumentationComments.Analyzers\CSharp\CSharpAvoidUsingCrefTagsWithAPrefix.cs" Link="Documentation\CSharpAvoidUsingCrefTagsWithAPrefix.cs" />
-    <Compile Include="..\..\XmlDocumentationComments.Analyzers\CSharp\CSharpAvoidUsingCrefTagsWithAPrefix.Fixer.cs" Link="Documentation\CSharpAvoidUsingCrefTagsWithAPrefix.Fixer.cs" />
-  </ItemGroup>
   <ItemGroup>
     <Content Include="Microsoft.CodeQuality.CSharp.Analyzers.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ApiDesignGuidelines\" />
-    <Folder Include="ApiReview\" />
-    <Folder Include="Documentation\" />
-    <Folder Include="Maintainability\" />
-    <Folder Include="QualityGuidelines\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Microsoft.CodeQuality.Analyzers.Core.csproj" />

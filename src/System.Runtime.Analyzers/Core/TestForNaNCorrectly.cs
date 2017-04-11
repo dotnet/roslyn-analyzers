@@ -27,7 +27,7 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Usage,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb264491.aspx",
@@ -47,7 +47,7 @@ namespace System.Runtime.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            analysisContext.RegisterOperationAction(
+            analysisContext.RegisterOperationActionInternal(
                 operationAnalysisContext =>
                 {
                     var binaryOperatorExpression = (IBinaryOperatorExpression)operationAnalysisContext.Operation;

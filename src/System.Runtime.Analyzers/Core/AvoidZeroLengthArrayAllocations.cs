@@ -35,7 +35,7 @@ namespace System.Runtime.Analyzers
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.Performance,
-            DiagnosticSeverity.Warning,
+            DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: true);
 
         /// <summary>Gets the set of supported diagnostic descriptors from this analyzer.</summary>
@@ -56,7 +56,7 @@ namespace System.Runtime.Analyzers
                     if (typeSymbol.GetMembers(ArrayEmptyMethodName).FirstOrDefault() is IMethodSymbol methodSymbol && methodSymbol.DeclaredAccessibility == Accessibility.Public &&
     methodSymbol.IsStatic && methodSymbol.Arity == 1 && methodSymbol.Parameters.Length == 0)
                     {
-                        ctx.RegisterOperationAction(AnalyzeOperation, OperationKind.ArrayCreationExpression);
+                        ctx.RegisterOperationActionInternal(AnalyzeOperation, OperationKind.ArrayCreationExpression);
                     }
                 }
             });
@@ -110,7 +110,7 @@ namespace System.Runtime.Analyzers
             var model = context.Compilation.GetSemanticModel(arrayCreationExpression.Syntax.SyntaxTree);
 
             // Compiler generated array creation seems to just use the syntax from the parent.
-            var parent = model.GetOperation(arrayCreationExpression.Syntax, context.CancellationToken) as IInvocationExpression;
+            var parent = model.GetOperationInternal(arrayCreationExpression.Syntax, context.CancellationToken) as IInvocationExpression;
             if (parent?.TargetMethod == null || parent.TargetMethod.Parameters.Length == 0)
             {
                 return false;

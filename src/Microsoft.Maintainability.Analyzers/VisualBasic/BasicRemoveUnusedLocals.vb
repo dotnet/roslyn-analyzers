@@ -2,12 +2,14 @@
 
 Imports System.Collections.Immutable
 Imports System.Linq
+Imports Analyzer.Utilities
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.Semantics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 Imports Microsoft.Maintainability.Analyzers
+Imports DiagnosticCategory = Microsoft.Maintainability.Analyzers.DiagnosticCategory
 
 Namespace Microsoft.Maintainability.VisualBasic.Analyzers
     ''' <summary>
@@ -27,7 +29,7 @@ Namespace Microsoft.Maintainability.VisualBasic.Analyzers
                                                         s_localizableTitle,
                                                         s_localizableMessage,
                                                         DiagnosticCategory.Performance,
-                                                        DiagnosticSeverity.Warning,
+                                                        DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                         True,
                                                         s_localizableDescription,
                                                         "https://msdn.microsoft.com/en-us/library/ms182278.aspx",
@@ -45,14 +47,14 @@ Namespace Microsoft.Maintainability.VisualBasic.Analyzers
 
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None)
 
-            analysisContext.RegisterOperationBlockStartAction(
+            analysisContext.RegisterOperationBlockStartActionInternal(
                 Sub(operationBlockContext)
                     Dim containingMethod = TryCast(operationBlockContext.OwningSymbol, IMethodSymbol)
 
                     If containingMethod IsNot Nothing Then
                         Dim mightBecomeUnusedLocals = New HashSet(Of ILocalSymbol)()
 
-                        operationBlockContext.RegisterOperationAction(
+                        operationBlockContext.RegisterOperationActionInternal(
                         Sub(operationContext)
                             Dim variables = DirectCast(operationContext.Operation, IVariableDeclarationStatement).Variables
 
@@ -63,7 +65,7 @@ Namespace Microsoft.Maintainability.VisualBasic.Analyzers
                             Next
                         End Sub, OperationKind.VariableDeclarationStatement)
 
-                        operationBlockContext.RegisterOperationAction(
+                        operationBlockContext.RegisterOperationActionInternal(
                         Sub(operationContext)
                             Dim localReferenceExpression As ILocalReferenceExpression = DirectCast(operationContext.Operation, ILocalReferenceExpression)
                             Dim syntax = localReferenceExpression.Syntax

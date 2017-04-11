@@ -24,7 +24,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Security,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182313.aspx",

@@ -24,7 +24,7 @@ namespace System.Runtime.Analyzers
                                                                          s_localizableTitle,
                                                                          s_localizableMessage,
                                                                          DiagnosticCategory.Performance,
-                                                                         DiagnosticSeverity.Warning,
+                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                          isEnabledByDefault: false,
                                                                          description: s_localizableDescription,
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182267.aspx",

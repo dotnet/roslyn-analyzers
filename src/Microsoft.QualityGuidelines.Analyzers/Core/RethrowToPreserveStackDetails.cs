@@ -18,7 +18,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                                                                          s_localizableTitle,
                                                                          s_localizableMessage,
                                                                          DiagnosticCategory.Usage,
-                                                                         DiagnosticSeverity.Warning,
+                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                          isEnabledByDefault: true,
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182363.aspx",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);

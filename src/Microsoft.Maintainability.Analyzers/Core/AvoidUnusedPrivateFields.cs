@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Semantics;
@@ -25,7 +26,7 @@ namespace Microsoft.Maintainability.Analyzers
                                                                                       s_localizableTitle,
                                                                                       s_localizableMessage,
                                                                                       DiagnosticCategory.Performance,
-                                                                                      DiagnosticSeverity.Warning,
+                                                                                      DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                       isEnabledByDefault: true,
                                                                                       description: s_localizableDescription,
                                                                                       helpLinkUri: "http://msdn.microsoft.com/library/ms245042.aspx",
@@ -58,7 +59,7 @@ namespace Microsoft.Maintainability.Analyzers
                         },
                         SymbolKind.Field);
 
-                    compilationContext.RegisterOperationAction(
+                    compilationContext.RegisterOperationActionInternal(
                         (operationContext) =>
                         {
                             IFieldSymbol field = ((IFieldReferenceExpression)operationContext.Operation).Field;

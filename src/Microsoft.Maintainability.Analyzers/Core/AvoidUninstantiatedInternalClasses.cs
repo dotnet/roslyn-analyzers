@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -28,7 +29,7 @@ namespace Microsoft.Maintainability.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Performance,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182265.aspx",
@@ -70,7 +71,7 @@ namespace Microsoft.Maintainability.Analyzers
                 INamedTypeSymbol mef1ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.ComponentModel.Composition.ExportAttribute");
                 INamedTypeSymbol mef2ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.Composition.ExportAttribute");
 
-                startContext.RegisterOperationAction(context =>
+                startContext.RegisterOperationActionInternal(context =>
                 {
                     IObjectCreationExpression expr = (IObjectCreationExpression)context.Operation;
                     if (expr.Type is INamedTypeSymbol namedType)

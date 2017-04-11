@@ -71,5 +71,8 @@
       
       <SystemResourcesAnalyzersSemanticVersion>1.2.0</SystemResourcesAnalyzersSemanticVersion>
       <SystemResourcesAnalyzersPreReleaseVersion>beta3</SystemResourcesAnalyzersPreReleaseVersion>
-   </PropertyGroup>
+
+      <MicrosoftCodeQualityAnalyzersSemanticVersion>1.2.0</MicrosoftCodeQualityAnalyzersSemanticVersion>
+      <MicrosoftCodeQualityAnalyzersPreReleaseVersion>beta3</MicrosoftCodeQualityAnalyzersPreReleaseVersion>
+</PropertyGroup>
 </Project>

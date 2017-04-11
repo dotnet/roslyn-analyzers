@@ -28,7 +28,7 @@ namespace Microsoft.Maintainability.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Performance,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182268.aspx",
@@ -58,7 +58,7 @@ namespace Microsoft.Maintainability.Analyzers
 
                 ImmutableHashSet<INamedTypeSymbol> attributeSetForMethodsToIgnore = ImmutableHashSet.Create(conditionalAttributeSymbol, onDeserializedAttribute, onDeserializingAttribute, onSerializedAttribute, onSerializingAttribute);
 
-                compilationStartContext.RegisterOperationBlockStartAction(startOperationBlockContext =>
+                compilationStartContext.RegisterOperationBlockStartActionInternal(startOperationBlockContext =>
                 {
                     // We only care about methods.
                     if (startOperationBlockContext.OwningSymbol.Kind != SymbolKind.Method)
@@ -103,7 +103,7 @@ namespace Microsoft.Maintainability.Analyzers
                     var analyzer = new UnusedParametersAnalyzer(method);
 
                     // Register an intermediate non-end action that accesses and modifies the state.
-                    startOperationBlockContext.RegisterOperationAction(analyzer.AnalyzeOperation, OperationKind.ParameterReferenceExpression);
+                    startOperationBlockContext.RegisterOperationActionInternal(analyzer.AnalyzeOperation, OperationKind.ParameterReferenceExpression);
 
                     // Register an end action to report diagnostics based on the final state.
                     startOperationBlockContext.RegisterOperationBlockEndAction(analyzer.OperationBlockEndAction);

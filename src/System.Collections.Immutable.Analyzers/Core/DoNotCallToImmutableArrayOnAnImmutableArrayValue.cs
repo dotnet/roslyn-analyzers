@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -23,7 +24,7 @@ namespace System.Collections.Immutable.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Reliability,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              helpLinkUri: null,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
@@ -43,7 +44,7 @@ namespace System.Collections.Immutable.Analyzers
                     return;
                 }
 
-                compilationStartContext.RegisterOperationAction(operationContext =>
+                compilationStartContext.RegisterOperationActionInternal(operationContext =>
                 {
                     var invocation = (IInvocationExpression)operationContext.Operation;
                     if (invocation.IsInvalid ||

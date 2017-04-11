@@ -2157,7 +2157,7 @@ End Namespace" }
                                                     s_CA5350RuleTitle,
                                                     s_CA5350RuleMessage,
                                                     DiagnosticCategory.Security,
-                                                    DiagnosticSeverity.Warning,
+                                                    DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                     true
                                                 );
 
@@ -2166,7 +2166,7 @@ End Namespace" }
                                                     s_CA5351RuleTitle,
                                                     s_CA5351RuleMessage,
                                                     DiagnosticCategory.Security,
-                                                    DiagnosticSeverity.Warning,
+                                                    DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                     true
                                                 );
     }

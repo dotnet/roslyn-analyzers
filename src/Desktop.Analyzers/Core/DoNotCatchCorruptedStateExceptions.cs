@@ -3,11 +3,11 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Desktop.Analyzers.Helpers;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Semantics;
 
 namespace Desktop.Analyzers
@@ -25,7 +25,7 @@ namespace Desktop.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Security,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "http://aka.ms/CA2153",
@@ -46,7 +46,7 @@ namespace Desktop.Analyzers
                     return;
                 }
 
-                compilationStartAnalysisContext.RegisterOperationBlockAction(operationBlockAnalysisContext =>
+                compilationStartAnalysisContext.RegisterOperationBlockActionInternal(operationBlockAnalysisContext =>
                 {
                     if (operationBlockAnalysisContext.OwningSymbol.Kind != SymbolKind.Method)
                     {

@@ -23,7 +23,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Reliability,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,     // TODO: add MSDN url

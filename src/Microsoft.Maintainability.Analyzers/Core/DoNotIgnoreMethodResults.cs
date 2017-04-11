@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Immutable;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Semantics;
@@ -52,7 +53,7 @@ namespace Microsoft.Maintainability.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageObjectCreation,
                                                                              DiagnosticCategory.Performance,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182273.aspx",
@@ -62,7 +63,7 @@ namespace Microsoft.Maintainability.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageStringCreation,
                                                                              DiagnosticCategory.Performance,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182273.aspx",
@@ -72,7 +73,7 @@ namespace Microsoft.Maintainability.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageHResultOrErrorCode,
                                                                              DiagnosticCategory.Performance,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182273.aspx",
@@ -82,7 +83,7 @@ namespace Microsoft.Maintainability.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageTryParse,
                                                                              DiagnosticCategory.Performance,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182273.aspx",
@@ -95,7 +96,7 @@ namespace Microsoft.Maintainability.Analyzers
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterOperationBlockStartAction(osContext =>
+            analysisContext.RegisterOperationBlockStartActionInternal(osContext =>
             {
                 var method = osContext.OwningSymbol as IMethodSymbol;
                 if (method == null)
@@ -103,7 +104,7 @@ namespace Microsoft.Maintainability.Analyzers
                     return;
                 }
 
-                osContext.RegisterOperationAction(opContext =>
+                osContext.RegisterOperationActionInternal(opContext =>
                 {
                     IOperation expression = ((IExpressionStatement)opContext.Operation).Expression;
                     DiagnosticDescriptor rule = null;

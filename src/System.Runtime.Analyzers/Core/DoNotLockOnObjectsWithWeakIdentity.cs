@@ -32,7 +32,7 @@ namespace System.Runtime.Analyzers
                                                                          s_localizableTitle,
                                                                          s_localizableMessage,
                                                                          DiagnosticCategory.Reliability,
-                                                                         DiagnosticSeverity.Warning,
+                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                          isEnabledByDefault: true,
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182290.aspx",
                                                                          description: s_localizableDescription,
@@ -48,7 +48,7 @@ namespace System.Runtime.Analyzers
             analysisContext.RegisterCompilationStartAction(compilationStartContext =>
             {
                 Compilation compilation = compilationStartContext.Compilation;
-                compilationStartContext.RegisterOperationAction(context =>
+                compilationStartContext.RegisterOperationActionInternal(context =>
                 {
                     var lockStatement = (ILockStatement)context.Operation;
                     ITypeSymbol type = lockStatement?.LockedObject?.Type;

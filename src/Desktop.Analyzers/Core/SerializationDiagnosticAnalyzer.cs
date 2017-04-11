@@ -2,10 +2,10 @@
 
 using System.Collections.Immutable;
 using System.Linq;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Desktop.Analyzers
 {
@@ -28,7 +28,7 @@ namespace Desktop.Analyzers
                                                                         s_localizableTitleCA2229,
                                                                         "{0}",
                                                                         DiagnosticCategory.Usage,
-                                                                        DiagnosticSeverity.Warning,
+                                                                        DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                         isEnabledByDefault: true,
                                                                         description: s_localizableDescriptionCA2229,
                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182343.aspx",
@@ -54,7 +54,7 @@ namespace Desktop.Analyzers
                                                                         s_localizableTitleCA2237,
                                                                         s_localizableMessageCA2237,
                                                                         DiagnosticCategory.Usage,
-                                                                        DiagnosticSeverity.Warning,
+                                                                        DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                         isEnabledByDefault: true,
                                                                         description: s_localizableDescriptionCA2237,
                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182350.aspx",
@@ -80,7 +80,7 @@ namespace Desktop.Analyzers
                                                                         s_localizableTitleCA2235,
                                                                         s_localizableMessageCA2235,
                                                                         DiagnosticCategory.Usage,
-                                                                        DiagnosticSeverity.Warning,
+                                                                        DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                         isEnabledByDefault: true,
                                                                         description: s_localizableDescriptionCA2235,
                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182349.aspx",

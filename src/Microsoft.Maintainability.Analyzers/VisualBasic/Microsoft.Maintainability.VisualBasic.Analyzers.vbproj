@@ -12,6 +12,7 @@
     <PreReleaseVersion>$(MicrosoftMaintainabilityAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj" />
     <ProjectReference Include="..\Core\Microsoft.Maintainability.Analyzers.Core.csproj" />
   </ItemGroup>
   <ItemGroup>

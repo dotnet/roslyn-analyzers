@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Analyzer.Utilities;
 
 namespace Desktop.Analyzers
 {
@@ -27,7 +27,7 @@ namespace Desktop.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageVisibility,
                                                                              DiagnosticCategory.Usage,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,     // TODO: add MSDN url
@@ -36,7 +36,7 @@ namespace Desktop.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageReturnType,
                                                                              DiagnosticCategory.Usage,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,     // TODO: add MSDN url
@@ -45,7 +45,7 @@ namespace Desktop.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageParameters,
                                                                              DiagnosticCategory.Usage,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,     // TODO: add MSDN url
@@ -54,7 +54,7 @@ namespace Desktop.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageGeneric,
                                                                              DiagnosticCategory.Usage,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,     // TODO: add MSDN url
@@ -63,7 +63,7 @@ namespace Desktop.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageStatic,
                                                                              DiagnosticCategory.Usage,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,     // TODO: add MSDN url

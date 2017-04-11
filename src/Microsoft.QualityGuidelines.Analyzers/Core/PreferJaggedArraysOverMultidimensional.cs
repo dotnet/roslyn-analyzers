@@ -30,7 +30,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageDefault,
                                                                              DiagnosticCategory.Performance,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: helpLink,
@@ -39,7 +39,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageReturn,
                                                                              DiagnosticCategory.Performance,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: helpLink,
@@ -48,7 +48,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageBody,
                                                                              DiagnosticCategory.Performance,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: helpLink,
@@ -64,7 +64,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
             analysisContext.RegisterSymbolAction(AnalyzeField, SymbolKind.Field);
             analysisContext.RegisterSymbolAction(AnalyzeProperty, SymbolKind.Property);
             analysisContext.RegisterSymbolAction(AnalyzeMethod, SymbolKind.Method);
-            analysisContext.RegisterOperationAction(AnalyzeObjectCreation, OperationKind.ArrayCreationExpression);
+            analysisContext.RegisterOperationActionInternal(AnalyzeObjectCreation, OperationKind.ArrayCreationExpression);
         }
 
         private static void AnalyzeField(SymbolAnalysisContext context)

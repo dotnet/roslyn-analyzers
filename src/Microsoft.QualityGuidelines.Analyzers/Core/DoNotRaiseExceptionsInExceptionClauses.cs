@@ -34,7 +34,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Usage,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUrl,
@@ -47,7 +47,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterOperationBlockAction(operationBlockContext =>
+            analysisContext.RegisterOperationBlockActionInternal(operationBlockContext =>
             {
                 foreach (var block in operationBlockContext.OperationBlocks)
                 {

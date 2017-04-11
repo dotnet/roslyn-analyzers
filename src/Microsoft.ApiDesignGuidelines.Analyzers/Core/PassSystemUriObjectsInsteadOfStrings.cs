@@ -28,7 +28,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Usage,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182360.aspx",
@@ -57,9 +57,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 var analyzer = new PerCompilationAnalyzer(c.Compilation, @string, uri, GetInvocationExpression);
 
                 // REVIEW: I need to do this thing because OperationAnalysisContext doesn't give me OwningSymbol
-                c.RegisterOperationBlockStartAction(sc =>
+                c.RegisterOperationBlockStartActionInternal(sc =>
                 {
-                    sc.RegisterOperationAction(oc => analyzer.Analyze(oc, sc.OwningSymbol), OperationKind.InvocationExpression);
+                    sc.RegisterOperationActionInternal(oc => analyzer.Analyze(oc, sc.OwningSymbol), OperationKind.InvocationExpression);
                 });
             });
         }

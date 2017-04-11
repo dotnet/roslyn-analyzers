@@ -28,7 +28,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Performance,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,     // TODO: add MSDN url
@@ -52,7 +52,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                 // those.
                 var reportedAssociatedSymbols = new HashSet<ISymbol>();
 
-                compilationContext.RegisterOperationBlockStartAction(blockStartContext =>
+                compilationContext.RegisterOperationBlockStartActionInternal(blockStartContext =>
                 {
                     var methodSymbol = blockStartContext.OwningSymbol as IMethodSymbol;
                     if (methodSymbol == null || !ShouldAnalyze(methodSymbol, blockStartContext.Compilation))
@@ -62,7 +62,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
                     bool isInstanceReferenced = false;
 
-                    blockStartContext.RegisterOperationAction(operationContext =>
+                    blockStartContext.RegisterOperationActionInternal(operationContext =>
                     {
                         isInstanceReferenced = true;
                     }, OperationKind.InstanceReferenceExpression);

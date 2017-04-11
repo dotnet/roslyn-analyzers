@@ -14,6 +14,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Test.Resources.Proprietary" Version="2.0.0-pre-20160714" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj" />
+  </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />
   </ImportGroup>

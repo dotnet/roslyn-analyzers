@@ -35,7 +35,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                           s_localizableTitle,
                                                                           s_localizableMessage,
                                                                           DiagnosticCategory.Design,
-                                                                          DiagnosticSeverity.Warning,
+                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                           isEnabledByDefault: false,
                                                                           description: s_localizableDescription,
                                                                           helpLinkUri: "https://msdn.microsoft.com/library/ms182153.aspx",
@@ -56,7 +56,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return;
                 }
 
-                compilationContext.RegisterOperationBlockAction(operationBlockContext => AnalyzeOperationBlock(operationBlockContext, iDisposableTypeSymbol));
+                compilationContext.RegisterOperationBlockActionInternal(operationBlockContext => AnalyzeOperationBlock(operationBlockContext, iDisposableTypeSymbol));
             });
         }
 

@@ -25,7 +25,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.Design,
-            DiagnosticSeverity.Warning,
+            DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);

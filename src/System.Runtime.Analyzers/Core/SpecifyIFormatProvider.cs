@@ -32,7 +32,7 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageIFormatProviderAlternateString,
                                                                              DiagnosticCategory.Globalization,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
@@ -41,7 +41,7 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageIFormatProviderAlternate,
                                                                              DiagnosticCategory.Globalization,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
@@ -50,7 +50,7 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageUICultureString,
                                                                              DiagnosticCategory.Globalization,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
@@ -59,7 +59,7 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessageUICulture,
                                                                              DiagnosticCategory.Globalization,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
@@ -123,7 +123,7 @@ namespace System.Runtime.Analyzers
                 var obsoleteAttributeType = WellKnownTypes.ObsoleteAttribute(csaContext.Compilation);
                 #endregion
 
-                csaContext.RegisterOperationAction(oaContext =>
+                csaContext.RegisterOperationActionInternal(oaContext =>
                 {
                     var invocationExpression = (IInvocationExpression)oaContext.Operation;
                     var targetMethod = invocationExpression.TargetMethod;

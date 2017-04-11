@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
@@ -190,14 +191,14 @@ class Program
         private static readonly DiagnosticResult s_diagnosticCA1014 = new DiagnosticResult
         {
             Id = MarkAssembliesWithAttributesDiagnosticAnalyzer.CA1014RuleId,
-            Severity = DiagnosticSeverity.Warning,
+            Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
             Message = MarkAssembliesWithAttributesDiagnosticAnalyzer.CA1014Rule.MessageFormat.ToString()
         };
 
         private static readonly DiagnosticResult s_diagnosticCA1016 = new DiagnosticResult
         {
             Id = MarkAssembliesWithAttributesDiagnosticAnalyzer.CA1016RuleId,
-            Severity = DiagnosticSeverity.Warning,
+            Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
             Message = MarkAssembliesWithAttributesDiagnosticAnalyzer.CA1016Rule.MessageFormat.ToString()
         };
     }

@@ -48,7 +48,7 @@ namespace Desktop.Analyzers
                                             title,
                                             message,
                                             DiagnosticCategory.Security,
-                                            DiagnosticSeverity.Warning,
+                                            DiagnosticHelpers.DefaultDiagnosticSeverity,
                                             isEnabledByDefault: true,
                                             description: description,
                                             helpLinkUri: uri,

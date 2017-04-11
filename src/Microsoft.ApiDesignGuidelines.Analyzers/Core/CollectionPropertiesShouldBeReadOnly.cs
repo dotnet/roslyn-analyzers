@@ -40,7 +40,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                     s_localizableTitle,
                                                                     s_localizableMessage,
                                                                     DiagnosticCategory.Usage,
-                                                                    DiagnosticSeverity.Warning,
+                                                                    DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                     isEnabledByDefault: true,
                                                                     description: s_localizableDescription,
                                                                     helpLinkUri: "https://msdn.microsoft.com/library/ms182327.aspx",

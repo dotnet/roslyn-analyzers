@@ -26,7 +26,7 @@
       </PropertyGroup>
     </Otherwise>
   </Choose>
-  
+
   <!-- NuGet version -->
   <PropertyGroup>
     <BuildNumberSuffix Condition="('$(TF_BUILD_BUILDNUMBER)' != '')
@@ -42,10 +42,10 @@
     <NuGetPreReleaseVersion>$(NuGetReleaseVersion)-$(PreReleaseVersion)</NuGetPreReleaseVersion>
     <NuGetPerBuildPreReleaseVersion Condition="'$(BuildNumberSuffix)' != ''">$(NuGetPreReleaseVersion)-$(BuildNumberPart1.Trim())-$(BuildNumberPart2.Trim())</NuGetPerBuildPreReleaseVersion>
   </PropertyGroup>
-  
+
   <!-- Returns the current build version. Used in .vsixmanifests to substitute our build version into them -->
   <Target Name="GetBuildVersion" Outputs="$(BuildVersion)" />
-  
+
   <!-- Update common properties -->
   <PropertyGroup Condition="'$(TestProject)' == 'true'">
     <NonShipping>true</NonShipping>
@@ -58,7 +58,7 @@
 
     <CodeAnalysisRuleSet Condition="'$(CodeAnalysisRuleSet)' == '' AND '$(NonShipping)' == 'true'">$(AnalyzersToolsPath)\Rulesets\NonShippingProjectRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRuleSet Condition="'$(CodeAnalysisRuleSet)' == ''">$(AnalyzersToolsPath)\Rulesets\Analyzers.ruleset</CodeAnalysisRuleSet>
-    
+
     <RoslynInternalKey>002400000480000094000000060200000024000052534131000400000100010055e0217eb635f69281051f9a823e0c7edd90f28063eb6c7a742a19b4f6139778ee0af438f47aed3b6e9f99838aa8dba689c7a71ddb860c96d923830b57bbd5cd6119406ddb9b002cf1c723bf272d6acbb7129e9d6dd5a5309c94e0ff4b2c884d45a55f475cd7dba59198086f61f5a8c8b5e601c0edbf269733f6f578fc8579c2</RoslynInternalKey>
   </PropertyGroup>
 
@@ -76,6 +76,10 @@
     </Otherwise>
   </Choose>
 
+  <PropertyGroup Condition="'$(USE_INTERNAL_IOPERATION_APIS)' == 'true'">
+    <DefineConstants>$(DefineConstants),USE_INTERNAL_IOPERATION_APIS,DEFAULT_SEVERITY_SUGGESTION</DefineConstants>
+  </PropertyGroup>
+  
   <!-- Settings for strong name signing -->
   <Choose>
     <When Condition="'$(SignAssembly)' == 'true'">
@@ -112,7 +116,7 @@
     <LanguageTargets Condition="'$(MSBuildProjectExtension)' == '.vbproj'">$(MSBuildToolsPath)\Microsoft.VisualBasic.targets</LanguageTargets>
     <LanguageTargets Condition="'$(LanguageTargets)' == ''">$(MSBuildToolsPath)\Microsoft.CSharp.targets</LanguageTargets>
   </PropertyGroup>
-  
+
   <Import Project="References.targets" />
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" Condition="'$(DotnetProject)' == 'true'" />
 
@@ -127,7 +131,7 @@
     <Error Condition="'$(PreReleaseVersion)' == ''"
            Text="Projects must specify a PreReleaseVersion" />
   </Target>
-  
+
   <!-- ====================================================================================
   
          Support for in-place modification of the compiled binary.
@@ -157,7 +161,7 @@
       <FileWrites Include="$(PostCompileBinaryModificationSentinelFile)" />
     </ItemGroup>
   </Target>
-  
+
   <!-- ====================================================================================
   
          Support for FakeSigning assemblies
@@ -172,9 +176,9 @@
           Condition="'$(DesignTimeBuild)' != 'true' AND '$(DelaySign)' == 'true' AND '$(ShouldSignBuild)' != 'true' AND ('$(Language)' == 'C#' OR '$(Language)' == 'VB')"
           Inputs="@(IntermediateAssembly)"
           Outputs="@(IntermediateAssembly);$(PostCompileBinaryModificationSentinelFile)">
-    
+
     <Exec Command="&quot;$(FakeSignToolPath)&quot; &quot;@(IntermediateAssembly)&quot;" />
-    
+
   </Target>
 
   <!-- ====================================================================================
@@ -182,7 +186,7 @@
          Support for real-signing assemblies
 
        ==================================================================================== -->
-  
+
   <ItemGroup Condition="'$(DelaySign)' == 'true' AND '$(ShouldSignBuild)' == 'true' AND ('$(Language)' == 'C#' OR '$(Language)' == 'VB')">
     <FilesToSign Include="$(OutDir)$(TargetFileName)">
       <Authenticode>MicrosoftSHA1</Authenticode>
@@ -197,7 +201,7 @@
        ==================================================================================== -->
 
   <Import Project="GenerateInternalsVisibleTo.targets" />
-  
+
   <!-- ====================================================================================
        
          VSSDK

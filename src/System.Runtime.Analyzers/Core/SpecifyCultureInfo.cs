@@ -28,7 +28,7 @@ namespace System.Runtime.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Globalization,
-                                                                             DiagnosticSeverity.Warning,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
@@ -48,7 +48,7 @@ namespace System.Runtime.Analyzers
                 var cultureInfoType = csaContext.Compilation.GetTypeByMetadataName("System.Globalization.CultureInfo");
                 if (cultureInfoType != null)
                 {
-                    csaContext.RegisterOperationAction(oaContext =>
+                    csaContext.RegisterOperationActionInternal(oaContext =>
                     {
                         var invocationExpression = (IInvocationExpression)oaContext.Operation;
                         var targetMethod = invocationExpression.TargetMethod;

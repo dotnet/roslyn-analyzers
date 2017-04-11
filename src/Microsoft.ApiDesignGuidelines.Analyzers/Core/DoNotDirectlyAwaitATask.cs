@@ -27,7 +27,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.Reliability,
-            DiagnosticSeverity.Warning,
+            DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: true,
             description: s_localizableDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
@@ -47,7 +47,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return;
                 }
 
-                context.RegisterOperationAction(oc => AnalyzeOperation(oc, taskTypes), OperationKind.AwaitExpression);
+                context.RegisterOperationActionInternal(oc => AnalyzeOperation(oc, taskTypes), OperationKind.AwaitExpression);
             });
         }
 

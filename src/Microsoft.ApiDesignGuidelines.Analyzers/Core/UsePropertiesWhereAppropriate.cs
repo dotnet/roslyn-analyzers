@@ -27,7 +27,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                          s_localizableTitle,
                                                                          s_localizableMessage,
                                                                          DiagnosticCategory.Design,
-                                                                         DiagnosticSeverity.Warning,
+                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                          isEnabledByDefault: false,
                                                                          description: s_localizableDescription,
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182181.aspx",
@@ -42,7 +42,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterOperationBlockStartAction(context =>
+            analysisContext.RegisterOperationBlockStartActionInternal(context =>
             {
                 var methodSymbol = context.OwningSymbol as IMethodSymbol;
 
@@ -71,7 +71,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
 
                 bool hasInvocations = false;
-                context.RegisterOperationAction(operationContext =>
+                context.RegisterOperationActionInternal(operationContext =>
                 {
                     hasInvocations = true;
                 }, OperationKind.InvocationExpression);

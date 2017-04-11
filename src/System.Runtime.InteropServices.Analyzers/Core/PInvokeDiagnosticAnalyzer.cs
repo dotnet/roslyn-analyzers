@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using System.Linq;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities.Extensions;
@@ -21,7 +22,7 @@ namespace System.Runtime.InteropServices.Analyzers
                                                                          s_localizableTitleCA1401,
                                                                          s_localizableMessageCA1401,
                                                                          DiagnosticCategory.Interoperability,
-                                                                         DiagnosticSeverity.Warning,
+                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                          isEnabledByDefault: true,
                                                                          description: s_localizableDescriptionCA1401,
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182209.aspx",
@@ -33,7 +34,7 @@ namespace System.Runtime.InteropServices.Analyzers
                                                                          s_localizableMessageAndTitleCA2101,
                                                                          s_localizableMessageAndTitleCA2101,
                                                                          DiagnosticCategory.Globalization,
-                                                                         DiagnosticSeverity.Warning,
+                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                          isEnabledByDefault: true,
                                                                          description: s_localizableDescriptionCA2101,
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182319.aspx",

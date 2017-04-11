@@ -12,9 +12,9 @@
     <PackageId>Microsoft.CodeQuality.Analyzers.Core</PackageId>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Microsoft.CodeQuality.Analyzers.UnitTests" />
     <InternalsVisibleTo Include="Microsoft.CodeQuality.CSharp.Analyzers" />
     <InternalsVisibleTo Include="Microsoft.CodeQuality.VisualBasic.Analyzers" />
-    <InternalsVisibleTo Include="Microsoft.CodeQuality.UnitTests" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Microsoft.CodeQuality.Analyzers.props">

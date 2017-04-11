@@ -3,9 +3,14 @@
 
   <!-- This file is imported by all projects at the end of the project files -->
 
-  <!-- Compute assembly, file, and NuGet versions -->
+  <!-- Compute/set the assembly, file, and NuGet versions -->
   <PropertyGroup>
-    <AssemblyVersion>$(SemanticVersion).0</AssemblyVersion>
+      <Version Condition="'$(Version)' == ''">1.2.0</Version>     
+      <SemanticVersion Condition="'$(SemanticVersion)' == ''">$(Version)</SemanticVersion>
+      <PreReleaseVersion Condition="'$(PreReleaseVersion)' == ''">beta3</PreReleaseVersion>      
+      <ToolsSemanticVersion>0.0.0</ToolsSemanticVersion>
+      <ToolsPreReleaseVersion>beta3</ToolsPreReleaseVersion>
+      <AssemblyVersion>$(SemanticVersion).0</AssemblyVersion>
   </PropertyGroup>
 
   <Choose>
@@ -26,6 +31,18 @@
       </PropertyGroup>
     </Otherwise>
   </Choose>
+
+  <!-- Properties for auto-generation of assembly attributes -->
+  <PropertyGroup>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <AssemblyTitle Condition="'$(AssemblyTitle)' == ''">$(AssemblyName)</AssemblyTitle>
+    <Company Condition="'$(Company)' == ''">Microsoft Corporation</Company>
+    <Copyright Condition="'$(Copyright)' == ''">© Microsoft Corporation. All rights reserved.</Copyright>
+    <Description Condition="'$(Description)' == ''">$(AssemblyName)</Description>
+    <FileVersion Condition="'$(FileVersion)' == ''">$(BuildVersion)</FileVersion>
+    <InformationalVersion Condition="'$(InformationalVersion)' == ''">$(BuildVersion)</InformationalVersion>
+    <NeutralLanguage Condition="'$(NeutralLanguage)' == ''">en-US</NeutralLanguage>
+  </PropertyGroup>
 
   <!-- NuGet version -->
   <PropertyGroup>

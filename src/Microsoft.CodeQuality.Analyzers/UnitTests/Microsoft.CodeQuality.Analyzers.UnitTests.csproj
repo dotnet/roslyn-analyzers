@@ -6,6 +6,7 @@
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
     <TestProject>true</TestProject>
+    <RootNamespace>Microsoft.CodeQuality.Analyzers.UnitTests</RootNamespace>
     <AssemblyName>Microsoft.CodeQuality.Analyzers.UnitTests</AssemblyName>
   </PropertyGroup>
   <ItemGroup Label="Project References">

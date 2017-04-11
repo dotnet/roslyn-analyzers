@@ -13,7 +13,7 @@ namespace Analyzer.Utilities
 #if DEFAULT_SEVERITY_SUGGESTION
             DiagnosticSeverity.Info;
 #else
-            DiagnosticHelpers.Warning;
+            DiagnosticSeverity.Warning;
 #endif
 
         public static bool TryConvertToUInt64(object value, SpecialType specialType, out ulong convertedValue)

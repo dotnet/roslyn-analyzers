@@ -367,11 +367,4 @@ namespace Analyzer.Utilities.Extensions
             return false;
         }
     }
-
-    public enum SymbolVisibility
-    {
-        Public,
-        Internal,
-        Private,
-    }
 }

@@ -88,7 +88,7 @@ namespace System.Runtime.Analyzers
                     var method = invocation.TargetMethod;
                     if (method.Equals(toLowerInvariant) ||
                         (method.Equals(toLowerWithCultureInfo) &&
-                         ((IMemberReferenceExpression)invocation.ArgumentsInParameterOrder.FirstOrDefault()?.Value)?.Member == invariantCulture))
+                         ((invocation.ArgumentsInParameterOrder.FirstOrDefault()?.Value as IMemberReferenceExpression)?.Member.Equals(invariantCulture) ?? false)))
                     {
                         var suggestedMethod = toUpperInvariant ?? toUpperWithCultureInfo;
 

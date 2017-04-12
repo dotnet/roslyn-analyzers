@@ -202,16 +202,16 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                     if (ImplementsDisposableDirectly(type))
                     {
+                        if (type.Interfaces.Contains(_disposableType))
+                        {
+                            // This differs from FxCop implementation
+                            // Reports violation when type redundantly declares IDisposable as implemented interface
+                            CheckIDisposableReimplementationRule(type, context, implementsDisposableInBaseType);
+                        }
+
                         IMethodSymbol disposeMethod = FindDisposeMethod(type);
                         if (disposeMethod != null)
                         {
-                            // This is difference from FxCop implementation
-                            // IDisposable Reimplementation Rule is violated only if type re-implements Dispose method, not just interface
-                            // For example see unit tests:
-                            // CSharp_CA1063_IDisposableReimplementation_NoDiagnostic_ImplementingInheritedInterfaceWithNoDisposeReimplementation
-                            // Basic_CA1063_IDisposableReimplementation_NoDiagnostic_ImplementingInheritedInterfaceWithNoDisposeReimplementation
-                            CheckIDisposableReimplementationRule(type, context, implementsDisposableInBaseType);
-
                             CheckDisposeSignatureRule(disposeMethod, type, context);
                             CheckRenameDisposeRule(disposeMethod, type, context);
 
@@ -228,17 +228,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                 }
                             }
                         }
-                        else if (type.Interfaces.Contains(_disposableType))
-                        {
-                            // Reports violation, when type mentions IDisposable as implemented interface,
-                            // even when Dispose method is not implemented, but inherited from base type
-                            // For example see unit test:
-                            // CSharp_CA1063_IDisposableReimplementation_Diagnostic_ReImplementingIDisposableWithNoDisposeMethod
-                            CheckIDisposableReimplementationRule(type, context, implementsDisposableInBaseType);
-                        }
                     }
 
-                    if (implementsDisposableInBaseType)
+                    if (implementsDisposableInBaseType && FindInheritedDisposeBoolMethod(type) != null)
                     {
                         foreach (IMethodSymbol method in type.GetMembers().OfType<IMethodSymbol>())
                         {
@@ -289,7 +281,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
 
             /// <summary>
-            /// Check rule: Remove IDisposable from the list of interfaces implemented by {0} and override the base class Dispose implementation instead.
+            /// Check rule: Remove IDisposable from the list of interfaces implemented by {0}. It is redundant.
             /// </summary>
             private static void CheckIDisposableReimplementationRule(INamedTypeSymbol type, SymbolAnalysisContext context, bool implementsDisposableInBaseType)
             {
@@ -434,6 +426,22 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             private static IMethodSymbol FindDisposeBoolMethod(INamedTypeSymbol type)
             {
                 return type.GetMembers(DisposeMethodName).OfType<IMethodSymbol>().FirstOrDefault(IsDisposeBoolMethod);
+            }
+
+            /// <summary>
+            /// Returns method defined in the nearest ancestor: void Dispose(bool)
+            /// </summary>
+            private IMethodSymbol FindInheritedDisposeBoolMethod(INamedTypeSymbol type)
+            {
+                IMethodSymbol method = null;
+
+                while (type != null && method == null && ImplementsDisposableInBaseType(type))
+                {
+                    type = type.BaseType;
+                    method = FindDisposeBoolMethod(type);
+                }
+
+                return method;
             }
         }
 

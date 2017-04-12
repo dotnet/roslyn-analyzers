@@ -1261,7 +1261,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove IDisposable from the list of interfaces implemented by {0} and override the base class Dispose implementation instead..
+        ///   Looks up a localized string similar to Remove IDisposable from the list of interfaces implemented by {0}. It is redundant..
         /// </summary>
         internal static string ImplementIDisposableCorrectlyMessageIDisposableReimplementation {
             get {

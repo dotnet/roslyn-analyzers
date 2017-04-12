@@ -108,9 +108,7 @@ public class B : IDisposable
 }|]
 ",
             GetCA1063CSharpIDisposableReimplementationResultAt(11, 14, "C"),
-            GetCA1063CSharpFinalizeOverrideResultAt(11, 14, "C"),
-            GetCA1063CSharpDisposeSignatureResultAt(13, 26, "C", "Dispose"),
-            GetCA1063CSharpDisposeOverrideResultAt(13, 26, "C", "Dispose"));
+            GetCA1063CSharpDisposeSignatureResultAt(13, 26, "C", "Dispose"));
         }
 
         [Fact]
@@ -149,13 +147,11 @@ public class B : A
 }|]
 ",
             GetCA1063CSharpIDisposableReimplementationResultAt(15, 14, "C"),
-            GetCA1063CSharpFinalizeOverrideResultAt(15, 14, "C"),
-            GetCA1063CSharpDisposeSignatureResultAt(17, 26, "C", "Dispose"),
-            GetCA1063CSharpDisposeOverrideResultAt(17, 26, "C", "Dispose"));
+            GetCA1063CSharpDisposeSignatureResultAt(17, 26, "C", "Dispose"));
         }
 
         [Fact]
-        public void CSharp_CA1063_IDisposableReimplementation_Diagnostic_ImplementingInterfaceInheritedFromIDisposable()
+        public void CSharp_CA1063_IDisposableReimplementation_NoDiagnostic_ImplementingInterfaceInheritedFromIDisposable()
         {
             VerifyCSharp(@"
 using System;
@@ -191,13 +187,11 @@ public class B : IDisposable
     {
     }
 }|]
-",
-            GetCA1063CSharpIDisposableReimplementationResultAt(16, 14, "C"),
-            GetCA1063CSharpFinalizeOverrideResultAt(16, 14, "C"));
+");
         }
 
         [Fact]
-        public void CSharp_CA1063_IDisposableReimplementation_Diagnostic_ReImplementingIDisposableWithNoDisposeMethod()
+        public void CSharp_CA1063_IDisposableReimplementation_NoDiagnostic_ReImplementingIDisposableWithNoDisposeMethod()
         {
             VerifyCSharp(@"
 using System;
@@ -455,10 +449,10 @@ public class B : A
 
         #endregion
 
-        #region CSharp FinilizeOverride Unit Tests
+        #region CSharp FinalizeOverride Unit Tests
 
         [Fact]
-        public void CSharp_CA1063_FinilizeOverride_Diagnostic_SimpleFinalizeOverride()
+        public void CSharp_CA1063_FinalizeOverride_Diagnostic_SimpleFinalizeOverride()
         {
             VerifyCSharp(@"
 using System;
@@ -492,7 +486,7 @@ public class B : IDisposable
         }
 
         [Fact]
-        public void CSharp_CA1063_FinilizeOverride_Diagnostic_DoubleFinalizeOverride()
+        public void CSharp_CA1063_FinalizeOverride_Diagnostic_DoubleFinalizeOverride()
         {
             VerifyCSharp(@"
 using System;
@@ -533,7 +527,7 @@ public class B : A
         }
 
         [Fact]
-        public void CSharp_CA1063_FinilizeOverride_Diagnostic_FinalizeNotInBaseType()
+        public void CSharp_CA1063_FinalizeOverride_NoDiagnostic_FinalizeNotInBaseType()
         {
             VerifyCSharp(@"
 using System;
@@ -551,8 +545,7 @@ public class B : IDisposable
     {
     }
 }|]
-",
-            GetCA1063CSharpFinalizeOverrideResultAt(11, 14, "C"));
+");
         }
 
         #endregion
@@ -1219,9 +1212,7 @@ End Class
 End Class|]
 ",
             GetCA1063BasicIDisposableReimplementationResultAt(11, 14, "C"),
-            GetCA1063BasicFinalizeOverrideResultAt(11, 14, "C"),
-            GetCA1063BasicDisposeSignatureResultAt(15, 26, "C", "Dispose"),
-            GetCA1063BasicDisposeOverrideResultAt(15, 26, "C", "Dispose"));
+            GetCA1063BasicDisposeSignatureResultAt(15, 26, "C", "Dispose"));
         }
 
         [Fact]
@@ -1261,13 +1252,11 @@ End Class
 End Class|]
 ",
             GetCA1063BasicIDisposableReimplementationResultAt(15, 14, "C"),
-            GetCA1063BasicFinalizeOverrideResultAt(15, 14, "C"),
-            GetCA1063BasicDisposeSignatureResultAt(19, 26, "C", "Dispose"),
-            GetCA1063BasicDisposeOverrideResultAt(19, 26, "C", "Dispose"));
+            GetCA1063BasicDisposeSignatureResultAt(19, 26, "C", "Dispose"));
         }
 
         [Fact]
-        public void Basic_CA1063_IDisposableReimplementation_Diagnostic_ImplementingInterfaceInheritedFromIDisposable()
+        public void Basic_CA1063_IDisposableReimplementation_NoDiagnostic_ImplementingInterfaceInheritedFromIDisposable()
         {
             VerifyBasic(@"
 Imports System
@@ -1305,9 +1294,7 @@ End Class
     End Sub
 
 End Class|]
-",
-            GetCA1063BasicIDisposableReimplementationResultAt(17, 14, "C"),
-            GetCA1063BasicFinalizeOverrideResultAt(17, 14, "C"));
+");
         }
 
         [Fact]
@@ -1681,10 +1668,10 @@ End Class|]
 
         #endregion
 
-        #region VB FinilizeOverride Unit Tests
+        #region VB FinalizeOverride Unit Tests
 
         [Fact]
-        public void Basic_CA1063_FinilizeOverride_Diagnostic_SimpleFinalizeOverride()
+        public void Basic_CA1063_FinalizeOverride_Diagnostic_SimpleFinalizeOverride()
         {
             VerifyBasic(@"
 Imports System
@@ -1719,7 +1706,7 @@ End Class|]
         }
 
         [Fact]
-        public void Basic_CA1063_FinilizeOverride_Diagnostic_DoubleFinalizeOverride()
+        public void Basic_CA1063_FinalizeOverride_Diagnostic_DoubleFinalizeOverride()
         {
             VerifyBasic(@"
 Imports System
@@ -1762,7 +1749,7 @@ End Class|]
         }
 
         [Fact]
-        public void Basic_CA1063_FinilizeOverride_Diagnostic_FinalizeNotInBaseType()
+        public void Basic_CA1063_FinalizeOverride_NoDiagnostic_FinalizeNotInBaseType()
         {
             VerifyBasic(@"
 Imports System
@@ -1781,8 +1768,7 @@ End Class
         MyBase.Finalize()
     End Sub
 End Class|]
-",
-            GetCA1063BasicFinalizeOverrideResultAt(11, 14, "C"));
+");
         }
 
         #endregion

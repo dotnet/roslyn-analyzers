@@ -1,0 +1,268 @@
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines;
+using Test.Utilities;
+using Xunit;
+
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
+{
+    public partial class AvoidDuplicateElementInitializationTests : DiagnosticAnalyzerTestBase
+    {
+        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        {
+            return null;
+        }
+
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        {
+            return new CSharpAvoidDuplicateElementInitialization();
+        }
+
+        [Fact]
+        public void LiteralIntIndex()
+        {
+            VerifyCSharp(@"
+class C
+{
+    void Foo()
+    {
+        var x = new System.Collections.Generic.Dictionary<int, string>
+        {
+            [1] = ""a"",
+            [2] = ""b"",
+            [1] = ""c""
+        };
+    }
+}
+",
+                GetCSharpResultAt(10, 13, "1"));
+        }
+
+        [Fact]
+        public void CalculatedIntIndex()
+        {
+            VerifyCSharp(@"
+class C
+{
+    void Foo()
+    {
+        var x = new System.Collections.Generic.Dictionary<int, string>
+        {
+            [1] = ""a"",
+            [2] = ""b"",
+            [(10 + 3) * 2 - 25] = ""c""
+        };
+    }
+}
+",
+                GetCSharpResultAt(10, 13, "1"));
+        }
+
+        [Fact]
+        public void LiteralStringIndex()
+        {
+            VerifyCSharp(@"
+class C
+{
+    void Foo()
+    {
+        var dictionary = new System.Collections.Generic.Dictionary<string, int>
+        {
+            [""a""] = 1,
+            [""b""] = 2,
+            [""a""] = 3
+        };
+    }
+}
+",
+                GetCSharpResultAt(10, 13, "\"a\""));
+        }
+
+        [Fact]
+        public void ConcatenatedStringIndex()
+        {
+            VerifyCSharp(@"
+class C
+{
+    void Foo()
+    {
+        var x = new System.Collections.Generic.Dictionary<string, int>
+        {
+            [""ab""] = 1,
+            [""bc""] = 2,
+            [""a"" + ""b""] = 3
+        };
+    }
+}
+",
+                GetCSharpResultAt(10, 13, "\"ab\""));
+        }
+
+        [Fact]
+        public void EnumIndex()
+        {
+            VerifyCSharp(@"
+class C
+{
+    void Foo()
+    {
+        var dictionary = new System.Collections.Generic.Dictionary<System.DateTimeKind, int>
+        {
+            [System.DateTimeKind.Local] = 1,
+            [System.DateTimeKind.Utc] = 2,
+            [System.DateTimeKind.Local] = 3
+        };
+    }
+}
+",
+                // TODO: See if there's a way to use 'DateTimeKind.Local' here.
+                GetCSharpResultAt(10, 13, "2"));
+        }
+
+        [Fact]
+        public void MultipleIndexerArguments()
+        {
+            VerifyCSharp(@"
+class C
+{
+    void Foo()
+    {
+        var x = new D
+        {
+            [1, ""a""] = 1,
+            [1, ""b""] = 2,
+            [2, ""a""] = 3,
+            [1, ""a""] = 4
+        };
+    }
+}
+
+class D
+{
+    public int this[int a, string b]
+    {
+        get { return 0; }
+        set { }
+    }
+}
+",
+                GetCSharpResultAt(11, 13, "1, \"a\""));
+        }
+
+        [Fact]
+        public void MultipleIndexerArgumentsNamed()
+        {
+            VerifyCSharp(@"
+class C
+{
+    void Foo()
+    {
+        var x = new D
+        {
+            [""a"", ""b""] = 1,
+            [""b"", ""c""] = 2,
+            [b: ""a"", a: ""b""] = 3,
+            [b: ""b"", a: ""a""] = 4
+        };
+    }
+}
+
+class D
+{
+    public int this[string a, string b]
+    {
+        get { return 0; }
+        set { }
+    }
+}
+",
+                GetCSharpResultAt(11, 13, "\"a\", \"b\""));
+        }
+
+        [Fact]
+        public void MultipleIndexerArgumentsNamedWithAtPrefix()
+        {
+            VerifyCSharp(@"
+class C
+{
+    void Foo()
+    {
+        var x = new D
+        {
+            [""a"", ""b""] = 1,
+            [""b"", ""c""] = 2,
+            [@class: ""a"", a: ""b""] = 3,
+            [@class: ""b"", @a: ""a""] = 4
+        };
+    }
+}
+
+class D
+{
+    public int this[string a, string @class]
+    {
+        get { return 0; }
+        set { }
+    }
+}
+",
+                GetCSharpResultAt(11, 13, "\"a\", \"b\""));
+        }
+
+        [Fact]
+        public void MultipleArgumentsWithOmittedDefault()
+        {
+            VerifyCSharp(@"
+class C
+{
+    void Foo()
+    {
+        var x = new D
+        {
+            [""a"", ""b""] = 1,
+            [""b"", ""c""] = 2,
+            [b: ""a"", a: ""b""] = 3,
+            [""a""] = 4
+        };
+    }
+}
+
+class D
+{
+    public int this[string a, string b = ""b""]
+    {
+        get { return 0; }
+        set { }
+    }
+}
+",
+                GetCSharpResultAt(11, 13, "\"a\", \"b\""));
+        }
+
+        [Fact]
+        public void NonConstantArguments()
+        {
+            VerifyCSharp(@"
+class C
+{
+    void Foo()
+    {
+        var dictionary = new System.Collections.Generic.Dictionary<string, int>
+        {
+            [""a""] = 1,
+            [typeof(C).ToString()] = 2,
+            [""a""] = 3
+        };
+    }
+}
+",
+                GetCSharpResultAt(10, 13, "\"a\""));
+        }
+
+        private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
+        {
+            return GetCSharpResultAt(line, column, AvoidDuplicateElementInitialization.Rule, symbolName);
+        }
+    }
+}

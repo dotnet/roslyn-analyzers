@@ -10,8 +10,6 @@
     <RootNamespace>Desktop.Analyzers</RootNamespace>
     <AssemblyName>Desktop.Analyzers</AssemblyName>
     <PackageId>Desktop.Analyzers.Core</PackageId>
-    <SemanticVersion>$(DesktopAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(DesktopAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Desktop.CSharp.Analyzers" />

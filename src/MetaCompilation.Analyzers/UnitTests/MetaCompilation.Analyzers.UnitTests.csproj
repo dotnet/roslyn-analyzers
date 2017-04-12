@@ -7,8 +7,6 @@
     <TestProject>true</TestProject>
     <RootNamespace>MetaCompilation.Analyzers.UnitTests</RootNamespace>
     <AssemblyName>MetaCompilation.Analyzers.UnitTests</AssemblyName>
-    <SemanticVersion>$(MetaCompilationAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(MetaCompilationAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Label="Start settings">
     <StartAction>Program</StartAction>

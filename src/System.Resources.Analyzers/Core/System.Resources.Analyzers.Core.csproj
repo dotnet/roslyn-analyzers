@@ -10,8 +10,6 @@
     <RootNamespace>System.Resources.Analyzers</RootNamespace>
     <AssemblyName>System.Resources.Analyzers</AssemblyName>
     <PackageId>System.Resources.Analyzers.Core</PackageId>
-    <SemanticVersion>$(SystemResourcesAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(SystemResourcesAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="System.Resources.CSharp.Analyzers" />

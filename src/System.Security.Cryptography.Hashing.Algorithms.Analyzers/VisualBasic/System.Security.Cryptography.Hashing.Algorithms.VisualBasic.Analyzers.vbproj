@@ -8,8 +8,6 @@
     <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <AnalyzerProject>true</AnalyzerProject>
     <AssemblyName>System.Security.Cryptography.Hashing.Algorithms.VisualBasic.Analyzers</AssemblyName>
-    <SemanticVersion>$(SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\System.Security.Cryptography.Hashing.Algorithms.Analyzers.Core.csproj" />

@@ -10,8 +10,6 @@
     <RootNamespace>System.Runtime.Analyzers</RootNamespace>
     <AssemblyName>System.Runtime.Analyzers</AssemblyName>
     <PackageId>System.Runtime.Analyzers.Core</PackageId>
-    <SemanticVersion>$(SystemRuntimeAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(SystemRuntimeAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="System.Runtime.CSharp.Analyzers" />

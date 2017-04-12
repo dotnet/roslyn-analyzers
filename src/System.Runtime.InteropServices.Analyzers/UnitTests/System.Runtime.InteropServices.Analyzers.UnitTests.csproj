@@ -7,8 +7,6 @@
     <TargetFramework>net46</TargetFramework>
     <TestProject>true</TestProject>
     <AssemblyName>System.Runtime.InteropServices.Analyzers.UnitTests</AssemblyName>
-    <SemanticVersion>$(SystemRuntimeInteropServicesAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(SystemRuntimeInteropServicesAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\..\Test\Utilities\Test.Utilities.csproj" />

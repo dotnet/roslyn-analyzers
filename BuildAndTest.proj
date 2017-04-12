@@ -59,21 +59,17 @@
   <Target Name="Test">
     
     <ItemGroup>
-      <TestAssemblies Include="Binaries\$(Configuration)\Microsoft.ApiDesignGuidelines.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\Desktop.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\System.Runtime.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\System.Runtime.InteropServices.Analyzers.UnitTests.dll" />
-      <TestAssemblies Include="Binaries\$(Configuration)\ApiReview.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\Roslyn.Diagnostics.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\System.Threading.Tasks.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\Microsoft.Composition.Analyzers.UnitTests.dll" />
-      <TestAssemblies Include="Binaries\$(Configuration)\XmlDocumentationComments.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\System.Collections.Immutable.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\System.Security.Cryptography.Hashing.Algorithms.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\Microsoft.CodeAnalysis.Analyzers.UnitTests.dll" />
-      <TestAssemblies Include="Binaries\$(Configuration)\Microsoft.Maintainability.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\Text.Analyzers.UnitTests.dll" />
-      <TestAssemblies Include="Binaries\$(Configuration)\Microsoft.QualityGuidelines.Analyzers.UnitTests.dll" />
+      <TestAssemblies Include="Binaries\$(Configuration)\Microsoft.CodeQuality.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\System.Resources.Analyzers.UnitTests.dll" />
     </ItemGroup>
 

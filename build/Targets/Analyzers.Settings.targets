@@ -23,18 +23,6 @@
     <XUnitVersion>2.1.0</XUnitVersion>
   </PropertyGroup>
 
-  <!-- Properties for auto-generation of assembly attributes -->
-  <PropertyGroup>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <AssemblyTitle Condition="'$(AssemblyTitle)' == ''">$(AssemblyName)</AssemblyTitle>
-    <Company Condition="'$(Company)' == ''">Microsoft Corporation</Company>
-    <Copyright Condition="'$(Copyright)' == ''">© Microsoft Corporation. All rights reserved.</Copyright>
-    <Description Condition="'$(Description)' == ''">$(AssemblyName)</Description>
-    <FileVersion Condition="'$(FileVersion)' == ''">$(BuildVersion)</FileVersion>
-    <InformationalVersion Condition="'$(InformationalVersion)' == ''">$(BuildVersion)</InformationalVersion>
-    <NeutralLanguage Condition="'$(NeutralLanguage)' == ''">en-US</NeutralLanguage>
-  </PropertyGroup>
-
   <!-- Project language -->
   <PropertyGroup Condition="'$(ProjectLanguage)' == ''">
     <ProjectLanguage Condition="'$(MSBuildProjectExtension)' == '.csproj' OR '$(Language)' == 'C#'">CSharp</ProjectLanguage>
@@ -152,6 +140,4 @@
     <AuthenticodeCertificateName>MicrosoftSHA1</AuthenticodeCertificateName>
     <FakeSignToolPath>$(NuGetPackageRoot)\FakeSign\0.9.2\tools\FakeSign.exe</FakeSignToolPath>
   </PropertyGroup>
-
-  <Import Project="Analyzers.Versions.targets" />
 </Project>

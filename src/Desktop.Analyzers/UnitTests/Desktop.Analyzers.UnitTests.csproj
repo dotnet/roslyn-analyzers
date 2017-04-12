@@ -8,8 +8,6 @@
     <TestProject>true</TestProject>
     <RootNamespace>Desktop.Analyzers.UnitTests</RootNamespace>
     <AssemblyName>Desktop.Analyzers.UnitTests</AssemblyName>
-    <SemanticVersion>$(DesktopAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(DesktopAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj" />

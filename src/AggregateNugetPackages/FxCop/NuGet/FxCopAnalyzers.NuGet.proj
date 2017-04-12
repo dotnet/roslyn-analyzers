@@ -5,8 +5,6 @@
     <Import Project="..\..\..\..\build\Targets\Analyzers.NuGet.Settings.targets" />
   </ImportGroup>
   <PropertyGroup>
-    <SemanticVersion>$(FxCopAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(FxCopAnalyzersPreReleaseVersion)</PreReleaseVersion>
     <NuGetLicenseURL>$(NuGetLicenseURLRedist)</NuGetLicenseURL>  
 </PropertyGroup>
   <ItemGroup>

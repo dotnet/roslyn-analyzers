@@ -8,15 +8,13 @@
     </description>
     <dependencies>
       <dependency id="Desktop.Analyzers" version="$currentVersion$" />
+      <dependency id="Microsoft.CodeQuality.Analyzers" version="$currentVersion$" />
       <dependency id="System.Collections.Immutable.Analyzers" version="$currentVersion$" />
       <dependency id="System.Runtime.Analyzers" version="$currentVersion$" />
       <dependency id="System.Runtime.InteropServices.Analyzers" version="$currentVersion$" />
       <dependency id="System.Threading.Tasks.Analyzers" version="$currentVersion$" />
       <dependency id="System.Security.Cryptography.Hashing.Algorithms.Analyzers" version="$currentVersion$" />
-      <dependency id="Microsoft.ApiDesignGuidelines.Analyzers" version="$currentVersion$" />
-      <dependency id="Microsoft.Maintainability.Analyzers" version="$currentVersion$" />
       <dependency id="Text.Analyzers" version="$currentVersion$" />
-      <dependency id="Microsoft.QualityGuidelines.Analyzers" version="$currentVersion$" />
       <dependency id="System.Resources.Analyzers" version="$currentVersion$" />
     </dependencies>
     <language>en-US</language>

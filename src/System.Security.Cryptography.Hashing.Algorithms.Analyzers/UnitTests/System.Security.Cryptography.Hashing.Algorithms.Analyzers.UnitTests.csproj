@@ -8,8 +8,6 @@
     <TestProject>true</TestProject>
     <RootNamespace>System.Security.Cryptography.Hashing.Algorithms.Analyzers.UnitTests</RootNamespace>
     <AssemblyName>System.Security.Cryptography.Hashing.Algorithms.Analyzers.UnitTests</AssemblyName>
-    <SemanticVersion>$(SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\..\Test\Utilities\Test.Utilities.csproj" />

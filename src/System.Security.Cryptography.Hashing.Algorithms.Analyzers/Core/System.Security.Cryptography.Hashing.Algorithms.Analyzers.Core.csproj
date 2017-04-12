@@ -10,8 +10,6 @@
     <RootNamespace>System.Security.Cryptography.Hashing.Algorithms.Analyzers</RootNamespace>
     <AssemblyName>System.Security.Cryptography.Hashing.Algorithms.Analyzers</AssemblyName>
     <PackageId>System.Security.Cryptography.Hashing.Algorithms.Analyzers.Core</PackageId>
-    <SemanticVersion>$(SystemSecurityCryptographyHashingAlgorithmsAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(SystemSecurityCryptographyHashingAlgorithmsAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="System.Security.Cryptography.Hashing.Algorithms.CSharp.Analyzers" />

@@ -8,8 +8,6 @@
     <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <AnalyzerProject>true</AnalyzerProject>
     <AssemblyName>System.Collections.Immutable.VisualBasic.Analyzers</AssemblyName>
-    <SemanticVersion>$(SystemCollectionsImmutableAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(SystemCollectionsImmutableAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\System.Collections.Immutable.Analyzers.Core.csproj" />

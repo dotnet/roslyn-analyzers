@@ -8,8 +8,6 @@
     <TestProject>true</TestProject>
     <RootNamespace>System.Collections.Immutable.Analyzers.UnitTests</RootNamespace>
     <AssemblyName>System.Collections.Immutable.Analyzers.UnitTests</AssemblyName>
-    <SemanticVersion>$(SystemCollectionsImmutableAnalyzersSemanticVersion)</SemanticVersion>
-    <PreReleaseVersion>$(SystemCollectionsImmutableAnalyzersPreReleaseVersion)</PreReleaseVersion>
   </PropertyGroup>
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\..\Test\Utilities\Test.Utilities.csproj" />

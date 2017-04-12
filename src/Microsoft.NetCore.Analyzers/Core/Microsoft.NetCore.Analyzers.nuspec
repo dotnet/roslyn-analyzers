@@ -2,9 +2,9 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Microsoft.NetCore.Analyzers</id>
-    <summary>Microsoft.NetCore Analyzers</summary>
+    <summary>Microsoft .NetCore API Analyzers</summary>
     <description>
-      .NetCore API Analyzers
+      Analyzers for .NetCore APIs
     </description>
     <dependencies>
     </dependencies>

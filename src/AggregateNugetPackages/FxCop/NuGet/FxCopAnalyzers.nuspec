@@ -7,9 +7,9 @@
       Microsoft FxCop rules implemented as analyzers using the .NET Compiler Platform ("Roslyn").
     </description>
     <dependencies>
-      <dependency id="Desktop.Analyzers" version="$currentVersion$" />
       <dependency id="Microsoft.CodeQuality.Analyzers" version="$currentVersion$" />
       <dependency id="Microsoft.NetCore.Analyzers" version="$currentVersion$" />
+      <dependency id="Microsoft.NetFramework.Analyzers" version="$currentVersion$" />
       <dependency id="Text.Analyzers" version="$currentVersion$" />
     </dependencies>
     <language>en-US</language>

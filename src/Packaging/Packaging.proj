@@ -4,12 +4,12 @@
     <Import Project="..\..\build\Targets\Analyzers.Settings.targets"/>
   </ImportGroup>
   <ItemGroup>
-    <Project Include = "..\Desktop.Analyzers\NuGet\Desktop.Analyzers.NuGet.proj" />
-    <Project Include = "..\Roslyn.Diagnostics.Analyzers\NuGet\Roslyn.Diagnostics.Analyzers.NuGet.proj" />
-    <Project Include = "..\Text.Analyzers\NuGet\Text.Analyzers.NuGet.proj" />
+    <Project Include = "..\Microsoft.CodeAnalysis.Analyzers\NuGet\Microsoft.CodeAnalysis.Analyzers.NuGet.proj" />
     <Project Include = "..\Microsoft.CodeQuality.Analyzers\NuGet\Microsoft.CodeQuality.Analyzers.NuGet.proj" />
     <Project Include = "..\Microsoft.NetCore.Analyzers\NuGet\Microsoft.NetCore.Analyzers.NuGet.proj" />
-    <Project Include = "..\Microsoft.CodeAnalysis.Analyzers\NuGet\Microsoft.CodeAnalysis.Analyzers.NuGet.proj" />
+    <Project Include = "..\Microsoft.NetFramework.Analyzers\NuGet\Microsoft.NetFramework.Analyzers.NuGet.proj" />
+    <Project Include = "..\Roslyn.Diagnostics.Analyzers\NuGet\Roslyn.Diagnostics.Analyzers.NuGet.proj" />
+    <Project Include = "..\Text.Analyzers\NuGet\Text.Analyzers.NuGet.proj" />
 
     <!-- Nuget packages which are aggregation of other core analyzer nuget packages -->
     <Project Include = "..\AggregateNugetPackages\FxCop\NuGet\FxCopAnalyzers.NuGet.proj" />

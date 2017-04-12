@@ -59,12 +59,12 @@
   <Target Name="Test">
     
     <ItemGroup>
-      <TestAssemblies Include="Binaries\$(Configuration)\Desktop.Analyzers.UnitTests.dll" />
-      <TestAssemblies Include="Binaries\$(Configuration)\Roslyn.Diagnostics.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\Microsoft.CodeAnalysis.Analyzers.UnitTests.dll" />
-      <TestAssemblies Include="Binaries\$(Configuration)\Text.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\Microsoft.CodeQuality.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\Microsoft.NetCore.Analyzers.UnitTests.dll" />
+      <TestAssemblies Include="Binaries\$(Configuration)\Microsoft.NetFramework.Analyzers.UnitTests.dll" />
+      <TestAssemblies Include="Binaries\$(Configuration)\Roslyn.Diagnostics.Analyzers.UnitTests.dll" />
+      <TestAssemblies Include="Binaries\$(Configuration)\Text.Analyzers.UnitTests.dll" />
     </ItemGroup>
 
     <Exec Command="&quot;$(NuGetPackageRoot)\xunit.runner.console\2.1.0\tools\xunit.console.x86.exe&quot; @(TestAssemblies, ' ') $(RunTestArgs)" />

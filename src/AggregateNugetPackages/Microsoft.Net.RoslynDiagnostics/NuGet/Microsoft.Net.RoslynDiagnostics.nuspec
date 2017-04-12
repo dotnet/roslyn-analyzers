@@ -11,11 +11,7 @@
       <dependency id="Roslyn.Diagnostics.Analyzers" version="$currentVersion$" />
       <dependency id="Microsoft.CodeAnalysis.Analyzers" version="$currentVersion$" />
       <dependency id="Microsoft.CodeQuality.Analyzers" version="$currentVersion$" />
-      <dependency id="Microsoft.Composition.Analyzers" version="$currentVersion$" />
-      <dependency id="System.Collections.Immutable.Analyzers" version="$currentVersion$" />
-      <dependency id="System.Runtime.Analyzers" version="$currentVersion$" />
-      <dependency id="System.Runtime.InteropServices.Analyzers" version="$currentVersion$" />
-      <dependency id="System.Threading.Tasks.Analyzers" version="$currentVersion$" />
+      <dependency id="Microsoft.NetCore.Analyzers" version="$currentVersion$" />
     </dependencies>
     <language>en-US</language>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>

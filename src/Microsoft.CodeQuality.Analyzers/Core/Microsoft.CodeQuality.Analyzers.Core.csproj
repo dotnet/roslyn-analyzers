@@ -46,7 +46,7 @@
     <EmbeddedResource Update="Documentation\XmlDocumentationCommentsAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>XmlDocumentationCommentsAnalyzersResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Documentation\XmlDocumentationComments.Analyzers</CustomToolNamespace>
+      <CustomToolNamespace>XmlDocumentationComments.Analyzers</CustomToolNamespace>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

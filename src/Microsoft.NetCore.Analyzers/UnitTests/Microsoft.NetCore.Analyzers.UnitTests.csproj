@@ -6,17 +6,14 @@
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
     <TestProject>true</TestProject>
-    <RootNamespace>Microsoft.CodeQuality.Analyzers.UnitTests</RootNamespace>
-    <AssemblyName>Microsoft.CodeQuality.Analyzers.UnitTests</AssemblyName>
+    <RootNamespace>Microsoft.NetCore.Analyzers.UnitTests</RootNamespace>
+    <AssemblyName>Microsoft.NetCore.Analyzers.UnitTests</AssemblyName>
   </PropertyGroup>
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\..\Test\Utilities\Test.Utilities.csproj" />
-    <ProjectReference Include="..\Core\Microsoft.CodeQuality.Analyzers.Core.csproj" />
-    <ProjectReference Include="..\CSharp\Microsoft.CodeQuality.CSharp.Analyzers.csproj" />
-    <ProjectReference Include="..\VisualBasic\Microsoft.CodeQuality.VisualBasic.Analyzers.vbproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+    <ProjectReference Include="..\Core\Microsoft.NetCore.Analyzers.Core.csproj" />
+    <ProjectReference Include="..\CSharp\Microsoft.NetCore.CSharp.Analyzers.csproj" />
+    <ProjectReference Include="..\VisualBasic\Microsoft.NetCore.VisualBasic.Analyzers.vbproj" />
   </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />

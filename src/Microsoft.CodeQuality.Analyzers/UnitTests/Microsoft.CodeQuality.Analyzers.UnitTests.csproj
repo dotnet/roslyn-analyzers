@@ -15,6 +15,9 @@
     <ProjectReference Include="..\CSharp\Microsoft.CodeQuality.CSharp.Analyzers.csproj" />
     <ProjectReference Include="..\VisualBasic\Microsoft.CodeQuality.VisualBasic.Analyzers.vbproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+  </ItemGroup>
   <ImportGroup Label="Targets">
     <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />
   </ImportGroup>

@@ -49,6 +49,12 @@ public class NormalizeStringsTesterClass
     {
         Console.WriteLine(""FOO"".ToUpper(CultureInfo.InstalledUICulture));
     }
+
+    public void TestMethodOneE()
+    {
+        var dynamicCulture = CultureInfo.CurrentCulture;
+        Console.WriteLine(""FOO"".ToUpper(dynamicCulture));
+    }
 }
 ");
 
@@ -71,6 +77,11 @@ Public Class NormalizeStringsTesterClass
 
     Public Sub TestMethodOneD()
         Console.WriteLine(""FOO"".ToUpper(CultureInfo.InstalledUICulture))
+    End Sub
+
+    Public Sub TestMethodOneE()
+        Dim dynamicCulture = CultureInfo.CurrentCulture
+        Console.WriteLine(""FOO"".ToUpper(dynamicCulture))
     End Sub
 End Class
 ");
@@ -104,6 +115,12 @@ public class NormalizeStringsTesterClass
     {
         Console.WriteLine(""FOO"".ToLower(CultureInfo.InstalledUICulture));
     }
+
+    public void TestMethodTwoE()
+    {
+        var dynamicCulture = CultureInfo.CurrentCulture;
+        Console.WriteLine(""FOO"".ToLower(dynamicCulture));
+    }
 }
 ");
 
@@ -126,6 +143,11 @@ Public Class NormalizeStringsTesterClass
 
     Public Sub TestMethodTwoD()
         Console.WriteLine(""FOO"".ToLower(CultureInfo.InstalledUICulture))
+    End Sub
+
+    Public Sub TestMethodTwoE()
+        Dim dynamicCulture = CultureInfo.CurrentCulture
+        Console.WriteLine(""FOO"".ToLower(dynamicCulture))
     End Sub
 End Class
 ");

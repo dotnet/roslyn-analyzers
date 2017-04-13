@@ -13,7 +13,6 @@
     <RunTestArgs>-noshadow -parallel all</RunTestArgs>
     <RunTestArgs Condition="'$(CIBuild)' == 'true'">$(RunTestArgs) -xml TestResults.xml</RunTestArgs>
 
-    <NuGetExe>$(MSBuildThisFileDirectory)\Src\.nuget\Nuget.exe</NuGetExe>
     <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == ''">$(NUGET_PACKAGES)</NuGetPackageRoot>
     <!-- Respect environment variable if set -->
     <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and

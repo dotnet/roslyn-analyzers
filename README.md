@@ -96,8 +96,10 @@ Getting Started
 ===============
 
 1. Clone the repository
-2. Install NuGet packages: `powershell -executionpolicy bypass src\.nuget\NuGetRestore.ps1`
+2. Install NuGet packages: `msbuild /t:restore src\Analyzers.sln`
 3. Build: `msbuild src\Analyzers.sln`
+
+Execute `cibuild.cmd` to clean, restore, build and runs tests
 
 **NOTE** The current build of System.Reflection.Metadata (from NuGet package System.Reflection.Metadata.1.2.0-rc2-23629) is unsigned. This causes unit tests to fail. To work around this problem until a new, signed version is available, give the command
 ```

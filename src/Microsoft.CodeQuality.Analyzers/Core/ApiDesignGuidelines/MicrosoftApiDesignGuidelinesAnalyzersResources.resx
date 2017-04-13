@@ -638,7 +638,7 @@ Names of parameters and members are better used to communicate their meaning tha
     <value>All IDisposable types should implement the Dispose pattern correctly.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyMessageIDisposableReimplementation" xml:space="preserve">
-    <value>Remove IDisposable from the list of interfaces implemented by {0}. It is redundant.</value>
+    <value>Remove IDisposable from the list of interfaces implemented by {0} as it is already implemented by base type {1}.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyMessageFinalizeOverride" xml:space="preserve">
     <value>Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false.</value>

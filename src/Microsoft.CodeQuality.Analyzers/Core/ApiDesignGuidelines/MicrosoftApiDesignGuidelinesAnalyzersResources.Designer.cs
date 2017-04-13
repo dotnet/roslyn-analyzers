@@ -1261,7 +1261,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove IDisposable from the list of interfaces implemented by {0}. It is redundant..
+        ///   Looks up a localized string similar to Remove IDisposable from the list of interfaces implemented by {0} as it is already implemented by base type {1}..
         /// </summary>
         internal static string ImplementIDisposableCorrectlyMessageIDisposableReimplementation {
             get {

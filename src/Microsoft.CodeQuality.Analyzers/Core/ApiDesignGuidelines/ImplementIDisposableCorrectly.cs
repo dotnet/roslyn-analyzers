@@ -281,13 +281,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
 
             /// <summary>
-            /// Check rule: Remove IDisposable from the list of interfaces implemented by {0}. It is redundant.
+            /// Check rule: Remove IDisposable from the list of interfaces implemented by {0} as it is already implemented by base type {1}.
             /// </summary>
             private static void CheckIDisposableReimplementationRule(INamedTypeSymbol type, SymbolAnalysisContext context, bool implementsDisposableInBaseType)
             {
                 if (implementsDisposableInBaseType)
                 {
-                    context.ReportDiagnostic(type.CreateDiagnostic(IDisposableReimplementationRule, type.Name));
+                    context.ReportDiagnostic(type.CreateDiagnostic(IDisposableReimplementationRule, type.Name, type.BaseType.Name));
                 }
             }
 

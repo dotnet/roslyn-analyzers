@@ -107,7 +107,7 @@ public class B : IDisposable
     }
 }|]
 ",
-            GetCA1063CSharpIDisposableReimplementationResultAt(11, 14, "C"),
+            GetCA1063CSharpIDisposableReimplementationResultAt(11, 14, "C", "B"),
             GetCA1063CSharpDisposeSignatureResultAt(13, 26, "C", "Dispose"));
         }
 
@@ -146,7 +146,7 @@ public class B : A
     }
 }|]
 ",
-            GetCA1063CSharpIDisposableReimplementationResultAt(15, 14, "C"),
+            GetCA1063CSharpIDisposableReimplementationResultAt(15, 14, "C", "B"),
             GetCA1063CSharpDisposeSignatureResultAt(17, 26, "C", "Dispose"));
         }
 
@@ -213,7 +213,7 @@ public class B : IDisposable
     public int Test { get; set; }
 }|]
 ",
-            GetCA1063CSharpIDisposableReimplementationResultAt(16, 14, "C"));
+            GetCA1063CSharpIDisposableReimplementationResultAt(16, 14, "C", "B"));
         }
 
         [Fact]
@@ -1211,7 +1211,7 @@ End Class
 
 End Class|]
 ",
-            GetCA1063BasicIDisposableReimplementationResultAt(11, 14, "C"),
+            GetCA1063BasicIDisposableReimplementationResultAt(11, 14, "C", "B"),
             GetCA1063BasicDisposeSignatureResultAt(15, 26, "C", "Dispose"));
         }
 
@@ -1251,7 +1251,7 @@ End Class
 
 End Class|]
 ",
-            GetCA1063BasicIDisposableReimplementationResultAt(15, 14, "C"),
+            GetCA1063BasicIDisposableReimplementationResultAt(15, 14, "C", "B"),
             GetCA1063BasicDisposeSignatureResultAt(19, 26, "C", "Dispose"));
         }
 
@@ -1325,7 +1325,7 @@ End Class
 
 End Class|]
 ",
-            GetCA1063BasicIDisposableReimplementationResultAt(17, 29, "C"));
+            GetCA1063BasicIDisposableReimplementationResultAt(17, 29, "C", "B"));
         }
 
         [Fact]
@@ -2344,15 +2344,15 @@ End Class
 
         #region Helpers
 
-        private static DiagnosticResult GetCA1063CSharpIDisposableReimplementationResultAt(int line, int column, string typeName)
+        private static DiagnosticResult GetCA1063CSharpIDisposableReimplementationResultAt(int line, int column, string typeName, string baseTypeName)
         {
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageIDisposableReimplementation, typeName);
+            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageIDisposableReimplementation, typeName, baseTypeName);
             return GetCSharpResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 
-        private static DiagnosticResult GetCA1063BasicIDisposableReimplementationResultAt(int line, int column, string typeName)
+        private static DiagnosticResult GetCA1063BasicIDisposableReimplementationResultAt(int line, int column, string typeName, string baseTypeName)
         {
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageIDisposableReimplementation, typeName);
+            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageIDisposableReimplementation, typeName, baseTypeName);
             return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 

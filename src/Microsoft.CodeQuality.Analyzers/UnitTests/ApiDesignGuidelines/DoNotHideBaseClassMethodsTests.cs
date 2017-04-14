@@ -21,235 +21,418 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         [Fact]
         public void CA1061_DerivedMethodMatchesBaseMethod_NoDiagnostic()
         {
-            const string Test = @"
-using System;
-
-class BaseType
+            VerifyCSharp(@"
+class Base
 {
     public void Method(string input)
     {
     }
 }
 
-class DerivedType : BaseType
+class Derived : Base
 {
     public void Method(string input)
     {
     }
-}";
+}");
 
-            VerifyCSharp(Test);
+            VerifyBasic(@"
+Class Base
+    Public Sub Method(input As String)
+    End Sub
+End Class
+
+Class Derived
+    Inherits Base
+    
+    Public Sub Method(input As String)
+    End Sub
+End Class");
         }
 
         [Fact]
-        public void CA1061_BaseMethodHasLessDerivedParameter_NoDiagnostic()
+        public void CA1061_DerivedMethodHasMoreDerivedParameter_NoDiagnostic()
         {
-            const string Test = @"
-using System;
-
-class BaseType
+            VerifyCSharp(@"
+class Base
 {
     public void Method(object input)
     {
     }
 }
 
-class DerivedType : BaseType
+class Derived : Base
 {
     public void Method(string input)
     {
     }
-}";
+}");
 
-            VerifyCSharp(Test);
+            VerifyBasic(@"
+Class Base
+    Public Sub Method(input As Object)
+    End Sub
+End Class
+
+Class Derived
+    Inherits Base
+    
+    Public Sub Method(input As String)
+    End Sub
+End Class");
         }
 
         [Fact]
         public void CA1061_DerivedMethodHasLessDerivedParameter_Diagnostic()
         {
-            const string Test = @"
-using System;
-
-class BaseType
+            VerifyCSharp(@"
+class Base
 {
-    public void Method(string input1, string input2)
+    public void Method(string input)
     {
     }
 }
 
-class DerivedType : BaseType
+class Derived : Base
 {
-    public void Method(object input1, string input2)
+    public void Method(object input)
     {
     }
-}";
+}",
+                GetCA1061CSharpResultAt(11, 17, "Derived.Method(object)", "Base.Method(string)"));
 
-            VerifyCSharp(Test, GetCA1061ResultAt(13, 17, "DerivedType.Method(object, string)", "BaseType.Method(string, string)"));
+            VerifyBasic(@"
+Class Base
+    Public Sub Method(input As String)
+    End Sub
+End Class
+
+Class Derived
+    Inherits Base
+    
+    Public Sub Method(input As Object)
+    End Sub
+End Class",
+                GetCA1061BasicResultAt(10, 16, "Public Sub Method(input As Object)", "Public Sub Method(input As String)"));
+        }
+
+        [Fact]
+        public void CA1061_DerivedMethodHasLessDerivedParameter_MultipleMethodsHidden_Diagnostics()
+        {
+            VerifyCSharp(@"
+class Parent
+{
+    public void Method(string input)
+    {
+    }
+}
+
+class Child : Parent
+{
+    public void Method(string input)
+    {
+    }
+}
+
+class Grandchild : Child
+{
+    public void Method(object input)
+    {
+    }
+}",
+                GetCA1061CSharpResultAt(18, 17, "Grandchild.Method(object)", "Child.Method(string)"),
+                GetCA1061CSharpResultAt(18, 17, "Grandchild.Method(object)", "Parent.Method(string)"));
+
+            VerifyBasic(@"
+Class Parent
+    Public Sub Method(input As String)
+    End Sub
+End Class
+
+Class Child
+    Inherits Parent
+
+    Public Sub Method(input as String)
+    End Sub
+End Class
+
+Class Grandchild
+    Inherits Child
+    
+    Public Sub Method(input As Object)
+    End Sub
+End Class",
+                GetCA1061BasicResultAt(17, 16, "Public Sub Method(input As Object)", "Public Sub Method(input As String)"),
+                GetCA1061BasicResultAt(17, 16, "Public Sub Method(input As Object)", "Public Sub Method(input As String)"));
+        }
+
+        [Fact]
+        public void CA1061_DerivedMethodHasLessDerivedParameter_ImplementsInterface_CompileError()
+        {
+            VerifyCSharp(@"
+interface IFace
+{
+    void Method(string input);
+}
+
+class Derived : IFace
+{
+    public void Method(object input)
+    {
+    }
+}",
+                TestValidationMode.AllowCompileErrors);
+
+            VerifyBasic(@"
+Interface IFace
+    Sub Method(input As String)
+End Interface
+
+Class Derived
+    Implements IFace
+
+    Public Sub Method(input As Object) Implements IFace.Method
+    End Sub
+End Class",
+                TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact]
+        public void CA1061_DerivedMethodHasLessDerivedParameter_OverridesVirtualBaseMethod_CompileError()
+        {
+            VerifyCSharp(@"
+class Base
+{
+    public virtual void Method(string input);
+}
+
+class Derived : Base
+{
+    public override void Method(object input)
+    {
+    }
+}",
+                TestValidationMode.AllowCompileErrors);
+
+            VerifyBasic(@"
+Class Base
+    Public Overridable Sub Method(input As String)
+    End Sub
+End Class
+
+Class Derived
+    Inherits Base
+    
+    Public Overrides Sub Method(input As Object)
+    End Sub
+End Class",
+                TestValidationMode.AllowCompileErrors);
+        }
+
+
+        [Fact]
+        public void CA1061_DerivedMethodHasLessDerivedParameter_OverridesAbstractBaseMethod_CompileError()
+        {
+            VerifyCSharp(@"
+abstract class Base
+{
+    public abstract void Method(string input);
+}
+
+class Derived : Base
+{
+    public override void Method(object input)
+    {
+    }
+}", 
+                TestValidationMode.AllowCompileErrors);
+
+            VerifyBasic(@"
+MustInherit Class Base
+    Public MustOverride Sub Method(input As String)
+    End Sub
+End Class
+
+Class Derived
+    Inherits Base
+    
+    Public Overrides Sub Method(input As Object)
+    End Sub
+End Class",
+                TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact]
+        public void CA1061_DerivedMethodHasLessDerivedParameter_DerivedMethodPrivate_Diagnostic()
+        {
+            VerifyCSharp(@"
+class Base
+{
+    public void Method(string input)
+    {
+    }
+}
+
+class Derived : Base
+{
+    private void Method(object input)
+    {
+    }
+}",
+                GetCA1061CSharpResultAt(11, 18, "Derived.Method(object)", "Base.Method(string)"));
+
+            VerifyBasic(@"
+Class Base
+    Public Sub Method(input As String)
+    End Sub
+End Class
+
+Class Derived
+    Inherits Base
+
+    Public Sub Method(input As Object)
+    End Sub
+End Class
+",
+                GetCA1061BasicResultAt(10, 16, "Public Sub Method(input As Object)", "Public Sub Method(input As String)"));
         }
 
         [Fact]
         public void CA1061_DerivedMethodHasLessDerivedParameter_BaseMethodPrivate_NoDiagnostic()
         {
-            const string Test = @"
-using System;
-
-class BaseType
+            // Note: This behavior differs from FxCop's CA1061
+            VerifyCSharp(@"
+class Base
 {
     private void Method(string input)
     {
     }
 }
 
-class DerivedType : BaseType
+class Derived : Base
 {
     public void Method(object input)
     {
     }
-}";
+}");
 
-            // Note: This behavior differs from FxCop's CA1061, but I think it makes sense
-            VerifyCSharp(Test);
+            VerifyBasic(@"
+Class Base
+    Private Sub Method(input As String)
+    End Sub
+End Class
+
+Class Derived
+    Inherits Base
+
+    Public Sub Method(input As Object)
+    End Sub
+End Class
+");
         }
 
         [Fact]
-        public void CA1061_DerivedMethodHasLessDerivedParameter_DerivedMethodPrivate_Diagnostic()
+        public void CA1061_DerivedMethodHasLessDerivedParameter_ArityMismatch_NoDiagnostic()
         {
-            const string Test = @"
-using System;
-
-class BaseType
-{
-    public void Method(string input)
-    {
-    }
-}
-
-class DerivedType : BaseType
-{
-    private void Method(object input)
-    {
-    }
-}";
-
-            VerifyCSharp(Test, GetCA1061ResultAt(13, 18, "DerivedType.Method(object)", "BaseType.Method(string)"));
-        }
-
-        [Fact]
-        public void CA1061_DerivedMethodHasLessDerivedParameter_MatchingMethodInBasesBase_Diagnostic()
-        {
-            const string Test = @"
-using System;
-
-class BaseBaseType
-{
-    public void Method(string input)
-    {
-    }
-}
-
-class BaseType : BaseBaseType
-{
-}
-
-class DerivedType : BaseType
-{
-    public void Method(object input)
-    {
-    }
-}";
-
-            VerifyCSharp(Test, GetCA1061ResultAt(17, 17, "DerivedType.Method(object)", "BaseBaseType.Method(string)"));
-        }
-
-        [Fact]
-        public void CA1601_DerivedMethodOverridesAbstractBaseMethod_NoDiagnostic()
-        {
-            const string Test = @"
-using System;
-
-abstract class BaseType
-{
-    public abstract void Method(string input);
-}
-
-class DerivedType : BaseType
-{
-    public override void Method(string input)
-    {
-    }
-}";
-
-            VerifyCSharp(Test);
-        }
-
-        [Fact]
-        public void CA1061_DerivedMethodOverridesBaseMethod_NoDiagnostic()
-        {
-            const string Test = @"
-using System;
-
-class BaseType
-{
-    public virtual void Method(string input)
-    {
-    }
-}
-
-class DerivedType : BaseType
-{
-    public override void Method(string input)
-    {
-    }
-}";
-
-            VerifyCSharp(Test);
-        }
-
-        [Fact]
-        public void CA1061_DerivedMethodImplementsInterfaceMethod_NoDiagnostic()
-        {
-            const string Test = @"
-using System;
-
-interface IFace
-{
-    void Method(string input);
-}
-
-class DerivedType : IFace
-{
-    public void Method(string input)
-    {
-    }
-}";
-
-            VerifyCSharp(Test);
-        }
-
-        [Fact]
-        public void CA1061_DerivedMethodDoesNotMatchBaseMethod_NoDiagnostic()
-        {
-            const string Test = @"
-using System;
-
-class BaseType
+            VerifyCSharp(@"
+class Base
 {
     public void Method(string input, string input2)
     {
     }
 }
 
-class DerivedType : BaseType
+class Derived : Base
 {
     public void Method(object input)
     {
     }
-}";
+}");
 
-            VerifyCSharp(Test);
+            VerifyBasic(@"
+Class Base
+    Private Sub Method(input As String, input2 As String)
+    End Sub
+End Class
+
+Class Derived
+    Inherits Base
+
+    Public Sub Method(input As Object)
+    End Sub
+End Class
+");
         }
 
-        private DiagnosticResult GetCA1061ResultAt(int line, int column, string derivedMethod, string baseMethod)
+        [Fact]
+        public void CA1061_DerivedMethodHasLessDerivedParameter_ReturnTypeMismatch_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+class Base
+{
+    public void Method(string input)
+    {
+    }
+}
+
+class Derived : Base
+{
+    public int Method(object input)
+    {
+        return 0;
+    }
+}");
+
+            VerifyBasic(@"
+Class Base
+    Private Sub Method(input As String)
+    End Sub
+End Class
+
+Class Derived
+    Inherits Base
+
+    Public Function Method(input As Object) As Integer
+        Method = 0
+    End Function
+End Class
+");
+        }
+
+        [Fact]
+        public void CA1061_DerivedMethodHasLessDerivedParameter_ParameterTypeMismatch_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+class Base
+{
+    public void Method(string input, int input2)
+    {
+    }
+}
+
+class Derived : Base
+{
+    public void Method(object input, char input2)
+    {
+    }
+}");
+
+            VerifyBasic(@"
+Class Base
+    Private Sub Method(input As String, input2 as Integer)
+    End Sub
+End Class
+
+Class Derived
+    Inherits Base
+
+    Public Sub Method(input As Object, input2 as Char)
+    End Sub
+End Class
+");
+        }
+
+        private DiagnosticResult GetCA1061CSharpResultAt(int line, int column, string derivedMethod, string baseMethod)
         {
             var message = string.Format(
                 MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotHideBaseClassMethodsMessage, 
@@ -257,6 +440,16 @@ class DerivedType : BaseType
                 baseMethod);
 
             return GetCSharpResultAt(line, column, DoNotHideBaseClassMethodsAnalyzer.RuleId, message);
+        }
+
+        private DiagnosticResult GetCA1061BasicResultAt(int line, int column, string derivedMethod, string baseMethod)
+        {
+            var message = string.Format(
+                MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotHideBaseClassMethodsMessage,
+                derivedMethod,
+                baseMethod);
+
+            return GetBasicResultAt(line, column, DoNotHideBaseClassMethodsAnalyzer.RuleId, message);
         }
     }
 }

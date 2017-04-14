@@ -37,7 +37,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            //analysisContext.EnableConcurrentExecution();
+            analysisContext.EnableConcurrentExecution();
             analysisContext.RegisterSymbolAction(SymbolAnalyzer, SymbolKind.Method);
         }
 
@@ -45,8 +45,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             var method = (IMethodSymbol)context.Symbol;
 
-            // Bail out if this method overrides another (parameter types cannot be changed) 
-            // or doesn't have any parameters
+            // Bail out if this method overrides another (parameter types must match) or doesn't have any parameters
             if (method.IsOverride || !method.Parameters.Any())
             {
                 return;
@@ -65,34 +64,46 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 if (baseType?.BaseType == null)
                 {
-                    // There are no other base types to check - we're at the top of the hierarchy
+                    // We must be at System.Object, and the methods in System.Object cannot be hidden
                     yield break;
                 }
 
-                var baseTypeMethods = baseType.GetMembers(method.Name)
-                    .Where(x => !x.IsStatic && !x.IsVirtual && x.DeclaredAccessibility != Accessibility.Private)
-                    .OfType<IMethodSymbol>();
+                var baseMethods = baseType.GetMembers(method.Name)
+                    .OfType<IMethodSymbol>()
+                    .Where(x => !(x.IsStatic || x.IsVirtual)
+                           && x.ReturnType.Equals(method.ReturnType)
+                           && x.DeclaredAccessibility != Accessibility.Private
+                           && x.Parameters.Length == method.Parameters.Length);
 
-                foreach (var baseTypeMethod in baseTypeMethods)
+                foreach (var baseMethod in baseMethods)
                 {
-                    if (method.Parameters.Length != baseTypeMethod.Parameters.Length)
+                    var isMethodHidden = false;
+
+                    for (var i = 0; i < baseMethod.Parameters.Length; ++i)
                     {
-                        continue;
+                        var baseMethodParameter = baseMethod.Parameters[i];
+                        var derivedMethodParameter = method.Parameters[i];
+
+                        // All parameter names must match
+                        if (baseMethodParameter.Name != derivedMethodParameter.Name)
+                        {
+                            isMethodHidden = false;
+                            break;
+                        }
+
+                        if (baseMethodParameter.Type.Equals(derivedMethodParameter.Type))
+                        {
+                            continue;
+                        }
+
+                        // If all parameter names and types match, the only thing that determines if this method is hidden
+                        // is whether the derived method parameter is a base type of our base method parameter.
+                        isMethodHidden = baseMethodParameter.Type.DerivesFrom(derivedMethodParameter.Type);
                     }
 
-                    var zippedParams = method.Parameters.Zip(
-                        baseTypeMethod.Parameters, 
-                        (x, y) => new {DerivedParm = x, BaseParam = y}).ToList();
-
-                    // Does the matching base type method also have the same return type, the same parameter names, 
-                    // and at least one parameter with a type that is more derived than the derived type's corresponding parameter? 
-                    if (method.ReturnType.Equals(baseTypeMethod.ReturnType) 
-                        && zippedParams.All(x => x.DerivedParm.Name == x.BaseParam.Name) 
-                        && zippedParams.Any(x => !x.BaseParam.Type.Equals(x.DerivedParm.Type) 
-                                            && x.BaseParam.Type.DerivesFrom(x.DerivedParm.Type)))
+                    if (isMethodHidden)
                     {
-                        // Yes - the derived type method is "hiding" the base type method (we can't call it)
-                        yield return baseTypeMethod;
+                        yield return baseMethod;
                     }
                 }
 

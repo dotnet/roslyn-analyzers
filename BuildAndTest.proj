@@ -9,9 +9,8 @@
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <IncludePattern Condition="'$(IncludePattern)' == ''">*.Test*.dll</IncludePattern>
 
-    <!-- Emit XML in a CIBuild in order to get structured test results -->
-    <RunTestArgs>-noshadow -parallel all</RunTestArgs>
-    <RunTestArgs Condition="'$(CIBuild)' == 'true'">$(RunTestArgs) -xml TestResults.xml</RunTestArgs>
+    <!-- Emit XML in order to get structured test results -->
+    <RunTestArgs>-noshadow -parallel all -xml Binaries\$(Configuration)\TestResults.xml</RunTestArgs>
 
     <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == ''">$(NUGET_PACKAGES)</NuGetPackageRoot>
     <!-- Respect environment variable if set -->
@@ -31,7 +30,7 @@
   <Target Name="Build" DependsOnTargets="RestorePackages">
     <MSBuild BuildInParallel="true"
              Projects="$(SolutionFile)"
-             Properties="RestorePackages=false;TreatWarningsAsErrors=true;DeployExtension=false"
+             Properties="RestorePackages=false;TreatWarningsAsErrors=true;DeployExtension=true"
              Targets="Build"/>
   </Target>
 
@@ -47,7 +46,7 @@
   <Target Name="Rebuild">
     <MSBuild BuildInParallel="true"
              Projects="$(SolutionFile)"
-             Properties="RestorePackages=false;TreatWarningsAsErrors=true;DeployExtension=false"
+             Properties="RestorePackages=false;TreatWarningsAsErrors=true;DeployExtension=true"
              Targets="Rebuild"/>
   </Target>
 

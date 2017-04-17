@@ -400,7 +400,40 @@ End Class
         }
 
         [Fact]
-        public void CA1061_DerivedMethodHasLessDerivedParameter_ParameterTypeMismatch_NoDiagnostic()
+        public void CA1061_DerivedMethodHasLessDerivedParameter_ParameterTypeMismatchAtStart_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+class Base
+{
+    public void Method(int input, string input2)
+    {
+    }
+}
+
+class Derived : Base
+{
+    public void Method(char input, object input2)
+    {
+    }
+}");
+
+            VerifyBasic(@"
+Class Base
+    Private Sub Method(input As Integer, input2 As String)
+    End Sub
+End Class
+
+Class Derived
+    Inherits Base
+
+    Public Sub Method(input As Char, input2 As Object)
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public void CA1061_DerivedMethodHasLessDerivedParameter_ParameterTypeMismatchAtEnd_NoDiagnostic()
         {
             VerifyCSharp(@"
 class Base
@@ -419,14 +452,14 @@ class Derived : Base
 
             VerifyBasic(@"
 Class Base
-    Private Sub Method(input As String, input2 as Integer)
+    Private Sub Method(input As String, input2 As Integer)
     End Sub
 End Class
 
 Class Derived
     Inherits Base
 
-    Public Sub Method(input As Object, input2 as Char)
+    Public Sub Method(input As Object, input2 As Char)
     End Sub
 End Class
 ");

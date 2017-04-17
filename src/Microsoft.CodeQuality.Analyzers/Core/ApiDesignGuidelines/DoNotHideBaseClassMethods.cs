@@ -93,14 +93,18 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                             break;
                         }
 
-                        if (baseMethodParameter.Type.Equals(derivedMethodParameter.Type))
+                        // All parameter types must match except for those that are subtypes of the
+                        // derived method's parameter type - there must be at least one.
+                        if (!baseMethodParameter.Type.Equals(derivedMethodParameter.Type))
                         {
-                            continue;
-                        }
+                            if (!baseMethodParameter.Type.DerivesFrom(derivedMethodParameter.Type))
+                            {
+                                isMethodHidden = false;
+                                break;
+                            }
 
-                        // If all parameter names and types match, the only thing that determines if this method is hidden
-                        // is whether the derived method parameter is a base type of our base method parameter.
-                        isMethodHidden = baseMethodParameter.Type.DerivesFrom(derivedMethodParameter.Type);
+                            isMethodHidden = true;
+                        }
                     }
 
                     if (isMethodHidden)

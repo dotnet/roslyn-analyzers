@@ -540,6 +540,33 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A method in a base type is hidden by an identically named method in a derived type when the parameter signature of the derived method differs only by types that are more weakly derived than the corresponding types in the parameter signature of the base method..
+        /// </summary>
+        internal static string DoNotHideBaseClassMethodsDescription {
+            get {
+                return ResourceManager.GetString("DoNotHideBaseClassMethodsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change or remove &apos;{0}&apos; because it hides a more specific base class method: &apos;{1}&apos;..
+        /// </summary>
+        internal static string DoNotHideBaseClassMethodsMessage {
+            get {
+                return ResourceManager.GetString("DoNotHideBaseClassMethodsMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not hide base class methods.
+        /// </summary>
+        internal static string DoNotHideBaseClassMethodsTitle {
+            get {
+                return ResourceManager.GetString("DoNotHideBaseClassMethodsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove FlagsAttribute from enum..
         /// </summary>
         internal static string DoNotMarkEnumsWithFlagsCodeFix {

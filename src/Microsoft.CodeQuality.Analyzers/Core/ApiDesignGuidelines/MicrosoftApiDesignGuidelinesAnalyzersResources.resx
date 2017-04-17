@@ -991,4 +991,13 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="RenameToTitle" xml:space="preserve">
     <value>Rename to '{0}'</value>
   </data>
+  <data name="DoNotHideBaseClassMethodsDescription" xml:space="preserve">
+    <value>A method in a base type is hidden by an identically named method in a derived type when the parameter signature of the derived method differs only by types that are more weakly derived than the corresponding types in the parameter signature of the base method.</value>
+  </data>
+  <data name="DoNotHideBaseClassMethodsMessage" xml:space="preserve">
+    <value>Change or remove '{0}' because it hides a more specific base class method: '{1}'.</value>
+  </data>
+  <data name="DoNotHideBaseClassMethodsTitle" xml:space="preserve">
+    <value>Do not hide base class methods</value>
+  </data>
 </root>

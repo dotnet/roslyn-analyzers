@@ -7,8 +7,9 @@
         <IncludeAnalyzerReferences>true</IncludeAnalyzerReferences>
         <IncludeToolsetCompilerReference>true</IncludeToolsetCompilerReference>
         <IncludeFakeSignReference>true</IncludeFakeSignReference>
-        <IncludeTestReferences>false</IncludeTestReferences>    
-    </PropertyGroup>
+        <IncludeTestReferences>false</IncludeTestReferences>
+        <IncludeVSSDKReferences>false</IncludeVSSDKReferences>
+      </PropertyGroup>
     </When>
     <When Condition="'$(TestProject)' == 'true'">
       <PropertyGroup>
@@ -17,8 +18,20 @@
         <IncludeAnalyzerReferences>false</IncludeAnalyzerReferences>
         <IncludeToolsetCompilerReference>true</IncludeToolsetCompilerReference>
         <IncludeFakeSignReference>true</IncludeFakeSignReference>
-        <IncludeTestReferences>true</IncludeTestReferences>      
-    </PropertyGroup>
+        <IncludeTestReferences>true</IncludeTestReferences>
+        <IncludeVSSDKReferences>false</IncludeVSSDKReferences>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(SetupProject)' == 'true'">
+      <PropertyGroup>
+        <IncludeCoreFrameworkReferences>false</IncludeCoreFrameworkReferences>
+        <IncludeCodeAnalysisReference>false</IncludeCodeAnalysisReference>
+        <IncludeAnalyzerReferences>false</IncludeAnalyzerReferences>
+        <IncludeToolsetCompilerReference>true</IncludeToolsetCompilerReference>
+        <IncludeFakeSignReference>true</IncludeFakeSignReference>
+        <IncludeTestReferences>false</IncludeTestReferences>
+        <IncludeVSSDKReferences>true</IncludeVSSDKReferences>
+      </PropertyGroup>
     </When>
   </Choose>
 
@@ -77,7 +90,15 @@
         <PackageReference Include="xunit" Version="$(XUnitVersion)" />
         <PackageReference Include="xunit.runner.console" Version="$(XUnitVersion)" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0-beta5-build1225" />
-      </ItemGroup>      
+      </ItemGroup>
+    </When>
+  </Choose>
+
+  <Choose>
+    <When Condition="'$(IncludeVSSDKReferences)' == 'true'">
+      <ItemGroup>
+        <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="15.0.26201" />
+      </ItemGroup>
     </When>
   </Choose>
 

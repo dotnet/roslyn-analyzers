@@ -8,6 +8,32 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 {
     public class PropertyNamesShouldNotMatchGetMethodsTests : DiagnosticAnalyzerTestBase
     {
+        private const string CSharpTestTemplate = @"
+using System;
+
+public class Test
+{{
+    {0} DateTime Date {{ get; }}
+    {1} string GetDate()
+    {{
+        return DateTime.Today.ToString();
+    }}
+}}";
+
+        private const string BasicTestTemplate = @"
+Imports System
+
+Public Class Test
+    {0} ReadOnly Property [Date]() As DateTime
+        Get
+            Return DateTime.Today
+        End Get
+    End Property
+    {1} Function GetDate() As String
+        Return Me.Date.ToString()
+    End Function 
+End Class";
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new PropertyNamesShouldNotMatchGetMethodsAnalyzer();
@@ -21,19 +47,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         [Fact]
         public void CSharp_CA1721_PropertyNameDoesNotMatchGetMethodName_Exposed_NoDiagnostic()
         {
-            const string Test = @"
+            VerifyCSharp(@"
 using System;
 
 public class Test
 {
-    public string PropA { get; }
-    public string GetPropB()
+    public DateTime Date { get; }
+    public string GetTime()
     {
-        return string.Empty;
+        return DateTime.Today.ToString();
     }
-}";
-
-            VerifyCSharp(Test);
+}");
         }
 
         [Theory] 
@@ -46,29 +70,15 @@ public class Test
         [InlineData("protected internal", "public")]
         [InlineData("protected internal", "protected")]
         [InlineData("protected internal", "protected internal")]
-#pragma warning disable CA1801 // Review unused parameters
         public void CSharp_CA1721_PropertyNamesMatchGetMethodNames_Exposed_Diagnostics(string propertyAccessibility, string methodAccessibility)
-#pragma warning restore CA1801 // Review unused parameters
         {
-            var test = $@"
-using System;
-
-public class Test
-{{
-    {propertyAccessibility} string Prop {{ get; }}
-    {methodAccessibility} string GetProp()
-    {{
-        return string.Empty;
-    }}
-}}";
-
             VerifyCSharp(
-                test,
+                string.Format(CSharpTestTemplate, propertyAccessibility, methodAccessibility),
                 GetCA1721CSharpResultAt(
                     line: 6, 
-                    column: $"    {propertyAccessibility} string ".Length + 1,
-                    identifierName: "Prop", 
-                    otherIdentifierName: "GetProp"));
+                    column: $"    {propertyAccessibility} DateTime ".Length + 1,
+                    identifierName: "Date", 
+                    otherIdentifierName: "GetDate"));
         }
 
         [Theory]
@@ -77,23 +87,9 @@ public class Test
         [InlineData("internal", "private")]
         [InlineData("internal", "internal")]
         [InlineData("", "")]
-#pragma warning disable CA1801 // Review unused parameters
         public void CSharp_CA1721_PropertyNamesMatchGetMethodNames_Unexposed_NoDiagnostics(string propertyAccessibility, string methodAccessibility)
-#pragma warning restore CA1801 // Review unused parameters
         {
-            var test = $@"
-using System;
-
-public class Test
-{{
-    {propertyAccessibility} string Prop {{ get; }}
-    {methodAccessibility} string GetProp()
-    {{
-        return string.Empty;
-    }}
-}}";
-
-            VerifyCSharp(test);
+            VerifyCSharp(string.Format(CSharpTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
         [Theory]
@@ -115,29 +111,15 @@ public class Test
         [InlineData("", "public")]
         [InlineData("", "protected")]
         [InlineData("", "protected internal")]
-#pragma warning disable CA1801 // Review unused parameters
         public void CSharp_CA1721_PropertyNamesMatchGetMethodNames_MixedExposure_NoDiagnostics(string propertyAccessibility, string methodAccessibility)
-#pragma warning restore CA1801 // Review unused parameters
         {
-            var test = $@"
-using System;
-
-public class Test
-{{
-    {propertyAccessibility} string Prop {{ get; }}
-    {methodAccessibility} string GetProp()
-    {{
-        return string.Empty;
-    }}
-}}";
-
-            VerifyCSharp(test);
+            VerifyCSharp(string.Format(CSharpTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
         [Fact]
         public void CSharp_CA1721_PropertyNameMatchesBaseClassGetMethodName_Exposed_Diagnostic()
         {
-            const string Test = @"
+            VerifyCSharp(@"
 using System;
 
 public class Foo
@@ -154,18 +136,15 @@ public class Bar : Foo
     {
         get { return DateTime.Today; }
     }         
-}";
-
-            VerifyCSharp(
-                Test,
-                GetCA1721CSharpResultAt(line: 14, column: 21, identifierName: "Date", otherIdentifierName: "GetDate"));
+}",
+            GetCA1721CSharpResultAt(line: 14, column: 21, identifierName: "Date", otherIdentifierName: "GetDate"));
         }
 
 
         [Fact]
         public void CSharp_CA1721_GetMethodNameMatchesBaseClassPropertyName_Exposed_Diagnostic()
         {
-            const string Test = @"
+            VerifyCSharp(@"
 using System;
 
 public class Foo
@@ -182,16 +161,14 @@ public class Bar : Foo
     {
         return DateTime.Today.ToString();
     }
-}";
-            VerifyCSharp(
-                Test,
-                GetCA1721CSharpResultAt(line: 14, column: 19, identifierName: "Date", otherIdentifierName: "GetDate"));
+}",
+            GetCA1721CSharpResultAt(line: 14, column: 19, identifierName: "Date", otherIdentifierName: "GetDate"));
         }
 
         [Fact]
         public void Basic_CA1721_PropertyNameDoesNotMatchGetMethodName_Exposed_NoDiagnostic()
         {
-            const string Test = @"
+            VerifyBasic(@"
 Imports System
 
 Public Class Test
@@ -203,38 +180,62 @@ Public Class Test
     Public Function GetTime() As String
         Return Me.Date.ToString()
     End Function 
-End Class";
-
-            VerifyBasic(Test);
+End Class");
         }
 
-        [Fact]
-        public void Basic_CA1721_PropertyNameMatchesGetMethodName_Exposed_Diagnostic()
+        [Theory]
+        [InlineData("Public", "Public")]
+        [InlineData("Public", "Protected")]
+        [InlineData("Public", "Protected Friend")]
+        [InlineData("Protected", "Public")]
+        [InlineData("Protected", "Protected")]
+        [InlineData("Protected", "Protected Friend")]
+        [InlineData("Protected Friend", "Public")]
+        [InlineData("Protected Friend", "Protected")]
+        [InlineData("Protected Friend", "Protected Friend")]
+        public void Basic_CA1721_PropertyNamesMatchGetMethodNames_Exposed_Diagnostics(string propertyAccessibility, string methodAccessibility)
         {
-            const string Test = @"
-Imports System
-
-Public Class Test
-    Public ReadOnly Property [Date]() As DateTime
-        Get
-            Return DateTime.Today
-        End Get
-    End Property
-    Public Function GetDate() As String
-        Return Me.Date.ToString()
-    End Function 
-End Class";
-
             VerifyBasic(
-                Test,
-                GetCA1721BasicResultAt(line: 5, column: 30, identifierName: "Date", otherIdentifierName: "GetDate"));
+                string.Format(BasicTestTemplate, propertyAccessibility, methodAccessibility),
+                GetCA1721BasicResultAt(
+                    line: 5, 
+                    column: $"    {propertyAccessibility} ReadOnly Property ".Length + 1, 
+                    identifierName: "Date", 
+                    otherIdentifierName: "GetDate"));
         }
 
+        [Theory]
+        [InlineData("Private", "Private")]
+        [InlineData("Private", "Friend")]
+        [InlineData("Friend", "Private")]
+        [InlineData("Friend", "Friend")]
+        public void Basic_CA1721_PropertyNamesMatchGetMethodNames_Unexposed_NoDiagnostics(string propertyAccessibility, string methodAccessibility)
+        {
+            VerifyBasic(string.Format(BasicTestTemplate, propertyAccessibility, methodAccessibility));
+        }
+
+        [Theory]
+        [InlineData("Public", "Private")]
+        [InlineData("Protected", "Private")]
+        [InlineData("Protected Friend", "Private")]
+        [InlineData("Public", "Friend")]
+        [InlineData("Protected", "Friend")]
+        [InlineData("Protected Friend", "Friend")]
+        [InlineData("Private", "Public")]
+        [InlineData("Private", "Protected")]
+        [InlineData("Private", "Protected Friend")]
+        [InlineData("Friend", "Public")]
+        [InlineData("Friend", "Protected")]
+        [InlineData("Friend", "Protected Friend")]
+        public void Basic_CA1721_PropertyNamesMatchGetMethodNames_MixedExposure_NoDiagnostics(string propertyAccessibility, string methodAccessibility)
+        {
+            VerifyBasic(string.Format(BasicTestTemplate, propertyAccessibility, methodAccessibility));
+        }
 
         [Fact]
         public void Basic_CA1721_PropertyNameMatchesBaseClassGetMethodName_Exposed_Diagnostic()
         {
-            const string Test = @"
+            VerifyBasic(@"
 Imports System
 
 Public Class Foo
@@ -250,18 +251,15 @@ Public Class Bar
             Return DateTime.Today
         End Get
     End Property
-End Class";
-
-            VerifyBasic(
-                Test,
-                GetCA1721BasicResultAt(line: 12, column: 30, identifierName: "Date", otherIdentifierName: "GetDate"));
+End Class",
+            GetCA1721BasicResultAt(line: 12, column: 30, identifierName: "Date", otherIdentifierName: "GetDate"));
         }
 
 
         [Fact]
         public void Basic_CA1721_GetMethodNameMatchesBaseClassPropertyName_Exposed_Diagnostic()
         {
-            const string Test = @"
+            VerifyBasic(@"
 Imports System
 
 Public Class Foo
@@ -276,11 +274,8 @@ Public Class Bar
     Public Function GetDate() As String
         Return DateTime.Today.ToString()
     End Function
-End Class";
-
-            VerifyBasic(
-                Test,
-                GetCA1721BasicResultAt(line: 13, column: 21, identifierName: "Date", otherIdentifierName: "GetDate"));
+End Class",
+            GetCA1721BasicResultAt(line: 13, column: 21, identifierName: "Date", otherIdentifierName: "GetDate"));
         }
 
         #region Helpers

@@ -5,29 +5,60 @@
 
   <!-- Compute/set the assembly, file, and NuGet versions -->
   <PropertyGroup>
-      <Version Condition="'$(Version)' == ''">2.0.0</Version>     
-      <SemanticVersion Condition="'$(SemanticVersion)' == ''">$(Version)</SemanticVersion>
-      <PreReleaseVersion Condition="'$(PreReleaseVersion)' == ''">beta1</PreReleaseVersion>      
-      <ToolsSemanticVersion>0.0.0</ToolsSemanticVersion>
-      <ToolsPreReleaseVersion>beta1</ToolsPreReleaseVersion>
-      <AssemblyVersion>$(SemanticVersion).0</AssemblyVersion>
+    <Version>2.0.0</Version>
+    <RoslynSemanticVersion>$(Version)</RoslynSemanticVersion>
+    <PreReleaseVersion Condition="'$(PreReleaseVersion)' == ''">beta1</PreReleaseVersion>
+    <ToolsSemanticVersion>0.0.0</ToolsSemanticVersion>
+    <ToolsPreReleaseVersion>beta1</ToolsPreReleaseVersion>
+
+    <BuildNumber Condition="'$(BuildNumber)' == ''AND ('$(BUILD_BUILDNUMBER)' != '')">$(BUILD_BUILDNUMBER)</BuildNumber>
+    <BuildNumber Condition="'$(BuildNumber)' == '' AND ('$(TF_BUILD_BUILDNUMBER)' != '')
+                     AND ($(TF_BUILD_BUILDNUMBER.Split('_').Length) == 2)">$(TF_BUILD_BUILDNUMBER.Split('_')[1])</BuildNumber>
+    <!-- When a build number is not specified, then we should default back to '00065535.0', which is a build number in the
+         same format as provided by MicroBuild v2, but greater than any that MicroBuild v2 will produce, and is still compatible
+         with the Win32 file version limitations. This is required so that builds done locally, where '$(OfficialBuild)' == 'true',
+         can still be deployed to VS and override the version that is globally installed. -->
+    <BuildNumber Condition="'$(BuildNumber)' == ''">00065535.0</BuildNumber>
+
+    <!-- Split the build parts out from the BuildNumber which is given to us by MicroBuild in the format of yyyymmdd.nn
+         where BuildNumberFiveDigitDateStamp is mmmdd (such as 60615) and BuildNumberBuildOfTheDay is nn (which represents the nth build
+         started that day). So the first build of the day, 20160615.1, will produce something similar to BuildNumberFiveDigitDateStamp: 60615,
+         BuildNumberBuildOfTheDayPadded: 01;and the 12th build of the day, 20160615.12, will produce BuildNumberFiveDigitDateStamp: 60615, BuildNumberBuildOfTheDay: 12
+
+         Additionally, in order ensure the value fits in the 16-bit PE header fields, we will only take the last five digits of the BuildNumber, so
+         in the case of 20160615, we will set BuildNumberFiveDigitDateStamp to 60615. Unfortunately for releases in 2017 we can't go any higher, so
+         we will continue the month counting instead: the build after 61231 is 61301. -->
+    <BuildNumberFiveDigitDateStamp>$([MSBuild]::Subtract($(BuildNumber.Split('.')[0].Substring(3).Trim()), 8800))</BuildNumberFiveDigitDateStamp>
+    <BuildNumberBuildOfTheDayPadded Condition="$(BuildNumber.Split('.').Length) == 2">$(BuildNumber.Split('.')[1].PadLeft(2,'0'))</BuildNumberBuildOfTheDayPadded>
+  </PropertyGroup>
+
+  <!-- NuGet version -->
+  <PropertyGroup>
+    <NuGetReleaseVersion>$(RoslynSemanticVersion)</NuGetReleaseVersion>
+    <NuGetPreReleaseVersion>$(NuGetReleaseVersion)-$(PreReleaseVersion)</NuGetPreReleaseVersion>
+    <NuGetPerBuildPreReleaseVersion>$(NuGetPreReleaseVersion)-$(BuildNumberFiveDigitDateStamp.Trim())</NuGetPerBuildPreReleaseVersion>
+    <NuGetPerBuildPreReleaseVersion Condition="'$(BuildNumberBuildOfTheDayPadded)' != ''">$(NuGetPerBuildPreReleaseVersion)-$(BuildNumberBuildOfTheDayPadded.Trim())</NuGetPerBuildPreReleaseVersion>
   </PropertyGroup>
 
   <Choose>
-    <When Condition="('$(BuildNumber)' != '') and ($(BuildNumber.Split('.').Length) == 2)">
-      <!-- The user specified a build number, so we should use that. -->
+    <When Condition="'$(OfficialBuild)' == 'true' OR '$(UseShippingAssemblyVersion)' == 'true'">
       <PropertyGroup>
-        <BuildVersion>$(SemanticVersion).$(BuildNumber.Split('.')[0])</BuildVersion>
+        <AssemblyVersion>$(RoslynSemanticVersion).0</AssemblyVersion>
+        <BuildVersion>$(RoslynSemanticVersion).$(BuildNumberFiveDigitDateStamp)</BuildVersion>
+        <VsixVersion>$(RoslynSemanticVersion).$(BuildNumberFiveDigitDateStamp)$(BuildNumberBuildOfTheDayPadded)</VsixVersion>
       </PropertyGroup>
     </When>
 
     <Otherwise>
       <!-- No build version was supplied.  We'll use a special version, higher than anything
-           installed, so that the assembly identity is different.  This will allows us to 
-           have a build with an actual number installed, but then build and F5 a build with 
-           this number.  -->
+           installed, so that the assembly identity is different.  This will allows us to
+           have a build with an actual number installed, but then build and F5 a build with
+           this number. We will make AssemblyVersion and BuildVersion different, to catch
+           any bugs where people might assume they are the same. -->
       <PropertyGroup>
-        <BuildVersion>$(SemanticVersion).0</BuildVersion>
+        <AssemblyVersion>42.42.42.42</AssemblyVersion>
+        <BuildVersion>42.42.42.42424</BuildVersion>
+        <VsixVersion>42.42.42.42424</VsixVersion>
       </PropertyGroup>
     </Otherwise>
   </Choose>
@@ -42,22 +73,6 @@
     <FileVersion Condition="'$(FileVersion)' == ''">$(BuildVersion)</FileVersion>
     <InformationalVersion Condition="'$(InformationalVersion)' == ''">$(BuildVersion)</InformationalVersion>
     <NeutralLanguage Condition="'$(NeutralLanguage)' == ''">en-US</NeutralLanguage>
-  </PropertyGroup>
-
-  <!-- NuGet version -->
-  <PropertyGroup>
-    <BuildNumberSuffix Condition="('$(TF_BUILD_BUILDNUMBER)' != '')
-                     and ($(TF_BUILD_BUILDNUMBER.Split('_').Length) == 2)">$(TF_BUILD_BUILDNUMBER.Split('_')[1])</BuildNumberSuffix>
-    <BuildNumberPart1 Condition="'$(BuildNumberSuffix)' != ''">
-      $(BuildNumberSuffix.Split('.')[0])
-    </BuildNumberPart1>
-    <BuildNumberPart2 Condition="'$(BuildNumberSuffix)' != ''">
-      $(BuildNumberSuffix.Split('.')[1].PadLeft(2,'0'))
-    </BuildNumberPart2>
-
-    <NuGetReleaseVersion>$(SemanticVersion)</NuGetReleaseVersion>
-    <NuGetPreReleaseVersion>$(NuGetReleaseVersion)-$(PreReleaseVersion)</NuGetPreReleaseVersion>
-    <NuGetPerBuildPreReleaseVersion Condition="'$(BuildNumberSuffix)' != ''">$(NuGetPreReleaseVersion)-$(BuildNumberPart1.Trim())-$(BuildNumberPart2.Trim())</NuGetPerBuildPreReleaseVersion>
   </PropertyGroup>
 
   <!-- Returns the current build version. Used in .vsixmanifests to substitute our build version into them -->
@@ -96,7 +111,7 @@
   <PropertyGroup Condition="'$(USE_INTERNAL_IOPERATION_APIS)' == 'true'">
     <DefineConstants>$(DefineConstants),USE_INTERNAL_IOPERATION_APIS,DEFAULT_SEVERITY_SUGGESTION</DefineConstants>
   </PropertyGroup>
-  
+
   <!-- Settings for strong name signing -->
   <Choose>
     <When Condition="'$(SignAssembly)' == 'true'">

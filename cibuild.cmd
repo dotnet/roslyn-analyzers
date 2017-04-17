@@ -5,11 +5,13 @@ REM Parse Arguments.
 
 set AnalyzersRoot=%~dp0
 set BuildConfiguration=Debug
+set OfficialBuild=false
 :ParseArguments
 if "%1" == "" goto :DoneParsing
 if /I "%1" == "/?" call :Usage && exit /b 1
 if /I "%1" == "/debug" set BuildConfiguration=Debug&&shift&& goto :ParseArguments
 if /I "%1" == "/release" set BuildConfiguration=Release&&shift&& goto :ParseArguments
+if /I "%1" == "/officialbuild" set OfficialBuild=true&&shift&& goto :ParseArguments
 call :Usage && exit /b 1
 :DoneParsing
 
@@ -31,7 +33,7 @@ if "%VS150COMNTOOLS%" EQU "" if exist "%ProgramFiles(x86)%\Microsoft Visual Stud
     call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\BuildTools\Common7\Tools\VsDevCmd.bat"
 )
 
-msbuild /v:m /m %AnalyzersRoot%\BuildAndTest.proj /p:CIBuild=true /p:Configuration=%BuildConfiguration%
+msbuild /v:m /m %AnalyzersRoot%\BuildAndTest.proj /p:CIBuild=true /p:Configuration=%BuildConfiguration% /p:OfficialBuild=%OfficialBuild%
 
 if ERRORLEVEL 1 (
     taskkill /F /IM vbcscompiler.exe

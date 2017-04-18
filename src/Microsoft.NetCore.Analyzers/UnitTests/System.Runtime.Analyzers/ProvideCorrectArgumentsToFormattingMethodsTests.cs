@@ -40,7 +40,7 @@ public class C
         var f = String.Format(p, """", 1);
         var g = String.Format(p, ""{0}"", 1, 2);
         var h = String.Format(p, ""{0} {1}"", 1, 2, 3);
-        var i = String.Formhoat(p, ""{0} {1} {2}"", 1, 2, 3, 4);
+        var i = String.Format(p, ""{0} {1} {2}"", 1, 2, 3, 4);
     }
 }
 ",

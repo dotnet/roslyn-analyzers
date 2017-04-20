@@ -19,10 +19,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         internal const string RuleId = "CA1721";
 
         private const string Get = "Get";
+
+        private static readonly ImmutableHashSet<Accessibility> ExposedAccessibilities = ImmutableHashSet.Create(Accessibility.Public, Accessibility.Protected, Accessibility.ProtectedOrInternal);
+
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly ImmutableHashSet<Accessibility> ExposedAccessibilities = ImmutableHashSet.Create(Accessibility.Public, Accessibility.Protected, Accessibility.ProtectedOrInternal);
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -58,7 +60,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             if (symbol.Kind == SymbolKind.Property)
             {
-                // Want to look for methods named the same as the property with a 'Get' prefix
+                // Want to look for methods named the same as the property but with a 'Get' prefix
                 identifier = Get + symbol.Name;
             }
             else if (symbol.Kind == SymbolKind.Method && symbol.Name.StartsWith(Get, StringComparison.Ordinal))
@@ -77,10 +79,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {                
                 Diagnostic diagnostic = null;
 
-                // We only want to check against protected or public methods/properties
-                var publicMembers = type.GetMembers(identifier).Where(member => ExposedAccessibilities.Contains(member.DeclaredAccessibility));
-
-                foreach (ISymbol member in publicMembers)
+                var exposedMembers = type.GetMembers(identifier).Where(member => ExposedAccessibilities.Contains(member.DeclaredAccessibility));
+                foreach (var member in exposedMembers)
                 {
                     // If the declared type is a property, was a matching method found?
                     if (symbol.Kind == SymbolKind.Property && member.Kind == SymbolKind.Method)
@@ -90,26 +90,21 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     }
 
                     // If the declared type is a method, was a matching property found?
-                    // Note: Last condition prevents reporting a diagnostic if the method matches a property 
-                    // in the same type because that is already handled above (favor reporting on the property)
                     if (symbol.Kind == SymbolKind.Method 
                         && member.Kind == SymbolKind.Property 
-                        && !symbol.ContainingType.Equals(type))
+                        && !symbol.ContainingType.Equals(type)) // prevent reporting duplicate diagnostics
                     {
                         diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], identifier, symbol.Name);
                         break;
                     }
                 }
 
-                if (diagnostic == null)
+                if (diagnostic != null)
                 {
-                    continue;
+                    // Once a match is found, exit the outer for loop
+                    context.ReportDiagnostic(diagnostic);
+                    break;
                 }
-
-                context.ReportDiagnostic(diagnostic);
-
-                // Once a match is found, exit the outer for loop
-                break;
             }
         }
     }

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -16,6 +17,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     public sealed class PropertyNamesShouldNotMatchGetMethodsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1721";
+
+        private const string Get = "Get";
+
+        private static readonly ImmutableHashSet<Accessibility> ExposedAccessibilities = ImmutableHashSet.Create(Accessibility.Public, Accessibility.Protected, Accessibility.ProtectedOrInternal);
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
@@ -33,8 +38,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        internal const string s_get = "Get";
-
         public override void Initialize(AnalysisContext analysisContext)
         {
             analysisContext.EnableConcurrentExecution();
@@ -48,61 +51,58 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             string identifier;
             var symbol = context.Symbol;
+
+            // Bail out if the method/property is not exposed (public, protected, or protected internal)
+            if (!ExposedAccessibilities.Contains(symbol.DeclaredAccessibility))
+            {
+                return;
+            }
+
             if (symbol.Kind == SymbolKind.Property)
             {
-                //if property then target search is to find methods that start with Get and the substring property name
-                identifier = s_get + symbol.Name;
+                // Want to look for methods named the same as the property but with a 'Get' prefix
+                identifier = Get + symbol.Name;
             }
-            else if (symbol.Kind == SymbolKind.Method && symbol.Name.StartsWith(s_get, StringComparison.Ordinal))
+            else if (symbol.Kind == SymbolKind.Method && symbol.Name.StartsWith(Get, StringComparison.Ordinal))
             {
-                //if method starts with Get then target search is to find properties that have the method name sans Get
+                // Want to look for properties named the same as the method sans 'Get'
                 identifier = symbol.Name.Substring(3);
             }
             else
             {
-                //if method name doesn't start with Get exit
+                // Exit if the method name doesn't start with 'Get'
                 return;
             }
 
-            //boolean variable used to exit out of the inner and outer for loops
-            var matchFound = false;
+            // Iterate through all declared types, including base
+            foreach (INamedTypeSymbol type in symbol.ContainingType.GetBaseTypesAndThis())
+            {                
+                Diagnostic diagnostic = null;
 
-            //get the collection of declaring and base types
-            var types = symbol.ContainingType.GetBaseTypesAndThis();
-
-            //iterate through the collection to find match
-            foreach (INamedTypeSymbol type in types)
-            {
-                ImmutableArray<ISymbol> membersFound = type.GetMembers(identifier);
-                if (membersFound != null && membersFound.Length > 0)
+                var exposedMembers = type.GetMembers(identifier).Where(member => ExposedAccessibilities.Contains(member.DeclaredAccessibility));
+                foreach (var member in exposedMembers)
                 {
-                    //found a match
-                    foreach (ISymbol member in membersFound)
+                    // If the declared type is a property, was a matching method found?
+                    if (symbol.Kind == SymbolKind.Property && member.Kind == SymbolKind.Method)
                     {
-                        //valid matches are...
-                        //when property from declaring type matches with method present in declaring type - this is covered by the LHS of OR condition below
-                        //when property from declaring type matches with method present in one of the base types - this is covered by the LHS of OR condition below
-                        //when method from declaring type matches with property present in one of the base types - this is covered by the RHS of OR condition below
-                        if ((symbol.Kind == SymbolKind.Property && member.Kind == SymbolKind.Method) ||
-                            (symbol.Kind == SymbolKind.Method && member.Kind == SymbolKind.Property && symbol.ContainingType != type))
-                        {
-                            //match found and break out of inner for loop
-                            matchFound = true;
-                            break;
-                        }
+                        diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], symbol.Name, identifier);
+                        break;
                     }
 
-                    //if no match found iterate to next in outer for loop
-                    if (!matchFound)
+                    // If the declared type is a method, was a matching property found?
+                    if (symbol.Kind == SymbolKind.Method 
+                        && member.Kind == SymbolKind.Property 
+                        && !symbol.ContainingType.Equals(type)) // prevent reporting duplicate diagnostics
                     {
-                        continue;
+                        diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], identifier, symbol.Name);
+                        break;
                     }
+                }
 
-                    //Reaches here only if match found. Create diagnostic
-                    var diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], symbol.Name, type.Name);
+                if (diagnostic != null)
+                {
+                    // Once a match is found, exit the outer for loop
                     context.ReportDiagnostic(diagnostic);
-
-                    //once a match is found exit the outer for loop
                     break;
                 }
             }

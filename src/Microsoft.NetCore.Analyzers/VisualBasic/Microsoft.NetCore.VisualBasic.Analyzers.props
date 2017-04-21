@@ -1,16 +1,22 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-   <!-- 
+  <!-- 
     This file contains the rules that have been implemented in this package and therefore should be disabled for the binary FxCop.
     When a new rule is implemented in this package, make sure to add an entry below to disable that rule in FxCop to avoid duplicate 
     issues.
     The format is -[Category]#[ID], e.g., -Microsoft.Design#CA1001;
   -->
-  <Import Project="Microsoft.Composition.Analyzers\Microsoft.Composition.VisualBasic.Analyzers.props"/>
-  <Import Project="System.Collections.Immutable.Analyzers\System.Collections.Immutable.VisualBasic.Analyzers.props"/>
-  <Import Project="System.Resources.Analyzers\System.Resources.VisualBasic.Analyzers.props"/>
-  <Import Project="System.Runtime.Analyzers\System.Runtime.VisualBasic.Analyzers.props"/>
-  <Import Project="System.Runtime.InteropServices.Analyzers\System.Runtime.InteropServices.VisualBasic.Analyzers.props"/>
-  <Import Project="System.Security.Cryptography.Hashing.Algorithms.Analyzers\System.Security.Cryptography.Hashing.Algorithms.VisualBasic.Analyzers.props"/>
-  <Import Project="System.Threading.Tasks.Analyzers\System.Threading.Tasks.VisualBasic.Analyzers.props"/>
+  <PropertyGroup>
+    <CodeAnalysisRuleSetOverrides>
+      $(CodeAnalysisRuleSetOverrides);
+      -Microsoft.Globalization#CA1309;
+
+      -Microsoft.Performance#CA1810;
+      -Microsoft.Performance#CA1824;
+      -Microsoft.Performance#CA1825;
+
+      -Microsoft.Usage#CA2201;
+      -Microsoft.Usage#CA2207;
+    </CodeAnalysisRuleSetOverrides>
+  </PropertyGroup>
 </Project>

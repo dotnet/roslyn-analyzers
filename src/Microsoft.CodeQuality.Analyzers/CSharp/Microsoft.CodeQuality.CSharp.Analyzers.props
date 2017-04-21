@@ -6,9 +6,18 @@
     issues.
     The format is -[Category]#[ID], e.g., -Microsoft.Design#CA1001;
   -->
-  <Import Project="ApiReview\ApiReview.CSharp.Analyzers.props"/>
-  <Import Project="ApiDesignGuidelines\Microsoft.ApiDesignGuidelines.CSharp.Analyzers.props"/>
-  <Import Project="Maintainability\Microsoft.Maintainability.CSharp.Analyzers.props"/>
-  <Import Project="QualityGuidelines\Microsoft.QualityGuidelines.CSharp.Analyzers.props"/>
-  <Import Project="Documentation\XmlDocumentationComments.CSharp.Analyzers.props"/>
+  <PropertyGroup>
+    <CodeAnalysisRuleSetOverrides>
+      $(CodeAnalysisRuleSetOverrides);
+      -Microsoft.Design#CA1001;
+      -Microsoft.Design#CA1003;
+      -Microsoft.Design#CA1009;
+      -Microsoft.Design#CA1019;
+      -Microsoft.Design#CA1032;
+      -Microsoft.Design#CA1040;
+
+      -Microsoft.Usage#CA2200;
+      -Microsoft.Usage#CA2234;
+    </CodeAnalysisRuleSetOverrides>
+  </PropertyGroup>
 </Project>

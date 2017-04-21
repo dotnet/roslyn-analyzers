@@ -6,11 +6,26 @@
     issues.
     The format is -[Category]#[ID], e.g., -Microsoft.Design#CA1001;
   -->
-  <Import Project="Microsoft.Composition.Analyzers\Microsoft.Composition.Analyzers.props"/>
-  <Import Project="System.Collections.Immutable.Analyzers\System.Collections.Immutable.Analyzers.props"/>
-  <Import Project="System.Resources.Analyzers\System.Resources.Analyzers.props"/>
-  <Import Project="System.Runtime.Analyzers\System.Runtime.Analyzers.props"/>
-  <Import Project="System.Runtime.InteropServices.Analyzers\System.Runtime.InteropServices.Analyzers.props"/>
-  <Import Project="System.Security.Cryptography.Hashing.Algorithms.Analyzers\System.Security.Cryptography.Hashing.Algorithms.Analyzers.props"/>
-  <Import Project="System.Threading.Tasks.Analyzers\System.Threading.Tasks.Analyzers.props"/>
+  <PropertyGroup>
+    <CodeAnalysisRuleSetOverrides>
+      $(CodeAnalysisRuleSetOverrides);
+      -Microsoft.Interoperability#CA1401;
+
+      -Microsoft.Globalization#CA1304;
+      -Microsoft.Globalization#CA1305;
+      -Microsoft.Globalization#CA1307;
+      -Microsoft.Globalization#CA1308;
+
+      -Microsoft.Performance#CA1813;
+      -Microsoft.Performance#CA1820;
+
+      -Microsoft.Reliability#CA2002;
+
+      -Microsoft.Usage#CA1816;
+      -Microsoft.Usage#CA2208;
+      -Microsoft.Usage#CA2216;
+      -Microsoft.Usage#CA2241;
+      -Microsoft.Usage#CA2242;
+    </CodeAnalysisRuleSetOverrides>
+  </PropertyGroup>
 </Project>

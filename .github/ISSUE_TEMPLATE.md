@@ -1,6 +1,6 @@
 #### Analyzer package
 
-Example: Microsoft.ApiDesignGuidelines.Analyzers
+Example: Microsoft.CodeQuality.Analyzers
 
 #### Analyzer
 

@@ -70,7 +70,9 @@ struct S : IEquatable<S>
         return obj is S && Equals((S)obj);
     }
 }
-", allowNewCompilerDiagnostics: true);
+",
+            // warning CS0659: 'S' overrides Object.Equals(object o) but does not override Object.GetHashCode()
+            allowNewCompilerDiagnostics: true);
         }
 
         [Fact]
@@ -101,7 +103,9 @@ class C : IEquatable<C>
         return Equals(obj as C);
     }
 }
-", allowNewCompilerDiagnostics: true);
+",
+            // warning CS0659: 'C' overrides Object.Equals(object o) but does not override Object.GetHashCode()
+            allowNewCompilerDiagnostics: true);
         }
 
         [Fact]
@@ -132,7 +136,9 @@ class C : IEquatable<C>
         return ((IEquatable<C>)this).Equals(obj as C);
     }
 }
-", allowNewCompilerDiagnostics: true);
+",
+            // warning CS0659: 'C' overrides Object.Equals(object o) but does not override Object.GetHashCode()
+            allowNewCompilerDiagnostics: true);
         }
 
         [Fact]
@@ -163,7 +169,9 @@ struct S : IEquatable<S>
         return obj is S && ((IEquatable<S>)this).Equals((S)obj);
     }
 }
-", allowNewCompilerDiagnostics: true);
+",
+            // warning CS0659: 'S' overrides Object.Equals(object o) but does not override Object.GetHashCode()
+            allowNewCompilerDiagnostics: true);
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

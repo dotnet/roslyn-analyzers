@@ -13,7 +13,8 @@ using Microsoft.CodeAnalysis.Editing;
 namespace Microsoft.ApiDesignGuidelines.Analyzers
 {
     /// <summary>
-    /// CA1064: Exceptions should be public
+    /// CA1066: Implement IEquatable when overriding Object.Equals
+    /// CA1067: Override Object.Equals(object) when implementing IEquatable{T}
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class EquatableFixer : CodeFixProvider

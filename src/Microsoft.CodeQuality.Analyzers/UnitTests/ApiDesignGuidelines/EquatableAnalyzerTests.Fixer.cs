@@ -129,7 +129,7 @@ class C : IEquatable<C>
 
     public override bool Equals(object obj)
     {
-        return ((IEquatable<C>)(this)).Equals(obj as C);
+        return ((IEquatable<C>)this).Equals(obj as C);
     }
 }
 ", allowNewCompilerDiagnostics: true);
@@ -160,7 +160,7 @@ struct S : IEquatable<S>
 
     public override bool Equals(object obj)
     {
-        return obj is S && ((IEquatable<S>)(this)).Equals((S)obj);
+        return obj is S && ((IEquatable<S>)this).Equals((S)obj);
     }
 }
 ", allowNewCompilerDiagnostics: true);

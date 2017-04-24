@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -124,10 +125,9 @@ namespace System.Runtime.Analyzers
             // https://github.com/dotnet/coreclr/blob/bc146608854d1db9cdbcc0b08029a87754e12b49/src/mscorlib/src/System/Text/StringBuilder.cs#L1312
 
             // return count of this format - {index[,alignment][:formatString]}
-            var count = 0;
-
             var pos = 0;
             int len = format.Length;
+            var uniqueNumbers = new HashSet<int>();
 
             // main loop
             while (true)
@@ -304,10 +304,11 @@ namespace System.Runtime.Analyzers
 
                 pos++;
 
-                count++;
+                uniqueNumbers.Add(index);
+
             } // end of main loop
 
-            return count;
+            return uniqueNumbers.Count;
         }
 
         private class StringFormatInfo

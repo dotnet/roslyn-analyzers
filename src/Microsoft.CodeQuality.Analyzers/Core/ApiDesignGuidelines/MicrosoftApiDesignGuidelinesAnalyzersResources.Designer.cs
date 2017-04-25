@@ -1225,6 +1225,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Implement IEquatable.
+        /// </summary>
+        internal static string ImplementEquatable {
+            get {
+                return ResourceManager.GetString("ImplementEquatable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All IDisposable types should implement the Dispose pattern correctly..
         /// </summary>
         internal static string ImplementIDisposableCorrectlyDescription {
@@ -1905,6 +1914,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers {
         internal static string OverrideEqualsAndOperatorEqualsOnValueTypesTitle {
             get {
                 return ResourceManager.GetString("OverrideEqualsAndOperatorEqualsOnValueTypesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Override object.Equals.
+        /// </summary>
+        internal static string OverrideEqualsOnImplementingIEquatableCodeActionTitle {
+            get {
+                return ResourceManager.GetString("OverrideEqualsOnImplementingIEquatableCodeActionTitle", resourceCulture);
             }
         }
         

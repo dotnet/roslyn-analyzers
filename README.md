@@ -96,8 +96,8 @@ Getting Started
 ===============
 
 1. Clone the repository
-2. Install NuGet packages: `msbuild /t:restore src\Analyzers.sln`
-3. Build: `msbuild src\Analyzers.sln`
+2. Install NuGet packages: `msbuild /t:restore RoslynAnalyzers.sln`
+3. Build: `msbuild RoslynAnalyzers.sln`
 
 Execute `cibuild.cmd` to clean, restore, build and runs tests
 

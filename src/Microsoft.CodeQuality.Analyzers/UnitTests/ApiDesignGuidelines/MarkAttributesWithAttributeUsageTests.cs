@@ -63,12 +63,24 @@ class D : C
         }
 
         [Fact]
+        public void TestCSAbstractAttributeClass()
+        {
+            VerifyCSharp(@"
+using System;
+
+abstract class C : Attribute
+{
+}
+");
+        }
+
+        [Fact]
         public void TestVBSimpleAttributeClass()
         {
             VerifyBasic(@"
 Imports System
 
-Class C 
+Class C
     Inherits Attribute
 End Class
 ", GetCA1018BasicResultAt(4, 7, "C"));
@@ -81,7 +93,7 @@ End Class
 Imports System
 
 <AttributeUsage(AttributeTargets.Method)>
-Class C 
+Class C
     Inherits Attribute
 End Class
 Class D
@@ -97,11 +109,23 @@ End Class
 Imports System
 
 [|<AttributeUsage(AttributeTargets.Method)>
-Class C 
+Class C
     Inherits Attribute
 End Class|]
 Class D
     Inherits C
+End Class
+");
+        }
+
+        [Fact]
+        public void TestVBAbstractAttributeClass()
+        {
+            VerifyBasic(@"
+Imports System
+
+MustInherit Class C
+    Inherits Attribute
 End Class
 ");
         }

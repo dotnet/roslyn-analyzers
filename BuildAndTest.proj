@@ -4,7 +4,7 @@
   ToolsVersion="14.0">
   
   <PropertyGroup>
-    <SolutionFile>$(MSBuildThisFileDirectory)\src\Analyzers.sln</SolutionFile>
+    <SolutionFile>$(MSBuildThisFileDirectory)RoslynAnalyzers.sln</SolutionFile>
     <PackagingProject>$(MSBuildThisFileDirectory)\src\Packaging\Packaging.proj</PackagingProject>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <IncludePattern Condition="'$(IncludePattern)' == ''">*.Test*.dll</IncludePattern>

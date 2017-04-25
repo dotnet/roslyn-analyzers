@@ -215,6 +215,21 @@ namespace Analyzer.Utilities.Extensions
                 return false;
             }
 
+            // A static constructor does not qualify or disqualify a class from being a
+            // static holder, because it isn't accessible to any consumers of the class.
+            if (member.IsConstructor())
+            {
+                return false;
+            }
+
+            // Private or protected members do not qualify or disqualify a class from
+            // being a static holder class, because they are not accessible to any
+            // consumers of the class.
+            if (member.IsProtected() || member.IsPrivate())
+            {
+                return false;
+            }
+
             return member.IsStatic;
         }
 
@@ -236,6 +251,15 @@ namespace Analyzer.Utilities.Extensions
             // parameters, so presumably the author of the class intended for it to be
             // instantiated.
             if (member.IsUserDefinedOperator())
+            {
+                return true;
+            }
+
+            // Like user-defined operators, explicit conversion operators disqualify a class
+            // from being considered a static holder, because it converts from an instance of
+            // another class to this class, so presumably the author intended for it to be
+            // instantiated
+            if (member.IsExplicitConversion())
             {
                 return true;
             }

@@ -96,21 +96,10 @@ Getting Started
 ===============
 
 1. Clone the repository
-2. Install NuGet packages: `msbuild /t:restore src\Analyzers.sln`
-3. Build: `msbuild src\Analyzers.sln`
+2. Install NuGet packages: `msbuild /t:restore RoslynAnalyzers.sln`
+3. Build: `msbuild RoslynAnalyzers.sln`
 
 Execute `cibuild.cmd` to clean, restore, build and runs tests
-
-**NOTE** The current build of System.Reflection.Metadata (from NuGet package System.Reflection.Metadata.1.2.0-rc2-23629) is unsigned. This causes unit tests to fail. To work around this problem until a new, signed version is available, give the command
-```
-sn -Vr System.Reflection.Metadata,B03F5F7F11D50A3A
-```
-which will cause the CLR to skip strong name verification for that assembly.
-
-When a properly signed version of this assembly becomes available, reenable strong name verification with the command
-```
-sn -Vu System.Reflection.Metadata,B03F5F7F11D50A3A
-```
 
 Submitting Pull Requests
 ========================

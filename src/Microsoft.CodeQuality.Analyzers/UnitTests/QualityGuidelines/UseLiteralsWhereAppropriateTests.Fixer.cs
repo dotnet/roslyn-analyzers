@@ -88,19 +88,18 @@ class C
     const /*intermediate*/  /*trailing*/ string f3, f4 = ""Message is shown only for f4"";
 }
 ");
-
+            // VB-fixer is disabled on multiple fields, because it would introduce compile error.
+            // Error BC30438: Constants must have a value.
             VerifyBasicFix(@"
 Class C
-    'Error BC30438: Constants must have a value.
     Shared ReadOnly f3 As String, f4 As String = ""Message is shown only for f4""
 End Class
 ",
 @"
 Class C
-    'Error BC30438: Constants must have a value.
-    Const f3 As String, f4 As String = ""Message is shown only for f4""
+    Shared ReadOnly f3 As String, f4 As String = ""Message is shown only for f4""
 End Class
-", validationMode: TestValidationMode.AllowCompileErrors, allowNewCompilerDiagnostics: true);
+");
         }
 
         [Fact]

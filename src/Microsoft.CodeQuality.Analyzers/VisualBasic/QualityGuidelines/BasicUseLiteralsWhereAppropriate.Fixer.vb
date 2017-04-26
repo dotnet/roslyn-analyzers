@@ -20,7 +20,10 @@ Namespace Microsoft.QualityGuidelines.VisualBasic.Analyzers
                 syntaxNode = syntaxNode.Parent
             End While
 
-            Return TryCast(syntaxNode, FieldDeclarationSyntax)
+            Dim field = DirectCast(syntaxNode, FieldDeclarationSyntax)
+
+            ' Multiple declarators are not supported, as one of them may not be constant.
+            Return If(field IsNot Nothing AndAlso field.Declarators.Count > 1, Nothing, field)
         End Function
 
         Protected Overrides Function IsStaticKeyword(syntaxToken As SyntaxToken) As Boolean

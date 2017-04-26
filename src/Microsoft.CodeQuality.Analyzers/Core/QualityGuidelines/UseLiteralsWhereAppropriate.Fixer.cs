@@ -60,6 +60,9 @@ namespace Microsoft.QualityGuidelines.Analyzers
             {
                 if (IsStaticKeyword(modifier) || IsReadonlyKeyword(modifier))
                 {
+                    // The associated analyzer ensures we'll only get in the fixer if both 'static' and 'readonly'
+                    // keywords are in the declaration. Because their order is not relevant, we detect if both
+                    // have been passed by inspecting whether leading and trailing trivia are non-empty. 
                     if (leadingTrivia.Count == 0 && trailingTrivia.Count == 0)
                     {
                         leadingTrivia = leadingTrivia.AddRange(modifier.LeadingTrivia);
@@ -67,10 +70,14 @@ namespace Microsoft.QualityGuidelines.Analyzers
                     }
                     else
                     {
+                        // Copy the trivia in-between both keywords ('static' and 'readonly') into 
+                        // the combined set of trailing trivia.
                         trailingTrivia = trailingTrivia.AddRange(modifier.LeadingTrivia);
                         trailingTrivia = trailingTrivia.AddRange(modifier.TrailingTrivia);
 
-                        var constModifier =
+                        // We have processed both the keywords 'static' and 'readonly', so we insert the 'const' keyword here.
+                        // In case any additional modifiers will follow, their relative position should not change.
+                        SyntaxToken constModifier =
                             GetConstKeywordToken().WithLeadingTrivia(leadingTrivia).WithTrailingTrivia(trailingTrivia);
                         newModifiers = newModifiers.Add(constModifier);
                     }

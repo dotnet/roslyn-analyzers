@@ -71,7 +71,7 @@ namespace Analyzer.Utilities.Extensions
             return (symbol as IMethodSymbol)?.MethodKind == MethodKind.UserDefinedOperator;
         }
 
-        public static bool IsExplicitConversion(this ISymbol symbol)
+        public static bool IsConversionOperator(this ISymbol symbol)
         {
             return (symbol as IMethodSymbol)?.MethodKind == MethodKind.Conversion;
         }

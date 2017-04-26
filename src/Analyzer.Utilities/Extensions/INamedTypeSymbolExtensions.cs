@@ -255,11 +255,11 @@ namespace Analyzer.Utilities.Extensions
                 return true;
             }
 
-            // Like user-defined operators, explicit conversion operators disqualify a class
+            // Like user-defined operators, conversion operators disqualify a class
             // from being considered a static holder, because it converts from an instance of
             // another class to this class, so presumably the author intended for it to be
             // instantiated
-            if (member.IsExplicitConversion())
+            if (member.IsConversionOperator())
             {
                 return true;
             }

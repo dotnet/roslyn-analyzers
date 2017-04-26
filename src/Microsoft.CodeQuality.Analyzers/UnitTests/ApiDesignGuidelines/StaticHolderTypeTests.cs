@@ -741,6 +741,17 @@ public class C29
         }
 
         [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyImplicitConversionOperatorsCSharp()
+        {
+            VerifyCSharp(@"
+public class C29
+{
+    public static implicit operator C29(int foo) => new C29();
+}
+");
+        }
+
+        [Fact]
         public void CA1052NoDiagnosticForNonStaticClassWithOnlyExplicitConversionOperatorsBasic()
         {
             VerifyBasic(@"

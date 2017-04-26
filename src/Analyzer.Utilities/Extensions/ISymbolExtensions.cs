@@ -39,6 +39,11 @@ namespace Analyzer.Utilities.Extensions
             return symbol.DeclaredAccessibility == Accessibility.Protected;
         }
 
+        public static bool IsPrivate(this ISymbol symbol)
+        {
+            return symbol.DeclaredAccessibility == Accessibility.Private;
+        }
+
         public static bool IsErrorType(this ISymbol symbol)
         {
             return
@@ -64,6 +69,11 @@ namespace Analyzer.Utilities.Extensions
         public static bool IsUserDefinedOperator(this ISymbol symbol)
         {
             return (symbol as IMethodSymbol)?.MethodKind == MethodKind.UserDefinedOperator;
+        }
+
+        public static bool IsConversionOperator(this ISymbol symbol)
+        {
+            return (symbol as IMethodSymbol)?.MethodKind == MethodKind.Conversion;
         }
 
         public static ImmutableArray<IParameterSymbol> GetParameters(this ISymbol symbol)

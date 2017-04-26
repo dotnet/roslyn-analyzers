@@ -166,46 +166,6 @@ public class C
         }
 
         [Fact]
-        public void CA1052FixesNonStaticClassWithStaticConstructorCSharp()
-        {
-            const string Code = @"
-public class C
-{
-    static C() { }
-}
-";
-
-            const string FixedCode = @"
-public static class C
-{
-    static C() { }
-}
-";
-
-            VerifyCSharpFix(Code, FixedCode);
-        }
-
-        [Fact]
-        public void CA1052FixesNonStaticClassWithStaticConstructorAndInstanceConstructorCSharp()
-        {
-            const string Code = @"
-public class C
-{
-    public C() { }
-    static C() { }
-}
-";
-            const string FixedCode = @"
-public static class C
-{
-    static C() { }
-}
-";
-
-            VerifyCSharpFix(Code, FixedCode);
-        }
-
-        [Fact]
         public void CA1052FixesNestedPublicClassInOtherwiseEmptyNonStaticClassCSharp()
         {
             const string Code = @"

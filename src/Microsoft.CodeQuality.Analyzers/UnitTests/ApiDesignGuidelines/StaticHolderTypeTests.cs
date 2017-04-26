@@ -407,27 +407,25 @@ public static class C15
         }
 
         [Fact]
-        public void CA1052DiagnosticForNonStaticClassWithStaticConstructorCSharp()
+        public void CA1052NoDiagnosticForNonStaticClassWithStaticConstructorCSharp()
         {
             VerifyCSharp(@"
 public class C16
 {
     static C16() { }
 }
-",
-                CSharpResult(2, 14, "C16"));
+");
         }
 
         [Fact]
-        public void CA1052DiagnosticForNonStaticClassWithStaticConstructorBasic()
+        public void CA1052NoDiagnosticForNonStaticClassWithStaticConstructorBasic()
         {
             VerifyBasic(@"
 Public Class B16
     Shared Sub New()
     End Sub
 End Class
-",
-                BasicResult(2, 14, "B16"));
+");
         }
 
         [Fact]
@@ -442,7 +440,7 @@ public static class C17
         }
 
         [Fact]
-        public void CA1052DiagnosticForNonStaticClassWithStaticConstructorAndInstanceConstructorCSharp()
+        public void CA1052NoDiagnosticForNonStaticClassWithStaticConstructorAndInstanceConstructorCSharp()
         {
             VerifyCSharp(@"
 public class C18
@@ -450,12 +448,11 @@ public class C18
     public C18() { }
     static C18() { }
 }
-",
-                CSharpResult(2, 14, "C18"));
+");
         }
 
         [Fact]
-        public void CA1052DiagnosticForNonStaticClassWithStaticConstructorAndInstanceConstructorBasic()
+        public void CA1052NoDiagnosticForNonStaticClassWithStaticConstructorAndInstanceConstructorBasic()
         {
             VerifyBasic(@"
 Public Class B18
@@ -465,8 +462,7 @@ Public Class B18
     Shared Sub New()
     End Sub
 End Class
-",
-                BasicResult(2, 14, "B18"));
+");
         }
 
         [Fact]
@@ -706,6 +702,65 @@ Public Class B27
 	Inherits
 End Class
 ", TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyPrivateAndProtectedStaticMethodsCSharp()
+        {
+            VerifyCSharp(@"
+public class C28
+{
+    private static void Foo() {}
+    protected static void Bar() {}
+}
+");
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyPrivateAndProtectedStaticMethodsBasic()
+        {
+            VerifyBasic(@"
+Public Class B28
+	Private Shared Sub Foo()
+	End Sub
+	Protected Shared Sub Bar()
+	End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyExplicitConversionOperatorsCSharp()
+        {
+            VerifyCSharp(@"
+public class C29
+{
+    public static explicit operator C29(int foo) => new C29();
+}
+");
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyImplicitConversionOperatorsCSharp()
+        {
+            VerifyCSharp(@"
+public class C29
+{
+    public static implicit operator C29(int foo) => new C29();
+}
+");
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyExplicitConversionOperatorsBasic()
+        {
+            VerifyBasic(@"
+Public Class B29
+    Public Shared Widening Operator CType(ByVal foo As Integer) As B29
+        Return New B29()
+    End Operator
+End Class
+");
         }
     }
 }

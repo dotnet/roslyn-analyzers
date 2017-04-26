@@ -228,4 +228,7 @@
   <data name="DoNotRaiseExceptionsInExceptionClausesTitle" xml:space="preserve">
     <value>Do not raise exceptions in finally clauses</value>
   </data>
+  <data name="UseLiteralsWhereAppropriateCodeActionTitle" xml:space="preserve">
+    <value>Change to constant</value>
+  </data>
 </root>

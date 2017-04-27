@@ -162,6 +162,15 @@ namespace Microsoft.Maintainability.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} calls {1} but does not use the value the method returns. Because {1} is marked as a Pure method, it cannot have side effects. Use the result in a conditional statement, assign the result to a variable, or pass it as an argument to another method..
+        /// </summary>
+        internal static string DoNotIgnoreMethodResultsMessagePureMethod {
+            get {
+                return ResourceManager.GetString("DoNotIgnoreMethodResultsMessagePureMethod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} calls {1} but does not use the new string instance that the method returns. Pass the instance as an argument to another method, assign the instance to a variable, or remove the call if it is unnecessary..
         /// </summary>
         internal static string DoNotIgnoreMethodResultsMessageStringCreation {

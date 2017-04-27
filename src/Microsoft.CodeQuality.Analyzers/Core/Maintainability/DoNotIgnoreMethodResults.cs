@@ -6,6 +6,8 @@ using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Semantics;
+using System.Diagnostics.Contracts;
+using System.Linq;
 
 namespace Microsoft.Maintainability.Analyzers
 {
@@ -46,6 +48,7 @@ namespace Microsoft.Maintainability.Analyzers
         private static readonly LocalizableString s_localizableMessageObjectCreation = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessageObjectCreation), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageStringCreation = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessageStringCreation), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageHResultOrErrorCode = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessageHResultOrErrorCode), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessagePureMethod = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessagePureMethod), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageTryParse = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessageTryParse), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsDescription), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
 
@@ -78,6 +81,17 @@ namespace Microsoft.Maintainability.Analyzers
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182273.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
+
+        internal static DiagnosticDescriptor PureMethodRule = new DiagnosticDescriptor(RuleId,
+                                                                             s_localizableTitle,
+                                                                             s_localizableMessagePureMethod,
+                                                                             DiagnosticCategory.Performance,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
+                                                                             isEnabledByDefault: true,
+                                                                             description: s_localizableDescription,
+                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182273.aspx",
+                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+
 
         internal static DiagnosticDescriptor TryParseRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -140,6 +154,10 @@ namespace Microsoft.Maintainability.Analyzers
                             {
                                 rule = HResultOrErrorCodeRule;
                             }
+                            else if (IsPureMethod(targetMethod, opContext.Compilation))
+                            {
+                                rule = PureMethodRule;
+                            }
 
                             targetMethodName = targetMethod.Name;
                             break;
@@ -174,6 +192,11 @@ namespace Microsoft.Maintainability.Analyzers
             return method.GetDllImportData() != null &&
                 (method.ReturnType.SpecialType == SpecialType.System_Int32 ||
                 method.ReturnType.SpecialType == SpecialType.System_UInt32);
+        }
+
+        private static bool IsPureMethod(IMethodSymbol method, Compilation compilation)
+        {
+            return method.GetAttributes().Any(attr => attr.AttributeClass.Equals(WellKnownTypes.PureAttribute(compilation)));
         }
     }
 }

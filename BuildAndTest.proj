@@ -5,13 +5,18 @@
   
   <PropertyGroup>
     <SolutionFile>$(MSBuildThisFileDirectory)RoslynAnalyzers.sln</SolutionFile>
-    <PackagingProject>$(MSBuildThisFileDirectory)\src\Packaging\Packaging.proj</PackagingProject>
+    <PackagingProject>$(MSBuildThisFileDirectory)src\Packaging\Packaging.proj</PackagingProject>
+    <BinariesPath>$(MSBuildThisFileDirectory)Binaries\$(Configuration)</BinariesPath>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <IncludePattern Condition="'$(IncludePattern)' == ''">*.Test*.dll</IncludePattern>
 
     <!-- Emit XML in order to get structured test results -->
     <RunTestArgs>-noshadow -parallel all -xml Binaries\$(Configuration)\TestResults.xml</RunTestArgs>
 
+    <!-- Arguments to the SignTool -->
+    <SignRoslynArgs>-msbuildPath "$(MSBuildBinPath)\msbuild.exe" -config "$(MSBuildThisFileDirectory)build\Config\SignToolData.json"</SignRoslynArgs>
+    <RoslynToolsMicrosoftSignToolVersion>0.3.0-beta</RoslynToolsMicrosoftSignToolVersion>
+    
     <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == ''">$(NUGET_PACKAGES)</NuGetPackageRoot>
     <!-- Respect environment variable if set -->
     <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and
@@ -50,6 +55,10 @@
              Targets="Rebuild"/>
   </Target>
 
+  <Target Name="Sign" Condition="'$(OfficialBuild)' == 'true'">
+    <Exec Command="$(NuGetPackageRoot)\RoslynTools.Microsoft.SignTool\$(RoslynToolsMicrosoftSignToolVersion)\tools\SignTool.exe $(SignRoslynArgs) &quot;$(BinariesPath)&quot;" WorkingDirectory="$(MSBuildThisFileDirectory)" />
+  </Target>
+
   <Target Name="Package" DependsOnTargets="Build">
     <MSBuild Projects="$(PackagingProject)" Targets="Build" />
   </Target>
@@ -69,6 +78,6 @@
 
   </Target>
 
-  <Target Name="BuildAndTest"
-          DependsOnTargets="Build;Package;Test" />
+ <Target Name="BuildAndTest"
+          DependsOnTargets="Build;Sign;Package;Test" />
 </Project>

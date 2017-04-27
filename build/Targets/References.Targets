@@ -102,4 +102,8 @@
     </When>
   </Choose>
 
+  <!-- TODO: Create a separate Toolset package project and only reference this package from that project -->
+  <ItemGroup>
+    <PackageReference Include="RoslynTools.Microsoft.SignTool" Version="0.3.0-beta" />
+  </ItemGroup>
 </Project>

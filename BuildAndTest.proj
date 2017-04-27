@@ -9,12 +9,12 @@
     <BinariesPath>$(MSBuildThisFileDirectory)Binaries\$(Configuration)</BinariesPath>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <IncludePattern Condition="'$(IncludePattern)' == ''">*.Test*.dll</IncludePattern>
-    
+
     <!-- Emit XML in order to get structured test results -->
     <RunTestArgs>-noshadow -parallel all -xml Binaries\$(Configuration)\TestResults.xml</RunTestArgs>
 
     <!-- Arguments to the SignTool -->
-    <SignRoslynArgs>-msbuildPath "$(MSBuildBinPath)\msbuild.exe"</SignRoslynArgs>
+    <SignRoslynArgs>-msbuildPath "$(MSBuildBinPath)\msbuild.exe" -config "$(MSBuildThisFileDirectory)build\Config\SignToolData.json"</SignRoslynArgs>
     <RoslynToolsMicrosoftSignToolVersion>0.3.0-beta</RoslynToolsMicrosoftSignToolVersion>
     
     <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == ''">$(NUGET_PACKAGES)</NuGetPackageRoot>

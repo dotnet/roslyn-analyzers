@@ -126,7 +126,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // to a method with a params parameter, and so it is probably sound to return true at this point.
             // As a sanity check, verify that the last argument to the call is equivalent to the array creation.
             // (Comparing for object identity does not work because the semantic model can return a fresh operation tree.)
-            var lastArgument = parent.ArgumentsInParameterOrder.LastOrDefault();
+            var lastArgument = parent.ArgumentsInEvaluationOrder.LastOrDefault();
             return lastArgument != null && lastArgument.Value.Syntax == arrayCreationExpression.Syntax && AreEquivalentZeroLengthArrayCreations(arrayCreationExpression, lastArgument.Value as IArrayCreationExpression);
         }
 

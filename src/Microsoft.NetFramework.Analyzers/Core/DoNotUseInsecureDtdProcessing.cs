@@ -271,7 +271,7 @@ namespace Microsoft.NetFramework.Analyzers
                     else
                     {
                         SemanticModel model = context.Compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree);
-                        IArgument arg = expression.ArgumentsInParameterOrder[xmlReaderSettingsIndex];
+                        IArgument arg = expression.ArgumentsInEvaluationOrder[xmlReaderSettingsIndex];
                         ISymbol settingsSymbol = arg.Value.Syntax.GetDeclaredOrReferencedSymbol(model);
 
                         if (settingsSymbol == null)
@@ -597,7 +597,10 @@ namespace Microsoft.NetFramework.Analyzers
             private void AnalyzeVariableDeclaration(OperationAnalysisContext context)
             {
                 IVariableDeclaration declare = context.Operation as IVariableDeclaration;
-                AnalyzeObjectCreationInternal(context, declare.Variable, declare.InitialValue);
+                foreach (var variable in declare.Variables)
+                {
+                    AnalyzeObjectCreationInternal(context, variable, declare.Initializer);
+                }
             }
 
             private void AnalyzeXmlResolverPropertyAssignmentForXmlDocument(OperationAnalysisContext context, ISymbol assignedSymbol, IAssignmentExpression expression)

@@ -25,7 +25,7 @@ namespace Analyzer.Utilities.Extensions
             }
             else if (invocation.TargetMethod.IsExtensionMethod && invocation.TargetMethod.Parameters.Length > 0)
             {
-                var firstArg = invocation.ArgumentsInParameterOrder.FirstOrDefault();
+                var firstArg = invocation.ArgumentsInEvaluationOrder.FirstOrDefault();
                 if (firstArg != null)
                 {
                     return beforeConversion ?

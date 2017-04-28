@@ -50,13 +50,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     var invocation = (IInvocationExpression)operationContext.Operation;
 
                     StringFormatInfo.Info info = formatInfo.TryGet(invocation.TargetMethod);
-                    if (info == null || invocation.ArgumentsInParameterOrder.Length <= info.FormatStringIndex)
+                    if (info == null || invocation.ArgumentsInEvaluationOrder.Length <= info.FormatStringIndex)
                     {
                         // not a target method
                         return;
                     }
 
-                    IArgument formatStringArgument = invocation.ArgumentsInParameterOrder[info.FormatStringIndex];
+                    IArgument formatStringArgument = invocation.ArgumentsInEvaluationOrder[info.FormatStringIndex];
                     if (!object.Equals(formatStringArgument?.Value?.Type, formatInfo.String) ||
                         !(formatStringArgument?.Value?.ConstantValue.Value is string))
                     {
@@ -86,8 +86,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     // params case
-                    IArgument paramsArgument = invocation.ArgumentsInParameterOrder[info.FormatStringIndex + 1];
-                    if (paramsArgument.ArgumentKind != ArgumentKind.ParamArray)
+                    IArgument paramsArgument = invocation.ArgumentsInEvaluationOrder[info.FormatStringIndex + 1];
+                    if (paramsArgument.ArgumentKind != ArgumentKind.ParamArray && paramsArgument.ArgumentKind != ArgumentKind.Explicit)
                     {
                         // wrong format
                         return;

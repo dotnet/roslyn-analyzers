@@ -189,7 +189,7 @@ namespace System.Runtime.Analyzers
                     IEnumerable<int> IformatProviderParameterIndices = GetIndexesOfParameterType(targetMethod, iformatProviderType);
                     foreach (var index in IformatProviderParameterIndices)
                     {
-                        var argument = invocationExpression.ArgumentsInParameterOrder[index];
+                        var argument = invocationExpression.ArgumentsInEvaluationOrder[index];
                         if (argument != null && currentUICultureProperty != null &&
                             installedUICultureProperty != null && currentThreadCurrentUICultureProperty != null)
                         {

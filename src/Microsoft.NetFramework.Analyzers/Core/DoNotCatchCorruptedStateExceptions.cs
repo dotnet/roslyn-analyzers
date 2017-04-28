@@ -102,7 +102,7 @@ namespace Microsoft.NetFramework.Analyzers
                 // for now there doesn't seem to be any way to annotate lambdas with attributes
             }
 
-            public override void VisitCatch(ICatchClause operation)
+            public override void VisitCatchClause(ICatchClause operation)
             {
                 _seenEmptyThrowInCatchClauses.Push(false);
 

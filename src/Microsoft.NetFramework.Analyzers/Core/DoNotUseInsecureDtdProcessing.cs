@@ -20,7 +20,7 @@ namespace Microsoft.NetFramework.Analyzers
     {
         internal const string RuleId = "CA3075";
         private const string HelpLink = "http://aka.ms/CA3075";
-        
+
         internal static DiagnosticDescriptor RuleDoNotUseInsecureDtdProcessing = CreateDiagnosticDescriptor(
                                                                                     SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(MicrosoftNetFrameworkAnalyzersResources.DoNotUseInsecureDtdProcessingGenericMessage)),
                                                                                     SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(MicrosoftNetFrameworkAnalyzersResources.DoNotUseInsecureDtdProcessingDescription)),
@@ -210,14 +210,14 @@ namespace Microsoft.NetFramework.Analyzers
             {
                 IInvocationExpression invocationExpression = context.Operation as IInvocationExpression;
 
-                if(invocationExpression == null)
+                if (invocationExpression == null)
                 {
                     return;
                 }
 
                 IMethodSymbol method = invocationExpression.TargetMethod;
 
-                if(method == null)
+                if (method == null)
                 {
                     return;
                 }
@@ -271,10 +271,10 @@ namespace Microsoft.NetFramework.Analyzers
                     else
                     {
                         SemanticModel model = context.Compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree);
-                        IArgument arg = expression.ArgumentsInParameterOrder[xmlReaderSettingsIndex];
+                        IArgument arg = expression.ArgumentsInEvaluationOrder[xmlReaderSettingsIndex];
                         ISymbol settingsSymbol = arg.Value.Syntax.GetDeclaredOrReferencedSymbol(model);
-                        
-                        if(settingsSymbol == null)
+
+                        if (settingsSymbol == null)
                         {
                             return;
                         }
@@ -325,7 +325,7 @@ namespace Microsoft.NetFramework.Analyzers
             {
                 IFieldInitializer fieldInit = context.Operation as IFieldInitializer;
 
-                if(fieldInit == null)
+                if (fieldInit == null)
                 {
                     return;
                 }
@@ -597,7 +597,10 @@ namespace Microsoft.NetFramework.Analyzers
             private void AnalyzeVariableDeclaration(OperationAnalysisContext context)
             {
                 IVariableDeclaration declare = context.Operation as IVariableDeclaration;
-                AnalyzeObjectCreationInternal(context, declare.Variable, declare.InitialValue);
+                foreach (var variable in declare.Variables)
+                {
+                    AnalyzeObjectCreationInternal(context, variable, declare.Initializer);
+                }
             }
 
             private void AnalyzeXmlResolverPropertyAssignmentForXmlDocument(OperationAnalysisContext context, ISymbol assignedSymbol, IAssignmentExpression expression)
@@ -651,7 +654,7 @@ namespace Microsoft.NetFramework.Analyzers
                 }
 
                 IConversionExpression conv = expression.Value as IConversionExpression;
-                
+
                 if (isXmlTextReaderXmlResolverProperty && conv != null && SecurityDiagnosticHelpers.IsXmlSecureResolverType(conv.Operand.Type, _xmlTypes))
                 {
                     env.IsSecureResolver = true;
@@ -717,10 +720,10 @@ namespace Microsoft.NetFramework.Analyzers
                         bool isXmlTextReaderXmlResolverProperty =
                             SecurityDiagnosticHelpers.IsXmlTextReaderXmlResolverPropertyDerived(propRef.Property, _xmlTypes);
                         bool isXmlTextReaderDtdProcessingProperty = !isXmlTextReaderXmlResolverProperty &&
-                            SecurityDiagnosticHelpers.IsXmlTextReaderDtdProcessingPropertyDerived(propRef.Property,_xmlTypes);
+                            SecurityDiagnosticHelpers.IsXmlTextReaderDtdProcessingPropertyDerived(propRef.Property, _xmlTypes);
                         if (isXmlTextReaderXmlResolverProperty || isXmlTextReaderDtdProcessingProperty)
                         {
-                            AnalyzeXmlTextReaderProperties(context, assignedSymbol, expression, isXmlTextReaderXmlResolverProperty, 
+                            AnalyzeXmlTextReaderProperties(context, assignedSymbol, expression, isXmlTextReaderXmlResolverProperty,
                                 isXmlTextReaderDtdProcessingProperty);
                         }
                         else if (SecurityDiagnosticHelpers.IsXmlReaderSettingsType(propRef.Instance.Type, _xmlTypes))

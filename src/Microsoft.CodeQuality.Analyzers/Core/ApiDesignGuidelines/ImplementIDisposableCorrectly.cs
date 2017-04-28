@@ -564,12 +564,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return false;
                 }
 
-                if (invocationExpression.ArgumentsInParameterOrder.Length != 1)
+                if (invocationExpression.ArgumentsInEvaluationOrder.Length != 1)
                 {
                     return false;
                 }
 
-                IArgument argument = invocationExpression.ArgumentsInParameterOrder[0];
+                IArgument argument = invocationExpression.ArgumentsInEvaluationOrder[0];
                 if (argument.Value.Kind != OperationKind.LiteralExpression)
                 {
                     return false;
@@ -591,12 +591,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return false;
                 }
 
-                if (invocationExpression.ArgumentsInParameterOrder.Length != 1)
+                if (invocationExpression.ArgumentsInEvaluationOrder.Length != 1)
                 {
                     return false;
                 }
 
-                IOperation argumentValue = invocationExpression.ArgumentsInParameterOrder[0].Value;
+                IOperation argumentValue = invocationExpression.ArgumentsInEvaluationOrder[0].Value;
                 if (argumentValue.Kind != OperationKind.ConversionExpression)
                 {
                     return false;

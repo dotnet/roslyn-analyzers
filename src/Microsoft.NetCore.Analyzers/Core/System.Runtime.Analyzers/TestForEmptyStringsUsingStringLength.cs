@@ -67,7 +67,7 @@ namespace System.Runtime.Analyzers
         private static void AnalyzeInvocationExpression(OperationAnalysisContext context)
         {
             var invocationOperation = (IInvocationExpression)context.Operation;
-            if (invocationOperation.ArgumentsInSourceOrder.Length > 0)
+            if (invocationOperation.ArgumentsInEvaluationOrder.Length > 0)
             {
                 IMethodSymbol methodSymbol = invocationOperation.TargetMethod;
                 if (methodSymbol != null &&
@@ -141,7 +141,7 @@ namespace System.Runtime.Analyzers
         /// </summary>
         private static bool HasAnEmptyStringArgument(IInvocationExpression invocation)
         {
-            return invocation.ArgumentsInSourceOrder.Any(arg => IsEmptyString(arg.Value));
+            return invocation.ArgumentsInEvaluationOrder.Any(arg => IsEmptyString(arg.Value));
         }
     }
 }

@@ -83,7 +83,7 @@ namespace System.Runtime.Analyzers
                 }
                 else
                 {
-                    IArgument lastArgument = operation.ArgumentsInSourceOrder.Last();
+                    IArgument lastArgument = operation.ArgumentsInEvaluationOrder.Last();
                     if (lastArgument.Value.Kind == OperationKind.FieldReferenceExpression)
                     {
                         IFieldSymbol fieldSymbol = ((IFieldReferenceExpression)lastArgument.Value).Field;

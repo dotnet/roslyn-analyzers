@@ -76,7 +76,7 @@ namespace System.Runtime.Analyzers
                 return;
             }
 
-            if (creation.ArgumentsInParameterOrder.Length == 0)
+            if (creation.ArgumentsInEvaluationOrder.Length == 0)
             {
                 if (HasMessageOrParameterNameConstructor(creation.Type))
                 {
@@ -86,7 +86,7 @@ namespace System.Runtime.Analyzers
             }
             else
             {
-                foreach (IArgument argument in creation.ArgumentsInParameterOrder)
+                foreach (IArgument argument in creation.ArgumentsInEvaluationOrder)
                 {
                     if (argument.Parameter.Type.SpecialType != SpecialType.System_String)
                     {

@@ -84,7 +84,7 @@ namespace System.Runtime.Analyzers
                         return;
                     }
 
-                    // params case
+                    // ensure argument is an array
                     IArgument paramsArgument = invocation.ArgumentsInEvaluationOrder[info.FormatStringIndex + 1];
                     if (paramsArgument.ArgumentKind != ArgumentKind.ParamArray && paramsArgument.ArgumentKind != ArgumentKind.Explicit)
                     {

@@ -100,7 +100,8 @@ namespace Microsoft.Maintainability.Analyzers
                 startContext.RegisterCompilationEndAction(context =>
                 {
                     IEnumerable<INamedTypeSymbol> uninstantiatedInternalTypes = internalTypes
-                        .Except(instantiatedTypes)
+                        .Select(it => it.OriginalDefinition)
+                        .Except(instantiatedTypes.Select(it => it.OriginalDefinition))
                         .Where(type => !HasInstantiatedNestedType(type, instantiatedTypes));
 
                     foreach (INamedTypeSymbol type in uninstantiatedInternalTypes)

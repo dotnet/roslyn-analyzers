@@ -2,6 +2,8 @@
   <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
   <!-- This file is imported by all projects at the beginning of the project files -->
 
+  <Import Project="Versions.props" />
+
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -20,7 +22,6 @@
                                  '$(OS)' == 'Windows_NT'">$(UserProfile)\.nuget\packages</NuGetPackageRoot>
     <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and
                                  '$(OS)' != 'Windows_NT'">$(HOME)\.nuget\packages</NuGetPackageRoot>
-    <XUnitVersion>2.2.0</XUnitVersion>
   </PropertyGroup>
 
   <!-- Project language -->
@@ -138,6 +139,6 @@
 
   <PropertyGroup>
     <AuthenticodeCertificateName>MicrosoftSHA1</AuthenticodeCertificateName>
-    <FakeSignToolPath>$(NuGetPackageRoot)\FakeSign\0.9.2\tools\FakeSign.exe</FakeSignToolPath>
+    <FakeSignToolPath>$(NuGetPackageRoot)\FakeSign\$(FakeSignVersion)\tools\FakeSign.exe</FakeSignToolPath>
   </PropertyGroup>
 </Project>

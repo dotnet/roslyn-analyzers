@@ -54,7 +54,7 @@
   <Choose>
     <When Condition="'$(IncludeCodeAnalysisReference)' == 'true'">
       <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis" Version="2.3.0-beta2-61630-01" />
+        <PackageReference Include="Microsoft.CodeAnalysis" Version="$(RoslynVersion)" />
       </ItemGroup>
     </When>
   </Choose>
@@ -62,8 +62,8 @@
   <Choose>
     <When Condition="'$(IncludeAnalyzerReferences)' == 'true'">
       <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="1.2.0-beta2" />
-        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="1.2.0-beta2" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="$(RoslynAnalyzersVersion)" />
+        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="$(RoslynAnalyzersVersion)" />
       </ItemGroup>
     </When>
   </Choose>
@@ -71,7 +71,7 @@
   <Choose>
     <When Condition="'$(IncludeToolsetCompilerReference)' == 'true'">
       <ItemGroup>
-        <PackageReference Include="Microsoft.Net.Compilers" Version="2.3.0-beta2-61630-01" />
+        <PackageReference Include="Microsoft.Net.Compilers" Version="$(RoslynVersion)" />
       </ItemGroup>
     </When>
   </Choose>
@@ -79,7 +79,7 @@
   <Choose>
     <When Condition="'$(IncludeFakeSignReference)' == 'true'">
       <ItemGroup>
-        <PackageReference Include="FakeSign" Version="0.9.2" />
+        <PackageReference Include="FakeSign" Version="$(FakeSignVersion)" />
       </ItemGroup>
     </When>
   </Choose>
@@ -97,13 +97,13 @@
   <Choose>
     <When Condition="'$(IncludeVSSDKReferences)' == 'true'">
       <ItemGroup>
-        <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="15.0.26201" />
+        <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="$(VSSDKBuildToolsVersion)" />
       </ItemGroup>
     </When>
   </Choose>
 
   <!-- TODO: Create a separate Toolset package project and only reference this package from that project -->
   <ItemGroup>
-    <PackageReference Include="RoslynTools.Microsoft.SignTool" Version="0.3.0-beta" />
+    <PackageReference Include="RoslynTools.Microsoft.SignTool" Version="$(SignToolVersion)" />
   </ItemGroup>
 </Project>

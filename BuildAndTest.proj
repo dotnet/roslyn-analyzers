@@ -2,7 +2,9 @@
   xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
   DefaultTargets="BuildAndTest"
   ToolsVersion="14.0">
-  
+
+  <Import Project="$(MSBuildThisFileDirectory)Build\Targets\Versions.props" />
+
   <PropertyGroup>
     <SolutionFile>$(MSBuildThisFileDirectory)RoslynAnalyzers.sln</SolutionFile>
     <PackagingProject>$(MSBuildThisFileDirectory)src\Packaging\Packaging.proj</PackagingProject>
@@ -15,7 +17,6 @@
 
     <!-- Arguments to the SignTool -->
     <SignRoslynArgs>-msbuildPath "$(MSBuildBinPath)\msbuild.exe" -config "$(MSBuildThisFileDirectory)build\Config\SignToolData.json"</SignRoslynArgs>
-    <RoslynToolsMicrosoftSignToolVersion>0.3.0-beta</RoslynToolsMicrosoftSignToolVersion>
     
     <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == ''">$(NUGET_PACKAGES)</NuGetPackageRoot>
     <!-- Respect environment variable if set -->
@@ -56,7 +57,7 @@
   </Target>
 
   <Target Name="Sign" Condition="'$(OfficialBuild)' == 'true'">
-    <Exec Command="$(NuGetPackageRoot)\RoslynTools.Microsoft.SignTool\$(RoslynToolsMicrosoftSignToolVersion)\tools\SignTool.exe $(SignRoslynArgs) &quot;$(BinariesPath)&quot;" WorkingDirectory="$(MSBuildThisFileDirectory)" />
+    <Exec Command="$(NuGetPackageRoot)\RoslynTools.Microsoft.SignTool\$(SignToolVersion)\tools\SignTool.exe $(SignRoslynArgs) &quot;$(BinariesPath)&quot;" WorkingDirectory="$(MSBuildThisFileDirectory)" />
   </Target>
 
   <Target Name="Package" DependsOnTargets="Build">
@@ -74,7 +75,7 @@
       <TestAssemblies Include="Binaries\$(Configuration)\Text.Analyzers.UnitTests.dll" />
     </ItemGroup>
 
-    <Exec Command="&quot;$(NuGetPackageRoot)\xunit.runner.console\2.1.0\tools\xunit.console.x86.exe&quot; @(TestAssemblies, ' ') $(RunTestArgs)" />
+    <Exec Command="&quot;$(NuGetPackageRoot)\xunit.runner.console\$(XUnitVersion)\tools\xunit.console.x86.exe&quot; @(TestAssemblies, ' ') $(RunTestArgs)" />
 
   </Target>
 

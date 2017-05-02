@@ -20,7 +20,7 @@
                                  '$(OS)' == 'Windows_NT'">$(UserProfile)\.nuget\packages</NuGetPackageRoot>
     <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and
                                  '$(OS)' != 'Windows_NT'">$(HOME)\.nuget\packages</NuGetPackageRoot>
-    <XUnitVersion>2.1.0</XUnitVersion>
+    <XUnitVersion>2.2.0</XUnitVersion>
   </PropertyGroup>
 
   <!-- Project language -->

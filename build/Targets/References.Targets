@@ -54,7 +54,7 @@
   <Choose>
     <When Condition="'$(IncludeCodeAnalysisReference)' == 'true'">
       <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis" Version="3.0.0-beta1-61628-02" />
+        <PackageReference Include="Microsoft.CodeAnalysis" Version="2.3.0-beta2-61630-01" />
       </ItemGroup>
     </When>
   </Choose>
@@ -71,7 +71,7 @@
   <Choose>
     <When Condition="'$(IncludeToolsetCompilerReference)' == 'true'">
       <ItemGroup>
-        <PackageReference Include="Microsoft.Net.Compilers" Version="2.0.1" />
+        <PackageReference Include="Microsoft.Net.Compilers" Version="2.3.0-beta2-61630-01" />
       </ItemGroup>
     </When>
   </Choose>
@@ -89,7 +89,7 @@
       <ItemGroup>
         <PackageReference Include="xunit" Version="$(XUnitVersion)" />
         <PackageReference Include="xunit.runner.console" Version="$(XUnitVersion)" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0-beta5-build1225" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="$(XUnitVersion)" />
       </ItemGroup>
     </When>
   </Choose>

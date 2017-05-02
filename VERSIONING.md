@@ -12,7 +12,7 @@ Following is the versioning scheme that is being used for analyzer packages:
 Current and Released Versions of Analyzer Packages
 ==================================================
 
-Current version of all analyzer packages that are built out of this repo are tracked in [Analyzers.Versions.targets](.//build//Targets//Analyzers.Versions.targets)
+Current version of all analyzer packages that are built out of this repo are tracked by the Version property defined in [Analyzers.Imports.targets](.//build//Targets//Analyzers.Imports.targets)
 
 Released versions of analyzer packages, with the last GitHub Commit Tag and SHA are below:
 

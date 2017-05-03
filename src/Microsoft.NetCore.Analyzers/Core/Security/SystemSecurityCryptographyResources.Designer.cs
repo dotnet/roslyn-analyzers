@@ -40,8 +40,7 @@ namespace Microsoft.NetCore.Analyzers.Security {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.NetCore.Analyzers.Security.Analy" +
-                            "zers.SystemSecurityCryptographyResources", typeof(SystemSecurityCryptographyResources).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.NetCore.Analyzers.Security.SystemSecurityCryptographyResources", typeof(SystemSecurityCryptographyResources).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

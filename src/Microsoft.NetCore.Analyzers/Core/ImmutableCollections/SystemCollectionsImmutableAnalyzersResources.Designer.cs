@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.NetCore.Analyzers {
+namespace Microsoft.NetCore.Analyzers.ImmutableCollections {
     using System;
     using System.Reflection;
     
@@ -40,8 +40,8 @@ namespace Microsoft.NetCore.Analyzers {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.NetCore.Analyzers.Microsoft.NetCore.Analyzers.ImmutableCollections.SystemCollecti" +
-                            "onsImmutableAnalyzersResources", typeof(SystemCollectionsImmutableAnalyzersResources).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.NetCore.Analyzers.ImmutableCollections.SystemCollectionsImmutableAnalyz" +
+                            "ersResources", typeof(SystemCollectionsImmutableAnalyzersResources).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

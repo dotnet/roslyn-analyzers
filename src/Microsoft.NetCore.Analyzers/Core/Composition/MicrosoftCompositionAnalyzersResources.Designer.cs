@@ -40,8 +40,7 @@ namespace Microsoft.NetCore.Analyzers.Composition {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.NetCore.Analyzers.Microsoft.NetCore.Analyzers.Composition.MicrosoftCompositionA" +
-                            "nalyzersResources", typeof(MicrosoftCompositionAnalyzersResources).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.NetCore.Analyzers.Composition.MicrosoftCompositionAnalyzersResources", typeof(MicrosoftCompositionAnalyzersResources).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

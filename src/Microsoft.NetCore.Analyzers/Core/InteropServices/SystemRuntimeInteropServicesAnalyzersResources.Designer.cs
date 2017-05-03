@@ -40,8 +40,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.NetCore.Analyzers.Microsoft.NetCore.Analyzers.InteropServices.SystemRuntim" +
-                            "eInteropServicesAnalyzersResources", typeof(SystemRuntimeInteropServicesAnalyzersResources).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.NetCore.Analyzers.InteropServices.SystemRuntimeInteropServicesAnalyzers" +
+                            "Resources", typeof(SystemRuntimeInteropServicesAnalyzersResources).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

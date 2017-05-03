@@ -40,8 +40,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.NetCore.Analyzers.Microsoft.NetCore.Analyzers.Tasks.SystemThreadingTasks" +
-                            "AnalyzersResources", typeof(SystemThreadingTasksAnalyzersResources).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.NetCore.Analyzers.Tasks.SystemThreadingTasksAnalyzersResources", typeof(SystemThreadingTasksAnalyzersResources).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

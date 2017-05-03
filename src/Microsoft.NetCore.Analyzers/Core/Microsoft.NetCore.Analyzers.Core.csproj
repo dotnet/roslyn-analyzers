@@ -26,37 +26,30 @@
     <EmbeddedResource Update="Composition\MicrosoftCompositionAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MicrosoftCompositionAnalyzersResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Microsoft.NetCore.Analyzers.Composition</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Update="ImmutableCollections\SystemCollectionsImmutableAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SystemCollectionsImmutableAnalyzersResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Microsoft.NetCore.Analyzers.ImmutableCollections</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\SystemResourcesAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SystemResourcesAnalyzersResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Microsoft.NetCore.Analyzers.Resources</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Update="Runtime\SystemRuntimeAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SystemRuntimeAnalyzersResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Microsoft.NetCore.Analyzers.Runtime</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Update="InteropServices\SystemRuntimeInteropServicesAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SystemRuntimeInteropServicesAnalyzersResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Microsoft.NetCore.Analyzers.InteropServices</CustomToolNamespace>
     </EmbeddedResource>
 	<EmbeddedResource Update="Security\SystemSecurityCryptographyResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SystemSecurityCryptographyResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Microsoft.NetCore.Analyzers.Security</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Update="Tasks\SystemThreadingTasksAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SystemThreadingTasksAnalyzersResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Microsoft.NetCore.Analyzers.Tasks</CustomToolNamespace>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

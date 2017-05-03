@@ -40,8 +40,7 @@ namespace Microsoft.NetCore.Analyzers.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.NetCore.Analyzers.Microsoft.NetCore.Analyzers.Resources.SystemResourcesAnalyzersRe" +
-                            "sources", typeof(SystemResourcesAnalyzersResources).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.NetCore.Analyzers.Resources.SystemResourcesAnalyzersResources", typeof(SystemResourcesAnalyzersResources).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

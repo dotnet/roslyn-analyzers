@@ -23,74 +23,74 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Microsoft.Composition.Analyzers\MicrosoftCompositionAnalyzersResources.resx">
+    <EmbeddedResource Update="Composition\MicrosoftCompositionAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MicrosoftCompositionAnalyzersResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Microsoft.Composition.Analyzers</CustomToolNamespace>
+      <CustomToolNamespace>Microsoft.NetCore.Analyzers.Composition</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Update="System.Collections.Immutable.Analyzers\SystemCollectionsImmutableAnalyzersResources.resx">
+    <EmbeddedResource Update="ImmutableCollections\SystemCollectionsImmutableAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SystemCollectionsImmutableAnalyzersResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>System.Collections.Immutable.Analyzers</CustomToolNamespace>
+      <CustomToolNamespace>Microsoft.NetCore.Analyzers.ImmutableCollections</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Update="System.Resources.Analyzers\SystemResourcesAnalyzersResources.resx">
+    <EmbeddedResource Update="Resources\SystemResourcesAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SystemResourcesAnalyzersResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>System.Resources.Analyzers</CustomToolNamespace>
+      <CustomToolNamespace>Microsoft.NetCore.Analyzers.Resources</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Update="System.Runtime.Analyzers\SystemRuntimeAnalyzersResources.resx">
+    <EmbeddedResource Update="Runtime\SystemRuntimeAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SystemRuntimeAnalyzersResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>System.Runtime.Analyzers</CustomToolNamespace>
+      <CustomToolNamespace>Microsoft.NetCore.Analyzers.Runtime</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Update="System.Runtime.InteropServices.Analyzers\SystemRuntimeInteropServicesAnalyzersResources.resx">
+    <EmbeddedResource Update="InteropServices\SystemRuntimeInteropServicesAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SystemRuntimeInteropServicesAnalyzersResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>System.Runtime.InteropServices.Analyzers</CustomToolNamespace>
+      <CustomToolNamespace>Microsoft.NetCore.Analyzers.InteropServices</CustomToolNamespace>
     </EmbeddedResource>
-	<EmbeddedResource Update="System.Security.Cryptography.Hashing.Algorithms.Analyzers\SystemSecurityCryptographyResources.resx">
+	<EmbeddedResource Update="Security\SystemSecurityCryptographyResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SystemSecurityCryptographyResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>System.Security.Cryptography.Hashing.Algorithms.Analyzers</CustomToolNamespace>
+      <CustomToolNamespace>Microsoft.NetCore.Analyzers.Security</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Update="System.Threading.Tasks.Analyzers\SystemThreadingTasksAnalyzersResources.resx">
+    <EmbeddedResource Update="Tasks\SystemThreadingTasksAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SystemThreadingTasksAnalyzersResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>System.Threading.Tasks.Analyzers</CustomToolNamespace>
+      <CustomToolNamespace>Microsoft.NetCore.Analyzers.Tasks</CustomToolNamespace>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Microsoft.Composition.Analyzers\MicrosoftCompositionAnalyzersResources.Designer.cs">
+    <Compile Update="Composition\MicrosoftCompositionAnalyzersResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>MicrosoftCompositionAnalyzersResources.resx</DependentUpon>
     </Compile>
-    <Compile Update="System.Collections.Immutable.Analyzers\SystemCollectionsImmutableAnalyzersResources.Designer.cs">
+    <Compile Update="ImmutableCollections\SystemCollectionsImmutableAnalyzersResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SystemCollectionsImmutableAnalyzersResources.resx</DependentUpon>
     </Compile>
-    <Compile Update="System.Resources.Analyzers\SystemResourcesAnalyzersResources.Designer.cs">
+    <Compile Update="Resources\SystemResourcesAnalyzersResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SystemResourcesAnalyzersResources.resx</DependentUpon>
     </Compile>
-    <Compile Update="System.Runtime.Analyzers\SystemRuntimeAnalyzersResources.Designer.cs">
+    <Compile Update="Runtime\SystemRuntimeAnalyzersResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SystemRuntimeAnalyzersResources.resx</DependentUpon>
     </Compile>
-    <Compile Update="System.Runtime.InteropServices.Analyzers\SystemRuntimeInteropServicesAnalyzersResources.Designer.cs">
+    <Compile Update="InteropServices\SystemRuntimeInteropServicesAnalyzersResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SystemRuntimeInteropServicesAnalyzersResources.resx</DependentUpon>
     </Compile>
-	<Compile Update="System.Security.Cryptography.Hashing.Algorithms.Analyzers\SystemSecurityCryptographyResources.Designer.cs">
+	<Compile Update="Security\SystemSecurityCryptographyResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SystemSecurityCryptographyResources.resx</DependentUpon>
     </Compile>
-    <Compile Update="System.Threading.Tasks.Analyzers\SystemThreadingTasksAnalyzersResources.Designer.cs">
+    <Compile Update="Tasks\SystemThreadingTasksAnalyzersResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SystemThreadingTasksAnalyzersResources.resx</DependentUpon>

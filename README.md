@@ -13,21 +13,21 @@ Debug | Release
 Projects
 ========
 
-Desktop.Analyzers
+Microsoft.NetFramework.Analyzers
 -----------------
 
 *Latest stable version:* [1.1.0](https://www.nuget.org/packages/Desktop.Analyzers/)
 
 Analyzers for APIs specific to the desktop .NET Framework.
 
-[More info](src/Desktop.Analyzers/Desktop.Analyzers.md)
+[More info](src/Microsoft.NetFramework.Analyzers/Microsoft.NetFramework.Analyzers.md)
 
 Microsoft.ApiDesignGuidelines.Analyzers
 --------------------------------
 
 Provides analyzers which implement the .NET design guidelines for API authors.
 
-[More info](src/Microsoft.ApiDesignGuidelines.Analyzers/Microsoft.ApiDesignGuidelines.Analyzers.md)
+[More info](src/Microsoft.CodeQuality.Analyzers/Documentation/ApiDesignGuidelines/Microsoft.ApiDesignGuidelines.Analyzers.md)
 
 
 Microsoft.CodeAnalysis.Analyzers
@@ -52,7 +52,7 @@ System.Collections.Immutable.Analyzers
 
 Provides guidelines for using APIs in the System.Collections.Immutable contract.
 
-[More info](src/System.Collections.Immutable.Analyzers/System.Collections.Immutable.Analyzers.md)
+[More info](src/Microsoft.NetCore.Analyzers/Documentation/System.Collections.Immutable.Analyzers/System.Collections.Immutable.Analyzers.md)
 
 System.Runtime.Analyzers
 ------------------------
@@ -61,7 +61,7 @@ System.Runtime.Analyzers
 
 Provides guidelines for using APIs in the System.Runtime contract.
 
-[More info](src/System.Runtime.Analyzers/System.Runtime.Analyzers.md)
+[More info](src/Microsoft.NetCore.Analyzers/Documentation/System.Runtime.Analyzers/System.Runtime.Analyzers.md)
 
 
 System.Runtime.InteropServices.Analyzers
@@ -71,7 +71,7 @@ System.Runtime.InteropServices.Analyzers
 
 Provides guidelines for using APIs in the System.Runtime.InteropServices contract.
 
-[More info](src/System.Runtime.InteropServices.Analyzers/System.Runtime.InteropServices.Analyzers.md)
+[More info](src/Microsoft.NetCore.Analyzers/Documentation/System.Runtime.InteropServices.Analyzers/System.Runtime.InteropServices.Analyzers.md)
 
 System.Security.Cryptography.Hashing.Algorithms.Analyzers
 ------------------------
@@ -80,7 +80,7 @@ System.Security.Cryptography.Hashing.Algorithms.Analyzers
 
 Provides guidelines for using APIs in the System.Cryptography.Hashing.Algorithms contract.
 
-[More info](src/System.Security.Cryptography.Hashing.Algorithms.Analyzers/System.Security.Cryptography.Hashing.Algorithms.Analyzers.md)
+[More info](src/Microsoft.NetCore.Analyzers/Documentation/System.Security.Cryptography.Hashing.Algorithms.Analyzers/System.Security.Cryptography.Hashing.Algorithms.Analyzers.md)
 
 MetaCompilation
 ---------------

@@ -5,9 +5,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.QualityGuidelines.Analyzers;
+using Microsoft.CodeQuality.Analyzers.QualityGuidelines;
 
-namespace Microsoft.QualityGuidelines.CSharp.Analyzers
+namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
 {
     /// <summary>
     /// CA1802: Use literals where appropriate

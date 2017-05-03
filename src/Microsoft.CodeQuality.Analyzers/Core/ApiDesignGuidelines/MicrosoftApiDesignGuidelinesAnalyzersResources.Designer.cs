@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers {
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines {
     using System;
     using System.Reflection;
     

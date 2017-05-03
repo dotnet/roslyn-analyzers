@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeFixes;
 
-namespace Microsoft.QualityGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     /// <summary>
     /// CA2000: Dispose Objects Before Losing Scope

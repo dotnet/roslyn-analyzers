@@ -13,7 +13,7 @@ using Microsoft.CodeAnalysis.Editing;
 // disable equivalence key warning because it cannot tell that equivalence key is overridden in the base class
 #pragma warning disable RS1011
 
-namespace Microsoft.QualityGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     /// <summary>
     /// CA2119: Seal methods that satisfy private interfaces

@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public partial class DefineAccessorsForAttributeArgumentsTests : CodeFixTestBase
     {

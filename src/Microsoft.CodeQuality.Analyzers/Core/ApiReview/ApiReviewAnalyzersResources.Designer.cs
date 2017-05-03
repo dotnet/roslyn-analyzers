@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ApiReview.Analyzers {
+namespace Microsoft.CodeQuality.Analyzers.ApiReview {
     using System;
     using System.Reflection;
     

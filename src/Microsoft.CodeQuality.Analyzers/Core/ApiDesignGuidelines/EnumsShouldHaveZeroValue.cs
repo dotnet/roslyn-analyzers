@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1008: Enums should have zero value

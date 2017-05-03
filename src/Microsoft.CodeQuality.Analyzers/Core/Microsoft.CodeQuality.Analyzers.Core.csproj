@@ -26,27 +26,27 @@
     <EmbeddedResource Update="ApiReview\ApiReviewAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ApiReview\ApiReviewAnalyzersResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>ApiReview.Analyzers</CustomToolNamespace>
+      <CustomToolNamespace>Microsoft.CodeQuality.Analyzers.ApiReview</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Update="ApiDesignGuidelines\MicrosoftApiDesignGuidelinesAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ApiDesignGuidelines\MicrosoftApiDesignGuidelinesAnalyzersResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Microsoft.ApiDesignGuidelines.Analyzers</CustomToolNamespace>
+      <CustomToolNamespace>Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Update="Maintainability\MicrosoftMaintainabilityAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Maintainability\MicrosoftMaintainabilityAnalyzersResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Microsoft.Maintainability.Analyzers</CustomToolNamespace>
+      <CustomToolNamespace>Microsoft.CodeQuality.Analyzers.Maintainability</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Update="QualityGuidelines\MicrosoftQualityGuidelinesAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>QualityGuidelines\MicrosoftQualityGuidelinesAnalyzersResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Microsoft.QualityGuidelines.Analyzers</CustomToolNamespace>
+      <CustomToolNamespace>Microsoft.CodeQuality.Analyzers.QualityGuidelines</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Update="Documentation\XmlDocumentationCommentsAnalyzersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>XmlDocumentationCommentsAnalyzersResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>XmlDocumentationComments.Analyzers</CustomToolNamespace>
+      <CustomToolNamespace>Microsoft.CodeQuality.Analyzers.Documentation</CustomToolNamespace>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

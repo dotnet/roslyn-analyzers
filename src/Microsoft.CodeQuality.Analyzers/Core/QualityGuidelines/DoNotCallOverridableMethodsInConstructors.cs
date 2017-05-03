@@ -7,7 +7,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Semantics;
 
-namespace Microsoft.QualityGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     /// <summary>
     /// CA2214: Do not call overridable methods in constructors

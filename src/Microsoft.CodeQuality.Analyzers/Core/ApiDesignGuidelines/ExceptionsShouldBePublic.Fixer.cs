@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.CodeActions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1064: Exceptions should be public

@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Semantics;
 
-namespace Microsoft.QualityGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     /// <summary>
     /// CA2219: Do not raise exceptions in exception clauses

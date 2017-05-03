@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1054: Uri parameters should not be strings

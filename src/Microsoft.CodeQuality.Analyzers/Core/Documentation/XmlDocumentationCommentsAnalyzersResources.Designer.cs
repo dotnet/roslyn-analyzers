@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace XmlDocumentationComments.Analyzers {
+namespace Microsoft.CodeQuality.Analyzers.Documentation {
     using System;
     using System.Reflection;
     

@@ -7,7 +7,7 @@ using Analyzer.Utilities;
 using System.Collections.Generic;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1707: Identifiers should not contain underscores

@@ -2,11 +2,11 @@
 
 using System;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.Maintainability.VisualBasic.Analyzers;
+using Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.Maintainability.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
     public class RemoveUnusedLocalsTests : DiagnosticAnalyzerTestBase
     {

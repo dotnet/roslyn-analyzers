@@ -3,10 +3,10 @@
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
-using XmlDocumentationComments.CSharp.Analyzers;
-using XmlDocumentationComments.VisualBasic.Analyzers;
+using Microsoft.CodeQuality.CSharp.Analyzers.Documentation;
+using Microsoft.CodeQuality.VisualBasic.Analyzers.Documentation;
 
-namespace XmlDocumentationComments.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.Documentation.UnitTests
 {
     public class AvoidUsingCrefTagsWithAPrefixFixerTests : CodeFixTestBase
     {

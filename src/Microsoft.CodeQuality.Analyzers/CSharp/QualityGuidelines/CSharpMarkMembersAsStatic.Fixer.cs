@@ -3,9 +3,9 @@
 using System.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.QualityGuidelines.Analyzers;
+using Microsoft.CodeQuality.Analyzers.QualityGuidelines;
 
-namespace Microsoft.QualityGuidelines.CSharp.Analyzers
+namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
 {
     /// <summary>
     /// CA1822: Mark members as static

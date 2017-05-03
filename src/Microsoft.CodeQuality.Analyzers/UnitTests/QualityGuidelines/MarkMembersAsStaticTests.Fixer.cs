@@ -2,11 +2,11 @@
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.QualityGuidelines.CSharp.Analyzers;
-using Microsoft.QualityGuidelines.VisualBasic.Analyzers;
+using Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines;
+using Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines;
 using Test.Utilities;
 
-namespace Microsoft.QualityGuidelines.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
 {
     public class MarkMembersAsStaticFixerTests : CodeFixTestBase
     {

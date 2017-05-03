@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class DefineAccessorsForAttributeArgumentsFixer : CodeFixProvider

@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// Async003: Don't Pass Async Lambdas as Void Returning Delegate Types

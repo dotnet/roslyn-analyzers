@@ -7,7 +7,7 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.QualityGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     /// <summary>
     /// CA2119: Seal methods that satisfy private interfaces

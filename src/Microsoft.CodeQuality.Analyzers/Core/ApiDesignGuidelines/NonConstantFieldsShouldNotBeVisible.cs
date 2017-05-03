@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA2211: Non-constant fields should not be visible

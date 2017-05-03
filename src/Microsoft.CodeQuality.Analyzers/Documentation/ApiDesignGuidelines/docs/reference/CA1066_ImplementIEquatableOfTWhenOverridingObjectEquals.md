@@ -87,4 +87,4 @@ The type `C` now implements `IEquatable<T>`, and its override of `Object.Equals(
 
 ## Related rules
 
-[CA1067: Override Object.Equals when implementing IEquatable<T\>](https://github.com/dotnet/roslyn-analyzers/blob/master/src/Microsoft.ApiDesignGuidelines.Analyzers/docs/reference/CA1067_OverrideObjectEqualsWhenImplementingIEquatableOfT.md)
+[CA1067: Override Object.Equals when implementing IEquatable<T\>](https://github.com/dotnet/roslyn-analyzers/blob/master/src/Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines/docs/reference/CA1067_OverrideObjectEqualsWhenImplementingIEquatableOfT.md)

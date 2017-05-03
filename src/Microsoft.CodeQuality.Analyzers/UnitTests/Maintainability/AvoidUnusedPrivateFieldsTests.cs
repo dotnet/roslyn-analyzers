@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.Maintainability.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
     public class AvoidUnusedPrivateFieldsTests : DiagnosticAnalyzerTestBase
     {

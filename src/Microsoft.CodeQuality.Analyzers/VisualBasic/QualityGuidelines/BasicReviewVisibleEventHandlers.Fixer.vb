@@ -3,9 +3,9 @@
 Imports System.Composition
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
-Imports Microsoft.QualityGuidelines.Analyzers
+Imports Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
-Namespace Microsoft.QualityGuidelines.VisualBasic.Analyzers
+Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines
     ''' <summary>
     ''' CA2109: Review visible event handlers
     ''' </summary>

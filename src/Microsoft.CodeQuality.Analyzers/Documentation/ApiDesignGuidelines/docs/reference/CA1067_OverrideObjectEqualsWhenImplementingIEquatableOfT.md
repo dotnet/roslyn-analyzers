@@ -83,4 +83,4 @@ The type `C` now implements `Object.Equals(object)`, which delegates to `IEquata
 
 ## Related rules
 
-[CA1066: Implement IEquatable<T\> when overriding Object.Equals>](https://github.com/dotnet/roslyn-analyzers/blob/master/src/Microsoft.ApiDesignGuidelines.Analyzers/docs/reference/CA1066_ImplementIEquatableOfTWhenOverridingObjectEquals.md)
+[CA1066: Implement IEquatable<T\> when overriding Object.Equals>](https://github.com/dotnet/roslyn-analyzers/blob/master/src/Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines/docs/reference/CA1066_ImplementIEquatableOfTWhenOverridingObjectEquals.md)

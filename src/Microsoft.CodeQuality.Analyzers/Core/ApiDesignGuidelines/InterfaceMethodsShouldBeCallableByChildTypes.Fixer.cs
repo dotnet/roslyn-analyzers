@@ -13,7 +13,7 @@ using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1033: Interface methods should be callable by child types

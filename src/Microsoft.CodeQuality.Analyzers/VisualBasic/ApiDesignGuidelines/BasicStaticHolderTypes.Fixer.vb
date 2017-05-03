@@ -5,14 +5,14 @@ Imports System.Composition
 Imports System.Threading
 Imports System.Threading.Tasks
 Imports Analyzer.Utilities
-Imports Microsoft.ApiDesignGuidelines.Analyzers
+Imports Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.Formatting
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.VisualBasic.Analyzers
+Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
 
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public Class BasicStaticHolderTypesFixer

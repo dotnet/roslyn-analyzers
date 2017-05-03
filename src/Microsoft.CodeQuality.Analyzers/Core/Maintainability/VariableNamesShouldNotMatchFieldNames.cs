@@ -5,7 +5,7 @@ using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.Maintainability.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
     /// <summary>
     /// CA1500: Variable names should not match field names

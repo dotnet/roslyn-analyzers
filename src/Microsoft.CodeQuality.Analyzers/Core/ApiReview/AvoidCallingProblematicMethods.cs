@@ -6,7 +6,7 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 
-namespace ApiReview.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiReview
 {
     /// <summary>
     /// CA2001: Avoid calling problematic methods

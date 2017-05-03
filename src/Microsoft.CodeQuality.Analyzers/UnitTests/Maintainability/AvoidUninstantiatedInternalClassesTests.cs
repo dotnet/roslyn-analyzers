@@ -5,7 +5,7 @@ using Test.Utilities;
 
 using Xunit;
 
-namespace Microsoft.Maintainability.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
     public class AvoidUninstantiatedInternalClassesTests : DiagnosticAnalyzerTestBase
     {

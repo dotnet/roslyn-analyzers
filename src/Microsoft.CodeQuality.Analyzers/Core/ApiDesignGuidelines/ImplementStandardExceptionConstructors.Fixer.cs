@@ -13,7 +13,7 @@ using Analyzer.Utilities;
 using System.Composition;
 using System.Collections.Generic;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1032: Implement standard exception constructors

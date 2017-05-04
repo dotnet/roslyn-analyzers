@@ -11,8 +11,8 @@ namespace Analyzer.Utilities
 {
     public static class AnalysisContextExtensions
     {
-        private static Version s_MicrosoftCodeAnalysisMinVersion = new Version("2.3");
-        private static Version s_MicrosoftCodeAnalysisMaxVersion = new Version("2.6");
+        private static Version s_MicrosoftCodeAnalysisMinVersion = new Version("2.0");
+        private static Version s_MicrosoftCodeAnalysisMaxVersion = new Version("2.3");
         private static Version s_MicrosoftCodeAnalysisDogfoodVersion = new Version("42.42");
         internal static readonly Version s_MicrosoftCodeAnalysisVersion = typeof(AnalysisContext).GetTypeInfo().Assembly.GetName().Version;
 

@@ -19,7 +19,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class EquatableFixer : CodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => 
+        public override ImmutableArray<string> FixableDiagnosticIds =>
             ImmutableArray.Create(EquatableAnalyzer.ImplementIEquatableRuleId, EquatableAnalyzer.OverrideObjectEqualsRuleId);
 
         public override FixAllProvider GetFixAllProvider()
@@ -145,7 +145,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 returnType: generator.TypeExpression(SpecialType.System_Boolean),
                 accessibility: Accessibility.Public,
                 modifiers: DeclarationModifiers.Override,
-                statements: new[] {returnStatement});
+                statements: new[] { returnStatement });
 
             editor.AddMember(declaration, equalsMethod);
 

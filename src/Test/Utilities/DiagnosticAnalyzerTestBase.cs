@@ -420,7 +420,7 @@ namespace Test.Utilities
                 Compilation compilation = project.GetCompilationAsync().Result;
                 compilation = EnableAnalyzer(analyzerOpt, compilation);
 
-                ImmutableArray <Diagnostic> diags = compilation.GetAnalyzerDiagnostics(new[] { analyzerOpt }, validationMode, analyzerOptions);
+                ImmutableArray<Diagnostic> diags = compilation.GetAnalyzerDiagnostics(new[] { analyzerOpt }, validationMode, analyzerOptions);
                 if (spans == null)
                 {
                     diagnostics.AddRange(diags);

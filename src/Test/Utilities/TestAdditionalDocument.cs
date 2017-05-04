@@ -14,8 +14,8 @@ namespace Test.Utilities
         private readonly SourceText _sourceText;
 
         public TestAdditionalDocument(string fileName, string text)
-            : this (fileName, fileName, text)
-        {            
+            : this(fileName, fileName, text)
+        {
         }
 
         public TestAdditionalDocument(TextDocument textDocument)

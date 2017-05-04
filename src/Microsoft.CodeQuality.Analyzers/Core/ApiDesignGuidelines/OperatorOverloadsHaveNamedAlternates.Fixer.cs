@@ -85,7 +85,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                     generator.ReturnStatement(generator.LiteralExpression(1))
                                 });
 
-                            bodyStatements = new[] {nullCheck}.Concat(bodyStatements);
+                            bodyStatements = new[] { nullCheck }.Concat(bodyStatements);
                         }
 
                         addedMember = generator.MethodDeclaration(

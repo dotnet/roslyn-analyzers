@@ -178,7 +178,7 @@ End Namespace",
                 GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(6, 37)
             );
         }
-        
+
         [Fact]
         public void XmlDocumentUseSecureResolverShouldNotGenerateDiagnostic()
         {
@@ -211,7 +211,7 @@ Namespace TestNamespace
 End Namespace"
             );
         }
-        
+
         [Fact]
         public void XmlDocumentSetSecureResolverInInitializerShouldNotGenerateDiagnostic()
         {
@@ -247,7 +247,7 @@ Namespace TestNamespace
 End Namespace"
             );
         }
-        
+
         [Fact]
         public void XmlDocumentUseSecureResolverWithPermissionsShouldNotGenerateDiagnostic()
         {
@@ -300,7 +300,7 @@ Namespace TestNamespace
 End Namespace"
             );
         }
-        
+
         [Fact]
         public void XmlDocumentSetResolverToNullInTryClauseShouldNotGenerateDiagnostic()
         {
@@ -374,7 +374,7 @@ End Namespace",
                 GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(7, 24)
             );
         }
-        
+
         [Fact]
         public void XmlDocumentUseNonSecureResolverShouldGenerateDiagnostic()
         {
@@ -410,7 +410,7 @@ End Namespace",
                 GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(8, 13)
             );
         }
-        
+
         [Fact]
         public void XmlDocumentUseNonSecureResolverInTryClauseShouldGenerateDiagnostic()
         {
@@ -533,7 +533,7 @@ End Namespace",
                 GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(10, 19)
             );
         }
-        
+
         [Fact]
         public void XmlDocumentSetResolversInDifferentBlock()
         {
@@ -578,7 +578,7 @@ End Namespace",
                 GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(8, 28)
             );
         }
-        
+
         [Fact]
         public void XmlDocumentAsFieldSetResolverToInsecureResolverInOnlyMethodShouldGenerateDiagnostics()
         {
@@ -617,7 +617,7 @@ End Namespace",
                 GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(9, 13)
             );
         }
-        
+
         [Fact]
         public void XmlDocumentAsFieldSetResolverToInsecureResolverInSomeMethodShouldGenerateDiagnostics()
         {
@@ -666,7 +666,7 @@ End Namespace",
                 GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(13, 13)
             );
         }
-        
+
         [Fact]
         public void XmlDocumentAsFieldSetResolverToNullInSomeMethodShouldGenerateDiagnostics()
         {
@@ -712,7 +712,7 @@ End Namespace",
                 GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(6, 37)
             );
         }
-        
+
         [Fact]
         public void XmlDocumentCreatedAsTempNotSetResolverShouldGenerateDiagnostics()
         {
@@ -752,7 +752,7 @@ End Namespace",
                 GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(8, 21)
             );
         }
-        
+
         [Fact]
         public void XmlDocumentDerivedTypeNotSetResolverShouldNotGenerateDiagnostics()
         {
@@ -799,7 +799,7 @@ End Namespace
 "
             );
         }
-        
+
         [Fact]
         public void XmlDocumentDerivedTypeWithNoSecureResolverShouldNotGenerateDiagnostic()
         {

@@ -87,7 +87,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var stringFormatMembers = stringType?.GetMembers("Format").OfType<IMethodSymbol>();
 
                 var stringFormatMemberWithStringAndObjectParameter = stringFormatMembers.GetSingleOrDefaultMemberWithParameterInfos(
-                                                                         GetParameterInfo(stringType), 
+                                                                         GetParameterInfo(stringType),
                                                                          GetParameterInfo(objectType));
                 var stringFormatMemberWithStringObjectAndObjectParameter = stringFormatMembers.GetSingleOrDefaultMemberWithParameterInfos(
                                                                                GetParameterInfo(stringType),
@@ -119,7 +119,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 var computerInfoType = csaContext.Compilation.GetTypeByMetadataName("Microsoft.VisualBasic.Devices.ComputerInfo");
                 var installedUICulturePropertyOfComputerInfoType = computerInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().SingleOrDefault();
-                
+
                 var obsoleteAttributeType = WellKnownTypes.ObsoleteAttribute(csaContext.Compilation);
                 #endregion
 
@@ -130,7 +130,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     #region "Exceptions"
                     if (targetMethod.IsGenericMethod || targetMethod.ContainingType == null || targetMethod.ContainingType.IsErrorType() ||
-                        (targetMethod.ContainingType != null && 
+                        (targetMethod.ContainingType != null &&
                          (activatorType != null && activatorType.Equals(targetMethod.ContainingType)) ||
                          (resourceManagerType != null && resourceManagerType.Equals(targetMethod.ContainingType))))
                     {
@@ -164,7 +164,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     if (methodsWithSameNameAsTargetMethod.Count() > 1)
                     {
                         var correctOverloads = methodsWithSameNameAsTargetMethod.GetMethodOverloadsWithDesiredParameterAtLeadingOrTrailing(targetMethod, iformatProviderType).ToList();
-                        
+
                         // If there are two matching overloads, one with CultureInfo as the first parameter and one with CultureInfo as the last parameter,
                         // report the diagnostic on the overload with CultureInfo as the last parameter, to match the behavior of FxCop.
                         var correctOverload = correctOverloads.FirstOrDefault(overload => overload.Parameters.Last().Type.Equals(iformatProviderType)) ?? correctOverloads.FirstOrDefault();
@@ -175,7 +175,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         {
                             oaContext.ReportDiagnostic(
                                 invocationExpression.Syntax.CreateDiagnostic(
-                                    targetMethod.ReturnType.Equals(stringType) ? 
+                                    targetMethod.ReturnType.Equals(stringType) ?
                                      IFormatProviderAlternateStringRule :
                                      IFormatProviderAlternateRule,
                                     targetMethod.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),

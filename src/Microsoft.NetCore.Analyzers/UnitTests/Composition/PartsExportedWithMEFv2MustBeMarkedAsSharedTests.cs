@@ -70,7 +70,7 @@ Public Class C
 End Class
 " + BasicWellKnownAttributesDefinition);
         }
-        
+
         [Fact]
         public void NoDiagnosticCases_UnresolvedTypes()
         {

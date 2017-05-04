@@ -36,7 +36,7 @@ Class A
     Dim field As System.String
 End Class");
         }
-        
+
         [Fact]
         public void PublicVariableCS()
         {

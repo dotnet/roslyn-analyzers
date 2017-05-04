@@ -46,7 +46,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(MissingConstructorRule);
-        
+
         public override void Initialize(AnalysisContext analysisContext)
         {
             analysisContext.EnableConcurrentExecution();

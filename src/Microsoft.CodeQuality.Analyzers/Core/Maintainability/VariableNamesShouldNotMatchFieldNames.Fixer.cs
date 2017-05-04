@@ -24,7 +24,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         {
             // Fixer not yet implemented.
             return Task.CompletedTask;
-            
+
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static readonly string s_category = DiagnosticCategory.Performance;
         private const string s_helpLinkUri = "https://msdn.microsoft.com/en-us/library/ms182276.aspx";
-        
+
         internal static DiagnosticDescriptor EqualsRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageEquals,

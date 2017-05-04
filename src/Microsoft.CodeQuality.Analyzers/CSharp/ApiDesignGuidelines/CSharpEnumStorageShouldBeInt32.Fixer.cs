@@ -18,7 +18,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines
         {
             var enumDecl = (EnumDeclarationSyntax)node;
             var baseTypeNode = (enumDecl.BaseList.Types.FirstOrDefault() as SimpleBaseTypeSyntax)?.Type;
-            return baseTypeNode; 
+            return baseTypeNode;
         }
     }
-} 
+}

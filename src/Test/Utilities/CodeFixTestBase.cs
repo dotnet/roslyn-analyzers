@@ -117,7 +117,7 @@ namespace Test.Utilities
                     break;
                 }
 
-                analyzerDiagnostics = GetSortedDiagnostics(analyzerOpt, new [] { document }, additionalFiles: additionalFiles, validationMode: validationMode);
+                analyzerDiagnostics = GetSortedDiagnostics(analyzerOpt, new[] { document }, additionalFiles: additionalFiles, validationMode: validationMode);
                 var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, document.GetSemanticModelAsync().Result.GetDiagnostics());
                 if (!allowNewCompilerDiagnostics && newCompilerDiagnostics.Any())
                 {

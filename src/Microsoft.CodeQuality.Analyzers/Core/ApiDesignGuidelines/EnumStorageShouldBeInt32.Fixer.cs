@@ -17,7 +17,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     /// </summary>
     public abstract class EnumStorageShouldBeInt32Fixer : CodeFixProvider
     {
-        protected abstract SyntaxNode GetTargetNode (SyntaxNode node);
+        protected abstract SyntaxNode GetTargetNode(SyntaxNode node);
 
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(EnumStorageShouldBeInt32Analyzer.RuleId);
 
@@ -59,7 +59,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             editor.RemoveNode(targetNode, SyntaxRemoveOptions.KeepLeadingTrivia | SyntaxRemoveOptions.KeepTrailingTrivia | SyntaxRemoveOptions.KeepExteriorTrivia | SyntaxRemoveOptions.KeepEndOfLine);
 
             return editor.GetChangedDocument();
-         }
+        }
 
         private class MyCodeAction : DocumentChangeAction
         {

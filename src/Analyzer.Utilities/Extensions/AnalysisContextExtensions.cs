@@ -67,7 +67,7 @@ namespace Analyzer.Utilities
 #if USE_INTERNAL_IOPERATION_APIS
             s_registerOperationActionOnAnalysisContext.Invoke(context, new object[] { analyzerOperationCallback, ImmutableArray.Create(operationKinds) });
 #else
-                context.RegisterOperationAction(analyzerOperationCallback, operationKinds);
+            context.RegisterOperationAction(analyzerOperationCallback, operationKinds);
 #endif
         }
 
@@ -167,5 +167,5 @@ namespace Analyzer.Utilities
         }
 
 
-        }
     }
+}

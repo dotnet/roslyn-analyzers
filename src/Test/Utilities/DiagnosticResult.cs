@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Test.Utilities
 {
-    public struct DiagnosticResultLocation: IEquatable<DiagnosticResultLocation>
+    public struct DiagnosticResultLocation : IEquatable<DiagnosticResultLocation>
     {
         public DiagnosticResultLocation(string path, int line, int column)
         {
@@ -34,7 +34,7 @@ namespace Test.Utilities
 
         public override int GetHashCode()
         {
-            return Hash.CombineValues(new []{ this.Path.GetHashCode(), this.Line, this.Column });
+            return Hash.CombineValues(new[] { this.Path.GetHashCode(), this.Line, this.Column });
         }
 
         public bool Equals(DiagnosticResultLocation other)
@@ -55,7 +55,7 @@ namespace Test.Utilities
         }
     }
 
-    public struct DiagnosticResult: IEquatable<DiagnosticResult>
+    public struct DiagnosticResult : IEquatable<DiagnosticResult>
     {
         private DiagnosticResultLocation[] _locations;
 

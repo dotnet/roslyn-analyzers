@@ -340,5 +340,10 @@ namespace Analyzer.Utilities
         {
             return compilation.GetTypeByMetadataName("System.ObsoleteAttribute");
         }
+
+        public static INamedTypeSymbol PureAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Diagnostics.Contracts.PureAttribute");
+        }
     }
 }

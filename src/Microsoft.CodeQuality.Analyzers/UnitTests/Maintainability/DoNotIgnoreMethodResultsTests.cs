@@ -251,6 +251,43 @@ End Interface
     GetBasicHResultOrErrorCodeResultAt(6, 9, "M", "NativeMethod"));
         }
 
+        [Fact]
+        [WorkItem(1164, "https://github.com/dotnet/roslyn-analyzers/issues/1164")]
+        public void UnusedPureMethodTriggersError()
+        {
+            VerifyCSharp(@"
+using System.Diagnostics.Contracts;
+
+class C
+{
+    [Pure]
+    public int Returns1() => 1;
+
+    public void DoesNotUseResult()
+    {
+        Returns1();
+    }
+}",
+    GetCSharpPureMethodResultAt(11, 9, "DoesNotUseResult", "Returns1"));
+
+            VerifyBasic(@"
+Imports System.Diagnostics.Contracts
+
+Module Module1
+    <Pure>
+    Function Returns1() As Integer
+        Return 1
+    End Function
+
+    Sub DoesNotUseResult()
+        Returns1()
+    End Sub
+
+End Module
+",
+    GetBasicPureMethodResultAt(11, 9, "DoesNotUseResult", "Returns1"));
+        }
+
         #endregion
 
         #region Helpers
@@ -305,6 +342,18 @@ End Interface
         private static DiagnosticResult GetBasicHResultOrErrorCodeResultAt(int line, int column, string containingMethodName, string invokedMethodName)
         {
             string message = string.Format(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessageHResultOrErrorCode, containingMethodName, invokedMethodName);
+            return GetBasicResultAt(line, column, DoNotIgnoreMethodResultsAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetCSharpPureMethodResultAt(int line, int column, string containingMethodName, string invokedMethodName)
+        {
+            string message = string.Format(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessagePureMethod, containingMethodName, invokedMethodName);
+            return GetCSharpResultAt(line, column, DoNotIgnoreMethodResultsAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetBasicPureMethodResultAt(int line, int column, string containingMethodName, string invokedMethodName)
+        {
+            string message = string.Format(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessagePureMethod, containingMethodName, invokedMethodName);
             return GetBasicResultAt(line, column, DoNotIgnoreMethodResultsAnalyzer.RuleId, message);
         }
 

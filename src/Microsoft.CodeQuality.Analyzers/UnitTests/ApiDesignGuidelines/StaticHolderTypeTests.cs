@@ -599,7 +599,7 @@ End Class
         }
 
         [Fact]
-        public void CA1052DiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndEmptyBaseInterfaceCSharp()
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndEmptyBaseInterfaceCSharp()
         {
             VerifyCSharp(@"
 public interface IC24Base
@@ -609,12 +609,11 @@ public class C24 : IC24Base
 {
     public static void Foo() { }
 }
-",
-                CSharpResult(5, 14, "C24"));
+");
         }
 
         [Fact]
-        public void CA1052DiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndEmptyBaseInterfaceBasic()
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndEmptyBaseInterfaceBasic()
         {
             VerifyBasic(@"
 Public Interface IB24Base
@@ -624,8 +623,7 @@ Public Class B24
 	Public Shared Sub Foo()
 	End Sub
 End Class
-",
-                BasicResult(4, 14, "B24"));
+");
         }
 
         [Fact]

@@ -12,7 +12,7 @@ namespace Analyzer.Utilities
     public abstract class AbstractVersionCheckAnalyzer : DiagnosticAnalyzer
     {
         private const string RuleId = "CA9999";
-        private const string AnalyzerPackageVersion = "2.0.*";
+        private const string AnalyzerPackageVersion = "2.3.*";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(AnalyzerUtilitiesResources.VersionCheckTitle), AnalyzerUtilitiesResources.ResourceManager, typeof(AnalyzerUtilitiesResources));
         private static readonly LocalizableString s_localizableMessageFormat = new LocalizableResourceString(nameof(AnalyzerUtilitiesResources.VersionCheckMessage), AnalyzerUtilitiesResources.ResourceManager, typeof(AnalyzerUtilitiesResources));

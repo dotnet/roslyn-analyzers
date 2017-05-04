@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Semantics;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.QualityGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class RemoveEmptyFinalizersAnalyzer : DiagnosticAnalyzer

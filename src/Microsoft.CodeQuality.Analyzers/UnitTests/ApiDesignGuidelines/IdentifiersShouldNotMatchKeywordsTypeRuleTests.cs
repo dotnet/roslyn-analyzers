@@ -2,7 +2,7 @@
 
 using Xunit;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     /// <summary>
     /// Contains those unit tests for the IdentifiersShouldNotMatchKeywords analyzer that

@@ -3,7 +3,7 @@
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public partial class IdentifiersShouldNotMatchKeywordsTests : DiagnosticAnalyzerTestBase
     {

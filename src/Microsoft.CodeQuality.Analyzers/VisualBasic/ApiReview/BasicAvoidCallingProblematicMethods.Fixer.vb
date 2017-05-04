@@ -1,11 +1,11 @@
 ' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 Imports System.Composition
-Imports ApiReview.Analyzers
+Imports Microsoft.CodeQuality.Analyzers.ApiReview
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
 
-Namespace ApiReview.VisualBasic.Analyzers
+Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiReview
     ''' <summary>
     ''' CA2001: Avoid calling problematic methods
     ''' </summary>

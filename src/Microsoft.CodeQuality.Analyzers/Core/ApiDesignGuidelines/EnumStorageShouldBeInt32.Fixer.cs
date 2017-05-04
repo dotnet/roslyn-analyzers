@@ -10,7 +10,7 @@ using System.Collections.Immutable;
 using Analyzer.Utilities;
 using System;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1028: Enum Storage should be Int32

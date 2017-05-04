@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.Maintainability.Analyzers {
+namespace Microsoft.CodeQuality.Analyzers.Maintainability {
     using System;
     using System.Reflection;
     

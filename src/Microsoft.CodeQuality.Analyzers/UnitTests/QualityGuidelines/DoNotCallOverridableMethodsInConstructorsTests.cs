@@ -248,7 +248,7 @@ abstract class D : System.Windows.Forms.Control
 {
     D()
     {
-        // no diagnostics because we inherit from System.Web.UI.Control
+        // no diagnostics because we inherit from System.Windows.Forms.Control
         Foo();
         OnPaint(null);
     }
@@ -266,6 +266,17 @@ class E : ControlBase
     {
         OnGotFocus(null); // no diagnostics when we're not an immediate descendant of a special class
     }
+}
+
+abstract class F : System.ComponentModel.Component
+{
+    F()
+    {
+        // no diagnostics because we inherit from System.ComponentModel.Component
+        Foo();
+    }
+
+    protected abstract void Foo();
 }
 ";
             Document document = CreateDocument(source, LanguageNames.CSharp);
@@ -292,7 +303,7 @@ End Class
 MustInherit Class D
     Inherits System.Windows.Forms.Control
     Public Sub New()
-        ' no diagnostics because we inherit from System.Web.UI.Control
+        ' no diagnostics because we inherit from System.Windows.Forms.Control
         Foo()
         OnPaint(Nothing)
     End Sub
@@ -308,6 +319,15 @@ Class E
     Public Sub New()
         OnGotFocus(Nothing) ' no diagnostics when we're not an immediate descendant of a special class
     End Sub
+End Class
+
+MustInherit Class F
+    Inherits System.ComponentModel.Component
+    Public Sub New()
+        ' no diagnostics because we inherit from System.ComponentModel.Component
+        Foo()
+    End Sub
+    MustOverride Sub Foo()
 End Class
 ";
             Document document = CreateDocument(source, LanguageNames.VisualBasic);

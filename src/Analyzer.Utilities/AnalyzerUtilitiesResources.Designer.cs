@@ -159,5 +159,32 @@ namespace Analyzer.Utilities {
                 return ResourceManager.GetString("CategoryUsage", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Analyzers in this package are preview version and are tied to a specific API version of Microsoft.CodeAnalysis. You have a mistatch between the analyzer and Microsoft.CodeAnalysis version and should either switch your analyzer NuGet package/VSIX to a matching version of the analyzer package or move to a  different version of Visual Studio..
+        /// </summary>
+        internal static string VersionCheckDescription {
+            get {
+                return ResourceManager.GetString("VersionCheckDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version mismatch between the analyzer package &apos;{0}&apos; and Microsoft.CodeAnalysis &apos;{1}&apos;. Certain analyzers in this package will not run until the version mismatch is fixed..
+        /// </summary>
+        internal static string VersionCheckMessage {
+            get {
+                return ResourceManager.GetString("VersionCheckMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Analyzer version mismatch.
+        /// </summary>
+        internal static string VersionCheckTitle {
+            get {
+                return ResourceManager.GetString("VersionCheckTitle", resourceCulture);
+            }
+        }
     }
 }

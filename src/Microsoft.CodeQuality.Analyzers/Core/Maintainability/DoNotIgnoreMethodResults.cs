@@ -2,12 +2,12 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics.Contracts;
+using System.Linq;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Semantics;
-using System.Diagnostics.Contracts;
-using System.Linq;
 
 namespace Microsoft.Maintainability.Analyzers
 {

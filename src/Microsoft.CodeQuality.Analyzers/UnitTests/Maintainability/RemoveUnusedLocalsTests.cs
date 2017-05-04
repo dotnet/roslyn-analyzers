@@ -77,7 +77,7 @@ Public Class Tester
     Sub Calculate(ByVal rate As Double, ByRef debt As Double)
         debt = debt + (debt * rate / 100)
     End Sub
-End Class", 
+End Class",
             GetBasicResultAt(6, 13, CA1804RuleId, _CA1804RemoveUnusedLocalMessage),
             GetBasicResultAt(8, 13, CA1804RuleId, _CA1804RemoveUnusedLocalMessage),
             GetBasicResultAt(9, 40, CA1804RuleId, _CA1804RemoveUnusedLocalMessage));

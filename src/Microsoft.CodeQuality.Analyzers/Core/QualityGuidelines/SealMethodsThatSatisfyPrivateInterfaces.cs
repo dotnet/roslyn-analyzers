@@ -41,7 +41,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             analysisContext.RegisterSymbolAction(CheckTypes, SymbolKind.NamedType);
         }
-        
+
         private static void CheckTypes(SymbolAnalysisContext context)
         {
             var type = (INamedTypeSymbol)context.Symbol;

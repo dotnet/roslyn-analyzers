@@ -141,7 +141,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         (SymbolAnalysisContext symbolAnalysisContext) =>
                         {
                             var namedTypeSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
-                            if (namedTypeSymbol.GetResultantVisibility()!= SymbolVisibility.Public)
+                            if (namedTypeSymbol.GetResultantVisibility() != SymbolVisibility.Public)
                             {
                                 return;
                             }
@@ -273,7 +273,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return false;
             }
 
-            return namedTypeSymbol.Name.HasSuffix(suffix)               
+            return namedTypeSymbol.Name.HasSuffix(suffix)
                 && !parentTypes.Any(parentType => namedTypeSymbol.DerivesFromOrImplementsAnyConstructionOf(parentType));
         }
     }

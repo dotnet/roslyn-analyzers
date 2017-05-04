@@ -105,7 +105,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             {
                 return false;
             }
-            
+
             // CA1000 says one shouldn't declare static members on generic types. So don't flag such cases.
             if (methodSymbol.ContainingType.IsGenericType && methodSymbol.GetResultantVisibility() == SymbolVisibility.Public)
             {
@@ -127,7 +127,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             }
 
             // If this looks like an event handler don't flag such cases.
-            if (methodSymbol.Parameters.Length == 2 && 
+            if (methodSymbol.Parameters.Length == 2 &&
                 methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_Object &&
                 IsEventArgs(methodSymbol.Parameters[1].Type, compilation))
             {

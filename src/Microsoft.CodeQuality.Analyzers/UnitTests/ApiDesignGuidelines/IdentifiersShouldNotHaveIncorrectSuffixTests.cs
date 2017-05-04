@@ -1373,7 +1373,7 @@ End Class",
                     "MyBadDataTableCollection",
                     IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.CollectionSuffix));
         }
-        
+
         [Fact]
         public void CA1711_CSharp_Diagnostic_TypeNameEndsWithEx()
         {
@@ -1385,7 +1385,7 @@ End Class",
                     IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.ExSuffix,
                     "MyClassEx"));
         }
-        
+
         [Fact]
         public void CA1711_Basic_Diagnostic_TypeNameEndsWithEx()
         {
@@ -1398,14 +1398,14 @@ End Class",
                     IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.ExSuffix,
                     "MyClassEx"));
         }
-        
+
         [Fact]
         public void CA1711_CSharp_NoDiagnostic_TypeNameNameIsEx()
         {
             VerifyCSharp(
 @"public class Ex { }");
         }
-        
+
         [Fact]
         public void CA1711_Basic_NoDiagnostic_TypeNameNameIsEx()
         {
@@ -1426,7 +1426,7 @@ End Class");
                     IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.NewSuffix,
                     "MyClassNew"));
         }
-        
+
         [Fact]
         public void CA1711_Basic_Diagnostic_TypeNameEndsWithNew()
         {

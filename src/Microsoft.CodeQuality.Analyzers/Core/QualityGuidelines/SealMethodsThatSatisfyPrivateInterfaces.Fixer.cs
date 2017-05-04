@@ -4,7 +4,7 @@ using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
-using System.Threading.Tasks;     
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -82,7 +82,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             }
         }
 
-        private abstract class ChangeSymbolAction :  CodeAction
+        private abstract class ChangeSymbolAction : CodeAction
         {
             public ChangeSymbolAction(string title, string equivalenceKey, Solution solution, ISymbol symbol)
             {

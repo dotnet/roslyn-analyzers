@@ -209,7 +209,7 @@ public class NestedExplicitInterfaceImplementation
             CSharpResult(50, 13, "ImplementsNestedGeneral", "NestedExplicitInterfaceImplementation.INestedGeneral.remove_TheEvent"));
         }
 
-        [Fact(Skip= "https://github.com/dotnet/roslyn-analyzers/issues/1008")]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1008")]
         public void CA1033NoDiagnosticCasesCSharp()
         {
             VerifyCSharp(@"

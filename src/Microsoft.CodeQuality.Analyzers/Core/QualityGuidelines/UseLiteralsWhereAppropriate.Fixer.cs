@@ -100,7 +100,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
         protected abstract SyntaxTokenList GetModifiers(SyntaxNode fieldSyntax);
         protected abstract SyntaxNode WithModifiers(SyntaxNode fieldSyntax, SyntaxTokenList modifiers);
-        
+
         /// <remarks>
         /// This type exists for telemetry purposes - it has the same functionality as 
         /// <see cref="DocumentChangeAction"/> but different metadata.

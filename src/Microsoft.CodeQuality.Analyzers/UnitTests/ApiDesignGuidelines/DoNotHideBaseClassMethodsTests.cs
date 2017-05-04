@@ -244,7 +244,7 @@ class Derived : Base
     public override void Method(object input)
     {
     }
-}", 
+}",
                 TestValidationMode.AllowCompileErrors);
 
             VerifyBasic(@"
@@ -468,8 +468,8 @@ End Class
         private DiagnosticResult GetCA1061CSharpResultAt(int line, int column, string derivedMethod, string baseMethod)
         {
             var message = string.Format(
-                MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotHideBaseClassMethodsMessage, 
-                derivedMethod, 
+                MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotHideBaseClassMethodsMessage,
+                derivedMethod,
                 baseMethod);
 
             return GetCSharpResultAt(line, column, DoNotHideBaseClassMethodsAnalyzer.RuleId, message);

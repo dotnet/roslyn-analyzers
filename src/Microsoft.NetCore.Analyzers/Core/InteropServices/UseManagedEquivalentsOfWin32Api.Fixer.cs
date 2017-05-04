@@ -23,7 +23,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         {
             // Fixer not yet implemented.
             return Task.CompletedTask;
-            
+
         }
     }
 }

@@ -507,10 +507,10 @@ GetIFormatProviderAlternateStringRuleBasicResultAt(23, 16, "String.Format(String
                                                            "String.Format(IFormatProvider, String, ParamArray Object())"));
         }
 
-       [Fact]
-       public void CA1305_StringReturningUserMethodOverloads_VisualBasic()
-       {
-           VerifyBasic(@"
+        [Fact]
+        public void CA1305_StringReturningUserMethodOverloads_VisualBasic()
+        {
+            VerifyBasic(@"
 Imports System
 Imports System.Globalization
 Imports System.Threading
@@ -556,20 +556,20 @@ Friend NotInheritable Class IFormatProviderOverloads
         Return Nothing
     End Function
 End Class",
-GetIFormatProviderAlternateStringRuleBasicResultAt(10, 9, "IFormatProviderOverloads.LeadingIFormatProviderReturningString(String)",
-                                                          "IFormatProviderStringTest.SpecifyIFormatProvider()",
-                                                          "IFormatProviderOverloads.LeadingIFormatProviderReturningString(IFormatProvider, String)"),
-GetIFormatProviderAlternateStringRuleBasicResultAt(11, 9, "IFormatProviderOverloads.TrailingIFormatProviderReturningString(String)",
-                                                          "IFormatProviderStringTest.SpecifyIFormatProvider()",
-                                                          "IFormatProviderOverloads.TrailingIFormatProviderReturningString(String, IFormatProvider)"),
-GetIFormatProviderAlternateStringRuleBasicResultAt(12, 9, "IFormatProviderOverloads.UserDefinedParamsMatchMethodOverload(String, ParamArray Object())",
-                                                          "IFormatProviderStringTest.SpecifyIFormatProvider()",
-                                                          "IFormatProviderOverloads.UserDefinedParamsMatchMethodOverload(IFormatProvider, String, ParamArray Object())"));
-       }
+ GetIFormatProviderAlternateStringRuleBasicResultAt(10, 9, "IFormatProviderOverloads.LeadingIFormatProviderReturningString(String)",
+                                                           "IFormatProviderStringTest.SpecifyIFormatProvider()",
+                                                           "IFormatProviderOverloads.LeadingIFormatProviderReturningString(IFormatProvider, String)"),
+ GetIFormatProviderAlternateStringRuleBasicResultAt(11, 9, "IFormatProviderOverloads.TrailingIFormatProviderReturningString(String)",
+                                                           "IFormatProviderStringTest.SpecifyIFormatProvider()",
+                                                           "IFormatProviderOverloads.TrailingIFormatProviderReturningString(String, IFormatProvider)"),
+ GetIFormatProviderAlternateStringRuleBasicResultAt(12, 9, "IFormatProviderOverloads.UserDefinedParamsMatchMethodOverload(String, ParamArray Object())",
+                                                           "IFormatProviderStringTest.SpecifyIFormatProvider()",
+                                                           "IFormatProviderOverloads.UserDefinedParamsMatchMethodOverload(IFormatProvider, String, ParamArray Object())"));
+        }
 
-       [Fact]
-       public void CA1305_StringReturningNoDiagnostics_VisualBasic()
-       {
+        [Fact]
+        public void CA1305_StringReturningNoDiagnostics_VisualBasic()
+        {
             VerifyBasic(@"
 Imports System
 Imports System.Globalization
@@ -615,12 +615,12 @@ Public Class DerivedClass
         Throw New NotImplementedException()
     End Function
 End Class");
-       }
+        }
 
-       [Fact]
-       public void CA1305_NonStringReturningStringFormatOverloads_VisualBasic()
-       {
-           VerifyBasic(@"
+        [Fact]
+        public void CA1305_NonStringReturningStringFormatOverloads_VisualBasic()
+        {
+            VerifyBasic(@"
 Imports System
 Imports System.Globalization
 Imports System.Threading
@@ -655,24 +655,24 @@ Friend NotInheritable Class IFormatProviderOverloads
         Console.WriteLine(String.Format(provider, format))
     End Sub
 End Class",
-GetIFormatProviderAlternateRuleBasicResultAt(10, 28, "Convert.ToInt32(String)",
+ GetIFormatProviderAlternateRuleBasicResultAt(10, 28, "Convert.ToInt32(String)",
+                                                      "IFormatProviderStringTest.TestMethod()",
+                                                      "Convert.ToInt32(String, IFormatProvider)"),
+ GetIFormatProviderAlternateRuleBasicResultAt(11, 25, "Convert.ToInt64(String)",
+                                                      "IFormatProviderStringTest.TestMethod()",
+                                                      "Convert.ToInt64(String, IFormatProvider)"),
+ GetIFormatProviderAlternateRuleBasicResultAt(12, 9, "IFormatProviderOverloads.LeadingIFormatProvider(String)",
                                                      "IFormatProviderStringTest.TestMethod()",
-                                                     "Convert.ToInt32(String, IFormatProvider)"),
-GetIFormatProviderAlternateRuleBasicResultAt(11, 25, "Convert.ToInt64(String)",
+                                                     "IFormatProviderOverloads.LeadingIFormatProvider(IFormatProvider, String)"),
+ GetIFormatProviderAlternateRuleBasicResultAt(13, 9, "IFormatProviderOverloads.TrailingIFormatProvider(String)",
                                                      "IFormatProviderStringTest.TestMethod()",
-                                                     "Convert.ToInt64(String, IFormatProvider)"),
-GetIFormatProviderAlternateRuleBasicResultAt(12, 9, "IFormatProviderOverloads.LeadingIFormatProvider(String)",
-                                                    "IFormatProviderStringTest.TestMethod()",
-                                                    "IFormatProviderOverloads.LeadingIFormatProvider(IFormatProvider, String)"),
-GetIFormatProviderAlternateRuleBasicResultAt(13, 9, "IFormatProviderOverloads.TrailingIFormatProvider(String)",
-                                                    "IFormatProviderStringTest.TestMethod()",
-                                                    "IFormatProviderOverloads.TrailingIFormatProvider(String, IFormatProvider)"));
-       }
+                                                     "IFormatProviderOverloads.TrailingIFormatProvider(String, IFormatProvider)"));
+        }
 
         [Fact]
-       public void CA1305_StringReturningUICultureIFormatProvider_VisualBasic()
-       {
-           VerifyBasic(@"
+        public void CA1305_StringReturningUICultureIFormatProvider_VisualBasic()
+        {
+            VerifyBasic(@"
 Imports System
 Imports System.Globalization
 Imports System.Threading
@@ -699,36 +699,36 @@ Friend NotInheritable Class IFormatProviderOverloads
         Return Nothing
     End Function
 End Class",
-GetIFormatProviderAlternateStringRuleBasicResultAt(10, 9, "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider)",
-                                                          "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider, IFormatProvider)"),
-GetIFormatProviderUICultureStringRuleBasicResultAt(10, 9, "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                          "CultureInfo.CurrentUICulture",
-                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider)"),
-GetIFormatProviderAlternateStringRuleBasicResultAt(11, 9, "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider)",
-                                                          "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider, IFormatProvider)"),
-GetIFormatProviderUICultureStringRuleBasicResultAt(11, 9, "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                          "CultureInfo.InstalledUICulture",
-                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider)"),
-GetIFormatProviderAlternateStringRuleBasicResultAt(12, 9, "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider)",
-                                                          "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider, IFormatProvider)"),
-GetIFormatProviderUICultureStringRuleBasicResultAt(12, 9, "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                          "Thread.CurrentUICulture",
-                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider)"),
-GetIFormatProviderUICultureStringRuleBasicResultAt(13, 9, "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                          "Thread.CurrentUICulture",
-                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider, IFormatProvider)"),
-GetIFormatProviderUICultureStringRuleBasicResultAt(13, 9, "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
-                                                          "CultureInfo.InstalledUICulture",
-                                                          "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider, IFormatProvider)"));
-       }
+ GetIFormatProviderAlternateStringRuleBasicResultAt(10, 9, "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider)",
+                                                           "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
+                                                           "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider, IFormatProvider)"),
+ GetIFormatProviderUICultureStringRuleBasicResultAt(10, 9, "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
+                                                           "CultureInfo.CurrentUICulture",
+                                                           "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider)"),
+ GetIFormatProviderAlternateStringRuleBasicResultAt(11, 9, "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider)",
+                                                           "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
+                                                           "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider, IFormatProvider)"),
+ GetIFormatProviderUICultureStringRuleBasicResultAt(11, 9, "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
+                                                           "CultureInfo.InstalledUICulture",
+                                                           "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider)"),
+ GetIFormatProviderAlternateStringRuleBasicResultAt(12, 9, "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider)",
+                                                           "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
+                                                           "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider, IFormatProvider)"),
+ GetIFormatProviderUICultureStringRuleBasicResultAt(12, 9, "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
+                                                           "Thread.CurrentUICulture",
+                                                           "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider)"),
+ GetIFormatProviderUICultureStringRuleBasicResultAt(13, 9, "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
+                                                           "Thread.CurrentUICulture",
+                                                           "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider, IFormatProvider)"),
+ GetIFormatProviderUICultureStringRuleBasicResultAt(13, 9, "UICultureAsIFormatProviderReturningStringTest.TestMethod()",
+                                                           "CultureInfo.InstalledUICulture",
+                                                           "IFormatProviderOverloads.IFormatProviderReturningString(String, IFormatProvider, IFormatProvider)"));
+        }
 
-       [Fact]
-       public void CA1305_NonStringReturningUICultureIFormatProvider_VisualBasic()
-       {
-           VerifyBasic(@"
+        [Fact]
+        public void CA1305_NonStringReturningUICultureIFormatProvider_VisualBasic()
+        {
+            VerifyBasic(@"
 Imports System
 Imports System.Globalization
 Imports System.Threading
@@ -753,31 +753,31 @@ Friend NotInheritable Class IFormatProviderOverloads
     Public Shared Sub IFormatProviderReturningNonString(format As String, provider As IFormatProvider, provider2 As IFormatProvider)
     End Sub
 End Class",
-GetIFormatProviderAlternateRuleBasicResultAt(10, 9, "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider)",
-                                                    "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider, IFormatProvider)"),
-GetIFormatProviderUICultureRuleBasicResultAt(10, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                    "CultureInfo.CurrentUICulture",
-                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider)"),
-GetIFormatProviderAlternateRuleBasicResultAt(11, 9, "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider)",
-                                                    "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider, IFormatProvider)"),
-GetIFormatProviderUICultureRuleBasicResultAt(11, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                    "CultureInfo.InstalledUICulture",
-                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider)"),
-GetIFormatProviderAlternateRuleBasicResultAt(12, 9, "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider)",
-                                                    "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider, IFormatProvider)"),
-GetIFormatProviderUICultureRuleBasicResultAt(12, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                    "Thread.CurrentUICulture",
-                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider)"),
-GetIFormatProviderUICultureRuleBasicResultAt(13, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                    "Thread.CurrentUICulture",
-                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider, IFormatProvider)"),
-GetIFormatProviderUICultureRuleBasicResultAt(13, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
-                                                    "CultureInfo.InstalledUICulture",
-                                                    "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider, IFormatProvider)"));
-       }
+ GetIFormatProviderAlternateRuleBasicResultAt(10, 9, "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider)",
+                                                     "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
+                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider, IFormatProvider)"),
+ GetIFormatProviderUICultureRuleBasicResultAt(10, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
+                                                     "CultureInfo.CurrentUICulture",
+                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider)"),
+ GetIFormatProviderAlternateRuleBasicResultAt(11, 9, "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider)",
+                                                     "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
+                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider, IFormatProvider)"),
+ GetIFormatProviderUICultureRuleBasicResultAt(11, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
+                                                     "CultureInfo.InstalledUICulture",
+                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider)"),
+ GetIFormatProviderAlternateRuleBasicResultAt(12, 9, "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider)",
+                                                     "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
+                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider, IFormatProvider)"),
+ GetIFormatProviderUICultureRuleBasicResultAt(12, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
+                                                     "Thread.CurrentUICulture",
+                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider)"),
+ GetIFormatProviderUICultureRuleBasicResultAt(13, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
+                                                     "Thread.CurrentUICulture",
+                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider, IFormatProvider)"),
+ GetIFormatProviderUICultureRuleBasicResultAt(13, 9, "UICultureAsIFormatProviderReturningNonStringTest.TestMethod()",
+                                                     "CultureInfo.InstalledUICulture",
+                                                     "IFormatProviderOverloads.IFormatProviderReturningNonString(String, IFormatProvider, IFormatProvider)"));
+        }
 
         [Fact]
         public void CA1305_NonStringReturningComputerInfoInstalledUICultureIFormatProvider_VisualBasic()
@@ -809,9 +809,9 @@ GetIFormatProviderUICultureRuleBasicResultAt(12, 9, "UICultureAsIFormatProviderR
         }
 
         [Fact]
-       public void CA1305_RuleException_NoDiagnostics_VisualBasic()
-       {
-           VerifyBasic(@"
+        public void CA1305_RuleException_NoDiagnostics_VisualBasic()
+        {
+            VerifyBasic(@"
 Imports System
 Imports System.Globalization
 Imports System.Threading
@@ -829,7 +829,7 @@ Public NotInheritable Class IFormatProviderStringTest
         Console.WriteLine(activator__1)
     End Sub
 End Class");
-       }
+        }
 
         private DiagnosticResult GetIFormatProviderAlternateStringRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3)
         {

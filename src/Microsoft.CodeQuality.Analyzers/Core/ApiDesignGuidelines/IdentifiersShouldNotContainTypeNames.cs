@@ -114,8 +114,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         }
 
                         AnalyzeSymbol(symbolContext.Symbol, symbolContext);
-                    }, 
-                    SymbolKind.Property, 
+                    },
+                    SymbolKind.Property,
                     SymbolKind.Method);
             });
         }

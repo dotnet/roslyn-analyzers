@@ -24,7 +24,7 @@ namespace Microsoft.NetCore.Analyzers.Composition
         {
             // Fixer not yet implemented.
             return Task.CompletedTask;
-            
+
         }
     }
 }

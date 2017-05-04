@@ -150,7 +150,7 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
         public static bool IsExpressionEqualsNull(IOperation operation)
         {
             ILiteralExpression literal = operation as ILiteralExpression;
-            return literal != null && literal.HasNullConstantValue(); 
+            return literal != null && literal.HasNullConstantValue();
         }
 
         public static bool IsExpressionEqualsDtdProcessingParse(IOperation operation)
@@ -163,7 +163,7 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
         {
             ILiteralExpression literal = operation as ILiteralExpression;
 
-            if(literal == null || !literal.ConstantValue.HasValue)
+            if (literal == null || !literal.ConstantValue.HasValue)
             {
                 return false;
             }

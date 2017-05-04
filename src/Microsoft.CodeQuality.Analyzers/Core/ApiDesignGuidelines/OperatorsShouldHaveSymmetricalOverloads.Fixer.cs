@@ -106,7 +106,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private OperatorKind GetInvertedOperatorKind(IMethodSymbol containingOperator)
         {
-            switch(containingOperator.Name)
+            switch (containingOperator.Name)
             {
                 case WellKnownMemberNames.EqualityOperatorName: return OperatorKind.Inequality;
                 case WellKnownMemberNames.InequalityOperatorName: return OperatorKind.Equality;

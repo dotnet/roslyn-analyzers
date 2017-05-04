@@ -24,7 +24,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         {
             // Fixer not yet implemented.
             return Task.CompletedTask;
-            
+
         }
     }
 }

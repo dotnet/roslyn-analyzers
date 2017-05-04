@@ -24,7 +24,7 @@ namespace Microsoft.NetFramework.Analyzers
         {
             // Fixer not yet implemented.
             return Task.CompletedTask;
-            
+
         }
     }
 }

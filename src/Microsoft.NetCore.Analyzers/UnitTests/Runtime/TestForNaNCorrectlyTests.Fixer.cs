@@ -281,7 +281,7 @@ Public Class A
 End Class
 ");
         }
-        
+
         [Fact]
         public void CA2242_FixForComparisonWithNaNInTernaryOperator()
         {
@@ -380,7 +380,7 @@ public class A
 }
 ");
         }
-        
+
         [Fact]
         public void CA2242_FixForComparisonWithNaNInYieldReturnStatement()
         {
@@ -538,7 +538,7 @@ public class A
 }
 ");
         }
-        
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new TestForNaNCorrectlyAnalyzer();

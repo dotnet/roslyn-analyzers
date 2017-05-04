@@ -43,7 +43,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 return;
             }
-            
+
             var generator = SyntaxGenerator.GetGenerator(document);
 
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);

@@ -60,7 +60,7 @@ public class Test
 }");
         }
 
-        [Theory] 
+        [Theory]
         [InlineData("public", "public")]
         [InlineData("public", "protected")]
         [InlineData("public", "protected internal")]
@@ -75,9 +75,9 @@ public class Test
             VerifyCSharp(
                 string.Format(CSharpTestTemplate, propertyAccessibility, methodAccessibility),
                 GetCA1721CSharpResultAt(
-                    line: 6, 
+                    line: 6,
                     column: $"    {propertyAccessibility} DateTime ".Length + 1,
-                    identifierName: "Date", 
+                    identifierName: "Date",
                     otherIdentifierName: "GetDate"));
         }
 
@@ -198,9 +198,9 @@ End Class");
             VerifyBasic(
                 string.Format(BasicTestTemplate, propertyAccessibility, methodAccessibility),
                 GetCA1721BasicResultAt(
-                    line: 5, 
-                    column: $"    {propertyAccessibility} ReadOnly Property ".Length + 1, 
-                    identifierName: "Date", 
+                    line: 5,
+                    column: $"    {propertyAccessibility} ReadOnly Property ".Length + 1,
+                    identifierName: "Date",
                     otherIdentifierName: "GetDate"));
         }
 

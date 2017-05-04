@@ -43,7 +43,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 var field = (IFieldSymbol)obj.Symbol;
 
                 // Only report diagnostic on public non-readonly static fields
-                if(field.IsPublic() && !field.IsConst && field.IsStatic && !field.IsReadOnly)
+                if (field.IsPublic() && !field.IsConst && field.IsStatic && !field.IsReadOnly)
                 {
                     obj.ReportDiagnostic(field.CreateDiagnostic(Rule));
                 }

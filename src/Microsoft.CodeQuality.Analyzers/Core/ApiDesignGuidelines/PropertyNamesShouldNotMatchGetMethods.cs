@@ -76,7 +76,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             // Iterate through all declared types, including base
             foreach (INamedTypeSymbol type in symbol.ContainingType.GetBaseTypesAndThis())
-            {                
+            {
                 Diagnostic diagnostic = null;
 
                 var exposedMembers = type.GetMembers(identifier).Where(member => ExposedAccessibilities.Contains(member.DeclaredAccessibility));
@@ -90,8 +90,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     }
 
                     // If the declared type is a method, was a matching property found?
-                    if (symbol.Kind == SymbolKind.Method 
-                        && member.Kind == SymbolKind.Property 
+                    if (symbol.Kind == SymbolKind.Method
+                        && member.Kind == SymbolKind.Property
                         && !symbol.ContainingType.Equals(type)) // prevent reporting duplicate diagnostics
                     {
                         diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], identifier, symbol.Name);

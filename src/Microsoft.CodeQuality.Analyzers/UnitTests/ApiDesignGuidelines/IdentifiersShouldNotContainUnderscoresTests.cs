@@ -600,15 +600,15 @@ End Class",
         [Fact]
         public void CA1707_ForDelegates_VisualBasic()
         {
-    VerifyBasic(@"
+            VerifyBasic(@"
 Public Delegate Sub Dele(intPublic_ As Integer, stringPublic_ As String)
 ' No diagnostics
 Friend Delegate Sub Dele2(intInternal_ As Integer, stringInternal_ As String)
 Public Delegate Function Del(Of T)(t_ As Integer) As T
 ",
-            GetCA1707BasicResultAt(2, 26, SymbolKind.DelegateParameter, "Dele", "intPublic_"),
-            GetCA1707BasicResultAt(2, 49, SymbolKind.DelegateParameter, "Dele", "stringPublic_"),
-            GetCA1707BasicResultAt(5, 36, SymbolKind.DelegateParameter, "Del(Of T)", "t_"));
+                    GetCA1707BasicResultAt(2, 26, SymbolKind.DelegateParameter, "Dele", "intPublic_"),
+                    GetCA1707BasicResultAt(2, 49, SymbolKind.DelegateParameter, "Dele", "stringPublic_"),
+                    GetCA1707BasicResultAt(5, 36, SymbolKind.DelegateParameter, "Del(Of T)", "t_"));
         }
 
         [Fact]

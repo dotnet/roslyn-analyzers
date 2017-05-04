@@ -106,10 +106,10 @@ namespace Analyzer.Utilities
             _prefix = prefix;
         }
 
-        private bool SkipMnemonics => 
+        private bool SkipMnemonics =>
             (_options & WordParserOptions.IgnoreMnemonicsIndicators) == WordParserOptions.IgnoreMnemonicsIndicators;
 
-        private bool SplitCompoundWords => 
+        private bool SplitCompoundWords =>
             (_options & WordParserOptions.SplitCompoundWords) == WordParserOptions.SplitCompoundWords;
 
         /// <summary>

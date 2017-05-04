@@ -53,7 +53,7 @@ namespace Microsoft.NetFramework.Analyzers
                         return;
                     }
 
-                    var method = (IMethodSymbol) operationBlockAnalysisContext.OwningSymbol;
+                    var method = (IMethodSymbol)operationBlockAnalysisContext.OwningSymbol;
 
                     if (!ContainsHandleProcessCorruptedStateExceptionsAttribute(method, compilationTypes))
                     {

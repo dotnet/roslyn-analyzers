@@ -149,7 +149,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
            GetCA2153BasicResultAt(11, 25, "Public Shared Function TestMethod() As Double", "System.Exception")
            );
         }
-        
+
         [Fact]
         public void CA2153TestCatchRethrowExceptionInMethodWithHpcseAndSecurityCriticalAttributes()
         {
@@ -220,7 +220,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             End Namespace
             ");
         }
-        
+
         [Fact]
         public void CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalAttributes()
         {
@@ -579,7 +579,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153CSharpResultAt(19, 25, "TestNamespace.TestClass.TestMethod()", "System.Exception")
             );
         }
-        
+
         [Fact]
         public void CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalL1Attributes()
         {
@@ -611,7 +611,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153CSharpResultAt(20, 25, "TestNamespace.TestClass.TestMethod()", "System.Exception")
             );
         }
-        
+
         [Fact]
         public void CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalL2Attributes()
         {
@@ -643,7 +643,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153CSharpResultAt(20, 25, "TestNamespace.TestClass.TestMethod()", "System.Exception")
             );
         }
-        
+
         [Fact]
         public void CA2153TestCatchExceptionInNestedClassMethodWithOuterHpcseAndSecurityCriticalScopeEverythingAttributes()
         {
@@ -677,7 +677,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153CSharpResultAt(21, 29, "TestNamespace.TestClass.NestedClass.TestMethod()", "System.Exception")
             );
         }
-        
+
         [Fact]
         public void CA2153TestCatchExceptionInNestedClassMethodWithInnerHpcseAndSecurityCriticalScopeEverythingAttributes()
         {
@@ -711,7 +711,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153CSharpResultAt(21, 29, "TestNamespace.TestClass.NestedClass.TestMethod()", "System.Exception")
             );
         }
-        
+
         [Fact]
         public void CA2153TestCatchExceptionInNestedClassMethodwithInnerHpcseAndOuterSecurityCriticalAttributes()
         {
@@ -745,7 +745,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153CSharpResultAt(21, 29, "TestNamespace.TestClass.NestedClass.TestMethod()", "System.Exception")
             );
         }
-        
+
         [Fact]
         public void CA2153TestCatchExceptionInGetAccessorWithHpcseAttribute()
         {
@@ -990,7 +990,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
            GetCA2153BasicResultAt(16, 29, "Public Property Set X(Value As Integer)", "System.Exception")
            );
         }
-        
+
         [Fact]
         public void CA2153TestCatchIOExceptionInMethodHpcseAttribute()
         {
@@ -1064,7 +1064,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153CSharpResultAt(22, 25, "TestNamespace.TestClass.TestMethod()", "object")
             );
         }
-        
+
         [Fact]
         public void CA2153TestSwallowAccessViolationExceptionInMethodHpcseAttribute()
         {
@@ -1099,7 +1099,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 }
             }");
         }
-        
+
         [Fact]
         public void CA2153TestSwallowAccessViolationExceptionThenSwallowOtherExceptionInMethodHpcseAttribute()
         {
@@ -1139,7 +1139,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153CSharpResultAt(25, 25, "TestNamespace.TestClass.SaveNewFile7(string)", "object")
             );
         }
-        
+
         [Fact]
         public void CA2153TestCatchExceptionThrowNotImplementedExceptionInMethodHpcseAttribute()
         {
@@ -1218,7 +1218,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153BasicResultAt(14, 25, "Public Shared Function TestMethod() As Double", "System.Exception")
             );
         }
-        
+
         [Fact]
         public void CA2153TestCatchExceptionInnerCatchThrowIOExceptionInMethodHpcseAttribute()
         {

@@ -82,7 +82,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     AnalyzeSymbol((INamedTypeSymbol)symbolContext.Symbol, flagsAttributeType, symbolContext.ReportDiagnostic);
                 }, SymbolKind.NamedType);
             });
-            
+
         }
 
         private static void AnalyzeSymbol(INamedTypeSymbol symbol, INamedTypeSymbol flagsAttributeType, Action<Diagnostic> addDiagnostic)

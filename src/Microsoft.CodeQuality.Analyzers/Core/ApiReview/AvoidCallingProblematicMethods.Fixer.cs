@@ -24,7 +24,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiReview
         {
             // Fixer not yet implemented.
             return Task.CompletedTask;
-            
+
         }
     }
 }

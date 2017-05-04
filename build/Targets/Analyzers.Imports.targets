@@ -7,9 +7,9 @@
   <PropertyGroup>
     <Version>2.0.0</Version>
     <RoslynSemanticVersion>$(Version)</RoslynSemanticVersion>
-    <PreReleaseVersion Condition="'$(PreReleaseVersion)' == ''">beta1</PreReleaseVersion>
+    <PreReleaseVersion Condition="'$(PreReleaseVersion)' == ''">beta2</PreReleaseVersion>
     <ToolsSemanticVersion>0.0.0</ToolsSemanticVersion>
-    <ToolsPreReleaseVersion>beta1</ToolsPreReleaseVersion>
+    <ToolsPreReleaseVersion>beta2</ToolsPreReleaseVersion>
 
     <BuildNumber Condition="'$(BuildNumber)' == ''AND ('$(BUILD_BUILDNUMBER)' != '')">$(BUILD_BUILDNUMBER)</BuildNumber>
     <BuildNumber Condition="'$(BuildNumber)' == '' AND ('$(TF_BUILD_BUILDNUMBER)' != '')

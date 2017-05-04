@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.QualityGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     public abstract class RethrowToPreserveStackDetailsAnalyzer : DiagnosticAnalyzer
     {

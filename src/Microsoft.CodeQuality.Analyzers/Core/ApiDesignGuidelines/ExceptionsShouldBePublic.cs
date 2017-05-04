@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1064: Exceptions should be public

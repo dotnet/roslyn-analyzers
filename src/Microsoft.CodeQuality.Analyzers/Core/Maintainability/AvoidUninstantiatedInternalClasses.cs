@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Semantics;
 
-namespace Microsoft.Maintainability.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
     /// <summary>
     /// CA1812: Avoid uninstantiated internal classes
@@ -100,7 +100,8 @@ namespace Microsoft.Maintainability.Analyzers
                 startContext.RegisterCompilationEndAction(context =>
                 {
                     IEnumerable<INamedTypeSymbol> uninstantiatedInternalTypes = internalTypes
-                        .Except(instantiatedTypes)
+                        .Select(it => it.OriginalDefinition)
+                        .Except(instantiatedTypes.Select(it => it.OriginalDefinition))
                         .Where(type => !HasInstantiatedNestedType(type, instantiatedTypes));
 
                     foreach (INamedTypeSymbol type in uninstantiatedInternalTypes)

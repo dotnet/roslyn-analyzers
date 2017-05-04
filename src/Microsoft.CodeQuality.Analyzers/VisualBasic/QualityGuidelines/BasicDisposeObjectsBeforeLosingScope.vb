@@ -2,9 +2,9 @@
 
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
-Imports Microsoft.QualityGuidelines.Analyzers
+Imports Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
-Namespace Microsoft.QualityGuidelines.VisualBasic.Analyzers
+Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines
     ''' <summary>
     ''' CA2000: Dispose Objects Before Losing Scope
     ''' </summary>

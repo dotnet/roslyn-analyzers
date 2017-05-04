@@ -5,7 +5,7 @@ using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 
-namespace XmlDocumentationComments.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.Documentation
 {
     /// <summary>
     /// RS0010: Avoid using cref tags with a prefix

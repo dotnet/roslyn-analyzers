@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using ApiReview.CSharp.Analyzers;
-using ApiReview.VisualBasic.Analyzers;
+using Microsoft.CodeQuality.CSharp.Analyzers.ApiReview;
+using Microsoft.CodeQuality.VisualBasic.Analyzers.ApiReview;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 
-namespace ApiReview.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.ApiReview.UnitTests
 {
     public class AvoidCallingProblematicMethodsFixerTests : CodeFixTestBase
     {

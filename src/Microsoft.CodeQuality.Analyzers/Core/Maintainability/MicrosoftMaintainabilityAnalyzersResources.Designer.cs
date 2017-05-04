@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.Maintainability.Analyzers {
+namespace Microsoft.CodeQuality.Analyzers.Maintainability {
     using System;
     using System.Reflection;
     
@@ -158,6 +158,15 @@ namespace Microsoft.Maintainability.Analyzers {
         internal static string DoNotIgnoreMethodResultsMessageObjectCreation {
             get {
                 return ResourceManager.GetString("DoNotIgnoreMethodResultsMessageObjectCreation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} calls {1} but does not use the value the method returns. Because {1} is marked as a Pure method, it cannot have side effects. Use the result in a conditional statement, assign the result to a variable, or pass it as an argument to another method..
+        /// </summary>
+        internal static string DoNotIgnoreMethodResultsMessagePureMethod {
+            get {
+                return ResourceManager.GetString("DoNotIgnoreMethodResultsMessagePureMethod", resourceCulture);
             }
         }
         

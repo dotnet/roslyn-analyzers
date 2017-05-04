@@ -11,6 +11,16 @@ namespace Analyzer.Utilities
 {
     public static class AnalysisContextExtensions
     {
+        private static Version s_MicrosoftCodeAnalysisMinVersion = new Version("2.0");
+        private static Version s_MicrosoftCodeAnalysisMaxVersion = new Version("2.3");
+        private static Version s_MicrosoftCodeAnalysisDogfoodVersion = new Version("42.42");
+        internal static readonly Version s_MicrosoftCodeAnalysisVersion = typeof(AnalysisContext).GetTypeInfo().Assembly.GetName().Version;
+
+        // Execute IOperation analyzers if we are either using dogfood bits of Microsoft.CodeAnalysis or its version is in the [min, max) version range.
+        internal static bool ShouldExecuteOperationAnalyzers =>
+            s_MicrosoftCodeAnalysisVersion >= s_MicrosoftCodeAnalysisDogfoodVersion ||
+            (s_MicrosoftCodeAnalysisVersion >= s_MicrosoftCodeAnalysisMinVersion && s_MicrosoftCodeAnalysisVersion < s_MicrosoftCodeAnalysisMaxVersion);
+
 #if USE_INTERNAL_IOPERATION_APIS
         // By pass the IOperation feature flag check if building analyzers VSIX.
         private const string RegisterOperationActionMethodName = "RegisterOperationActionImmutableArrayInternal";
@@ -49,15 +59,25 @@ namespace Analyzer.Utilities
 
         public static void RegisterOperationActionInternal(this AnalysisContext context, Action<OperationAnalysisContext> analyzerOperationCallback, params OperationKind[] operationKinds)
         {
+            if (!ShouldExecuteOperationAnalyzers)
+            {
+                return;
+            }
+
 #if USE_INTERNAL_IOPERATION_APIS
             s_registerOperationActionOnAnalysisContext.Invoke(context, new object[] { analyzerOperationCallback, ImmutableArray.Create(operationKinds) });
 #else
-            context.RegisterOperationAction(analyzerOperationCallback, operationKinds);
+                context.RegisterOperationAction(analyzerOperationCallback, operationKinds);
 #endif
         }
 
         public static void RegisterOperationBlockActionInternal(this AnalysisContext context, Action<OperationBlockAnalysisContext> analyzerOperationCallback)
         {
+            if (!ShouldExecuteOperationAnalyzers)
+            {
+                return;
+            }
+
 #if USE_INTERNAL_IOPERATION_APIS
             s_registerOperationBlockActionOnAnalysisContext.Invoke(context, new object[] { analyzerOperationCallback });
 #else
@@ -67,6 +87,11 @@ namespace Analyzer.Utilities
 
         public static void RegisterOperationBlockStartActionInternal(this AnalysisContext context, Action<OperationBlockStartAnalysisContext> analyzerOperationCallback)
         {
+            if (!ShouldExecuteOperationAnalyzers)
+            {
+                return;
+            }
+
 #if USE_INTERNAL_IOPERATION_APIS
             s_registerOperationBlockStartActionOnAnalysisContext.Invoke(context, new object[] { analyzerOperationCallback });
 #else
@@ -76,6 +101,11 @@ namespace Analyzer.Utilities
 
         public static void RegisterOperationActionInternal(this CompilationStartAnalysisContext context, Action<OperationAnalysisContext> analyzerOperationCallback, params OperationKind[] operationKinds)
         {
+            if (!ShouldExecuteOperationAnalyzers)
+            {
+                return;
+            }
+
 #if USE_INTERNAL_IOPERATION_APIS
             s_registerOperationActionOnCompilationStartAnalysisContext.Invoke(context, new object[] { analyzerOperationCallback, ImmutableArray.Create(operationKinds) });
 #else
@@ -85,6 +115,11 @@ namespace Analyzer.Utilities
 
         public static void RegisterOperationBlockActionInternal(this CompilationStartAnalysisContext context, Action<OperationBlockAnalysisContext> analyzerOperationCallback)
         {
+            if (!ShouldExecuteOperationAnalyzers)
+            {
+                return;
+            }
+
 #if USE_INTERNAL_IOPERATION_APIS
             s_registerOperationBlockActionOnCompilationStartAnalysisContext.Invoke(context, new object[] { analyzerOperationCallback });
 #else
@@ -94,6 +129,11 @@ namespace Analyzer.Utilities
 
         public static void RegisterOperationBlockStartActionInternal(this CompilationStartAnalysisContext context, Action<OperationBlockStartAnalysisContext> analyzerOperationCallback)
         {
+            if (!ShouldExecuteOperationAnalyzers)
+            {
+                return;
+            }
+
 #if USE_INTERNAL_IOPERATION_APIS
             s_registerOperationBlockStartActionOnCompilationStartAnalysisContext.Invoke(context, new object[] { analyzerOperationCallback });
 #else
@@ -103,12 +143,22 @@ namespace Analyzer.Utilities
 
         public static void RegisterOperationActionInternal(this OperationBlockStartAnalysisContext context, Action<OperationAnalysisContext> analyzerOperationCallback, params OperationKind[] operationKinds)
         {
+            if (!ShouldExecuteOperationAnalyzers)
+            {
+                return;
+            }
+
             // No feature flag check on OperationBlockStartAnalysisContext.RegisterOperationAction, so we call it directly.
             context.RegisterOperationAction(analyzerOperationCallback, operationKinds);
         }
 
         public static IOperation GetOperationInternal(this SemanticModel model, SyntaxNode node, CancellationToken cancellationToken)
         {
+            if (!ShouldExecuteOperationAnalyzers)
+            {
+                return null;
+            }
+
 #if USE_INTERNAL_IOPERATION_APIS
             return (IOperation)s_getOperationOnSemanticModel.Invoke(model, new object[] { node, cancellationToken });
 #else

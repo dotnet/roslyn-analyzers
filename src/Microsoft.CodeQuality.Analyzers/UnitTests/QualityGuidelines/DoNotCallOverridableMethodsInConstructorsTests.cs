@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.QualityGuidelines.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
 {
     public partial class DoNotCallOverridableMethodsInConstructorsTests : DiagnosticAnalyzerTestBase
     {

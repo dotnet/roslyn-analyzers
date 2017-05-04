@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 
-namespace XmlDocumentationComments.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.Documentation
 {
     /// <summary>
     /// RS0010: Avoid using cref tags with a prefix

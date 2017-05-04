@@ -5,7 +5,7 @@ using Test.Utilities;
 
 using Xunit;
 
-namespace Microsoft.Maintainability.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
     public class AvoidUninstantiatedInternalClassesTests : DiagnosticAnalyzerTestBase
     {
@@ -430,7 +430,7 @@ internal class C : IConfigurationSectionHandler
         return null;
     }
 }");
-         }
+        }
 
         [Fact]
         public void CA1812_Basic_NoDiagnostic_ImplementsIConfigurationSectionHandler()
@@ -713,6 +713,82 @@ Friend Class C
 End Class"
                 );
         }
+
+        [Fact, WorkItem(1154, "https://github.com/dotnet/roslyn-analyzers/issues/1154")]
+        public void CA1812_CSharp_GenericInternalClass_InstanciatedNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public static class X
+{
+    public static IEnumerable<T> OrderBy<T>(this IEnumerable<T> source, Comparison<T> compare)
+    {
+        return source.OrderBy(new ComparisonComparer<T>(compare));
+    }
+
+    public static IEnumerable<T> OrderBy<T>(this IEnumerable<T> source, IComparer<T> comparer)
+    {
+        return source.OrderBy(t => t, comparer);
+    }
+
+    private class ComparisonComparer<T> : Comparer<T>
+    {
+        private readonly Comparison<T> _compare;
+
+        public ComparisonComparer(Comparison<T> compare)
+        {
+            _compare = compare;
+        }
+
+        public override int Compare(T x, T y)
+        {
+            return _compare(x, y);
+        }
+    }
+}
+");
+        }
+
+        [Fact, WorkItem(1154, "https://github.com/dotnet/roslyn-analyzers/issues/1154")]
+        public void CA1812_Basic_GenericInternalClass_InstanciatedNoDiagnostic()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.Collections.Generic
+Imports System.Linq
+Imports System.Runtime.CompilerServices
+
+Module M
+    <Extension()>
+    Public Function OrderBy(Of T)(ByVal source As IEnumerable(Of T), compare As Comparison(Of T)) As IEnumerable(Of T)
+        Return source.OrderBy(New ComparisonCompare(Of T)(compare))
+    End Function
+
+    <Extension()>
+    Public Function OrderBy(Of T)(ByVal source As IEnumerable(Of T), comparer As IComparer(Of T)) As IEnumerable(Of T)
+        Return source.OrderBy(Function(i) i, comparer)
+    End Function
+
+    Private Class ComparisonCompare(Of T)
+        Inherits Comparer(Of T)
+
+        Private _compare As Comparison(Of T)
+
+        Public Sub New(compare As Comparison(Of T))
+            _compare = compare
+        End Sub
+
+        Public Overrides Function Compare(x As T, y As T) As Integer
+            Throw New NotImplementedException()
+        End Function
+    End Class
+End Module
+");
+        }
+
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {

@@ -2,9 +2,9 @@
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.Maintainability.Analyzers;
+using Microsoft.CodeQuality.Analyzers.Maintainability;
 
-namespace Microsoft.Maintainability.CSharp.Analyzers
+namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
 {
     /// <summary>
     /// CA1500: Variable names should not match field names

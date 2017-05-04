@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.QualityGuidelines.Analyzers {
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines {
     using System;
     using System.Reflection;
     

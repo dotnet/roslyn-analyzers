@@ -8,10 +8,10 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.Semantics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
-Imports Microsoft.Maintainability.Analyzers
-Imports DiagnosticCategory = Microsoft.Maintainability.Analyzers.DiagnosticCategory
+Imports Microsoft.CodeQuality.Analyzers.Maintainability
+Imports DiagnosticCategory = Microsoft.CodeQuality.Analyzers.Maintainability.DiagnosticCategory
 
-Namespace Microsoft.Maintainability.VisualBasic.Analyzers
+Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
     ''' <summary>
     ''' CA1804: Remove unused locals
     ''' </summary>

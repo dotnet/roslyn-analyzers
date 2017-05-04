@@ -3,9 +3,9 @@
 using System.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.Maintainability.Analyzers;
+using Microsoft.CodeQuality.Analyzers.Maintainability;
 
-namespace Microsoft.Maintainability.CSharp.Analyzers
+namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
 {
     /// <summary>
     /// CA1801: Review unused parameters

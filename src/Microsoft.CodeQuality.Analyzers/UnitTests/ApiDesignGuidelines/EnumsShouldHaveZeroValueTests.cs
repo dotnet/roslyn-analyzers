@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Xunit;
 using Test.Utilities;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class CA1008Tests : DiagnosticAnalyzerTestBase
     {

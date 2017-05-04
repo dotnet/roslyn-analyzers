@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA2222: Do not decrease inherited member visibility

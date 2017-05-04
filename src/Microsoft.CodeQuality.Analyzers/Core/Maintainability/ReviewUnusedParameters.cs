@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Semantics;
 
-namespace Microsoft.Maintainability.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
     /// <summary>
     /// CA1801: Review unused parameters

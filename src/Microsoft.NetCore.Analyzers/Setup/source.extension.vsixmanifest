@@ -2,7 +2,7 @@
 <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="81f388f0-1777-4c56-be8f-51f5f420037d" Version="|%CurrentProject%;GetBuildVersion|" Language="en-US" Publisher="Microsoft" />
+    <Identity Id="8e93bd53-8b59-4c05-ae8a-b8e16de6a5d6" Version="|%CurrentProject%;GetBuildVersion|" Language="en-US" Publisher="Microsoft" />
     <DisplayName>Microsoft.NetCore.Analyzers Setup</DisplayName>
     <Description xml:space="preserve">Analyzers for .NetCore APIs.</Description>
   </Metadata>
@@ -13,9 +13,9 @@
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
   </Dependencies>
   <Assets>
-    <Asset Type="Microsoft.VisualStudio.Analyzer" Path="Microsoft.NetCore.Analyzers.dll" IsOptionBased="true" />
-    <Asset Type="Microsoft.VisualStudio.Analyzer" Path="Microsoft.NetCore.CSharp.Analyzers.dll" IsOptionBased="true" />
-    <Asset Type="Microsoft.VisualStudio.Analyzer" Path="Microsoft.NetCore.VisualBasic.Analyzers.dll" IsOptionBased="true" />
+    <Asset Type="Microsoft.VisualStudio.Analyzer" Path="Microsoft.NetCore.Analyzers.dll" />
+    <Asset Type="Microsoft.VisualStudio.Analyzer" Path="Microsoft.NetCore.CSharp.Analyzers.dll" />
+    <Asset Type="Microsoft.VisualStudio.Analyzer" Path="Microsoft.NetCore.VisualBasic.Analyzers.dll" />
     <Asset Type="Microsoft.VisualStudio.MefComponent" Path="Microsoft.NetCore.Analyzers.dll" />
     <Asset Type="Microsoft.VisualStudio.MefComponent" Path="Microsoft.NetCore.CSharp.Analyzers.dll" />
     <Asset Type="Microsoft.VisualStudio.MefComponent" Path="Microsoft.NetCore.VisualBasic.Analyzers.dll" />

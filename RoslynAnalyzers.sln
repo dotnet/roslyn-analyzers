@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26424.2
+VisualStudioVersion = 15.0.26507.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.NetFramework.Analyzers", "Microsoft.NetFramework.Analyzers", "{AB503AAC-EE72-4DD4-A339-C7DD545494DB}"
 EndProject
@@ -93,6 +93,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FxCopAnalyzersSetup", "src\FxCopAnalyzersSetup\FxCopAnalyzersSetup\FxCopAnalyzersSetup.csproj", "{2638D846-F5D3-4188-AF01-E94331552D2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -374,6 +376,14 @@ Global
 		{A5CDB779-6B8B-4DEF-A87E-F892355C9A96}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A5CDB779-6B8B-4DEF-A87E-F892355C9A96}.Release|x86.ActiveCfg = Release|Any CPU
 		{A5CDB779-6B8B-4DEF-A87E-F892355C9A96}.Release|x86.Build.0 = Release|Any CPU
+		{2638D846-F5D3-4188-AF01-E94331552D2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2638D846-F5D3-4188-AF01-E94331552D2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2638D846-F5D3-4188-AF01-E94331552D2D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2638D846-F5D3-4188-AF01-E94331552D2D}.Debug|x86.Build.0 = Debug|Any CPU
+		{2638D846-F5D3-4188-AF01-E94331552D2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2638D846-F5D3-4188-AF01-E94331552D2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2638D846-F5D3-4188-AF01-E94331552D2D}.Release|x86.ActiveCfg = Release|Any CPU
+		{2638D846-F5D3-4188-AF01-E94331552D2D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -34,7 +34,8 @@
         "Microsoft.NetCore.Analyzers.Setup.vsix",
         "Microsoft.NetFramework.Analyzers.Setup.vsix",
         "Roslyn.Diagnostics.Analyzers.Setup.vsix",
-        "Text.Analyzers.Setup.vsix"
+        "Text.Analyzers.Setup.vsix",
+        "Microsoft.CodeAnalysis.FxCopAnalyzers.Setup.vsix"
       ]
     }
   ]

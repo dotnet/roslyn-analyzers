@@ -13,22 +13,14 @@ Debug | Release
 Projects
 ========
 
-Microsoft.NetFramework.Analyzers
------------------
+MetaCompilation
+---------------
 
-*Latest stable version:* [1.1.0](https://www.nuget.org/packages/Desktop.Analyzers/)
+*Created by summer 2015 interns [Zoë Petard](https://github.com/zoepetard), [Jessica Petty](https://github.com/jepetty), and [Daniel King](https://github.com/daking2014)*
 
-Analyzers for APIs specific to the desktop .NET Framework.
+The MetaCompilation Analyzer is an analyzer that functions as a tutorial to teach users how to write an analyzer. It uses diagnostics and code fixes to guide the user through the various steps required to create a simple analyzer. It is designed for a novice analyzer programmer with some previous programming experience.
 
-[More info](src/Microsoft.NetFramework.Analyzers/Microsoft.NetFramework.Analyzers.md)
-
-Microsoft.ApiDesignGuidelines.Analyzers
---------------------------------
-
-Provides analyzers which implement the .NET design guidelines for API authors.
-
-[More info](src/Microsoft.CodeQuality.Analyzers/Documentation/ApiDesignGuidelines/Microsoft.ApiDesignGuidelines.Analyzers.md)
-
+For instructions on using this tutorial, see [Instructions](src/MetaCompilation.Analyzers/Core/ReadMe.md#instructions).
 
 Microsoft.CodeAnalysis.Analyzers
 --------------------------------
@@ -39,58 +31,48 @@ Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
 
 [More info](src/Microsoft.CodeAnalysis.Analyzers/Microsoft.CodeAnalysis.Analyzers.md)
 
+Microsoft.CodeQuality.Analyzers
+--------------------------------
+
+*NuGet link (no stable version yet)*: <https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers/>
+
+Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
+
+[More info](src/Microsoft.CodeQuality.Analyzers/Documentation/Microsoft.CodeQuality.Analyzers.md)
+
+Microsoft.NetCore.Analyzers
+-----------------
+
+*NuGet link (no stable version yet)*: <https://www.nuget.org/packages/Microsoft.NetCore.Analyzers/>
+
+Analyzers for APIs specific to .NET Core.
+
+[More info](src/Microsoft.NetCore.Analyzers/Microsoft.NetCore.Analyzers.md)
+
+Microsoft.NetFramework.Analyzers
+-----------------
+
+*NuGet link (no stable version yet)*: <https://www.nuget.org/packages/Microsoft.NetFramework.Analyzers/>
+
+Analyzers for APIs specific to the desktop .NET Framework.
+
+[More info](src/Microsoft.NetFramework.Analyzers/Microsoft.NetFramework.Analyzers.md)
 
 Roslyn.Diagnostics.Analyzers
 -------------------------------
+
+*NuGet link (no stable version yet)*: <https://www.nuget.org/packages/Roslyn.Diagnostics.Analyzers/>
 
 Contains analyzers specific to the .NET Compiler Platform ("Roslyn") project.
 
 [More info](src/Roslyn.Diagnostics.Analyzers/Roslyn.Diagnostics.Analyzers.md)
 
-System.Collections.Immutable.Analyzers
-------------------------
+Text.Analyzers
+-------------------------------
 
-Provides guidelines for using APIs in the System.Collections.Immutable contract.
+*NuGet link (no stable version yet)*: <https://www.nuget.org/packages/Text.Analyzers/>
 
-[More info](src/Microsoft.NetCore.Analyzers/Documentation/System.Collections.Immutable.Analyzers/System.Collections.Immutable.Analyzers.md)
-
-System.Runtime.Analyzers
-------------------------
-
-*Latest stable version:* [1.1.0](https://www.nuget.org/packages/System.Runtime.Analyzers/)
-
-Provides guidelines for using APIs in the System.Runtime contract.
-
-[More info](src/Microsoft.NetCore.Analyzers/Documentation/System.Runtime.Analyzers/System.Runtime.Analyzers.md)
-
-
-System.Runtime.InteropServices.Analyzers
-----------------------------------------
-
-*Latest stable version:* [1.1.0](https://www.nuget.org/packages/System.Runtime.InteropServices.Analyzers/)
-
-Provides guidelines for using APIs in the System.Runtime.InteropServices contract.
-
-[More info](src/Microsoft.NetCore.Analyzers/Documentation/System.Runtime.InteropServices.Analyzers/System.Runtime.InteropServices.Analyzers.md)
-
-System.Security.Cryptography.Hashing.Algorithms.Analyzers
-------------------------
-
-*Latest stable version:* [1.1.0](https://www.nuget.org/packages/System.Security.Cryptography.Hashing.Algorithms.Analyzers/)
-
-Provides guidelines for using APIs in the System.Cryptography.Hashing.Algorithms contract.
-
-[More info](src/Microsoft.NetCore.Analyzers/Documentation/System.Security.Cryptography.Hashing.Algorithms.Analyzers/System.Security.Cryptography.Hashing.Algorithms.Analyzers.md)
-
-MetaCompilation
----------------
-
-*Created by summer 2015 interns [Zoë Petard](https://github.com/zoepetard), [Jessica Petty](https://github.com/jepetty), and [Daniel King](https://github.com/daking2014)*
-
-The MetaCompilation Analyzer is an analyzer that functions as a tutorial to teach users how to write an analyzer. It uses diagnostics and code fixes to guide the user through the various steps required to create a simple analyzer. It is designed for a novice analyzer programmer with some previous programming experience.
-
-For instructions on using this tutorial, see [Instructions](src/MetaCompilation.Analyzers/Core/ReadMe.md#instructions).
-
+Contains analyzers for text included in code, such as comments.
 
 Getting Started
 ===============

@@ -7,7 +7,7 @@
     <TargetFramework>net46</TargetFramework>
     <SetupProject>true</SetupProject>
     <AssemblyName>Microsoft.CodeAnalysis.FxCopAnalyzers.Setup</AssemblyName>
-    <GeneratePkgDefFile>false</GeneratePkgDefFile>
+    <GeneratePkgDefFile>true</GeneratePkgDefFile>
     <VSSDKTargetPlatformRegRootSuffix>RoslynDev</VSSDKTargetPlatformRegRootSuffix>
     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
     <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
@@ -31,6 +31,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="15.0.26201" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Microsoft.CodeQuality.Analyzers\Setup\Microsoft.CodeQuality.Analyzers.Setup.csproj">

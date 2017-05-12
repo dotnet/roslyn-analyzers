@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -47,7 +48,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 var instantiatedTypes = new ConcurrentBag<INamedTypeSymbol>();
                 var internalTypes = new ConcurrentBag<INamedTypeSymbol>();
 
-                Compilation compilation = startContext.Compilation;
+                var compilation = startContext.Compilation;
 
                 // If the assembly being built by this compilation exposes its internals to
                 // any other assembly, don't report any "uninstantiated internal class" errors.
@@ -57,23 +58,23 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 // better to have false negatives (which would happen if the type were *not*
                 // instantiated by any friend assembly, but we didn't report the issue) than
                 // to have false positives.
-                INamedTypeSymbol internalsVisibleToAttributeSymbol = compilation.GetTypeByMetadataName("System.Runtime.CompilerServices.InternalsVisibleToAttribute");
+                var internalsVisibleToAttributeSymbol = compilation.GetTypeByMetadataName("System.Runtime.CompilerServices.InternalsVisibleToAttribute");
                 if (AssemblyExposesInternals(compilation, internalsVisibleToAttributeSymbol))
                 {
                     return;
                 }
 
-                INamedTypeSymbol systemAttributeSymbol = compilation.GetTypeByMetadataName("System.Attribute");
-                INamedTypeSymbol iConfigurationSectionHandlerSymbol = compilation.GetTypeByMetadataName("System.Configuration.IConfigurationSectionHandler");
-                INamedTypeSymbol configurationSectionSymbol = compilation.GetTypeByMetadataName("System.Configuration.ConfigurationSection");
-                INamedTypeSymbol safeHandleSymbol = compilation.GetTypeByMetadataName("System.Runtime.InteropServices.SafeHandle");
-                INamedTypeSymbol traceListenerSymbol = compilation.GetTypeByMetadataName("System.Diagnostics.TraceListener");
-                INamedTypeSymbol mef1ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.ComponentModel.Composition.ExportAttribute");
-                INamedTypeSymbol mef2ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.Composition.ExportAttribute");
+                var systemAttributeSymbol = compilation.GetTypeByMetadataName("System.Attribute");
+                var iConfigurationSectionHandlerSymbol = compilation.GetTypeByMetadataName("System.Configuration.IConfigurationSectionHandler");
+                var configurationSectionSymbol = compilation.GetTypeByMetadataName("System.Configuration.ConfigurationSection");
+                var safeHandleSymbol = compilation.GetTypeByMetadataName("System.Runtime.InteropServices.SafeHandle");
+                var traceListenerSymbol = compilation.GetTypeByMetadataName("System.Diagnostics.TraceListener");
+                var mef1ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.ComponentModel.Composition.ExportAttribute");
+                var mef2ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.Composition.ExportAttribute");
 
                 startContext.RegisterOperationActionInternal(context =>
                 {
-                    IObjectCreationExpression expr = (IObjectCreationExpression)context.Operation;
+                    var expr = (IObjectCreationExpression)context.Operation;
                     if (expr.Type is INamedTypeSymbol namedType)
                     {
                         instantiatedTypes.Add(namedType);
@@ -82,7 +83,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                 startContext.RegisterSymbolAction(context =>
                 {
-                    INamedTypeSymbol type = (INamedTypeSymbol)context.Symbol;
+                    var type = (INamedTypeSymbol)context.Symbol;
                     if (type.GetResultantVisibility() != SymbolVisibility.Public &&
                         !IsOkToBeUnused(type, compilation,
                             systemAttributeSymbol,
@@ -97,14 +98,56 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     }
                 }, SymbolKind.NamedType);
 
+                // If a type is passed a generic argument to another type or a method that specifies that the type must have a constructor,
+                // we presume that the method will be constructing the type, and add it to the list of instantiated types.
+
+                void ProcessGenericTypes(IEnumerable<(ITypeParameterSymbol param, ITypeSymbol arg)> generics)
+                {
+                    foreach (var (typeParam, typeArg) in generics)
+                    {
+                        if (typeParam.HasConstructorConstraint)
+                        {
+                            instantiatedTypes.Add((INamedTypeSymbol)typeArg);
+                        }
+                    }
+                }
+
+                startContext.RegisterOperationActionInternal(context =>
+                {
+                    var expr = (IObjectCreationExpression)context.Operation;
+                    var constructedClass = (INamedTypeSymbol)expr.Type;
+
+                    if (!constructedClass.IsGenericType || constructedClass.IsUnboundGenericType)
+                    {
+                        return;
+                    }
+
+                    var generics = constructedClass.TypeParameters.Zip(constructedClass.TypeArguments, (parameter, argument) => (parameter, argument));
+                    ProcessGenericTypes(generics);
+                }, OperationKind.ObjectCreationExpression);
+
+                startContext.RegisterOperationActionInternal(context =>
+                {
+                    var expr = (IInvocationExpression)context.Operation;
+                    var methodType = expr.TargetMethod;
+
+                    if (!methodType.IsGenericMethod)
+                    {
+                        return;
+                    }
+
+                    var generics = methodType.TypeParameters.Zip(methodType.TypeArguments, (parameter, argument) => (parameter, argument));
+                    ProcessGenericTypes(generics);
+                }, OperationKind.InvocationExpression);
+
                 startContext.RegisterCompilationEndAction(context =>
                 {
-                    IEnumerable<INamedTypeSymbol> uninstantiatedInternalTypes = internalTypes
+                    var uninstantiatedInternalTypes = internalTypes
                         .Select(it => it.OriginalDefinition)
                         .Except(instantiatedTypes.Select(it => it.OriginalDefinition))
                         .Where(type => !HasInstantiatedNestedType(type, instantiatedTypes));
 
-                    foreach (INamedTypeSymbol type in uninstantiatedInternalTypes)
+                    foreach (var type in uninstantiatedInternalTypes)
                     {
                         context.ReportDiagnostic(type.CreateDiagnostic(Rule, type.FormatMemberName()));
                     }
@@ -117,7 +160,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             INamedTypeSymbol internalsVisibleToAttributeSymbol)
         {
             ISymbol assemblySymbol = compilation.Assembly;
-            ImmutableArray<AttributeData> attributes = assemblySymbol.GetAttributes();
+            var attributes = assemblySymbol.GetAttributes();
             return attributes.Any(
                 attr => attr.AttributeClass.Equals(internalsVisibleToAttributeSymbol));
         }
@@ -126,8 +169,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         {
             // We don't care whether a private nested type is instantiated, because if it
             // is, it can only have happened within the type itself.
-            IEnumerable<INamedTypeSymbol> nestedTypes = type.GetTypeMembers()
-                .Where(member => member.DeclaredAccessibility != Accessibility.Private);
+            var nestedTypes = type.GetTypeMembers().Where(member => member.DeclaredAccessibility != Accessibility.Private);
 
             foreach (var nestedType in nestedTypes)
             {
@@ -210,7 +252,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             return false;
         }
-
         public static bool IsMefExported(
             INamedTypeSymbol type,
             INamedTypeSymbol mef1ExportAttributeSymbol,

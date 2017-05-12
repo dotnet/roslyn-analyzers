@@ -789,6 +789,93 @@ End Module
 ");
         }
 
+        [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
+        public void CA1812_CSharp_GenericMethodWithNewConstraint_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+internal class InstantiatedType
+{
+}
+
+internal static class Factory
+{
+    internal static T Create<T>()
+        where T : new()
+    {
+        return new T();
+    }
+}
+
+internal class Program
+{
+    public static void Main(string[] args)
+    {
+        Console.WriteLine(Factory.Create<InstantiatedType>());
+    }
+}");
+        }
+
+        [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
+        public void CA1812_Basic_GenericMethodWithNewConstraint_NoDiagnostic()
+        {
+            VerifyBasic(@"
+Imports System
+
+Module Module1
+    Sub Main()
+        Console.WriteLine(Create(Of InstantiatedType)())
+    End Sub
+
+    Friend Class InstantiatedType
+    End Class
+
+    Friend Function Create(Of T As New)() As T
+        Return New T
+    End Function
+End Module");
+        }
+
+        [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
+        public void CA1812_CSharp_GenericTypeWithNewConstraint_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+internal class InstantiatedType
+{
+}
+
+internal class Factory<T> where T : new()
+{
+}
+
+internal class Program
+{
+    public static void Main(string[] args)
+    {
+        var factory = new Factory<InstantiatedType>();
+    }
+}");
+        }
+
+        [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
+        public void CA1812_Basic_GenericTypeWithNewConstraint_NoDiagnostic()
+        {
+            VerifyBasic(@"
+Imports System
+
+Module Module1
+    Sub Main()
+        Console.WriteLine(New Factory(Of InstantiatedType))
+    End Sub
+
+    Friend Class InstantiatedType
+    End Class
+
+    Friend Class Factory(Of T As New)
+    End Class
+End Module");
+        }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {

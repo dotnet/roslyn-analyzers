@@ -1,3 +1,6 @@
+Api Design Guidelines
+------------------------------
+
 ### CA1000: Do not declare static members on generic types ###
 
 When a static member of a generic type is called, the type argument must be specified for the type. When a generic instance member that does not support inference is called, the type argument must be specified for the member. In these two cases, the syntax for specifying the type argument is different and easily confused.
@@ -446,3 +449,75 @@ Category: Usage
 Severity: Warning
 
 Help: [https://msdn.microsoft.com/en-us/library/ms182360.aspx](https://msdn.microsoft.com/en-us/library/ms182360.aspx)
+
+Maintainability
+----------------------------------
+### CA1801: Review unused parameters ###
+
+A method signature includes a parameter that is not used in the method body.
+
+Category: Performance
+
+Severity: Warning
+
+Help: [https://msdn.microsoft.com/en-us/library/ms182268.aspx](https://msdn.microsoft.com/en-us/library/ms182268.aspx)
+
+### CA1806: Do not ignore method results ###
+
+A new object is created but never used; or a method that creates and returns a new string is called and the new string is never used; or a COM or P/Invoke method returns an HRESULT or error code that is never used.
+
+Category: Performance
+
+Severity: Warning
+
+Help: [https://msdn.microsoft.com/en-us/library/ms182273.aspx](https://msdn.microsoft.com/en-us/library/ms182273.aspx)
+
+### CA1823: Avoid unused private fields ###
+
+Private fields were detected that do not appear to be accessed in the assembly.
+
+Category: Performance
+
+Severity: Warning
+
+Help: [http://msdn.microsoft.com/library/ms245042.aspx](http://msdn.microsoft.com/library/ms245042.aspx)
+
+Quality Guidelines
+--------------------------------
+### CA1814: Prefer jagged arrays over multidimensional ###
+
+A jagged array is an array whose elements are arrays. The arrays that make up the elements can be of different sizes, leading to less wasted space for some sets of data.
+
+Category: Performance
+
+Severity: Warning
+
+Help: [https://msdn.microsoft.com/en-us/library/ms182277.aspx](https://msdn.microsoft.com/en-us/library/ms182277.aspx)
+
+### CA1821: Remove empty Finalizers ###
+
+Finalizers should be avoided where possible, to avoid the additional performance overhead involved in tracking object lifetime.
+
+Category: Performance
+
+Severity: Warning
+
+Help: [http://msdn.microsoft.com/library/bb264476.aspx](http://msdn.microsoft.com/library/bb264476.aspx)
+
+### CA2200: Rethrow to preserve stack details. ###
+
+Category: Usage
+
+Severity: Warning
+
+Help: [http://msdn.microsoft.com/library/ms182363.aspx](http://msdn.microsoft.com/library/ms182363.aspx)
+
+### CA2214: Do not call overridable methods in constructors ###
+
+Virtual methods defined on the class should not be called from constructors. If a derived class has overridden the method, the derived class version will be called (before the derived class constructor is called).
+
+Category: Usage
+
+Severity: Warning
+
+Help: [http://msdn.microsoft.com/library/ms182331.aspx](http://msdn.microsoft.com/library/ms182331.aspx)

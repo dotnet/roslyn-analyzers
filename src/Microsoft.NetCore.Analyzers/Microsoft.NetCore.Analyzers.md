@@ -1,3 +1,17 @@
+System.Resources
+--------------------------
+### CA1824: Mark assemblies with NeutralResourcesLanguageAttribute ###
+
+The NeutralResourcesLanguage attribute informs the ResourceManager of the language that was used to display the resources of a neutral culture for an assembly. This improves lookup performance for the first resource that you load and can reduce your working set.
+
+Category: Performance
+
+Severity: Warning
+
+Help: [https://msdn.microsoft.com/en-us/library/bb385967.aspx](https://msdn.microsoft.com/en-us/library/bb385967.aspx)
+
+System.Runtime
+--------------------------
 ### CA1309: Use ordinal stringcomparison ###
 
 A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.
@@ -111,3 +125,51 @@ Category: Usage
 Severity: Warning
 
 Help: [https://msdn.microsoft.com/en-us/library/bb264491.aspx](https://msdn.microsoft.com/en-us/library/bb264491.aspx)
+
+System.Runtime.InteropServices
+---------------------------------------
+### CA1401: P/Invokes should not be visible ###
+
+A public or protected method in a public type has the System.Runtime.InteropServices.DllImportAttribute attribute (also implemented by the Declare keyword in Visual Basic). Such methods should not be exposed.
+
+Category: Interoperability
+
+Severity: Warning
+
+Help: [http://msdn.microsoft.com/library/ms182209.aspx](http://msdn.microsoft.com/library/ms182209.aspx)
+
+### CA2101: Specify marshaling for P/Invoke string arguments ###
+
+A platform invoke member allows partially trusted callers, has a string parameter, and does not explicitly marshal the string. This can cause a potential security vulnerability.
+
+Category: Globalization
+
+Severity: Warning
+
+Help: [http://msdn.microsoft.com/library/ms182319.aspx](http://msdn.microsoft.com/library/ms182319.aspx)
+
+### RS0015: Always consume the value returned by methods marked with PreserveSigAttribute ###
+
+PreserveSigAttribute indicates that a method will return an HRESULT, rather than throwing an exception. Therefore, it is important to consume the HRESULT returned by the method, so that errors can be detected. Generally, this is done by calling Marshal.ThrowExceptionForHR.
+
+Category: Reliability
+
+Severity: Warning
+
+System.Security
+-------------------------------------------
+### CA5350: Do not use insecure cryptographic algorithm SHA1. ###
+
+This type implements SHA1, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the SHA-1 and SHA-0 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).
+
+Category: Microsoft.Security
+
+Severity: Warning
+
+### CA5351: Do not use insecure cryptographic algorithm MD5. ###
+
+This type implements MD5, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the MD5 and HMACMD5 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).
+
+Category: Microsoft.Security
+
+Severity: Warning

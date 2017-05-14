@@ -27,7 +27,7 @@
     <developmentDependency>true</developmentDependency>
   </metadata>
   <files>
-    <file src="Microsoft.Net.RoslynDiagnostics.props" target="build" />
+    <file src="Microsoft.Net.RoslynDiagnostics.props" target="roslyn" />
     <file src="ThirdPartyNotices.rtf" target="" />
   </files>
 </package>

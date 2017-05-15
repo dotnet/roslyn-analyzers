@@ -78,12 +78,16 @@ namespace Microsoft.NetCore.Analyzers.Composition
             }
 
             var badNamespaces = exportAttributes.Except(appliedExportAttributes).Select(s => s.ContainingNamespace).ToSet();
+            var goodNamespaces = appliedExportAttributes.Select(s => s.ContainingNamespace).ToSet();
 
-            // Now look at all attributes and see if any are metadata attributes
+            // Now look at all attributes and see if any are metadata attributes from badNamespaces, but none from good namepaces.
             foreach (var namedTypeAttribute in namedTypeAttributes)
             {
-                if (namedTypeAttribute.AttributeClass.GetApplicableAttributes().Any(ad => badNamespaces.Contains(ad.AttributeClass.ContainingNamespace) &&
-                                                                                                          ad.AttributeClass.Name == "MetadataAttributeAttribute"))
+                var appliedAttributes = namedTypeAttribute.AttributeClass.GetApplicableAttributes();
+                if (appliedAttributes.Any(ad => badNamespaces.Contains(ad.AttributeClass.ContainingNamespace) &&
+                        ad.AttributeClass.Name == "MetadataAttributeAttribute") &&
+                    !appliedAttributes.Any(ad => goodNamespaces.Contains(ad.AttributeClass.ContainingNamespace) &&
+                        ad.AttributeClass.Name == "MetadataAttributeAttribute"))
                 {
                     ReportDiagnostic(symbolContext, namedType, namedTypeAttribute);
                 }

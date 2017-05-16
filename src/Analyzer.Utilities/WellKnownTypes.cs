@@ -345,5 +345,15 @@ namespace Analyzer.Utilities
         {
             return compilation.GetTypeByMetadataName("System.Diagnostics.Contracts.PureAttribute");
         }
+
+        public static INamedTypeSymbol MEFV1ExportAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.ComponentModel.Composition.ExportAttribute");
+        }
+
+        public static INamedTypeSymbol MEFV2ExportAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Composition.ExportAttribute");
+        }
     }
 }

@@ -353,6 +353,42 @@ End Class
 ", TestValidationMode.AllowCompileErrors);
         }
 
+        [Fact]
+        public void NoDiagnosticCases_MultiMefMetadataAttribute()
+        {
+            VerifyCSharp(@"
+using System;
+
+[System.ComponentModel.Composition.Export(typeof(C)), MyNamespace.MultiMefMetadataAttribute]
+public class C
+{
+}
+
+namespace MyNamespace
+{
+    [System.ComponentModel.Composition.MetadataAttribute, System.Composition.MetadataAttribute]
+    public class MultiMefMetadataAttribute : System.Attribute
+    {
+    }
+}
+" + CSharpWellKnownAttributesDefinition);
+
+            VerifyBasic(@"
+Imports System
+
+<System.ComponentModel.Composition.Export(GetType(C)), MyNamespace.MultiMefMetadataAttribute> _
+Public Class C
+End Class
+
+Namespace MyNamespace
+    <System.ComponentModel.Composition.MetadataAttribute, System.Composition.MetadataAttribute> _
+	Public Class MultiMefMetadataAttribute
+		Inherits System.Attribute
+	End Class
+End Namespace
+" + BasicWellKnownAttributesDefinition);
+        }
+
         #endregion
 
         #region Diagnostic Tests

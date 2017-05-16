@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -33,8 +34,6 @@ namespace Microsoft.NetCore.Analyzers.Composition
                                                                              helpLinkUri: null,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
-        private static readonly string[] s_mefNamespaces = new[] { "System.ComponentModel.Composition", "System.Composition" };
-
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
@@ -44,21 +43,15 @@ namespace Microsoft.NetCore.Analyzers.Composition
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                var exportAttributes = new List<INamedTypeSymbol>();
-
-                foreach (var mefNamespace in s_mefNamespaces)
+                var mefV1ExportAttribute = WellKnownTypes.MEFV1ExportAttribute(compilationContext.Compilation);
+                var mefV2ExportAttribute = WellKnownTypes.MEFV2ExportAttribute(compilationContext.Compilation);
+                if (mefV1ExportAttribute == null || mefV2ExportAttribute == null)
                 {
-                    var exportAttribute = compilationContext.Compilation.GetTypeByMetadataName(mefNamespace + ".ExportAttribute");
+                    // We don't need to check assemblies unless they're referencing both versions of MEF, so we're done
+                    return;
+                };
 
-                    if (exportAttribute == null)
-                    {
-                        // We don't need to check assemblies unless they're referencing both versions of MEF, so we're done
-                        return;
-                    }
-
-                    exportAttributes.Add(exportAttribute);
-                }
-
+                var exportAttributes = new List<INamedTypeSymbol>() { mefV1ExportAttribute, mefV2ExportAttribute };
                 compilationContext.RegisterSymbolAction(c => AnalyzeSymbol(c, exportAttributes), SymbolKind.NamedType);
             });
         }
@@ -78,12 +71,15 @@ namespace Microsoft.NetCore.Analyzers.Composition
             }
 
             var badNamespaces = exportAttributes.Except(appliedExportAttributes).Select(s => s.ContainingNamespace).ToSet();
+            var goodNamespaces = appliedExportAttributes.Select(s => s.ContainingNamespace).ToSet();
 
-            // Now look at all attributes and see if any are metadata attributes
+            // Now look at all attributes and see if any are metadata attributes from badNamespaces, but none from good namepaces.
             foreach (var namedTypeAttribute in namedTypeAttributes)
             {
-                if (namedTypeAttribute.AttributeClass.GetApplicableAttributes().Any(ad => badNamespaces.Contains(ad.AttributeClass.ContainingNamespace) &&
-                                                                                                          ad.AttributeClass.Name == "MetadataAttributeAttribute"))
+                var appliedMetadataAttributes = namedTypeAttribute.AttributeClass.GetApplicableAttributes()
+                    .Where(ad => ad.AttributeClass.Name.Equals("MetadataAttributeAttribute", StringComparison.Ordinal));
+                if (appliedMetadataAttributes.Any(ad => badNamespaces.Contains(ad.AttributeClass.ContainingNamespace)) &&
+                    !appliedMetadataAttributes.Any(ad => goodNamespaces.Contains(ad.AttributeClass.ContainingNamespace)))
                 {
                     ReportDiagnostic(symbolContext, namedType, namedTypeAttribute);
                 }

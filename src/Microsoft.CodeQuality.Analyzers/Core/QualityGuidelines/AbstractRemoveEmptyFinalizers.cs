@@ -4,14 +4,12 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
-using Microsoft.CodeAnalysis.Semantics;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class RemoveEmptyFinalizersAnalyzer : DiagnosticAnalyzer
+    public abstract class AbstractRemoveEmptyFinalizersAnalyzer : DiagnosticAnalyzer
     {
         public const string RuleId = "CA1821";
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
@@ -35,72 +33,26 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationContext =>
+            analysisContext.RegisterSymbolAction(methodContext =>
             {
-                INamedTypeSymbol conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(compilationContext.Compilation);
-
-                compilationContext.RegisterOperationBlockActionInternal(context =>
+                var methodSymbol = (IMethodSymbol)methodContext.Symbol;
+                if (!methodSymbol.IsDestructor())
                 {
-                    var method = context.OwningSymbol as IMethodSymbol;
-                    if (method == null)
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    if (!method.IsFinalizer())
-                    {
-                        return;
-                    }
+                var methodBody = methodSymbol.DeclaringSyntaxReferences.Single().GetSyntax();
 
-                    if (IsEmptyFinalizer(context.OperationBlocks, conditionalAttributeSymbol))
-                    {
-                        context.ReportDiagnostic(context.OwningSymbol.CreateDiagnostic(Rule));
-                    }
-                });
-            });
+                if (IsEmptyFinalizer(methodBody, methodContext))
+                {
+                    methodContext.ReportDiagnostic(methodSymbol.CreateDiagnostic(Rule));
+                }
+            }, SymbolKind.Method);
         }
 
-        private static bool IsEmptyFinalizer(ImmutableArray<IOperation> operationBlocks, ISymbol conditionalAttributeSymbol)
-        {
-            if (operationBlocks != null && operationBlocks.Length == 1)
-            {
-                var block = operationBlocks[0] as IBlockStatement;
-                if (block == null)
-                {
-                    return true;
-                }
+        protected bool InvocationIsConditional(IMethodSymbol methodSymbol, INamedTypeSymbol conditionalAttributeSymbol) =>
+            methodSymbol.GetAttributes().Any(n => n.AttributeClass.Equals(conditionalAttributeSymbol));
 
-                // Empty method
-                if (block.Statements.Length == 0)
-                {
-                    return true;
-                }
-
-                if (block.Statements.Length == 1)
-                {
-                    IOperation statement = block.Statements[0];
-
-                    // Just a throw statement.
-                    if (statement.Kind == OperationKind.ThrowStatement)
-                    {
-                        return true;
-                    }
-
-                    if (statement.Kind == OperationKind.ExpressionStatement &&
-                        ((IExpressionStatement)statement).Expression.Kind == OperationKind.InvocationExpression)
-                    {
-                        var invocation = ((IExpressionStatement)statement).Expression as IInvocationExpression;
-                        IMethodSymbol method = invocation.TargetMethod;
-
-                        if (method.GetAttributes().Any(n => n.AttributeClass.Equals(conditionalAttributeSymbol)))
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
-        }
+        protected abstract bool IsEmptyFinalizer(SyntaxNode methodBody, SymbolAnalysisContext analysisContext);
     }
 }

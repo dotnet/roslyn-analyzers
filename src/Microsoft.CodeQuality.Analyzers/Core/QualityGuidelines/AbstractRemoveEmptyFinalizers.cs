@@ -33,9 +33,14 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCodeBlockAction(methodContext =>
+            analysisContext.RegisterCodeBlockAction(codeBlockContext =>
             {
-                var methodSymbol = (IMethodSymbol)methodContext.OwningSymbol;
+                if (codeBlockContext.OwningSymbol.Kind != SymbolKind.Method)
+                {
+                    return;
+                }
+
+                var methodSymbol = (IMethodSymbol)codeBlockContext.OwningSymbol;
                 if (!methodSymbol.IsDestructor())
                 {
                     return;
@@ -43,9 +48,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
                 var methodBody = methodSymbol.DeclaringSyntaxReferences.Single().GetSyntax();
 
-                if (IsEmptyFinalizer(methodBody, methodContext))
+                if (IsEmptyFinalizer(methodBody, codeBlockContext))
                 {
-                    methodContext.ReportDiagnostic(methodSymbol.CreateDiagnostic(Rule));
+                    codeBlockContext.ReportDiagnostic(methodSymbol.CreateDiagnostic(Rule));
                 }
             });
         }

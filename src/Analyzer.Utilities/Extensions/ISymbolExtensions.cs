@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -58,7 +59,17 @@ namespace Analyzer.Utilities.Extensions
 
         public static bool IsDestructor(this ISymbol symbol)
         {
-            return (symbol as IMethodSymbol)?.MethodKind == MethodKind.Destructor;
+            if (symbol.Language.Equals(LanguageNames.CSharp, StringComparison.Ordinal))
+            {
+                return (symbol as IMethodSymbol)?.MethodKind == MethodKind.Destructor;
+            }
+            else
+            {
+                return symbol is IMethodSymbol methodSymbol &&
+                       methodSymbol.MethodKind == MethodKind.Ordinary &&
+                       methodSymbol.IsProtected() &&
+                       methodSymbol.Name.Equals("Finalize", StringComparison.Ordinal);
+            }
         }
 
         public static bool IsIndexer(this ISymbol symbol)

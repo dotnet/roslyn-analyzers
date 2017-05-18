@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines;
+using Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines;
 using Test.Utilities;
 using Xunit;
 
@@ -10,15 +12,15 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new RemoveEmptyFinalizersAnalyzer();
+            return new BasicRemoveEmptyFinalizersAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new RemoveEmptyFinalizersAnalyzer();
+            return new CSharpRemoveEmptyFinalizersAnalyzer();
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void CA1821CSharpTestNoWarning()
         {
             VerifyCSharp(@"
@@ -190,7 +192,7 @@ public class Class1
 ");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void CA1821CSharpTestRemoveEmptyFinalizersWithDebugFailAndDirectiveAroundStatements()
         {
             VerifyCSharp(@"
@@ -223,7 +225,7 @@ public class Class2
         }
 
         [WorkItem(820941, "DevDiv")]
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void CA1821CSharpTestRemoveEmptyFinalizersWithNonInvocationBody()
         {
             VerifyCSharp(@"
@@ -242,6 +244,7 @@ public class Class2
 ");
         }
 
+        [Fact]
         public void CA1821BasicTestNoWarning()
         {
             VerifyBasic(@"
@@ -283,12 +286,13 @@ Public Class Class5
     Protected Overrides Sub Finalize()
         If True Then
             Debug.Fail(""Finalizer called!"")
-        End If    End Sub
+        End If    
+    End Sub
 End Class
 ");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void CA1821BasicTestRemoveEmptyFinalizers()
         {
             VerifyBasic(@"
@@ -350,7 +354,7 @@ End Class
                 GetCA1821BasicResultAt(13, 29));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void CA1821BasicTestRemoveEmptyFinalizersWithDebugFail()
         {
             VerifyBasic(@"
@@ -376,12 +380,12 @@ End Class
 
         private static DiagnosticResult GetCA1821CSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, RemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers);
+            return GetCSharpResultAt(line, column, AbstractRemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers);
         }
 
         private static DiagnosticResult GetCA1821BasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, RemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers);
+            return GetBasicResultAt(line, column, AbstractRemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers);
         }
     }
 }

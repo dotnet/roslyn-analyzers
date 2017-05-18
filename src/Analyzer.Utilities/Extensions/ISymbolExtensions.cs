@@ -59,17 +59,7 @@ namespace Analyzer.Utilities.Extensions
 
         public static bool IsDestructor(this ISymbol symbol)
         {
-            if (symbol.Language.Equals(LanguageNames.CSharp, StringComparison.Ordinal))
-            {
-                return (symbol as IMethodSymbol)?.MethodKind == MethodKind.Destructor;
-            }
-            else
-            {
-                return symbol is IMethodSymbol methodSymbol &&
-                       methodSymbol.MethodKind == MethodKind.Ordinary &&
-                       methodSymbol.IsProtected() &&
-                       methodSymbol.Name.Equals("Finalize", StringComparison.Ordinal);
-            }
+            return (symbol as IMethodSymbol)?.IsFinalizer() ?? false;
         }
 
         public static bool IsIndexer(this ISymbol symbol)

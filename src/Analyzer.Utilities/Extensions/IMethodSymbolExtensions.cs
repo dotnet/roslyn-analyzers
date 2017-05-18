@@ -77,7 +77,7 @@ namespace Analyzer.Utilities.Extensions
                 return true; // for C#
             }
 
-            if (method.Name != "Finalize" || method.Parameters.Length != 0 || !method.ReturnsVoid)
+            if (method.Name != WellKnownMemberNames.DestructorName || method.Parameters.Length != 0 || !method.ReturnsVoid)
             {
                 return false;
             }

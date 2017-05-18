@@ -2,6 +2,8 @@
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines;
+using Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines;
 using Test.Utilities;
 using Xunit;
 
@@ -11,7 +13,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new RemoveEmptyFinalizersAnalyzer();
+            return new BasicRemoveEmptyFinalizersAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
@@ -21,7 +23,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new RemoveEmptyFinalizersAnalyzer();
+            return new CSharpRemoveEmptyFinalizersAnalyzer();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

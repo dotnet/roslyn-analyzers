@@ -10,7 +10,7 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines
     Public Class BasicRemoveEmptyFinalizersAnalyzer
         Inherits AbstractRemoveEmptyFinalizersAnalyzer
 
-        Protected Overrides Function IsEmptyFinalizer(methodBody As SyntaxNode, analysisContext As SymbolAnalysisContext) As Boolean
+        Protected Overrides Function IsEmptyFinalizer(methodBody As SyntaxNode, analysisContext As CodeBlockAnalysisContext) As Boolean
             Dim destructorStatement = DirectCast(methodBody, MethodStatementSyntax)
             Dim destructorBlock = DirectCast(destructorStatement.Parent, MethodBlockSyntax)
 
@@ -22,17 +22,16 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines
                 End If
 
                 If (destructorBlock.Statements(0).Kind() = CodeAnalysis.VisualBasic.SyntaxKind.ExpressionStatement) Then
-                        Dim destructorExpression = DirectCast(destructorBlock.Statements(0), ExpressionStatementSyntax)
-                        If (destructorExpression.Expression.Kind() = CodeAnalysis.VisualBasic.SyntaxKind.InvocationExpression) Then
-                            Dim invocationExpression = DirectCast(destructorExpression.Expression, InvocationExpressionSyntax)
-                            Dim semanticModel = analysisContext.Compilation.GetSemanticModel(invocationExpression.SyntaxTree)
-                            Dim invocationSymbol = DirectCast(semanticModel.GetSymbolInfo(invocationExpression).Symbol, IMethodSymbol)
-                            Dim conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(analysisContext.Compilation)
-                            Return InvocationIsConditional(invocationSymbol, conditionalAttributeSymbol)
-                        End If
+                    Dim destructorExpression = DirectCast(destructorBlock.Statements(0), ExpressionStatementSyntax)
+                    If (destructorExpression.Expression.Kind() = CodeAnalysis.VisualBasic.SyntaxKind.InvocationExpression) Then
+                        Dim invocationExpression = DirectCast(destructorExpression.Expression, InvocationExpressionSyntax)
+                        Dim invocationSymbol = DirectCast(analysisContext.SemanticModel.GetSymbolInfo(invocationExpression).Symbol, IMethodSymbol)
+                        Dim conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(analysisContext.SemanticModel.Compilation)
+                        Return InvocationIsConditional(invocationSymbol, conditionalAttributeSymbol)
                     End If
                 End If
-                Return False
+            End If
+            Return False
         End Function
     End Class
 End Namespace

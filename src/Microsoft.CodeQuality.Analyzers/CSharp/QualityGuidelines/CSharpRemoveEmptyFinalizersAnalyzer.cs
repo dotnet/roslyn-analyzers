@@ -11,7 +11,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class CSharpRemoveEmptyFinalizersAnalyzer : AbstractRemoveEmptyFinalizersAnalyzer
     {
-        protected override bool IsEmptyFinalizer(SyntaxNode methodBody, SymbolAnalysisContext analysisContext)
+        protected override bool IsEmptyFinalizer(SyntaxNode methodBody, CodeBlockAnalysisContext analysisContext)
         {
             var destructorDeclaration = (DestructorDeclarationSyntax)methodBody;
 
@@ -34,9 +34,8 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
                     expr.Expression.Kind() == CodeAnalysis.CSharp.SyntaxKind.InvocationExpression)
                 {
                     var invocation = (InvocationExpressionSyntax)expr.Expression;
-                    var semanticModel = analysisContext.Compilation.GetSemanticModel(invocation.SyntaxTree);
-                    var invocationSymbol = (IMethodSymbol)semanticModel.GetSymbolInfo(invocation).Symbol;
-                    var conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(analysisContext.Compilation);
+                    var invocationSymbol = (IMethodSymbol)analysisContext.SemanticModel.GetSymbolInfo(invocation).Symbol;
+                    var conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(analysisContext.SemanticModel.Compilation);
                     return InvocationIsConditional(invocationSymbol, conditionalAttributeSymbol);
                 }
             }

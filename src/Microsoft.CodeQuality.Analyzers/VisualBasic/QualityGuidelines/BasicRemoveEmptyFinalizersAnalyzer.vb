@@ -30,8 +30,5 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines
             End If
             Return False
         End Function
-        Protected Overrides Sub Finalize()
-
-        End Sub
     End Class
 End Namespace

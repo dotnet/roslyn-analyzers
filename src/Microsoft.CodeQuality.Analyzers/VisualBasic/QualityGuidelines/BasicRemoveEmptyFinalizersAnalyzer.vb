@@ -17,18 +17,22 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines
             If (destructorBlock.Statements.Count = 0) Then
                 Return True
             ElseIf (destructorBlock.Statements.Count = 1) Then
+                If (destructorBlock.Statements(0).Kind() = CodeAnalysis.VisualBasic.SyntaxKind.ThrowStatement) Then
+                    Return True
+                End If
+
                 If (destructorBlock.Statements(0).Kind() = CodeAnalysis.VisualBasic.SyntaxKind.ExpressionStatement) Then
-                    Dim destructorExpression = DirectCast(destructorBlock.Statements(0), ExpressionStatementSyntax)
-                    If (destructorExpression.Expression.Kind() = CodeAnalysis.VisualBasic.SyntaxKind.InvocationExpression) Then
-                        Dim invocationExpression = DirectCast(destructorExpression.Expression, InvocationExpressionSyntax)
-                        Dim semanticModel = analysisContext.Compilation.GetSemanticModel(invocationExpression.SyntaxTree)
-                        Dim invocationSymbol = DirectCast(semanticModel.GetSymbolInfo(invocationExpression).Symbol, IMethodSymbol)
-                        Dim conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(analysisContext.Compilation)
-                        Return InvocationIsConditional(invocationSymbol, conditionalAttributeSymbol)
+                        Dim destructorExpression = DirectCast(destructorBlock.Statements(0), ExpressionStatementSyntax)
+                        If (destructorExpression.Expression.Kind() = CodeAnalysis.VisualBasic.SyntaxKind.InvocationExpression) Then
+                            Dim invocationExpression = DirectCast(destructorExpression.Expression, InvocationExpressionSyntax)
+                            Dim semanticModel = analysisContext.Compilation.GetSemanticModel(invocationExpression.SyntaxTree)
+                            Dim invocationSymbol = DirectCast(semanticModel.GetSymbolInfo(invocationExpression).Symbol, IMethodSymbol)
+                            Dim conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(analysisContext.Compilation)
+                            Return InvocationIsConditional(invocationSymbol, conditionalAttributeSymbol)
+                        End If
                     End If
                 End If
-            End If
-            Return False
+                Return False
         End Function
     End Class
 End Namespace

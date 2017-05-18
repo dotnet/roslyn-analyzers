@@ -378,6 +378,34 @@ End Class
                 GetCA1821BasicResultAt(6, 29));
         }
 
+        [Fact]
+        public void CA1821CSharpTestRemoveEmptyFinalizersWithThrowStatement()
+        {
+            VerifyCSharp(@"
+public class Class1
+{
+    ~Class1()
+    {
+        throw new System.Exception();
+    }
+}", 
+                GetCA1821CSharpResultAt(4, 6));
+        }
+
+        [Fact]
+        public void CA1821BasicTestRemoveEmptyFinalizersWithThrowStatement()
+        {
+            VerifyBasic(@"
+Public Class Class1
+	' Violation occurs because Debug.Fail is a conditional method.
+    Protected Overrides Sub Finalize()
+        Throw New System.Exception()
+    End Sub
+End Class
+",
+                GetCA1821BasicResultAt(4, 29));
+        }
+
         private static DiagnosticResult GetCA1821CSharpResultAt(int line, int column)
         {
             return GetCSharpResultAt(line, column, AbstractRemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers);

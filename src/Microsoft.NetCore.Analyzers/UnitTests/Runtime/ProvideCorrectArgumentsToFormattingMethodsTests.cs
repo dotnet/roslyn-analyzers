@@ -161,7 +161,7 @@ public class C
             GetCA2241CSharpResultAt(10, 9));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn/pull/19674")]
         public void CA2241CSharpVarArgsNotSupported()
         {
             // currently not supported due to "https://github.com/dotnet/roslyn/issues/7346"

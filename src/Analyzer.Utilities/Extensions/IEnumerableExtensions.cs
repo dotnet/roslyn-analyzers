@@ -71,7 +71,9 @@ namespace Analyzer.Utilities.Extensions
             return source.Where((Func<T, bool>)s_notNullTest);
         }
 
+#pragma warning disable CA1812
         private class ComparisonComparer<T> : Comparer<T>
+#pragma warning disable CA1812
         {
             private readonly Comparison<T> _compare;
 

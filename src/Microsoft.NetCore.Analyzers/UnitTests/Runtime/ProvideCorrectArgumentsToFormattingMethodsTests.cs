@@ -141,9 +141,8 @@ public class C
         }
 
         [Fact]
-        public void CA2241CSharpExplicitObjectArrayNotSupported()
+        public void CA2241CSharpExplicitObjectArraySupported()
         {
-            // currently not supported due to "https://github.com/dotnet/roslyn/issues/7342"
             VerifyCSharp(@"
 using System;
 
@@ -156,10 +155,13 @@ public class C
         Console.WriteLine(""{0} {1} {2} {3}"", new object[] {1, 2, 3, 4, 5});
     }
 }
-");
+",
+            GetCA2241CSharpResultAt(8, 17),
+            GetCA2241CSharpResultAt(9, 9),
+            GetCA2241CSharpResultAt(10, 9));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn/pull/19674")]
         public void CA2241CSharpVarArgsNotSupported()
         {
             // currently not supported due to "https://github.com/dotnet/roslyn/issues/7346"

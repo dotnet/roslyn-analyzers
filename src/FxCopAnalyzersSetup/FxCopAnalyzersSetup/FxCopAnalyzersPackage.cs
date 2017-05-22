@@ -7,7 +7,9 @@ using Microsoft.VisualStudio.Shell;
 namespace FxCopAnalyzersSetup
 {
     [Guid(PackageGuid)]
+#pragma warning disable CA1812
     class FxCopAnalyzersPackage : Package
+#pragma warning disable CA1812
     {
         private const string PackageGuid = "4A41D270-A97F-4639-A352-28732FC410E4";
     }

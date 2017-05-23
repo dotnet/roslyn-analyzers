@@ -29,7 +29,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Globalization,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);

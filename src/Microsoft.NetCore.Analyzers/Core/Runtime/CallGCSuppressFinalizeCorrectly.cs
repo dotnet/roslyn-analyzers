@@ -31,7 +31,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              s_localizableMessageNotCalledWithFinalizer,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-US/library/ms182269.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
@@ -40,7 +40,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              s_localizableMessageNotCalled,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-US/library/ms182269.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
@@ -49,7 +49,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              s_localizableMessageNotPassedThis,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-US/library/ms182269.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
@@ -58,7 +58,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              s_localizableMessageOutsideDispose,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-US/library/ms182269.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);

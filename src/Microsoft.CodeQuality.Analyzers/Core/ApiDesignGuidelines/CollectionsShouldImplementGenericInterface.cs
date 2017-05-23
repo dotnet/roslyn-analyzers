@@ -41,7 +41,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 s_localizableMessage,
                 DiagnosticCategory.Design,
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: true,
+                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_localizableDescription,
                 helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182132.aspx",
                 customTags: WellKnownDiagnosticTags.Telemetry);

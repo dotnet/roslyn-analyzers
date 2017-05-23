@@ -21,7 +21,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                                                          s_localizableMessage,
                                                                          DiagnosticCategory.Performance,
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                         isEnabledByDefault: true,
+                                                                         isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                          description: s_localizableDescription,
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/bb264476.aspx",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);

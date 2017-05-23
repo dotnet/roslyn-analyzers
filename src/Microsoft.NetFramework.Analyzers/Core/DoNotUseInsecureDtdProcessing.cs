@@ -846,7 +846,7 @@ namespace Microsoft.NetFramework.Analyzers
                                             messageFormat,
                                             DiagnosticCategory.Security,
                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                            isEnabledByDefault: true,
+                                            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                             description: description,
                                             helpLinkUri: helpLink,
                                             customTags: WellKnownDiagnosticTags.Telemetry);

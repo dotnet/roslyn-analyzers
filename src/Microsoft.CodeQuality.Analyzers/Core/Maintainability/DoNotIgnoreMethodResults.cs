@@ -57,7 +57,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                              s_localizableMessageObjectCreation,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182273.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
@@ -67,7 +67,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                              s_localizableMessageStringCreation,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182273.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
@@ -77,7 +77,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                              s_localizableMessageHResultOrErrorCode,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182273.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
@@ -87,7 +87,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                              s_localizableMessagePureMethod,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182273.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
@@ -98,7 +98,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                              s_localizableMessageTryParse,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182273.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);

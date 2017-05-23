@@ -27,7 +27,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Reliability,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);

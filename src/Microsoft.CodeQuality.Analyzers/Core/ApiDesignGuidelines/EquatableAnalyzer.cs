@@ -25,7 +25,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             s_localizableMessageImplementIEquatable,
             DiagnosticCategory.Design,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: true,
+            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             description: s_localizableDescriptionImplementIEquatable,
             helpLinkUri: "http://go.microsoft.com/fwlink/?LinkId=734907");
 
@@ -39,7 +39,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             s_localizableMessageOverridesObjectEquals,
             DiagnosticCategory.Design,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: true,
+            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             description: s_localizableDescriptionOverridesObjectEquals,
             helpLinkUri: "http://go.microsoft.com/fwlink/?LinkId=734909");
 

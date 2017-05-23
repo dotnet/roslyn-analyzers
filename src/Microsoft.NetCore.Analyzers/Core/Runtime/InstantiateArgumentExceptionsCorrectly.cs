@@ -30,7 +30,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              "{0}",
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);

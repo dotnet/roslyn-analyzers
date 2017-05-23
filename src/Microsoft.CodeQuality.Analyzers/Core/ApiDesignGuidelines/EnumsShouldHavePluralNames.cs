@@ -44,7 +44,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 s_localizableMessage_CA1714,
                 DiagnosticCategory.Naming,
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: true,
+                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_localizableDescription_CA1714,
                 helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb264486.aspx",
                 customTags: WellKnownDiagnosticTags.Telemetry);
@@ -79,7 +79,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 s_localizableMessage_CA1717,
                 DiagnosticCategory.Naming,
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: true,
+                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_localizableDescription_CA1717,
                 helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb264487.aspx",
                 customTags: WellKnownDiagnosticTags.Telemetry);

@@ -23,7 +23,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                     s_localizableMessageInterfaceRule,
                                                                                     DiagnosticCategory.Naming,
                                                                                     DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                                    isEnabledByDefault: true,
+                                                                                    isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                                     description: s_localizableDescription,
                                                                                     helpLinkUri: "http://msdn.microsoft.com/library/ms182243.aspx",
                                                                                     customTags: WellKnownDiagnosticTags.Telemetry);
@@ -34,7 +34,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                       s_localizableMessageTypeParameterRule,
                                                                                       DiagnosticCategory.Naming,
                                                                                       DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                                      isEnabledByDefault: true,
+                                                                                      isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                                       description: s_localizableDescription,
                                                                                       helpLinkUri: "http://msdn.microsoft.com/library/ms182243.aspx",
                                                                                       customTags: WellKnownDiagnosticTags.Telemetry);

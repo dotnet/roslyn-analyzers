@@ -256,7 +256,7 @@ Class C
     Private Sub F(ParamArray args As String())
     End Sub
 
-    Private Sub G()
+Private Sub G()
         F()     ' Compiler seems to generate a param array with size 0 for the invocation.
     End Sub
 End Class
@@ -267,6 +267,89 @@ End Class
             // Should we be flagging diagnostics on compiler generated code?
             // Should the analyzer even be invoked for compiler generated code?
             VerifyBasic(source + arrayEmptySource);
+        }
+
+        [WorkItem(1209, "https://github.com/dotnet/roslyn-analyzers/issues/1209")]
+        [Fact]
+        public void EmptyArrayCSharp_CompilerGeneratedArrayCreationInObjectCreation()
+        {
+            const string arrayEmptySourceRaw = @"
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace System
+{
+	public class Array
+	{
+		public static T[] Empty<T>()
+		{
+			return null;
+		}
+	}
+}
+";
+            const string source = @"
+namespace N
+{
+    using Microsoft.CodeAnalysis;
+    class C
+    {
+	    public static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            ""RuleId"",
+            ""Title"",
+            ""MessageFormat"",
+            ""Dummy"",
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: ""Description"");
+    }
+}
+";
+
+            string arrayEmptySource = IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
+
+            // Should we be flagging diagnostics on compiler generated code?
+            // Should the analyzer even be invoked for compiler generated code?
+            VerifyCSharp(source + arrayEmptySource, addLanguageSpecificCodeAnalysisReference: true);
+        }
+        
+        [WorkItem(1209, "https://github.com/dotnet/roslyn-analyzers/issues/1209")]
+        [Fact]
+        public void EmptyArrayCSharp_CompilerGeneratedArrayCreationInIndexerAccess()
+        {
+            const string arrayEmptySourceRaw = @"
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace System
+{
+	public class Array
+	{
+		public static T[] Empty<T>()
+		{
+			return null;
+		}
+	}
+}
+";
+            const string source = @"
+public abstract class C
+{
+    protected abstract int this[int p1, params int[] p2] {get; set;}
+    public void M()
+    {
+        var x = this[0];
+    }
+}
+";
+
+            string arrayEmptySource = IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
+
+            // Should we be flagging diagnostics on compiler generated code?
+            // Should the analyzer even be invoked for compiler generated code?
+            VerifyCSharp(source + arrayEmptySource, addLanguageSpecificCodeAnalysisReference: true);
         }
     }
 }

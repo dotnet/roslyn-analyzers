@@ -117,18 +117,32 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return false;
             }
 
-            IMethodSymbol targetMethod;
+            ISymbol targetSymbol;
             var invocation = parent as IInvocationExpression;
             if (invocation != null)
             {
-                targetMethod = invocation.TargetMethod;
+                targetSymbol = invocation.TargetMethod;
             }
             else
             {
-                targetMethod = (parent as IObjectCreationExpression)?.Constructor;
+                var objectCreation = parent as IObjectCreationExpression;
+                if (objectCreation != null)
+                {
+                    targetSymbol = objectCreation.Constructor;
+                }
+                else
+                {
+                    targetSymbol = (parent as IIndexedPropertyReferenceExpression)?.Property;
+                }
             }
-            
-            if (targetMethod == null || targetMethod.Parameters.Length == 0 || !targetMethod.Parameters.Last().IsParams)
+
+            if (targetSymbol == null)
+            {
+                return false;
+            }
+
+            var parameters = targetSymbol.GetParameters();
+            if (parameters.Length == 0 || !parameters[parameters.Length - 1].IsParams)
             {
                 return false;
             }

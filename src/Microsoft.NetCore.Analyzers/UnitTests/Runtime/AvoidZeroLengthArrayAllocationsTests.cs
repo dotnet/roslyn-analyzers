@@ -271,7 +271,7 @@ End Class
 
         [WorkItem(1209, "https://github.com/dotnet/roslyn-analyzers/issues/1209")]
         [Fact]
-        public void EmptyArrayCSharp_CompilerGeneratedArrayCreation()
+        public void EmptyArrayCSharp_CompilerGeneratedArrayCreationInObjectCreation()
         {
             const string arrayEmptySourceRaw = @"
 using System;
@@ -303,6 +303,44 @@ namespace N
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: ""Description"");
+    }
+}
+";
+
+            string arrayEmptySource = IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
+
+            // Should we be flagging diagnostics on compiler generated code?
+            // Should the analyzer even be invoked for compiler generated code?
+            VerifyCSharp(source + arrayEmptySource, addLanguageSpecificCodeAnalysisReference: true);
+        }
+        
+        [WorkItem(1209, "https://github.com/dotnet/roslyn-analyzers/issues/1209")]
+        [Fact]
+        public void EmptyArrayCSharp_CompilerGeneratedArrayCreationInIndexerAccess()
+        {
+            const string arrayEmptySourceRaw = @"
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace System
+{
+	public class Array
+	{
+		public static T[] Empty<T>()
+		{
+			return null;
+		}
+	}
+}
+";
+            const string source = @"
+public abstract class C
+{
+    protected abstract int this[int p1, params int[] p2] {get; set;}
+    public void M()
+    {
+        var x = this[0];
     }
 }
 ";

@@ -118,15 +118,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             ISymbol targetSymbol;
-            var invocation = parent as IInvocationExpression;
-            if (invocation != null)
+            if (parent is IInvocationExpression invocation)
             {
                 targetSymbol = invocation.TargetMethod;
             }
             else
             {
-                var objectCreation = parent as IObjectCreationExpression;
-                if (objectCreation != null)
+                if (parent is IObjectCreationExpression objectCreation)
                 {
                     targetSymbol = objectCreation.Constructor;
                 }

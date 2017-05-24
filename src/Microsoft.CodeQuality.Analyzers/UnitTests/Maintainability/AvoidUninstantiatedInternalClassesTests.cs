@@ -790,7 +790,7 @@ End Module
         }
 
         [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
-        public void CA1812_CSharp_GenericMethodWithNewConstraint_NoDiagnostic()
+        public void CA1812_CSharp_NoDiagnostic_GenericMethodWithNewConstraint()
         {
             VerifyCSharp(@"
 using System;
@@ -818,7 +818,7 @@ internal class Program
         }
 
         [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
-        public void CA1812_Basic_GenericMethodWithNewConstraint_NoDiagnostic()
+        public void CA1812_Basic_NoDiagnostic_GenericMethodWithNewConstraint()
         {
             VerifyBasic(@"
 Imports System
@@ -838,7 +838,7 @@ End Module");
         }
 
         [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
-        public void CA1812_CSharp_GenericTypeWithNewConstraint_NoDiagnostic()
+        public void CA1812_CSharp_NoDiagnostic_GenericTypeWithNewConstraint()
         {
             VerifyCSharp(@"
 internal class InstantiatedType
@@ -859,7 +859,7 @@ internal class Program
         }
 
         [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
-        public void CA1812_Basic_GenericTypeWithNewConstraint_NoDiagnostic()
+        public void CA1812_Basic_NoDiagnostic_GenericTypeWithNewConstraint()
         {
             VerifyBasic(@"
 Imports System
@@ -874,6 +874,113 @@ Module Module1
 
     Friend Class Factory(Of T As New)
     End Class
+End Module");
+        }
+
+        [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
+        public void CA1812_CSharp_Diagnostic_NestedGenericTypeWithNoNewConstraint()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+
+internal class InstantiatedType
+{
+}
+
+internal class Factory<T> where T : new()
+{
+}
+
+internal class Program
+{
+    public static void Main(string[] args)
+    {
+        var list = new List<Factory<InstantiatedType>>();
+    }
+}",
+                GetCSharpResultAt(
+                    4, 16,
+                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
+                    "InstantiatedType"),
+                GetCSharpResultAt(
+                    8, 16,
+                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
+                    "Factory<T>"));
+        }
+
+        [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
+        public void CA1812_Basic_Diagnostic_NestedGenericTypeWithNoNewConstraint()
+        {
+            VerifyBasic(@"
+Imports System.Collections.Generic
+
+Module Library
+    Friend Class InstantiatedType
+    End Class
+
+    Friend Class Factory(Of T As New)
+    End Class
+
+    Sub Main()
+        Dim a = New List(Of Factory(Of InstantiatedType))
+    End Sub
+End Module",
+                GetBasicResultAt(
+                    5, 18,
+                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
+                    "Library.InstantiatedType"),
+                GetBasicResultAt(
+                    8, 18,
+                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
+                    "Library.Factory(Of T)"));
+        }
+
+        [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
+        public void CA1812_CSharp_NoDiagnostic_NestedGenericTypeWithNewConstraint()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+
+internal class InstantiatedType
+{
+}
+
+internal class Factory1<T> where T : new()
+{
+}
+
+internal class Factory2<T> where T : new()
+{
+}
+
+internal class Program
+{
+    public static void Main(string[] args)
+    {
+        var factory = new Factory1<Factory2<InstantiatedType>>();
+    }
+}");
+        }
+
+        [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
+        public void CA1812_Basic_NoDiagnostic_NestedGenericTypeWithNewConstraint()
+        {
+            VerifyBasic(@"
+Imports System.Collections.Generic
+
+Module Library
+    Friend Class InstantiatedType
+    End Class
+
+    Friend Class Factory1(Of T As New)
+    End Class
+
+    Friend Class Factory2(Of T As New)
+    End Class
+
+    Sub Main()
+        Dim a = New Factory1(Of Factory2(Of InstantiatedType))
+    End Sub
 End Module");
         }
 

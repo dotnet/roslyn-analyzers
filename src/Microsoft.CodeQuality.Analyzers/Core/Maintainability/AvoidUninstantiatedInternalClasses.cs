@@ -107,7 +107,20 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     {
                         if (typeParam.HasConstructorConstraint)
                         {
-                            instantiatedTypes.Add((INamedTypeSymbol)typeArg);
+                            var namedTypeArg = (INamedTypeSymbol)typeArg;
+                            instantiatedTypes.Add(namedTypeArg);
+
+                            // We need to handle if this type param also has type params that have a generic constraint. Take the following example:
+                            // new Factory1<Factory2<InstantiatedType>>();
+                            // In this example, Factory1 and Factory2 have type params with constructor constraints. Therefore, we need to add all 3
+                            // types to the list of types that have actually been instantiated. However, in the following example:
+                            // new List<Factory<InstantiatedType>>();
+                            // List does not have a constructor constraint, so we can't reasonably infer anything about its type parameters.
+                            if (namedTypeArg.IsGenericType)
+                            {
+                                var newGenerics = namedTypeArg.TypeParameters.Zip(namedTypeArg.TypeArguments, (parameter, argument) => (parameter, argument));
+                                ProcessGenericTypes(newGenerics);
+                            }
                         }
                     }
                 }

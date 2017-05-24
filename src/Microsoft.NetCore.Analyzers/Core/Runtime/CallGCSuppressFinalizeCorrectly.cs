@@ -155,12 +155,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     // Checks for GC.SuppressFinalize(this)
-                    if (invocationExpression.ArgumentsInSourceOrder.Count() != 1)
+                    if (invocationExpression.ArgumentsInEvaluationOrder.Count() != 1)
                     {
                         return;
                     }
 
-                    var parameterSymbol = _semanticModel.GetSymbolInfo(invocationExpression.ArgumentsInSourceOrder.Single().Syntax).Symbol as IParameterSymbol;
+                    var parameterSymbol = _semanticModel.GetSymbolInfo(invocationExpression.ArgumentsInEvaluationOrder.Single().Syntax).Symbol as IParameterSymbol;
                     if (parameterSymbol == null || !parameterSymbol.IsThis)
                     {
                         analysisContext.ReportDiagnostic(invocationExpression.Syntax.CreateDiagnostic(

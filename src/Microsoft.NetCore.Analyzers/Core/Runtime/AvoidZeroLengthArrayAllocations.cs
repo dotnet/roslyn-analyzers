@@ -111,7 +111,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var model = context.Compilation.GetSemanticModel(arrayCreationExpression.Syntax.SyntaxTree);
 
             // Compiler generated array creation seems to just use the syntax from the parent.
-            // Compiler generated array creation seems to just use the syntax from the parent.
             var parent = model.GetOperationInternal(arrayCreationExpression.Syntax, context.CancellationToken) as IHasArgumentsExpression;
             if (parent == null)
             {

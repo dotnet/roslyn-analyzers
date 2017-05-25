@@ -89,7 +89,7 @@ public class Class7
 	// Violation will not occur because the finalizer's body is not empty.
 	~Class7()
 	{
-        if (true) 
+        if (true)
         {
 		    Debug.Fail(""Finalizer called!"");
         }
@@ -286,7 +286,7 @@ Public Class Class5
     Protected Overrides Sub Finalize()
         If True Then
             Debug.Fail(""Finalizer called!"")
-        End If    
+        End If
     End Sub
 End Class
 ");
@@ -388,7 +388,7 @@ public class Class1
     {
         throw new System.Exception();
     }
-}", 
+}",
                 GetCA1821CSharpResultAt(4, 6));
         }
 
@@ -404,6 +404,34 @@ Public Class Class1
 End Class
 ",
                 GetCA1821BasicResultAt(4, 29));
+        }
+
+        [Fact, WorkItem(1211, "https://github.com/dotnet/roslyn-analyzers/issues/1211")]
+        public void CA1821CSharpRemoveEmptyFinalizersInvalidInvocationExpression()
+        {
+            VerifyCSharp(@"
+public class C1
+{
+    ~C1()
+    {
+        a
+    }
+}
+",
+                TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact, WorkItem(1211, "https://github.com/dotnet/roslyn-analyzers/issues/1211")]
+        public void CA1821BasicRemoveEmptyFinalizersInvalidInvocationExpression()
+        {
+            VerifyBasic(@"
+Public Class Class1
+    Protected Overrides Sub Finalize()
+        a
+    End Sub
+End Class
+",
+                TestValidationMode.AllowCompileErrors);
         }
 
         private static DiagnosticResult GetCA1821CSharpResultAt(int line, int column)

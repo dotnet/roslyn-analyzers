@@ -24,8 +24,13 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines
                 If (destructorBlock.Statements(0).Kind() = CodeAnalysis.VisualBasic.SyntaxKind.ExpressionStatement) Then
                     Dim destructorExpression = DirectCast(destructorBlock.Statements(0), ExpressionStatementSyntax)
                     If (destructorExpression.Expression.Kind() = CodeAnalysis.VisualBasic.SyntaxKind.InvocationExpression) Then
-                        Dim invocationExpression = DirectCast(destructorExpression.Expression, InvocationExpressionSyntax)
-                        Dim invocationSymbol = DirectCast(analysisContext.SemanticModel.GetSymbolInfo(invocationExpression).Symbol, IMethodSymbol)
+                        Dim invocationSymbol = DirectCast(analysisContext.SemanticModel.GetSymbolInfo(destructorExpression.Expression).Symbol, IMethodSymbol)
+                        If (invocationSymbol Is Nothing) Then
+                            ' Presumably, if the user has typed something but hasn't completed it yet, they're not going to have an empty body,
+                            ' so we return False here
+                            Return False
+                        End If
+
                         Dim conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(analysisContext.SemanticModel.Compilation)
                         Return InvocationIsConditional(invocationSymbol, conditionalAttributeSymbol)
                     End If

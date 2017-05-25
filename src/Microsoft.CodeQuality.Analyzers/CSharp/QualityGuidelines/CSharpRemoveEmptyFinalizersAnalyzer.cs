@@ -33,8 +33,13 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
                     body is ExpressionStatementSyntax expr &&
                     expr.Expression.Kind() == CodeAnalysis.CSharp.SyntaxKind.InvocationExpression)
                 {
-                    var invocation = (InvocationExpressionSyntax)expr.Expression;
-                    var invocationSymbol = (IMethodSymbol)analysisContext.SemanticModel.GetSymbolInfo(invocation).Symbol;
+                    if (!(analysisContext.SemanticModel.GetSymbolInfo(expr.Expression).Symbol is IMethodSymbol invocationSymbol))
+                    {
+                        // Presumably, if the user has typed something but it doesn't have a symbol yet, the body won't be empty
+                        // once all compile errors are corrected, so we return false here.
+                        return false;
+                    }
+
                     var conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(analysisContext.SemanticModel.Compilation);
                     return InvocationIsConditional(invocationSymbol, conditionalAttributeSymbol);
                 }

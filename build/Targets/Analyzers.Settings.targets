@@ -19,9 +19,9 @@
     <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == ''">$(NUGET_PACKAGES)</NuGetPackageRoot>
     <!-- Respect environment variable if set -->
     <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and
-                                 '$(OS)' == 'Windows_NT'">$(UserProfile)\.nuget\packages</NuGetPackageRoot>
+                                 '$(OS)' == 'Windows_NT'">$(UserProfile)\.nuget\packages\</NuGetPackageRoot>
     <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and
-                                 '$(OS)' != 'Windows_NT'">$(HOME)\.nuget\packages</NuGetPackageRoot>
+                                 '$(OS)' != 'Windows_NT'">$(HOME)\.nuget\packages\</NuGetPackageRoot>
   </PropertyGroup>
 
   <!-- Project language -->
@@ -86,6 +86,13 @@
         <OptionStrict>On</OptionStrict>
         <RootNamespace></RootNamespace>
         <VBRuntime>Embed</VBRuntime>
+
+        <!-- Suppress the following warning by default for VB projects. See https://github.com/dotnet/sdk/pull/1127 for details.
+                vbc : error BC40057: Namespace or type specified in the project-level Imports '<qualifiedelementname>' doesn't contain any public
+                member or cannot be found. Make sure the namespace or the type is defined and contains at least one public member. Make
+                sure the imported element name doesn't use any aliases.
+        -->
+        <NoWarn>40057</NoWarn>
       </PropertyGroup>
       <ItemGroup>
         <Import Include="Microsoft.VisualBasic" />

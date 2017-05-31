@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -11,12 +12,15 @@ using Microsoft.CodeAnalysis.Semantics;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
+    using UnusedParameterDictionary = IDictionary<IMethodSymbol, ISet<IParameterSymbol>>;
+
     /// <summary>
     /// CA1801: Review unused parameters
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class ReviewUnusedParametersAnalyzer : DiagnosticAnalyzer
     {
+
         internal const string RuleId = "CA1801";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
@@ -57,6 +61,17 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 INamedTypeSymbol onSerializedAttribute = WellKnownTypes.OnSerializedAttribute(compilationStartContext.Compilation);
 
                 ImmutableHashSet<INamedTypeSymbol> attributeSetForMethodsToIgnore = ImmutableHashSet.Create(conditionalAttributeSymbol, onDeserializedAttribute, onDeserializingAttribute, onSerializedAttribute, onSerializingAttribute);
+
+                UnusedParameterDictionary unusedMethodParameters = new ConcurrentDictionary<IMethodSymbol, ISet<IParameterSymbol>>();
+                ISet<IMethodSymbol> methodsUsedAsDelegates = new HashSet<IMethodSymbol>();
+
+                // Create a list of functions to exclude from analysis. We assume that any function that is used in an IMethodBindingExpression
+                // cannot have its signature changed, and add it to the list of methods to be excluded from analysis.
+                compilationStartContext.RegisterOperationActionInternal(operationContext =>
+                {
+                    var methodBinding = (IMethodBindingExpression)operationContext.Operation;
+                    methodsUsedAsDelegates.Add(methodBinding.Method.OriginalDefinition);
+                }, OperationKind.MethodBindingExpression);
 
                 compilationStartContext.RegisterOperationBlockStartActionInternal(startOperationBlockContext =>
                 {
@@ -99,14 +114,33 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                         return;
                     }
 
+                    // Ignore methods that were used as delegates
+                    if (methodsUsedAsDelegates.Contains(method))
+                    {
+                        return;
+                    }
+
                     // Initialize local mutable state in the start action.
-                    var analyzer = new UnusedParametersAnalyzer(method);
+                    var analyzer = new UnusedParametersAnalyzer(method, unusedMethodParameters);
 
                     // Register an intermediate non-end action that accesses and modifies the state.
                     startOperationBlockContext.RegisterOperationActionInternal(analyzer.AnalyzeOperation, OperationKind.ParameterReferenceExpression);
 
-                    // Register an end action to report diagnostics based on the final state.
+                    // Register an end action to add unused parameters to the unusedMethodParameters dictionary
                     startOperationBlockContext.RegisterOperationBlockEndAction(analyzer.OperationBlockEndAction);
+                });
+
+                // Register a compilation end action to filter all methods used as delegates and report any diagnostics
+                compilationStartContext.RegisterCompilationEndAction(compilationAnalysisContext =>
+                {
+                    // Report diagnostics for unused parameters.
+                    var unusedParameters = unusedMethodParameters.Where(kvp => !methodsUsedAsDelegates.Contains(kvp.Key)).SelectMany(kvp => kvp.Value);
+                    foreach (var parameter in unusedParameters)
+                    {
+                        var diagnostic = Diagnostic.Create(Rule, parameter.Locations[0], parameter.Name, parameter.ContainingSymbol.Name);
+                        compilationAnalysisContext.ReportDiagnostic(diagnostic);
+                    }
+
                 });
             });
         }
@@ -116,15 +150,19 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             #region Per-CodeBlock mutable state
 
             private readonly HashSet<IParameterSymbol> _unusedParameters;
+            private readonly UnusedParameterDictionary _finalUnusedParameters;
+            private readonly IMethodSymbol _method;
 
             #endregion
 
             #region State intialization
 
-            public UnusedParametersAnalyzer(IMethodSymbol method)
+            public UnusedParametersAnalyzer(IMethodSymbol method, UnusedParameterDictionary finalUnusedParameters)
             {
                 // Initialization: Assume all parameters are unused.
                 _unusedParameters = new HashSet<IParameterSymbol>(method.Parameters);
+                _finalUnusedParameters = finalUnusedParameters;
+                _method = method;
             }
 
             #endregion
@@ -150,12 +188,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             public void OperationBlockEndAction(OperationBlockAnalysisContext context)
             {
-                // Report diagnostics for unused parameters.
-                foreach (IParameterSymbol parameter in _unusedParameters)
-                {
-                    Diagnostic diagnostic = Diagnostic.Create(Rule, parameter.Locations[0], parameter.Name, parameter.ContainingSymbol.Name);
-                    context.ReportDiagnostic(diagnostic);
-                }
+                _finalUnusedParameters[_method] = _unusedParameters;
             }
 
             #endregion

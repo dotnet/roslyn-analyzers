@@ -420,6 +420,100 @@ End Class
 ");
         }
 
+        [Fact, WorkItem(1801, "https://github.com/dotnet/roslyn-analyzers/issues/1218")]
+        public void NoDiagnosticForMethodsUsedAsDelegatesCSharp()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C1
+{
+    private Action<object> _handler;
+
+    public void Handler(object o1)
+    {
+    }
+
+    public void SetupHandler()
+    {
+        _handler = Handler;
+    }
+}
+
+public class C2
+{
+    public void Handler(object o1)
+    {
+    }
+
+    public void TakesHandler(Action<object> handler)
+    {
+        handler(null);
+    }
+
+    public void SetupHandler()
+    {
+        TakesHandler(Handler);
+    }
+}
+
+public class C3
+{
+    private Action<object> _handler;
+
+    public C3()
+    {
+        _handler = Handler;
+    }
+
+    public void Handler(object o1)
+    {
+    }
+}");
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/19917"), WorkItem(1801, "https://github.com/dotnet/roslyn-analyzers/issues/1218")]
+        public void NoDiagnosticForMethodsUsedAsDelegatesBasic()
+        {
+            VerifyBasic(@"
+Imports System
+Public Class C1
+    Private _handler As Action(Of Object)
+
+    Public Sub Handler(o As Object)
+    End Sub
+
+    Public Sub SetupHandler()
+        _handler = AddressOf Handler
+    End Sub
+End Class
+
+Module M2
+    Sub Handler(o As Object)
+    End Sub
+
+    Sub TakesHandler(handler As Action(Of Object))
+        handler(Nothing)
+    End Sub
+
+    Sub SetupHandler()
+        TakesHandler(AddressOf Handler)
+    End Sub
+End Module
+
+Class C3
+    Private _handler As Action(Of Object)
+
+    Sub New()
+        _handler = AddressOf Handler
+    End Sub
+
+    Sub Handler(o As Object)
+    End Sub
+End Class
+");
+        }
+
         #endregion
 
         #region Unit tests for analyzer diagnostic(s)

@@ -195,7 +195,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             public void OperationBlockEndAction(OperationBlockAnalysisContext context)
             {
-                _finalUnusedParameters[_method] = _unusedParameters;
+                _finalUnusedParameters.Add(_method, _unusedParameters);
             }
 
             #endregion

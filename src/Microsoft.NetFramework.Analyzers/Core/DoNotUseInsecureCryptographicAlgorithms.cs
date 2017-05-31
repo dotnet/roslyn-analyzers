@@ -49,7 +49,7 @@ namespace Microsoft.NetFramework.Analyzers
                                             message,
                                             DiagnosticCategory.Security,
                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                            isEnabledByDefault: true,
+                                            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                             description: description,
                                             helpLinkUri: uri,
                                             customTags: WellKnownDiagnosticTags.Telemetry);

@@ -26,7 +26,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                          s_localizableMessage,
                                                                          DiagnosticCategory.Performance,
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                         isEnabledByDefault: false,
+                                                                         isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultOnlyIfBuildingVSIX,
                                                                          description: s_localizableDescription,
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182267.aspx",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);

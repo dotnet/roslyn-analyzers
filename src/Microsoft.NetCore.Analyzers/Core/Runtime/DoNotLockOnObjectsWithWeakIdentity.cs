@@ -33,7 +33,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                          s_localizableMessage,
                                                                          DiagnosticCategory.Reliability,
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                         isEnabledByDefault: true,
+                                                                         isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182290.aspx",
                                                                          description: s_localizableDescription,
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);

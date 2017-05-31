@@ -26,7 +26,7 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Reliability,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              helpLinkUri: null,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 

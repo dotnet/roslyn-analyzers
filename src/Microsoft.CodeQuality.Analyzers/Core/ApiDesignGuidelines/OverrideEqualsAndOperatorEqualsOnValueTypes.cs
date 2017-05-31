@@ -30,11 +30,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              s_localizableTitle,
                                                                              s_localizableMessageEquals,
                                                                              s_category,
-                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             true,
-                                                                             s_localizableDescription,
-                                                                             s_helpLinkUri,
-                                                                             WellKnownDiagnosticTags.Telemetry);
+                                                                             defaultSeverity: DiagnosticHelpers.DefaultDiagnosticSeverity,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
+                                                                             description: s_localizableDescription,
+                                                                             helpLinkUri: s_helpLinkUri,
+                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
 
         internal static DiagnosticDescriptor OpEqualityRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,

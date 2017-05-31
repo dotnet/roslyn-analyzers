@@ -26,7 +26,7 @@ namespace Microsoft.NetFramework.Analyzers
                                                                              "{0}",
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182171.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);

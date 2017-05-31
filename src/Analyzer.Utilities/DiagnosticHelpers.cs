@@ -16,6 +16,22 @@ namespace Analyzer.Utilities
             DiagnosticSeverity.Warning;
 #endif
 
+        public const bool EnabledByDefaultIfNotBuildingVSIX =
+#if USE_INTERNAL_IOPERATION_APIS // Building Analyzer VSIX
+            false;
+#else
+            true;
+#endif
+
+        public const bool EnabledByDefaultOnlyIfBuildingVSIX =
+#if USE_INTERNAL_IOPERATION_APIS // Building Analyzer VSIX
+            true;
+#else
+            false;
+#endif
+
+        public const bool EnabledByDefaultForVsixAndNuget = true;
+
         public static bool TryConvertToUInt64(object value, SpecialType specialType, out ulong convertedValue)
         {
             bool success = false;

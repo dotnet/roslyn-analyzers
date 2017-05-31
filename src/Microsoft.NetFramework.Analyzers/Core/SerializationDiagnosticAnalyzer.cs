@@ -29,7 +29,7 @@ namespace Microsoft.NetFramework.Analyzers
                                                                         "{0}",
                                                                         DiagnosticCategory.Usage,
                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                        isEnabledByDefault: true,
+                                                                        isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                         description: s_localizableDescriptionCA2229,
                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182343.aspx",
                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
@@ -55,7 +55,7 @@ namespace Microsoft.NetFramework.Analyzers
                                                                         s_localizableMessageCA2237,
                                                                         DiagnosticCategory.Usage,
                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                        isEnabledByDefault: true,
+                                                                        isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                         description: s_localizableDescriptionCA2237,
                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182350.aspx",
                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
@@ -81,7 +81,7 @@ namespace Microsoft.NetFramework.Analyzers
                                                                         s_localizableMessageCA2235,
                                                                         DiagnosticCategory.Usage,
                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                        isEnabledByDefault: true,
+                                                                        isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                         description: s_localizableDescriptionCA2235,
                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182349.aspx",
                                                                         customTags: WellKnownDiagnosticTags.Telemetry);

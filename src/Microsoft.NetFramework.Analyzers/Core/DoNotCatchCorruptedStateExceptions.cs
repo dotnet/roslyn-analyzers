@@ -26,7 +26,7 @@ namespace Microsoft.NetFramework.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Security,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "http://aka.ms/CA2153",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);

@@ -24,7 +24,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                                                          s_localizableMessageCA1401,
                                                                          DiagnosticCategory.Interoperability,
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                         isEnabledByDefault: true,
+                                                                         isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                          description: s_localizableDescriptionCA1401,
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182209.aspx",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
@@ -36,7 +36,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                                                          s_localizableMessageAndTitleCA2101,
                                                                          DiagnosticCategory.Globalization,
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                         isEnabledByDefault: true,
+                                                                         isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                          description: s_localizableDescriptionCA2101,
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182319.aspx",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);

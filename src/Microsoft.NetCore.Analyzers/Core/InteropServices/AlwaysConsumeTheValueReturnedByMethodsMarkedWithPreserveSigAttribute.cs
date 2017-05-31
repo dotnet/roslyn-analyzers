@@ -23,7 +23,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             s_localizableMessage,
             DiagnosticCategory.Reliability,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: true,
+            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             description: s_localizableDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
 

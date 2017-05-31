@@ -19,7 +19,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                                                          s_localizableMessage,
                                                                          DiagnosticCategory.Usage,
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                         isEnabledByDefault: true,
+                                                                         isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182363.aspx",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
 

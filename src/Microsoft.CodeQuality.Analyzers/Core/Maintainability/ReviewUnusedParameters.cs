@@ -59,8 +59,15 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 INamedTypeSymbol onDeserializedAttribute = WellKnownTypes.OnDeserializedAttribute(compilationStartContext.Compilation);
                 INamedTypeSymbol onSerializingAttribute = WellKnownTypes.OnSerializingAttribute(compilationStartContext.Compilation);
                 INamedTypeSymbol onSerializedAttribute = WellKnownTypes.OnSerializedAttribute(compilationStartContext.Compilation);
+                INamedTypeSymbol obsoleteAttribute = WellKnownTypes.ObsoleteAttribute(compilationStartContext.Compilation);
 
-                ImmutableHashSet<INamedTypeSymbol> attributeSetForMethodsToIgnore = ImmutableHashSet.Create(conditionalAttributeSymbol, onDeserializedAttribute, onDeserializingAttribute, onSerializedAttribute, onSerializingAttribute);
+                ImmutableHashSet<INamedTypeSymbol> attributeSetForMethodsToIgnore = ImmutableHashSet.Create(
+                    conditionalAttributeSymbol,
+                    onDeserializedAttribute,
+                    onDeserializingAttribute,
+                    onSerializedAttribute,
+                    onSerializingAttribute,
+                    obsoleteAttribute);
 
                 UnusedParameterDictionary unusedMethodParameters = new ConcurrentDictionary<IMethodSymbol, ISet<IParameterSymbol>>();
                 ISet<IMethodSymbol> methodsUsedAsDelegates = new HashSet<IMethodSymbol>();

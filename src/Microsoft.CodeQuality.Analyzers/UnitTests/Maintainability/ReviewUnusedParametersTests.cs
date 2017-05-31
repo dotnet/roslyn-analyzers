@@ -514,6 +514,30 @@ End Class
 ");
         }
 
+        [Fact, WorkItem(1801, "https://github.com/dotnet/roslyn-analyzers/issues/1218")]
+        public void NoDiagnosticForObsoleteMethods()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C1
+{
+    [Obsolete]
+    public void ObsoleteMethod(object o1)
+    {
+    }
+}");
+
+            VerifyBasic(@"
+Imports System
+
+Public Class C1
+    <Obsolete>
+    Public Sub ObsoleteMethod(o1 as Object)
+    End Sub
+End Class");
+        }
+
         #endregion
 
         #region Unit tests for analyzer diagnostic(s)

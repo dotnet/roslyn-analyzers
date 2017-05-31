@@ -420,7 +420,7 @@ End Class
 ");
         }
 
-        [Fact, WorkItem(1801, "https://github.com/dotnet/roslyn-analyzers/issues/1218")]
+        [Fact, WorkItem(1218, "https://github.com/dotnet/roslyn-analyzers/issues/1218")]
         public void NoDiagnosticForMethodsUsedAsDelegatesCSharp()
         {
             VerifyCSharp(@"
@@ -472,7 +472,7 @@ public class C3
 }");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/19917"), WorkItem(1801, "https://github.com/dotnet/roslyn-analyzers/issues/1218")]
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/19917"), WorkItem(1218, "https://github.com/dotnet/roslyn-analyzers/issues/1218")]
         public void NoDiagnosticForMethodsUsedAsDelegatesBasic()
         {
             VerifyBasic(@"
@@ -514,7 +514,7 @@ End Class
 ");
         }
 
-        [Fact, WorkItem(1801, "https://github.com/dotnet/roslyn-analyzers/issues/1218")]
+        [Fact, WorkItem(1218, "https://github.com/dotnet/roslyn-analyzers/issues/1218")]
         public void NoDiagnosticForObsoleteMethods()
         {
             VerifyCSharp(@"

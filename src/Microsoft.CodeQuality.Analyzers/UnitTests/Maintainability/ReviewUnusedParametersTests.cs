@@ -538,6 +538,53 @@ Public Class C1
 End Class");
         }
 
+        [Fact, WorkItem(1218, "https://github.com/dotnet/roslyn-analyzers/issues/1218")]
+        public void NoDiagnosticMethodJustThrowsNotImplemented()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C1
+{
+    public int Prop1
+    {
+        get
+        {
+            throw new NotImplementedException();
+        }
+        set
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public void Method1(object o1)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Method2(object o1) => throw new NotImplementedException();
+}");
+
+            VerifyBasic(@"
+Imports System
+
+Public Class C1
+    Property Prop1 As Integer
+        Get
+            Throw New NotImplementedException()
+        End Get
+        Set(ByVal value As Integer)
+            Throw New NotImplementedException()
+        End Set
+    End Property
+
+    Public Sub Method1(o1 As Object)
+        Throw New NotImplementedException()
+    End Sub
+End Class");
+        }
+
         #endregion
 
         #region Unit tests for analyzer diagnostic(s)

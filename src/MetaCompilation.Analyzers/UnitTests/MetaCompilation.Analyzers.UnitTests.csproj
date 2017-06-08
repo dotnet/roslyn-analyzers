@@ -1,27 +1,10 @@
-﻿<Project>
-  <ImportGroup Label="Settings">
-    <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
-  </ImportGroup>
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
-    <TestProject>true</TestProject>
-    <RootNamespace>MetaCompilation.Analyzers.UnitTests</RootNamespace>
-    <AssemblyName>MetaCompilation.Analyzers.UnitTests</AssemblyName>
-  </PropertyGroup>
-  <PropertyGroup Label="Start settings">
-    <StartAction>Program</StartAction>
-    <StartProgram>$(NuGetPackageRoot)\xunit.runner.console\$(XUnitVersion)\tools\xunit.console.x86.exe</StartProgram>
-    <StartArguments>$(AssemblyName).dll -noshadow -wait</StartArguments>
-    <StartWorkingDirectory>$(OutDir)</StartWorkingDirectory>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Test\Utilities\Test.Utilities.csproj" />
-    <ProjectReference Include="..\Core\MetaCompilation.Analyzers.Core.csproj" />
+    <ProjectReference Include="..\..\Test.Utilities\Test.Utilities.csproj" />
+    <ProjectReference Include="..\Core\MetaCompilation.Analyzers.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
-  </ItemGroup>
-  <ImportGroup Label="Targets">
-    <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />
-  </ImportGroup>
 </Project>

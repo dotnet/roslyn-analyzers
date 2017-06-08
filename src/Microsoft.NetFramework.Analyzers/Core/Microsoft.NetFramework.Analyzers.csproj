@@ -1,0 +1,28 @@
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard1.3</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Microsoft.NetFramework.CSharp.Analyzers" />
+    <InternalsVisibleTo Include="Microsoft.NetFramework.VisualBasic.Analyzers" />
+    <InternalsVisibleTo Include="Microsoft.NetFramework.Analyzers.UnitTests" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="MicrosoftNetFrameworkAnalyzersResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>MicrosoftNetFrameworkAnalyzersResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="MicrosoftNetFrameworkAnalyzersResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MicrosoftNetFrameworkAnalyzersResources.resx</DependentUpon>
+    </Compile>
+	</ItemGroup>
+</Project>

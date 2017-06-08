@@ -1,0 +1,31 @@
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard1.3</TargetFramework>
+
+    <IsPackable>true</IsPackable>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NuspecPackageId>Microsoft.NetFramework.Analyzers</NuspecPackageId>
+    <Description>Analyzers for APIs specific to the full .NetFramework which are not present in .NetCore.</Description>
+    <Summary>Microsoft.NetFramework.Analyzers</Summary>
+    <ReleaseNotes>Microsoft.NetFramework.Analyzers</ReleaseNotes>
+    <PackageTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Diagnostic Analyzers Syntax Semantics</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Note that we need to use the binaries from locations where they are signed -->
+    <AnalyzerNupkgFile Include="Microsoft.NetFramework.Analyzers\netstandard1.3\Microsoft.NetFramework.Analyzers.dll" />
+    <AnalyzerNupkgFile Include="Microsoft.NetFramework.CSharp.Analyzers\netstandard1.3\Microsoft.NetFramework.CSharp.Analyzers.dll" />
+    <AnalyzerNupkgFile Include="Microsoft.NetFramework.VisualBasic.Analyzers\netstandard1.3\Microsoft.NetFramework.VisualBasic.Analyzers.dll" />
+    <AnalyzerNupkgFile Include="Analyzer.Utilities\netstandard1.3\Analyzer.Utilities.dll" />
+    
+    <AnalyzerNupkgFile Include="$(MSBuildThisFileDirectory)Microsoft.NetFramework.Analyzers.props" />
+    <AnalyzerNupkgFile Include="$(MSBuildThisFileDirectory)Microsoft.NetFramework.CSharp.Analyzers.props" />
+    <AnalyzerNupkgFile Include="$(MSBuildThisFileDirectory)Microsoft.NetFramework.VisualBasic.Analyzers.props" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Microsoft.NetFramework.Analyzers\Core\Microsoft.NetFramework.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.NetFramework.Analyzers\CSharp\Microsoft.NetFramework.CSharp.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.NetFramework.Analyzers\VisualBasic\Microsoft.NetFramework.VisualBasic.Analyzers.vbproj" />
+  </ItemGroup>
+</Project>

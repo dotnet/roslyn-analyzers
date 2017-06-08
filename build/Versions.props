@@ -1,0 +1,32 @@
+<Project>
+  <PropertyGroup>
+    <VersionBase>2.3.0</VersionBase>
+    <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
+
+    <!-- Roslyn -->
+    <MicrosoftCodeAnalysisVersion>2.3.0-beta3-61807-05</MicrosoftCodeAnalysisVersion>
+    <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
+
+    <!-- CoreFX -->
+    <SystemCollectionsImmutableVersion>1.3.1</SystemCollectionsImmutableVersion>
+    <SystemReflectionMetadataVersion>1.4.2</SystemReflectionMetadataVersion>
+    <MicrosoftVisualBasicVersion>10.1.0</MicrosoftVisualBasicVersion>
+
+    <!-- Toolset -->
+    <RoslynToolsMicrosoftRepoToolsetVersion>1.0.0-alpha19</RoslynToolsMicrosoftRepoToolsetVersion>
+    <RoslynToolsMicrosoftXUnitLoggerVersion>1.0.0-alpha1</RoslynToolsMicrosoftXUnitLoggerVersion>
+    <RoslynToolsMicrosoftSignToolVersion>0.3.2-beta</RoslynToolsMicrosoftSignToolVersion>
+    <VSWhereVersion>1.0.47</VSWhereVersion>
+    <MicroBuildCoreVersion>0.2.0</MicroBuildCoreVersion>
+    <MicroBuildPluginsSwixBuildVersion>1.0.115</MicroBuildPluginsSwixBuildVersion>
+    <MicrosoftNetCompilersVersion>2.3.0-beta2-61719-05</MicrosoftNetCompilersVersion>
+    <MicrosoftVSSDKBuildToolsVersion>15.0.26201</MicrosoftVSSDKBuildToolsVersion>
+    <MicrosoftVSSDKVersion>15.0.26201-alpha</MicrosoftVSSDKVersion>
+
+    <!-- Tests -->
+    <MicrosoftNETTestSdkVersion>15.0.0-preview-20170125-04</MicrosoftNETTestSdkVersion>
+    <XUnitVersion>2.2.0-beta4-build3444</XUnitVersion>
+    <XUnitRunnerVisualStudioVersion>2.2.0-beta4-build1194</XUnitRunnerVisualStudioVersion>
+    <XUnitRunnerConsoleVersion>2.2.0-beta4-build3444</XUnitRunnerConsoleVersion>
+  </PropertyGroup>
+</Project>

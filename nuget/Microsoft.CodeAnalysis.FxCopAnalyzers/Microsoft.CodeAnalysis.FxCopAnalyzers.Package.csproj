@@ -1,0 +1,28 @@
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard1.3</TargetFramework>
+
+    <IsPackable>true</IsPackable>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NuspecPackageId>Microsoft.CodeAnalysis.FxCopAnalyzers</NuspecPackageId>
+    <Description>Microsoft FxCop rules implemented as analyzers using the .NET Compiler Platform ("Roslyn").</Description>
+    <Summary>Microsoft FxCop Analyzers</Summary>
+    <ReleaseNotes>Microsoft FxCop rules implemented as analyzers using the .NET Compiler Platform ("Roslyn").</ReleaseNotes>
+    <PackageTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Diagnostic Analyzers Syntax Semantics</PackageTags>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <AnalyzerNupkgDependency Include="Microsoft.CodeQuality.Analyzers" />
+    <AnalyzerNupkgDependency Include="Microsoft.NetCore.Analyzers" />
+    <AnalyzerNupkgDependency Include="Microsoft.NetFramework.Analyzers" />
+    <AnalyzerNupkgDependency Include="Text.Analyzers" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.Analyzers.Package.csproj" />
+    <ProjectReference Include="..\Microsoft.NetFramework.Analyzers\Microsoft.NetFramework.Analyzers.Package.csproj" />
+    <ProjectReference Include="..\Microsoft.NetCore.Analyzers\Microsoft.NetCore.Analyzers.Package.csproj" />
+    <ProjectReference Include="..\Text.Analyzers\Text.Analyzers.Package.csproj" />
+  </ItemGroup>
+</Project>

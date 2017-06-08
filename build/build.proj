@@ -1,0 +1,26 @@
+<Project DefaultTargets="Build" TreatAsLocalProperty="SolutionPath">
+  <!--
+    Optional parameters:
+      SolutionPath     Path to the solution to build
+      Configuration    Build configuration: "Debug", "Release", etc.
+      CIBuild          "true" if building on CI server
+      Restore          "true" to restore toolset and solution
+      Build            "true" to build solution
+      Test             "true" to run tests
+      Sign             "true" to sign built binaries
+      Pack             "true" to build NuGet packages
+      Properties        List of properties to pass to each build phase ("Name=Value;Name=Value;...")
+  -->
+  <PropertyGroup>
+    <SolutionPath Condition="'$(SolutionPath)' == ''">$(MSBuildThisFileDirectory)..\RoslynAnalyzers.sln</SolutionPath>
+  </PropertyGroup>
+
+  <Import Project="..\Directory.build.props"/>
+  
+  <Target Name="Build">
+    <MSBuild Projects="Toolset.proj" Targets="Restore" Condition="'$(Restore)' == 'true'"/>
+
+    <MSBuild Projects="$(RepoToolsetDir)Build.proj" 
+             Properties="SolutionPath=$(SolutionPath);Configuration=$(Configuration);CIBuild=$(CIBuild);Restore=$(Restore);Build=$(Build);Test=$(Test);Sign=$(Sign);Pack=$(Pack);Properties=$(Properties)" />
+  </Target>
+</Project>

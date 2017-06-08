@@ -1,0 +1,32 @@
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard1.3</TargetFramework>
+
+    <IsPackable>true</IsPackable>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NuspecPackageId>Microsoft.CodeQuality.Analyzers</NuspecPackageId>
+    <Description>CodeQuality Analyzers</Description>
+    <Summary>Microsoft.CodeQuality Analyzers</Summary>
+    <ReleaseNotes>Diagnostic analyzers for the Microsoft .NET Compiler Platform (Roslyn)</ReleaseNotes>
+    <PackageTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Diagnostic Analyzers Syntax Semantics</PackageTags>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <!-- Note that we need to use the binaries from locations where they are signed -->
+    <AnalyzerNupkgFile Include="Microsoft.CodeQuality.Analyzers\netstandard1.3\Microsoft.CodeQuality.Analyzers.dll" />
+    <AnalyzerNupkgFile Include="Microsoft.CodeQuality.CSharp.Analyzers\netstandard1.3\Microsoft.CodeQuality.CSharp.Analyzers.dll" />
+    <AnalyzerNupkgFile Include="Microsoft.CodeQuality.VisualBasic.Analyzers\netstandard1.3\Microsoft.CodeQuality.VisualBasic.Analyzers.dll" />
+    <AnalyzerNupkgFile Include="Analyzer.Utilities\netstandard1.3\Analyzer.Utilities.dll" />
+
+    <AnalyzerNupkgFile Include="$(MSBuildThisFileDirectory)Microsoft.CodeQuality.Analyzers.props" />
+    <AnalyzerNupkgFile Include="$(MSBuildThisFileDirectory)Microsoft.CodeQuality.VisualBasic.Analyzers.props" />
+    <AnalyzerNupkgFile Include="$(MSBuildThisFileDirectory)Microsoft.CodeQuality.CSharp.Analyzers.props" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Microsoft.CodeQuality.Analyzers\Core\Microsoft.CodeQuality.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.CodeQuality.Analyzers\CSharp\Microsoft.CodeQuality.CSharp.Analyzers.csproj" /> 
+    <ProjectReference Include="..\..\src\Microsoft.CodeQuality.Analyzers\VisualBasic\Microsoft.CodeQuality.VisualBasic.Analyzers.vbproj" />
+  </ItemGroup>
+</Project>

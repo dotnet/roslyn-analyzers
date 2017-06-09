@@ -24,7 +24,7 @@ namespace Analyzer.Utilities
                                                         s_localizableMessageFormat,
                                                         DiagnosticCategory.Reliability,
                                                         DiagnosticSeverity.Warning,
-                                                        isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                                                        isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                         description: s_localizableDescription);
 
         protected abstract string AnalyzerPackageName { get; }

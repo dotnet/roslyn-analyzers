@@ -13,15 +13,14 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <!-- Note that we need to use the binaries from locations where they are signed -->
-    <AnalyzerNupkgFile Include="Microsoft.CodeQuality.Analyzers\netstandard1.3\Microsoft.CodeQuality.Analyzers.dll" />
-    <AnalyzerNupkgFile Include="Microsoft.CodeQuality.CSharp.Analyzers\netstandard1.3\Microsoft.CodeQuality.CSharp.Analyzers.dll" />
-    <AnalyzerNupkgFile Include="Microsoft.CodeQuality.VisualBasic.Analyzers\netstandard1.3\Microsoft.CodeQuality.VisualBasic.Analyzers.dll" />
-    <AnalyzerNupkgFile Include="Analyzer.Utilities\netstandard1.3\Analyzer.Utilities.dll" />
+    <AnalyzerNupkgAssembly Include="Microsoft.CodeQuality.Analyzers.dll" />
+    <AnalyzerNupkgAssembly Include="Microsoft.CodeQuality.CSharp.Analyzers.dll" />
+    <AnalyzerNupkgAssembly Include="Microsoft.CodeQuality.VisualBasic.Analyzers.dll" />
+    <AnalyzerNupkgAssembly Include="Analyzer.Utilities.dll" />
 
-    <AnalyzerNupkgFile Include="$(MSBuildThisFileDirectory)Microsoft.CodeQuality.Analyzers.props" />
-    <AnalyzerNupkgFile Include="$(MSBuildThisFileDirectory)Microsoft.CodeQuality.VisualBasic.Analyzers.props" />
-    <AnalyzerNupkgFile Include="$(MSBuildThisFileDirectory)Microsoft.CodeQuality.CSharp.Analyzers.props" />
+    <AnalyzerNupkgFile Include="Microsoft.CodeQuality.Analyzers.props" />
+    <AnalyzerNupkgFile Include="Microsoft.CodeQuality.VisualBasic.Analyzers.props" />
+    <AnalyzerNupkgFile Include="Microsoft.CodeQuality.CSharp.Analyzers.props" />
   </ItemGroup>
   
   <ItemGroup>

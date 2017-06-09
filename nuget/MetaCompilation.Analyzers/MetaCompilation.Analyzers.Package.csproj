@@ -13,8 +13,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <!-- Note that we need to use the binaries from locations where they are signed -->
-    <AnalyzerNupkgFile Include="MetaCompilation.Analyzers\netstandard1.3\MetaCompilation.Analyzers.dll" />
+    <AnalyzerNupkgAssembly Include="MetaCompilation.Analyzers.dll" />
   </ItemGroup>
   
   <ItemGroup>

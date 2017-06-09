@@ -13,14 +13,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Note that we need to use the binaries from locations where they are signed -->
-    <AnalyzerNupkgFile Include="Microsoft.NetCore.Analyzers\netstandard1.3\Microsoft.NetCore.Analyzers.dll" />
-    <AnalyzerNupkgFile Include="Microsoft.NetCore.CSharp.Analyzers\netstandard1.3\Microsoft.NetCore.CSharp.Analyzers.dll" />
-    <AnalyzerNupkgFile Include="Analyzer.Utilities\netstandard1.3\Analyzer.Utilities.dll" />
+    <AnalyzerNupkgAssembly Include="Microsoft.NetCore.Analyzers.dll" />
+    <AnalyzerNupkgAssembly Include="Microsoft.NetCore.CSharp.Analyzers.dll" />
+    <AnalyzerNupkgAssembly Include="Analyzer.Utilities.dll" />
     
-    <AnalyzerNupkgFile Include="$(MSBuildThisFileDirectory)Microsoft.NetCore.CSharp.Analyzers.props" />
-    <AnalyzerNupkgFile Include="$(MSBuildThisFileDirectory)Microsoft.NetCore.VisualBasic.Analyzers.props" />
-    <AnalyzerNupkgFile Include="$(MSBuildThisFileDirectory)Microsoft.NetCore.Analyzers.props" />
+    <AnalyzerNupkgFile Include="Microsoft.NetCore.CSharp.Analyzers.props" />
+    <AnalyzerNupkgFile Include="Microsoft.NetCore.VisualBasic.Analyzers.props" />
+    <AnalyzerNupkgFile Include="Microsoft.NetCore.Analyzers.props" />
   </ItemGroup>
   
   <ItemGroup>

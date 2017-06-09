@@ -1,8 +1,11 @@
 string nuspecFile = Args[0];
 string assetsDir = Args[1];
-var metadataList = Args[2].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-var fileList = Args[3].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-var dependencyList = Args[4].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+string projectDir = Args[2];
+string tfm = Args[3];
+var metadataList = Args[4].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+var fileList = Args[5].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+var assemblyList = Args[6].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+var dependencyList = Args[7].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
 var result = new StringBuilder();
 
@@ -46,7 +49,7 @@ result.AppendLine(@"  <files>");
 
 string FileElement(string file, string target) => $@"    <file src=""{file}"" target=""{target}""/>";
 
-if (fileList.Length > 0)
+if (fileList.Length > 0 || assemblyList.Length > 0)
 {
     const string csName = "CSharp";
     const string vbName = "VisualBasic";
@@ -54,14 +57,13 @@ if (fileList.Length > 0)
     const string vbTarget = @"analyzers\dotnet\vb";
     const string agnosticTarget = @"analyzers\dotnet";
 
-
     var allTargets = new List<string>();
-    if (fileList.Any(file => file.Contains(csName)))
+    if (assemblyList.Any(assembly => assembly.Contains(csName)))
     {
         allTargets.Add(csTarget);
     }
 
-    if (fileList.Any(file => file.Contains(vbName)))
+    if (assemblyList.Any(assembly => assembly.Contains(vbName)))
     {
         allTargets.Add(vbTarget);
     }
@@ -71,19 +73,15 @@ if (fileList.Length > 0)
         allTargets.Add(agnosticTarget);
     }
 
-    foreach (string file in fileList)
+    foreach (string assembly in assemblyList) 
     {
         IEnumerable<string> targets;
 
-        if (Path.GetExtension(file) == ".props")
-        {
-            targets = new[] { "build" };
-        }
-        else if (file.Contains(csName))
+        if (assembly.Contains(csName))
         {
             targets = new[] { csTarget };
         }
-        else if (file.Contains(vbName))
+        else if (assembly.Contains(vbName))
         {
             targets = new[] { vbTarget };
         }
@@ -92,10 +90,17 @@ if (fileList.Length > 0)
             targets = allTargets;
         }
 
+        string path = Path.Combine(Path.GetFileNameWithoutExtension(assembly), tfm, assembly);
+
         foreach (string target in targets)
         {
-            result.AppendLine(FileElement(file, target));
+            result.AppendLine(FileElement(path, target));
         }
+    }
+
+    foreach (string file in fileList)
+    {
+        result.AppendLine(FileElement(Path.Combine(projectDir, file), "build"));
     }
 
     result.AppendLine(FileElement(Path.Combine(assetsDir, "Install.ps1"), "tools"));

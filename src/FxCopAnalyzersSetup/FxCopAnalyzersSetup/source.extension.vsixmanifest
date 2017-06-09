@@ -3,12 +3,15 @@
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
     <Identity Id="4db2d63d-3320-4fbd-bf80-07f8d1500bd3" Version="|%CurrentProject%;GetBuildVersion|" Language="en-US" Publisher="Microsoft"  />
-    <DisplayName>Microsoft.CodeAnalysis.FxCopAnalyzers</DisplayName>
-    <Description xml:space="preserve">FxCop Analyzers for code analysis rules.</Description>
+    <DisplayName>Microsoft Code Analysis 2017</DisplayName>
+    <Description xml:space="preserve">Live code analysis rules and code fixes addressing API design, performance, security, and best practices for C# and Visual Basic.</Description>
+    <MoreInfo>https://go.microsoft.com/fwlink/?linkid=849061</MoreInfo>
+    <License>EULA.rtf</License>
+    <Tags>code analysis; roslyn; analyzer; analyzers; live; fxcop; code quality;</Tags>
   </Metadata>
   <Installation>
-    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0,]" />
-    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[15.0,]" />
+    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.3,]" />
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[15.3,]" />
   </Installation>
   <Dependencies>
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />

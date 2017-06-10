@@ -11,18 +11,4 @@
     <InternalsVisibleTo Include="Microsoft.NetFramework.VisualBasic.Analyzers" />
     <InternalsVisibleTo Include="Microsoft.NetFramework.Analyzers.UnitTests" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="MicrosoftNetFrameworkAnalyzersResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>MicrosoftNetFrameworkAnalyzersResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="MicrosoftNetFrameworkAnalyzersResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MicrosoftNetFrameworkAnalyzersResources.resx</DependentUpon>
-    </Compile>
-	</ItemGroup>
 </Project>

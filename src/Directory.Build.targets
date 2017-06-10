@@ -2,4 +2,13 @@
 <Project>
   <Import Project="$(RepoToolsetDir)Imports.targets" />  
   <Import Project="$(RepoToolsetDir)VisualStudio.targets" Condition="'$(IsVsixProject)' == 'true'"/>
+
+  <!--  
+    Resx files are already included by the SDK. 
+    Update them with GenerateSource property to process them by GenerateResxSource target
+    that generates source code for them.
+  -->
+  <ItemGroup>
+    <EmbeddedResource Update="**\*.resx" GenerateSource="true" />
+  </ItemGroup>
 </Project>

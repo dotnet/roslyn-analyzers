@@ -451,8 +451,7 @@
     <value>Identifier contains type name</value>
   </data>
   <data name="IdentifiersShouldNotContainTypeNamesDescription" xml:space="preserve">
-    <value>
-Names of parameters and members are better used to communicate their meaning than to describe their type, which is expected to be provided by development tools. For names of members, if a data type name must be used, use a language-independent name instead of a language-specific one.</value>
+    <value>Names of parameters and members are better used to communicate their meaning than to describe their type, which is expected to be provided by development tools. For names of members, if a data type name must be used, use a language-independent name instead of a language-specific one.</value>
   </data>
   <data name="IdentifiersShouldNotContainTypeNamesMessage" xml:space="preserve">
     <value>Identifier '{0}' contains type name</value>

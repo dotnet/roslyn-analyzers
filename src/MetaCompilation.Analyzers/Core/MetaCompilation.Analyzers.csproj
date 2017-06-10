@@ -6,17 +6,4 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis" Version="$(MicrosoftCodeAnalysisVersion)" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Update="MetaCompilationResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MetaCompilationResources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="MetaCompilationResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>MetaCompilationResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
 </Project>

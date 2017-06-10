@@ -6,17 +6,4 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis" Version="$(MicrosoftCodeAnalysisVersion)" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Update="AnalyzerUtilitiesResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AnalyzerUtilitiesResources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="AnalyzerUtilitiesResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>AnalyzerUtilitiesResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
 </Project>

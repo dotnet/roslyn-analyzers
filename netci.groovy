@@ -1,39 +1,73 @@
-// Import the utility functionality.
+// Groovy Script: http://www.groovy-lang.org/syntax.html
+// Jenkins DSL: https://github.com/jenkinsci/job-dsl-plugin/wiki
+
 import jobs.generation.Utilities;
 
-// Defines a the new of the repo, used elsewhere in the file
-def project = GithubProject
-def branch = GithubBranchName
+static getJobName(def opsysName, def configName) {
+  return "${opsysName}_${configName}"
+}
 
-// Generate the builds for debug and release, commit and PRJob
-[true, false].each { isPR -> // Defines a closure over true and false, value assigned to isPR
-    ['Debug', 'Release'].each { configuration ->
-        
-        def newJobName = Utilities.getFullJobName(project, "windows_${configuration.toLowerCase()}", isPR)
+static addArchival(def job, def filesToArchive, def filesToExclude) {
+  def doNotFailIfNothingArchived = false
+  def archiveOnlyIfSuccessful = false
 
-        def newJob = job(newJobName) {
-            // This opens the set of build steps that will be run.
-            steps {
-                // Indicates that a batch script should be run with the build string (see above)
-                // Also available is:
-                // shell (for unix scripting)
-                batchFile("""
-SET VS150COMNTOOLS=%ProgramFiles(x86)%\\Microsoft Visual Studio\\2017\\Enterprise\\Common7\\Tools\\
-SET VSSDK150Install=%ProgramFiles(x86)%\\Microsoft Visual Studio\\2017\\Enterprise\\VSSDK\\
-SET VSSDKInstall=%ProgramFiles(x86)%\\Microsoft Visual Studio\\2017\\Enterprise\\VSSDK\\
+  Utilities.addArchival(job, filesToArchive, filesToExclude, doNotFailIfNothingArchived, archiveOnlyIfSuccessful)
+}
 
-cibuild.cmd /${configuration.toLowerCase()}""")
-            }
-        }
-        
-        Utilities.setMachineAffinity(newJob, 'Windows_NT', 'latest-or-auto-dev15-0')
-        Utilities.standardJobSetup(newJob, project, isPR, "*/${branch}")
-        Utilities.addXUnitDotNETResults(newJob, "**/*TestResults.xml")
-        if (isPR) {
-            Utilities.addGithubPRTriggerForBranch(newJob, branch, "Windows ${configuration}")
-        }
-        else {
-            Utilities.addGithubPushTrigger(newJob)
-        }
+static addGithubPRTriggerForBranch(def job, def branchName, def jobName) {
+  def prContext = "prtest/${jobName.replace('_', '/')}"
+  def triggerPhrase = "(?i)^\\s*(@?dotnet-bot\\s+)?(re)?test\\s+(${prContext})(\\s+please)?\\s*\$"
+  def triggerOnPhraseOnly = false
+
+  Utilities.addGithubPRTriggerForBranch(job, branchName, prContext, triggerPhrase, triggerOnPhraseOnly)
+}
+
+static addXUnitDotNETResults(def job, def configName) {
+  def resultFilePattern = "**/artifacts/${configName}/TestResults/*.xml"
+  def skipIfNoTestFiles = false
+    
+  Utilities.addXUnitDotNETResults(job, resultFilePattern, skipIfNoTestFiles)
+}
+
+static addBuildSteps(def job, def projectName, def opsysName, def configName, def isPR) {
+  def buildJobName = getJobName(opsysName, configName)
+  def buildFullJobName = Utilities.getFullJobName(projectName, buildJobName, isPR)
+
+  job.with {
+    steps {
+      batchFile(""".\\CIBuild.cmd -configuration ${configName} -clearCaches""")
     }
+  }
+}
+
+[true, false].each { isPR ->
+  ['windows'].each { opsysName ->
+    ['debug', 'release'].each { configName ->
+      def projectName = GithubProject
+
+      def branchName = GithubBranchName
+
+      def filesToArchive = "**/artifacts/**"
+      def filesToExclude = "**/artifacts/${configName}/obj/**"
+
+      def jobName = getJobName(opsysName, configName)
+      def fullJobName = Utilities.getFullJobName(projectName, jobName, isPR)
+      def myJob = job(fullJobName)
+
+      Utilities.standardJobSetup(myJob, projectName, isPR, "*/${branchName}")
+
+      if (isPR) {
+        addGithubPRTriggerForBranch(myJob, branchName, jobName)
+      } else {
+        Utilities.addGithubPushTrigger(myJob)
+      }
+      
+      addArchival(myJob, filesToArchive, filesToExclude)
+      addXUnitDotNETResults(myJob, configName)
+
+      Utilities.setMachineAffinity(myJob, 'Windows_NT', 'latest-dev15-3-preview1')
+
+      addBuildSteps(myJob, projectName, opsysName, configName, isPR)
+    }
+  }
 }

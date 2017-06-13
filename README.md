@@ -3,12 +3,17 @@
 
 This repository contains a number of [Roslyn](https://github.com/dotnet/roslyn) diagnostic analyzers initially developed to help flesh out the design and implementation of the static analysis APIs. They have been migrated from the main [dotnet/roslyn](https://github.com/dotnet/roslyn) repository in order to continue and speed their further development.
 
-Debug | Release
-------|--------
-[![Build Status](http://dotnet-ci.cloudapp.net/job/dotnet_roslyn-analyzers/job/master/job/windows_debug/badge/icon)](http://dotnet-ci.cloudapp.net/job/dotnet_roslyn-analyzers/job/master/job/windows_debug/) | [![Build Status](http://dotnet-ci.cloudapp.net/job/dotnet_roslyn-analyzers/job/master/job/windows_release/badge/icon)](http://dotnet-ci.cloudapp.net/job/dotnet_roslyn-analyzers/job/master/job/windows_release/)
+Pre-release builds are available on MyGet gallery: https://dotnet.myget.org/Gallery/roslyn-analyzers.
+
+[//]: # (Begin current test results)
+
+|          |Windows Debug|Windows Release|
+|:--------:|:-----------:|:-------------:|
+|**master**|[![Build Status](https://ci.dot.net/job/dotnet_roslyn-analyzers/job/master/job/windows_debug/badge/icon)](https://ci.dot.net/job/dotnet_roslyn-analyzers/job/master/job/windows_debug/)|[![Build Status](https://ci.dot.net/job/dotnet_roslyn-analyzers/job/master/job/windows_release/badge/icon)](https://ci.dot.net/job/dotnet_roslyn-analyzers/job/master/job/windows_release/)|
+
+[//]: # (End current test results)
 
 [![Join the chat at https://gitter.im/dotnet/roslyn](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dotnet/roslyn?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 
 Projects
 ========

@@ -1,0 +1,20 @@
+<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>
+  <Import Project="build\NuGet.props"/>
+  <Import Project="build\Versions.props"/>
+
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    
+    <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\'))</RepoRoot>
+    <SignToolDataPath>$(RepoRoot)build\SignToolData.json</SignToolDataPath>
+    <VersionsPropsPath>$(RepoRoot)build\Versions.props</VersionsPropsPath>
+    <RepoToolsetDir>$(NuGetPackageRoot)RoslynTools.Microsoft.RepoToolset\$(RoslynToolsMicrosoftRepoToolsetVersion)\tools\</RepoToolsetDir>
+    <AssetsDir>$(RepoRoot)assets\</AssetsDir>
+
+    <RepositoryUrl>https://github.com/dotnet/roslyn-analyzers</RepositoryUrl>
+    <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
+
+    <VSSDKTargetPlatformRegRootSuffix>RoslynDev</VSSDKTargetPlatformRegRootSuffix>
+  </PropertyGroup>
+</Project>

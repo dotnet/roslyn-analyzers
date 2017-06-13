@@ -98,7 +98,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Roslyn.Diagnostics.Analyzers.CSharp" />
     <InternalsVisibleTo Include="Roslyn.Diagnostics.Analyzers.VisualBasic" />
-    <InternalsVisibleToTest Include="Roslyn.Diagnostics.Analyzers.UnitTests" />
+    <InternalsVisibleTo Include="Roslyn.Diagnostics.Analyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -1,0 +1,32 @@
+<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>  
+  <PropertyGroup>
+    <NuspecFile>$(IntermediateOutputPath)$(NuspecPackageId).nuspec</NuspecFile>
+    <NuspecBasePath>$(ArtifactsBinDir)</NuspecBasePath>
+  </PropertyGroup>
+
+  <Target Name="GenerateAnalyzerNuspecFile"
+          BeforeTargets="$(PackDependsOn)" 
+          Condition="'@(AnalyzerNupkgFile)' != '' or '@(AnalyzerNupkgAssembly)' != '' or'@(AnalyzerNupkgDependency)' != ''">
+    <PropertyGroup>
+      <PackageId>$(NuspecPackageId)</PackageId>
+    </PropertyGroup>
+    <ItemGroup>
+      <_NuspecMetadata Include="version=$(PackageVersion)" />
+      <_NuspecMetadata Include="id=$(NuspecPackageId)" />
+      <_NuspecMetadata Include="authors=$(Authors)" />
+      <_NuspecMetadata Include="owners=$(Authors)" />
+      <_NuspecMetadata Include="requireLicenseAcceptance=$(PackageRequireLicenseAcceptance)" />
+      <_NuspecMetadata Include="description=$(Description)" />
+      <_NuspecMetadata Include="copyright=$(Copyright)" />
+      <_NuspecMetadata Include="licenseUrl=$(PackageLicenseUrl)" />
+      <_NuspecMetadata Include="projectUrl=$(PackageProjectUrl)" />
+      <_NuspecMetadata Include="iconUrl=$(PackageIconUrl)" />
+      <_NuspecMetadata Include="releaseNotes=$(PackageReleaseNotes)" />
+      <_NuspecMetadata Include="tags=$(PackageTags)" />
+      <_NuspecMetadata Include="serviceable=$(Serviceable)" />
+      <_NuspecMetadata Include="developmentDependency=true" />
+    </ItemGroup>
+    <Exec Command='"$(ToolsetCompilerPackageDir)tools\csi.exe" "$(RepoRoot)build\GenerateAnalyzerNuspec.csx" "$(NuspecFile)" "$(AssetsDir)\" "$(MSBuildProjectDirectory)" "$(TargetFramework)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)"' />
+  </Target>
+</Project>

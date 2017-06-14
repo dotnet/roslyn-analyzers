@@ -32,10 +32,10 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
             s_localizableMessage,
             DiagnosticCategory.Usage,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
-            True,
-            s_localizableDescription,
-            "https://msdn.microsoft.com/en-us/library/ms182357.aspx",
-            WellKnownDiagnosticTags.Telemetry)
+            isEnabledByDefault:=DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            description:=s_localizableDescription,
+            helpLinkUri:="https://msdn.microsoft.com/en-us/library/ms182357.aspx",
+            customTags:=WellKnownDiagnosticTags.Telemetry)
 
         Public Overrides ReadOnly Property SupportedDiagnostics As ImmutableArray(Of DiagnosticDescriptor) = ImmutableArray.Create(Rule)
 

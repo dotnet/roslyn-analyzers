@@ -38,7 +38,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             title,
                                             DiagnosticCategory.Security,
                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                            true,
+                                            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                             description: description,
                                             helpLinkUri: uri,
                                             customTags: WellKnownDiagnosticTags.Telemetry);

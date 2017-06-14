@@ -31,10 +31,10 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                                                         s_localizableMessage,
                                                         DiagnosticCategory.Performance,
                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                        True,
-                                                        s_localizableDescription,
-                                                        "https://msdn.microsoft.com/en-us/library/ms182278.aspx",
-                                                        WellKnownDiagnosticTags.Telemetry)
+                                                        isEnabledByDefault:=DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                                                        description:=s_localizableDescription,
+                                                        helpLinkUri:="https://msdn.microsoft.com/en-us/library/ms182278.aspx",
+                                                        customTags:=WellKnownDiagnosticTags.Telemetry)
 
         Public Overrides ReadOnly Property SupportedDiagnostics As ImmutableArray(Of DiagnosticDescriptor)
             Get

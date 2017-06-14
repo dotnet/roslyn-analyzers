@@ -30,7 +30,7 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                                                         s_localizableMessage,
                                                         DiagnosticCategory.Performance,
                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                        True,
+                                                        DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                         s_localizableDescription,
                                                         "https://msdn.microsoft.com/en-us/library/ms182278.aspx",
                                                         WellKnownDiagnosticTags.Telemetry)

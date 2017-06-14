@@ -30,7 +30,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         // Properties common to all DiagnosticDescriptors for this rule:
         private static readonly string s_category = DiagnosticCategory.Naming;
         private const DiagnosticSeverity Severity = DiagnosticHelpers.DefaultDiagnosticSeverity;
-        private const bool IsEnabledByDefault = true;
         private const string HelpLinkUri = "https://msdn.microsoft.com/en-us/library/ms182248.aspx";
         private static readonly string[] s_customTags = new[] { WellKnownDiagnosticTags.Telemetry };
 
@@ -39,7 +38,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              s_localizableMessageMemberParameter,
                                                                              s_category,
                                                                              Severity,
-                                                                             isEnabledByDefault: IsEnabledByDefault,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
                                                                              customTags: s_customTags);
@@ -48,7 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              s_localizableMessageMember,
                                                                              s_category,
                                                                              Severity,
-                                                                             isEnabledByDefault: IsEnabledByDefault,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
                                                                              customTags: s_customTags);
@@ -57,7 +56,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              s_localizableMessageType,
                                                                              s_category,
                                                                              Severity,
-                                                                             isEnabledByDefault: IsEnabledByDefault,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
                                                                              customTags: s_customTags);
@@ -66,7 +65,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              s_localizableMessageNamespace,
                                                                              s_category,
                                                                              Severity,
-                                                                             isEnabledByDefault: IsEnabledByDefault,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
                                                                              customTags: s_customTags);

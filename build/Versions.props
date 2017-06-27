@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <VersionBase>2.6.0</VersionBase>
+    <VersionBase>2.3.0</VersionBase>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
 
     <!-- Roslyn -->

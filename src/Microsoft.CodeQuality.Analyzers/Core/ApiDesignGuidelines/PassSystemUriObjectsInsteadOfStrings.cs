@@ -91,7 +91,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             public void Analyze(OperationAnalysisContext context, ISymbol owningSymbol)
             {
-                if (context.Operation.IsInvalid)
+                if (context.Operation.IsInvalid(context.Compilation, context.CancellationToken))
                 {
                     // not interested in invalid expression
                     return;

@@ -3,6 +3,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Semantics;
@@ -53,7 +54,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
                 compilationContext.RegisterOperationActionInternal(operationContext =>
                 {
                     var invocation = (IInvocationExpression)operationContext.Operation;
-                    if (invocation.IsInvalid)
+                    if (invocation.IsInvalid(operationContext.Compilation, operationContext.CancellationToken))
                     {
                         return;
                     }

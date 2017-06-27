@@ -3,6 +3,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Semantics;
@@ -79,7 +80,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 compilationStartContext.RegisterOperationActionInternal(operationAnalysisContext =>
                 {
-                    if (operationAnalysisContext.Operation.IsInvalid)
+                    if (operationAnalysisContext.Operation.IsInvalid(operationAnalysisContext.Compilation, operationAnalysisContext.CancellationToken))
                     {
                         return;
                     }

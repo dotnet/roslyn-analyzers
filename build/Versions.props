@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <VersionBase>2.3.0</VersionBase>
-    <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
+    <PreReleaseVersionLabel>beta2</PreReleaseVersionLabel>
 
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>2.3.0-beta3-61807-05</MicrosoftCodeAnalysisVersion>

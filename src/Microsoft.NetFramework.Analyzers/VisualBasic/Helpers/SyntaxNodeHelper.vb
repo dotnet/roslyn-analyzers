@@ -212,7 +212,6 @@ Namespace Microsoft.NetFramework.VisualBasic.Analyzers.Helpers
             End If
 
             ' CA1804: Remove unused locals
-            ' TODO: Remove the below suppression once https://github.com/dotnet/roslyn-analyzers/issues/935 is fixed.
             Dim initializer As ObjectMemberInitializerSyntax = CType(objectCreationNode.Initializer, ObjectMemberInitializerSyntax)
             Return From fieldInitializer In initializer.Initializers
                    Where fieldInitializer.Kind() = SyntaxKind.NamedFieldInitializer

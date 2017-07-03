@@ -24,9 +24,4 @@
     <Rule Id="CA1305" Action="None" />
   </Rules>
 
-  <!-- TODO: Remove the below suppression once https://github.com/dotnet/roslyn/issues/8884 has been fixed. -->
-  <Rules AnalyzerId="Microsoft.Maintainability.Analyzers" RuleNamespace="Microsoft.Maintainability.Analyzers">
-    <!-- ReviewUnusedParameters -->
-    <Rule Id="CA1801" Action="None" />
-  </Rules>
 </RuleSet>

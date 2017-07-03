@@ -2,7 +2,7 @@
 Param(
   [string] $configuration = "Debug",
   [string] $solution = "",
-  [string] $verbosity = "normal",
+  [string] $verbosity = "minimal",
   [switch] $restore,
   [switch] $build,
   [switch] $test,

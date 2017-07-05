@@ -2,16 +2,20 @@
 // Jenkins DSL: https://github.com/jenkinsci/job-dsl-plugin/wiki
 
 import jobs.generation.Utilities;
+import jobs.generation.ArchivalSettings;
 
 static getJobName(def opsysName, def configName) {
   return "${opsysName}_${configName}"
 }
 
 static addArchival(def job, def filesToArchive, def filesToExclude) {
-  def doNotFailIfNothingArchived = false
-  def archiveOnlyIfSuccessful = false
+  def archivalSettings = new ArchivalSettings()
+  archivalSettings.addFiles(filesToArchive)
+  archivalSettings.excludeFiles(filesToExclude)
+  archivalSettings.setFailIfNothingArchived()
+  archivalSettings.setArchiveOnFailure()
 
-  Utilities.addArchival(job, filesToArchive, filesToExclude, doNotFailIfNothingArchived, archiveOnlyIfSuccessful)
+  Utilities.addArchival(job, archivalSettings)
 }
 
 static addGithubPRTriggerForBranch(def job, def branchName, def jobName) {

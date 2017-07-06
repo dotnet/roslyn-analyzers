@@ -24,7 +24,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.Analyzers.Package.csproj" />
-    <ProjectReference Include="..\Microsoft.CodeAnalysis.Analyzers\icrosoft.CodeAnalysis.Analyzers.Package.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.Analyzers\Microsoft.CodeAnalysis.Analyzers.Package.csproj" />
     <ProjectReference Include="..\Microsoft.NetCore.Analyzers\Microsoft.NetCore.Analyzers.Package.csproj" />
     <ProjectReference Include="..\Roslyn.Diagnostics.Analyzers\Roslyn.Diagnostics.Analyzers.Package.csproj" />
   </ItemGroup>

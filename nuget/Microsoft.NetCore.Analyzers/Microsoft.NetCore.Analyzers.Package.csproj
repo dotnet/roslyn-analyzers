@@ -15,6 +15,7 @@
   <ItemGroup>
     <AnalyzerNupkgAssembly Include="Microsoft.NetCore.Analyzers.dll" />
     <AnalyzerNupkgAssembly Include="Microsoft.NetCore.CSharp.Analyzers.dll" />
+    <AnalyzerNupkgAssembly Include="Microsoft.NetCore.VisualBasic.Analyzers.dll" />
     <AnalyzerNupkgAssembly Include="Analyzer.Utilities.dll" />
     
     <AnalyzerNupkgFile Include="Microsoft.NetCore.CSharp.Analyzers.props" />

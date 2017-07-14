@@ -1,0 +1,517 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ru" original="../MicrosoftNetFrameworkAnalyzersResources.resx">
+    <body>
+      <trans-unit id="SpecifyMessageBoxOptionsTitle">
+        <source>Specify MessageBoxOptions</source>
+        <target state="new">Specify MessageBoxOptions</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecifyMessageBoxOptionsDescription">
+        <source>To correctly display a message box for cultures that use a right-to-left reading order, the RightAlign and RtlReading members of the MessageBoxOptions enumeration must be passed to the Show method.</source>
+        <target state="new">To correctly display a message box for cultures that use a right-to-left reading order, the RightAlign and RtlReading members of the MessageBoxOptions enumeration must be passed to the Show method.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecifyMessageBoxOptionsMessage">
+        <source>Specify MessageBoxOptions</source>
+        <target state="new">Specify MessageBoxOptions</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidDuplicateAcceleratorsTitle">
+        <source>Avoid duplicate accelerators</source>
+        <target state="new">Avoid duplicate accelerators</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidDuplicateAcceleratorsDescription">
+        <source>An access key, also known as an accelerator, enables keyboard access to a control by using the ALT key. When multiple controls have duplicate access keys, the behavior of the access key is not well defined.</source>
+        <target state="new">An access key, also known as an accelerator, enables keyboard access to a control by using the ALT key. When multiple controls have duplicate access keys, the behavior of the access key is not well defined.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidDuplicateAcceleratorsMessage">
+        <source>Avoid duplicate accelerators</source>
+        <target state="new">Avoid duplicate accelerators</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetLocaleForDataTypesTitle">
+        <source>Set locale for data types</source>
+        <target state="new">Set locale for data types</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetLocaleForDataTypesDescription">
+        <source>The locale determines culture-specific presentation elements for data, such as formatting that is used for numeric values, currency symbols, and sort order. When you create a DataTable or DataSet, you should explicitly set the locale.</source>
+        <target state="new">The locale determines culture-specific presentation elements for data, such as formatting that is used for numeric values, currency symbols, and sort order. When you create a DataTable or DataSet, you should explicitly set the locale.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetLocaleForDataTypesMessage">
+        <source>Set locale for data types</source>
+        <target state="new">Set locale for data types</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotMarkServicedComponentsWithWebMethodTitle">
+        <source>Do not mark serviced components with WebMethod</source>
+        <target state="new">Do not mark serviced components with WebMethod</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotMarkServicedComponentsWithWebMethodDescription">
+        <source>A method in a type that inherits from System.EnterpriseServices.ServicedComponent is marked by using System.Web.Services.WebMethodAttribute. Because WebMethodAttribute and a ServicedComponent method have conflicting behavior and requirements for context and transaction flow, the behavior of the method will be incorrect in some scenarios.</source>
+        <target state="new">A method in a type that inherits from System.EnterpriseServices.ServicedComponent is marked by using System.Web.Services.WebMethodAttribute. Because WebMethodAttribute and a ServicedComponent method have conflicting behavior and requirements for context and transaction flow, the behavior of the method will be incorrect in some scenarios.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotMarkServicedComponentsWithWebMethodMessage">
+        <source>Do not mark serviced components with WebMethod</source>
+        <target state="new">Do not mark serviced components with WebMethod</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementSerializationConstructorsTitle">
+        <source>Implement serialization constructors</source>
+        <target state="new">Implement serialization constructors</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementSerializationConstructorsDescription">
+        <source>To fix a violation of this rule, implement the serialization constructor. For a sealed class, make the constructor private; otherwise, make it protected.</source>
+        <target state="new">To fix a violation of this rule, implement the serialization constructor. For a sealed class, make the constructor private; otherwise, make it protected.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementSerializationConstructorsMessageCreateMagicConstructor">
+        <source>Add a constructor to {0} with the following signature: 'protected {0}(SerializationInfo info, StreamingContext context)'.</source>
+        <target state="new">Add a constructor to {0} with the following signature: 'protected {0}(SerializationInfo info, StreamingContext context)'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementSerializationConstructorsMessageMakeUnsealedMagicConstructorFamily">
+        <source>Declare the serialization constructor of {0}, an unsealed type, as protected.</source>
+        <target state="new">Declare the serialization constructor of {0}, an unsealed type, as protected.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate">
+        <source>Declare the serialization constructor of {0}, a sealed type, as private.</source>
+        <target state="new">Declare the serialization constructor of {0}, a sealed type, as private.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementSerializationConstructorsCodeActionTitle">
+        <source>Implement Serialization constructor</source>
+        <target state="new">Implement Serialization constructor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkWindowsFormsEntryPointsWithStaThreadTitle">
+        <source>Mark Windows Forms entry points with STAThread</source>
+        <target state="new">Mark Windows Forms entry points with STAThread</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkWindowsFormsEntryPointsWithStaThreadDescription">
+        <source>STAThreadAttribute indicates that the COM threading model for the application is a single-threaded apartment. This attribute must be present on the entry point of any application that uses Windows Forms; if it is omitted, the Windows components might not work correctly.</source>
+        <target state="new">STAThreadAttribute indicates that the COM threading model for the application is a single-threaded apartment. This attribute must be present on the entry point of any application that uses Windows Forms; if it is omitted, the Windows components might not work correctly.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkWindowsFormsEntryPointsWithStaThreadMessage">
+        <source>Mark Windows Forms entry points with STAThread</source>
+        <target state="new">Mark Windows Forms entry points with STAThread</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkAllNonSerializableFieldsTitle">
+        <source>Mark all non-serializable fields</source>
+        <target state="new">Mark all non-serializable fields</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkAllNonSerializableFieldsDescription">
+        <source>An instance field of a type that is not serializable is declared in a type that is serializable.</source>
+        <target state="new">An instance field of a type that is not serializable is declared in a type that is serializable.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkAllNonSerializableFieldsMessage">
+        <source>Field {0} is a member of type {1} which is serializable but is of type {2} which is not serializable</source>
+        <target state="new">Field {0} is a member of type {1} which is serializable but is of type {2} which is not serializable</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CallBaseClassMethodsOnISerializableTypesTitle">
+        <source>Call base class methods on ISerializable types</source>
+        <target state="new">Call base class methods on ISerializable types</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CallBaseClassMethodsOnISerializableTypesDescription">
+        <source>To fix a violation of this rule, call the base type GetObjectData method or serialization constructor from the corresponding derived type method or constructor.</source>
+        <target state="new">To fix a violation of this rule, call the base type GetObjectData method or serialization constructor from the corresponding derived type method or constructor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CallBaseClassMethodsOnISerializableTypesMessage">
+        <source>Call base class methods on ISerializable types</source>
+        <target state="new">Call base class methods on ISerializable types</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkISerializableTypesWithSerializableTitle">
+        <source>Mark ISerializable types with serializable</source>
+        <target state="new">Mark ISerializable types with serializable</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkISerializableTypesWithSerializableDescription">
+        <source>To be recognized by the common language runtime as serializable, types must be marked by using the SerializableAttribute attribute even when the type uses a custom serialization routine through implementation of the ISerializable interface.</source>
+        <target state="new">To be recognized by the common language runtime as serializable, types must be marked by using the SerializableAttribute attribute even when the type uses a custom serialization routine through implementation of the ISerializable interface.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkISerializableTypesWithSerializableMessage">
+        <source>Add [Serializable] to {0} as this type implements ISerializable</source>
+        <target state="new">Add [Serializable] to {0} as this type implements ISerializable</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddSerializableAttributeCodeActionTitle">
+        <source>Add Serializable attribute</source>
+        <target state="new">Add Serializable attribute</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddNonSerializedAttributeCodeActionTitle">
+        <source>Add the 'NonSerialized' attribute to this field.</source>
+        <target state="new">Add the 'NonSerialized' attribute to this field.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementSerializationMethodsCorrectlyTitle">
+        <source>Implement serialization methods correctly</source>
+        <target state="new">Implement serialization methods correctly</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementSerializationMethodsCorrectlyDescription">
+        <source>A method that handles a serialization event does not have the correct signature, return type, or visibility.</source>
+        <target state="new">A method that handles a serialization event does not have the correct signature, return type, or visibility.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageVisibility">
+        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its accessibility to private.</source>
+        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its accessibility to private.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageReturnType">
+        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its return type from {1} to void (Sub in Visual Basic).</source>
+        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its return type from {1} to void (Sub in Visual Basic).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageParameters">
+        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it takes a single parameter of type 'System.Runtime.Serialization.StreamingContext'.</source>
+        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it takes a single parameter of type 'System.Runtime.Serialization.StreamingContext'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageGeneric">
+        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it is no longer generic.</source>
+        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it is no longer generic.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageStatic">
+        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change it from static (Shared in Visual Basic) to an instance method.</source>
+        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change it from static (Shared in Visual Basic) to an instance method.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsTitle">
+        <source>Provide deserialization methods for optional fields</source>
+        <target state="new">Provide deserialization methods for optional fields</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsDescription">
+        <source>A type has a field that is marked by using the System.Runtime.Serialization.OptionalFieldAttribute attribute, and the type does not provide deserialization event handling methods.</source>
+        <target state="new">A type has a field that is marked by using the System.Runtime.Serialization.OptionalFieldAttribute attribute, and the type does not provide deserialization event handling methods.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserialized">
+        <source>Add a 'private void OnDeserialized(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializedAttribute.</source>
+        <target state="new">Add a 'private void OnDeserialized(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializedAttribute.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserializing">
+        <source>Add a 'private void OnDeserializing(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializingAttribute.</source>
+        <target state="new">Add a 'private void OnDeserializing(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializingAttribute.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementISerializableCorrectlyTitle">
+        <source>Implement ISerializable correctly</source>
+        <target state="new">Implement ISerializable correctly</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementISerializableCorrectlyDescription">
+        <source>To fix a violation of this rule, make the GetObjectData method visible and overridable, and make sure that all instance fields are included in the serialization process or explicitly marked by using the NonSerializedAttribute attribute.</source>
+        <target state="new">To fix a violation of this rule, make the GetObjectData method visible and overridable, and make sure that all instance fields are included in the serialization process or explicitly marked by using the NonSerializedAttribute attribute.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementISerializableCorrectlyMessageDefault">
+        <source>Add an implementation of GetObjectData to type {0}.</source>
+        <target state="new">Add an implementation of GetObjectData to type {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementISerializableCorrectlyMessageMakeVisible">
+        <source>Increase the accessibility of {0}.GetObjectData so that it is visible to derived types.</source>
+        <target state="new">Increase the accessibility of {0}.GetObjectData so that it is visible to derived types.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementISerializableCorrectlyMessageMakeOverridable">
+        <source>Make {0}.GetObjectData virtual and overridable.</source>
+        <target state="new">Make {0}.GetObjectData virtual and overridable.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderForDataSetReadXmlTitle">
+        <source>Use XmlReader for DataSet ReadXml</source>
+        <target state="new">Use XmlReader for DataSet ReadXml</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderForDataSetReadXmlDescription">
+        <source>Do not use unsafe overloads of System.Data.DataSet.ReadXml. This API internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</source>
+        <target state="new">Do not use unsafe overloads of System.Data.DataSet.ReadXml. This API internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderForDataSetReadXmlMessage">
+        <source>Use XmlReader for DataSet ReadXml</source>
+        <target state="new">Use XmlReader for DataSet ReadXml</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderForDataSetReadXmlSchemaTitle">
+        <source>Use XmlReader for DataSet ReadXmlSchema</source>
+        <target state="new">Use XmlReader for DataSet ReadXmlSchema</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderForDataSetReadXmlSchemaDescription">
+        <source>Do not use unsafe overloads of System.Data.DataSet.ReadXmlSchema. This API internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</source>
+        <target state="new">Do not use unsafe overloads of System.Data.DataSet.ReadXmlSchema. This API internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderForDataSetReadXmlSchemaMessage">
+        <source>Use XmlReader for DataSet ReadXmlSchema</source>
+        <target state="new">Use XmlReader for DataSet ReadXmlSchema</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReviewDataViewCollectionStringTitle">
+        <source>Review DataView CollectionString</source>
+        <target state="new">Review DataView CollectionString</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReviewDataViewCollectionStringDescription">
+        <source>Review code to insure that usage of System.Data.DataViewManager.DataViewSettingCollectionString input is sanitized to not contain DTD. Enabling DTD processing on the XML reader and using UrlResolver for resolving external XML entities may lead to information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</source>
+        <target state="new">Review code to insure that usage of System.Data.DataViewManager.DataViewSettingCollectionString input is sanitized to not contain DTD. Enabling DTD processing on the XML reader and using UrlResolver for resolving external XML entities may lead to information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReviewDataViewCollectionStringMessage">
+        <source>Review DataView CollectionString</source>
+        <target state="new">Review DataView CollectionString</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderForDataTableReadXmlTitle">
+        <source>Use XmlReader for DataTable ReadXml</source>
+        <target state="new">Use XmlReader for DataTable ReadXml</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderForDataTableReadXmlDescription">
+        <source>Do not use unsafe overloads of System.Data.DataTable.ReadXml. This API internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</source>
+        <target state="new">Do not use unsafe overloads of System.Data.DataTable.ReadXml. This API internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderForDataTableReadXmlMessage">
+        <source>Use XmlReader for DataTable ReadXml</source>
+        <target state="new">Use XmlReader for DataTable ReadXml</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderForDataTableReadXmlSchemaTitle">
+        <source>Use XmlReader for DataTable ReadXmlSchema</source>
+        <target state="new">Use XmlReader for DataTable ReadXmlSchema</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderForDataTableReadXmlSchemaDescription">
+        <source>Checks for usage of an unsafe overload of  System.Data.DataTable.ReadXmlSchema. This API internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</source>
+        <target state="new">Checks for usage of an unsafe overload of  System.Data.DataTable.ReadXmlSchema. This API internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderForDataTableReadXmlSchemaMessage">
+        <source>Use XmlReader for DataTable ReadXmlSchema</source>
+        <target state="new">Use XmlReader for DataTable ReadXmlSchema</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCatchCorruptedStateExceptions">
+        <source>Do Not Catch Corrupted State Exceptions</source>
+        <target state="new">Do Not Catch Corrupted State Exceptions</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCatchCorruptedStateExceptionsDescription">
+        <source>Catching corrupted state exceptions could mask errors (such as access violations), resulting in inconsistent state of execution or making it easier for attackers to compromise system. Instead, catch and handle a more specific set of exception type(s) or re-throw the exception</source>
+        <target state="new">Catching corrupted state exceptions could mask errors (such as access violations), resulting in inconsistent state of execution or making it easier for attackers to compromise system. Instead, catch and handle a more specific set of exception type(s) or re-throw the exception</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCatchCorruptedStateExceptionsMessage">
+        <source>{0} is catching corrupted state exception.</source>
+        <target state="new">{0} is catching corrupted state exception.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseBrokenCryptographicAlgorithms">
+        <source>Do Not Use Broken Cryptographic Algorithms</source>
+        <target state="new">Do Not Use Broken Cryptographic Algorithms</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseBrokenCryptographicAlgorithmsDescription">
+        <source>An attack making it computationally feasible to break this algorithm exists. This allows attackers to break the cryptographic guarantees it is designed to provide. Depending on the type and application of this cryptographic algorithm, this may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA512, SHA384, or SHA256. Replace digital signature uses with RSA with a key length greater than or equal to 2048-bits, or ECDSA with a key length greater than or equal to 256 bits.</source>
+        <target state="new">An attack making it computationally feasible to break this algorithm exists. This allows attackers to break the cryptographic guarantees it is designed to provide. Depending on the type and application of this cryptographic algorithm, this may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA512, SHA384, or SHA256. Replace digital signature uses with RSA with a key length greater than or equal to 2048-bits, or ECDSA with a key length greater than or equal to 256 bits.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseBrokenCryptographicAlgorithmsMessage">
+        <source>{0} uses a broken cryptographic algorithm {1}</source>
+        <target state="new">{0} uses a broken cryptographic algorithm {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWeakCryptographicAlgorithms">
+        <source>Do Not Use Weak Cryptographic Algorithms</source>
+        <target state="new">Do Not Use Weak Cryptographic Algorithms</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWeakCryptographicAlgorithmsDescription">
+        <source>Cryptographic algorithms degrade over time as attacks become for advances to attacker get access to more computation. Depending on the type and application of this cryptographic algorithm, further degradation of the cryptographic strength of it may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA-2 512, SHA-2 384, or SHA-2 256.</source>
+        <target state="new">Cryptographic algorithms degrade over time as attacks become for advances to attacker get access to more computation. Depending on the type and application of this cryptographic algorithm, further degradation of the cryptographic strength of it may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA-2 512, SHA-2 384, or SHA-2 256.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWeakCryptographicAlgorithmsMessage">
+        <source>{0} uses a weak cryptographic algorithm {1}</source>
+        <target state="new">{0} uses a weak cryptographic algorithm {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TypesShouldNotExtendCertainBaseTypesTitle">
+        <source>Types should not extend certain base types</source>
+        <target state="new">Types should not extend certain base types</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TypesShouldNotExtendCertainBaseTypesDescription">
+        <source>An externally visible type extends certain base types. Use one of the alternatives.</source>
+        <target state="new">An externally visible type extends certain base types. Use one of the alternatives.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TypesShouldNotExtendCertainBaseTypesMessageSystemXmlXmlDocument">
+        <source>Change the base type of {0} so that it no longer extends {1}. The preferred design is to decouple the underlying XmlDocument representation from the type's interface by using containment instead of inheritance.</source>
+        <target state="new">Change the base type of {0} so that it no longer extends {1}. The preferred design is to decouple the underlying XmlDocument representation from the type's interface by using containment instead of inheritance.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException">
+        <source>Change the base type of {0} so that it no longer extends {1}. This base exception type does not provide any additional value for framework classes. Extend 'System.Exception' or an existing unsealed exception type instead. Do not create a new exception base type unless there is specific value in enabling the creation of a catch handler for an entire class of exceptions.</source>
+        <target state="new">Change the base type of {0} so that it no longer extends {1}. This base exception type does not provide any additional value for framework classes. Extend 'System.Exception' or an existing unsealed exception type instead. Do not create a new exception base type unless there is specific value in enabling the creation of a catch handler for an entire class of exceptions.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase">
+        <source>Change the base type of {0} from {1} to its generic equivalent 'System.Collections.ObjectModel.Collection'.</source>
+        <target state="new">Change the base type of {0} from {1} to its generic equivalent 'System.Collections.ObjectModel.Collection'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsDictionaryBase">
+        <source>Change the base type of {0} from {1} to its generic equivalent 'System.Collections.ObjectModel.KeyedCollection'.</source>
+        <target state="new">Change the base type of {0} from {1} to its generic equivalent 'System.Collections.ObjectModel.KeyedCollection'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsQueue">
+        <source>Change the base type of {0} from {1} to its generic equivalent 'System.Collections.Generic.Queue'.</source>
+        <target state="new">Change the base type of {0} from {1} to its generic equivalent 'System.Collections.Generic.Queue'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsReadOnlyCollectionBase">
+        <source>Change the base type of {0} from {1} to its generic equivalent 'System.Collections.ObjectModel.ReadOnlyCollection'.</source>
+        <target state="new">Change the base type of {0} from {1} to its generic equivalent 'System.Collections.ObjectModel.ReadOnlyCollection'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsSortedList">
+        <source>Change the base type of {0} from {1} to its generic equivalent 'System.Collections.Generic.SortedList'.</source>
+        <target state="new">Change the base type of {0} from {1} to its generic equivalent 'System.Collections.Generic.SortedList'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsStack">
+        <source>Change the base type of {0} from {1} to its generic equivalent 'System.Collections.Generic.Stack'.</source>
+        <target state="new">Change the base type of {0} from {1} to its generic equivalent 'System.Collections.Generic.Stack'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseInsecureDtdProcessingDescription">
+        <source>Using XmlTextReader.Load(), creating an insecure XmlReaderSettings instance when invoking XmlReader.Create(), setting the InnerXml property of the XmlDocument and enabling DTD processing using XmlUrlResolver insecurely can lead to information disclosure. Replace it with a call to the Load() method overload that takes an XmlReader instance, use XmlReader.Create() to accept XmlReaderSettings arguments or consider explicitly setting secure values. The DataViewSettingCollectionString property of DataViewManager should always be assigned from a trusted source, the DtdProcessing property should be set to false, and the XmlResolver property should be changed to XmlSecureResolver or null. </source>
+        <target state="new">Using XmlTextReader.Load(), creating an insecure XmlReaderSettings instance when invoking XmlReader.Create(), setting the InnerXml property of the XmlDocument and enabling DTD processing using XmlUrlResolver insecurely can lead to information disclosure. Replace it with a call to the Load() method overload that takes an XmlReader instance, use XmlReader.Create() to accept XmlReaderSettings arguments or consider explicitly setting secure values. The DataViewSettingCollectionString property of DataViewManager should always be assigned from a trusted source, the DtdProcessing property should be set to false, and the XmlResolver property should be changed to XmlSecureResolver or null. </target>
+        <note>CA3075</note>CA3075</trans-unit>
+      <trans-unit id="DoNotUseDtdProcessingOverloadsMessage">
+        <source>Unsafe overload of '{0}' method</source>
+        <target state="new">Unsafe overload of '{0}' method</target>
+        <note>CA3075</note>CA3075</trans-unit>
+      <trans-unit id="DoNotUseDtdProcessingOverloads">
+        <source>Insecure DTD Processing</source>
+        <target state="new">Insecure DTD Processing</target>
+        <note>CA3075</note>CA3075</trans-unit>
+      <trans-unit id="DoNotUseSetInnerXmlMessage">
+        <source>Uses the unsafe setter of InnerXml property of System.Xml.XmlDocument.</source>
+        <target state="new">Uses the unsafe setter of InnerXml property of System.Xml.XmlDocument.</target>
+        <note>CA3075</note>CA3075</trans-unit>
+      <trans-unit id="InsecureXmlDtdProcessing">
+        <source>Insecure DTD processing in XML</source>
+        <target state="new">Insecure DTD processing in XML</target>
+        <note>CA3075</note>CA3075</trans-unit>
+      <trans-unit id="ReviewDtdProcessingPropertiesMessage">
+        <source>Property in {0} might be set from an untrusted source.</source>
+        <target state="new">Property in {0} might be set from an untrusted source.</target>
+        <note>CA3075</note>CA3075</trans-unit>
+      <trans-unit id="XmlDocumentWithNoSecureResolverMessage">
+        <source>An XmlDocument instance is created without setting its XmlResolver property to a secure value.</source>
+        <target state="new">An XmlDocument instance is created without setting its XmlResolver property to a secure value.</target>
+        <note>CA3075</note>CA3075</trans-unit>
+      <trans-unit id="XmlReaderCreateInsecureConstructedMessage">
+        <source>An insecure XmlReaderSettings instance is provided to XmlReader.Create method.</source>
+        <target state="new">An insecure XmlReaderSettings instance is provided to XmlReader.Create method.</target>
+        <note>CA3075</note>CA3075</trans-unit>
+      <trans-unit id="XmlReaderCreateInsecureInputMessage">
+        <source>A potentially insecure XmlReaderSettings instance is provided to XmlReader.Create method.</source>
+        <target state="new">A potentially insecure XmlReaderSettings instance is provided to XmlReader.Create method.</target>
+        <note>CA3075</note>CA3075</trans-unit>
+      <trans-unit id="XmlReaderCreateWrongOverloadMessage">
+        <source>An insecure overload of XmlReader.Create which does not accept an XmlReaderSettings argument.</source>
+        <target state="new">An insecure overload of XmlReader.Create which does not accept an XmlReaderSettings argument.</target>
+        <note>CA3075</note>CA3075</trans-unit>
+      <trans-unit id="XmlTextReaderConstructedWithNoSecureResolutionMessage">
+        <source>XmlTextReader instance created with insecure default settings.</source>
+        <target state="new">XmlTextReader instance created with insecure default settings.</target>
+        <note>CA3075</note>CA3075</trans-unit>
+      <trans-unit id="XmlTextReaderSetInsecureResolutionMessage">
+        <source>XmlTextReader instance is set with insecure values.</source>
+        <target state="new">XmlTextReader instance is set with insecure values.</target>
+        <note>CA3075</note>CA3075</trans-unit>
+      <trans-unit id="DoNotUseInsecureDtdProcessingGenericMessage">
+        <source>{0}</source>
+        <target state="new">{0}</target>
+        <note>CA3075</note>CA3075</trans-unit>
+      <trans-unit id="InsecureDtdProcessingInApiDesign">
+        <source>Insecure Processing in API Design, XmlDocument and XmlTextReader</source>
+        <target state="new">Insecure Processing in API Design, XmlDocument and XmlTextReader</target>
+        <note>CA3077</note>CA3077</trans-unit>
+      <trans-unit id="DoNotUseInsecureDtdProcessingInApiDesignDescription">
+        <source>Enabling DTD processing on all instances derived from XmlTextReader or  XmlDocument and using XmlUrlResolver for resolving external XML entities may lead to information disclosure. Ensure to set the XmlResolver property to null, create an instance of XmlSecureResolver when processing untrusted input, or use XmlReader.Create method with a secure XmlReaderSettings argument. Unless you need to enable it, ensure the DtdProcessing property is set to false. </source>
+        <target state="new">Enabling DTD processing on all instances derived from XmlTextReader or  XmlDocument and using XmlUrlResolver for resolving external XML entities may lead to information disclosure. Ensure to set the XmlResolver property to null, create an instance of XmlSecureResolver when processing untrusted input, or use XmlReader.Create method with a secure XmlReaderSettings argument. Unless you need to enable it, ensure the DtdProcessing property is set to false. </target>
+        <note>CA3077</note>CA3077</trans-unit>
+      <trans-unit id="XmlDocumentDerivedClassConstructorNoSecureXmlResolverMessage">
+        <source>Constructor of XmlDocument derived class {0} implicitly uses insecure default value for DTD processing.</source>
+        <target state="new">Constructor of XmlDocument derived class {0} implicitly uses insecure default value for DTD processing.</target>
+        <note>CA3077</note>CA3077</trans-unit>
+      <trans-unit id="XmlDocumentDerivedClassNoConstructorMessage">
+        <source>XmlDocument derived class {0} doesn't explictily define a constructor.</source>
+        <target state="new">XmlDocument derived class {0} doesn't explictily define a constructor.</target>
+        <note>CA3077</note>CA3077</trans-unit>
+      <trans-unit id="XmlDocumentDerivedClassSetInsecureXmlResolverInMethodMessage">
+        <source>Method {0} of XmlDocument derived class sets XmlResolver property to an insecure value.</source>
+        <target state="new">Method {0} of XmlDocument derived class sets XmlResolver property to an insecure value.</target>
+        <note>CA3077</note>CA3077</trans-unit>
+      <trans-unit id="XmlTextReaderDerivedClassConstructorNoSecureSettingsMessage">
+        <source>Constructor of XmlTextReader derived class {0} uses insecure default values for DTD processing.</source>
+        <target state="new">Constructor of XmlTextReader derived class {0} uses insecure default values for DTD processing.</target>
+        <note>CA3077</note>CA3077</trans-unit>
+      <trans-unit id="XmlTextReaderDerivedClassNoConstructorMessage">
+        <source>XmlTextReader derived class {0} doesn't explictily define a constructor.</source>
+        <target state="new">XmlTextReader derived class {0} doesn't explictily define a constructor.</target>
+        <note>CA3077</note>CA3077</trans-unit>
+      <trans-unit id="XmlTextReaderDerivedClassSetInsecureSettingsInMethodMessage">
+        <source>{0} method of XmlTextReader derived class sets XmlResolver and/or DtdProcessing property to insecure value.</source>
+        <target state="new">{0} method of XmlTextReader derived class sets XmlResolver and/or DtdProcessing property to insecure value.</target>
+        <note>CA3077</note>CA3077</trans-unit>
+      <trans-unit id="InsecureXsltScriptProcessingMessage">
+        <source>Insecure XSLT script processing.</source>
+        <target state="new">Insecure XSLT script processing.</target>
+        <note>CA3076</note>CA3076</trans-unit>
+      <trans-unit id="DoNotUseInsecureXSLTScriptExecutionDescription">
+        <source>Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which on an untrusted XSL input may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argurment with null or an XmlSecureResolver instance. This message may be suppressed if the input is known to be from a trusted source and external resource resolution from locations that are not known in advance must be supported.</source>
+        <target state="new">Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which on an untrusted XSL input may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argurment with null or an XmlSecureResolver instance. This message may be suppressed if the input is known to be from a trusted source and external resource resolution from locations that are not known in advance must be supported.</target>
+        <note>CA3076</note>CA3076</trans-unit>
+      <trans-unit id="XslCompiledTransformLoadInsecureConstructedMessage">
+        <source>In {0} an insecure combination of XsltSettings and XmlResolver instances are provided to XslCompiledTransfor.Load as arguments.</source>
+        <target state="new">In {0} an insecure combination of XsltSettings and XmlResolver instances are provided to XslCompiledTransfor.Load as arguments.</target>
+        <note>CA3076</note>CA3076</trans-unit>
+      <trans-unit id="XslCompiledTransformLoadInsecureInputMessage">
+        <source>In {0} an insecure combination of XsltSettings and XmlResolver instances are provided to XslCompiledTransfor.Load as arguments.</source>
+        <target state="new">In {0} an insecure combination of XsltSettings and XmlResolver instances are provided to XslCompiledTransfor.Load as arguments.</target>
+        <note>CA3076</note>CA3076</trans-unit>
+    </body>
+  </file>
+</xliff>

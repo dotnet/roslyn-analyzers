@@ -4,12 +4,17 @@ Param(
   [string] $solution = "",
   [string] $verbosity = "minimal",
   [switch] $restore,
+  [switch] $deployDeps,
   [switch] $build,
+  [switch] $rebuild,
+  [switch] $deploy,
   [switch] $test,
+  [switch] $integrationTest,
   [switch] $sign,
   [switch] $pack,
   [switch] $ci,
-  [switch] $clearCaches
+  [switch] $clearCaches,
+  [Parameter(ValueFromRemainingArguments=$true)][String[]]$properties
 )
 
 set-strictmode -version 2.0
@@ -20,7 +25,7 @@ $ToolsRoot = Join-Path $RepoRoot ".tools"
 $BuildProj = Join-Path $PSScriptRoot "build.proj"
 $DependenciesProps = Join-Path $PSScriptRoot "Versions.props"
 $ArtifactsDir = Join-Path $RepoRoot "artifacts"
-$LogDir = Join-Path $ArtifactsDir "log"
+$LogDir = Join-Path (Join-Path $ArtifactsDir $configuration) "log"
 $TempDir = Join-Path (Join-Path $ArtifactsDir $configuration) "tmp"
 
 function Create-Directory([string[]] $path) {
@@ -58,13 +63,19 @@ function LocateMsbuild {
 function Build {
   $msbuildExe = LocateMsbuild
   
-  $summaryLog = Join-Path $LogDir "Build.log"
-  $warningLog = Join-Path $LogDir "Build.wrn"
-  $errorLog = Join-Path $LogDir "Build.err"
-
+  if ($ci) {
   Create-Directory($logDir)
+    # Microbuild is on 15.1 which doesn't support binary log
+    if ($env:BUILD_BUILDNUMBER -eq "") {
+      $log = "/bl:" + (Join-Path $LogDir "Build.binlog")
+    } else {
+      $log = "/flp1:Summary;Verbosity=diagnostic;Encoding=UTF-8;LogFile=" + (Join-Path $LogDir "Build.log")
+    }
+  } else {
+    $log = ""
+  }
 
-  & $msbuildExe $BuildProj /m /p:Configuration=$configuration /p:SolutionPath=$solution /p:Restore=$restore /p:Build=$build /p:Test=$test /p:Sign=$sign /p:Pack=$pack /p:CIBuild=$ci /v:$verbosity /flp1:Summary`;Verbosity=diagnostic`;Encoding=UTF-8`;LogFile=$summaryLog /flp2:WarningsOnly`;Verbosity=diagnostic`;Encoding=UTF-8`;LogFile=$warningLog /flp3:ErrorsOnly`;Verbosity=diagnostic`;Encoding=UTF-8`;LogFile=$errorLog
+  & $msbuildExe $BuildProj /m /v:$verbosity $log /p:Configuration=$configuration /p:SolutionPath=$solution /p:Restore=$restore /p:DeployDeps=$deployDeps /p:Build=$build /p:Rebuild=$rebuild /p:Deploy=$deploy /p:Test=$test /p:IntegrationTest=$integrationTest /p:Sign=$sign /p:Pack=$pack /p:CIBuild=$ci $properties
 
   if ($lastExitCode -ne 0) {
     throw "Build failed (exit code '$lastExitCode')."

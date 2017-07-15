@@ -1,0 +1,4 @@
+# Automatically request reviews when a pull request changes any owned files
+# More information: https://github.com/blog/2392-introducing-code-owners 
+
+* @dotnet/roslyn-analysis

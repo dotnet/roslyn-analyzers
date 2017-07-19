@@ -10,4 +10,8 @@
   <ItemGroup>
     <EmbeddedResource Update="**\*.resx" GenerateSource="true" />
   </ItemGroup>
+  <PropertyGroup>
+    <PublicSign>true</PublicSign>
+    <DelaySign>false</DelaySign>
+  </PropertyGroup>
 </Project>

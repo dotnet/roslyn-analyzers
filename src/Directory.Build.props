@@ -13,8 +13,6 @@
 
   <!-- Test runner configuration -->
   <ItemGroup>
-    <None Include="$(MSBuildProjectName).xunit.runner.json" Condition="'$(IsUnitTestProject)' == 'true'">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="$(MSBuildThisFileDirectory)Common\Test\App.config" CopyToOutputDirectory="PreserveNewest" Condition="'$(IsUnitTestProject)' == 'true'" />
   </ItemGroup>
 </Project>

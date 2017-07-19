@@ -82,16 +82,43 @@ function Build {
   }
 }
 
-if ($ci) {
-  Create-Directory $TempDir
-  $env:TEMP = $TempDir
-  $env:TMP = $TempDir
+function Stop-Processes() {
+  Write-Host "Killing running build processes..."
+  Get-Process -Name "msbuild" -ErrorAction SilentlyContinue | Stop-Process
+  Get-Process -Name "vbcscompiler" -ErrorAction SilentlyContinue | Stop-Process
 }
 
-# clean nuget packages -- necessary to avoid mismatching versions of swix microbuild build plugin and VSSDK on Jenkins
-$nugetRoot = (Join-Path $env:USERPROFILE ".nuget\packages")
-if ($clearCaches -and (Test-Path $nugetRoot)) {
-  Remove-Item $nugetRoot -Recurse -Force
+function Clear-NuGetCache() {
+  # clean nuget packages -- necessary to avoid mismatching versions of swix microbuild build plugin and VSSDK on Jenkins
+  $nugetRoot = (Join-Path $env:USERPROFILE ".nuget\packages")
+  if (Test-Path $nugetRoot) {
+    Remove-Item $nugetRoot -Recurse -Force
+  }
 }
 
-Build
+try {
+  if ($ci) {
+    Create-Directory $TempDir
+    $env:TEMP = $TempDir
+    $env:TMP = $TempDir
+  }
+
+  if ($clearCaches) {
+    Clear-NuGetCache
+  }
+
+  Build
+  exit 0
+}
+catch {
+  Write-Host $_
+  Write-Host $_.Exception
+  Write-Host $_.ScriptStackTrace
+  exit 1
+}
+finally {
+  Pop-Location
+  if ($ci -and $clearCaches) {
+    Stop-Processes
+  }
+}

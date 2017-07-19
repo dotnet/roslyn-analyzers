@@ -9,9 +9,6 @@
     
     <DefineConstants Condition="'$(USE_INTERNAL_IOPERATION_APIS)' == 'true'">$(DefineConstants),USE_INTERNAL_IOPERATION_APIS,DEFAULT_SEVERITY_SUGGESTION</DefineConstants>
     <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)Analyzers.ruleset</CodeAnalysisRuleSet>
-
-    <PublicSign>true</PublicSign>
-    <DelaySign>false</DelaySign>
   </PropertyGroup>
 
   <!-- Test runner configuration -->

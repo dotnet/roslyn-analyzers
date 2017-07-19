@@ -5,15 +5,18 @@
       <trans-unit id="AnalyzerDescription">
         <source>Type names should be all uppercase.</source>
         <target state="new">Type names should be all uppercase.</target>
-        <note>An optional longer localizable description of the diagnostic.</note>An optional longer localizable description of the diagnostic.</trans-unit>
+        <note>An optional longer localizable description of the diagnostic.</note>
+      </trans-unit>
       <trans-unit id="AnalyzerMessageFormat">
         <source>Type name '{0}' contains lowercase letters</source>
         <target state="new">Type name '{0}' contains lowercase letters</target>
-        <note>The format-able message the diagnostic displays.</note>The format-able message the diagnostic displays.</trans-unit>
+        <note>The format-able message the diagnostic displays.</note>
+      </trans-unit>
       <trans-unit id="AnalyzerTitle">
         <source>Type name contains lowercase letters</source>
         <target state="new">Type name contains lowercase letters</target>
-        <note>The title of the diagnostic.</note>The title of the diagnostic.</trans-unit>
+        <note>The title of the diagnostic.</note>
+      </trans-unit>
     </body>
   </file>
 </xliff>

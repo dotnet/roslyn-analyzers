@@ -6,7 +6,7 @@
   <PropertyGroup>
     <!-- TODO: Remove suppressions of Xunit warnings: https://github.com/dotnet/roslyn-analyzers/issues/1257 -->
     <NoWarn>$(NoWarn);xUnit1004;xUnit2000;xUnit2003;xUnit2004;xUnit2009;xUnit2010;xUnit1013</NoWarn>
-    
+
     <DefineConstants Condition="'$(USE_INTERNAL_IOPERATION_APIS)' == 'true'">$(DefineConstants),USE_INTERNAL_IOPERATION_APIS,DEFAULT_SEVERITY_SUGGESTION</DefineConstants>
     <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>

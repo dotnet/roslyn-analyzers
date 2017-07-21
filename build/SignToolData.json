@@ -50,6 +50,7 @@
       "certificate": "VsixSHA2",
       "strongName": null,
       "values": [
+        "VSSetup/MetaCompilation.Analyzers.Setup.vsix",
         "VSSetup/Microsoft.CodeAnalysis.Analyzers.Setup.vsix",
         "VSSetup/Microsoft.CodeQuality.Analyzers.Setup.vsix",
         "VSSetup/Microsoft.NetCore.Analyzers.Setup.vsix",

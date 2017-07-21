@@ -1,0 +1,21 @@
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>
+  <!--
+     Properties describing the layout of the repo.
+  -->
+  
+  <PropertyGroup>
+    <DotNetRoot>$(RepoRoot).dotnet\</DotNetRoot>
+    <DotNetTool>$(DotNetRoot)dotnet.exe</DotNetTool>
+    <ArtifactsDir>$(RepoRoot)artifacts\</ArtifactsDir>
+    <ArtifactsConfigurationDir>$(ArtifactsDir)$(Configuration)\</ArtifactsConfigurationDir>
+    <ArtifactsBinDir>$(ArtifactsConfigurationDir)bin\</ArtifactsBinDir>
+    <ArtifactsObjDir>$(ArtifactsConfigurationDir)obj\</ArtifactsObjDir>
+    <ArtifactsToolsetDir>$(ArtifactsDir)toolset\</ArtifactsToolsetDir>
+    <ArtifactsTestResultsDir>$(ArtifactsConfigurationDir)TestResults\</ArtifactsTestResultsDir>
+    <PackageOutputPath>$(ArtifactsConfigurationDir)packages\</PackageOutputPath>
+    <VisualStudioSetupOutputPath>$(ArtifactsConfigurationDir)VSSetup\</VisualStudioSetupOutputPath>
+    <VisualStudioSetupInsertionPath>$(VisualStudioSetupOutputPath)Insertion\</VisualStudioSetupInsertionPath>
+    <VisualStudioSetupIntermediateOutputPath>$(ArtifactsConfigurationDir)VSSetup.obj\</VisualStudioSetupIntermediateOutputPath>
+  </PropertyGroup>
+</Project>

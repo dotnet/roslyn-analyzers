@@ -1,0 +1,16 @@
+<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>
+  <!--
+     Properties describing the layout of the repo specific to the current project.
+  -->
+
+  <Import Project="RepoLayout.props"/>
+  
+  <PropertyGroup>
+    <OutDirName Condition="'$(OutDirName)' == ''">$(MSBuildProjectName)</OutDirName>
+    <BaseOutputPath Condition="'$(BaseOutputPath)' == ''">$(ArtifactsBinDir)$(OutDirName)\</BaseOutputPath>
+    <OutputPath>$(BaseOutputPath)</OutputPath>
+    <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)' == ''">$(ArtifactsObjDir)$(OutDirName)\</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
+  </PropertyGroup>
+</Project>

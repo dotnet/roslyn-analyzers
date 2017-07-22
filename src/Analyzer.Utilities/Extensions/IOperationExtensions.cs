@@ -126,7 +126,7 @@ namespace Analyzer.Utilities.Extensions
 
             // if given compilation is wrong, we will throw null ref exception
             var model = compilation.GetSemanticModel(operation.Syntax.SyntaxTree);
-            return model.GetDiagnostics(operation.Syntax.Span, cancellationToken).Any(d => d.Severity == DiagnosticSeverity.Error);
+            return model.GetSyntaxDiagnostics(operation.Syntax.Span, cancellationToken).Any(d => d.Severity == DiagnosticSeverity.Error);
         }
     }
 }

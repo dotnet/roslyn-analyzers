@@ -45,7 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182346.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(CA1810Rule, CA2207Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(CA1810Rule, CA2207Rule) : ImmutableArray<DiagnosticDescriptor>.Empty;
 
         protected abstract bool InitialiesStaticField(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken);
         protected abstract TLanguageKindEnum AssignmentNodeKind { get; }

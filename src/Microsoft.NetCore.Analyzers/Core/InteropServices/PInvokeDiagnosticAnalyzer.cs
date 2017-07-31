@@ -41,7 +41,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182319.aspx",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleCA1401, RuleCA2101);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(RuleCA1401, RuleCA2101) : ImmutableArray.Create(RuleCA2101);
 
         public override void Initialize(AnalysisContext analysisContext)
         {

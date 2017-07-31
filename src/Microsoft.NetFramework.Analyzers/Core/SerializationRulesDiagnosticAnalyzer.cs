@@ -86,7 +86,7 @@ namespace Microsoft.NetFramework.Analyzers
                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182349.aspx",
                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleCA2229, RuleCA2235, RuleCA2237);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(RuleCA2229, RuleCA2235, RuleCA2237) : ImmutableArray.Create(RuleCA2229, RuleCA2237);
 
         public override void Initialize(AnalysisContext analysisContext)
         {

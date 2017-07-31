@@ -69,7 +69,7 @@ namespace Microsoft.NetFramework.Analyzers
                                                                              helpLinkUri: null,     // TODO: add MSDN url
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(VisibilityRule, ReturnTypeRule, ParametersRule, GenericRule, StaticRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(VisibilityRule, ReturnTypeRule, ParametersRule, GenericRule, StaticRule) : ImmutableArray<DiagnosticDescriptor>.Empty;
 
         public override void Initialize(AnalysisContext analysisContext)
         {

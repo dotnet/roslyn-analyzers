@@ -35,7 +35,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private const string SafeNativeMethodsText = "SafeNativeMethods";
         private const string UnsafeNativeMethodsText = "UnsafeNativeMethods";
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(Rule) : ImmutableArray<DiagnosticDescriptor>.Empty;
 
         public override void Initialize(AnalysisContext context)
         {

@@ -38,7 +38,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182156.aspx",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(CA1016Rule, CA1014Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(CA1016Rule, CA1014Rule) : ImmutableArray<DiagnosticDescriptor>.Empty;
 
         public override void Initialize(AnalysisContext analysisContext)
         {

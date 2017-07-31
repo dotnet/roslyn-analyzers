@@ -30,10 +30,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182172.aspx",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(Rule) : ImmutableArray<DiagnosticDescriptor>.Empty;
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            if (!DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX)
+            {
+            }
+
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 

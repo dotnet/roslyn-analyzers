@@ -34,10 +34,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            if (!DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX)
-            {
-            }
-
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 

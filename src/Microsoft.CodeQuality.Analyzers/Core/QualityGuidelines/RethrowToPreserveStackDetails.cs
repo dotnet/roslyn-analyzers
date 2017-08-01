@@ -23,7 +23,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182363.aspx",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(Rule) : ImmutableArray<DiagnosticDescriptor>.Empty;
 
         protected static Diagnostic CreateDiagnostic(SyntaxNode node)
         {

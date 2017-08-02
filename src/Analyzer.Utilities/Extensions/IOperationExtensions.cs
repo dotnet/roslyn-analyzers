@@ -112,21 +112,5 @@ namespace Analyzer.Utilities.Extensions
 
             return DiagnosticHelpers.TryConvertToUInt64(constantValue.Value, constantValueType.SpecialType, out ulong convertedValue) && convertedValue == comparand;
         }
-
-        /// <summary>
-        /// This will check context around the operation has any errors such as syntax or semantic errors
-        /// </summary>
-        public static bool IsInvalid(this IOperation operation, Compilation compilation, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            // once we made sure every operation has Syntax, we will return this condition
-            if (operation.Syntax == null)
-            {
-                return true;
-            }
-
-            // if given compilation is wrong, we will throw null ref exception
-            var model = compilation.GetSemanticModel(operation.Syntax.SyntaxTree);
-            return model.GetSyntaxDiagnostics(operation.Syntax.Span, cancellationToken).Any(d => d.Severity == DiagnosticSeverity.Error);
-        }
     }
 }

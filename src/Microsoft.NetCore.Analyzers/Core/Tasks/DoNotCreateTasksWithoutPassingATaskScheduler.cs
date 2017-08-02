@@ -54,7 +54,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
                 compilationContext.RegisterOperationActionInternal(operationContext =>
                 {
                     var invocation = (IInvocationExpression)operationContext.Operation;
-                    if (invocation.IsInvalid(operationContext.Compilation, operationContext.CancellationToken))
+                    if (invocation.Instance == null)
                     {
                         return;
                     }

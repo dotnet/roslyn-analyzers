@@ -48,7 +48,7 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
                 compilationStartContext.RegisterOperationActionInternal(operationContext =>
                 {
                     var invocation = (IInvocationExpression)operationContext.Operation;
-                    if (invocation.IsInvalid(operationContext.Compilation, operationContext.CancellationToken) ||
+                    if (invocation.Instance == null ||
                         invocation.TargetMethod?.Name != "ToImmutableArray")
                     {
                         return;

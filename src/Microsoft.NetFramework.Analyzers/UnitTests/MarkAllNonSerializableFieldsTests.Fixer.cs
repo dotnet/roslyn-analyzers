@@ -33,6 +33,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             return new CSharpMarkAllNonSerializableFieldsFixer();
         }
 
+#if !USE_INTERNAL_IOPERATION_APIS
         #region CA2235
 
         [Fact]
@@ -238,5 +239,6 @@ codeFixIndex: 1);
         }
 
         #endregion
+#endif
     }
 }

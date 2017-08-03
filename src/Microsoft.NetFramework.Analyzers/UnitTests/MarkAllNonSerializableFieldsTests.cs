@@ -18,6 +18,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             return new SerializationRulesDiagnosticAnalyzer();
         }
 
+#if !USE_INTERNAL_IOPERATION_APIS
         [WorkItem(858655, "DevDiv")]
         #region CA2235
 
@@ -394,5 +395,6 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             return GetBasicResultAt(line, column, SerializationRulesDiagnosticAnalyzer.RuleCA2235Id, string.Format(CA2235Message, fieldName, containerName, typeName));
         }
         #endregion
+#endif
     }
 }

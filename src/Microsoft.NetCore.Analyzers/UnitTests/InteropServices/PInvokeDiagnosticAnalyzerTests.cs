@@ -45,6 +45,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 
         #endregion
 
+#if !USE_INTERNAL_IOPERATION_APIS
         #region CA1401 tests 
 
         [Fact]
@@ -256,6 +257,7 @@ End Class
         }
 
         #endregion
+#endif
 
         #region CA2101 tests 
 

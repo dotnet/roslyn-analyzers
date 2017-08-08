@@ -80,12 +80,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 compilationStartContext.RegisterOperationActionInternal(operationAnalysisContext =>
                 {
-                    if (operationAnalysisContext.Operation.IsInvalid(operationAnalysisContext.Compilation, operationAnalysisContext.CancellationToken))
+                    var invocation = (IInvocationExpression)operationAnalysisContext.Operation;
+                    if (invocation.TargetMethod == null)
                     {
                         return;
                     }
-
-                    var invocation = (IInvocationExpression)operationAnalysisContext.Operation;
                     var method = invocation.TargetMethod;
                     if (method.Equals(toLowerInvariant) ||
                         (method.Equals(toLowerWithCultureInfo) &&

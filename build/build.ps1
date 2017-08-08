@@ -27,6 +27,7 @@ $DependenciesProps = Join-Path $PSScriptRoot "Versions.props"
 $ArtifactsDir = Join-Path $RepoRoot "artifacts"
 $LogDir = Join-Path (Join-Path $ArtifactsDir $configuration) "log"
 $TempDir = Join-Path (Join-Path $ArtifactsDir $configuration) "tmp"
+$NugetConfig = Join-Path $RepoRoot "NuGet.config"
 
 function Create-Directory([string[]] $path) {
   if (!(Test-Path -path $path)) {
@@ -75,7 +76,7 @@ function Build {
     $log = ""
   }
 
-  & $msbuildExe $BuildProj /m /v:$verbosity $log /p:Configuration=$configuration /p:SolutionPath=$solution /p:Restore=$restore /p:DeployDeps=$deployDeps /p:Build=$build /p:Rebuild=$rebuild /p:Deploy=$deploy /p:Test=$test /p:IntegrationTest=$integrationTest /p:Sign=$sign /p:Pack=$pack /p:CIBuild=$ci $properties
+  & $msbuildExe $BuildProj /m /v:$verbosity $log /p:Configuration=$configuration /p:SolutionPath=$solution /p:Restore=$restore /p:DeployDeps=$deployDeps /p:Build=$build /p:Rebuild=$rebuild /p:Deploy=$deploy /p:Test=$test /p:IntegrationTest=$integrationTest /p:Sign=$sign /p:Pack=$pack /p:CIBuild=$ci  /p:RestoreConfigFile=$NugetConfig $properties
 
   if ($lastExitCode -ne 0) {
     throw "Build failed (exit code '$lastExitCode')."

@@ -91,13 +91,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             public void Analyze(OperationAnalysisContext context, ISymbol owningSymbol)
             {
-                if (context.Operation.IsInvalid(context.Compilation, context.CancellationToken))
+                var invocation = (IInvocationExpression)context.Operation;
+                if (invocation.TargetMethod == null)
                 {
-                    // not interested in invalid expression
                     return;
                 }
-
-                var invocation = (IInvocationExpression)context.Operation;
                 var method = invocation.TargetMethod;
 
                 // check basic stuff that FxCop checks. 

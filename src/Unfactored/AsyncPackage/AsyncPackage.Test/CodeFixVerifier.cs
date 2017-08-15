@@ -123,7 +123,7 @@ namespace TestTemplate
 
             // After applying all of the code fixes, compare the resulting string to the inputted one
             var actual = GetStringFromDocument(document);
-            Assert.Equal(newSource, actual);
+            Assert.Equal(newSource.Replace("\r\n", "\n"), actual.Replace("\r\n", "\n"));
         }
     }
 }

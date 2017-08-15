@@ -143,7 +143,7 @@ namespace Test.Utilities
             }
 
             var actualText = GetActualTextForNewDocument(document, newSourceFileName);
-            Assert.Equal(newSource, actualText.ToString());
+            Assert.Equal(newSource.Replace("\r\n", "\n"), actualText.ToString().Replace("\r\n", "\n"));
         }
 
         private sealed class DiagnosticComparer : IEqualityComparer<Diagnostic>

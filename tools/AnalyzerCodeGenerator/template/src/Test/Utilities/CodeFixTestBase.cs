@@ -94,7 +94,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
             var root = newDocument.GetSyntaxRootAsync().Result;
             root = Formatter.Format(root, Formatter.Annotation, newDocument.Project.Solution.Workspace);
             var actual = root.GetText().ToString();
-            Assert.Equal(newSource, actual);
+            Assert.Equal(newSource.Replace("\r\n", "\n"), actual.Replace("\r\n", "\n"));
         }
 
         private static IEnumerable<Diagnostic> GetNewDiagnostics(IEnumerable<Diagnostic> diagnostics, IEnumerable<Diagnostic> newDiagnostics)

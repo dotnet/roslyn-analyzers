@@ -106,11 +106,11 @@ Recommended version of Analyzer Packages
 
 Due to the fact that large number of our analyzers are based on the *not-yet-shipped IOperation APIs* in Roslyn, they are still in beta stage and tied to a specific compiler/Visual Studio version. Once the IOperation API is shipped, we will release a fully supported analyzer package that should work on future compiler versions. Please use the following guidelines when choosing the version of analyzer packages to use on a specific version of Visual Studio/compiler toolset:
 
-1. **Visual Studio 2013 RTW**: Analyzer package **Version 1.0.1**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/1.0.1
-2. **Visual Studio 2013 Update 1**: Analyzer package **Version 1.1.0**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/1.1.0
-3. **Visual Studio 2013 Update 2 and 3**: Analyzer package **Version 1.2.0-beta2**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/1.2.0-beta2
-4. **Visual Studio 2015 RTW (15.0), 15.1 and 15.2**: Analyzer package **Version 2.0.0-beta2**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/2.0.0-beta2
-5.  **Visual Studio 2015 15.3**: Analyzer package **Version 2.3.0-beta1**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/2.3.0-beta1
+1. **Visual Studio 2015 RTW**: Analyzer package **Version 1.0.1**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/1.0.1
+2. **Visual Studio 2015 Update 1**: Analyzer package **Version 1.1.0**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/1.1.0
+3. **Visual Studio 2015 Update 2 and 3**: Analyzer package **Version 1.2.0-beta2**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/1.2.0-beta2
+4. **Visual Studio 2017 RTW (15.0), 15.1 and 15.2**: Analyzer package **Version 2.0.0-beta2**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/2.0.0-beta2
+5.  **Visual Studio 2017 15.3**: Analyzer package **Version 2.3.0-beta1**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/2.3.0-beta1
 
-On Visual Studio 2015 15.3 release, you can also install a custom **Microsoft Code Analysis VSIX** containing these analyzers as a Visual Studio extension for all your managed projects. See details here: https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.MicrosoftCodeAnalysis2017
+On Visual Studio 2017 15.3 release, you can also install a custom **Microsoft Code Analysis VSIX** containing these analyzers as a Visual Studio extension for all your managed projects. See details here: https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.MicrosoftCodeAnalysis2017
 

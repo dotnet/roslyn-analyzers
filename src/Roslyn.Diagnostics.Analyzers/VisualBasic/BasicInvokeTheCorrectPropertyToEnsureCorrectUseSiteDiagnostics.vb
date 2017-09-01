@@ -18,7 +18,7 @@ Namespace Roslyn.Diagnostics.VisualBasic.Analyzers
         Private Shared ReadOnly s_localizableTitle As LocalizableString = New LocalizableResourceString(NameOf(RoslynDiagnosticsAnalyzersResources.InvokeTheCorrectPropertyToEnsureCorrectUseSiteDiagnosticsTitle), RoslynDiagnosticsAnalyzersResources.ResourceManager, GetType(RoslynDiagnosticsAnalyzersResources))
         Private Shared ReadOnly s_localizableMessage As LocalizableString = New LocalizableResourceString(NameOf(RoslynDiagnosticsAnalyzersResources.InvokeTheCorrectPropertyToEnsureCorrectUseSiteDiagnosticsMessage), RoslynDiagnosticsAnalyzersResources.ResourceManager, GetType(RoslynDiagnosticsAnalyzersResources))
 
-        Private Shared ReadOnly s_descriptor As DiagnosticDescriptor = New DiagnosticDescriptor(RoslynDiagnosticIds.UseSiteDiagnosticsCheckerRuleId,
+        Friend Shared ReadOnly Rule As DiagnosticDescriptor = New DiagnosticDescriptor(RoslynDiagnosticIds.UseSiteDiagnosticsCheckerRuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              "Usage",
@@ -50,7 +50,7 @@ Namespace Roslyn.Diagnostics.VisualBasic.Analyzers
 
         Public Overrides ReadOnly Property SupportedDiagnostics As ImmutableArray(Of DiagnosticDescriptor)
             Get
-                Return ImmutableArray.Create(s_descriptor)
+                Return ImmutableArray.Create(Rule)
             End Get
         End Property
 
@@ -70,7 +70,7 @@ Namespace Roslyn.Diagnostics.VisualBasic.Analyzers
                     Dim sym As ISymbol = context.SemanticModel.GetSymbolInfo(identifier, context.CancellationToken).Symbol
                     If sym IsNot Nothing AndAlso sym.Kind = SymbolKind.Property Then
                         If containingTypeName = sym.ContainingType.ToDisplayString() Then
-                            context.ReportDiagnostic(identifier.CreateDiagnostic(s_descriptor, identifier.ToString()))
+                            context.ReportDiagnostic(identifier.CreateDiagnostic(Rule, identifier.ToString()))
                         End If
                     End If
                 End If

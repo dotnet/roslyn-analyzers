@@ -13,8 +13,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     /// <summary>
     /// CA2242: Test for NaN correctly
     /// </summary>
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    // [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)] - See https://github.com/dotnet/roslyn/issues/21448
+#pragma warning disable RS1001 // Missing diagnostic analyzer attribute.
     public sealed class TestForNaNCorrectlyAnalyzer : DiagnosticAnalyzer
+#pragma warning restore RS1001 // Missing diagnostic analyzer attribute.
     {
         internal const string RuleId = "CA2242";
 

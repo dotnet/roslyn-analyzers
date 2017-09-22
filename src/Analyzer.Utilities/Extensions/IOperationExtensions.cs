@@ -112,5 +112,10 @@ namespace Analyzer.Utilities.Extensions
 
             return DiagnosticHelpers.TryConvertToUInt64(constantValue.Value, constantValueType.SpecialType, out ulong convertedValue) && convertedValue == comparand;
         }
+
+        public static ITypeSymbol GetElementType(this IArrayCreationExpression arrayCreation)
+        {
+            return (arrayCreation?.Type as IArrayTypeSymbol)?.ElementType;
+        }
     }
 }

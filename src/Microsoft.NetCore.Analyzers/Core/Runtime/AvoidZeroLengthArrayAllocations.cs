@@ -93,11 +93,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     // pointers can't be used as generic arguments
-                    if (arrayCreationExpression.ElementType.TypeKind != TypeKind.Pointer)
+                    var elementType = arrayCreationExpression.GetElementType();
+                    if (elementType == null)
+                    {
+                        return;
+                    }
+
+                    if (elementType.TypeKind != TypeKind.Pointer)
                     {
                         var arrayType = context.Compilation.GetTypeByMetadataName(ArrayTypeName);
                         IMethodSymbol emptyMethod = (IMethodSymbol)arrayType.GetMembers(ArrayEmptyMethodName).First();
-                        var constructed = emptyMethod.Construct(arrayCreationExpression.ElementType);
+                        var constructed = emptyMethod.Construct(elementType);
 
                         string typeName = constructed.ToDisplayString(ReportFormat);
                         context.ReportDiagnostic(context.Operation.Syntax.CreateDiagnostic(UseArrayEmptyDescriptor, typeName));

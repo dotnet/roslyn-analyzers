@@ -94,8 +94,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     var arrayCreation = paramsArgument.Value as IArrayCreationExpression;
-                    if (arrayCreation == null ||
-                        !object.Equals(arrayCreation.ElementType, formatInfo.Object) ||
+                    var elementType = arrayCreation.GetElementType();
+                    if (elementType == null ||
+                        !object.Equals(elementType, formatInfo.Object) ||
                         arrayCreation.DimensionSizes.Length != 1)
                     {
                         // wrong format

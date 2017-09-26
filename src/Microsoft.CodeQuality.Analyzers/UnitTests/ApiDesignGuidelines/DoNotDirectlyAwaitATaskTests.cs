@@ -18,7 +18,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             return new DoNotDirectlyAwaitATaskAnalyzer();
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CSharpSimpleAwaitTask()
         {
             var code = @"
@@ -36,7 +36,7 @@ public class C
             VerifyCSharp(code, GetCSharpResultAt(9, 15));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void BasicSimpleAwaitTask()
         {
             var code = @"
@@ -52,7 +52,7 @@ End Class
             VerifyBasic(code, GetBasicResultAt(7, 15));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CSharpSimpleAwaitTaskOfT()
         {
             var code = @"
@@ -70,7 +70,7 @@ public class C
             VerifyCSharp(code, GetCSharpResultAt(9, 23));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void BasicSimpleAwaitTaskOfT()
         {
             var code = @"
@@ -86,7 +86,7 @@ End Class
             VerifyBasic(code, GetBasicResultAt(7, 34));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CSharpNoDiagnostic()
         {
             var code = @"
@@ -132,7 +132,7 @@ public class SomeAwaiter : INotifyCompletion
             VerifyCSharp(code, TestValidationMode.AllowCompileErrors);
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void BasicNoDiagnostic()
         {
             var code = @"
@@ -176,7 +176,7 @@ End Class
             VerifyBasic(code, TestValidationMode.AllowCompileErrors);
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CSharpAwaitAwaitTask()
         {
             var code = @"
@@ -200,7 +200,7 @@ public class C
                 GetCSharpResultAt(11, 22));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void BasicAwaitAwaitTask()
         {
             var code = @"
@@ -222,7 +222,7 @@ End Class
                 GetBasicResultAt(9, 22));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CSharpComplexAwaitTask()
         {
             var code = @"
@@ -247,7 +247,7 @@ public class C
                 GetCSharpResultAt(11, 33));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void BasicComplexeAwaitTask()
         {
             var code = @"

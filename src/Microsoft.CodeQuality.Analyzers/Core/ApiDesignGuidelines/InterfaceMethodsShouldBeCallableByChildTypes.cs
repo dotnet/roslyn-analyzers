@@ -74,7 +74,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 if (block.Statements.Length == 0 ||
                     (block.Statements.Length == 1 &&
-                     (block.Statements[0] as IExpressionStatement)?.Expression.Kind == OperationKind.ThrowExpression))
+                     block.Statements[0] is IExpressionStatement exprStatement &&
+                     exprStatement.Expression.Kind == OperationKind.ThrowExpression))
                 {
                     // Empty body OR body that just throws.
                     return true;

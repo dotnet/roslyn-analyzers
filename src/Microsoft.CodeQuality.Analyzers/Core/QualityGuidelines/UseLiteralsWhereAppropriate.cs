@@ -6,7 +6,6 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
@@ -51,16 +50,26 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterOperationActionInternal(saContext =>
+            analysisContext.RegisterOperationBlockActionInternal(blockContext =>
             {
-                var fieldInitializer = saContext.Operation as IFieldInitializer;
+                // For field declarations with multiple symbols sharing same initializer (VB), FxCop reported diagnostic on the last field.
+                // Analyzers currently receive only the first field symbol for such iinitializers, hence we report diagnostic on the first field.
+                // https://github.com/dotnet/roslyn-analyzers/issues/1300 tracks matching FxCop behavior and report it on last field.
+                var field = blockContext.OwningSymbol as IFieldSymbol;
+                if (field == null)
+                {
+                    return;
+                }
 
-                // Diagnostics are reported on the last initialized field to retain the previous FxCop behavior
-                var lastField = fieldInitializer?.InitializedFields.LastOrDefault();
-                var fieldInitializerValue = fieldInitializer?.Value;
-                if (fieldInitializerValue == null || lastField.IsConst ||
-                    lastField.GetResultantVisibility() == SymbolVisibility.Public || !lastField.IsStatic ||
-                    !lastField.IsReadOnly || !fieldInitializerValue.ConstantValue.HasValue)
+                var fieldInitializerValue = blockContext.OperationBlocks.SingleOrDefault();
+                if (fieldInitializerValue == null)
+                {
+                    return;
+                }
+
+                if (fieldInitializerValue == null || field.IsConst ||
+                    field.GetResultantVisibility() == SymbolVisibility.Public || !field.IsStatic ||
+                    !field.IsReadOnly || !fieldInitializerValue.ConstantValue.HasValue)
                 {
                     return;
                 }
@@ -73,14 +82,13 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     if (fieldInitializerValue.Type?.SpecialType == SpecialType.System_String &&
                         ((string)initializerValue).Length == 0)
                     {
-                        saContext.ReportDiagnostic(lastField.CreateDiagnostic(EmptyStringRule, lastField.Name));
+                        blockContext.ReportDiagnostic(field.CreateDiagnostic(EmptyStringRule, field.Name));
                         return;
                     }
 
-                    saContext.ReportDiagnostic(lastField.CreateDiagnostic(DefaultRule, lastField.Name));
+                    blockContext.ReportDiagnostic(field.CreateDiagnostic(DefaultRule, field.Name));
                 }
-            },
-            OperationKind.FieldInitializerAtDeclaration);
+            });
         }
     }
 }

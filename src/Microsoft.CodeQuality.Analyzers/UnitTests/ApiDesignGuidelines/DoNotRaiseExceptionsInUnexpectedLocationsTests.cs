@@ -20,7 +20,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
         #region Property and Event Tests
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void CSharpPropertyNoDiagnostics()
         {
             var code = @"
@@ -42,7 +42,7 @@ class NonPublic
             VerifyCSharp(code);
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void BasicPropertyNoDiagnostics()
         {
             var code = @"
@@ -95,7 +95,7 @@ End Class
             VerifyBasic(code);
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void CSharpPropertyWithInvalidExceptions()
         {
             var code = @"
@@ -115,7 +115,7 @@ public class C
                          GetCSharpAllowedExceptionsResultAt(8, 80, "remove_Event1", "Exception"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void BasicPropertyWithInvalidExceptions()
         {
             var code = @"
@@ -166,7 +166,7 @@ End Class
 
         #region Equals, GetHashCode, Dispose and ToString Tests
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void CSharpEqualsAndGetHashCodeWithExceptions()
         {
             var code = @"
@@ -190,7 +190,7 @@ public class C
                          GetCSharpNoExceptionsResultAt(12, 9, "GetHashCode", "ArgumentException"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void BasicEqualsAndGetHashCodeWithExceptions()
         {
             var code = @"
@@ -211,7 +211,7 @@ End Class
                         GetBasicNoExceptionsResultAt(9, 9, "GetHashCode", "ArgumentException"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void CSharpEqualsAndGetHashCodeNoDiagnostics()
         {
             var code = @"
@@ -233,7 +233,7 @@ public class C
             VerifyCSharp(code);
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void BasicEqualsAndGetHashCodeNoDiagnostics()
         {
             var code = @"
@@ -252,7 +252,7 @@ End Class
             VerifyBasic(code);
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void CSharpIEquatableEqualsWithExceptions()
         {
             var code = @"
@@ -270,7 +270,7 @@ public class C : IEquatable<C>
                          GetCSharpNoExceptionsResultAt(8, 9, "Equals", "Exception"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void BasicIEquatableEqualsExceptions()
         {
             var code = @"
@@ -288,7 +288,7 @@ End Class
                         GetBasicNoExceptionsResultAt(7, 9, "Equals", "Exception"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void CSharpIHashCodeProviderGetHashCode()
         {
             var code = @"
@@ -314,7 +314,7 @@ public class D : IHashCodeProvider
                          GetCSharpAllowedExceptionsResultAt(8, 9, "GetHashCode", "Exception"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void BasicIHashCodeProviderGetHashCode()
         {
             var code = @"
@@ -339,7 +339,7 @@ End Class
                         GetBasicAllowedExceptionsResultAt(7, 9, "GetHashCode", "Exception"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void CSharpIEqualityComparer()
         {
             var code = @"
@@ -362,7 +362,7 @@ public class C : IEqualityComparer<C>
                          GetCSharpAllowedExceptionsResultAt(12, 9, "GetHashCode", "Exception"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void BasicIEqualityComparer()
         {
             var code = @"
@@ -384,7 +384,7 @@ End Class
                         GetBasicAllowedExceptionsResultAt(10, 9, "GetHashCode", "Exception"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void CSharpIDisposable()
         {
             var code = @"
@@ -402,7 +402,7 @@ public class C : IDisposable
                          GetCSharpNoExceptionsResultAt(8, 9, "Dispose", "Exception"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void BasicIDisposable()
         {
             var code = @"
@@ -420,7 +420,7 @@ End Class
                         GetBasicNoExceptionsResultAt(7, 9, "Dispose", "Exception"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void CSharpToStringWithExceptions()
         {
             var code = @"
@@ -439,7 +439,7 @@ public class C
                          GetCSharpNoExceptionsResultAt(8, 9, "ToString", "Exception"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void BasicToStringWithExceptions()
         {
             var code = @"
@@ -459,7 +459,7 @@ End Class
         #endregion
 
         #region Constructor and Destructor tests
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void CSharpStaticConstructorWithExceptions()
         {
             var code = @"
@@ -477,7 +477,7 @@ class NonPublic
                          GetCSharpNoExceptionsResultAt(8, 9, ".cctor", "Exception"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void BasicStaticConstructorWithExceptions()
         {
             var code = @"
@@ -512,7 +512,7 @@ class NonPublic
                          GetCSharpNoExceptionsResultAt(8, 9, "Finalize", "Exception"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void BasicFinalizerWithExceptions()
         {
             var code = @"
@@ -531,7 +531,7 @@ End Class
         #endregion
 
         #region Operator tests
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void CSharpEqualityOperatorWithExceptions()
         {
             var code = @"
@@ -576,7 +576,7 @@ End Class
                         GetBasicNoExceptionsResultAt(9, 9, "op_Inequality", "Exception"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1306")]
         public void CSharpImplicitOperatorWithExceptions()
         {
             var code = @"

@@ -15,8 +15,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     /// <summary>
     /// CA1065: Do not raise exceptions in unexpected locations
     /// </summary>
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    //[DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+#pragma warning disable RS1001 // Missing diagnostic analyzer attribute.
     public sealed class DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer : DiagnosticAnalyzer
+#pragma warning restore RS1001 // Missing diagnostic analyzer attribute.
     {
         internal const string RuleId = "CA1065";
 
@@ -91,21 +93,21 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         return;
                     }
 
-                    // For the interesting methods, register an operation action to catch all
-                    // Throw statements.
-                    operationBlockContext.RegisterOperationActionInternal(operationContext =>
-                    {
-                        IThrowStatement operation = operationContext.Operation as IThrowStatement;
-                        if (operation.ThrownObject?.Type is INamedTypeSymbol type && type.DerivesFrom(exceptionType))
-                        {
-                            // If no exceptions are allowed or if the thrown exceptions is not an allowed one..
-                            if (methodCategory.AllowedExceptions.IsEmpty || !methodCategory.AllowedExceptions.Contains(type))
-                            {
-                                operationContext.ReportDiagnostic(
-                                    operation.Syntax.CreateDiagnostic(methodCategory.Rule, methodSymbol.Name, type.Name));
-                            }
-                        }
-                    }, OperationKind.ThrowStatement);
+                    //// For the interesting methods, register an operation action to catch all
+                    //// Throw statements.
+                    //operationBlockContext.RegisterOperationActionInternal(operationContext =>
+                    //{
+                    //    IThrowStatement operation = operationContext.Operation as IThrowStatement;
+                    //    if (operation.ThrownObject?.Type is INamedTypeSymbol type && type.DerivesFrom(exceptionType))
+                    //    {
+                    //        // If no exceptions are allowed or if the thrown exceptions is not an allowed one..
+                    //        if (methodCategory.AllowedExceptions.IsEmpty || !methodCategory.AllowedExceptions.Contains(type))
+                    //        {
+                    //            operationContext.ReportDiagnostic(
+                    //                operation.Syntax.CreateDiagnostic(methodCategory.Rule, methodSymbol.Name, type.Name));
+                    //        }
+                    //    }
+                    //}, OperationKind.ThrowStatement);
                 });
             });
         }

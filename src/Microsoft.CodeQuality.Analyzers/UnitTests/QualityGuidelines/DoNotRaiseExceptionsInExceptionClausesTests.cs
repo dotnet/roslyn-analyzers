@@ -18,7 +18,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
             return new DoNotRaiseExceptionsInExceptionClausesAnalyzer();
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1305")]
         public void CSharpSimpleCase()
         {
             var code = @"
@@ -52,7 +52,7 @@ public class Test
                 GetCSharpResultAt(22, 13, DoNotRaiseExceptionsInExceptionClausesAnalyzer.Rule));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1305")]
         public void BasicSimpleCase()
         {
             var code = @"
@@ -76,7 +76,7 @@ End Class
                 GetBasicResultAt(13, 13, DoNotRaiseExceptionsInExceptionClausesAnalyzer.Rule));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1305")]
         public void CSharpNestedFinally()
         {
             var code = @"
@@ -115,7 +115,7 @@ public class Test
                 GetCSharpResultAt(25, 13, DoNotRaiseExceptionsInExceptionClausesAnalyzer.Rule));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1305")]
         public void BasicNestedFinally()
         {
             var code = @"

@@ -119,7 +119,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                             operationAnalysisContext.ReportDiagnostic(containingType.CreateDiagnostic(Rule));
                         },
-                        OperationKind.AssignmentExpression);
+                        OperationKind.SimpleAssignmentExpression);
                 });
         }
     }

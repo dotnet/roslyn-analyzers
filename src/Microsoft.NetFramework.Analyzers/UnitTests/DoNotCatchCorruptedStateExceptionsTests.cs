@@ -18,7 +18,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             return new DoNotCatchCorruptedStateExceptionsAnalyzer();
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchExceptionInMethodWithSecurityCriticalAttribute()
         {
             VerifyCSharp(@"
@@ -80,7 +80,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             ");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchExceptionInMethodWithHpcseAttribute()
         {
             // Note this is a change from FxCop's previous behavior since we no longer consider SystemCritical.
@@ -150,7 +150,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
            );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchRethrowExceptionInMethodWithHpcseAndSecurityCriticalAttributes()
         {
             VerifyCSharp(@"
@@ -221,7 +221,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             ");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalAttributes()
         {
             VerifyCSharp(@"
@@ -318,7 +318,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchInMethodWithHpcseAndSecurityCriticalAttributes()
         {
             VerifyCSharp(@"
@@ -392,7 +392,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchsystemExceptionInMethodWithHpcseAndSecurityCriticalAttributes()
         {
             VerifyCSharp(@"
@@ -466,7 +466,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalClassScopeEverythingAttributes()
         {
             VerifyCSharp(@"
@@ -518,7 +518,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalClassAttributes()
         {
             VerifyCSharp(@"
@@ -549,7 +549,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalClassScopeExcplicitAttributes()
         {
             VerifyCSharp(@"
@@ -580,7 +580,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalL1Attributes()
         {
             VerifyCSharp(@"
@@ -612,7 +612,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalL2Attributes()
         {
             VerifyCSharp(@"
@@ -644,7 +644,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchExceptionInNestedClassMethodWithOuterHpcseAndSecurityCriticalScopeEverythingAttributes()
         {
             VerifyCSharp(@"
@@ -678,7 +678,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchExceptionInNestedClassMethodWithInnerHpcseAndSecurityCriticalScopeEverythingAttributes()
         {
             VerifyCSharp(@"
@@ -712,7 +712,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchExceptionInNestedClassMethodwithInnerHpcseAndOuterSecurityCriticalAttributes()
         {
             VerifyCSharp(@"
@@ -746,7 +746,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchExceptionInGetAccessorWithHpcseAttribute()
         {
             VerifyCSharp(@"
@@ -810,7 +810,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchInGetAccessorWithHpcseAttribute()
         {
             VerifyCSharp(@"
@@ -849,7 +849,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchSystemExceptionInGetAccessorWithHpcseAttribute()
         {
             VerifyCSharp(@"
@@ -888,7 +888,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchInSetAccessorWithHpcseAttribute()
         {
             VerifyCSharp(@"
@@ -926,7 +926,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchExceptionInSetAccessorWithHpcseAttribute()
         {
             VerifyCSharp(@"
@@ -991,7 +991,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
            );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchIOExceptionInMethodHpcseAttribute()
         {
             VerifyCSharp(@"
@@ -1028,7 +1028,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchIOExceptionSwallowOtherExceptionInMethodHpcseAttribute()
         {
             VerifyCSharp(@"
@@ -1065,7 +1065,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestSwallowAccessViolationExceptionInMethodHpcseAttribute()
         {
             VerifyCSharpUnsafeCode(@"
@@ -1100,7 +1100,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             }");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestSwallowAccessViolationExceptionThenSwallowOtherExceptionInMethodHpcseAttribute()
         {
             VerifyCSharpUnsafeCode(@"
@@ -1140,7 +1140,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchExceptionThrowNotImplementedExceptionInMethodHpcseAttribute()
         {
             VerifyCSharp(@"
@@ -1219,7 +1219,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchExceptionInnerCatchThrowIOExceptionInMethodHpcseAttribute()
         {
             VerifyCSharp(@"
@@ -1314,7 +1314,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             );
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchGeneralException()
         {
             VerifyCSharp(@"
@@ -1382,7 +1382,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             ");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
         public void CA2153TestCatchInsideLambdaExpression()
         {
             VerifyCSharp(@"

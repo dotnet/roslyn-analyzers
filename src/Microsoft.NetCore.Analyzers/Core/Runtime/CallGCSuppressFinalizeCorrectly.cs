@@ -160,7 +160,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    var parameterSymbol = _semanticModel.GetSymbolInfo(invocationExpression.ArgumentsInEvaluationOrder.Single().Syntax).Symbol as IParameterSymbol;
+                    var parameterSymbol = _semanticModel.GetSymbolInfo(invocationExpression.ArgumentsInEvaluationOrder.Single().Value.Syntax).Symbol as IParameterSymbol;
                     if (parameterSymbol == null || !parameterSymbol.IsThis)
                     {
                         analysisContext.ReportDiagnostic(invocationExpression.Syntax.CreateDiagnostic(

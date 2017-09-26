@@ -13,10 +13,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     /// <summary>
     /// CA2242: Test for NaN correctly
     /// </summary>
-    // [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)] - See https://github.com/dotnet/roslyn/issues/21448
-#pragma warning disable RS1001 // Missing diagnostic analyzer attribute.
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class TestForNaNCorrectlyAnalyzer : DiagnosticAnalyzer
-#pragma warning restore RS1001 // Missing diagnostic analyzer attribute.
     {
         internal const string RuleId = "CA2242";
 
@@ -37,14 +35,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        private readonly BinaryOperationKind[] _comparisonOperators = new[]
+        private readonly BinaryOperatorKind[] _comparisonOperators = new[]
         {
-            BinaryOperationKind.FloatingEquals,
-            BinaryOperationKind.FloatingGreaterThan,
-            BinaryOperationKind.FloatingGreaterThanOrEqual,
-            BinaryOperationKind.FloatingLessThan,
-            BinaryOperationKind.FloatingLessThanOrEqual,
-            BinaryOperationKind.FloatingNotEquals
+            BinaryOperatorKind.Equals,
+            BinaryOperatorKind.GreaterThan,
+            BinaryOperatorKind.GreaterThanOrEqual,
+            BinaryOperatorKind.LessThan,
+            BinaryOperatorKind.LessThanOrEqual,
+            BinaryOperatorKind.NotEquals
         };
 
         public override void Initialize(AnalysisContext analysisContext)
@@ -53,7 +51,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 operationAnalysisContext =>
                 {
                     var binaryOperatorExpression = (IBinaryOperatorExpression)operationAnalysisContext.Operation;
-                    if (!_comparisonOperators.Contains(binaryOperatorExpression.BinaryOperationKind))
+                    if (!_comparisonOperators.Contains(binaryOperatorExpression.OperatorKind))
                     {
                         return;
                     }

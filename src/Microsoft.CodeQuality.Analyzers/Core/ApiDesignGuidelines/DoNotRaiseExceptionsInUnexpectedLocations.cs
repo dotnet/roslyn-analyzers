@@ -95,17 +95,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     // Throw statements.
                     operationBlockContext.RegisterOperationActionInternal(operationContext =>
                     {
-                        IThrowStatement operation = operationContext.Operation as IThrowStatement;
-                        if (operation.ThrownObject?.Type is INamedTypeSymbol type && type.DerivesFrom(exceptionType))
+                        if (operationContext.Operation.Type is INamedTypeSymbol type && type.DerivesFrom(exceptionType))
                         {
                             // If no exceptions are allowed or if the thrown exceptions is not an allowed one..
                             if (methodCategory.AllowedExceptions.IsEmpty || !methodCategory.AllowedExceptions.Contains(type))
                             {
                                 operationContext.ReportDiagnostic(
-                                    operation.Syntax.CreateDiagnostic(methodCategory.Rule, methodSymbol.Name, type.Name));
+                                    operationContext.Operation.Syntax.CreateDiagnostic(methodCategory.Rule, methodSymbol.Name, type.Name));
                             }
                         }
-                    }, OperationKind.ThrowStatement);
+                    }, OperationKind.ThrowExpression);
                 });
             });
         }

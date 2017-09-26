@@ -498,7 +498,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 switch (operation.Kind)
                 {
                     case OperationKind.EmptyStatement:
-                    case OperationKind.LabelStatement:
+                    case OperationKind.LabeledStatement:
                         return true;
                     case OperationKind.BlockStatement:
                         var blockStatement = (IBlockStatement)operation;
@@ -557,9 +557,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return false;
                 }
 
-                var instanceReferenceExpression = (IInstanceReferenceExpression)invocationExpression.Instance;
-                if (instanceReferenceExpression.InstanceReferenceKind != InstanceReferenceKind.Implicit &&
-                    instanceReferenceExpression.InstanceReferenceKind != InstanceReferenceKind.Explicit)
+                if (!_type.Equals(invocationExpression.Instance.Type))
                 {
                     return false;
                 }
@@ -603,19 +601,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
 
                 var conversion = (IConversionExpression)argumentValue;
-                if (conversion.ConversionKind != ConversionKind.Cast && conversion.ConversionKind != ConversionKind.CSharp && conversion.ConversionKind != ConversionKind.Basic)
-                {
-                    return false;
-                }
-
                 if (conversion.Operand == null || conversion.Operand.Kind != OperationKind.InstanceReferenceExpression)
                 {
                     return false;
                 }
 
-                var instanceReferenceExpression = (IInstanceReferenceExpression)conversion.Operand;
-                if (instanceReferenceExpression.InstanceReferenceKind != InstanceReferenceKind.Implicit &&
-                    instanceReferenceExpression.InstanceReferenceKind != InstanceReferenceKind.Explicit)
+                if (!_type.Equals(conversion.Operand.Type))
                 {
                     return false;
                 }

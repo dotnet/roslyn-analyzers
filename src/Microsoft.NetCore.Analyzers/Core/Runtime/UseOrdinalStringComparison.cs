@@ -102,13 +102,21 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static void AnalyzeBinaryExpression(IBinaryOperatorExpression operation, Action<Diagnostic> reportDiagnostic, Func<SyntaxNode, Location> getOperatorTokenLocation)
         {
-            if (operation.BinaryOperationKind == BinaryOperationKind.StringEquals || operation.BinaryOperationKind == BinaryOperationKind.StringNotEquals)
+            if (operation.OperatorKind == BinaryOperatorKind.Equals || operation.OperatorKind == BinaryOperatorKind.NotEquals)
             {
+                // If either of the operands is not of string type, we shouldn't report a diagnostic.
+                if (operation.LeftOperand.Type?.SpecialType != SpecialType.System_String ||
+                    operation.RightOperand.Type?.SpecialType != SpecialType.System_String)
+                {
+                    return;
+                }
+
                 // If either of the operands is null, we shouldn't report a diagnostic.
                 if (operation.LeftOperand.HasNullConstantValue() || operation.RightOperand.HasNullConstantValue())
                 {
                     return;
                 }
+
                 reportDiagnostic(Diagnostic.Create(Rule, getOperatorTokenLocation(operation.Syntax)));
             }
         }

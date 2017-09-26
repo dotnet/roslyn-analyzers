@@ -95,8 +95,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     // Throw statements.
                     operationBlockContext.RegisterOperationActionInternal(operationContext =>
                     {
-                        IOperation thrownObject = operationContext.Operation;
-                        if (thrownObject?.Type is INamedTypeSymbol type && type.DerivesFrom(exceptionType))
+                        if (operationContext.Operation.Type is INamedTypeSymbol type && type.DerivesFrom(exceptionType))
                         {
                             // If no exceptions are allowed or if the thrown exceptions is not an allowed one..
                             if (methodCategory.AllowedExceptions.IsEmpty || !methodCategory.AllowedExceptions.Contains(type))

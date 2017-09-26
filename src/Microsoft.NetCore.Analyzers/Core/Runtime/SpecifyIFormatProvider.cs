@@ -190,11 +190,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     foreach (var index in IformatProviderParameterIndices)
                     {
                         var argument = invocationExpression.ArgumentsInEvaluationOrder[index];
+                        
                         if (argument != null && currentUICultureProperty != null &&
                             installedUICultureProperty != null && currentThreadCurrentUICultureProperty != null)
                         {
                             var semanticModel = oaContext.Compilation.GetSemanticModel(argument.Syntax.SyntaxTree);
-                            var symbol = semanticModel.GetSymbolInfo(argument.Syntax).Symbol;
+
+                            var symbol = semanticModel.GetSymbolInfo(argument.Value.Syntax).Symbol;
 
                             if (symbol != null &&
                                 (symbol.Equals(currentUICultureProperty) ||

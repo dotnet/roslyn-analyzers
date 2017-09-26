@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <VersionBase>2.5.0</VersionBase>
+    <VersionBase>2.6.0</VersionBase>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
 
     <!-- Opt-in RepoToolset tools -->
@@ -12,7 +12,7 @@
     <MicrosoftVSSDKVersion>15.0.26201-alpha</MicrosoftVSSDKVersion>
 
     <!-- Roslyn -->
-    <MicrosoftCodeAnalysisVersion>2.6.0-beta1-61906-06</MicrosoftCodeAnalysisVersion>
+    <MicrosoftCodeAnalysisVersion>2.6.0-beta1-62122-07</MicrosoftCodeAnalysisVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
 
     <!-- CoreFX -->

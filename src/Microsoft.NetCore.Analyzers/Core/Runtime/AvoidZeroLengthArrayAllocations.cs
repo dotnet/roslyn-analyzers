@@ -136,7 +136,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
                 else
                 {
-                    targetSymbol = (parent as IIndexedPropertyReferenceExpression)?.Property;
+                    targetSymbol = (parent as IPropertyReferenceExpression)?.Property;
                 }
             }
 

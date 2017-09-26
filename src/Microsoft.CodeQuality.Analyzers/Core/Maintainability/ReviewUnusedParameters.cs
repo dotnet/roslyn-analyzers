@@ -76,9 +76,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 // cannot have its signature changed, and add it to the list of methods to be excluded from analysis.
                 compilationStartContext.RegisterOperationActionInternal(operationContext =>
                 {
-                    var methodBinding = (IMethodBindingExpression)operationContext.Operation;
+                    var methodBinding = (IMethodReferenceExpression)operationContext.Operation;
                     methodsUsedAsDelegates.Add(methodBinding.Method.OriginalDefinition);
-                }, OperationKind.MethodBindingExpression);
+                }, OperationKind.MethodReferenceExpression);
 
                 compilationStartContext.RegisterOperationBlockStartActionInternal(startOperationBlockContext =>
                 {

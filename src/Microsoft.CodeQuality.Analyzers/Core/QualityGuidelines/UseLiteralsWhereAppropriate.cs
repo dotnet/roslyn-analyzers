@@ -80,7 +80,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     saContext.ReportDiagnostic(lastField.CreateDiagnostic(DefaultRule, lastField.Name));
                 }
             },
-            OperationKind.FieldInitializerAtDeclaration);
+            OperationKind.FieldInitializer);
         }
     }
 }

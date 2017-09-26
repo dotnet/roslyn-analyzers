@@ -88,8 +88,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             var binaryOperation = (IBinaryOperatorExpression)context.Operation;
 
-            if (binaryOperation.BinaryOperationKind != BinaryOperationKind.StringEquals &&
-                binaryOperation.BinaryOperationKind != BinaryOperationKind.StringNotEquals)
+            if (binaryOperation.OperatorKind != BinaryOperatorKind.Equals &&
+                binaryOperation.OperatorKind != BinaryOperatorKind.NotEquals)
+            {
+                return;
+            }
+
+            if (binaryOperation.LeftOperand.Type?.SpecialType != SpecialType.System_String ||
+                binaryOperation.RightOperand.Type?.SpecialType != SpecialType.System_String)
             {
                 return;
             }

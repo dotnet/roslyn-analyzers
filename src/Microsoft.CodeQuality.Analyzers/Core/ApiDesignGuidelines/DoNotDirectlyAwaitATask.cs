@@ -56,10 +56,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             IAwaitExpression awaitExpression = context.Operation as IAwaitExpression;
 
             // Get the type of the expression being awaited and check it's a task type.
-            ITypeSymbol typeOfAwaitedExpression = awaitExpression?.AwaitedValue?.Type;
+            ITypeSymbol typeOfAwaitedExpression = awaitExpression?.Expression?.Type;
             if (typeOfAwaitedExpression != null && taskTypes.Contains(typeOfAwaitedExpression.OriginalDefinition))
             {
-                context.ReportDiagnostic(awaitExpression.AwaitedValue.Syntax.CreateDiagnostic(Rule));
+                context.ReportDiagnostic(awaitExpression.Expression.Syntax.CreateDiagnostic(Rule));
             }
         }
 

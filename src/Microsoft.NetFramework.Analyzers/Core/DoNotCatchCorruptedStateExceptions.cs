@@ -97,7 +97,7 @@ namespace Microsoft.NetFramework.Analyzers
                 _compilationTypes = compilationTypes;
             }
 
-            public override void VisitLambdaExpression(ILambdaExpression operation)
+            public override void VisitAnonymousFunctionExpression(IAnonymousFunctionExpression operation)
             {
                 // for now there doesn't seem to be any way to annotate lambdas with attributes
             }
@@ -111,21 +111,21 @@ namespace Microsoft.NetFramework.Analyzers
 
                 bool seenEmptyThrow = _seenEmptyThrowInCatchClauses.Pop();
 
-                if (IsCaughtTypeTooGeneral(operation.CaughtType) && !seenEmptyThrow)
+                if (IsCaughtTypeTooGeneral(operation.ExceptionType) && !seenEmptyThrow)
                 {
                     CatchAllCatchClausesWithoutEmptyThrow.Add(operation);
                 }
             }
 
-            public override void VisitThrowStatement(IThrowStatement operation)
+            public override void VisitThrowExpression(IThrowExpression operation)
             {
-                if (operation.ThrownObject == null && _seenEmptyThrowInCatchClauses.Count > 0 && !_seenEmptyThrowInCatchClauses.Peek())
+                if (operation.Expression == null && _seenEmptyThrowInCatchClauses.Count > 0 && !_seenEmptyThrowInCatchClauses.Peek())
                 {
                     _seenEmptyThrowInCatchClauses.Pop();
                     _seenEmptyThrowInCatchClauses.Push(true);
                 }
 
-                base.VisitThrowStatement(operation);
+                base.VisitThrowExpression(operation);
             }
 
             private bool IsCaughtTypeTooGeneral(ITypeSymbol caughtType)

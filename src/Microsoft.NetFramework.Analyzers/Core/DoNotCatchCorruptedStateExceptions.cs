@@ -12,10 +12,8 @@ using Microsoft.CodeAnalysis.Semantics;
 
 namespace Microsoft.NetFramework.Analyzers
 {
-    //[DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-#pragma warning disable RS1001 // Missing diagnostic analyzer attribute.
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotCatchCorruptedStateExceptionsAnalyzer : DiagnosticAnalyzer
-#pragma warning restore RS1001 // Missing diagnostic analyzer attribute.
     {
         internal const string RuleId = "CA2153";
 
@@ -40,44 +38,43 @@ namespace Microsoft.NetFramework.Analyzers
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
 
-            //analysisContext.RegisterCompilationStartAction(compilationStartAnalysisContext =>
-            //{
-            //    var compilationTypes = new CompilationSecurityTypes(compilationStartAnalysisContext.Compilation);
-            //    if (compilationTypes.HandleProcessCorruptedStateExceptionsAttribute == null)
-            //    {
-            //        return;
-            //    }
+            analysisContext.RegisterCompilationStartAction(compilationStartAnalysisContext =>
+            {
+                var compilationTypes = new CompilationSecurityTypes(compilationStartAnalysisContext.Compilation);
+                if (compilationTypes.HandleProcessCorruptedStateExceptionsAttribute == null)
+                {
+                    return;
+                }
 
-            //    compilationStartAnalysisContext.RegisterOperationBlockActionInternal(operationBlockAnalysisContext =>
-            //    {
-            //        if (operationBlockAnalysisContext.OwningSymbol.Kind != SymbolKind.Method)
-            //        {
-            //            return;
-            //        }
+                compilationStartAnalysisContext.RegisterOperationBlockActionInternal(operationBlockAnalysisContext =>
+                {
+                    if (operationBlockAnalysisContext.OwningSymbol.Kind != SymbolKind.Method)
+                    {
+                        return;
+                    }
 
-            //        var method = (IMethodSymbol)operationBlockAnalysisContext.OwningSymbol;
+                    var method = (IMethodSymbol)operationBlockAnalysisContext.OwningSymbol;
 
-            //        if (!ContainsHandleProcessCorruptedStateExceptionsAttribute(method, compilationTypes))
-            //        {
-            //            return;
-            //        }
+                    if (!ContainsHandleProcessCorruptedStateExceptionsAttribute(method, compilationTypes))
+                    {
+                        return;
+                    }
 
-            //        foreach (var operation in operationBlockAnalysisContext.OperationBlocks)
-            //        {
-            //            var walker = new EmptyThrowInsideCatchAllWalker(compilationTypes);
-            //            walker.Visit(operation);
+                    foreach (var operation in operationBlockAnalysisContext.OperationBlocks)
+                    {
+                        var walker = new EmptyThrowInsideCatchAllWalker(compilationTypes);
+                        walker.Visit(operation);
 
-            //            foreach (var catchClause in walker.CatchAllCatchClausesWithoutEmptyThrow)
-            //            {
-            //                operationBlockAnalysisContext.ReportDiagnostic(catchClause.Syntax.CreateDiagnostic(Rule,
-            //                    method.ToDisplayString()));
-            //            }
-            //        }
-            //    });
-            //});
+                        foreach (var catchClause in walker.CatchAllCatchClausesWithoutEmptyThrow)
+                        {
+                            operationBlockAnalysisContext.ReportDiagnostic(catchClause.Syntax.CreateDiagnostic(Rule,
+                                method.ToDisplayString()));
+                        }
+                    }
+                });
+            });
         }
 
-    /*
         private bool ContainsHandleProcessCorruptedStateExceptionsAttribute(IMethodSymbol method, CompilationSecurityTypes compilationTypes)
         {
             ImmutableArray<AttributeData> attributes = method.GetAttributes();
@@ -100,7 +97,7 @@ namespace Microsoft.NetFramework.Analyzers
                 _compilationTypes = compilationTypes;
             }
 
-            public override void VisitLambdaExpression(ILambdaExpression operation)
+            public override void VisitAnonymousFunctionExpression(IAnonymousFunctionExpression operation)
             {
                 // for now there doesn't seem to be any way to annotate lambdas with attributes
             }
@@ -114,21 +111,21 @@ namespace Microsoft.NetFramework.Analyzers
 
                 bool seenEmptyThrow = _seenEmptyThrowInCatchClauses.Pop();
 
-                if (IsCaughtTypeTooGeneral(operation.CaughtType) && !seenEmptyThrow)
+                if (IsCaughtTypeTooGeneral(operation.ExceptionType) && !seenEmptyThrow)
                 {
                     CatchAllCatchClausesWithoutEmptyThrow.Add(operation);
                 }
             }
 
-            public override void VisitThrowStatement(IThrowStatement operation)
+            public override void VisitThrowExpression(IThrowExpression operation)
             {
-                if (operation.ThrownObject == null && _seenEmptyThrowInCatchClauses.Count > 0 && !_seenEmptyThrowInCatchClauses.Peek())
+                if (operation.Expression == null && _seenEmptyThrowInCatchClauses.Count > 0 && !_seenEmptyThrowInCatchClauses.Peek())
                 {
                     _seenEmptyThrowInCatchClauses.Pop();
                     _seenEmptyThrowInCatchClauses.Push(true);
                 }
 
-                base.VisitThrowStatement(operation);
+                base.VisitThrowExpression(operation);
             }
 
             private bool IsCaughtTypeTooGeneral(ITypeSymbol caughtType)
@@ -139,6 +136,5 @@ namespace Microsoft.NetFramework.Analyzers
                        caughtType == _compilationTypes.SystemObject;
             }
         }
-    */
-}
+    }
 }

@@ -227,7 +227,7 @@ namespace Microsoft.NetFramework.Analyzers
                 AnalyzeMethodOverloads(context, method, invocationExpression);
             }
 
-            private void AnalyzeMethodOverloads(OperationAnalysisContext context, IMethodSymbol method, IHasArgumentsExpression expression)
+            private void AnalyzeMethodOverloads(OperationAnalysisContext context, IMethodSymbol method, IHasArguments expression)
             {
                 if (method.MatchMethodDerivedByName(_xmlTypes.XmlDocument, SecurityMemberNames.Load) ||                                    //FxCop CA3056
                     method.MatchMethodDerivedByName(_xmlTypes.XmlDocument, SecurityMemberNames.LoadXml) ||                                 //FxCop CA3057

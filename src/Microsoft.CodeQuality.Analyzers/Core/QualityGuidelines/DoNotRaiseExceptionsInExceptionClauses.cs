@@ -54,7 +54,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     var walker = new ThrowInsideFinallyWalker();
                     walker.Visit(block);
 
-                    foreach (var throwStatement in walker.ThrowStatements)
+                    foreach (var throwStatement in walker.ThrowExpressions)
                     {
                         operationBlockContext.ReportDiagnostic(throwStatement.Syntax.CreateDiagnostic(Rule));
                     }
@@ -63,13 +63,13 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         }
 
         /// <summary>
-        /// Walks an IOperation tree to find throw statements inside finally blocks.
+        /// Walks an IOperation tree to find throw expressions inside finally blocks.
         /// </summary>
         private class ThrowInsideFinallyWalker : OperationWalker
         {
             private int _finallyBlockNestingDepth;
 
-            public List<IThrowStatement> ThrowStatements { get; private set; } = new List<IThrowStatement>();
+            public List<IThrowExpression> ThrowExpressions { get; private set; } = new List<IThrowExpression>();
 
             public override void VisitTryStatement(ITryStatement operation)
             {
@@ -80,18 +80,18 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 }
 
                 _finallyBlockNestingDepth++;
-                Visit(operation.FinallyHandler);
+                Visit(operation.Finally);
                 _finallyBlockNestingDepth--;
             }
 
-            public override void VisitThrowStatement(IThrowStatement operation)
+            public override void VisitThrowExpression(IThrowExpression operation)
             {
                 if (_finallyBlockNestingDepth > 0)
                 {
-                    ThrowStatements.Add(operation);
+                    ThrowExpressions.Add(operation);
                 }
 
-                base.VisitThrowStatement(operation);
+                base.VisitThrowExpression(operation);
             }
         }
     }

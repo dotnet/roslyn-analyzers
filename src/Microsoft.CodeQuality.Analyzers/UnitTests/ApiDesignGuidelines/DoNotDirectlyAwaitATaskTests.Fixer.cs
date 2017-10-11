@@ -29,7 +29,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             return new DoNotDirectlyAwaitATaskFixer();
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
+        [Fact]
         public void CSharpSimpleAwaitTask()
         {
             var code = @"
@@ -59,7 +59,7 @@ public class C
             VerifyCSharpFix(code, fixedCode);
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
+        [Fact]
         public void BasicSimpleAwaitTask()
         {
             var code = @"
@@ -86,7 +86,7 @@ End Class
             VerifyBasicFix(code, fixedCode);
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
+        [Fact]
         public void CSharpSimpleAwaitTaskWithTrivia()
         {
             var code = @"
@@ -116,7 +116,7 @@ public class C
             VerifyCSharpFix(code, fixedCode);
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
+        [Fact]
         public void BasicSimpleAwaitTaskWithTrivia()
         {
             var code = @"
@@ -143,7 +143,7 @@ End Class
             VerifyBasicFix(code, fixedCode);
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
+        [Fact]
         public void CSharpAwaitAwaitTask()
         {
             var code = @"
@@ -178,7 +178,7 @@ public class C
             VerifyCSharpFix(code, fixedCode);
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
+        [Fact]
         public void BasicAwaitAwaitTask()
         {
             var code = @"
@@ -208,7 +208,7 @@ End Class
             VerifyBasicFix(code, fixedCode);
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
+        [Fact]
         public void CSharpComplexAwaitTask()
         {
             var code = @"
@@ -246,7 +246,7 @@ public class C
             VerifyCSharpFix(code, fixedCode);
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1303")]
+        [Fact]
         public void BasicComplexeAwaitTask()
         {
             var code = @"

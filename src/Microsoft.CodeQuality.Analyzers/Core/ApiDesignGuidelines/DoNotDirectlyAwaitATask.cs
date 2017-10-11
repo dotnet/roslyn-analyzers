@@ -13,10 +13,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     /// <summary>
     /// CA2007: Do not directly await a Task in libraries. Append ConfigureAwait(false) to the task.
     /// </summary>
-    //[DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-#pragma warning disable RS1001 // Missing diagnostic analyzer attribute.
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotDirectlyAwaitATaskAnalyzer : DiagnosticAnalyzer
-#pragma warning restore RS1001 // Missing diagnostic analyzer attribute.
     {
         internal const string RuleId = "CA2007";
 
@@ -41,29 +39,29 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            //analysisContext.RegisterCompilationStartAction(context =>
-            //{
-            //    ImmutableArray<INamedTypeSymbol> taskTypes = GetTaskTypes(context.Compilation);
-            //    if (taskTypes.Any(t => t == null))
-            //    {
-            //        return;
-            //    }
+            analysisContext.RegisterCompilationStartAction(context =>
+            {
+                ImmutableArray<INamedTypeSymbol> taskTypes = GetTaskTypes(context.Compilation);
+                if (taskTypes.Any(t => t == null))
+                {
+                    return;
+                }
 
-            //    context.RegisterOperationActionInternal(oc => AnalyzeOperation(oc, taskTypes), OperationKind.AwaitExpression);
-            //});
+                context.RegisterOperationActionInternal(oc => AnalyzeOperation(oc, taskTypes), OperationKind.AwaitExpression);
+            });
         }
 
-        //private static void AnalyzeOperation(OperationAnalysisContext context, ImmutableArray<INamedTypeSymbol> taskTypes)
-        //{
-        //    IAwaitExpression awaitExpression = context.Operation as IAwaitExpression;
+        private static void AnalyzeOperation(OperationAnalysisContext context, ImmutableArray<INamedTypeSymbol> taskTypes)
+        {
+            IAwaitExpression awaitExpression = context.Operation as IAwaitExpression;
 
-        //    // Get the type of the expression being awaited and check it's a task type.
-        //    ITypeSymbol typeOfAwaitedExpression = awaitExpression?.AwaitedValue?.Type;
-        //    if (typeOfAwaitedExpression != null && taskTypes.Contains(typeOfAwaitedExpression.OriginalDefinition))
-        //    {
-        //        context.ReportDiagnostic(awaitExpression.AwaitedValue.Syntax.CreateDiagnostic(Rule));
-        //    }
-        //}
+            // Get the type of the expression being awaited and check it's a task type.
+            ITypeSymbol typeOfAwaitedExpression = awaitExpression?.AwaitedValue?.Type;
+            if (typeOfAwaitedExpression != null && taskTypes.Contains(typeOfAwaitedExpression.OriginalDefinition))
+            {
+                context.ReportDiagnostic(awaitExpression.AwaitedValue.Syntax.CreateDiagnostic(Rule));
+            }
+        }
 
         private static ImmutableArray<INamedTypeSymbol> GetTaskTypes(Compilation compilation)
         {

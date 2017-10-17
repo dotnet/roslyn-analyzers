@@ -64,7 +64,6 @@ $DependenciesProps = Join-Path $PSScriptRoot "Versions.props"
 $ArtifactsDir = Join-Path $RepoRoot "artifacts"
 $LogDir = Join-Path (Join-Path $ArtifactsDir $configuration) "log"
 $TempDir = Join-Path (Join-Path $ArtifactsDir $configuration) "tmp"
-$NugetConfig = Join-Path $RepoRoot "NuGet.config"
 
 function Create-Directory([string[]] $path) {
   if (!(Test-Path -path $path)) {
@@ -124,7 +123,7 @@ function Build {
 
   $nodeReuse = !$ci
 
-  & $msbuildExe $BuildProj /m /nologo /clp:Summary /nodeReuse:$nodeReuse /warnaserror /v:$verbosity $logCmd /p:Configuration=$configuration /p:SolutionPath=$solution /p:Restore=$restore /p:DeployDeps=$deployDeps /p:Build=$build /p:Rebuild=$rebuild /p:Deploy=$deploy /p:Test=$test /p:IntegrationTest=$integrationTest /p:Sign=$sign /p:Pack=$pack /p:CIBuild=$ci /p:RestoreConfigFile=$NugetConfig $properties
+  & $msbuildExe $BuildProj /m /nologo /clp:Summary /nodeReuse:$nodeReuse /warnaserror /v:$verbosity $logCmd /p:Configuration=$configuration /p:SolutionPath=$solution /p:Restore=$restore /p:DeployDeps=$deployDeps /p:Build=$build /p:Rebuild=$rebuild /p:Deploy=$deploy /p:Test=$test /p:IntegrationTest=$integrationTest /p:Sign=$sign /p:Pack=$pack /p:CIBuild=$ci $properties
 }
 
 function Stop-Processes() {

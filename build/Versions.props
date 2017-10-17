@@ -5,9 +5,10 @@
 
     <!-- Opt-in RepoToolset tools -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
+    <UsingToolPdbConverter>true</UsingToolPdbConverter>
 
     <!-- Toolset -->
-    <RoslynToolsMicrosoftRepoToolsetVersion>1.0.0-alpha40</RoslynToolsMicrosoftRepoToolsetVersion>
+    <RoslynToolsMicrosoftRepoToolsetVersion>1.0.0-alpha43</RoslynToolsMicrosoftRepoToolsetVersion>
     <VSWhereVersion>2.1.4</VSWhereVersion>
     <MicrosoftVSSDKVersion>15.0.26201-alpha</MicrosoftVSSDKVersion>
 

@@ -15,7 +15,7 @@ namespace Microsoft.NetFramework.Analyzers
     /// <summary>
     /// Secure DTD processing and entity resolution in XML
     /// </summary>
-    //[DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
 #pragma warning disable RS1001 // Missing diagnostic analyzer attribute.
     public sealed class DoNotUseInsecureDtdProcessingAnalyzer : DiagnosticAnalyzer
 #pragma warning restore RS1001 // Missing diagnostic analyzer attribute.
@@ -165,7 +165,6 @@ namespace Microsoft.NetFramework.Analyzers
                     }
                 }
 
-
                 foreach (KeyValuePair<ISymbol, XmlTextReaderEnvironment> p in _xmlTextReaderEnvironments)
                 {
                     XmlTextReaderEnvironment env = p.Value;
@@ -184,7 +183,6 @@ namespace Microsoft.NetFramework.Analyzers
                     }
                 }
             }
-
 
             public void AnalyzeOperation(OperationAnalysisContext context)
             {
@@ -231,7 +229,7 @@ namespace Microsoft.NetFramework.Analyzers
             {
                 if (method.MatchMethodDerivedByName(_xmlTypes.XmlDocument, SecurityMemberNames.Load) ||                                    //FxCop CA3056
                     method.MatchMethodDerivedByName(_xmlTypes.XmlDocument, SecurityMemberNames.LoadXml) ||                                 //FxCop CA3057
-                    method.MatchMethodDerivedByName(_xmlTypes.XPathDocument, WellKnownMemberNames.InstanceConstructorName) ||         //FxCop CA3059
+                    method.MatchMethodDerivedByName(_xmlTypes.XPathDocument, WellKnownMemberNames.InstanceConstructorName) ||              //FxCop CA3059
                     method.MatchMethodDerivedByName(_xmlTypes.XmlSchema, SecurityMemberNames.Read) ||                                      //FxCop CA3060
                     method.MatchMethodDerivedByName(_xmlTypes.DataSet, SecurityMemberNames.ReadXml) ||                                     //FxCop CA3063
                     method.MatchMethodDerivedByName(_xmlTypes.DataSet, SecurityMemberNames.ReadXmlSchema) ||                               //FxCop CA3064
@@ -380,17 +378,13 @@ namespace Microsoft.NetFramework.Analyzers
             {
                 XmlDocumentEnvironment xmlDocumentEnvironment;
 
-                if (variable == null || !_xmlDocumentEnvironments.ContainsKey(variable))
+                if (variable == null || !_xmlDocumentEnvironments.TryGetValue(variable, out xmlDocumentEnvironment))
                 {
                     xmlDocumentEnvironment = new XmlDocumentEnvironment
                     {
                         IsSecureResolver = false,
                         IsXmlResolverSet = false
                     };
-                }
-                else
-                {
-                    xmlDocumentEnvironment = _xmlDocumentEnvironments[variable];
                 }
 
                 xmlDocumentEnvironment.XmlDocumentDefinition = objCreation.Syntax;
@@ -436,30 +430,12 @@ namespace Microsoft.NetFramework.Analyzers
                                 }
                                 else // Non secure resolvers
                                 {
-
-                                    if (operation.Operand is IObjectCreationExpression xmlResolverObjCreated)
-                                    {
-                                        Diagnostic diag = Diagnostic.Create(
-                                            RuleDoNotUseInsecureDtdProcessing,
-                                            prop.Locations[0],
-                                            SecurityDiagnosticHelpers.GetLocalizableResourceString(
-                                                nameof(MicrosoftNetFrameworkAnalyzersResources.XmlDocumentWithNoSecureResolverMessage)
-                                            )
-                                        );
-                                        context.ReportDiagnostic(diag);
-                                    }
-
                                     return;
                                 }
-                            }
-                            else
-                            {
-                                AnalyzeNeverSetProperties(context, prop, prop.Locations[0]);
                             }
                         }
                     }
                 }
-
 
                 xmlDocumentEnvironment.IsSecureResolver = isXmlDocumentSecureResolver;
 
@@ -556,7 +532,7 @@ namespace Microsoft.NetFramework.Analyzers
                     _xmlTextReaderEnvironments[variable] = env;
                 }
                 // if the is not set or set to Parse for a temporary object, report right now.
-                else if (variable == null && !(env.IsDtdProcessingSet && env.IsXmlResolverSet && env.IsDtdProcessingDisabled && env.IsSecureResolver))
+                else if (variable == null && !(env.IsDtdProcessingSet && env.IsDtdProcessingDisabled))
                 {
                     Diagnostic diag = Diagnostic.Create(
                         RuleDoNotUseInsecureDtdProcessing,
@@ -661,9 +637,8 @@ namespace Microsoft.NetFramework.Analyzers
                     context.ReportDiagnostic(diag);
                 }
 
-                if (_xmlDocumentEnvironments.ContainsKey(assignedSymbol))
+                if (_xmlDocumentEnvironments.TryGetValue(assignedSymbol, out XmlDocumentEnvironment xmlDocumentEnv))
                 {
-                    XmlDocumentEnvironment xmlDocumentEnv = _xmlDocumentEnvironments[assignedSymbol];
                     xmlDocumentEnv.IsXmlResolverSet = true;
                     xmlDocumentEnv.IsSecureResolver = isSecureResolver;
                 }
@@ -671,7 +646,6 @@ namespace Microsoft.NetFramework.Analyzers
 
             private void AnalyzeXmlTextReaderProperties(OperationAnalysisContext context, ISymbol assignedSymbol, IAssignmentExpression expression, bool isXmlTextReaderXmlResolverProperty, bool isXmlTextReaderDtdProcessingProperty)
             {
-
                 if (!_xmlTextReaderEnvironments.TryGetValue(assignedSymbol, out XmlTextReaderEnvironment env))
                 {
                     env = new XmlTextReaderEnvironment(_isFrameworkSecure);
@@ -700,7 +674,7 @@ namespace Microsoft.NetFramework.Analyzers
                 {
                     env.IsDtdProcessingDisabled = !SecurityDiagnosticHelpers.IsExpressionEqualsDtdProcessingParse(expression.Value);
                 }
-                else
+                else if (context.Operation?.Parent?.Kind != OperationKind.ObjectOrCollectionInitializerExpression)
                 {
                     // Generate a warning whenever the XmlResolver or DtdProcessing property is set to an insecure value
                     Diagnostic diag = Diagnostic.Create(

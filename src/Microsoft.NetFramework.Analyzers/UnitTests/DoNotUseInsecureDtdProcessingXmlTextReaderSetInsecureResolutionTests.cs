@@ -392,7 +392,7 @@ End Namespace",
             );
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1202")]
+        [Fact]
         public void ConstructXmlTextReaderSetInsecureResolverInInitializerShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
@@ -430,7 +430,7 @@ End Namespace",
             );
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1202")]
+        [Fact]
         public void ConstructXmlTextReaderSetDtdProcessingParseInInitializerShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
@@ -468,7 +468,7 @@ End Namespace",
             );
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1202")]
+        [Fact]
         public void ConstructXmlTextReaderSetBothToInsecureValuesInInitializerShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
@@ -508,7 +508,7 @@ End Namespace",
             );
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1202")]
+        [Fact]
         public void XmlTextReaderDerivedTypeSetInsecureResolverShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
@@ -552,7 +552,7 @@ End Namespace",
             );
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1202")]
+        [Fact]
         public void XmlTextReaderDerivedTypeSetDtdProcessingParseShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
@@ -636,7 +636,7 @@ Namespace TestNamespace
 End Namespace");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1202")]
+        [Fact]
         public void XmlTextReaderCreatedAsTempSetInsecureResolverShouldGenerateDiagnostics()
         {
             VerifyCSharp(@"
@@ -680,7 +680,7 @@ End Namespace
             );
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1202")]
+        [Fact]
         public void XmlTextReaderCreatedAsTempSetDtdProcessingParseShouldGenerateDiagnostics()
         {
             VerifyCSharp(@"

@@ -169,6 +169,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                                 if (methodSymbol.MethodKind == MethodKind.Conversion)
                                 {
+                                    // Do not flag for conversion methods generated for operators.
                                     return;
                                 }
 

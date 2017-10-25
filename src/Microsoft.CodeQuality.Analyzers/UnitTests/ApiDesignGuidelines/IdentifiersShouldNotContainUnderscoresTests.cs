@@ -363,6 +363,26 @@ public struct S
 ");
         }
 
+        [Fact, WorkItem(1319, "https://github.com/dotnet/roslyn-analyzers/issues/1319")]
+        public void CA1707_CustomOperator_CSharp()
+        {
+            VerifyCSharp(@"
+public class Span
+{
+    public static implicit operator Span(string text) => new Span(text);
+    public static explicit operator string(Span span) => span.GetText();
+    private string _text;
+
+    public Span(string text)
+    {
+        this._text = text;
+    }
+
+    public string GetText() => _text;
+}
+");
+        }
+
         #endregion
 
         #region Visual Basic Tests
@@ -736,6 +756,31 @@ Public Structure S
 		Return Not (left = right)
 	End Operator
 End Structure
+");
+        }
+
+        [Fact, WorkItem(1319, "https://github.com/dotnet/roslyn-analyzers/issues/1319")]
+        public void CA1707_CustomOperator_VisualBasic()
+        {
+            VerifyBasic(@"
+Public Class Span
+    Public Shared Narrowing Operator CType(ByVal text As String) As Span
+        Return New Span(text)
+    End Operator
+
+    Public Shared Widening Operator CType(ByVal span As Span) As String
+        Return span.GetText()
+    End Operator
+
+    Private _text As String
+    Public Sub New(ByVal text)
+        _text = text
+    End Sub
+
+    Public Function GetText() As String
+        Return _text
+    End Function
+End Class
 ");
         }
 

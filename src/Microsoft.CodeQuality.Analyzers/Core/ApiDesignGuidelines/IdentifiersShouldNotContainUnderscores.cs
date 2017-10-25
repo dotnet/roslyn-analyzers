@@ -167,6 +167,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                     return;
                                 }
 
+                                if (methodSymbol.MethodKind == MethodKind.Conversion)
+                                {
+                                    return;
+                                }
+
                                 AnalyzeParameters(symbolAnalysisContext, methodSymbol.Parameters);
                                 AnalyzeTypeParameters(symbolAnalysisContext, methodSymbol.TypeParameters);
                             }

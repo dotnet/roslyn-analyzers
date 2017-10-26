@@ -14,6 +14,6 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpRemoveUnusedLocalsFixer : RemoveUnusedLocalsFixer
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create("CS0168");
+        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create("CS0168", "CS0219", "CS8321");
     }
 }

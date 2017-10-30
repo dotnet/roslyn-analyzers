@@ -544,7 +544,7 @@ End Class");
 
         [Fact]
         [WorkItem(459, "https://github.com/dotnet/roslyn-analyzers/issues/459")]
-        public void DiagnosticForSimpleCasesTest()
+        public void CSharp_DiagnosticForSimpleCasesTest()
         {
             VerifyCSharp(@"
 using System;
@@ -602,7 +602,12 @@ class C
       GetCSharpUnusedParameterResultAt(30, 47, "param1", "UnusedRefParamMethod"),
       // Test0.cs(34,58): warning CA1801: Parameter param1 of method UnusedErrorTypeParamMethod is never used. Remove the parameter or use it in the method body.
       GetCSharpUnusedParameterResultAt(34, 58, "param1", "UnusedErrorTypeParamMethod"));
+        }
 
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1333")]
+        [WorkItem(459, "https://github.com/dotnet/roslyn-analyzers/issues/459")]
+        public void Basic_DiagnosticForSimpleCasesTest()
+        {
             VerifyBasic(@"
 Class C
     Public Sub New(param As Integer)

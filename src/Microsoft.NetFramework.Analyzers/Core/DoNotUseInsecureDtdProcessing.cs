@@ -340,9 +340,9 @@ namespace Microsoft.NetFramework.Analyzers
                 AnalyzeObjectCreationInternal(context, field, assign.Value);
             }
 
-            private void AnalyzeObjectCreationInternal(OperationAnalysisContext context, ISymbol variable, IOperation value)
+            private void AnalyzeObjectCreationInternal(OperationAnalysisContext context, ISymbol variable, IOperation valueOpt)
             {
-                IObjectCreationOperation objCreation = value as IObjectCreationOperation;
+                IObjectCreationOperation objCreation = valueOpt as IObjectCreationOperation;
 
                 if (objCreation == null)
                 {
@@ -629,10 +629,10 @@ namespace Microsoft.NetFramework.Analyzers
 
             private void AnalyzeVariableDeclaration(OperationAnalysisContext context)
             {
-                IVariableDeclarationOperation declare = context.Operation as IVariableDeclarationOperation;
+                var declare = (IVariableDeclarationOperation)context.Operation;
                 foreach (var variable in declare.Variables)
                 {
-                    AnalyzeObjectCreationInternal(context, variable, declare.Initializer);
+                    AnalyzeObjectCreationInternal(context, variable, declare.Initializer?.Value);
                 }
             }
 

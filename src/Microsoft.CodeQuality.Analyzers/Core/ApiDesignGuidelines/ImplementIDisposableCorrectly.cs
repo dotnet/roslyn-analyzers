@@ -6,7 +6,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -497,28 +497,28 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 switch (operation.Kind)
                 {
-                    case OperationKind.EmptyStatement:
-                    case OperationKind.LabeledStatement:
+                    case OperationKind.Empty:
+                    case OperationKind.Labeled:
                         return true;
-                    case OperationKind.BlockStatement:
-                        var blockStatement = (IBlockStatement)operation;
-                        return ValidateOperations(blockStatement.Statements);
+                    case OperationKind.Block:
+                        var blockStatement = (IBlockOperation)operation;
+                        return ValidateOperations(blockStatement.Operations);
                     case OperationKind.ExpressionStatement:
-                        var expressionStatement = (IExpressionStatement)operation;
+                        var expressionStatement = (IExpressionStatementOperation)operation;
                         return ValidateExpression(expressionStatement);
                     default:
                         return false;
                 }
             }
 
-            private bool ValidateExpression(IExpressionStatement expressionStatement)
+            private bool ValidateExpression(IExpressionStatementOperation expressionStatement)
             {
-                if (expressionStatement.Expression == null || expressionStatement.Expression.Kind != OperationKind.InvocationExpression)
+                if (expressionStatement.Operation == null || expressionStatement.Operation.Kind != OperationKind.Invocation)
                 {
                     return false;
                 }
 
-                var invocationExpression = (IInvocationExpression)expressionStatement.Expression;
+                var invocationExpression = (IInvocationOperation)expressionStatement.Operation;
                 if (!_callsDisposeBool)
                 {
                     bool result = IsDisposeBoolCall(invocationExpression);
@@ -543,7 +543,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return false;
             }
 
-            private bool IsDisposeBoolCall(IInvocationExpression invocationExpression)
+            private bool IsDisposeBoolCall(IInvocationOperation invocationExpression)
             {
                 if (invocationExpression.TargetMethod == null ||
                     invocationExpression.TargetMethod.ContainingType != _type ||
@@ -552,7 +552,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return false;
                 }
 
-                if (invocationExpression.Instance.Kind != OperationKind.InstanceReferenceExpression)
+                if (invocationExpression.Instance.Kind != OperationKind.InstanceReference)
                 {
                     return false;
                 }
@@ -562,18 +562,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return false;
                 }
 
-                if (invocationExpression.ArgumentsInEvaluationOrder.Length != 1)
+                if (invocationExpression.Arguments.Length != 1)
                 {
                     return false;
                 }
 
-                IArgument argument = invocationExpression.ArgumentsInEvaluationOrder[0];
-                if (argument.Value.Kind != OperationKind.LiteralExpression)
+                IArgumentOperation argument = invocationExpression.Arguments[0];
+                if (argument.Value.Kind != OperationKind.Literal)
                 {
                     return false;
                 }
 
-                var literal = (ILiteralExpression)argument.Value;
+                var literal = (ILiteralOperation)argument.Value;
                 if (!literal.ConstantValue.HasValue || !true.Equals(literal.ConstantValue.Value))
                 {
                     return false;
@@ -582,26 +582,26 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return true;
             }
 
-            private bool IsSuppressFinalizeCall(IInvocationExpression invocationExpression)
+            private bool IsSuppressFinalizeCall(IInvocationOperation invocationExpression)
             {
                 if (invocationExpression.TargetMethod != _suppressFinalizeMethod)
                 {
                     return false;
                 }
 
-                if (invocationExpression.ArgumentsInEvaluationOrder.Length != 1)
+                if (invocationExpression.Arguments.Length != 1)
                 {
                     return false;
                 }
 
-                IOperation argumentValue = invocationExpression.ArgumentsInEvaluationOrder[0].Value;
-                if (argumentValue.Kind != OperationKind.ConversionExpression)
+                IOperation argumentValue = invocationExpression.Arguments[0].Value;
+                if (argumentValue.Kind != OperationKind.Conversion)
                 {
                     return false;
                 }
 
-                var conversion = (IConversionExpression)argumentValue;
-                if (conversion.Operand == null || conversion.Operand.Kind != OperationKind.InstanceReferenceExpression)
+                var conversion = (IConversionOperation)argumentValue;
+                if (conversion.Operand == null || conversion.Operand.Kind != OperationKind.InstanceReference)
                 {
                     return false;
                 }

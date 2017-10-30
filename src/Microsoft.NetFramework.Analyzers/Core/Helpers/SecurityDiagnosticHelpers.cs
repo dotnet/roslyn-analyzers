@@ -3,7 +3,7 @@
 using System;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetFramework.Analyzers.Helpers
 {
@@ -149,19 +149,19 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
 
         public static bool IsExpressionEqualsNull(IOperation operation)
         {
-            ILiteralExpression literal = operation as ILiteralExpression;
+            ILiteralOperation literal = operation as ILiteralOperation;
             return literal != null && literal.HasNullConstantValue();
         }
 
         public static bool IsExpressionEqualsDtdProcessingParse(IOperation operation)
         {
-            IFieldReferenceExpression enumRef = operation as IFieldReferenceExpression;
+            IFieldReferenceOperation enumRef = operation as IFieldReferenceOperation;
             return enumRef != null && enumRef.HasConstantValue(2); // DtdProcessing.Parse
         }
 
         public static bool IsExpressionEqualsIntZero(IOperation operation)
         {
-            ILiteralExpression literal = operation as ILiteralExpression;
+            ILiteralOperation literal = operation as ILiteralOperation;
 
             if (literal == null || !literal.ConstantValue.HasValue)
             {

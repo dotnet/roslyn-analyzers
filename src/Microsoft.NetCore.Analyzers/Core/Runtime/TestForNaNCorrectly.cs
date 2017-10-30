@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -50,7 +50,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             analysisContext.RegisterOperationActionInternal(
                 operationAnalysisContext =>
                 {
-                    var binaryOperatorExpression = (IBinaryOperatorExpression)operationAnalysisContext.Operation;
+                    var binaryOperatorExpression = (IBinaryOperation)operationAnalysisContext.Operation;
                     if (!_comparisonOperators.Contains(binaryOperatorExpression.OperatorKind))
                     {
                         return;
@@ -62,7 +62,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             binaryOperatorExpression.Syntax.CreateDiagnostic(Rule));
                     }
                 },
-                OperationKind.BinaryOperatorExpression);
+                OperationKind.BinaryOperator);
         }
 
         private static bool IsNan(IOperation expr)

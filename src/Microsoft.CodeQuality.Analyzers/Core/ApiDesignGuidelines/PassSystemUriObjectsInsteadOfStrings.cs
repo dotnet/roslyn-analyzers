@@ -8,7 +8,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -59,7 +59,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 // REVIEW: I need to do this thing because OperationAnalysisContext doesn't give me OwningSymbol
                 c.RegisterOperationBlockStartActionInternal(sc =>
                 {
-                    sc.RegisterOperationActionInternal(oc => analyzer.Analyze(oc, sc.OwningSymbol), OperationKind.InvocationExpression);
+                    sc.RegisterOperationActionInternal(oc => analyzer.Analyze(oc, sc.OwningSymbol), OperationKind.Invocation);
                 });
             });
         }
@@ -91,7 +91,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             public void Analyze(OperationAnalysisContext context, ISymbol owningSymbol)
             {
-                var invocation = (IInvocationExpression)context.Operation;
+                var invocation = (IInvocationOperation)context.Operation;
                 if (invocation.TargetMethod == null)
                 {
                     return;

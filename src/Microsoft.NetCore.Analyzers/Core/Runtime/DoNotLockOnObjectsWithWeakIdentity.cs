@@ -5,7 +5,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -50,14 +50,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 Compilation compilation = compilationStartContext.Compilation;
                 compilationStartContext.RegisterOperationActionInternal(context =>
                 {
-                    var lockStatement = (ILockStatement)context.Operation;
-                    ITypeSymbol type = lockStatement?.Expression?.Type;
+                    var lockStatement = (ILockOperation)context.Operation;
+                    ITypeSymbol type = lockStatement.LockedValue?.Type;
                     if (type != null && TypeHasWeakIdentity(type, compilation))
                     {
-                        context.ReportDiagnostic(lockStatement.Expression.Syntax.CreateDiagnostic(Rule, type.ToDisplayString()));
+                        context.ReportDiagnostic(lockStatement.LockedValue.Syntax.CreateDiagnostic(Rule, type.ToDisplayString()));
                     }
                 },
-                OperationKind.LockStatement);
+                OperationKind.Lock);
             });
         }
 

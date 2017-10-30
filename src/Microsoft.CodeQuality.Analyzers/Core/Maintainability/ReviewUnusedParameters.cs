@@ -8,7 +8,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
@@ -76,9 +76,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 // cannot have its signature changed, and add it to the list of methods to be excluded from analysis.
                 compilationStartContext.RegisterOperationActionInternal(operationContext =>
                 {
-                    var methodBinding = (IMethodReferenceExpression)operationContext.Operation;
+                    var methodBinding = (IMethodReferenceOperation)operationContext.Operation;
                     methodsUsedAsDelegates.Add(methodBinding.Method.OriginalDefinition);
-                }, OperationKind.MethodReferenceExpression);
+                }, OperationKind.MethodReference);
 
                 compilationStartContext.RegisterOperationBlockStartActionInternal(startOperationBlockContext =>
                 {
@@ -131,7 +131,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     var analyzer = new UnusedParametersAnalyzer(method, unusedMethodParameters);
 
                     // Register an intermediate non-end action that accesses and modifies the state.
-                    startOperationBlockContext.RegisterOperationActionInternal(analyzer.AnalyzeOperation, OperationKind.ParameterReferenceExpression);
+                    startOperationBlockContext.RegisterOperationActionInternal(analyzer.AnalyzeOperation, OperationKind.ParameterReference);
 
                     // Register an end action to add unused parameters to the unusedMethodParameters dictionary
                     startOperationBlockContext.RegisterOperationBlockEndAction(analyzer.OperationBlockEndAction);
@@ -185,7 +185,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 }
 
                 // Mark this parameter as used.
-                IParameterSymbol parameter = ((IParameterReferenceExpression)context.Operation).Parameter;
+                IParameterSymbol parameter = ((IParameterReferenceOperation)context.Operation).Parameter;
                 _unusedParameters.Remove(parameter);
             }
 

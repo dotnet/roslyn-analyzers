@@ -8,7 +8,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -104,7 +104,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                     operationContext.Operation.Syntax.CreateDiagnostic(methodCategory.Rule, methodSymbol.Name, type.Name));
                             }
                         }
-                    }, OperationKind.ThrowExpression);
+                    }, OperationKind.Throw);
                 });
             });
         }

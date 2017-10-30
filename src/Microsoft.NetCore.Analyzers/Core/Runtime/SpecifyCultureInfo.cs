@@ -7,7 +7,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -50,7 +50,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     csaContext.RegisterOperationActionInternal(oaContext =>
                     {
-                        var invocationExpression = (IInvocationExpression)oaContext.Operation;
+                        var invocationExpression = (IInvocationOperation)oaContext.Operation;
                         var targetMethod = invocationExpression.TargetMethod;
                         if (targetMethod.ContainingType == null || targetMethod.ContainingType.IsErrorType() || targetMethod.IsGenericMethod)
                         {
@@ -78,7 +78,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                     oaContext.ContainingSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
                                     correctOverload.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
                         }
-                    }, OperationKind.InvocationExpression);
+                    }, OperationKind.Invocation);
                 }
             });
         }

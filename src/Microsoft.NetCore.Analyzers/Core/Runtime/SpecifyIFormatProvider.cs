@@ -7,7 +7,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -125,7 +125,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 csaContext.RegisterOperationActionInternal(oaContext =>
                 {
-                    var invocationExpression = (IInvocationExpression)oaContext.Operation;
+                    var invocationExpression = (IInvocationOperation)oaContext.Operation;
                     var targetMethod = invocationExpression.TargetMethod;
 
                     #region "Exceptions"
@@ -189,7 +189,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     IEnumerable<int> IformatProviderParameterIndices = GetIndexesOfParameterType(targetMethod, iformatProviderType);
                     foreach (var index in IformatProviderParameterIndices)
                     {
-                        var argument = invocationExpression.ArgumentsInEvaluationOrder[index];
+                        var argument = invocationExpression.Arguments[index];
                         
                         if (argument != null && currentUICultureProperty != null &&
                             installedUICultureProperty != null && currentThreadCurrentUICultureProperty != null)
@@ -223,7 +223,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
                     #endregion
 
-                }, OperationKind.InvocationExpression);
+                }, OperationKind.Invocation);
             });
         }
 

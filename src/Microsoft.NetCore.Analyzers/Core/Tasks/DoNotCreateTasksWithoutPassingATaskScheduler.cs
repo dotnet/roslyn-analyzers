@@ -6,7 +6,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Tasks
 {
@@ -53,7 +53,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
 
                 compilationContext.RegisterOperationActionInternal(operationContext =>
                 {
-                    var invocation = (IInvocationExpression)operationContext.Operation;
+                    var invocation = (IInvocationOperation)operationContext.Operation;
                     if (invocation.TargetMethod == null)
                     {
                         return;
@@ -71,7 +71,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
                     }
 
                     operationContext.ReportDiagnostic(Diagnostic.Create(Rule, invocation.Syntax.GetLocation(), invocation.TargetMethod.Name));
-                }, OperationKind.InvocationExpression);
+                }, OperationKind.Invocation);
             });
         }
 

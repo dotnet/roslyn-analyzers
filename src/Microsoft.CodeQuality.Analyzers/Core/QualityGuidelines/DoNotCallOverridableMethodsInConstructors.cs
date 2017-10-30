@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
@@ -54,14 +54,14 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                         return;
                     }
 
-                    context.RegisterOperationActionInternal(oc => AnalyzeOperation(oc, context.OwningSymbol.ContainingType), OperationKind.InvocationExpression);
+                    context.RegisterOperationActionInternal(oc => AnalyzeOperation(oc, context.OwningSymbol.ContainingType), OperationKind.Invocation);
                 });
             });
         }
 
         private static void AnalyzeOperation(OperationAnalysisContext context, INamedTypeSymbol containingType)
         {
-            var operation = context.Operation as IInvocationExpression;
+            var operation = context.Operation as IInvocationOperation;
             IMethodSymbol method = operation.TargetMethod;
             if (method != null &&
                 (method.IsAbstract || method.IsVirtual) &&

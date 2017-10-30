@@ -12,7 +12,7 @@
     <MicrosoftVSSDKVersion>15.0.26201-alpha</MicrosoftVSSDKVersion>
 
     <!-- Roslyn -->
-    <MicrosoftCodeAnalysisVersion>2.6.0-beta2-62210-01</MicrosoftCodeAnalysisVersion>
+    <MicrosoftCodeAnalysisVersion>2.6.0-beta3-62227-02</MicrosoftCodeAnalysisVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
 
     <!-- CoreFX -->

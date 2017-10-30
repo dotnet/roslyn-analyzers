@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
@@ -62,14 +62,14 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     compilationContext.RegisterOperationActionInternal(
                         (operationContext) =>
                         {
-                            IFieldSymbol field = ((IFieldReferenceExpression)operationContext.Operation).Field;
+                            IFieldSymbol field = ((IFieldReferenceOperation)operationContext.Operation).Field;
                             if (field.DeclaredAccessibility == Accessibility.Private)
                             {
                                 referencedPrivateFields.Add(field);
                                 unreferencedPrivateFields.Remove(field);
                             }
                         },
-                        OperationKind.FieldReferenceExpression);
+                        OperationKind.FieldReference);
 
                     compilationContext.RegisterCompilationEndAction(
                         (compilationEndContext) =>

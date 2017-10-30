@@ -5,7 +5,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.ImmutableCollections
 {
@@ -47,7 +47,7 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
 
                 compilationStartContext.RegisterOperationActionInternal(operationContext =>
                 {
-                    var invocation = (IInvocationExpression)operationContext.Operation;
+                    var invocation = (IInvocationOperation)operationContext.Operation;
                     if (invocation.TargetMethod?.Name != "ToImmutableArray")
                     {
                         return;
@@ -59,7 +59,7 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
                     {
                         operationContext.ReportDiagnostic(Diagnostic.Create(Rule, invocation.Syntax.GetLocation()));
                     }
-                }, OperationKind.InvocationExpression);
+                }, OperationKind.Invocation);
             });
         }
 

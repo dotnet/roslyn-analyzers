@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -56,7 +56,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     compilationStartAnalysisContext.RegisterOperationActionInternal(
                         operationAnalysisContext =>
                         {
-                            var assignment = (IAssignmentExpression)operationAnalysisContext.Operation;
+                            var assignment = (IAssignmentOperation)operationAnalysisContext.Operation;
 
                             IOperation target = assignment.Target;
                             if (target == null)
@@ -65,12 +65,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 return;
                             }
 
-                            if (target.Kind != OperationKind.FieldReferenceExpression)
+                            if (target.Kind != OperationKind.FieldReference)
                             {
                                 return;
                             }
 
-                            var fieldReference = (IFieldReferenceExpression)target;
+                            var fieldReference = (IFieldReferenceOperation)target;
                             var field = fieldReference.Member as IFieldSymbol;
                             if (field == null || field.Kind != SymbolKind.Field || field.IsStatic)
                             {
@@ -98,12 +98,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 return;
                             }
 
-                            if (assignment.Value == null || assignment.Value.Kind != OperationKind.InvocationExpression)
+                            if (assignment.Value == null || assignment.Value.Kind != OperationKind.Invocation)
                             {
                                 return;
                             }
 
-                            var invocation = (IInvocationExpression)assignment.Value;
+                            var invocation = (IInvocationOperation)assignment.Value;
                             if (invocation == null)
                             {
                                 return;
@@ -119,7 +119,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                             operationAnalysisContext.ReportDiagnostic(containingType.CreateDiagnostic(Rule));
                         },
-                        OperationKind.SimpleAssignmentExpression);
+                        OperationKind.SimpleAssignment);
                 });
         }
     }

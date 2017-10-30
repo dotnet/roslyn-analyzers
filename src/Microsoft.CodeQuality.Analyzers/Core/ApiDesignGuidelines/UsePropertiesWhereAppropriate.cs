@@ -74,7 +74,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 context.RegisterOperationActionInternal(operationContext =>
                 {
                     hasInvocations = true;
-                }, OperationKind.InvocationExpression);
+                }, OperationKind.Invocation);
 
                 context.RegisterOperationBlockEndAction(endContext =>
                 {

@@ -7,7 +7,7 @@ using System.Linq;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
@@ -120,13 +120,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                 osContext.RegisterOperationActionInternal(opContext =>
                 {
-                    IOperation expression = ((IExpressionStatement)opContext.Operation).Expression;
+                    IOperation expression = ((IExpressionStatementOperation)opContext.Operation).Operation;
                     DiagnosticDescriptor rule = null;
                     string targetMethodName = null;
                     switch (expression.Kind)
                     {
-                        case OperationKind.ObjectCreationExpression:
-                            IMethodSymbol ctor = ((IObjectCreationExpression)expression).Constructor;
+                        case OperationKind.ObjectCreation:
+                            IMethodSymbol ctor = ((IObjectCreationOperation)expression).Constructor;
                             if (ctor != null)
                             {
                                 rule = ObjectCreationRule;
@@ -134,8 +134,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             }
                             break;
 
-                        case OperationKind.InvocationExpression:
-                            IInvocationExpression invocationExpression = ((IInvocationExpression)expression);
+                        case OperationKind.Invocation:
+                            IInvocationOperation invocationExpression = ((IInvocationOperation)expression);
                             IMethodSymbol targetMethod = invocationExpression.TargetMethod;
                             if (targetMethod == null)
                             {

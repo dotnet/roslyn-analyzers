@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Analyzer.Utilities.Extensions
 {
@@ -15,7 +15,7 @@ namespace Analyzer.Utilities.Extensions
         /// If the invocation actually involves a conversion from A to some other type, say 'C', on which B is invoked,
         /// then this method returns type A if <paramref name="beforeConversion"/> is true, and C if false.
         /// </summary>
-        public static INamedTypeSymbol GetReceiverType(this IInvocationExpression invocation, Compilation compilation, bool beforeConversion, CancellationToken cancellationToken)
+        public static INamedTypeSymbol GetReceiverType(this IInvocationOperation invocation, Compilation compilation, bool beforeConversion, CancellationToken cancellationToken)
         {
             if (invocation.Instance != null)
             {
@@ -25,7 +25,7 @@ namespace Analyzer.Utilities.Extensions
             }
             else if (invocation.TargetMethod.IsExtensionMethod && invocation.TargetMethod.Parameters.Length > 0)
             {
-                var firstArg = invocation.ArgumentsInEvaluationOrder.FirstOrDefault();
+                var firstArg = invocation.Arguments.FirstOrDefault();
                 if (firstArg != null)
                 {
                     return beforeConversion ?
@@ -113,7 +113,7 @@ namespace Analyzer.Utilities.Extensions
             return DiagnosticHelpers.TryConvertToUInt64(constantValue.Value, constantValueType.SpecialType, out ulong convertedValue) && convertedValue == comparand;
         }
 
-        public static ITypeSymbol GetElementType(this IArrayCreationExpression arrayCreation)
+        public static ITypeSymbol GetElementType(this IArrayCreationOperation arrayCreation)
         {
             return (arrayCreation?.Type as IArrayTypeSymbol)?.ElementType;
         }

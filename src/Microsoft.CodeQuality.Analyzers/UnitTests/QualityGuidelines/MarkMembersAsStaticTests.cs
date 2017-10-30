@@ -72,7 +72,7 @@ public class MembersTests
                 GetCSharpResultAt(40, 56, "CustomEvent"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1333")]
         public void BasicSimpleMembers()
         {
             VerifyBasic(@"

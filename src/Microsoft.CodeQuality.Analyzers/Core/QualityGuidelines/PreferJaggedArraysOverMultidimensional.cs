@@ -5,7 +5,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
@@ -64,7 +64,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             analysisContext.RegisterSymbolAction(AnalyzeField, SymbolKind.Field);
             analysisContext.RegisterSymbolAction(AnalyzeProperty, SymbolKind.Property);
             analysisContext.RegisterSymbolAction(AnalyzeMethod, SymbolKind.Method);
-            analysisContext.RegisterOperationActionInternal(AnalyzeObjectCreation, OperationKind.ArrayCreationExpression);
+            analysisContext.RegisterOperationActionInternal(AnalyzeObjectCreation, OperationKind.ArrayCreation);
         }
 
         private static void AnalyzeField(SymbolAnalysisContext context)
@@ -112,7 +112,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
         private static void AnalyzeObjectCreation(OperationAnalysisContext context)
         {
-            var arrayCreationExpression = (IArrayCreationExpression)context.Operation;
+            var arrayCreationExpression = (IArrayCreationOperation)context.Operation;
 
             if (IsMultiDimensionalArray(arrayCreationExpression.Type))
             {

@@ -6,7 +6,7 @@ Imports System.Linq
 Imports Analyzer.Utilities
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
-Imports Microsoft.CodeAnalysis.Semantics
+Imports Microsoft.CodeAnalysis.Operations
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 Imports Microsoft.CodeQuality.Analyzers.Maintainability
@@ -57,18 +57,18 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
 
                         operationBlockContext.RegisterOperationActionInternal(
                         Sub(operationContext)
-                            Dim declarations = DirectCast(operationContext.Operation, IVariableDeclarationStatement).Declarations
+                            Dim declarations = DirectCast(operationContext.Operation, IVariableDeclarationsOperation).Declarations
 
                             For Each declaration In declarations
                                 For Each local In declaration.Variables
                                     mightBecomeUnusedLocals.Add(local)
                                 Next
                             Next
-                        End Sub, OperationKind.VariableDeclarationStatement)
+                        End Sub, OperationKind.VariableDeclarations)
 
                         operationBlockContext.RegisterOperationActionInternal(
                         Sub(operationContext)
-                            Dim localReferenceExpression As ILocalReferenceExpression = DirectCast(operationContext.Operation, ILocalReferenceExpression)
+                            Dim localReferenceExpression As ILocalReferenceOperation = DirectCast(operationContext.Operation, ILocalReferenceOperation)
                             Dim syntax = localReferenceExpression.Syntax
 
                             ' The writeonly references should be ignored
@@ -78,7 +78,7 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                             End If
 
                             mightBecomeUnusedLocals.Remove(localReferenceExpression.Local)
-                        End Sub, OperationKind.LocalReferenceExpression)
+                        End Sub, OperationKind.LocalReference)
 
                         operationBlockContext.RegisterOperationBlockEndAction(
                         Sub(operationBlockEndContext)

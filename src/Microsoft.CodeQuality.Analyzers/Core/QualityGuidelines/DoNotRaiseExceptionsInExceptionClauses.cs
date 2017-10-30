@@ -6,7 +6,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
@@ -69,9 +69,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         {
             private int _finallyBlockNestingDepth;
 
-            public List<IThrowExpression> ThrowExpressions { get; private set; } = new List<IThrowExpression>();
+            public List<IThrowOperation> ThrowExpressions { get; private set; } = new List<IThrowOperation>();
 
-            public override void VisitTryStatement(ITryStatement operation)
+            public override void VisitTry(ITryOperation operation)
             {
                 Visit(operation.Body);
                 foreach (var catchClause in operation.Catches)
@@ -84,14 +84,14 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 _finallyBlockNestingDepth--;
             }
 
-            public override void VisitThrowExpression(IThrowExpression operation)
+            public override void VisitThrow(IThrowOperation operation)
             {
                 if (_finallyBlockNestingDepth > 0)
                 {
                     ThrowExpressions.Add(operation);
                 }
 
-                base.VisitThrowExpression(operation);
+                base.VisitThrow(operation);
             }
         }
     }

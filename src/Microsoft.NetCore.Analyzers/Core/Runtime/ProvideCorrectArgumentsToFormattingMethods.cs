@@ -7,7 +7,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -47,16 +47,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 compilationContext.RegisterOperationActionInternal(operationContext =>
                 {
-                    var invocation = (IInvocationExpression)operationContext.Operation;
+                    var invocation = (IInvocationOperation)operationContext.Operation;
 
                     StringFormatInfo.Info info = formatInfo.TryGet(invocation.TargetMethod);
-                    if (info == null || invocation.ArgumentsInEvaluationOrder.Length <= info.FormatStringIndex)
+                    if (info == null || invocation.Arguments.Length <= info.FormatStringIndex)
                     {
                         // not a target method
                         return;
                     }
 
-                    IArgument formatStringArgument = invocation.ArgumentsInEvaluationOrder[info.FormatStringIndex];
+                    IArgumentOperation formatStringArgument = invocation.Arguments[info.FormatStringIndex];
                     if (!object.Equals(formatStringArgument?.Value?.Type, formatInfo.String) ||
                         !(formatStringArgument?.Value?.ConstantValue.Value is string))
                     {
@@ -86,14 +86,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     // ensure argument is an array
-                    IArgument paramsArgument = invocation.ArgumentsInEvaluationOrder[info.FormatStringIndex + 1];
+                    IArgumentOperation paramsArgument = invocation.Arguments[info.FormatStringIndex + 1];
                     if (paramsArgument.ArgumentKind != ArgumentKind.ParamArray && paramsArgument.ArgumentKind != ArgumentKind.Explicit)
                     {
                         // wrong format
                         return;
                     }
 
-                    var arrayCreation = paramsArgument.Value as IArrayCreationExpression;
+                    var arrayCreation = paramsArgument.Value as IArrayCreationOperation;
                     var elementType = arrayCreation.GetElementType();
                     if (elementType == null ||
                         !object.Equals(elementType, formatInfo.Object) ||
@@ -104,7 +104,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     // compiler generating object array for params case
-                    IArrayInitializer intializer = arrayCreation.Initializer;
+                    IArrayInitializerOperation intializer = arrayCreation.Initializer;
                     if (intializer == null)
                     {
                         // unsupported format
@@ -117,7 +117,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         operationContext.ReportDiagnostic(operationContext.Operation.Syntax.CreateDiagnostic(Rule));
                     }
-                }, OperationKind.InvocationExpression);
+                }, OperationKind.Invocation);
             });
         }
 

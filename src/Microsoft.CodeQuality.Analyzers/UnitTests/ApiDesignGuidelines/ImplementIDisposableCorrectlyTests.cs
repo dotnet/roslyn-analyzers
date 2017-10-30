@@ -1775,7 +1775,7 @@ End Class|]
 
         #region VB ProvideDisposeBool Unit Tests
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1333")]
         public void Basic_CA1063_ProvideDisposeBool_Diagnostic_MissingDisposeBool()
         {
             VerifyBasic(@"
@@ -2094,7 +2094,7 @@ End Class
             GetCA1063BasicDisposeImplementationResultAt(7, 16, "C", "Dispose"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1333")]
         public void Basic_CA1063_DisposeImplementation_Diagnostic_EmptyDisposeBody()
         {
             VerifyBasic(@"

@@ -65,7 +65,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     blockStartContext.RegisterOperationActionInternal(operationContext =>
                     {
                         isInstanceReferenced = true;
-                    }, OperationKind.InstanceReferenceExpression);
+                    }, OperationKind.InstanceReference);
 
                     blockStartContext.RegisterOperationBlockEndAction(blockEndContext =>
                     {

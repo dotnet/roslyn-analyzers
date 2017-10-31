@@ -81,7 +81,7 @@ End Class
 
         #region Diagnostic Tests
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1318")]
         public void DiagnosticCases()
         {
             VerifyCSharp(@"

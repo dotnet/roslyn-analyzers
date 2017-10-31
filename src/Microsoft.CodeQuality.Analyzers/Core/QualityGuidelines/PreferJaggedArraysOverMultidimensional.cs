@@ -64,7 +64,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             analysisContext.RegisterSymbolAction(AnalyzeField, SymbolKind.Field);
             analysisContext.RegisterSymbolAction(AnalyzeProperty, SymbolKind.Property);
             analysisContext.RegisterSymbolAction(AnalyzeMethod, SymbolKind.Method);
-            analysisContext.RegisterOperationActionInternal(AnalyzeObjectCreation, OperationKind.ArrayCreation);
+            analysisContext.RegisterOperationAction(AnalyzeObjectCreation, OperationKind.ArrayCreation);
         }
 
         private static void AnalyzeField(SymbolAnalysisContext context)

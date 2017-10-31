@@ -48,14 +48,14 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
 
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None)
 
-            analysisContext.RegisterOperationBlockStartActionInternal(
+            analysisContext.RegisterOperationBlockStartAction(
                 Sub(operationBlockContext)
                     Dim containingMethod = TryCast(operationBlockContext.OwningSymbol, IMethodSymbol)
 
                     If containingMethod IsNot Nothing Then
                         Dim mightBecomeUnusedLocals = New HashSet(Of ILocalSymbol)()
 
-                        operationBlockContext.RegisterOperationActionInternal(
+                        operationBlockContext.RegisterOperationAction(
                         Sub(operationContext)
                             Dim declarations = DirectCast(operationContext.Operation, IVariableDeclarationsOperation).Declarations
 
@@ -66,7 +66,7 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                             Next
                         End Sub, OperationKind.VariableDeclarations)
 
-                        operationBlockContext.RegisterOperationActionInternal(
+                        operationBlockContext.RegisterOperationAction(
                         Sub(operationContext)
                             Dim localReferenceExpression As ILocalReferenceOperation = DirectCast(operationContext.Operation, ILocalReferenceOperation)
                             Dim syntax = localReferenceExpression.Syntax

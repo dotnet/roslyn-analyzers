@@ -191,7 +191,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             public void Initialize(CompilationStartAnalysisContext context)
             {
                 context.RegisterSymbolAction(AnalyzeNamedTypeSymbol, SymbolKind.NamedType);
-                context.RegisterOperationBlockActionInternal(AnalyzeOperationBlock);
+                context.RegisterOperationBlockAction(AnalyzeOperationBlock);
             }
 
             private void AnalyzeNamedTypeSymbol(SymbolAnalysisContext context)

@@ -123,7 +123,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var obsoleteAttributeType = WellKnownTypes.ObsoleteAttribute(csaContext.Compilation);
                 #endregion
 
-                csaContext.RegisterOperationActionInternal(oaContext =>
+                csaContext.RegisterOperationAction(oaContext =>
                 {
                     var invocationExpression = (IInvocationOperation)oaContext.Operation;
                     var targetMethod = invocationExpression.TargetMethod;

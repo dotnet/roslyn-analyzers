@@ -48,7 +48,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var cultureInfoType = csaContext.Compilation.GetTypeByMetadataName("System.Globalization.CultureInfo");
                 if (cultureInfoType != null)
                 {
-                    csaContext.RegisterOperationActionInternal(oaContext =>
+                    csaContext.RegisterOperationAction(oaContext =>
                     {
                         var invocationExpression = (IInvocationOperation)oaContext.Operation;
                         var targetMethod = invocationExpression.TargetMethod;

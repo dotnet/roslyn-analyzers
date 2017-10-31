@@ -47,7 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterOperationBlockActionInternal(operationBlockContext =>
+            analysisContext.RegisterOperationBlockAction(operationBlockContext =>
             {
                 foreach (var block in operationBlockContext.OperationBlocks)
                 {

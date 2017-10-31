@@ -57,9 +57,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 var analyzer = new PerCompilationAnalyzer(c.Compilation, @string, uri, GetInvocationExpression);
 
                 // REVIEW: I need to do this thing because OperationAnalysisContext doesn't give me OwningSymbol
-                c.RegisterOperationBlockStartActionInternal(sc =>
+                c.RegisterOperationBlockStartAction(sc =>
                 {
-                    sc.RegisterOperationActionInternal(oc => analyzer.Analyze(oc, sc.OwningSymbol), OperationKind.Invocation);
+                    sc.RegisterOperationAction(oc => analyzer.Analyze(oc, sc.OwningSymbol), OperationKind.Invocation);
                 });
             });
         }

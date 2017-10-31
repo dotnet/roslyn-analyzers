@@ -110,7 +110,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterOperationBlockStartActionInternal(osContext =>
+            analysisContext.RegisterOperationBlockStartAction(osContext =>
             {
                 var method = osContext.OwningSymbol as IMethodSymbol;
                 if (method == null)
@@ -118,7 +118,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     return;
                 }
 
-                osContext.RegisterOperationActionInternal(opContext =>
+                osContext.RegisterOperationAction(opContext =>
                 {
                     IOperation expression = ((IExpressionStatementOperation)opContext.Operation).Operation;
                     DiagnosticDescriptor rule = null;

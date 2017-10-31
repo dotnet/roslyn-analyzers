@@ -75,7 +75,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 // Get a list of interesting categories of methods to analyze.
                 List<MethodCategory> methodCategories = GetMethodCategories(compilation);
 
-                compilationStartContext.RegisterOperationBlockStartActionInternal(operationBlockContext =>
+                compilationStartContext.RegisterOperationBlockStartAction(operationBlockContext =>
                 {
                     var methodSymbol = operationBlockContext.OwningSymbol as IMethodSymbol;
                     if (methodSymbol == null)
@@ -93,7 +93,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                     // For the interesting methods, register an operation action to catch all
                     // Throw statements.
-                    operationBlockContext.RegisterOperationActionInternal(operationContext =>
+                    operationBlockContext.RegisterOperationAction(operationContext =>
                     {
                         if (operationContext.Operation.Type is INamedTypeSymbol type && type.DerivesFrom(exceptionType))
                         {

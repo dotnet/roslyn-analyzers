@@ -78,7 +78,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                compilationStartContext.RegisterOperationActionInternal(operationAnalysisContext =>
+                compilationStartContext.RegisterOperationAction(operationAnalysisContext =>
                 {
                     var invocation = (IInvocationOperation)operationAnalysisContext.Operation;
                     if (invocation.TargetMethod == null)

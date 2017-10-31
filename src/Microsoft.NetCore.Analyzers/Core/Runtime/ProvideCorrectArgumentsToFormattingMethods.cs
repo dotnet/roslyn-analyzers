@@ -45,7 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 var formatInfo = new StringFormatInfo(compilationContext.Compilation);
 
-                compilationContext.RegisterOperationActionInternal(operationContext =>
+                compilationContext.RegisterOperationAction(operationContext =>
                 {
                     var invocation = (IInvocationOperation)operationContext.Operation;
 

@@ -52,10 +52,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    compilationContext.RegisterOperationBlockStartActionInternal(
+                    compilationContext.RegisterOperationBlockStartAction(
                         operationBlockStartContext =>
                         {
-                            operationBlockStartContext.RegisterOperationActionInternal(
+                            operationBlockStartContext.RegisterOperationAction(
                                 operationContext => AnalyzeObjectCreation(
                                     operationContext,
                                     operationBlockStartContext.OwningSymbol,

@@ -46,7 +46,7 @@ namespace Microsoft.NetFramework.Analyzers
                     return;
                 }
 
-                compilationStartAnalysisContext.RegisterOperationBlockActionInternal(operationBlockAnalysisContext =>
+                compilationStartAnalysisContext.RegisterOperationBlockAction(operationBlockAnalysisContext =>
                 {
                     if (operationBlockAnalysisContext.OwningSymbol.Kind != SymbolKind.Method)
                     {

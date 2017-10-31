@@ -72,7 +72,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 var mef1ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.ComponentModel.Composition.ExportAttribute");
                 var mef2ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.Composition.ExportAttribute");
 
-                startContext.RegisterOperationActionInternal(context =>
+                startContext.RegisterOperationAction(context =>
                 {
                     var expr = (IObjectCreationOperation)context.Operation;
                     if (expr.Type is INamedTypeSymbol namedType)
@@ -125,7 +125,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     }
                 }
 
-                startContext.RegisterOperationActionInternal(context =>
+                startContext.RegisterOperationAction(context =>
                 {
                     var expr = (IObjectCreationOperation)context.Operation;
                     var constructedClass = (INamedTypeSymbol)expr.Type;
@@ -139,7 +139,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     ProcessGenericTypes(generics);
                 }, OperationKind.ObjectCreation);
 
-                startContext.RegisterOperationActionInternal(context =>
+                startContext.RegisterOperationAction(context =>
                 {
                     var expr = (IInvocationOperation)context.Operation;
                     var methodType = expr.TargetMethod;

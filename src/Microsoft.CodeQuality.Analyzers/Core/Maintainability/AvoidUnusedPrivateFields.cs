@@ -59,7 +59,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                         },
                         SymbolKind.Field);
 
-                    compilationContext.RegisterOperationActionInternal(
+                    compilationContext.RegisterOperationAction(
                         (operationContext) =>
                         {
                             IFieldSymbol field = ((IFieldReferenceOperation)operationContext.Operation).Field;

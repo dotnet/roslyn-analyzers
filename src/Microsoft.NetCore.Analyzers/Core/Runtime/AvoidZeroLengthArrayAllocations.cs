@@ -57,7 +57,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     if (typeSymbol.GetMembers(ArrayEmptyMethodName).FirstOrDefault() is IMethodSymbol methodSymbol && methodSymbol.DeclaredAccessibility == Accessibility.Public &&
     methodSymbol.IsStatic && methodSymbol.Arity == 1 && methodSymbol.Parameters.Length == 0)
                     {
-                        ctx.RegisterOperationActionInternal(AnalyzeOperation, OperationKind.ArrayCreation);
+                        ctx.RegisterOperationAction(AnalyzeOperation, OperationKind.ArrayCreation);
                     }
                 }
             });
@@ -117,7 +117,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var model = context.Compilation.GetSemanticModel(arrayCreationExpression.Syntax.SyntaxTree);
 
             // Compiler generated array creation seems to just use the syntax from the parent.
-            var parent = model.GetOperationInternal(arrayCreationExpression.Syntax, context.CancellationToken);
+            var parent = model.GetOperation(arrayCreationExpression.Syntax, context.CancellationToken);
             if (parent == null)
             {
                 return false;

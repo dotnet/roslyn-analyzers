@@ -47,7 +47,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            analysisContext.RegisterOperationActionInternal(
+            analysisContext.RegisterOperationAction(
                 operationAnalysisContext =>
                 {
                     var binaryOperatorExpression = (IBinaryOperation)operationAnalysisContext.Operation;

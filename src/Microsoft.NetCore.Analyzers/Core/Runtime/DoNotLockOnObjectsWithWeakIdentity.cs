@@ -48,7 +48,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             analysisContext.RegisterCompilationStartAction(compilationStartContext =>
             {
                 Compilation compilation = compilationStartContext.Compilation;
-                compilationStartContext.RegisterOperationActionInternal(context =>
+                compilationStartContext.RegisterOperationAction(context =>
                 {
                     var lockStatement = (ILockOperation)context.Operation;
                     ITypeSymbol type = lockStatement.LockedValue?.Type;

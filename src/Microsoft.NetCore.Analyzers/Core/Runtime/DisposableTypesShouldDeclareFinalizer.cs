@@ -53,7 +53,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     );
                     var disposableType = WellKnownTypes.IDisposable(compilation);
 
-                    compilationStartAnalysisContext.RegisterOperationActionInternal(
+                    compilationStartAnalysisContext.RegisterOperationAction(
                         operationAnalysisContext =>
                         {
                             var assignment = (IAssignmentOperation)operationAnalysisContext.Operation;

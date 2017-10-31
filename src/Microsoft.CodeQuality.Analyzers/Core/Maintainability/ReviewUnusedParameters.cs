@@ -74,13 +74,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                 // Create a list of functions to exclude from analysis. We assume that any function that is used in an IMethodBindingExpression
                 // cannot have its signature changed, and add it to the list of methods to be excluded from analysis.
-                compilationStartContext.RegisterOperationActionInternal(operationContext =>
+                compilationStartContext.RegisterOperationAction(operationContext =>
                 {
                     var methodBinding = (IMethodReferenceOperation)operationContext.Operation;
                     methodsUsedAsDelegates.Add(methodBinding.Method.OriginalDefinition);
                 }, OperationKind.MethodReference);
 
-                compilationStartContext.RegisterOperationBlockStartActionInternal(startOperationBlockContext =>
+                compilationStartContext.RegisterOperationBlockStartAction(startOperationBlockContext =>
                 {
                     // We only care about methods.
                     if (startOperationBlockContext.OwningSymbol.Kind != SymbolKind.Method)
@@ -131,7 +131,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     var analyzer = new UnusedParametersAnalyzer(method, unusedMethodParameters);
 
                     // Register an intermediate non-end action that accesses and modifies the state.
-                    startOperationBlockContext.RegisterOperationActionInternal(analyzer.AnalyzeOperation, OperationKind.ParameterReference);
+                    startOperationBlockContext.RegisterOperationAction(analyzer.AnalyzeOperation, OperationKind.ParameterReference);
 
                     // Register an end action to add unused parameters to the unusedMethodParameters dictionary
                     startOperationBlockContext.RegisterOperationBlockEndAction(analyzer.OperationBlockEndAction);

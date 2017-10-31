@@ -56,7 +56,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return;
                 }
 
-                compilationContext.RegisterOperationBlockActionInternal(operationBlockContext => AnalyzeOperationBlock(operationBlockContext, iDisposableTypeSymbol));
+                compilationContext.RegisterOperationBlockAction(operationBlockContext => AnalyzeOperationBlock(operationBlockContext, iDisposableTypeSymbol));
             });
         }
 

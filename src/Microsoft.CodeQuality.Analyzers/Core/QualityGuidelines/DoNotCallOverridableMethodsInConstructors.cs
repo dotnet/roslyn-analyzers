@@ -47,14 +47,14 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 INamedTypeSymbol webUiControlType = compilationContext.Compilation.GetTypeByMetadataName("System.Web.UI.Control");
                 INamedTypeSymbol componentModelComponentType = compilationContext.Compilation.GetTypeByMetadataName("System.ComponentModel.Component");
 
-                compilationContext.RegisterOperationBlockStartActionInternal(context =>
+                compilationContext.RegisterOperationBlockStartAction(context =>
                 {
                     if (ShouldOmitThisDiagnostic(context.OwningSymbol, webUiControlType, componentModelComponentType))
                     {
                         return;
                     }
 
-                    context.RegisterOperationActionInternal(oc => AnalyzeOperation(oc, context.OwningSymbol.ContainingType), OperationKind.Invocation);
+                    context.RegisterOperationAction(oc => AnalyzeOperation(oc, context.OwningSymbol.ContainingType), OperationKind.Invocation);
                 });
             });
         }

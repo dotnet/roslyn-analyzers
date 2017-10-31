@@ -59,7 +59,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            context.RegisterOperationActionInternal(operationContext =>
+            context.RegisterOperationAction(operationContext =>
             {
                 var invocation = (IInvocationOperation)operationContext.Operation;
                 if (!IsPossibleLinqInvocation(invocation))

@@ -51,7 +51,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterOperationActionInternal(saContext =>
+            analysisContext.RegisterOperationAction(saContext =>
             {
                 var fieldInitializer = saContext.Operation as IFieldInitializerOperation;
 

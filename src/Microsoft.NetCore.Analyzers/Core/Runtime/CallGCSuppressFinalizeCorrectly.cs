@@ -85,7 +85,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                compilationContext.RegisterOperationBlockStartActionInternal(operationBlockContext =>
+                compilationContext.RegisterOperationBlockStartAction(operationBlockContext =>
                 {
                     if (operationBlockContext.OwningSymbol.Kind != SymbolKind.Method)
                     {
@@ -100,7 +100,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     var analyzer = new SuppressFinalizeAnalyzer(methodSymbol, gcSuppressFinalizeMethodSymbol, compilationContext.Compilation);
 
-                    operationBlockContext.RegisterOperationActionInternal(analyzer.Analyze, OperationKind.Invocation);
+                    operationBlockContext.RegisterOperationAction(analyzer.Analyze, OperationKind.Invocation);
                     operationBlockContext.RegisterOperationBlockEndAction(analyzer.OperationBlockEndAction);
                 });
             });

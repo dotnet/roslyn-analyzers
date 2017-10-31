@@ -33,7 +33,7 @@ namespace Microsoft.NetFramework.Analyzers
         private void RegisterAnalyzer(OperationBlockStartAnalysisContext context, CompilationSecurityTypes types, Version frameworkVersion)
         {
             var analyzer = new OperationAnalyzer(types, frameworkVersion);
-            context.RegisterOperationActionInternal(
+            context.RegisterOperationAction(
                 analyzer.AnalyzeOperation,
                 OperationKind.Invocation,
                 OperationKind.SimpleAssignment,
@@ -67,7 +67,7 @@ namespace Microsoft.NetFramework.Analyzers
 
                         if (version != null)
                         {
-                            context.RegisterOperationBlockStartActionInternal(
+                            context.RegisterOperationBlockStartAction(
                                 (c) =>
                                 {
                                     RegisterAnalyzer(c, xmlTypes, version);

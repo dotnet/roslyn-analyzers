@@ -45,7 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            context.RegisterOperationActionInternal(AnalyzeNode, OperationKind.Invocation, OperationKind.BinaryOperator);
+            context.RegisterOperationAction(AnalyzeNode, OperationKind.Invocation, OperationKind.BinaryOperator);
         }
 
         private static void AnalyzeNode(OperationAnalysisContext context)

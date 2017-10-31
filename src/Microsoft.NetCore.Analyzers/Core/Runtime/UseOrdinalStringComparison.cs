@@ -50,7 +50,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     INamedTypeSymbol stringComparisonType = context.Compilation.GetTypeByMetadataName(StringComparisonTypeName);
                     if (stringComparisonType != null)
                     {
-                        context.RegisterOperationActionInternal(operationContext => AnalyzeOperation(operationContext, stringComparisonType),
+                        context.RegisterOperationAction(operationContext => AnalyzeOperation(operationContext, stringComparisonType),
                                                         OperationKind.Invocation,
                                                         OperationKind.BinaryOperator);
                     }

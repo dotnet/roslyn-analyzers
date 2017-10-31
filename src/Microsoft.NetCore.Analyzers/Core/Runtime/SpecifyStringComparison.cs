@@ -91,7 +91,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 overloadMapBuilder.AddKeyValueIfNotNull(stringCompareParameterStringIntStringIntIntBool, stringCompareParameterStringIntStringIntIntComparison);
                 var overloadMap = overloadMapBuilder.ToImmutable();
 
-                csaContext.RegisterOperationActionInternal(oaContext =>
+                csaContext.RegisterOperationAction(oaContext =>
                 {
                     var invocationExpression = (IInvocationOperation)oaContext.Operation;
                     var targetMethod = invocationExpression.TargetMethod;

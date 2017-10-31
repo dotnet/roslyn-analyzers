@@ -47,7 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return;
                 }
 
-                context.RegisterOperationActionInternal(oc => AnalyzeOperation(oc, taskTypes), OperationKind.Await);
+                context.RegisterOperationAction(oc => AnalyzeOperation(oc, taskTypes), OperationKind.Await);
             });
         }
 

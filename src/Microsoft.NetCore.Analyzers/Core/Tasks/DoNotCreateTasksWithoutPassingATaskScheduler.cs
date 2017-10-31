@@ -51,7 +51,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
                     return;
                 }
 
-                compilationContext.RegisterOperationActionInternal(operationContext =>
+                compilationContext.RegisterOperationAction(operationContext =>
                 {
                     var invocation = (IInvocationOperation)operationContext.Operation;
                     if (invocation.TargetMethod == null)

@@ -4,6 +4,7 @@ Imports System.Collections.Immutable
 Imports System.Composition
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
+Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeQuality.Analyzers.Maintainability
 
 Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
@@ -19,5 +20,13 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                 Return ImmutableArray.Create(BasicRemoveUnusedLocalsAnalyzer.RuleId)
             End Get
         End Property
+
+        Protected Overrides Function GetAssignmentStatement(node As SyntaxNode) As SyntaxNode
+            node = node.Parent
+            If (node.Kind() = SyntaxKind.SimpleAssignmentStatement) Then
+                Return node
+            End If
+            Return Nothing
+        End Function
     End Class
 End Namespace

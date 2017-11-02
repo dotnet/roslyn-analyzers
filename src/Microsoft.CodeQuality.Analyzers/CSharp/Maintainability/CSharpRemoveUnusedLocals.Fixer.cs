@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeQuality.Analyzers.Maintainability;
 
 namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
@@ -15,5 +16,16 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
     public sealed class CSharpRemoveUnusedLocalsFixer : RemoveUnusedLocalsFixer
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create("CS0168", "CS0219", "CS8321");
+
+        protected override SyntaxNode GetAssignmentStatement(SyntaxNode node)
+        {
+            node = node.Parent;
+            if (node.Kind() == SyntaxKind.SimpleAssignmentExpression)
+            {
+                return node.Parent;
+            }
+
+            return null;
+        }
     }
 }

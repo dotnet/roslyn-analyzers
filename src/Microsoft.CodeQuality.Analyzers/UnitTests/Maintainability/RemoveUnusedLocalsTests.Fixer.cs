@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeQuality.CSharp.Analyzers.Maintainability;
@@ -34,7 +33,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
             return new CSharpRemoveUnusedLocalsFixer();
         }
 
-        [Fact]
+        [Fact, WorkItem(22921, "https://github.com/dotnet/roslyn/issues/22921")]
         public void UnusedLocal_CSharp()
         {
             var code = @"
@@ -44,23 +43,45 @@ public class Tester
 {
     public void Testing()
     {
+        double localRate; // inline comment also to be deleted.
         int c;
         c = 0;
-        void lambda() 
+        void localFunction()
         {
             var lambdaA = 0;
             lambdaA = 3;
         }
 
         var rateIt = 3;
+        unsafe
+        {
+            int* p;
+            p = & rateIt;
+        }
+
         double debitIt = 4;
         Calculate(rateIt, ref debitIt);
     }
 
-
     void Calculate(double rate, ref double debt)
     {
-        debt = debt + (debt * rate / 100);
+        double GetRate(double rateParam)
+        {
+            double rateIt;
+            int AnotherLocal(int anotherRateParam) => 1;
+            return rateParam;
+        }
+
+        int a = 2, b = 100;
+        double c, localRate;
+        localRate = GetRate(rate);
+        Func<int> lambda = () =>
+        {
+            int bb = 4;
+            Func<int> internalLambda = () => { int bbb = 4; return 2; };
+            return 1;
+        };
+        debt = debt + (debt * localRate / b);
     }
 }
 ";
@@ -73,17 +94,36 @@ public class Tester
     public void Testing()
     {
         var rateIt = 3;
+        unsafe
+        {
+            int* p;
+            p = & rateIt;
+        }
+
         double debitIt = 4;
         Calculate(rateIt, ref debitIt);
     }
 
-
     void Calculate(double rate, ref double debt)
     {
-        debt = debt + (debt * rate / 100);
+        double GetRate(double rateParam)
+        {
+            return rateParam;
+        }
+
+        int b = 100;
+        double localRate;
+        localRate = GetRate(rate);
+        Func<int> lambda = () =>
+        {
+            Func<int> internalLambda = () => { return 2; };
+            return 1;
+        };
+        debt = debt + (debt * localRate / b);
     }
-}";
-            VerifyCSharpFix(code, fix);
+}
+";
+            VerifyCSharpFix(code, fix, allowNewCompilerDiagnostics: true);
         }
 
         [Fact]
@@ -93,38 +133,56 @@ public class Tester
 Imports System
 
 Public Class Tester
+
     Public Sub Testing()
-        Dim c as Integer
+        Dim localRate As Double ' inline comment also to be deleted. 
+        Dim c As Integer
         c = 0
-        Dim lambda As Action = Sub()
-                                   Dim lambdaA = 0
-                                   lambdaA = 3
-                               End Sub
         Dim rateIt = 3
-        Dim debitIt = 4
+        Dim debitIt As Double = 4
         Calculate(rateIt, debitIt)
     End Sub
 
-    Sub Calculate(ByVal rate As Double, ByRef debt As Double)
-        debt = debt + (debt * rate / 100)
+    Sub Calculate(rate As Double, ByRef debt As Double)
+        Dim a As Integer = 2, b As Integer = 100
+        Dim c As Double, localRate As Double
+        localRate = rate
+        Dim lambda As Func(Of Integer) = Function()
+            Dim bb As Integer = 4
+            Dim internalLambda As Func(Of Integer) = Function()
+                Dim bbb As Integer = 4
+                Return 2
+            End Function
+            Return 1
+        End Function
+        debt = debt + (debt * localRate / b * lambda())
     End Sub
-End Class";
+End Class
+";
 
             var fix = @"
 Imports System
 
 Public Class Tester
+
     Public Sub Testing()
         Dim rateIt = 3
-        Dim debitIt = 4
+        Dim debitIt As Double = 4
         Calculate(rateIt, debitIt)
     End Sub
 
-    Sub Calculate(ByVal rate As Double, ByRef debt As Double)
-        debt = debt + (debt * rate / 100)
+    Sub Calculate(rate As Double, ByRef debt As Double)
+        Dim b As Integer = 100
+        Dim localRate As Double
+        localRate = rate
+        Dim lambda As Func(Of Integer) = Function()
+                                             Return 1
+        End Function
+        debt = debt + (debt * localRate / b * lambda())
     End Sub
-End Class";
-            VerifyBasicFix(code, fix);
+End Class
+";
+            VerifyBasicFix(code, fix, allowNewCompilerDiagnostics: true);
         }
     }
 }

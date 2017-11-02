@@ -9,6 +9,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Analyzer.Utilities;
+using Microsoft.CodeAnalysis.FindSymbols;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
@@ -36,28 +39,61 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return;
             }
 
-            // We cannot have multiple overlapping diagnostics of this id. 
             Diagnostic diagnostic = context.Diagnostics.Single();
+
+            DocumentEditor editor = await DocumentEditor.CreateAsync(context.Document, context.CancellationToken).ConfigureAwait(false);
+            ISymbol symbol = editor.SemanticModel.GetDeclaredSymbol(node);
+            var referencedSymbols = await SymbolFinder.FindReferencesAsync(symbol, context.Document.Project.Solution, context.CancellationToken);
+            
+            var nodesToRemoveBuilder = ImmutableArray.CreateBuilder<SyntaxNode>();
+            foreach (var referencedSymbol in referencedSymbols)
+            {
+                if (referencedSymbol?.Locations != null)
+                {
+                    foreach (var location in referencedSymbol.Locations)
+                    {
+                        if (location != null)
+                        {
+                            var referencedSymbolNode = root.FindNode(location.Location.SourceSpan);
+                            if (referencedSymbolNode != null)
+                            {
+                                var assignmentNode = GetAssignmentStatement(referencedSymbolNode);
+                                if (assignmentNode != null)
+                                {
+                                    nodesToRemoveBuilder.Add(assignmentNode);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            var declarationNode = editor.Generator.GetDeclaration(node);
+            nodesToRemoveBuilder.Add(node);
+
+            var nodesToRemove = nodesToRemoveBuilder.ToImmutable();
+
             context.RegisterCodeFix(
                 new RemoveLocalAction(
                     MicrosoftMaintainabilityAnalyzersResources.RemoveUnusedLocalsMessage,
-                    async ct => await RemoveLocal(context.Document, node, ct).ConfigureAwait(false)),
+                    async ct => await RemoveNodes(context.Document, nodesToRemove, ct).ConfigureAwait(false)),
                 diagnostic);
 
             return;
         }
 
-        private async Task<Document> RemoveLocal(Document document, SyntaxNode node, CancellationToken cancellationToken)
+        private async Task<Document> RemoveNodes(Document document, IEnumerable<SyntaxNode> nodes, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            ISymbol symbol = editor.SemanticModel.GetDeclaredSymbol(node);
-            node = editor.Generator.GetDeclaration(node);
+            foreach (var node in nodes.Where(n => n != null).OrderByDescending(n => n.SpanStart))
+            {
+                editor.RemoveNode(node);
+            }
 
-            
-            editor.RemoveNode(node);
-         
             return editor.GetChangedDocument();
         }
+
+        protected abstract SyntaxNode GetAssignmentStatement(SyntaxNode node);
 
         private class RemoveLocalAction : DocumentChangeAction
         {

@@ -118,7 +118,9 @@ namespace Test.Utilities
                 }
 
                 analyzerDiagnostics = GetSortedDiagnostics(analyzerOpt, new[] { document }, additionalFiles: additionalFiles, validationMode: validationMode);
-                var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, document.GetSemanticModelAsync().Result.GetDiagnostics());
+
+                var updatedCompilerDiagnostics = document.GetSemanticModelAsync().Result.GetDiagnostics();
+                var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, updatedCompilerDiagnostics);
                 if (!allowNewCompilerDiagnostics && newCompilerDiagnostics.Any())
                 {
                     // Format and get the compiler diagnostics again so that the locations make sense in the output
@@ -131,7 +133,7 @@ namespace Test.Utilities
                             document.GetSyntaxRootAsync().Result.ToFullString()));
                 }
 
-                var newFixableDiagnostics = getFixableDiagnostics(analyzerDiagnostics.Concat(newCompilerDiagnostics));
+                var newFixableDiagnostics = getFixableDiagnostics(analyzerDiagnostics.Concat(updatedCompilerDiagnostics));
                 if (fixableDiagnostics.SetEquals(newFixableDiagnostics, DiagnosticComparer.Instance))
                 {
                     diagnosticIndexToFix++;

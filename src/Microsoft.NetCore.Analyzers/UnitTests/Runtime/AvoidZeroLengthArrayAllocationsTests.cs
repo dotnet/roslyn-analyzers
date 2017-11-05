@@ -361,6 +361,7 @@ class C
             VerifyCSharpFix(badSource, fixedSource);
         }
         
+        [WorkItem(1337, "https://github.com/dotnet/roslyn-analyzers/issues/1337")]
         [Fact]
         public void EmptyArrayCSharp_UsedInAttribute_NoDiagnostics()
         {
@@ -384,6 +385,7 @@ class C
             VerifyCSharp(source);
         }
 
+        [WorkItem(1337, "https://github.com/dotnet/roslyn-analyzers/issues/1337")]
         [Fact]
         public void WipEmptyArrayCSharp_UsedInAssignment()
         {
@@ -418,6 +420,7 @@ class C
             VerifyCSharpFix(badSource, fixedSource);
         }
 
+        [WorkItem(1337, "https://github.com/dotnet/roslyn-analyzers/issues/1337")]
         [Fact]
         public void WipEmptyArrayCSharp_DeclarationTypeDoesNotMatch_NotArray()
         {
@@ -472,6 +475,7 @@ class C
             VerifyCSharpFix(badSource, fixedSource);
         }
 
+        [WorkItem(1337, "https://github.com/dotnet/roslyn-analyzers/issues/1337")]
         [Fact]
         public void WipEmptyArrayCSharp_DeclarationTypeDoesNotMatch_DifferentElementType()
         {
@@ -495,6 +499,7 @@ class C
             VerifyCSharpFix(badSource, fixedSource);
         }
 
+        [WorkItem(1337, "https://github.com/dotnet/roslyn-analyzers/issues/1337")]
         [Fact]
         public void WipEmptyArrayCSharp_UsedAsExpression()
         {

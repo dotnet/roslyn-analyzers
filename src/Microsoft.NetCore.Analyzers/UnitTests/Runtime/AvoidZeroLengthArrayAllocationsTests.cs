@@ -494,5 +494,58 @@ class C
 ";
             VerifyCSharpFix(badSource, fixedSource);
         }
+
+        [Fact]
+        public void WipEmptyArrayCSharp_UsedAsExpression()
+        {
+            const string badSource = @"
+class C
+{
+    void M1(object obj)
+    {
+    }
+
+    void M2()
+    {
+        M1(        new object[0]);
+    }
+
+    object M3() => new object[0];
+
+    object M4()
+    {
+        return     new object[0];
+    }
+}
+";
+            VerifyCSharp(badSource, new DiagnosticResult[]
+            {
+                GetCSharpResultAt(10, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
+                GetCSharpResultAt(13, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
+                GetCSharpResultAt(17, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
+            });
+
+            const string fixedSource = @"
+class C
+{
+    void M1(object obj)
+    {
+    }
+
+    void M2()
+    {
+        M1(        Array.Empty<object>());
+    }
+
+    object M3() => Array.Empty<object>();
+
+    object M4()
+    {
+        return     Array.Empty<object>();
+    }
+}
+";
+            VerifyCSharpFix(badSource, fixedSource);
+        }
     }
 }

@@ -29,12 +29,40 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             return type.GetMethod("Empty", BindingFlags.Public | BindingFlags.Static) != null;
         }
 
+        private static string GetArrayEmptySourceBasic()
+        {
+            const string arrayEmptySourceRaw = @"
+Namespace System
+    Public Class Array
+       Public Shared Function Empty(Of T)() As T()
+           Return Nothing
+       End Function
+    End Class
+End Namespace";
+
+            return IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
+        }
+
+        private static string GetArrayEmptySourceCSharp()
+        {
+            const string arrayEmptySourceRaw = @"
+namespace System
+{
+    public class Array
+    {
+        public static T[] Empty<T>()
+        {
+            return null;
+        }
+    }
+}";
+
+            return IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
+        }
+
         [Fact]
         public void EmptyArrayCSharp()
         {
-            const string arrayEmptySourceRaw =
-                @"namespace System { public class Array { public static T[] Empty<T>() { return null; } } }";
-
             const string badSource = @"
 using System.Collections.Generic;
 
@@ -82,7 +110,7 @@ class C
         List<int> list1 = new List<int>() { };         // no
     }
 }";
-            string arrayEmptySource = IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
+            string arrayEmptySource = GetArrayEmptySourceCSharp();
 
             VerifyCSharpUnsafeCode(badSource + arrayEmptySource, new[]
             {
@@ -117,15 +145,6 @@ class C
         [Fact]
         public void EmptyArrayVisualBasic()
         {
-            const string arrayEmptySourceRaw = @"
-Namespace System
-    Public Class Array
-       Public Shared Function Empty(Of T)() As T()
-           Return Nothing
-       End Function
-    End Class
-End Namespace
-";
             const string badSource = @"
 Imports System.Collections.Generic
 
@@ -172,7 +191,7 @@ Class C
     End Sub
 End Class";
 
-            string arrayEmptySource = IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
+            string arrayEmptySource = GetArrayEmptySourceBasic();
 
             VerifyBasic(badSource + arrayEmptySource, new[]
             {
@@ -220,7 +239,7 @@ class C
         double[] arr3 = new double[(long)1];         // no
     }
 }";
-            string arrayEmptySource = IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
+            string arrayEmptySource = GetArrayEmptySourceCSharp();
 
             VerifyCSharp(badSource + arrayEmptySource, new[]
             {
@@ -242,15 +261,6 @@ class C
         [Fact]
         public void EmptyArrayVisualBasic_CompilerGeneratedArrayCreation()
         {
-            const string arrayEmptySourceRaw = @"
-Namespace System
-    Public Class Array
-       Public Shared Function Empty(Of T)() As T()
-           Return Nothing
-       End Function
-    End Class
-End Namespace
-";
             const string source = @"
 Class C
     Private Sub F(ParamArray args As String())
@@ -262,7 +272,7 @@ Private Sub G()
 End Class
 ";
 
-            string arrayEmptySource = IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
+            string arrayEmptySource = GetArrayEmptySourceBasic();
 
             // Should we be flagging diagnostics on compiler generated code?
             // Should the analyzer even be invoked for compiler generated code?
@@ -273,29 +283,13 @@ End Class
         [Fact]
         public void EmptyArrayCSharp_CompilerGeneratedArrayCreationInObjectCreation()
         {
-            const string arrayEmptySourceRaw = @"
-using System;
-using System.Collections;
-using System.Collections.Generic;
-
-namespace System
-{
-	public class Array
-	{
-		public static T[] Empty<T>()
-		{
-			return null;
-		}
-	}
-}
-";
             const string source = @"
 namespace N
 {
     using Microsoft.CodeAnalysis;
     class C
     {
-	    public static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+        public static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             ""RuleId"",
             ""Title"",
             ""MessageFormat"",
@@ -307,7 +301,7 @@ namespace N
 }
 ";
 
-            string arrayEmptySource = IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
+            string arrayEmptySource = GetArrayEmptySourceCSharp();
 
             // Should we be flagging diagnostics on compiler generated code?
             // Should the analyzer even be invoked for compiler generated code?
@@ -318,22 +312,6 @@ namespace N
         [Fact]
         public void EmptyArrayCSharp_CompilerGeneratedArrayCreationInIndexerAccess()
         {
-            const string arrayEmptySourceRaw = @"
-using System;
-using System.Collections;
-using System.Collections.Generic;
-
-namespace System
-{
-	public class Array
-	{
-		public static T[] Empty<T>()
-		{
-			return null;
-		}
-	}
-}
-";
             const string source = @"
 public abstract class C
 {

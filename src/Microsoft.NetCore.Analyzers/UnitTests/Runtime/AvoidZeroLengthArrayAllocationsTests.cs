@@ -323,11 +323,176 @@ public abstract class C
 }
 ";
 
-            string arrayEmptySource = IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
+            string arrayEmptySource = GetArrayEmptySourceCSharp();
 
             // Should we be flagging diagnostics on compiler generated code?
             // Should the analyzer even be invoked for compiler generated code?
             VerifyCSharp(source + arrayEmptySource, addLanguageSpecificCodeAnalysisReference: true);
+        }
+
+        [WorkItem(1298, "https://github.com/dotnet/roslyn-analyzers/issues/1298")]
+        [Fact]
+        public void WipEmptyArrayCSharp_FieldOrPropertyInitializer()
+        {
+            const string badSource = @"
+class C
+{
+    public int[] f1 = new int[] { };
+    public int[] p1 { get; set; } = new int[] { };
+}
+";
+
+            string arrayEmptySource = GetArrayEmptySourceCSharp();
+
+            VerifyCSharp(badSource + arrayEmptySource, new[]
+            {
+                GetCSharpResultAt(4, 23, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                GetCSharpResultAt(7, 37, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()")
+            });
+
+            const string fixedSource = @"
+class C
+{
+    public int[] f1 = Array.Empty<int>();
+    public int[] p1 { get; set; } = Array.Empty<int>();
+}
+";
+
+            VerifyCSharpFix(badSource, fixedSource);
+        }
+        
+        [Fact]
+        public void EmptyArrayCSharp_UsedInAttribute_NoDiagnostics()
+        {
+            const string source = @"
+using System;
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]  
+class CustomAttribute : Attribute
+{
+    public CustomAttribute(object o)
+    {
+    }
+}
+
+[Custom(new int[0])]
+[Custom(new string[] { })]
+class C
+{
+}
+";
+            VerifyCSharp(source);
+        }
+
+        [Fact]
+        public void WipEmptyArrayCSharp_UsedInAssignment()
+        {
+            const string badSource = @"
+class C
+{
+    void M()
+    {
+        int[] l1;
+        l1 = new int[0];
+        l1 = new int[] { };
+    }
+}
+";
+            VerifyCSharp(badSource, new DiagnosticResult[]
+            {
+                GetCSharpResultAt(7, 14, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                GetCSharpResultAt(8, 14, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()")
+            });
+
+            const string fixedSource = @"
+class C
+{
+    void M()
+    {
+        int[] l1;
+        l1 = Array.Empty<int>();
+        l1 = Array.Empty<int>();
+    }
+}
+";
+            VerifyCSharpFix(badSource, fixedSource);
+        }
+
+        [Fact]
+        public void WipEmptyArrayCSharp_DeclarationTypeDoesNotMatch_NotArray()
+        {
+            const string badSource = @"
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
+class C
+{
+    public IEnumerable<int> f1 =         new int[0];
+    public ICollection<int> f2 =         new int[0];
+    public IReadOnlyCollection<int> f3 = new int[0];
+    public IList<int> f4 =               new int[0];
+    public IReadOnlyList<int> f5 =       new int[0];
+
+    public IEnumerable f6 =              new int[0];
+    public ICollection f7 =              new int[0];
+    public IList f8 =                    new int[0];
+}
+";
+            VerifyCSharp(badSource, new DiagnosticResult[]
+            {
+                GetCSharpResultAt(8, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                GetCSharpResultAt(9, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                GetCSharpResultAt(10, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                GetCSharpResultAt(11, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                GetCSharpResultAt(12, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                GetCSharpResultAt(14, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                GetCSharpResultAt(15, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                GetCSharpResultAt(16, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()")
+            });
+
+            const string fixedSource = @"
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
+class C
+{
+    public IEnumerable<int> f1 =         Array.Empty<int>();
+    public ICollection<int> f2 =         Array.Empty<int>();
+    public IReadOnlyCollection<int> f3 = Array.Empty<int>();
+    public IList<int> f4 =               Array.Empty<int>();
+    public IReadOnlyList<int> f5 =       Array.Empty<int>();
+
+    public IEnumerable f6 =              Array.Empty<int>();
+    public ICollection f7 =              Array.Empty<int>();
+    public IList f8 =                    Array.Empty<int>();
+}
+";
+            VerifyCSharpFix(badSource, fixedSource);
+        }
+
+        [Fact]
+        public void WipEmptyArrayCSharp_DeclarationTypeDoesNotMatch_DifferentElementType()
+        {
+            const string badSource = @"
+class C
+{
+    public object[] f1 = new string[0];
+}
+";
+            VerifyCSharp(badSource, new DiagnosticResult[]
+            {
+                GetCSharpResultAt(4, 26, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<string>()")
+            });
+
+            const string fixedSource = @"
+class C
+{
+    public object[] f1 = Array.Empty<string>();
+}
+";
+            VerifyCSharpFix(badSource, fixedSource);
         }
     }
 }

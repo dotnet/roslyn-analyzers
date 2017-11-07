@@ -66,6 +66,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             switch (operation.Kind)
             {
                 case OperationKind.Argument:
+                    // Happens if the array is passed as a method argument as it's being created.
+                    // e.g. M(new object[0])
                     return FindArrayCreation(
                         ((IArgument)operation).Value);
 
@@ -73,6 +75,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return (IArrayCreationExpression)operation;
 
                 case OperationKind.ConversionExpression:
+                    // Happens when the array is converted to a different type as it's created.
+                    // e.g. M's signature is M(object obj), M(new object[0])
+                    //      In this case, the IConversionExpression is the child of the IArgument.
                     return FindArrayCreation(
                         ((IConversionExpression)operation).Operand);
             }

@@ -518,18 +518,24 @@ using System;
 
 class C
 {
-    void M1(object[] obj)
+    void M1(object[] array)
     {
     }
 
-    void M2()
+    // Tests handling of implicit conversion. Do not change to 'object[] obj'.
+    void M2(object obj)
+    {
+    }
+
+    void M3()
     {
         M1(new object[0]);
+        M2(new object[0]);
     }
 
-    object M3() => new object[0];
+    object M4() => new object[0];
 
-    object M4()
+    object M5()
     {
         return new object[0];
     }
@@ -537,9 +543,10 @@ class C
 ";
             VerifyCSharp(badSource, new DiagnosticResult[]
             {
-                GetCSharpResultAt(12, 12, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
-                GetCSharpResultAt(15, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
-                GetCSharpResultAt(19, 16, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
+                GetCSharpResultAt(17, 12, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
+                GetCSharpResultAt(18, 12, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
+                GetCSharpResultAt(21, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
+                GetCSharpResultAt(25, 16, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
             });
 
             const string fixedSource = @"
@@ -547,18 +554,24 @@ using System;
 
 class C
 {
-    void M1(object[] obj)
+    void M1(object[] array)
     {
     }
 
-    void M2()
+    // Tests handling of implicit conversion. Do not change to 'object[] obj'.
+    void M2(object obj)
+    {
+    }
+
+    void M3()
     {
         M1(Array.Empty<object>());
+        M2(Array.Empty<object>());
     }
 
-    object M3() => Array.Empty<object>();
+    object M4() => Array.Empty<object>();
 
-    object M4()
+    object M5()
     {
         return Array.Empty<object>();
     }

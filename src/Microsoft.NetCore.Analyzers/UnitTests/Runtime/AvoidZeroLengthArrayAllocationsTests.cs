@@ -327,6 +327,29 @@ public abstract class C
             VerifyCSharp(source + arrayEmptySource, addLanguageSpecificCodeAnalysisReference: true);
         }
 
+        [Fact]
+        public void EmptyArrayCSharp_UsedInAttribute_NoDiagnostics()
+        {
+            const string source = @"
+using System;
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]  
+class CustomAttribute : Attribute
+{
+    public CustomAttribute(object o)
+    {
+    }
+}
+
+[Custom(new int[0])]
+[Custom(new string[] { })]
+class C
+{
+}
+";
+            VerifyCSharp(source);
+        }
+
         [WorkItem(1298, "https://github.com/dotnet/roslyn-analyzers/issues/1298")]
         [Fact]
         public void EmptyArrayCSharp_FieldOrPropertyInitializer()
@@ -360,29 +383,6 @@ class C
 ";
 
             VerifyCSharpFix(badSource, fixedSource);
-        }
-        
-        [Fact]
-        public void EmptyArrayCSharp_UsedInAttribute_NoDiagnostics()
-        {
-            const string source = @"
-using System;
-
-[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]  
-class CustomAttribute : Attribute
-{
-    public CustomAttribute(object o)
-    {
-    }
-}
-
-[Custom(new int[0])]
-[Custom(new string[] { })]
-class C
-{
-}
-";
-            VerifyCSharp(source);
         }
 
         [WorkItem(1298, "https://github.com/dotnet/roslyn-analyzers/issues/1298")]

@@ -329,7 +329,7 @@ public abstract class C
 
         [WorkItem(1298, "https://github.com/dotnet/roslyn-analyzers/issues/1298")]
         [Fact]
-        public void WipEmptyArrayCSharp_FieldOrPropertyInitializer()
+        public void EmptyArrayCSharp_FieldOrPropertyInitializer()
         {
             const string badSource = @"
 using System;
@@ -363,7 +363,7 @@ class C
         }
         
         [Fact]
-        public void WipEmptyArrayCSharp_UsedInAttribute_NoDiagnostics()
+        public void EmptyArrayCSharp_UsedInAttribute_NoDiagnostics()
         {
             const string source = @"
 using System;
@@ -387,7 +387,7 @@ class C
 
         [WorkItem(1298, "https://github.com/dotnet/roslyn-analyzers/issues/1298")]
         [Fact]
-        public void WipEmptyArrayCSharp_UsedInAssignment()
+        public void EmptyArrayCSharp_UsedInAssignment()
         {
             const string badSource = @"
 using System;
@@ -426,7 +426,7 @@ class C
 
         [WorkItem(1298, "https://github.com/dotnet/roslyn-analyzers/issues/1298")]
         [Fact]
-        public void WipEmptyArrayCSharp_DeclarationTypeDoesNotMatch_NotArray()
+        public void EmptyArrayCSharp_DeclarationTypeDoesNotMatch_NotArray()
         {
             const string badSource = @"
 using System;
@@ -483,7 +483,7 @@ class C
 
         [WorkItem(1298, "https://github.com/dotnet/roslyn-analyzers/issues/1298")]
         [Fact]
-        public void WipEmptyArrayCSharp_DeclarationTypeDoesNotMatch_DifferentElementType()
+        public void EmptyArrayCSharp_DeclarationTypeDoesNotMatch_DifferentElementType()
         {
             const string badSource = @"
 using System;
@@ -511,7 +511,7 @@ class C
 
         [WorkItem(1298, "https://github.com/dotnet/roslyn-analyzers/issues/1298")]
         [Fact]
-        public void WipEmptyArrayCSharp_UsedAsExpression()
+        public void EmptyArrayCSharp_UsedAsExpression()
         {
             const string badSource = @"
 using System;
@@ -581,7 +581,7 @@ class C
         }
 
         [Fact]
-        public void WipEmptyArrayCSharp_SystemNotImported()
+        public void EmptyArrayCSharp_SystemNotImported()
         {
             const string badSource = @"
 class C

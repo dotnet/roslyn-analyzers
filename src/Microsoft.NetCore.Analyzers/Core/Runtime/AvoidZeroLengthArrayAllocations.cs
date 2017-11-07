@@ -86,7 +86,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 if (dimensionSize.HasConstantValue(0))
                 {
                     // Workaround for https://github.com/dotnet/roslyn/issues/10214
-                    // Bail out for compiler generated param array creation.
+                    // Bail out for compiler generated params array creation.
                     if (IsCompilerGeneratedParamsArray(arrayCreationExpression, context))
                     {
                         return;
@@ -106,7 +106,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         var constructed = emptyMethod.Construct(elementType);
 
                         string typeName = constructed.ToDisplayString(ReportFormat);
-                        context.ReportDiagnostic(context.Operation.Syntax.CreateDiagnostic(UseArrayEmptyDescriptor, typeName));
+                        context.ReportDiagnostic(arrayCreationExpression.Syntax.CreateDiagnostic(UseArrayEmptyDescriptor, typeName));
                     }
                 }
             }

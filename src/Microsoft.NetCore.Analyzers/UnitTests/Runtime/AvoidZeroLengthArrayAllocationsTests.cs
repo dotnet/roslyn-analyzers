@@ -332,6 +332,8 @@ public abstract class C
         public void WipEmptyArrayCSharp_FieldOrPropertyInitializer()
         {
             const string badSource = @"
+using System;
+
 class C
 {
     public int[] f1 = new int[] { };
@@ -343,11 +345,13 @@ class C
 
             VerifyCSharp(badSource + arrayEmptySource, new[]
             {
-                GetCSharpResultAt(4, 23, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                GetCSharpResultAt(6, 23, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
                 GetCSharpResultAt(7, 37, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()")
             });
 
             const string fixedSource = @"
+using System;
+
 class C
 {
     public int[] f1 = Array.Empty<int>();
@@ -387,6 +391,8 @@ class C
         public void WipEmptyArrayCSharp_UsedInAssignment()
         {
             const string badSource = @"
+using System;
+
 class C
 {
     void M()
@@ -399,11 +405,13 @@ class C
 ";
             VerifyCSharp(badSource, new DiagnosticResult[]
             {
-                GetCSharpResultAt(7, 14, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                GetCSharpResultAt(8, 14, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()")
+                GetCSharpResultAt(8, 14, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                GetCSharpResultAt(9, 14, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()")
             });
 
             const string fixedSource = @"
+using System;
+
 class C
 {
     void M()
@@ -422,6 +430,7 @@ class C
         public void WipEmptyArrayCSharp_DeclarationTypeDoesNotMatch_NotArray()
         {
             const string badSource = @"
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -441,17 +450,18 @@ class C
 ";
             VerifyCSharp(badSource, new DiagnosticResult[]
             {
-                GetCSharpResultAt(8, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
                 GetCSharpResultAt(9, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
                 GetCSharpResultAt(10, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
                 GetCSharpResultAt(11, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
                 GetCSharpResultAt(12, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                GetCSharpResultAt(14, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                GetCSharpResultAt(13, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
                 GetCSharpResultAt(15, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                GetCSharpResultAt(16, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()")
+                GetCSharpResultAt(16, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                GetCSharpResultAt(17, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()")
             });
 
             const string fixedSource = @"
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -477,6 +487,8 @@ class C
         public void WipEmptyArrayCSharp_DeclarationTypeDoesNotMatch_DifferentElementType()
         {
             const string badSource = @"
+using System;
+
 class C
 {
     public object[] f1 = new string[0];
@@ -484,10 +496,12 @@ class C
 ";
             VerifyCSharp(badSource, new DiagnosticResult[]
             {
-                GetCSharpResultAt(4, 26, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<string>()")
+                GetCSharpResultAt(6, 26, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<string>()")
             });
 
             const string fixedSource = @"
+using System;
+
 class C
 {
     public object[] f1 = Array.Empty<string>();
@@ -501,6 +515,8 @@ class C
         public void WipEmptyArrayCSharp_UsedAsExpression()
         {
             const string badSource = @"
+using System;
+
 class C
 {
     void M1(object obj)
@@ -522,12 +538,14 @@ class C
 ";
             VerifyCSharp(badSource, new DiagnosticResult[]
             {
-                GetCSharpResultAt(10, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
-                GetCSharpResultAt(13, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
-                GetCSharpResultAt(17, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
+                GetCSharpResultAt(12, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
+                GetCSharpResultAt(15, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
+                GetCSharpResultAt(19, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
             });
 
             const string fixedSource = @"
+using System;
+
 class C
 {
     void M1(object obj)
@@ -545,6 +563,29 @@ class C
     {
         return     Array.Empty<object>();
     }
+}
+";
+            VerifyCSharpFix(badSource, fixedSource);
+        }
+
+        [Fact]
+        public void WipEmptyArrayCSharp_SystemNotImported()
+        {
+            const string badSource = @"
+class C
+{
+    public object[] f1 = new object[0];
+}
+";
+            VerifyCSharp(badSource, new DiagnosticResult[]
+            {
+                GetCSharpResultAt(4, 26, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()")
+            });
+
+            const string fixedSource = @"
+class C
+{
+    public object[] f1 = System.Array.Empty<object>();
 }
 ";
             VerifyCSharpFix(badSource, fixedSource);

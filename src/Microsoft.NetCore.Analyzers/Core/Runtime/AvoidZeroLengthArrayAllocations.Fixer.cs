@@ -48,22 +48,31 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             SyntaxGenerator generator = editor.Generator;
 
-            SyntaxNode variableDecl = generator.GetDeclaration(nodeToFix, DeclarationKind.Variable);
-            SyntaxNode typeNode = generator.GetType(variableDecl);
+            ITypeSymbol elementType = GetArrayElementType(nodeToFix, semanticModel, cancellationToken);
+            SyntaxNode arrayEmptyInvocation = GenerateArrayEmptyInvocation(generator, elementType, semanticModel).WithTriviaFrom(nodeToFix);
 
-            var type = semanticModel.GetTypeInfo(typeNode, cancellationToken).Type as IArrayTypeSymbol;
-            INamedTypeSymbol arrayTypeSymbol = semanticModel.Compilation.GetTypeByMetadataName(AvoidZeroLengthArrayAllocationsAnalyzer.ArrayTypeName);
-
-            SyntaxNode arrayEmptyName = generator.QualifiedName(generator.TypeExpression(arrayTypeSymbol),
-                                                         generator.GenericName(AvoidZeroLengthArrayAllocationsAnalyzer.ArrayEmptyMethodName, type.ElementType));
-            SyntaxNode arrayEmptyInvocation = generator.InvocationExpression(arrayEmptyName);
-            arrayEmptyInvocation = arrayEmptyInvocation.WithLeadingTrivia(nodeToFix.GetLeadingTrivia()).WithTrailingTrivia(nodeToFix.GetTrailingTrivia());
             editor.ReplaceNode(nodeToFix, arrayEmptyInvocation);
             return editor.GetChangedDocument();
         }
 
+        private static ITypeSymbol GetArrayElementType(SyntaxNode arrayCreationExpression, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            var typeInfo = semanticModel.GetTypeInfo(arrayCreationExpression, cancellationToken);
+            var arrayType = (IArrayTypeSymbol)typeInfo.Type;
+            return arrayType.ElementType;
+        }
+
+        private static SyntaxNode GenerateArrayEmptyInvocation(SyntaxGenerator generator, ITypeSymbol elementType, SemanticModel semanticModel)
+        {
+            INamedTypeSymbol arrayTypeSymbol = semanticModel.Compilation.GetTypeByMetadataName(AvoidZeroLengthArrayAllocationsAnalyzer.ArrayTypeName);
+            SyntaxNode arrayEmptyName = generator.QualifiedName(
+                generator.TypeExpression(arrayTypeSymbol),
+                generator.GenericName(AvoidZeroLengthArrayAllocationsAnalyzer.ArrayEmptyMethodName, elementType));
+            return generator.InvocationExpression(arrayEmptyName);
+        }
+
         // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
-        private class MyCodeAction : DocumentChangeAction
+=       private class MyCodeAction : DocumentChangeAction
         {
             public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
                 : base(title, createChangedDocument, equivalenceKey)

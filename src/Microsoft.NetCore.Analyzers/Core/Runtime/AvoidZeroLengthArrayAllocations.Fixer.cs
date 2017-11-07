@@ -6,9 +6,11 @@ using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.Semantics;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -48,18 +50,34 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             SyntaxGenerator generator = editor.Generator;
 
-            ITypeSymbol elementType = GetArrayElementType(nodeToFix, semanticModel, cancellationToken);
+            var operation = semanticModel.GetOperationInternal(nodeToFix, cancellationToken);
+            var arrayCreationExpression = FindArrayCreation(operation);
+            nodeToFix = arrayCreationExpression.Syntax;
+
+            ITypeSymbol elementType = arrayCreationExpression.GetElementType();
             SyntaxNode arrayEmptyInvocation = GenerateArrayEmptyInvocation(generator, elementType, semanticModel).WithTriviaFrom(nodeToFix);
 
             editor.ReplaceNode(nodeToFix, arrayEmptyInvocation);
             return editor.GetChangedDocument();
         }
 
-        private static ITypeSymbol GetArrayElementType(SyntaxNode arrayCreationExpression, SemanticModel semanticModel, CancellationToken cancellationToken)
+        private static IArrayCreationExpression FindArrayCreation(IOperation operation)
         {
-            var typeInfo = semanticModel.GetTypeInfo(arrayCreationExpression, cancellationToken);
-            var arrayType = (IArrayTypeSymbol)typeInfo.Type;
-            return arrayType.ElementType;
+            switch (operation.Kind)
+            {
+                case OperationKind.Argument:
+                    return FindArrayCreation(
+                        ((IArgument)operation).Value);
+
+                case OperationKind.ArrayCreationExpression:
+                    return (IArrayCreationExpression)operation;
+
+                case OperationKind.ConversionExpression:
+                    return FindArrayCreation(
+                        ((IConversionExpression)operation).Operand);
+            }
+
+            return null;
         }
 
         private static SyntaxNode GenerateArrayEmptyInvocation(SyntaxGenerator generator, ITypeSymbol elementType, SemanticModel semanticModel)

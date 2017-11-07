@@ -361,10 +361,9 @@ class C
 
             VerifyCSharpFix(badSource, fixedSource);
         }
-
-        [WorkItem(1298, "https://github.com/dotnet/roslyn-analyzers/issues/1298")]
+        
         [Fact]
-        public void EmptyArrayCSharp_UsedInAttribute_NoDiagnostics()
+        public void WipEmptyArrayCSharp_UsedInAttribute_NoDiagnostics()
         {
             const string source = @"
 using System;
@@ -405,8 +404,8 @@ class C
 ";
             VerifyCSharp(badSource, new DiagnosticResult[]
             {
-                GetCSharpResultAt(8, 14, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                GetCSharpResultAt(9, 14, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()")
+                GetCSharpResultAt(9, 14, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                GetCSharpResultAt(10, 14, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()")
             });
 
             const string fixedSource = @"
@@ -437,27 +436,27 @@ using System.Collections.ObjectModel;
 
 class C
 {
-    public IEnumerable<int> f1 =         new int[0];
-    public ICollection<int> f2 =         new int[0];
+    public IEnumerable<int> f1 = new int[0];
+    public ICollection<int> f2 = new int[0];
     public IReadOnlyCollection<int> f3 = new int[0];
-    public IList<int> f4 =               new int[0];
-    public IReadOnlyList<int> f5 =       new int[0];
+    public IList<int> f4 = new int[0];
+    public IReadOnlyList<int> f5 = new int[0];
 
-    public IEnumerable f6 =              new int[0];
-    public ICollection f7 =              new int[0];
-    public IList f8 =                    new int[0];
+    public IEnumerable f6 = new int[0];
+    public ICollection f7 = new int[0];
+    public IList f8 = new int[0];
 }
 ";
             VerifyCSharp(badSource, new DiagnosticResult[]
             {
-                GetCSharpResultAt(9, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                GetCSharpResultAt(10, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                GetCSharpResultAt(9, 34, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                GetCSharpResultAt(10, 34, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
                 GetCSharpResultAt(11, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                GetCSharpResultAt(12, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                GetCSharpResultAt(13, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                GetCSharpResultAt(15, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                GetCSharpResultAt(16, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                GetCSharpResultAt(17, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()")
+                GetCSharpResultAt(12, 28, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                GetCSharpResultAt(13, 36, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                GetCSharpResultAt(15, 29, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                GetCSharpResultAt(16, 29, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                GetCSharpResultAt(17, 23, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()")
             });
 
             const string fixedSource = @"
@@ -468,15 +467,15 @@ using System.Collections.ObjectModel;
 
 class C
 {
-    public IEnumerable<int> f1 =         Array.Empty<int>();
-    public ICollection<int> f2 =         Array.Empty<int>();
+    public IEnumerable<int> f1 = Array.Empty<int>();
+    public ICollection<int> f2 = Array.Empty<int>();
     public IReadOnlyCollection<int> f3 = Array.Empty<int>();
-    public IList<int> f4 =               Array.Empty<int>();
-    public IReadOnlyList<int> f5 =       Array.Empty<int>();
+    public IList<int> f4 = Array.Empty<int>();
+    public IReadOnlyList<int> f5 = Array.Empty<int>();
 
-    public IEnumerable f6 =              Array.Empty<int>();
-    public ICollection f7 =              Array.Empty<int>();
-    public IList f8 =                    Array.Empty<int>();
+    public IEnumerable f6 = Array.Empty<int>();
+    public ICollection f7 = Array.Empty<int>();
+    public IList f8 = Array.Empty<int>();
 }
 ";
             VerifyCSharpFix(badSource, fixedSource);
@@ -519,28 +518,28 @@ using System;
 
 class C
 {
-    void M1(object obj)
+    void M1(object[] obj)
     {
     }
 
     void M2()
     {
-        M1(        new object[0]);
+        M1(new object[0]);
     }
 
     object M3() => new object[0];
 
     object M4()
     {
-        return     new object[0];
+        return new object[0];
     }
 }
 ";
             VerifyCSharp(badSource, new DiagnosticResult[]
             {
-                GetCSharpResultAt(12, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
+                GetCSharpResultAt(12, 12, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
                 GetCSharpResultAt(15, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
-                GetCSharpResultAt(19, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
+                GetCSharpResultAt(19, 16, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
             });
 
             const string fixedSource = @"
@@ -548,20 +547,20 @@ using System;
 
 class C
 {
-    void M1(object obj)
+    void M1(object[] obj)
     {
     }
 
     void M2()
     {
-        M1(        Array.Empty<object>());
+        M1(Array.Empty<object>());
     }
 
     object M3() => Array.Empty<object>();
 
     object M4()
     {
-        return     Array.Empty<object>();
+        return Array.Empty<object>();
     }
 }
 ";

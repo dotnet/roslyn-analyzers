@@ -38,8 +38,8 @@ Namespace System
            Return Nothing
        End Function
     End Class
-End Namespace";
-
+End Namespace
+";
             return IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
         }
 
@@ -55,8 +55,8 @@ namespace System
             return null;
         }
     }
-}";
-
+}
+";
             return IsArrayEmptyDefined() ? string.Empty : arrayEmptySourceRaw;
         }
 
@@ -215,9 +215,6 @@ End Class";
         [Fact]
         public void EmptyArrayCSharp_DifferentTypeKind()
         {
-            const string arrayEmptySourceRaw =
-                @"namespace System { public class Array { public static T[] Empty<T>() { return null; } } }";
-
             const string badSource = @"
 class C
 {
@@ -360,8 +357,8 @@ class C
 
             VerifyCSharpFix(badSource, fixedSource);
         }
-        
-        [WorkItem(1337, "https://github.com/dotnet/roslyn-analyzers/issues/1337")]
+
+        [WorkItem(1298, "https://github.com/dotnet/roslyn-analyzers/issues/1298")]
         [Fact]
         public void EmptyArrayCSharp_UsedInAttribute_NoDiagnostics()
         {
@@ -385,7 +382,7 @@ class C
             VerifyCSharp(source);
         }
 
-        [WorkItem(1337, "https://github.com/dotnet/roslyn-analyzers/issues/1337")]
+        [WorkItem(1298, "https://github.com/dotnet/roslyn-analyzers/issues/1298")]
         [Fact]
         public void WipEmptyArrayCSharp_UsedInAssignment()
         {
@@ -420,7 +417,7 @@ class C
             VerifyCSharpFix(badSource, fixedSource);
         }
 
-        [WorkItem(1337, "https://github.com/dotnet/roslyn-analyzers/issues/1337")]
+        [WorkItem(1298, "https://github.com/dotnet/roslyn-analyzers/issues/1298")]
         [Fact]
         public void WipEmptyArrayCSharp_DeclarationTypeDoesNotMatch_NotArray()
         {
@@ -475,7 +472,7 @@ class C
             VerifyCSharpFix(badSource, fixedSource);
         }
 
-        [WorkItem(1337, "https://github.com/dotnet/roslyn-analyzers/issues/1337")]
+        [WorkItem(1298, "https://github.com/dotnet/roslyn-analyzers/issues/1298")]
         [Fact]
         public void WipEmptyArrayCSharp_DeclarationTypeDoesNotMatch_DifferentElementType()
         {
@@ -499,7 +496,7 @@ class C
             VerifyCSharpFix(badSource, fixedSource);
         }
 
-        [WorkItem(1337, "https://github.com/dotnet/roslyn-analyzers/issues/1337")]
+        [WorkItem(1298, "https://github.com/dotnet/roslyn-analyzers/issues/1298")]
         [Fact]
         public void WipEmptyArrayCSharp_UsedAsExpression()
         {

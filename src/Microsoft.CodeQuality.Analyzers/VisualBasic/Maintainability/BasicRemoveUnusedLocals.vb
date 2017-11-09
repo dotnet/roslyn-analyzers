@@ -57,14 +57,14 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
 
                         operationBlockContext.RegisterOperationAction(
                         Sub(operationContext)
-                            Dim declarations = DirectCast(operationContext.Operation, IVariableDeclarationsOperation).Declarations
+                            Dim declarations = DirectCast(operationContext.Operation, IVariableDeclarationGroupOperation).Declarations
 
                             For Each declaration In declarations
-                                For Each local In declaration.Variables
-                                    mightBecomeUnusedLocals.Add(local)
+                                For Each declarator In declaration.Declarators
+                                    mightBecomeUnusedLocals.Add(declarator.Symbol)
                                 Next
                             Next
-                        End Sub, OperationKind.VariableDeclarations)
+                        End Sub, OperationKind.VariableDeclarationGroup)
 
                         operationBlockContext.RegisterOperationAction(
                         Sub(operationContext)

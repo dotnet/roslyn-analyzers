@@ -66,7 +66,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 IBlockOperation block = operationBlocks[0] as IBlockOperation;
 
-                // An operation block that's not even a block - don't analyze the error cases.
+                // Analyze IBlockOperation blocks.
+                // TODO: Handle expression bodied members https://github.com/dotnet/roslyn-analyzers/issues/1345
                 if (block == null)
                 {
                     return true;
@@ -74,8 +75,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 if (block.Operations.Length == 0 ||
                     (block.Operations.Length == 1 &&
-                     block.Operations[0] is IExpressionStatementOperation exprStatement &&
-                     exprStatement.Operation.Kind == OperationKind.Throw))
+                     block.Operations[0].Kind == OperationKind.Throw))
                 {
                     // Empty body OR body that just throws.
                     return true;

@@ -39,7 +39,7 @@ static addBuildSteps(def job, def projectName, def opsysName, def configName, de
 
   job.with {
     steps {
-      batchFile(""".\\build\CIBuild.cmd -configuration ${configName} -prepareMachine""")
+      batchFile(""".\\build\\CIBuild.cmd -configuration ${configName} -prepareMachine""")
     }
   }
 }

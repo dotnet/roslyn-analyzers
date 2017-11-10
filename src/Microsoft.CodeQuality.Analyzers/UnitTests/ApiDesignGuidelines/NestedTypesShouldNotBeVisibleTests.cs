@@ -361,6 +361,30 @@ End Class
             VerifyBasic(code);
         }
 
+        [Fact, WorkItem(1347, "https://github.com/dotnet/roslyn-analyzers/issues/1347")]
+        public void CSharpNoDiagnosticDelegateTypeSpecialCases()
+        {
+            var code = @"
+public class A
+{
+    public delegate void B();
+}
+";
+            VerifyCSharp(code);
+        }
+
+        [Fact, WorkItem(1347, "https://github.com/dotnet/roslyn-analyzers/issues/1347")]
+        public void BasicNoDiagnosticDelegateTypeSpecialCases()
+        {
+            var code = @"
+Public Class A
+	Public Delegate Sub B()
+End Class
+";
+            VerifyBasic(code);
+        }
+
+
         [Fact]
         public void CSharpDiagnosticDataSetWithOtherNestedClass()
         {

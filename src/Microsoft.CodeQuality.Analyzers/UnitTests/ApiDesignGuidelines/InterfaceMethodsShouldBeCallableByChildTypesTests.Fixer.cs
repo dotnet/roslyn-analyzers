@@ -657,7 +657,7 @@ public class NestedExplicitInterfaceImplementation
 
         #region VisualBasic
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1333")]
+        [Fact]
         public void CA1033SimpleDiagnosticCasesBasic_MakeProtected()
         {
             var code = @"
@@ -738,7 +738,7 @@ End Class
             VerifyBasicFix(code, expectedFixedCode);
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1333"), WorkItem(2616, "https://github.com/dotnet/roslyn/issues/2616")]
+        [Fact, WorkItem(2616, "https://github.com/dotnet/roslyn/issues/2616")]
         public void CA1033SimpleDiagnosticCasesBasic_ImplicitImpl()
         {
             var code = @"
@@ -1045,7 +1045,7 @@ End Class
             VerifyBasicFix(code, expectedFixedCode, codeFixIndex: 1);
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1333")]
+        [Fact]
         public void CA1033SimpleDiagnosticCasesBasic_Events()
         {
             var code = @"

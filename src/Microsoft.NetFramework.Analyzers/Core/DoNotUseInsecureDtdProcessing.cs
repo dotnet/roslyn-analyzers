@@ -630,9 +630,9 @@ namespace Microsoft.NetFramework.Analyzers
             private void AnalyzeVariableDeclaration(OperationAnalysisContext context)
             {
                 var declare = (IVariableDeclarationOperation)context.Operation;
-                foreach (var variable in declare.Variables)
+                foreach (var declarator in declare.Declarators)
                 {
-                    AnalyzeObjectCreationInternal(context, variable, declare.Initializer?.Value);
+                    AnalyzeObjectCreationInternal(context, declarator.Symbol, declarator.GetVariableInitializer()?.Value);
                 }
             }
 

@@ -484,7 +484,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 foreach (IOperation operation in operations)
                 {
-                    if (!ValidateOperation(operation))
+                    if (!operation.IsImplicit && !ValidateOperation(operation))
                     {
                         return false;
                     }

@@ -95,13 +95,15 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     // Throw statements.
                     operationBlockContext.RegisterOperationAction(operationContext =>
                     {
-                        if (operationContext.Operation.Type is INamedTypeSymbol type && type.DerivesFrom(exceptionType))
+                        // Get ThrowOperation's ExceptionType
+                        var thrownExceptionType = ((IThrowOperation)operationContext.Operation).Exception?.Type as INamedTypeSymbol;
+                        if (thrownExceptionType != null && thrownExceptionType.DerivesFrom(exceptionType))
                         {
                             // If no exceptions are allowed or if the thrown exceptions is not an allowed one..
-                            if (methodCategory.AllowedExceptions.IsEmpty || !methodCategory.AllowedExceptions.Contains(type))
+                            if (methodCategory.AllowedExceptions.IsEmpty || !methodCategory.AllowedExceptions.Contains(thrownExceptionType))
                             {
                                 operationContext.ReportDiagnostic(
-                                    operationContext.Operation.Syntax.CreateDiagnostic(methodCategory.Rule, methodSymbol.Name, type.Name));
+                                    operationContext.Operation.Syntax.CreateDiagnostic(methodCategory.Rule, methodSymbol.Name, thrownExceptionType.Name));
                             }
                         }
                     }, OperationKind.Throw);

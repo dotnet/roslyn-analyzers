@@ -632,7 +632,7 @@ namespace Microsoft.NetFramework.Analyzers
                 var declare = (IVariableDeclarationOperation)context.Operation;
                 foreach (var declarator in declare.Declarators)
                 {
-                    AnalyzeObjectCreationInternal(context, declarator.Symbol, declarator.Initializer?.Value ?? declare.Initializer?.Value);
+                    AnalyzeObjectCreationInternal(context, declarator.Symbol, declarator.GetVariableInitializer()?.Value);
                 }
             }
 

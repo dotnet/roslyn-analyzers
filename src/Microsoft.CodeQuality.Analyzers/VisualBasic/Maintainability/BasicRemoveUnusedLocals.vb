@@ -60,8 +60,8 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                             Dim declarations = DirectCast(operationContext.Operation, IVariableDeclarationGroupOperation).Declarations
 
                             For Each declaration In declarations
-                                For Each declarator In declaration.Declarators
-                                    mightBecomeUnusedLocals.Add(declarator.Symbol)
+                                For Each local In declaration.GetDeclaredVariables()
+                                    mightBecomeUnusedLocals.Add(local)
                                 Next
                             Next
                         End Sub, OperationKind.VariableDeclarationGroup)

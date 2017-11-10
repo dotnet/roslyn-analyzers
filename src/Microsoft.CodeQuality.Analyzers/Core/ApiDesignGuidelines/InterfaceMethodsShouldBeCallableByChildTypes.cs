@@ -67,7 +67,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 IBlockOperation block = operationBlocks[0] as IBlockOperation;
 
                 // Analyze IBlockOperation blocks.
-                // TODO: Handle expression bodied members https://github.com/dotnet/roslyn-analyzers/issues/1345
                 if (block == null)
                 {
                     return true;

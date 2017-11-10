@@ -199,6 +199,39 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 GetCA2237BasicResultAt(4, 30, "CA2237SerializableWithBaseAttr"));
         }
 
+        [Fact]
+        public void CA2237_CA2229_NoDiagnosticForInterfaceAndDelegate()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.Serialization;
+
+class A
+{
+    [Serializable]
+    public delegate void B();
+}
+
+public interface I : ISerializable
+{
+    string Name { get; }
+}");
+
+            VerifyBasic(@"
+Imports System
+Imports System.Runtime.Serialization
+
+Class A
+	<Serializable> _
+	Public Delegate Sub B()
+End Class
+
+Public Interface I
+	Inherits ISerializable
+	ReadOnly Property Name() As String
+End Interface");
+        }
+
         internal static readonly string CA2237Message = MicrosoftNetFrameworkAnalyzersResources.MarkISerializableTypesWithSerializableMessage;
 
         private static DiagnosticResult GetCA2237CSharpResultAt(int line, int column, string objectName)

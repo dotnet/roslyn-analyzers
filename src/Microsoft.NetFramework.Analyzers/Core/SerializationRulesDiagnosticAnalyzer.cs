@@ -155,6 +155,10 @@ namespace Microsoft.NetFramework.Analyzers
             public void AnalyzeSymbol(SymbolAnalysisContext context)
             {
                 var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
+                if (namedTypeSymbol.TypeKind == TypeKind.Delegate || namedTypeSymbol.TypeKind == TypeKind.Interface)
+                {
+                    return;
+                }
 
                 // If the type is public and implements ISerializable
                 if (namedTypeSymbol.DeclaredAccessibility == Accessibility.Public && namedTypeSymbol.AllInterfaces.Contains(_iserializableTypeSymbol))

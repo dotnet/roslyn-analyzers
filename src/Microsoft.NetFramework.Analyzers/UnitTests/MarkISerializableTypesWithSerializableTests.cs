@@ -222,13 +222,13 @@ Imports System
 Imports System.Runtime.Serialization
 
 Class A
-	<Serializable> _
-	Public Delegate Sub B()
+    <Serializable> _
+    Public Delegate Sub B()
 End Class
 
 Public Interface I
-	Inherits ISerializable
-	ReadOnly Property Name() As String
+    Inherits ISerializable
+    ReadOnly Property Name() As String
 End Interface");
         }
 

@@ -378,12 +378,11 @@ public class A
         {
             var code = @"
 Public Class A
-	Public Delegate Sub B()
+    Public Delegate Sub B()
 End Class
 ";
             VerifyBasic(code);
         }
-
 
         [Fact]
         public void CSharpDiagnosticDataSetWithOtherNestedClass()

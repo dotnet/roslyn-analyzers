@@ -10,6 +10,7 @@
     <RoslynToolsMicrosoftRepoToolsetVersion>1.0.0-alpha54</RoslynToolsMicrosoftRepoToolsetVersion>
     <VSWhereVersion>2.1.4</VSWhereVersion>
     <MicrosoftVSSDKVersion>15.0.26201-alpha</MicrosoftVSSDKVersion>
+    <Pdb2PdbVersion>1.1.0-beta1-62309-01</Pdb2PdbVersion>
 
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>2.6.0-beta3-62309-01</MicrosoftCodeAnalysisVersion>

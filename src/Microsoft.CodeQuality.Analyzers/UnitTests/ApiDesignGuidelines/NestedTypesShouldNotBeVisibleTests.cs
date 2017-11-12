@@ -100,7 +100,7 @@ End Module
             VerifyBasic(code, GetBasicCA1034ModuleResultAt(3, 18, "Inner"));
         }
 
-        [Fact]
+        [Fact, WorkItem(1347, "https://github.com/dotnet/roslyn-analyzers/issues/1347")]
         public void CSharpDiagnosticPublicNestedDelegate()
         {
             var code = @"
@@ -109,10 +109,10 @@ public class Outer
     public delegate void Inner();
 }
 ";
-            VerifyCSharp(code, GetCSharpCA1034ResultAt(4, 26, "Inner"));
+            VerifyCSharp(code);
         }
 
-        [Fact]
+        [Fact, WorkItem(1347, "https://github.com/dotnet/roslyn-analyzers/issues/1347")]
         public void BasicDiagnosticPublicNestedDelegate()
         {
             var code = @"
@@ -120,7 +120,7 @@ Public Class Outer
     Delegate Sub Inner()
 End Class
 ";
-            VerifyBasic(code, GetBasicCA1034ResultAt(3, 18, "Inner"));
+            VerifyBasic(code);
         }
 
         [Fact]
@@ -356,29 +356,6 @@ Public Class MyDataSet
             MyBase.New(builder)
         End Sub
     End Class
-End Class
-";
-            VerifyBasic(code);
-        }
-
-        [Fact, WorkItem(1347, "https://github.com/dotnet/roslyn-analyzers/issues/1347")]
-        public void CSharpNoDiagnosticDelegateTypeSpecialCases()
-        {
-            var code = @"
-public class A
-{
-    public delegate void B();
-}
-";
-            VerifyCSharp(code);
-        }
-
-        [Fact, WorkItem(1347, "https://github.com/dotnet/roslyn-analyzers/issues/1347")]
-        public void BasicNoDiagnosticDelegateTypeSpecialCases()
-        {
-            var code = @"
-Public Class A
-    Public Delegate Sub B()
 End Class
 ";
             VerifyBasic(code);

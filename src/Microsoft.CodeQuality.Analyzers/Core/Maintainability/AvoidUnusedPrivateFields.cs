@@ -50,10 +50,10 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                     ImmutableHashSet<INamedTypeSymbol> specialAttributes = GetSpecialAttributes(compilationContext.Compilation);
                     var structLayoutAttribute = WellKnownTypes.StructLayoutAttribute(compilationContext.Compilation);
-                    
+
                     compilationContext.RegisterSymbolAction(
                         (symbolContext) =>
-                        {                            
+                        {
                             IFieldSymbol field = (IFieldSymbol)symbolContext.Symbol;
 
                             // Fields of types marked with StructLayoutAttribute with LayoutKind.Sequential should never be flagged as unused as their removal can change the runtime behavior.

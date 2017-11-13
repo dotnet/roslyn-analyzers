@@ -365,10 +365,5 @@ namespace Analyzer.Utilities
         {
             return compilation.GetTypeByMetadataName("System.Runtime.InteropServices.StructLayoutAttribute");
         }
-
-        public static INamedTypeSymbol LayoutKind(Compilation compilation)
-        {
-            return compilation.GetTypeByMetadataName("System.Runtime.InteropServices.LayoutKind");
-        }
     }
 }

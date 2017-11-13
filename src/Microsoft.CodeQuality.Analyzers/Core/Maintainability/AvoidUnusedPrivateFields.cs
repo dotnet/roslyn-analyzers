@@ -48,12 +48,27 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     HashSet<IFieldSymbol> unreferencedPrivateFields = new HashSet<IFieldSymbol>();
                     HashSet<IFieldSymbol> referencedPrivateFields = new HashSet<IFieldSymbol>();
 
+                    // Fields with certain special attributes should never be considered unused.
+                    ImmutableHashSet<INamedTypeSymbol> specialAttributes = GetSpecialAttributes(compilationContext.Compilation);
+                    
                     compilationContext.RegisterSymbolAction(
                         (symbolContext) =>
                         {
                             IFieldSymbol field = (IFieldSymbol)symbolContext.Symbol;
                             if (field.DeclaredAccessibility == Accessibility.Private && !referencedPrivateFields.Contains(field))
                             {
+                                if (!specialAttributes.IsEmpty)
+                                {
+                                    var fieldAttributes = field.GetAttributes();
+                                    foreach (var attribute in field.GetAttributes())
+                                    {
+                                        if (specialAttributes.Contains(attribute.AttributeClass.OriginalDefinition))
+                                        {
+                                            return;
+                                        }
+                                    }
+                                }
+
                                 unreferencedPrivateFields.Add(field);
                             }
                         },
@@ -80,6 +95,31 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             }
                         });
                 });
+        }
+
+        private static ImmutableHashSet<INamedTypeSymbol> GetSpecialAttributes(Compilation compilation)
+        {
+            var specialAttributes = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>();
+
+            var fieldOffsetAttribute = WellKnownTypes.FieldOffsetAttribute(compilation);
+            if (fieldOffsetAttribute != null)
+            {
+                specialAttributes.Add(fieldOffsetAttribute);
+            }
+
+            var mefV1Attribute = WellKnownTypes.MEFV1ExportAttribute(compilation);
+            if (mefV1Attribute != null)
+            {
+                specialAttributes.Add(mefV1Attribute);
+            }
+
+            var mefV2Attribute = WellKnownTypes.MEFV2ExportAttribute(compilation);
+            if (mefV2Attribute != null)
+            {
+                specialAttributes.Add(mefV2Attribute);
+            }
+
+            return specialAttributes.ToImmutable();
         }
     }
 }

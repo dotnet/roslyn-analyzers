@@ -355,5 +355,10 @@ namespace Analyzer.Utilities
         {
             return compilation.GetTypeByMetadataName("System.Composition.ExportAttribute");
         }
+
+        public static INamedTypeSymbol FieldOffsetAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Runtime.InteropServices.FieldOffsetAttribute");
+        }
     }
 }

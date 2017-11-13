@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
@@ -9,6 +8,35 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
     public class AvoidUnusedPrivateFieldsTests : DiagnosticAnalyzerTestBase
     {
+        private const string CSharpMEFAttributesDefinition = @"
+namespace System.ComponentModel.Composition
+{
+    public class ExportAttribute: System.Attribute
+    {
+    }
+}
+
+namespace System.Composition
+{
+    public class ExportAttribute: System.Attribute
+    {
+    }
+}
+";
+        private const string BasicMEFAttributesDefinition = @"
+Namespace System.ComponentModel.Composition
+    Public Class ExportAttribute
+        Inherits System.Attribute
+    End Class
+End Namespace
+
+Namespace System.Composition
+    Public Class ExportAttribute
+        Inherits System.Attribute
+    End Class
+End Namespace
+";
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new AvoidUnusedPrivateFieldsAnalyzer();
@@ -57,6 +85,81 @@ public class Class
 ");
         }
 
+        [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
+        public void CA1823_CSharp_FieldOffsetAttribute_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)]
+public class Class
+{
+    [System.Runtime.InteropServices.FieldOffsetAttribute(8)]
+    private int fieldWithFieldOffsetAttribute;
+}
+");
+        }
+
+        [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
+        public void CA1823_CSharp_FieldOffsetAttributeError_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)]
+public class Class
+{
+    [System.Runtime.InteropServices.FieldOffsetAttribute]
+    private int fieldWithFieldOffsetAttribute;
+}
+", TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
+        public void CA1823_CSharp_MEFAttributes_NoDiagnostic()
+        {
+            VerifyCSharp(CSharpMEFAttributesDefinition + @"
+public class Class
+{
+    [System.Composition.ExportAttribute]
+    private int fieldWithMefV1ExportAttribute;
+
+    [System.ComponentModel.Composition.ExportAttribute]
+    private int fieldWithMefV2ExportAttribute;
+}
+");
+        }
+
+        [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
+        public void CA1823_CSharp_MEFAttributesError_NoDiagnostic()
+        {
+            VerifyCSharp(CSharpMEFAttributesDefinition + @"
+public class Class
+{
+    [System.Composition.ExportAttribute(0)]
+    private int fieldWithMefV1ExportAttribute;
+
+    [System.ComponentModel.Composition.ExportAttribute(0)]
+    private int fieldWithMefV2ExportAttribute;
+}
+", TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
+        public void CA1823_CSharp_MEFAttributesUndefined_Diagnostic()
+        {
+            VerifyCSharp(@"
+public class Class
+{
+    [System.Composition.ExportAttribute]
+    private int fieldWithMefV1ExportAttribute;
+
+    [System.ComponentModel.Composition.ExportAttribute]
+    private int fieldWithMefV2ExportAttribute;
+}
+", TestValidationMode.AllowCompileErrors,
+    // Test0.cs(5,17): warning CA1823: Unused field 'fieldWithMefV1ExportAttribute'.
+    GetCSharpResultAt(5, 17, AvoidUnusedPrivateFieldsAnalyzer.Rule, "fieldWithMefV1ExportAttribute"),
+    // Test0.cs(8,17): warning CA1823: Unused field 'fieldWithMefV2ExportAttribute'.
+    GetCSharpResultAt(8, 17, AvoidUnusedPrivateFieldsAnalyzer.Rule, "fieldWithMefV2ExportAttribute"));
+        }
+
         [Fact]
         public void CA1823_CSharp_SimpleUsages_DiagnosticCases()
         {
@@ -87,7 +190,7 @@ public class Class
         {
             VerifyBasic(@"
 Public Class Class1
-	Private fileName As String
+    Private fileName As String
     Private Used1 As Integer = 10
     Private Used2 As Integer
     Private Unused1 As Integer = 20
@@ -107,6 +210,76 @@ End Class
 ",
             GetCA1823BasicResultAt(6, 13, "Unused1"),
             GetCA1823BasicResultAt(7, 13, "Unused2"));
+        }
+
+        [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
+        public void CA1823_VisualBasic_FieldOffsetAttribute_NoDiagnostic()
+        {
+            VerifyBasic(@"
+<System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)> _
+Public Class [Class]
+    <System.Runtime.InteropServices.FieldOffsetAttribute(8)> _
+    Private fieldWithFieldOffsetAttribute As Integer
+End Class
+");
+        }
+
+        [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
+        public void CA1823_VisualBasic_FieldOffsetAttributeError_NoDiagnostic()
+        {
+            VerifyBasic(@"
+<System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)> _
+Public Class [Class]
+    <System.Runtime.InteropServices.FieldOffsetAttribute> _
+    Private fieldWithFieldOffsetAttribute As Integer
+End Class
+", TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
+        public void CA1823_VisualBasic_MEFAttributes_NoDiagnostic()
+        {
+            VerifyBasic(BasicMEFAttributesDefinition + @"
+Public Class [Class]
+    <System.Composition.ExportAttribute> _
+    Private fieldWithMefV1ExportAttribute As Integer
+
+    <System.ComponentModel.Composition.ExportAttribute> _
+    Private fieldWithMefV2ExportAttribute As Integer
+End Class
+");
+        }
+
+        [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
+        public void CA1823_VisualBasic_MEFAttributesError_NoDiagnostic()
+        {
+            VerifyBasic(BasicMEFAttributesDefinition + @"
+Public Class [Class]
+    <System.Composition.ExportAttribute(0)> _
+    Private fieldWithMefV1ExportAttribute As Integer
+
+    <System.ComponentModel.Composition.ExportAttribute(0)> _
+    Private fieldWithMefV2ExportAttribute As Integer
+End Class
+", TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
+        public void CA1823_VisualBasic_MEFAttributesUndefined_Diagnostic()
+        {
+            VerifyBasic(@"
+Public Class [Class]
+    <System.Composition.ExportAttribute> _
+    Private fieldWithMefV1ExportAttribute As Integer
+
+    <System.ComponentModel.Composition.ExportAttribute> _
+    Private fieldWithMefV2ExportAttribute As Integer
+End Class
+", TestValidationMode.AllowCompileErrors,
+        // Test0.vb(4,13): warning CA1823: Unused field 'fieldWithMefV1ExportAttribute'.
+        GetBasicResultAt(4, 13, AvoidUnusedPrivateFieldsAnalyzer.Rule, "fieldWithMefV1ExportAttribute"),
+        // Test0.vb(7,13): warning CA1823: Unused field 'fieldWithMefV2ExportAttribute'.
+        GetBasicResultAt(7, 13, AvoidUnusedPrivateFieldsAnalyzer.Rule, "fieldWithMefV2ExportAttribute"));
         }
 
         private static DiagnosticResult GetCA1823CSharpResultAt(int line, int column, string fieldName)

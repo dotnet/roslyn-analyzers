@@ -111,6 +111,75 @@ public class Class
 ", TestValidationMode.AllowCompileErrors);
         }
 
+        [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
+        public void CA1823_CSharp_StructLayoutAttribute_LayoutKindSequential_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
+class Class1
+{
+    private int field;
+}
+
+// System.Runtime.InteropServices.LayoutKind.Sequential has value 0
+[System.Runtime.InteropServices.StructLayout((short)0)]
+class Class2
+{
+    private int field;
+}
+");
+        }
+
+        [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
+        public void CA1823_CSharp_StructLayoutAttribute_LayoutKindAuto_Diagnostic()
+        {
+            VerifyCSharp(@"
+[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Auto)]
+class Class
+{
+    private int field;
+}
+",
+    // Test0.cs(5,17): warning CA1823: Unused field 'field'.
+    GetCSharpResultAt(5, 17, AvoidUnusedPrivateFieldsAnalyzer.Rule, "field"));
+        }
+
+        [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
+        public void CA1823_CSharp_StructLayoutAttribute_LayoutKindExplicit_Diagnostic()
+        {
+            VerifyCSharp(@"
+[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)]
+class Class
+{
+    private int field;
+}
+", TestValidationMode.AllowCompileErrors,
+    // Test0.cs(5,17): warning CA1823: Unused field 'field'.
+    GetCSharpResultAt(5, 17, AvoidUnusedPrivateFieldsAnalyzer.Rule, "field"));
+        }
+
+        [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
+        public void CA1823_CSharp_StructLayoutAttributeError_NoLayoutKind_Diagnostic()
+        {
+            VerifyCSharp(@"
+[System.Runtime.InteropServices.StructLayout]
+class Class1
+{
+    private int field;
+}
+
+[System.Runtime.InteropServices.StructLayout(1000)]
+class Class2
+{
+    private int field;
+}
+", TestValidationMode.AllowCompileErrors,
+    // Test0.cs(5,17): warning CA1823: Unused field 'field'.
+    GetCSharpResultAt(5, 17, AvoidUnusedPrivateFieldsAnalyzer.Rule, "field"),
+    // Test0.cs(11,17): warning CA1823: Unused field 'field'.
+    GetCSharpResultAt(11, 17, AvoidUnusedPrivateFieldsAnalyzer.Rule, "field"));
+        }
+
         [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
         public void CA1823_CSharp_MEFAttributes_NoDiagnostic()
         {
@@ -230,10 +299,73 @@ End Class
             VerifyBasic(@"
 <System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)> _
 Public Class [Class]
-    <System.Runtime.InteropServices.FieldOffsetAttribute> _
+    <System.Runtime.InteropServices.FieldOffsetAttribute(8)> _
     Private fieldWithFieldOffsetAttribute As Integer
 End Class
 ", TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
+        public void CA1823_VisualBasic_StructLayoutAttribute_LayoutKindSequential_NoDiagnostic()
+        {
+            VerifyBasic(@"
+<System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)> _
+Public Class Class1
+    Private field As Integer
+End Class
+
+' System.Runtime.InteropServices.LayoutKind.Sequential has value 0
+<System.Runtime.InteropServices.StructLayout(0)> _
+Public Class Class2
+    Private field As Integer
+End Class
+");
+        }
+
+        [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
+        public void CA1823_VisualBasic_StructLayoutAttribute_LayoutKindAuto_Diagnostic()
+        {
+            VerifyBasic(@"
+<System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Auto)> _
+Public Class [Class]
+    Private field As Integer
+End Class
+",
+    // Test0.vb(4,13): warning CA1823: Unused field 'field'.
+    GetBasicResultAt(4, 13, AvoidUnusedPrivateFieldsAnalyzer.Rule, "field"));
+        }
+
+        [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
+        public void CA1823_VisualBasic_StructLayoutAttribute_LayoutKindExplicit_Diagnostic()
+        {
+            VerifyBasic(@"
+<System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)> _
+Public Class [Class]
+    Private field As Integer
+End Class
+", TestValidationMode.AllowCompileErrors,
+    // Test0.vb(4,13): warning CA1823: Unused field 'field'.
+    GetBasicResultAt(4, 13, AvoidUnusedPrivateFieldsAnalyzer.Rule, "field"));
+        }
+
+        [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
+        public void CA1823_VisualBasic_StructLayoutAttributeError_NoLayoutKind_Diagnostic()
+        {
+            VerifyBasic(@"
+<System.Runtime.InteropServices.StructLayout> _
+Public Class Class1
+    Private field As Integer
+End Class
+
+<System.Runtime.InteropServices.StructLayout(1000)> _
+Public Class Class2
+    Private field As Integer
+End Class
+", TestValidationMode.AllowCompileErrors,
+    // Test0.vb(4,13): warning CA1823: Unused field 'field'.
+    GetBasicResultAt(4, 13, AvoidUnusedPrivateFieldsAnalyzer.Rule, "field"),
+    // Test0.vb(9,13): warning CA1823: Unused field 'field'.
+    GetBasicResultAt(9, 13, AvoidUnusedPrivateFieldsAnalyzer.Rule, "field"));
         }
 
         [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]

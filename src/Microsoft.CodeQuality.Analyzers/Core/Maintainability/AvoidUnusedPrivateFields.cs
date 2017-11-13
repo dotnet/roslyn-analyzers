@@ -48,18 +48,44 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     HashSet<IFieldSymbol> unreferencedPrivateFields = new HashSet<IFieldSymbol>();
                     HashSet<IFieldSymbol> referencedPrivateFields = new HashSet<IFieldSymbol>();
 
-                    // Fields with certain special attributes should never be considered unused.
                     ImmutableHashSet<INamedTypeSymbol> specialAttributes = GetSpecialAttributes(compilationContext.Compilation);
+                    var structLayoutAttribute = WellKnownTypes.StructLayoutAttribute(compilationContext.Compilation);
                     
                     compilationContext.RegisterSymbolAction(
                         (symbolContext) =>
-                        {
+                        {                            
                             IFieldSymbol field = (IFieldSymbol)symbolContext.Symbol;
+
+                            // Fields of types marked with StructLayoutAttribute with LayoutKind.Sequential should never be flagged as unused as their removal can change the runtime behavior.
+                            if (structLayoutAttribute != null && field.ContainingType != null)
+                            {
+                                foreach (var attribute in field.ContainingType.GetAttributes())
+                                {
+                                    if (structLayoutAttribute.Equals(attribute.AttributeClass.OriginalDefinition) &&
+                                        attribute.ConstructorArguments.Length == 1)
+                                    {
+                                        var argument = attribute.ConstructorArguments[0];
+                                        if (argument.Type != null)
+                                        {
+                                            SpecialType specialType = argument.Type.TypeKind == TypeKind.Enum ?
+                                                ((INamedTypeSymbol)argument.Type).EnumUnderlyingType.SpecialType :
+                                                argument.Type.SpecialType;
+
+                                            if (DiagnosticHelpers.TryConvertToUInt64(argument.Value, specialType, out ulong convertedLayoutKindValue) &&
+                                                convertedLayoutKindValue == (ulong)System.Runtime.InteropServices.LayoutKind.Sequential)
+                                            {
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                             if (field.DeclaredAccessibility == Accessibility.Private && !referencedPrivateFields.Contains(field))
                             {
+                                // Fields with certain special attributes should never be considered unused.
                                 if (!specialAttributes.IsEmpty)
                                 {
-                                    var fieldAttributes = field.GetAttributes();
                                     foreach (var attribute in field.GetAttributes())
                                     {
                                         if (specialAttributes.Contains(attribute.AttributeClass.OriginalDefinition))

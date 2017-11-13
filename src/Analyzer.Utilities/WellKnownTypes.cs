@@ -360,5 +360,15 @@ namespace Analyzer.Utilities
         {
             return compilation.GetTypeByMetadataName("System.Runtime.InteropServices.FieldOffsetAttribute");
         }
+
+        public static INamedTypeSymbol StructLayoutAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Runtime.InteropServices.StructLayoutAttribute");
+        }
+
+        public static INamedTypeSymbol LayoutKind(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Runtime.InteropServices.LayoutKind");
+        }
     }
 }

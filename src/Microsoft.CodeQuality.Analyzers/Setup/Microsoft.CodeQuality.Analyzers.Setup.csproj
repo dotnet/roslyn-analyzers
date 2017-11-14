@@ -10,7 +10,12 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Core\Microsoft.CodeQuality.Core.Analyzers.csproj" />
+    <ProjectReference Include="..\Core\Microsoft.CodeQuality.Core.Analyzers.csproj">
+      <Name>Microsoft.CodeQuality.Core.Analyzers</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
+      <ForceIncludeInVSIX>true</ForceIncludeInVSIX>
+    </ProjectReference>
     <ProjectReference Include="..\CSharp\Microsoft.CodeQuality.CSharp.Analyzers.csproj">
       <Name>Microsoft.CodeQuality.CSharp.Analyzers</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>

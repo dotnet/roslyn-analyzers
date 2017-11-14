@@ -18,6 +18,11 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Core\MetaCompilation.Core.Analyzers.csproj" />
+    <ProjectReference Include="..\Core\MetaCompilation.Core.Analyzers.csproj">
+      <Name>MetaCompilation.Core.Analyzers</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
+      <ForceIncludeInVSIX>true</ForceIncludeInVSIX>
+    </ProjectReference> 
   </ItemGroup>
 </Project>

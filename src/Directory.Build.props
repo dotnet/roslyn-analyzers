@@ -8,12 +8,17 @@
     <NoWarn>$(NoWarn);xUnit1004;xUnit2000;xUnit2003;xUnit2004;xUnit2009;xUnit2010;xUnit1013</NoWarn>
 
     <DefineConstants Condition="'$(USE_INTERNAL_IOPERATION_APIS)' == 'true'">$(DefineConstants),USE_INTERNAL_IOPERATION_APIS,DEFAULT_SEVERITY_SUGGESTION</DefineConstants>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.0-beta1-62314-01" />
-    <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <!-- Test runner configuration -->
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.0-beta1-62314-01" />
     <None Include="$(MSBuildThisFileDirectory)Common\Test\App.config" CopyToOutputDirectory="PreserveNewest" Condition="'$(IsUnitTestProject)' == 'true'" />
   </ItemGroup>
+
+  <!-- Setup the correct code analysis rulesets -->
+  <PropertyGroup>
+    <CodeAnalysisRuleSet Condition="'$(IsTestProject)' == 'true'">$(MSBuildThisFileDirectory)..\build\Analyzers_NonShippingRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(CodeAnalysisRuleSet)' == ''">$(MSBuildThisFileDirectory)..\build\Analyzers_ShippingRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
 </Project>

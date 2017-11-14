@@ -15,6 +15,11 @@
     <Rule Id="CA1707" Action="None" />
   </Rules>
 
+  <Rules AnalyzerId="Microsoft.CodeQuality.Analyzers" RuleNamespace="Microsoft.CodeQuality.Analyzers.Maintainability">
+    <!-- Reenabling is tracked by https://github.com/dotnet/roslyn-analyzers/issues/1355 -->
+    <Rule Id="CA1801" Action="None" />
+  </Rules>
+
   <!-- TODO: Remove the below suppression once https://github.com/dotnet/roslyn-analyzers/issues/965 has been fixed. -->
   <Rules AnalyzerId="System.Runtime.Analyzers" RuleNamespace="System.Runtime.Analyzers">
     <!-- SpecifyIFormatProvider -->

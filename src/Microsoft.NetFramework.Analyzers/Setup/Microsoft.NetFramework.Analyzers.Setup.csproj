@@ -11,7 +11,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Core\Microsoft.NetFramework.Analyzers.csproj">
+    <ProjectReference Include="..\Core\Microsoft.NetFramework.Core.Analyzers.csproj">
       <Name>Microsoft.NetFramework.Analyzers</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>

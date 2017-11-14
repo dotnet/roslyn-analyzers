@@ -4,6 +4,6 @@ namespace Microsoft.NetCore.Analyzers.Security
 {
     public static class DiagnosticCategory
     {
-        public const string Security = "Microsoft.Security";
+        public static readonly string Security = SystemSecurityCryptographyResources.SecurityCategory;
     }
 }

@@ -11,4 +11,18 @@
     <InternalsVisibleTo Include="Text.VisualBasic.Analyzers" />
     <InternalsVisibleTo Include="Text.Analyzers.UnitTests" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="TextAnalyzersResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TextAnalyzersResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="TextAnalyzersResources.resx">
+      <CustomToolNamespace>Text.Analyzers</CustomToolNamespace>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>TextAnalyzersResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

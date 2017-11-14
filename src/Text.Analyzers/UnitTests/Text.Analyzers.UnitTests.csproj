@@ -5,7 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Test.Utilities\Test.Utilities.csproj" />
-    <ProjectReference Include="..\Core\Text.Analyzers.csproj" />
+    <ProjectReference Include="..\Core\Text.Core.Analyzers.csproj" />
     <ProjectReference Include="..\CSharp\Text.CSharp.Analyzers.csproj" />
     <ProjectReference Include="..\VisualBasic\Text.VisualBasic.Analyzers.vbproj" />
   </ItemGroup>

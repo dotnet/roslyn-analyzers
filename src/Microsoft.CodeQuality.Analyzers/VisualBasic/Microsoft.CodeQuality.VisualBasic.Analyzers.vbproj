@@ -4,9 +4,9 @@
     <TargetFramework>netstandard1.3</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\Microsoft.CodeQuality.Analyzers.csproj" />
+    <InternalsVisibleTo Include="Microsoft.CodeQuality.Analyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Microsoft.CodeQuality.Analyzers.UnitTests" />
+    <ProjectReference Include="..\Core\Microsoft.CodeQuality.Core.Analyzers.csproj" />
   </ItemGroup>
 </Project>

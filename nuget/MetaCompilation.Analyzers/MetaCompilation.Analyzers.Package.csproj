@@ -17,6 +17,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\src\MetaCompilation.Analyzers\Core\MetaCompilation.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\MetaCompilation.Analyzers\Core\MetaCompilation.Core.Analyzers.csproj" />
   </ItemGroup>
 </Project>

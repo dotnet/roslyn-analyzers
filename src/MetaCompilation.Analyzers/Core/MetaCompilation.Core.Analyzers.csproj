@@ -1,0 +1,23 @@
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard1.3</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="$(MicrosoftCodeAnalysisVersion)" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="MetaCompilationResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MetaCompilationResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="MetaCompilationResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MetaCompilationResources.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>MetaCompilation.Analyzers</CustomToolNamespace>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

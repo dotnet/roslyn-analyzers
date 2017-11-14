@@ -1,0 +1,68 @@
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard1.3</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Microsoft.CodeQuality.CSharp.Analyzers" />
+    <InternalsVisibleTo Include="Microsoft.CodeQuality.VisualBasic.Analyzers" />
+    <InternalsVisibleTo Include="Microsoft.CodeQuality.Analyzers.UnitTests" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="ApiDesignGuidelines\MicrosoftApiDesignGuidelinesAnalyzersResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MicrosoftApiDesignGuidelinesAnalyzersResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="ApiReview\ApiReviewAnalyzersResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ApiReviewAnalyzersResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Documentation\XmlDocumentationCommentsAnalyzersResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XmlDocumentationCommentsAnalyzersResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Maintainability\MicrosoftMaintainabilityAnalyzersResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MicrosoftMaintainabilityAnalyzersResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="QualityGuidelines\MicrosoftQualityGuidelinesAnalyzersResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MicrosoftQualityGuidelinesAnalyzersResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="ApiDesignGuidelines\MicrosoftApiDesignGuidelinesAnalyzersResources.resx">
+      <CustomToolNamespace>Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines</CustomToolNamespace>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MicrosoftApiDesignGuidelinesAnalyzersResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ApiReview\ApiReviewAnalyzersResources.resx">
+      <CustomToolNamespace>Microsoft.CodeQuality.Analyzers.ApiReview</CustomToolNamespace>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ApiReviewAnalyzersResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Documentation\XmlDocumentationCommentsAnalyzersResources.resx">
+      <CustomToolNamespace>Microsoft.CodeQuality.Analyzers.Documentation</CustomToolNamespace>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>XmlDocumentationCommentsAnalyzersResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Maintainability\MicrosoftMaintainabilityAnalyzersResources.resx">
+      <CustomToolNamespace>Microsoft.CodeQuality.Analyzers.Maintainability</CustomToolNamespace>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MicrosoftMaintainabilityAnalyzersResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="QualityGuidelines\MicrosoftQualityGuidelinesAnalyzersResources.resx">
+      <CustomToolNamespace>Microsoft.CodeQuality.Analyzers.QualityGuidelines</CustomToolNamespace>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MicrosoftQualityGuidelinesAnalyzersResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

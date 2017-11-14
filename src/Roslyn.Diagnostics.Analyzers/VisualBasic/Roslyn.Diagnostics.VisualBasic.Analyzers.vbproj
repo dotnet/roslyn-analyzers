@@ -5,6 +5,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj" />
-    <ProjectReference Include="..\Core\Roslyn.Diagnostics.Analyzers.csproj" />
+    <ProjectReference Include="..\Core\Roslyn.Diagnostics.Core.Analyzers.csproj" />
   </ItemGroup>
 </Project>

@@ -5,6 +5,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Test.Utilities\Test.Utilities.csproj" />
-    <ProjectReference Include="..\Core\MetaCompilation.Analyzers.csproj" />
+    <ProjectReference Include="..\Core\MetaCompilation.Core.Analyzers.csproj" />
   </ItemGroup>
 </Project>

@@ -6,7 +6,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Analyzer.Utilities\Analyzer.Utilities.csproj" />
     <ProjectReference Include="..\..\Test.Utilities\Test.Utilities.csproj" />
-    <ProjectReference Include="..\Core\Microsoft.NetFramework.Analyzers.csproj" />
+    <ProjectReference Include="..\Core\Microsoft.NetFramework.Core.Analyzers.csproj" />
     <ProjectReference Include="..\CSharp\Microsoft.NetFramework.CSharp.Analyzers.csproj" />
     <ProjectReference Include="..\VisualBasic\Microsoft.NetFramework.VisualBasic.Analyzers.vbproj" />
   </ItemGroup>

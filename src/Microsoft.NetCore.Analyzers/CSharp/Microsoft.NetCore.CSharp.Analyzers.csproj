@@ -4,9 +4,9 @@
     <TargetFramework>netstandard1.3</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\Microsoft.NetCore.Analyzers.csproj" />
+    <InternalsVisibleTo Include="Microsoft.NetCore.Analyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Microsoft.NetCore.Analyzers.UnitTests" />
+    <ProjectReference Include="..\Core\Microsoft.NetCore.Core.Analyzers.csproj" />
   </ItemGroup>
 </Project>

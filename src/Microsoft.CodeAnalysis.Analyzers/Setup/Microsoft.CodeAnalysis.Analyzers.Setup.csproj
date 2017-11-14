@@ -18,8 +18,8 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Core\Microsoft.CodeAnalysis.Analyzers.csproj">
-      <Name>Microsoft.CodeAnalysis.Analyzers</Name>
+    <ProjectReference Include="..\Core\Microsoft.CodeAnalysis.Core.Analyzers.csproj">
+      <Name>Microsoft.CodeAnalysis.Core.Analyzers</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
       <ForceIncludeInVSIX>true</ForceIncludeInVSIX>

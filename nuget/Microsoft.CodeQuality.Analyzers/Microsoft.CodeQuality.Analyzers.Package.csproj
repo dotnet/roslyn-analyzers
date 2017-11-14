@@ -24,7 +24,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Microsoft.CodeQuality.Analyzers\Core\Microsoft.CodeQuality.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.CodeQuality.Analyzers\Core\Microsoft.CodeQuality.Core.Analyzers.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.CodeQuality.Analyzers\CSharp\Microsoft.CodeQuality.CSharp.Analyzers.csproj" /> 
     <ProjectReference Include="..\..\src\Microsoft.CodeQuality.Analyzers\VisualBasic\Microsoft.CodeQuality.VisualBasic.Analyzers.vbproj" />
   </ItemGroup>

@@ -24,7 +24,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Roslyn.Diagnostics.Analyzers\Core\Roslyn.Diagnostics.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\Roslyn.Diagnostics.Analyzers\Core\Roslyn.Diagnostics.Core.Analyzers.csproj" />
     <ProjectReference Include="..\..\src\Roslyn.Diagnostics.Analyzers\CSharp\Roslyn.Diagnostics.CSharp.Analyzers.csproj" />
     <ProjectReference Include="..\..\src\Roslyn.Diagnostics.Analyzers\VisualBasic\Roslyn.Diagnostics.VisualBasic.Analyzers.vbproj" />
   </ItemGroup>

@@ -16,12 +16,8 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>
+  
   <ItemGroup>
-    <ProjectReference Include="..\Core\MetaCompilation.Analyzers.csproj">
-      <Name>MetaCompilation.Analyzers</Name>
-      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
-      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
-      <ForceIncludeInVSIX>true</ForceIncludeInVSIX>
-    </ProjectReference>
+    <ProjectReference Include="..\Core\MetaCompilation.Core.Analyzers.csproj" />
   </ItemGroup>
 </Project>

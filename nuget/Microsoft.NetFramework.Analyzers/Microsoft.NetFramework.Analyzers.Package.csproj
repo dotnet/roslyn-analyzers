@@ -23,7 +23,7 @@
     <AnalyzerNupkgFile Include="Microsoft.NetFramework.VisualBasic.Analyzers.props" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Microsoft.NetFramework.Analyzers\Core\Microsoft.NetFramework.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.NetFramework.Analyzers\Core\Microsoft.NetFramework.Core.Analyzers.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.NetFramework.Analyzers\CSharp\Microsoft.NetFramework.CSharp.Analyzers.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.NetFramework.Analyzers\VisualBasic\Microsoft.NetFramework.VisualBasic.Analyzers.vbproj" />
   </ItemGroup>

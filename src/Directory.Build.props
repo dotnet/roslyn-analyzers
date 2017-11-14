@@ -12,7 +12,7 @@
 
   <!-- Test runner configuration -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.0-beta1-62314-01" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="$(MicrosoftCodeAnalysisFXCopAnalyersVersion)" />
     <None Include="$(MSBuildThisFileDirectory)Common\Test\App.config" CopyToOutputDirectory="PreserveNewest" Condition="'$(IsUnitTestProject)' == 'true'" />
   </ItemGroup>
 

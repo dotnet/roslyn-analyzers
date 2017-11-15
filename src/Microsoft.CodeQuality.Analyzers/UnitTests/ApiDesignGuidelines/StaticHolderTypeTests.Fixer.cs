@@ -32,26 +32,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public void CA1052FixesSealedClassWithOnlyStaticDeclaredMembersCSharp()
-        {
-            const string Code = @"
-public sealed class C
-{
-    public static void Foo() { }
-}
-";
-
-            const string FixedCode = @"
-public static class C
-{
-    public static void Foo() { }
-}
-";
-
-            VerifyCSharpFix(Code, FixedCode);
-        }
-
-        [Fact]
         public void CA1052FixesNonStaticClassWithOnlyStaticDeclaredMembersCSharp()
         {
             const string Code = @"

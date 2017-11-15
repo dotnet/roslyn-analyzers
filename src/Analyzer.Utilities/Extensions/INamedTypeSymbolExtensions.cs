@@ -183,6 +183,12 @@ namespace Analyzer.Utilities.Extensions
                 return false;
             }
 
+            // Sealed objects are presumed to be non-static holder types
+            if (symbol.IsSealed)
+            {
+                return false;
+            }
+
             IEnumerable<ISymbol> declaredMembers = symbol.GetMembers().Where(m => !m.IsImplicitlyDeclared);
 
             return declaredMembers.Any(IsQualifyingMember) && !declaredMembers.Any(IsDisqualifyingMember);

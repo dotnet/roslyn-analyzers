@@ -63,28 +63,56 @@ public static class C2
 ");
         }
 
-        [Fact]
-        public void CA1052DiagnosticForSealedClassWithOnlyStaticDeclaredMembersCSharp()
+        [Fact, WorkItem(1320, "https://github.com/dotnet/roslyn-analyzers/issues/1320")]
+        public void CA1052NoDiagnosticForSealedClassWithOnlyStaticDeclaredMembersCSharp()
         {
             VerifyCSharp(@"
 public sealed class C3
 {
     public static void Foo() { }
 }
-",
-                CSharpResult(2, 21, "C3"));
+");
         }
 
-        [Fact]
-        public void CA1052DiagnosticForNonInheritableClassWithOnlySharedDeclaredMembersBasic()
+        [Fact, WorkItem(1320, "https://github.com/dotnet/roslyn-analyzers/issues/1320")]
+        public void CA1052NoDiagnosticForNonInheritableClassWithOnlySharedDeclaredMembersBasic()
         {
             VerifyBasic(@"
 Public NotInheritable Class B3
     Public Shared Sub Foo()
     End Sub
 End Class
-",
-                BasicResult(2, 29, "B3"));
+");
+        }
+
+        [Fact, WorkItem(1292, "https://github.com/dotnet/roslyn-analyzers/issues/1292")]
+        public void CA1052NoDiagnosticForSealedClassWithPublicConstructorAndStaticMembers()
+        {
+            VerifyCSharp(@"
+using System.Threading;
+
+public sealed class ConcurrentCreationDummy
+{
+    private static int creationAttempts;
+
+    public ConcurrentCreationDummy()
+    {
+        if (IsCreatingFirstInstance())
+        {
+            CreatingFirstInstance.Set();
+            CreatedSecondInstance.Wait();
+        }
+    }
+
+    public static ManualResetEventSlim CreatingFirstInstance { get; } = new ManualResetEventSlim();
+
+    public static ManualResetEventSlim CreatedSecondInstance { get; } = new ManualResetEventSlim();
+
+    private static bool IsCreatingFirstInstance()
+    {
+        return Interlocked.Increment(ref creationAttempts) == 1;
+    }
+}");
         }
 
         [Fact]

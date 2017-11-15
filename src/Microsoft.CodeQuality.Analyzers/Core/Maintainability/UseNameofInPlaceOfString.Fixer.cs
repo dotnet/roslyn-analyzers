@@ -1,50 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
+﻿using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = "Use NameOf")]
-    internal class UseNameOfCodeFix : CodeFixProvider
+    /// <summary>
+    /// NEEDCODE
+    /// </summary>
+    public class UseNameOfInPlaceOfStringFixer : CodeFixProvider
     {
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(UseNameofInPlaceOfStringAnalyzer<SyntaxKind>.RuleId);
+
+        public sealed override FixAllProvider GetFixAllProvider()
+        {
+            // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers'
+            return WellKnownFixAllProviders.BatchFixer;
+        }
+
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var root = await context.Document.GetSyntaxRootAsync(CancellationToken.None);
 
-            //var literalExpression = root.FindNode(context.Span, getInnermostNodeForTie: true) as LiteralExpressionSyntax;
-            //if (literalExpression != null)
-            //{
-            //    context.RegisterCodeFix(
-            //        CodeAction.Create("Use NameOf", c => ReplaceWithNameOf(context.Document, literalExpression, c)),
-            //        context.Diagnostics);
-            //}
+            var literalExpression = root.FindNode(context.Span, getInnermostNodeForTie: true) as LiteralExpressionSyntax;
+            if (literalExpression != null)
+            {
+                context.RegisterCodeFix(
+                    CodeAction.Create("Use NameOf", c => ReplaceWithNameOf(context.Document, literalExpression, c)),
+                    context.Diagnostics);
+            }
         }
 
-        //private async Task<Document> ReplaceWithNameOf(Document document, LiteralExpressionSyntax literalExpression, CancellationToken cancellationToken)
-        //{
-        //    var stringText = literalExpression.Token.ValueText;
+        private async Task<Document> ReplaceWithNameOf(Document document, LiteralExpressionSyntax literalExpression, CancellationToken cancellationToken)
+        {
+            var stringText = literalExpression.Token.ValueText;
 
-        //    var nameOfExpression = InvocationExpression(
-        //        expression: IdentifierName("nameof"),
-        //        argumentList: ArgumentList(
-        //            arguments: SingletonSeparatedList(Argument(IdentifierName(stringText)))));
+            var nameOfExpression = InvocationExpression(
+                expression: IdentifierName("nameof"),
+                argumentList: ArgumentList(
+                    arguments: SingletonSeparatedList(Argument(IdentifierName(stringText)))));
 
-        //    var root = await document.GetSyntaxRootAsync(cancellationToken);
-        //    var newRoot = root.ReplaceNode(literalExpression, nameOfExpression);
+            var root = await document.GetSyntaxRootAsync(cancellationToken);
+            var newRoot = root.ReplaceNode(literalExpression, nameOfExpression);
 
-        //    return document.WithSyntaxRoot(newRoot);
-        //}
-
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create("test");
-
-        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+            return document.WithSyntaxRoot(newRoot);
+        }
     }
 }

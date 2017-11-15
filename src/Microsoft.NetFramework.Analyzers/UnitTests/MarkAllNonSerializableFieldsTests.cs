@@ -382,6 +382,112 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 GetCA2235BasicResultAt(12, 37, "s2", "CA2235WithNonSerializableAutoProperties", "NonSerializableType"));
         }
 
+        [Fact]
+        public void CA2235WithArrayType()
+        {
+            VerifyCSharp(@"
+                using System;
+                public class NonSerializableType { }
+
+                [Serializable]
+                public class SerializableType { }
+    
+                [Serializable]
+                internal class CA2235WithNonSerializableArray
+                {
+                    public SerializableType[] s1;
+                    internal NonSerializableType[] s2;
+                }",
+                // Test0.cs(12,52): warning CA2235: Field s2 is a member of type CA2235WithNonSerializableArray which is serializable but is of type NonSerializableType[] which is not serializable
+                GetCA2235CSharpResultAt(12, 52, "s2", "CA2235WithNonSerializableArray", "NonSerializableType[]"));
+
+            VerifyBasic(@"
+                Imports System
+                Public Class NonSerializableType
+                End Class
+                <Serializable>
+                Public Class SerializableType
+                End Class
+
+                <Serializable>
+                Friend Class CA2235WithNonSerializableArray 
+                    Public s1 As SerializableType()
+                    Friend Property s2 As NonSerializableType()
+                End Class",
+                // Test0.vb(12,37): warning CA2235: Field s2 is a member of type CA2235WithNonSerializableArray which is serializable but is of type NonSerializableType() which is not serializable
+                GetCA2235BasicResultAt(12, 37, "s2", "CA2235WithNonSerializableArray", "NonSerializableType()"));
+        }
+
+        [Fact]
+        public void CA2235WithEnumType()
+        {
+            VerifyCSharp(@"
+                using System;
+                internal enum E1
+                {
+                    F1 = 0
+                }
+    
+                internal enum E2 : long
+                {
+                    F1 = 0
+                }
+    
+                [Serializable]
+                internal class CA2235WithEnumFields
+                {
+                    public E1 s1;
+                    internal E2 s2;
+                }");
+
+            VerifyBasic(@"
+                Imports System
+                Friend Enum E1
+                    F1 = 0
+                End Enum
+
+                Friend Enum E2 As Long
+                    F1 = 0
+                End Enum
+
+                <Serializable>
+                Friend Class CA2235WithEnumFields
+                    Public s1 As E1
+                    Friend Property s2 As E2
+                End Class");
+        }
+
+        [Fact]
+        public void CA2235WithSpecialSerializableTypeFields()
+        {
+            // Interface, type parameter and delegate fields are always considered serializable. 
+            VerifyCSharp(@"
+                using System;
+                interface I
+                {
+                }
+    
+                [Serializable]
+                internal class GenericType<T>
+                {
+                    public I s1;
+                    internal T s2;
+                    private delegate void s3();
+                }");
+
+            VerifyBasic(@"
+                Imports System
+                Friend Interface I
+                End Interface
+
+                <Serializable>
+                Friend Class GenericType(Of T)
+                    Public s1 As I
+                    Friend s2 As T
+                    Private Delegate Sub s3()
+                End Class");
+        }
+
         internal static readonly string CA2235Message = MicrosoftNetFrameworkAnalyzersResources.MarkAllNonSerializableFieldsMessage;
 
         private static DiagnosticResult GetCA2235CSharpResultAt(int line, int column, string fieldName, string containerName, string typeName)

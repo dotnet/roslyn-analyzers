@@ -1,4 +1,4 @@
-.NET Compiler Platform ("Roslyn") Analyzers
+﻿.NET Compiler Platform ("Roslyn") Analyzers
 ===========================================
 
 This repository contains a number of [Roslyn](https://github.com/dotnet/roslyn) diagnostic analyzers initially developed to help flesh out the design and implementation of the static analysis APIs. They have been migrated from the main [dotnet/roslyn](https://github.com/dotnet/roslyn) repository in order to continue and speed their further development.
@@ -43,7 +43,7 @@ Microsoft.CodeQuality.Analyzers
 
 Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
 
-[More info](src/Microsoft.CodeQuality.Analyzers/Documentation/Microsoft.CodeQuality.Analyzers.md)
+[More info](src/Microsoft.CodeQuality.Analyzers/Microsoft.CodeQuality.Analyzers.md)
 
 Microsoft.NetCore.Analyzers
 -----------------

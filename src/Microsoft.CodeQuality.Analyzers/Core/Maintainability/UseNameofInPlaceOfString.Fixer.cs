@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -13,6 +14,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
     /// <summary>
     /// NEEDCODE
     /// </summary>
+    [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public class UseNameOfInPlaceOfStringFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(UseNameofInPlaceOfStringAnalyzer<SyntaxKind>.RuleId);
@@ -31,7 +33,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             if (literalExpression != null)
             {
                 context.RegisterCodeFix(
-                    CodeAction.Create("Use NameOf", c => ReplaceWithNameOf(context.Document, literalExpression, c)),
+                    CodeAction.Create("Use NameOf", c => ReplaceWithNameOf(context.Document, literalExpression, c), equivalenceKey: nameof(UseNameOfInPlaceOfStringFixer)),
                     context.Diagnostics);
             }
         }

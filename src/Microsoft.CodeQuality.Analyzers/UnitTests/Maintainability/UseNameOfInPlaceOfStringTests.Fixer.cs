@@ -51,7 +51,7 @@ class C
     {
         throw new ArgumentNullException(nameof(x));
     }
-}" );
+}", allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors );
         }
 
         [Fact]

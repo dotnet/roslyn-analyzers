@@ -65,8 +65,20 @@ Public NotInheritable Class BasicUseNameofInPlaceOfString
         Return False
     End Function
 
-    Friend Overrides Function GetParametersInScope(node As SyntaxNode) As IEnumerable(Of String)
-        Throw New NotImplementedException()
+    Friend Overrides Iterator Function GetParametersInScope(node As SyntaxNode) As IEnumerable(Of String)
+        For Each ancestor In node.AncestorsAndSelf()
+            Select Case ancestor.Kind
+                Case SyntaxKind.MultiLineFunctionLambdaExpression,
+                     SyntaxKind.SingleLineFunctionLambdaExpression,
+                     SyntaxKind.MultiLineSubLambdaExpression,
+                     SyntaxKind.SingleLineSubLambdaExpression
+                    Dim parameters = DirectCast(ancestor, LambdaExpressionSyntax).SubOrFunctionHeader.ParameterList.Parameters
+                    For Each parameter In parameters
+                        Yield DirectCast(parameter.Identifier, ModifiedIdentifierSyntax).Identifier.ValueText
+                    Next
+            End Select
+        Next
+
     End Function
 
     Friend Overrides Function GetPropertiesInScope(argument As SyntaxNode) As IEnumerable(Of String)
@@ -75,11 +87,12 @@ Public NotInheritable Class BasicUseNameofInPlaceOfString
         Dim ancestors = argumentSyntax.FirstAncestorOrSelf(Of SyntaxNode)(Function(ancestor) ancestor.IsKind(SyntaxKind.ClassStatement)) _
             .ChildNodes()
         Dim propertyNodes = ancestors.Where(Function(t) t.IsKind(SyntaxKind.PropertyStatement))
+        Dim propertyNames As List(Of String) = Nothing
         For Each propertyNode In propertyNodes
             Dim propertyStatementSyntax = DirectCast(propertyNode, PropertyStatementSyntax)
-            'Dim propertyNames As List(Of String) = propertyStatementSyntax
-
+            propertyNames.Add(propertyStatementSyntax.Identifier.ValueText)
         Next
 
+        Return propertyNames
     End Function
 End Class

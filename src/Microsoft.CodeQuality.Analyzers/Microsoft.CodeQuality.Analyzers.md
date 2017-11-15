@@ -23,7 +23,7 @@ Help: [http://msdn.microsoft.com/library/ms182172.aspx](http://msdn.microsoft.co
 
 ### CA1003: Use generic event handler instances ###
 
-A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.
+A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework 2.0.
 
 Category: Design
 
@@ -52,6 +52,8 @@ Severity: Warning
 Help: [https://msdn.microsoft.com/en-us/library/ms182132.aspx](https://msdn.microsoft.com/en-us/library/ms182132.aspx)
 
 ### CA1012: Abstract types should not have constructors ###
+
+Constructors on abstract types can be called only by derived types. Because public constructors create instances of a type, and you cannot create instances of an abstract type, an abstract type that has a public constructor is incorrectly designed.
 
 Category: Design
 
@@ -91,6 +93,8 @@ Help: [http://msdn.microsoft.com/library/ms182157.aspx](http://msdn.microsoft.co
 
 ### CA1018: Mark attributes with AttributeUsageAttribute ###
 
+When you define a custom attribute, mark it by using AttributeUsageAttribute to indicate where in the source code the custom attribute can be applied. The meaning and intended usage of an attribute will determine its valid locations in code.
+
 Category: Design
 
 Severity: Warning
@@ -98,6 +102,8 @@ Severity: Warning
 Help: [http://msdn.microsoft.com/library/ms182158.aspx](http://msdn.microsoft.com/library/ms182158.aspx)
 
 ### CA1019: Define accessors for attribute arguments ###
+
+Attributes can define mandatory arguments that must be specified when you apply the attribute to a target. These are also known as positional arguments because they are supplied to attribute constructors as positional parameters. For every mandatory argument, the attribute should also provide a corresponding read-only property so that the value of the argument can be retrieved at execution time.
 
 Category: Design
 
@@ -217,6 +223,8 @@ Help: [https://msdn.microsoft.com/en-us/library/ms182134.aspx](https://msdn.micr
 
 ### CA1052: Static holder types should be Static or NotInheritable ###
 
+Static holder types should be sealed. This rule assumes that a type that contains only static members is not designed to be inherited, because the type does not provide any functionality that can be overridden in a derived type. A type that is not meant to be inherited should be marked with the sealed modifier to prohibit its use as a base type.
+
 Category: Design
 
 Severity: Warning
@@ -255,17 +263,23 @@ Help: [https://msdn.microsoft.com/en-us/library/bb386039.aspx](https://msdn.micr
 
 ### CA1066: Type {0} should implement IEquatable<T> because it overrides Equals ###
 
+When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable<T>, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable<T>.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.
+
 Category: Design
 
 Severity: Warning
 
 ### CA1067: Override Object.Equals(object) when implementing IEquatable<T> ###
 
+When a type T implements the interface IEquatable<T>, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".
+
 Category: Design
 
 Severity: Warning
 
 ### CA1068: CancellationToken parameters must come last ###
+
+CancellationToken parameters must come last
 
 Category: Design
 

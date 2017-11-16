@@ -13,6 +13,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
     public abstract class ReviewVisibleEventHandlersAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2109";
+        private const string HelpLinkUri = "https://msdn.microsoft.com/en-us/library/ms182312.aspx";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.ReviewVisibleEventHandlersTitle), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
 
@@ -27,7 +28,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor DefaultRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -36,7 +37,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(SecurityRule, DefaultRule);

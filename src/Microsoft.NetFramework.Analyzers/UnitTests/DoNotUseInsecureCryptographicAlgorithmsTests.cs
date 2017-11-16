@@ -2158,7 +2158,8 @@ End Namespace" }
                                                     s_CA5350RuleMessage,
                                                     DiagnosticCategory.Security,
                                                     DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                    true
+                                                    isEnabledByDefault: true,
+                                                    helpLinkUri: DoNotUseInsecureCryptographicAlgorithmsAnalyzer.CA5350HelpLink
                                                 );
 
         private static readonly DiagnosticDescriptor s_CA5351Rule =
@@ -2167,7 +2168,8 @@ End Namespace" }
                                                     s_CA5351RuleMessage,
                                                     DiagnosticCategory.Security,
                                                     DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                    true
+                                                    isEnabledByDefault: true,
+                                                    helpLinkUri: DoNotUseInsecureCryptographicAlgorithmsAnalyzer.CA5350HelpLink
                                                 );
     }
 }

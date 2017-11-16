@@ -13,6 +13,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
     public abstract class MarkBooleanPInvokeArgumentsWithMarshalAsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1414";
+        private const string HelpLinkUri = "https://msdn.microsoft.com/en-us/library/ms182206.aspx";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.MarkBooleanPInvokeArgumentsWithMarshalAsTitle), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
 
@@ -27,7 +28,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor ReturnRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -36,7 +37,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, ReturnRule);

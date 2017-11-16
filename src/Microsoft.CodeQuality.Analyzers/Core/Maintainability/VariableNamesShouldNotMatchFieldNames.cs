@@ -13,6 +13,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
     public abstract class VariableNamesShouldNotMatchFieldNamesAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1500";
+        private const string HelpLinkUri = "https://msdn.microsoft.com/en-us/library/ms182216.aspx";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.VariableNamesShouldNotMatchFieldNamesTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
 
@@ -27,7 +28,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor ParameterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -36,7 +37,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(LocalRule, ParameterRule);

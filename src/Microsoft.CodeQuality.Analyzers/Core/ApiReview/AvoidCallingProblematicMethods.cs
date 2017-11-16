@@ -14,6 +14,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiReview
     public abstract class AvoidCallingProblematicMethodsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2001";
+        private const string HelpLinkUri = "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2001-avoid-calling-problematic-methods";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(ApiReviewAnalyzersResources.AvoidCallingProblematicMethodsTitle), ApiReviewAnalyzersResources.ResourceManager, typeof(ApiReviewAnalyzersResources));
 
@@ -36,7 +37,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiReview
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor SystemThreadingThreadResumeRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -45,7 +46,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiReview
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor SystemThreadingThreadSuspendRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -54,7 +55,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiReview
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor SystemTypeInvokeMemberRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -63,7 +64,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiReview
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor CoInitializeSecurityRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -72,7 +73,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiReview
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor CoSetProxyBlanketRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -81,7 +82,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiReview
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor SystemRuntimeInteropServicesSafeHandleDangerousGetHandleRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -90,7 +91,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiReview
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor SystemReflectionAssemblyLoadFromRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -99,7 +100,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiReview
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor SystemReflectionAssemblyLoadFileRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -108,7 +109,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiReview
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor SystemReflectionAssemblyLoadWithPartialNameRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -117,7 +118,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiReview
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
+                                                                             helpLinkUri: HelpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(SystemGCCollectRule, SystemThreadingThreadResumeRule, SystemThreadingThreadSuspendRule, SystemTypeInvokeMemberRule, CoInitializeSecurityRule, CoSetProxyBlanketRule, SystemRuntimeInteropServicesSafeHandleDangerousGetHandleRule, SystemReflectionAssemblyLoadFromRule, SystemReflectionAssemblyLoadFileRule, SystemReflectionAssemblyLoadWithPartialNameRule);

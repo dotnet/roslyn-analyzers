@@ -26,7 +26,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
+#pragma warning disable RS1015 // Provide non-null 'helpLinkUri' value to diagnostic descriptor constructor.
                                                                              helpLinkUri: null,     // TODO: add MSDN url
+#pragma warning restore RS1015 // Provide non-null 'helpLinkUri' value to diagnostic descriptor constructor.
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);

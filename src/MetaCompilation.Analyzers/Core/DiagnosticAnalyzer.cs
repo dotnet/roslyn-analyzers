@@ -234,6 +234,7 @@ namespace MetaCompilation.Analyzers
         #endregion
 
         public const string GoToCodeFix = "MetaAnalyzer050";
+#pragma warning disable RS1015 // Provide non-null 'helpLinkUri' value to diagnostic descriptor constructor.
         internal static readonly DiagnosticDescriptor GoToCodeFixRule = new DiagnosticDescriptor(
             id: GoToCodeFix,
             title: "Analyzer tutorial complete",
@@ -241,6 +242,7 @@ namespace MetaCompilation.Analyzers
             category: s_ruleCategory,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true);
+#pragma warning restore RS1015 // Provide non-null 'helpLinkUri' value to diagnostic descriptor constructor.
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
             MissingIdRule,

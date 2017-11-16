@@ -386,7 +386,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             /// </summary>
             private static void CheckFinalizeImplementationRule(IMethodSymbol method, INamedTypeSymbol type, ImmutableArray<IOperation> operationBlocks, OperationBlockAnalysisContext context)
             {
-                // TODO: Implement check of Finalize
+                var validator = new FinalizeImplementationValidator(type);
+                if (!validator.Validate(operationBlocks))
+                {
+                    context.ReportDiagnostic(method.CreateDiagnostic(FinalizeImplementationRule, $"{type.Name}.{method.Name}"));
+                }
             }
 
             /// <summary>
@@ -444,13 +448,51 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return method;
             }
         }
+        private static bool IsDisposeBoolCall(IInvocationOperation invocationExpression, INamedTypeSymbol type, bool expectedValue)
+        {
+            if (invocationExpression.TargetMethod == null ||
+                invocationExpression.TargetMethod.ContainingType != type ||
+                !IsDisposeBoolMethod(invocationExpression.TargetMethod))
+            {
+                return false;
+            }
+
+            if (invocationExpression.Instance.Kind != OperationKind.InstanceReference)
+            {
+                return false;
+            }
+
+            if (!type.Equals(invocationExpression.Instance.Type))
+            {
+                return false;
+            }
+
+            if (invocationExpression.Arguments.Length != 1)
+            {
+                return false;
+            }
+
+            IArgumentOperation argument = invocationExpression.Arguments[0];
+            if (argument.Value.Kind != OperationKind.Literal)
+            {
+                return false;
+            }
+
+            var literal = (ILiteralOperation)argument.Value;
+            if (!literal.ConstantValue.HasValue || !expectedValue.Equals(literal.ConstantValue.Value))
+            {
+                return false;
+            }
+
+            return true;
+        }
 
         /// <summary>
         /// Validates implementation of Dispose method. The method must call Dispose(true) and then GC.SuppressFinalize(this).
         /// </summary>
         private struct DisposeImplementationValidator
         {
-            // this type will be created per compilation 
+            // this type will be created per compilation
             // this is actually a bug - https://github.com/dotnet/roslyn-analyzers/issues/845
 #pragma warning disable RS1008
             private readonly IMethodSymbol _suppressFinalizeMethod;
@@ -521,7 +563,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 var invocationExpression = (IInvocationOperation)expressionStatement.Operation;
                 if (!_callsDisposeBool)
                 {
-                    bool result = IsDisposeBoolCall(invocationExpression);
+                    bool result = IsDisposeBoolCall(invocationExpression, _type, expectedValue: true);
                     if (result)
                     {
                         _callsDisposeBool = true;
@@ -541,45 +583,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
 
                 return false;
-            }
-
-            private bool IsDisposeBoolCall(IInvocationOperation invocationExpression)
-            {
-                if (invocationExpression.TargetMethod == null ||
-                    invocationExpression.TargetMethod.ContainingType != _type ||
-                    !IsDisposeBoolMethod(invocationExpression.TargetMethod))
-                {
-                    return false;
-                }
-
-                if (invocationExpression.Instance.Kind != OperationKind.InstanceReference)
-                {
-                    return false;
-                }
-
-                if (!_type.Equals(invocationExpression.Instance.Type))
-                {
-                    return false;
-                }
-
-                if (invocationExpression.Arguments.Length != 1)
-                {
-                    return false;
-                }
-
-                IArgumentOperation argument = invocationExpression.Arguments[0];
-                if (argument.Value.Kind != OperationKind.Literal)
-                {
-                    return false;
-                }
-
-                var literal = (ILiteralOperation)argument.Value;
-                if (!literal.ConstantValue.HasValue || !true.Equals(literal.ConstantValue.Value))
-                {
-                    return false;
-                }
-
-                return true;
             }
 
             private bool IsSuppressFinalizeCall(IInvocationOperation invocationExpression)
@@ -612,6 +615,150 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
 
                 return true;
+            }
+        }
+
+        /// <summary>
+        /// Validates implementation of the finalizer. This method must call Dispose(false) and then return
+        /// </summary>
+        private struct FinalizeImplementationValidator
+        {
+            // Avoid storing per-compilation data into the fields of a diagnostic analyzer.
+            // this is actually a bug - https://github.com/dotnet/roslyn-analyzers/issues/845
+#pragma warning disable RS1008
+            private INamedTypeSymbol _type;
+#pragma warning restore RS1008
+            private bool _callDispose;
+
+            public FinalizeImplementationValidator(INamedTypeSymbol type)
+            {
+                _type = type;
+                _callDispose = false;
+            }
+
+            public bool Validate(ImmutableArray<IOperation> operations)
+            {
+                _callDispose = false;
+
+                if (ValidateOperations(operations))
+                {
+                    return _callDispose;
+                }
+
+                return false;
+            }
+
+            private bool ValidateOperations(ImmutableArray<IOperation> operations)
+            {
+                foreach (var operation in operations)
+                {
+                    // We need to analyze implicit try statements. This is because if the base type has
+                    // a finalizer, C# will create a try/finally statement to wrap the finalizer, with a
+                    // call to the base finalizer in the finally section. We need to validate the contents
+                    // of the try block
+                    var shouldAnalyze = !operation.IsImplicit || operation.Kind == OperationKind.Try;
+                    if (shouldAnalyze && !ValidateOperation(operation))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            private bool ValidateOperation(IOperation operation)
+            {
+                switch (operation.Kind)
+                {
+                    case OperationKind.Empty:
+                    case OperationKind.Labeled:
+                        return true;
+                    case OperationKind.Block:
+                        return ValidateOperations(((IBlockOperation)operation).Operations);
+                    case OperationKind.ExpressionStatement:
+                        return ValidateExpression((IExpressionStatementOperation)operation);
+                    case OperationKind.Try:
+                        return ValidateTryOperation((ITryOperation)operation);
+                    default:
+                        return false;
+                }
+            }
+
+            private bool ValidateExpression(IExpressionStatementOperation expressionStatement)
+            {
+                if (expressionStatement.Operation?.Kind != OperationKind.Invocation)
+                {
+                    return false;
+                }
+
+                var invocation = (IInvocationOperation)expressionStatement.Operation;
+
+                // Valid calls are either to Dispose(false), or to the Finalize method of the base type
+                if (!_callDispose)
+                {
+                    bool result = IsDisposeBoolCall(invocation, _type, expectedValue: false);
+                    if (result)
+                    {
+                        _callDispose = true;
+                    }
+
+                    return result;
+                }
+                else if (_type.BaseType != null && invocation.Instance != null && invocation.Instance.Kind == OperationKind.InstanceReference)
+                {
+                    IMethodSymbol methodSymbol = invocation.TargetMethod;
+                    IInstanceReferenceOperation receiver = (IInstanceReferenceOperation)invocation.Instance;
+
+                    return methodSymbol.IsFinalizer() && receiver.Type.OriginalDefinition == _type.BaseType.OriginalDefinition;
+                }
+
+                return false;
+            }
+
+            private bool ValidateTryOperation(ITryOperation tryOperation)
+            {
+                // The try operation must have been implicit, as we still analyze it if it isn't implicit
+                if (!tryOperation.IsImplicit)
+                {
+                    return false;
+                }
+
+                if (tryOperation.Finally == null || !tryOperation.Finally.IsImplicit)
+                {
+                    return false;
+                }
+
+                // Due to https://github.com/dotnet/roslyn/issues/23226, the finally block doesn't have
+                // any operations in it. When that is fixed, the code in the if will verify it.
+                if (tryOperation.Finally.Operations.Length != 0)
+                {
+                    return false;
+
+#if false
+                    // The finally block must contain a single implicit call to the finalizer of the base type
+                    if (tryOperation.Finally.Operations.Length != 1 ||
+                        !(tryOperation.Finally.Operations[1] is IExpressionStatementOperation finallyExpression))
+                    {
+                        return false;
+                    }
+
+                    if (!finallyExpression.IsImplicit ||
+                        !(finallyExpression.Operation is IInvocationOperation finallyInvocation) ||
+                        !finallyInvocation.IsImplicit)
+                    {
+                        return false;
+                    }
+
+                    IMethodSymbol finallyMethod = finallyInvocation.TargetMethod;
+                    if (!finallyMethod.IsFinalizer() || finallyMethod.ContainingType != _type.BaseType)
+                    {
+                        return false;
+                    }
+#endif
+                }
+
+                // The try statement is otherwise correct, so validate the main body
+                return Validate(tryOperation.Body.Operations);
             }
         }
     }

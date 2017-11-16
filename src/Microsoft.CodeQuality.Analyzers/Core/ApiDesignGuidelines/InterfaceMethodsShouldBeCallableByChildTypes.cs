@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -56,7 +56,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return;
                 }
 
-                compilationContext.RegisterOperationBlockActionInternal(operationBlockContext => AnalyzeOperationBlock(operationBlockContext, iDisposableTypeSymbol));
+                compilationContext.RegisterOperationBlockAction(operationBlockContext => AnalyzeOperationBlock(operationBlockContext, iDisposableTypeSymbol));
             });
         }
 
@@ -64,18 +64,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             if (operationBlocks != null && operationBlocks.Length == 1)
             {
-                IBlockStatement block = operationBlocks[0] as IBlockStatement;
+                IBlockOperation block = operationBlocks[0] as IBlockOperation;
 
-                // An operation block that's not even a block - don't analyze the error cases.
+                // Analyze IBlockOperation blocks.
                 if (block == null)
                 {
                     return true;
                 }
 
-                if (block.Statements.Length == 0 ||
-                    (block.Statements.Length == 1 &&
-                     block.Statements[0] is IExpressionStatement exprStatement &&
-                     exprStatement.Expression.Kind == OperationKind.ThrowExpression))
+                if (block.Operations.Length == 0 ||
+                    (block.Operations.Length == 1 &&
+                     block.Operations[0].Kind == OperationKind.Throw))
                 {
                     // Empty body OR body that just throws.
                     return true;

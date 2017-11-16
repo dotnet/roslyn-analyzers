@@ -6,7 +6,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -47,19 +47,19 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return;
                 }
 
-                context.RegisterOperationActionInternal(oc => AnalyzeOperation(oc, taskTypes), OperationKind.AwaitExpression);
+                context.RegisterOperationAction(oc => AnalyzeOperation(oc, taskTypes), OperationKind.Await);
             });
         }
 
         private static void AnalyzeOperation(OperationAnalysisContext context, ImmutableArray<INamedTypeSymbol> taskTypes)
         {
-            IAwaitExpression awaitExpression = context.Operation as IAwaitExpression;
+            IAwaitOperation awaitExpression = context.Operation as IAwaitOperation;
 
             // Get the type of the expression being awaited and check it's a task type.
-            ITypeSymbol typeOfAwaitedExpression = awaitExpression?.Expression?.Type;
+            ITypeSymbol typeOfAwaitedExpression = awaitExpression?.Operation?.Type;
             if (typeOfAwaitedExpression != null && taskTypes.Contains(typeOfAwaitedExpression.OriginalDefinition))
             {
-                context.ReportDiagnostic(awaitExpression.Expression.Syntax.CreateDiagnostic(Rule));
+                context.ReportDiagnostic(awaitExpression.Operation.Syntax.CreateDiagnostic(Rule));
             }
         }
 

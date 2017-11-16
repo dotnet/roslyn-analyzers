@@ -19,8 +19,6 @@ x64/
 .tools/
 
 # Per-user project properties
-launchSettings.json
-
 *_i.c
 *_p.c
 *.ilk

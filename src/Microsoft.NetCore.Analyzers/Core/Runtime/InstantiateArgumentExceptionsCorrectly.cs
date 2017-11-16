@@ -5,7 +5,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -52,15 +52,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    compilationContext.RegisterOperationBlockStartActionInternal(
+                    compilationContext.RegisterOperationBlockStartAction(
                         operationBlockStartContext =>
                         {
-                            operationBlockStartContext.RegisterOperationActionInternal(
+                            operationBlockStartContext.RegisterOperationAction(
                                 operationContext => AnalyzeObjectCreation(
                                     operationContext,
                                     operationBlockStartContext.OwningSymbol,
                                     argumentExceptionType),
-                                OperationKind.ObjectCreationExpression);
+                                OperationKind.ObjectCreation);
                         });
                 });
         }
@@ -70,13 +70,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             ISymbol owningSymbol,
             ITypeSymbol argumentExceptionType)
         {
-            var creation = (IObjectCreationExpression)context.Operation;
+            var creation = (IObjectCreationOperation)context.Operation;
             if (!creation.Type.Inherits(argumentExceptionType))
             {
                 return;
             }
 
-            if (creation.ArgumentsInEvaluationOrder.Length == 0)
+            if (creation.Arguments.Length == 0)
             {
                 if (HasMessageOrParameterNameConstructor(creation.Type))
                 {
@@ -86,7 +86,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
             else
             {
-                foreach (IArgument argument in creation.ArgumentsInEvaluationOrder)
+                foreach (IArgumentOperation argument in creation.Arguments)
                 {
                     if (argument.Parameter.Type.SpecialType != SpecialType.System_String)
                     {

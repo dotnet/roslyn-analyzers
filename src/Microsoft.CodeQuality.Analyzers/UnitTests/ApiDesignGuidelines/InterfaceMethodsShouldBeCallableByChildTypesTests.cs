@@ -347,6 +347,37 @@ public class NestedExplicitInterfaceImplementation
 ");
         }
 
+        [Fact]
+        public void CA1033ExpressionBodiedMemberCSharp()
+        {
+            VerifyCSharp(@"
+using System;
+
+public interface IGeneral
+{
+    object DoSomething();
+}
+
+public class ImplementsGeneral  : IGeneral
+{
+    object IGeneral.DoSomething() => null;
+}
+
+public class ImplementsGeneralThree : IGeneral
+{
+    public ImplementsGeneralThree()
+    {
+        DoSomething();
+    }
+
+    object IGeneral.DoSomething() => null;
+    private int DoSomething() => 0;
+}
+",
+            CSharpResult(11, 21, "ImplementsGeneral", "IGeneral.DoSomething"),
+            CSharpResult(21, 21, "ImplementsGeneralThree", "IGeneral.DoSomething"));
+        }
+
         #endregion
 
         #region VisualBasic

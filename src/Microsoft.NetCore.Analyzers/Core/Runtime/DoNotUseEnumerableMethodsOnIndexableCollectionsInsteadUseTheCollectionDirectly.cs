@@ -8,7 +8,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -59,9 +59,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            context.RegisterOperationActionInternal(operationContext =>
+            context.RegisterOperationAction(operationContext =>
             {
-                var invocation = (IInvocationExpression)operationContext.Operation;
+                var invocation = (IInvocationOperation)operationContext.Operation;
                 if (!IsPossibleLinqInvocation(invocation))
                 {
                     return;
@@ -85,7 +85,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 operationContext.ReportDiagnostic(Diagnostic.Create(Rule, invocation.Syntax.GetLocation()));
-            }, OperationKind.InvocationExpression);
+            }, OperationKind.Invocation);
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 methodSymbol.Parameters.Length == 1;
         }
 
-        private static bool IsPossibleLinqInvocation(IInvocationExpression invocation)
+        private static bool IsPossibleLinqInvocation(IInvocationOperation invocation)
         {
             switch (invocation.TargetMethod.Name)
             {

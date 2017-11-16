@@ -8,7 +8,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -75,7 +75,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 // Get a list of interesting categories of methods to analyze.
                 List<MethodCategory> methodCategories = GetMethodCategories(compilation);
 
-                compilationStartContext.RegisterOperationBlockStartActionInternal(operationBlockContext =>
+                compilationStartContext.RegisterOperationBlockStartAction(operationBlockContext =>
                 {
                     var methodSymbol = operationBlockContext.OwningSymbol as IMethodSymbol;
                     if (methodSymbol == null)
@@ -93,18 +93,20 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                     // For the interesting methods, register an operation action to catch all
                     // Throw statements.
-                    operationBlockContext.RegisterOperationActionInternal(operationContext =>
+                    operationBlockContext.RegisterOperationAction(operationContext =>
                     {
-                        if (operationContext.Operation.Type is INamedTypeSymbol type && type.DerivesFrom(exceptionType))
+                        // Get ThrowOperation's ExceptionType
+                        var thrownExceptionType = ((IThrowOperation)operationContext.Operation).Exception?.Type as INamedTypeSymbol;
+                        if (thrownExceptionType != null && thrownExceptionType.DerivesFrom(exceptionType))
                         {
                             // If no exceptions are allowed or if the thrown exceptions is not an allowed one..
-                            if (methodCategory.AllowedExceptions.IsEmpty || !methodCategory.AllowedExceptions.Contains(type))
+                            if (methodCategory.AllowedExceptions.IsEmpty || !methodCategory.AllowedExceptions.Contains(thrownExceptionType))
                             {
                                 operationContext.ReportDiagnostic(
-                                    operationContext.Operation.Syntax.CreateDiagnostic(methodCategory.Rule, methodSymbol.Name, type.Name));
+                                    operationContext.Operation.Syntax.CreateDiagnostic(methodCategory.Rule, methodSymbol.Name, thrownExceptionType.Name));
                             }
                         }
-                    }, OperationKind.ThrowExpression);
+                    }, OperationKind.Throw);
                 });
             });
         }

@@ -9,7 +9,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
@@ -72,14 +72,14 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 var mef1ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.ComponentModel.Composition.ExportAttribute");
                 var mef2ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.Composition.ExportAttribute");
 
-                startContext.RegisterOperationActionInternal(context =>
+                startContext.RegisterOperationAction(context =>
                 {
-                    var expr = (IObjectCreationExpression)context.Operation;
+                    var expr = (IObjectCreationOperation)context.Operation;
                     if (expr.Type is INamedTypeSymbol namedType)
                     {
                         instantiatedTypes.Add(namedType);
                     }
-                }, OperationKind.ObjectCreationExpression);
+                }, OperationKind.ObjectCreation);
 
                 startContext.RegisterSymbolAction(context =>
                 {
@@ -125,9 +125,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     }
                 }
 
-                startContext.RegisterOperationActionInternal(context =>
+                startContext.RegisterOperationAction(context =>
                 {
-                    var expr = (IObjectCreationExpression)context.Operation;
+                    var expr = (IObjectCreationOperation)context.Operation;
                     var constructedClass = (INamedTypeSymbol)expr.Type;
 
                     if (!constructedClass.IsGenericType || constructedClass.IsUnboundGenericType)
@@ -137,11 +137,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                     var generics = constructedClass.TypeParameters.Zip(constructedClass.TypeArguments, (parameter, argument) => (parameter, argument));
                     ProcessGenericTypes(generics);
-                }, OperationKind.ObjectCreationExpression);
+                }, OperationKind.ObjectCreation);
 
-                startContext.RegisterOperationActionInternal(context =>
+                startContext.RegisterOperationAction(context =>
                 {
-                    var expr = (IInvocationExpression)context.Operation;
+                    var expr = (IInvocationOperation)context.Operation;
                     var methodType = expr.TargetMethod;
 
                     if (!methodType.IsGenericMethod)
@@ -151,7 +151,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                     var generics = methodType.TypeParameters.Zip(methodType.TypeArguments, (parameter, argument) => (parameter, argument));
                     ProcessGenericTypes(generics);
-                }, OperationKind.InvocationExpression);
+                }, OperationKind.Invocation);
 
                 startContext.RegisterCompilationEndAction(context =>
                 {

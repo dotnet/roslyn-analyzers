@@ -155,6 +155,10 @@ namespace Microsoft.NetFramework.Analyzers
             public void AnalyzeSymbol(SymbolAnalysisContext context)
             {
                 var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
+                if (namedTypeSymbol.TypeKind == TypeKind.Delegate || namedTypeSymbol.TypeKind == TypeKind.Interface)
+                {
+                    return;
+                }
 
                 // If the type is public and implements ISerializable
                 if (namedTypeSymbol.DeclaredAccessibility == Accessibility.Public && namedTypeSymbol.AllInterfaces.Contains(_iserializableTypeSymbol))
@@ -238,13 +242,34 @@ namespace Microsoft.NetFramework.Analyzers
                 }
             }
 
-            private bool IsSerializable(ITypeSymbol namedTypeSymbol)
+            private bool IsSerializable(ITypeSymbol type)
             {
-                return IsPrimitiveType(namedTypeSymbol) ||
-                       namedTypeSymbol.SpecialType == SpecialType.System_String ||
-                       namedTypeSymbol.SpecialType == SpecialType.System_Decimal ||
-                       namedTypeSymbol.GetAttributes()
-                           .Any(a => a.AttributeClass.Equals(_serializableAttributeTypeSymbol));
+                switch (type.TypeKind)
+                {
+                    case TypeKind.Array:
+                        return IsSerializable(((IArrayTypeSymbol)type).ElementType);
+
+                    case TypeKind.Enum:
+                        return IsSerializable(((INamedTypeSymbol)type).EnumUnderlyingType);
+
+                    case TypeKind.TypeParameter:
+                    case TypeKind.Interface:
+                        // The concrete type can't be determined statically,
+                        // so we assume true to cut down on noise.
+                        return true;
+
+                    case TypeKind.Delegate:
+                        // delegates are always serializable, even if
+                        // they aren't actually marked [Serializable]
+                        return true;
+
+                    default:
+                        return IsPrimitiveType(type) ||
+                            type.SpecialType == SpecialType.System_String ||
+                            type.SpecialType == SpecialType.System_Decimal ||
+                            type.GetAttributes()
+                                .Any(a => a.AttributeClass.Equals(_serializableAttributeTypeSymbol));
+                }
             }
 
             private static bool IsPrimitiveType(ITypeSymbol type)

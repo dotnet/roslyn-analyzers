@@ -124,6 +124,7 @@ public class Tester
 }
 ";
             VerifyCSharpFix(code, fix, allowNewCompilerDiagnostics: true);
+            VerifyCSharpFixAll(code, fix, allowNewCompilerDiagnostics: true);
         }
 
         [Fact]
@@ -183,6 +184,7 @@ Public Class Tester
 End Class
 ";
             VerifyBasicFix(code, fix, allowNewCompilerDiagnostics: true);
+            VerifyBasicFixAll(code, fix, allowNewCompilerDiagnostics: true);
         }
     }
 }

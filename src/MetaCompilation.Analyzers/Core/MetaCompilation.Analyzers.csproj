@@ -2,6 +2,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
+    <!--
+      PackageId is used by Restore. If we set it to MetaCompilation.Analyzers,
+      Restore would conclude that there is a cyclic dependency between us and the MetaCompilation.Analyzers nuget package.
+    -->
+    <PackageId>*$(MSBuildProjectFullPath)*</PackageId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis" Version="$(MicrosoftCodeAnalysisVersion)" />

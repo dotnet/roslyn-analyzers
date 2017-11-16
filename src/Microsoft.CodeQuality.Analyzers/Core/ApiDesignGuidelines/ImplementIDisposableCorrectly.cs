@@ -381,10 +381,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
             }
 
+#pragma warning disable CA1801 // Review unused parameters
             /// <summary>
             /// Checks rule: Modify {0} so that it calls Dispose(false) and then returns.
             /// </summary>
             private static void CheckFinalizeImplementationRule(IMethodSymbol method, INamedTypeSymbol type, ImmutableArray<IOperation> operationBlocks, OperationBlockAnalysisContext context)
+#pragma warning restore CA1801 // Review unused parameters
             {
                 // TODO: Implement check of Finalize
             }

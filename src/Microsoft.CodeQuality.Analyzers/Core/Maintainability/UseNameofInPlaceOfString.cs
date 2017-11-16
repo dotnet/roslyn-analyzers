@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
@@ -14,7 +14,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
     /// 
     /// 
     /// </summary>
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public abstract class UseNameofInPlaceOfStringAnalyzer<TSyntaxKind> : DiagnosticAnalyzer
         where TSyntaxKind : struct
     {
@@ -39,7 +38,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            // TODO correct setting?dir
+            // TODO correct setting?
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
             analysisContext.RegisterSyntaxNodeAction(AnalyzeArgument, ArgumentSyntaxKind);
@@ -69,15 +68,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return;
             }
 
-
-            // if there isn't an argument list (Can this happen?)
             var argumentList = GetArgumentListSyntax(argumentSyntaxNode);
             if (argumentList == null)
             {
                 return;
             }
 
-            //var argumentExpression = argumentList.Parent as ExpressionSyntax;
             var argumentExpression = GetArgumentExpression(argumentList);
             if (argumentExpression == null)
             {
@@ -87,13 +83,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             var parametersInScope = GetParametersInScope(argumentSyntaxNode);
             var propertiesInScope = GetPropertiesInScope(argumentSyntaxNode);
 
-            // if there aren't any parameters or members in scope, bail 
             if (!parametersInScope.Any() && !propertiesInScope.Any())
             {
                 return;
             }
             
-            // does the string match any parameters or properties in scope?
             var matchesParameterInScope = CheckForMatching(stringText, parametersInScope);
             var matchesPropertyInScope = CheckForMatching(stringText, propertiesInScope);
             if (!matchesParameterInScope && !matchesPropertyInScope)
@@ -101,9 +95,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return;
             }
 
-            // ******** compilation
-
-            // Get the method or property symbol
             var semanticModel = context.SemanticModel;
             var methodOrProperty = semanticModel.GetSymbolInfo(argumentExpression).Symbol;
             if (methodOrProperty == null)
@@ -111,7 +102,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return;
             }
 
-            // Get the matching parameter for the argument
             var methodOrPropertyParameters = methodOrProperty.GetParameters();
             if (methodOrPropertyParameters.Length == 0)
             {
@@ -126,20 +116,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             else // positional arguments
             {
                 var index = GetIndexOfArgument(argumentList, argumentSyntaxNode);
-                if (index < 0)
+                if ((index < 0) || (index >= methodOrPropertyParameters.Length))
                 {
                     return;
                 }
-
-                if (index < methodOrPropertyParameters.Length)
+                else
                 {
                     matchingParameter = methodOrPropertyParameters[index];
-                }
-
-                // TODO what if the matching parameter is params[]?
-                if (index >= methodOrPropertyParameters.Length && methodOrPropertyParameters[methodOrPropertyParameters.Length - 1].IsParams)
-                {
-                    return;
                 }
             }
 
@@ -155,6 +138,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         internal abstract bool IsValidIdentifier(string stringLiteral);
         internal abstract bool TryGetStringLiteralOfExpression(SyntaxNode argument, out SyntaxNode stringLiteral, out string stringText);
         internal abstract bool TryGetNamedArgument(SyntaxNode argumentSyntaxNode, out string argumentName);
+        internal abstract IEnumerable<string> GetParametersInScope(SyntaxNode node);
+        internal abstract IEnumerable<string> GetPropertiesInScope(SyntaxNode argument);
 
         private static bool CheckForMatching(string stringText, IEnumerable<string> searchCollection )
         {
@@ -168,8 +153,5 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             return false;
         }
-
-        internal abstract IEnumerable<string> GetParametersInScope(SyntaxNode node);
-        internal abstract IEnumerable<string> GetPropertiesInScope(SyntaxNode argument);
     }
 }

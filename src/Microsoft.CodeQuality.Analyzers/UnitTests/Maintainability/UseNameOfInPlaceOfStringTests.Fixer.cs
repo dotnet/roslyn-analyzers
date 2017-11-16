@@ -12,7 +12,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return null;
+            return new BasicUseNameofInPlaceOfString();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
@@ -32,7 +32,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
         }
 
         [Fact]
-        public void Fixer_ArgumentMatchesAParameterInScope()
+        public void Fixer_CSharp_ArgumentMatchesAParameterInScope()
         {
             VerifyCSharpFix(@"
 using System;
@@ -52,6 +52,27 @@ class C
         throw new ArgumentNullException(nameof(x));
     }
 }", allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors );
+        }
+
+//        [Fact]
+        public void Fixer_VB_ArgumentMatchesAParameterInScope()
+        {
+            VerifyBasicFix(@"
+Imports System
+
+Module Mod1
+    Sub f(s As String)
+        Throw New ArgumentNullException(""s"")
+    End Sub
+End Module",
+@"
+Imports System
+
+Module Mod1
+    Sub f(s As String)
+        Throw New ArgumentNullException(NameOf(s))
+    End Sub
+End Module", allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
@@ -107,7 +128,7 @@ public class Person : INotifyPropertyChanged
             handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}");
+}", allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors);
         }
     }
 }

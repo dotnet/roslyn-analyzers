@@ -1,11 +1,9 @@
 ﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-Imports System.Collections.Generic
-Imports System.Linq
 Imports Microsoft.CodeAnalysis
+Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
-Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeQuality.Analyzers.Maintainability
 
 <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
@@ -25,7 +23,7 @@ Public NotInheritable Class BasicUseNameofInPlaceOfString
     End Function
 
     Friend Overrides Function GetArgumentExpression(argumentList As SyntaxNode) As SyntaxNode
-        Dim expression = TryCast(argumentList, ExpressionSyntax)
+        Dim expression = TryCast(argumentList, ArgumentListSyntax)
         Return expression.Parent
     End Function
 
@@ -76,23 +74,36 @@ Public NotInheritable Class BasicUseNameofInPlaceOfString
                     For Each parameter In parameters
                         Yield DirectCast(parameter.Identifier, ModifiedIdentifierSyntax).Identifier.ValueText
                     Next
+                Case SyntaxKind.SubBlock,
+                     SyntaxKind.FunctionBlock
+                    Dim parameters = DirectCast(ancestor, MethodBlockSyntax).BlockStatement.ParameterList.Parameters
+                    For Each parameter In parameters
+                        Yield DirectCast(parameter.Identifier, ModifiedIdentifierSyntax).Identifier.ValueText
+                    Next
             End Select
         Next
 
     End Function
 
-    Friend Overrides Function GetPropertiesInScope(argument As SyntaxNode) As IEnumerable(Of String)
-        Dim argumentSyntax = DirectCast(argument, ArgumentSyntax)
+    Friend Overrides Iterator Function GetPropertiesInScope(argument As SyntaxNode) As IEnumerable(Of String)
+        Dim argumentSyntax = DirectCast(argument, SimpleArgumentSyntax)
 
-        Dim ancestors = argumentSyntax.FirstAncestorOrSelf(Of SyntaxNode)(Function(ancestor) ancestor.IsKind(SyntaxKind.ClassStatement)) _
-            .ChildNodes()
-        Dim propertyNodes = ancestors.Where(Function(t) t.IsKind(SyntaxKind.PropertyStatement))
+        Dim containingTypeBlock = argumentSyntax.FirstAncestorOrSelf(Of SyntaxNode)(Function(ancestor)
+                                                                                        Return ancestor.IsKind(SyntaxKind.ClassBlock) OrElse
+                                                                                            ancestor.IsKind(SyntaxKind.StructureBlock) OrElse
+                                                                                            ancestor.IsKind(SyntaxKind.ModuleBlock)
+                                                                                    End Function)
+
+        If containingTypeBlock Is Nothing Then
+            Yield String.Empty
+        End If
+
+        Dim propertyNodes = containingTypeBlock.ChildNodes.Where(Function(t) t.IsKind(SyntaxKind.PropertyBlock))
         Dim propertyNames As List(Of String) = Nothing
         For Each propertyNode In propertyNodes
-            Dim propertyStatementSyntax = DirectCast(propertyNode, PropertyStatementSyntax)
-            propertyNames.Add(propertyStatementSyntax.Identifier.ValueText)
+            Dim propertyStatementSyntax = DirectCast(propertyNode, PropertyBlockSyntax)
+            Yield propertyStatementSyntax.PropertyStatement.Identifier.ValueText
         Next
 
-        Return propertyNames
     End Function
 End Class

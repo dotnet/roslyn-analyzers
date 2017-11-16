@@ -180,6 +180,20 @@ class C
         }
 
         [Fact]
+        public void Diagnostic_VB_ArgumentMatchesAParameterInScope()
+        {
+            VerifyBasic(@"
+Imports System
+
+Module Mod1
+    Sub f(s As String)
+        Throw New ArgumentNullException([|""s""|])
+    End Sub
+End Module",
+    GetBasicNameofResultAt(6, 41));
+        }
+
+        [Fact]
         public void Diagnostic_ArgumentMatchesPropertyInScope()
         {
             VerifyCSharp(@"
@@ -262,14 +276,13 @@ public class Person : INotifyPropertyChanged
 
         #endregion
 
-        private DiagnosticResult[] GetBasicNameofResultAt(int v1, int v2)
+        private DiagnosticResult GetBasicNameofResultAt(int line, int column)
         {
-            throw new NotImplementedException();
+            string message = string.Format(MicrosoftMaintainabilityAnalyzersResources.UseNameOfInPlaceOfStringMessage, "test");
+            return GetBasicResultAt(line, column, UseNameofInPlaceOfStringAnalyzer<SyntaxKind>.RuleId, message);
         }
 
-        private DiagnosticResult GetCSharpNameofResultAt(int line, int column
-            
-            )
+        private DiagnosticResult GetCSharpNameofResultAt(int line, int column)
         {
             string message = string.Format(MicrosoftMaintainabilityAnalyzersResources.UseNameOfInPlaceOfStringMessage, "test");
             return GetCSharpResultAt(line, column, UseNameofInPlaceOfStringAnalyzer<SyntaxKind>.RuleId, message);
@@ -277,8 +290,7 @@ public class Person : INotifyPropertyChanged
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            //   return new visu();
-            return null;
+            return new BasicUseNameofInPlaceOfString();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

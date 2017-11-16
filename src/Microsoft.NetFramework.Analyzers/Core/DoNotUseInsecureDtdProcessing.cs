@@ -674,7 +674,7 @@ namespace Microsoft.NetFramework.Analyzers
                 {
                     env.IsDtdProcessingDisabled = !SecurityDiagnosticHelpers.IsExpressionEqualsDtdProcessingParse(expression.Value);
                 }
-                else if (context.Operation?.Parent?.Kind != OperationKind.ObjectOrCollectionInitializerExpression)
+                else if (context.Operation?.Parent?.Kind != OperationKind.ObjectOrCollectionInitializer)
                 {
                     // Generate a warning whenever the XmlResolver or DtdProcessing property is set to an insecure value
                     Diagnostic diag = Diagnostic.Create(

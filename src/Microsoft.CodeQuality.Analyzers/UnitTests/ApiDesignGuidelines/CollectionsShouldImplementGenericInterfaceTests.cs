@@ -601,8 +601,7 @@ public class IntCollection : BaseClass
 {
 }
 ",
-                GetCSharpResultAt(5, 14, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()),
-                GetCSharpResultAt(15, 14, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
+                GetCSharpResultAt(5, 14, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
 
             VerifyBasic(@"
 Imports System
@@ -628,8 +627,84 @@ Public Class IntCollection
 	Inherits BaseClass
 End Class
 ",
-                GetBasicResultAt(5, 14, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()),
-                GetBasicResultAt(21, 14, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
+                GetBasicResultAt(5, 14, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
         }
+
+        [Fact]
+        public void Test_InheritsCollectionBaseAndReadOnlyCollectionBase()
+        {
+            VerifyCSharp(@"
+using System.Collections;
+
+class C : CollectionBase { }
+
+class R : ReadOnlyCollectionBase { }
+",
+                GetCSharpResultAt(4, 7, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()),
+                GetCSharpResultAt(6, 7, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
+
+            VerifyBasic(@"
+Imports System.Collections
+
+Class C
+    Inherits CollectionBase
+End Class
+
+Class R
+    Inherits ReadOnlyCollectionBase
+End Class
+",
+                GetBasicResultAt(4, 7, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()),
+                GetBasicResultAt(8, 7, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
+        }
+
+        [Fact]
+        public void Test_InheritsCollectionBaseAndReadOnlyCollectionBaseAndGenericIEnumerable_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.Collections;
+using System.Collections.Generic;
+
+class C : CollectionBase, IEnumerable<int>
+{
+    IEnumerator<int> IEnumerable<int>.GetEnumerator()
+    {
+        throw new System.NotImplementedException();
+    }
+}
+
+class R : ReadOnlyCollectionBase, IEnumerable<int>
+{
+    IEnumerator<int> IEnumerable<int>.GetEnumerator()
+    {
+        throw new System.NotImplementedException();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System.Collections
+Imports System.Collections.Generic
+
+Class C
+    Inherits CollectionBase
+    Implements IEnumerable(Of Integer)
+
+    Private Function IEnumerable_GetEnumerator() As IEnumerator(Of Integer) Implements IEnumerable(Of Integer).GetEnumerator
+        Throw New System.NotImplementedException()
+    End Function
+End Class
+
+Class R
+    Inherits ReadOnlyCollectionBase
+    Implements IEnumerable(Of Integer)
+
+    Private Function IEnumerable_GetEnumerator() As IEnumerator(Of Integer) Implements IEnumerable(Of Integer).GetEnumerator
+        Throw New System.NotImplementedException()
+    End Function
+End Class
+");
+        }
+
     }
 }

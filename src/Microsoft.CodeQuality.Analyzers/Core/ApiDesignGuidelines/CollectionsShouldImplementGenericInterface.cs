@@ -62,6 +62,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                    INamedTypeSymbol genericIEnumerableType = WellKnownTypes.GenericIEnumerable(context.Compilation);
                    INamedTypeSymbol iListType = WellKnownTypes.IList(context.Compilation);
                    INamedTypeSymbol genericIListType = WellKnownTypes.GenericIList(context.Compilation);
+                   INamedTypeSymbol collectionBase = WellKnownTypes.CollectionBase(context.Compilation);
+                   INamedTypeSymbol readOnlyCollectionBase = WellKnownTypes.ReadOnlyCollectionBase(context.Compilation);
 
                    if (iCollectionType == null && genericICollectionType == null &&
                        iEnumerableType == null && genericIEnumerableType == null &&
@@ -73,7 +75,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                    context.RegisterSymbolAction(c => AnalyzeSymbol(c,
                                                 iCollectionType, genericICollectionType,
                                                 iEnumerableType, genericIEnumerableType,
-                                                iListType, genericIListType),
+                                                iListType, genericIListType,
+                                                collectionBase, readOnlyCollectionBase),
                                                 SymbolKind.NamedType);
                });
         }
@@ -85,19 +88,36 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             INamedTypeSymbol iEnumerableType,
             INamedTypeSymbol gEnumerableType,
             INamedTypeSymbol iListType,
-            INamedTypeSymbol gListType)
+            INamedTypeSymbol gListType,
+            INamedTypeSymbol collectionBase,
+            INamedTypeSymbol readOnlyCollectionBase)
         {
             var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
-            var allInterfaces = namedTypeSymbol.AllInterfaces.Select(t => t.OriginalDefinition).ToImmutableHashSet();
+            var interfaces = namedTypeSymbol.Interfaces.Select(t => t.OriginalDefinition).ToImmutableArray();
 
-            foreach (INamedTypeSymbol @interface in allInterfaces)
+            bool diagnosticReported = false;
+            foreach (INamedTypeSymbol @interface in interfaces)
             {
-                if ((@interface.Equals(iCollectionType) && !allInterfaces.Contains(gCollectionType)) ||
-                     (@interface.Equals(iEnumerableType) && !allInterfaces.Contains(gEnumerableType)) ||
-                      (@interface.Equals(iListType) && !allInterfaces.Contains(gListType)))
+                if ((@interface.Equals(iCollectionType) && !interfaces.Contains(gCollectionType)) ||
+                     (@interface.Equals(iEnumerableType) && !interfaces.Contains(gEnumerableType)) ||
+                      (@interface.Equals(iListType) && !interfaces.Contains(gListType)))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Rule, namedTypeSymbol.Locations.First(), namedTypeSymbol.Name, @interface.Name));
+                    diagnosticReported = true;
                     break;
+                }
+            }
+
+            if (!diagnosticReported && namedTypeSymbol.BaseType != null)
+            {
+                // If the type inherits from CollectionsBase but doesn't implement a generic ienumerable, this is probably an error,
+                // as collectionbase and readonlycollectionbase are meant for strongly typed collections
+                var allInterfaces = namedTypeSymbol.AllInterfaces.Select(t => t.OriginalDefinition).ToImmutableArray();
+                var originalBaseType = namedTypeSymbol.BaseType.OriginalDefinition;
+                if (allInterfaces.Contains(iEnumerableType) && !allInterfaces.Contains(gEnumerableType) &&
+                    (originalBaseType.Equals(collectionBase) || originalBaseType.Equals(readOnlyCollectionBase)))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Rule, namedTypeSymbol.Locations.First(), namedTypeSymbol.Name, originalBaseType.Name));
                 }
             }
         }

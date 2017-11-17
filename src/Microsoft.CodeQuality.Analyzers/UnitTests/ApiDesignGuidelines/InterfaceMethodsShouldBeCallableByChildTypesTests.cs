@@ -382,7 +382,7 @@ public class ImplementsGeneralThree : IGeneral
 
         #region VisualBasic
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7397")]
+        [Fact]
         public void CA1033SimpleDiagnosticCasesBasic()
         {
             VerifyBasic(@"
@@ -485,14 +485,18 @@ Public Class ImplementsGeneralThree
 End Class
 ",
             BasicResult(17, 22, "ImplementsGeneral", "IGeneral_DoSomething"),
+            BasicResult(21, 17, "ImplementsGeneral", "IGeneral_DoNothing"),
+            BasicResult(24, 17, "ImplementsGeneral", "IGeneral_JustThrow"),
             BasicResult(30, 9, "ImplementsGeneral", "get_IGeneral_Item"),
             BasicResult(38, 9, "ImplementsGeneral", "get_IGeneral_Name"),
             BasicResult(54, 22, "ImplementsGeneralThree", "IGeneral_DoSomething"),
+            BasicResult(58, 17, "ImplementsGeneralThree", "IGeneral_DoNothing"),
+            BasicResult(60, 17, "ImplementsGeneralThree", "IGeneral_DoJustThrow"),
             BasicResult(66, 9, "ImplementsGeneralThree", "get_IGeneral_Item"),
             BasicResult(74, 9, "ImplementsGeneralThree", "get_IGeneral_Name"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7397")]
+        [Fact]
         public void CA1033NestedDiagnosticCasesBasic()
         {
             VerifyBasic(@"
@@ -555,14 +559,16 @@ Public Class NestedExplicitInterfaceImplementation
 End Class
 ",
             BasicResult(17, 26, "ImplementsNestedGeneral", "INestedGeneral_DoSomething"),
+            BasicResult(21, 21, "ImplementsNestedGeneral", "INestedGeneral_DoNothing"),
+            BasicResult(23, 21, "ImplementsNestedGeneral", "INestedGeneral_JustThrow"),
             BasicResult(29, 13, "ImplementsNestedGeneral", "get_INestedGeneral_Item"),
             BasicResult(37, 13, "ImplementsNestedGeneral", "get_INestedGeneral_Name"),
             BasicResult(45, 13, "ImplementsNestedGeneral", "add_TheEvent"),
             BasicResult(50, 13, "ImplementsNestedGeneral", "remove_TheEvent"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7397")]
-        public void CA1033NoDiagnosticCasesBasic()
+        [Fact]
+        public void CA1033NoUnderlyingImplementationsDiagnostics()
         {
             VerifyBasic(@"
 Imports System
@@ -706,7 +712,19 @@ Public Class NestedExplicitInterfaceImplementation
         End Event
     End Class
 End Class
-");
+",
+            BasicResult(25, 17, "ImplementsGeneral", "INestedGeneral_DoNothing"),
+            BasicResult(28, 17, "ImplementsGeneral", "INestedGeneral_JustThrow"),
+            BasicResult(33, 9, "ImplementsGeneral", "get_INestedGeneral_Item"),
+            BasicResult(38, 9, "ImplementsGeneral", "get_INestedGeneral_Name"),
+            BasicResult(55, 17, "ImplementsGeneralThree", "INestedGeneral_Nothing"),
+            BasicResult(57, 17, "ImplementsGeneralThree", "INestedGeneral_JustThrow"),
+            BasicResult(115, 21, "ImplementsNestedGeneral", "INestedGeneral_DoNothing"),
+            BasicResult(117, 21, "ImplementsNestedGeneral", "INestedGeneral_JustThrow"),
+            BasicResult(122, 13, "ImplementsNestedGeneral", "get_INestedGeneral_Item"),
+            BasicResult(127, 13, "ImplementsNestedGeneral", "get_INestedGeneral_Name"),
+            BasicResult(132, 13, "ImplementsNestedGeneral", "add_TheEvent"),
+            BasicResult(135, 13, "ImplementsNestedGeneral", "remove_TheEvent"));
         }
 
         #endregion 

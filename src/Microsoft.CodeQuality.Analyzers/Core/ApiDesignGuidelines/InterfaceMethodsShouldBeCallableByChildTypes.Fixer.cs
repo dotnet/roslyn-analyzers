@@ -54,13 +54,28 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             IMethodSymbol candidateToIncreaseVisibility = GetExistingNonVisibleAlternate(methodSymbol);
             if (candidateToIncreaseVisibility != null)
             {
-                ISymbol symbolToChange = candidateToIncreaseVisibility.IsAccessorMethod() ? candidateToIncreaseVisibility.AssociatedSymbol : candidateToIncreaseVisibility;
+                ISymbol symbolToChange;
+                bool checkSetter = false;
+                if (candidateToIncreaseVisibility.IsAccessorMethod())
+                {
+                    symbolToChange = candidateToIncreaseVisibility.AssociatedSymbol;
+                    if (methodSymbol.AssociatedSymbol.Kind == SymbolKind.Property)
+                    {
+                        var originalProperty = (IPropertySymbol)methodSymbol.AssociatedSymbol;
+                        checkSetter = originalProperty.SetMethod != null;
+                    }
+                }
+                else
+                {
+                    symbolToChange = candidateToIncreaseVisibility;
+                }
+
                 if (symbolToChange != null)
                 {
                     string title = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix1, symbolToChange.Name);
 
                     context.RegisterCodeFix(new MyCodeAction(title,
-                         async ct => await MakeProtected(context.Document, symbolToChange, ct).ConfigureAwait(false),
+                         async ct => await MakeProtected(context.Document, symbolToChange, checkSetter, ct).ConfigureAwait(false),
                          equivalenceKey: MicrosoftApiDesignGuidelinesAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix1),
                     context.Diagnostics);
                 }
@@ -102,14 +117,39 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return null;
         }
 
-        private async Task<Document> MakeProtected(Document document, ISymbol symbolToChange, CancellationToken cancellationToken)
+        private async Task<Document> MakeProtected(Document document, ISymbol symbolToChange, bool checkSetter, CancellationToken cancellationToken)
         {
             SymbolEditor editor = SymbolEditor.Create(document);
+
+            ISymbol getter = null;
+            ISymbol setter = null;
+            if (symbolToChange.Kind == SymbolKind.Property)
+            {
+                var propertySymbol = (IPropertySymbol)symbolToChange;
+                getter = propertySymbol.GetMethod;
+                setter = propertySymbol.SetMethod;
+            }
 
             await editor.EditAllDeclarationsAsync(symbolToChange, (docEditor, declaration) =>
             {
                 docEditor.SetAccessibility(declaration, Accessibility.Protected);
             }, cancellationToken).ConfigureAwait(false);
+
+            if (getter != null && getter.DeclaredAccessibility == Accessibility.Private)
+            {
+                await editor.EditAllDeclarationsAsync(getter, (docEditor, declaration) =>
+                {
+                    docEditor.SetAccessibility(declaration, Accessibility.NotApplicable);
+                }, cancellationToken).ConfigureAwait(false);
+            }
+
+            if (checkSetter && setter != null && setter.DeclaredAccessibility == Accessibility.Private)
+            {
+                await editor.EditAllDeclarationsAsync(setter, (docEditor, declaration) =>
+                {
+                    docEditor.SetAccessibility(declaration, Accessibility.NotApplicable);
+                }, cancellationToken).ConfigureAwait(false);
+            }
 
             return editor.GetChangedDocuments().First();
         }

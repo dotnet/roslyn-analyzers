@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -36,28 +35,35 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
 
         public override FixAllProvider GetFixAllProvider()
         {
-            // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
             return new CSharpRemoveLocalFixAllProvider();
+        }
+
+        private class CSharpNodesProvider : NodesProvider
+        {
+            protected override SyntaxNode GetAssignmentStatement(SyntaxNode node)
+            {
+                node = node.Parent;
+                if (node.Kind() == SyntaxKind.SimpleAssignmentExpression)
+                {
+                    return node.Parent;
+                }
+
+                return null;
+            }
         }
 
         private class CSharpRemoveLocalFixAllProvider : FixAllProvider
         {
             public override async Task<CodeAction> GetFixAsync(FixAllContext fixAllContext)
             {
-                var diagnostics = new List<KeyValuePair<Document, ImmutableArray<Diagnostic>>>();
-                foreach(var document in fixAllContext.Project.Documents)
-                {
-                    diagnostics.Add(new KeyValuePair<Document, ImmutableArray<Diagnostic>>(document, await fixAllContext.GetDocumentDiagnosticsAsync(document)));
-                }
-                    
-                // TODO change/review title
-                return new CSharpRemoveLocalFixAllAction("CSharpRemoveLocalFixAllAction", fixAllContext.Solution, diagnostics);
+                var diagnostics = await GetDiagnostics(fixAllContext);
+                return new CSharpRemoveLocalFixAllAction(fixAllContext.Solution, diagnostics);
             }
         }
 
         internal class CSharpRemoveLocalFixAllAction : RemoveLocalFixAllAction
         {
-            public CSharpRemoveLocalFixAllAction(string title, Solution solution, List<KeyValuePair<Document, ImmutableArray<Diagnostic>>> diagnosticsToFix): base(title, solution, diagnosticsToFix) { }
+            public CSharpRemoveLocalFixAllAction(Solution solution, List<KeyValuePair<Document, ImmutableArray<Diagnostic>>> diagnosticsToFix): base(solution, diagnosticsToFix) { }
 
             protected override void RemoveAllUnusedLocalDeclarations(HashSet<SyntaxNode> nodesToRemove)
             {
@@ -91,56 +97,10 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
                 }
             }
 
-            protected override async Task<SyntaxNode> GetNodeToRemoveAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+            internal override NodesProvider GetNodesProvider()
             {
-                var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-                var diagnosticSpan = diagnostic.Location.SourceSpan;
-
-                // Find the variable declarator identified by the diagnostic.
-                var variableDeclarator = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
-                if (variableDeclarator == null)
-                {
-                    return null;
-                }
-
-                // Bail out if the initializer is non-constant (could have side effects if removed).
-                if (variableDeclarator.Initializer != null)
-                {
-                    var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-                    if (!semanticModel.GetConstantValue(variableDeclarator.Initializer.Value).HasValue)
-                    {
-                        return null;
-                    }
-                }
-
-                // Bail out for code with syntax errors - parent of a declaration is not a local declaration statement.
-                var variableDeclaration = variableDeclarator.Parent as VariableDeclarationSyntax;
-                var localDeclaration = variableDeclaration?.Parent as LocalDeclarationStatementSyntax;
-                if (localDeclaration == null)
-                {
-                    return null;
-                }
-
-                // If the statement declares a single variable, the code fix should remove the whole statement.
-                // Otherwise, the code fix should remove only this variable declaration.
-                SyntaxNode nodeToRemove;
-                if (variableDeclaration.Variables.Count == 1)
-                {
-                    if (!(localDeclaration.Parent is BlockSyntax))
-                    {
-                        // Bail out for error case where local declaration is not embedded in a block.
-                        // Compiler generates errors CS1023 (Embedded statement cannot be a declaration or labeled statement)
-                        return null;
-                    }
-
-                    nodeToRemove = localDeclaration;
-                }
-                else
-                {
-                    nodeToRemove = variableDeclarator;
-                }
-
-                return nodeToRemove;
+                // TODO at least do not return new each time. return a static instance if not able to refactor
+                return new CSharpNodesProvider();
             }
         }
     }

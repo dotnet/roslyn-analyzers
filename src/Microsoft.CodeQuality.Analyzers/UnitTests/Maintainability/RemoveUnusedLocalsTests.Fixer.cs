@@ -33,10 +33,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
             return new CSharpRemoveUnusedLocalsFixer();
         }
 
-        [Fact, WorkItem(22921, "https://github.com/dotnet/roslyn/issues/22921")]
-        public void UnusedLocal_CSharp()
-        {
-            var code = @"
+        private const string CSharpOriginalCode = @"
 using System;
 
 public class Tester
@@ -85,8 +82,7 @@ public class Tester
     }
 }
 ";
-
-            var fix = @"
+        private const string CSharpFix = @"
 using System;
 
 public class Tester
@@ -123,14 +119,8 @@ public class Tester
     }
 }
 ";
-            VerifyCSharpFix(code, fix, allowNewCompilerDiagnostics: true);
-            VerifyCSharpFixAll(code, fix, allowNewCompilerDiagnostics: true);
-        }
 
-        [Fact]
-        public void UnusedLocal_VisualBasic()
-        {
-            var code = @"
+        private const string BasicOriginalCode = @"
 Imports System
 
 Public Class Tester
@@ -161,7 +151,7 @@ Public Class Tester
 End Class
 ";
 
-            var fix = @"
+        private const string BasicFix = @"
 Imports System
 
 Public Class Tester
@@ -183,8 +173,30 @@ Public Class Tester
     End Sub
 End Class
 ";
-            VerifyBasicFix(code, fix, allowNewCompilerDiagnostics: true);
-            VerifyBasicFixAll(code, fix, allowNewCompilerDiagnostics: true);
+        
+        [Fact, WorkItem(22921, "https://github.com/dotnet/roslyn/issues/22921")]
+        public void UnusedLocal_CSharp()
+        {
+            VerifyCSharpFix(CSharpOriginalCode, CSharpFix, allowNewCompilerDiagnostics: true);
+        }
+
+        [Fact, WorkItem(22921, "https://github.com/dotnet/roslyn/issues/22921")]
+        public void UnusedLocal_FixAll_CSharp()
+        {
+            VerifyCSharpFixAll(CSharpOriginalCode, CSharpFix, allowNewCompilerDiagnostics: true);
+        }
+
+        [Fact]
+        public void UnusedLocal_VisualBasic()
+        {
+            VerifyBasicFix(BasicOriginalCode, BasicFix, allowNewCompilerDiagnostics: true);
+        }
+
+
+        [Fact]
+        public void UnusedLocal_FixAll_VisualBasic()
+        {
+            VerifyBasicFixAll(BasicOriginalCode, BasicFix, allowNewCompilerDiagnostics: true);
         }
     }
 }

@@ -2,7 +2,6 @@
 
 Imports System.Collections.Immutable
 Imports System.Composition
-Imports System.Threading
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeActions
 Imports Microsoft.CodeAnalysis.CodeFixes
@@ -46,15 +45,15 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                 Next
 
                 ' TODO rename/review name
-                Return New BasicRemoveLocalFixAllAction("BasicRemoveLocalFixAllAction", fixAllContext.Solution, diagnostics)
+                Return New BasicRemoveLocalFixAllAction(fixAllContext.Solution, diagnostics)
             End Function
         End Class
 
         Friend Class BasicRemoveLocalFixAllAction
             Inherits RemoveLocalFixAllAction
 
-            Public Sub New(title As String, solution As Solution, diagnosticsToFix As List(Of KeyValuePair(Of Document, ImmutableArray(Of Diagnostic))))
-                MyBase.New(title, solution, diagnosticsToFix)
+            Public Sub New(solution As Solution, diagnosticsToFix As List(Of KeyValuePair(Of Document, ImmutableArray(Of Diagnostic))))
+                MyBase.New(solution, diagnosticsToFix)
             End Sub
 
             Protected Overrides Sub RemoveAllUnusedLocalDeclarations(nodesToRemove As HashSet(Of SyntaxNode))
@@ -82,48 +81,21 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                 Next
             End Sub
 
-            Protected Overrides Async Function GetNodeToRemoveAsync(document As Document, diagnostic As Diagnostic, cancellationToken As CancellationToken) As Task(Of SyntaxNode)
-                Dim root = Await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(False)
-
-                Dim diagnosticSpan = diagnostic.Location.SourceSpan
-
-                Dim variableDeclarator = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType(Of VariableDeclaratorSyntax)().First()
-
-
-                If (variableDeclarator Is Nothing) Then
-                    Return Nothing
-                End If
-
-                ' Bail out if the initializer Is non-constant (could have side effects if removed).
-                If (variableDeclarator.Initializer IsNot Nothing) Then
-                    Dim SemanticModel = Await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(False)
-                    If (Not SemanticModel.GetConstantValue(variableDeclarator.Initializer.Value).HasValue) Then
-                        Return Nothing
-                    End If
-                End If
-
-                ' Bail out for code with syntax errors - parent of a declaration Is Not a local declaration statement.
-                Dim localDeclaration As LocalDeclarationStatementSyntax = CType(variableDeclarator.Parent, LocalDeclarationStatementSyntax)
-                If (localDeclaration Is Nothing) Then
-                    Return Nothing
-                End If
-
-                ' If the statement declares a single variable, the code fix should remove the whole statement.
-                ' Otherwise, the code fix should remove only this variable declaration.
-                Dim nodeToRemove As SyntaxNode
-                If (localDeclaration.Declarators.Count = 1) Then
-                    nodeToRemove = localDeclaration
-
-                Else
-
-                    nodeToRemove = variableDeclarator
-                End If
-
-                Return nodeToRemove
+            Friend Overrides Function GetNodesProvider() As NodesProvider
+                Return New BasicNodesProvider()
             End Function
-
         End Class
 
+        Private Class BasicNodesProvider
+            Inherits NodesProvider
 
+            Protected Overrides Function GetAssignmentStatement(node As SyntaxNode) As SyntaxNode
+                node = node.Parent
+                If (node.Kind() = SyntaxKind.SimpleAssignmentStatement) Then
+                    Return node
+                End If
+                Return Nothing
+            End Function
+        End Class
     End Class
 End Namespace

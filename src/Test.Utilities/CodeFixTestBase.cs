@@ -193,7 +193,7 @@ namespace Test.Utilities
             var diagnosticProvider = new FixAllDiagnosticProvider(analyzerOpt, additionalFiles, validationMode, getFixableDiagnostics);
             var fixAllContent = new FixAllContext(document, codeFixProvider, FixAllScope.Document, string.Empty, fixableDiagnostics.Select(d => d.Id), diagnosticProvider, CancellationToken.None);
             var codeAction = fixAllProvider.GetFixAsync(fixAllContent).Result;
-            document.Apply(codeAction);
+            document = document.Apply(codeAction);
             additionalFiles = document.Project.AdditionalDocuments.Select(a => new TestAdditionalDocument(a));
 
             var actualText = GetActualTextForNewDocument(document, newSourceFileName);

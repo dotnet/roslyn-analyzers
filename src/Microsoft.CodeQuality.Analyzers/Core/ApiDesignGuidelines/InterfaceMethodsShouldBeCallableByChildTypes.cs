@@ -72,11 +72,23 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return true;
                 }
 
-                if (block.Operations.Length == 0 ||
-                    (block.Operations.Length == 1 &&
-                     block.Operations[0].Kind == OperationKind.Throw))
+                var operations = block.Operations.GetOperations();
+
+                if (operations.Length == 0 ||
+                    (operations.Length == 1 &&
+                     operations[0].Kind == OperationKind.Throw))
                 {
                     // Empty body OR body that just throws.
+                    return true;
+                }
+
+                // Expression-bodied can be an implicit return and conversion on top of the throw operation
+                if (operations.Length == 1 &&
+                    operations[0] is IReturnOperation returnOp &&
+                    returnOp.IsImplicit &&
+                    returnOp.ReturnedValue is IConversionOperation conversionOp &&
+                    conversionOp.IsImplicit && conversionOp.Operand.Kind == OperationKind.Throw)
+                {
                     return true;
                 }
             }

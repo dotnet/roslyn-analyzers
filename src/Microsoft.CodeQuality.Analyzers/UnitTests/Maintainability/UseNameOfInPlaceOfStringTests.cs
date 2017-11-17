@@ -1,9 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeQuality.CSharp.Analyzers.Maintainability;
 using Test.Utilities;
 using Xunit;
 
@@ -194,7 +191,7 @@ End Module",
         }
 
         [Fact]
-        public void Diagnostic_ArgumentMatchesPropertyInScope()
+        public void Diagnostic_ArgumentMatchesAPropertyInScope()
         {
             VerifyCSharp(@"
 using System.ComponentModel;
@@ -223,6 +220,49 @@ public class Person : INotifyPropertyChanged
     }
 }",
     GetCSharpNameofResultAt(14, 31));
+        }
+
+        [Fact]
+        public void Diagnostic_ArgumentMatchesAPropertyInScope2()
+        {
+            VerifyCSharp(@"
+using System.ComponentModel;
+
+public class Person : INotifyPropertyChanged
+{
+    private string name;
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string PersonName 
+    {
+        get { return name; }
+        set
+        {
+            name = value;
+            OnPropertyChanged(""PersonName"");
+        }
+    }
+
+    public string PersonName2
+    {
+        get { return name; }
+        set
+        {
+            name = value; 
+            OnPropertyChanged(nameof(PersonName2));
+        }
+    }
+
+    protected void OnPropertyChanged(string propertyName)
+    {
+        PropertyChangedEventHandler handler = PropertyChanged;
+        if (handler != null)
+        {
+            handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}",
+    GetCSharpNameofResultAt(8, 79));
         }
 
         [Fact]
@@ -273,29 +313,99 @@ public class Person : INotifyPropertyChanged
         }
 
 
+        [Fact]
+        public void Diagnostic_AnonymousFunction1()
+        {
+            VerifyCSharp(@"
+using System;
+
+class Test
+{
+    void Method(int x)
+    {
+        Action<int> a = (int y) =>
+        {
+            throw new ArgumentException(""somemessage"", ""x"");
+        };
+    }
+}",
+    GetCSharpNameofResultAt(10, 56));
+        }
+
+        [Fact]
+        public void Diagnostic_AnonymousFunction2()
+        {
+            VerifyCSharp(@"
+using System;
+
+class Test
+{
+    void Method(int x)
+    {
+        Action<int> a = (int y) =>
+        {
+            throw new ArgumentException(""somemessage"", ""y"");
+        };
+    }
+}",
+    GetCSharpNameofResultAt(10, 56));
+        }
+
+        [Fact]
+        public void Diagnostic_AnonymousFunction3()
+        {
+            VerifyCSharp(@"
+using System;
+
+class Test
+{
+    void Method(int x)
+    {
+        Action<int> a = (int y) => throw new ArgumentException(""somemessage"", ""y"");
+    }
+}",
+    GetCSharpNameofResultAt(8, 79));
+        }
+
+        [Fact]
+        public void Diagnostic_AnonymousFunction4()
+        {
+            VerifyCSharp(@"
+using System;
+
+class Test
+{
+    void Method(int x)
+    {
+        Action<int> a = (int y) => throw new ArgumentException(""somemessage"", ""x"");
+    }
+}",
+    GetCSharpNameofResultAt(8, 79));
+        }
+
 
         #endregion
 
         private DiagnosticResult GetBasicNameofResultAt(int line, int column)
         {
             string message = string.Format(MicrosoftMaintainabilityAnalyzersResources.UseNameOfInPlaceOfStringMessage, "test");
-            return GetBasicResultAt(line, column, UseNameofInPlaceOfStringAnalyzer<SyntaxKind>.RuleId, message);
+            return GetBasicResultAt(line, column, UseNameofInPlaceOfStringAnalyzer.RuleId, message);
         }
 
         private DiagnosticResult GetCSharpNameofResultAt(int line, int column)
         {
             string message = string.Format(MicrosoftMaintainabilityAnalyzersResources.UseNameOfInPlaceOfStringMessage, "test");
-            return GetCSharpResultAt(line, column, UseNameofInPlaceOfStringAnalyzer<SyntaxKind>.RuleId, message);
+            return GetCSharpResultAt(line, column, UseNameofInPlaceOfStringAnalyzer.RuleId, message);
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicUseNameofInPlaceOfString();
+            return new UseNameofInPlaceOfStringAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpUseNameofInPlaceOfString();
+            return new UseNameofInPlaceOfStringAnalyzer();
         }
     }
 }

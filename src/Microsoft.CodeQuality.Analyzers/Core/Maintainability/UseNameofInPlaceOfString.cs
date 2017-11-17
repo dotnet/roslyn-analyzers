@@ -2,11 +2,12 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
+
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
@@ -14,8 +15,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
     /// 
     /// 
     /// </summary>
-    public abstract class UseNameofInPlaceOfStringAnalyzer<TSyntaxKind> : DiagnosticAnalyzer
-        where TSyntaxKind : struct
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class UseNameofInPlaceOfStringAnalyzer : DiagnosticAnalyzer
+
     {
         // TODO: need a RuleId
         internal const string RuleId = "NAMEOFANALYZER";
@@ -41,107 +43,81 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             // TODO correct setting?
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterSyntaxNodeAction(AnalyzeArgument, ArgumentSyntaxKind);
+            analysisContext.RegisterOperationAction(AnalyzeArgument, OperationKind.Argument);
         }
 
-        protected abstract TSyntaxKind ArgumentSyntaxKind { get;  }
-
-        private void AnalyzeArgument(SyntaxNodeAnalysisContext context)
+        private void AnalyzeArgument(OperationAnalysisContext context)
         {
 
-            var argumentSyntaxNode = context.Node;
+            var argument = (IArgumentOperation)context.Operation;
 
-            // iF argument has a NameColon but it is not equal to paramName or propertyName
-            if (TryGetNamedArgument(argumentSyntaxNode, out var argumentName) && argumentName != "paramName" && argumentName != "propertyName")
+            if (argument.Value.Type.SpecialType != SpecialType.System_String)
             {
                 return;
             }
+            var stringText = argument.Value.ConstantValue.Value.ToString();
 
-            // expression must be a string literal and a valid identifier name
-            if (!TryGetStringLiteralOfExpression(argumentSyntaxNode, out var stringLiteral, out var stringText))
+            var matchingParameter = (IParameterSymbol)argument.Parameter;
+            switch (matchingParameter.Name)
             {
-                return;
-            }
-
-            if (!IsValidIdentifier(stringText))
-            {
-                return;
-            }
-
-            var argumentList = GetArgumentListSyntax(argumentSyntaxNode);
-            if (argumentList == null)
-            {
-                return;
-            }
-
-            var argumentExpression = GetArgumentExpression(argumentList);
-            if (argumentExpression == null)
-            {
-                return;
-            }
-
-            var parametersInScope = GetParametersInScope(argumentSyntaxNode);
-            var propertiesInScope = GetPropertiesInScope(argumentSyntaxNode);
-
-            if (!parametersInScope.Any() && !propertiesInScope.Any())
-            {
-                return;
-            }
-            
-            var matchesParameterInScope = CheckForMatching(stringText, parametersInScope);
-            var matchesPropertyInScope = CheckForMatching(stringText, propertiesInScope);
-            if (!matchesParameterInScope && !matchesPropertyInScope)
-            {
-                return;
-            }
-
-            var semanticModel = context.SemanticModel;
-            var methodOrProperty = semanticModel.GetSymbolInfo(argumentExpression).Symbol;
-            if (methodOrProperty == null)
-            {
-                return;
-            }
-
-            var methodOrPropertyParameters = methodOrProperty.GetParameters();
-            if (methodOrPropertyParameters.Length == 0)
-            {
-                return;
-            }
-
-            IParameterSymbol matchingParameter = null;
-            if (argumentName != null) // named argument
-            {
-                matchingParameter = methodOrPropertyParameters.Single(p => p.Name == argumentName);
-            }
-            else // positional arguments
-            {
-                var index = GetIndexOfArgument(argumentList, argumentSyntaxNode);
-                if ((index < 0) || (index >= methodOrPropertyParameters.Length))
-                {
+                case "paramName":
+                    var parametersInScope = GetParametersInScope(context);
+                    if (HasAMatchInScope(stringText, parametersInScope))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(RuleWithSuggestion, argument.Syntax.GetLocation()));
+                    }
                     return;
-                }
-                else
-                {
-                    matchingParameter = methodOrPropertyParameters[index];
-                }
+                case "propertyName":
+                    var propertiesInScope = GetPropertiesInScope(context);
+                    if (HasAMatchInScope(stringText, propertiesInScope))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(RuleWithSuggestion, argument.Syntax.GetLocation()));
+                    }
+                    return;
+                default:
+                    return;
             }
-
-            if ((matchingParameter.Name == "paramName" && matchesParameterInScope) || (matchingParameter.Name == "propertyName" && matchesPropertyInScope))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(RuleWithSuggestion, stringLiteral.GetLocation()));
-                }
         }
 
-        internal abstract int GetIndexOfArgument(SyntaxNode argumentList, SyntaxNode argumentSyntaxNode);
-        internal abstract SyntaxNode GetArgumentExpression(SyntaxNode argumentList);
-        internal abstract SyntaxNode GetArgumentListSyntax(SyntaxNode node);
-        internal abstract bool IsValidIdentifier(string stringLiteral);
-        internal abstract bool TryGetStringLiteralOfExpression(SyntaxNode argument, out SyntaxNode stringLiteral, out string stringText);
-        internal abstract bool TryGetNamedArgument(SyntaxNode argumentSyntaxNode, out string argumentName);
-        internal abstract IEnumerable<string> GetParametersInScope(SyntaxNode node);
-        internal abstract IEnumerable<string> GetPropertiesInScope(SyntaxNode argument);
+        private IEnumerable<string> GetPropertiesInScope(OperationAnalysisContext context)
+        {
+            var containingType = context.ContainingSymbol.ContainingType;
+            if (containingType != null)
+            {
+                foreach (var property in containingType.GetMembers().OfType<IPropertySymbol>())
+                {
+                    yield return property.Name;
+                }
+            }
+        }
 
-        private static bool CheckForMatching(string stringText, IEnumerable<string> searchCollection )
+        internal IEnumerable<string> GetParametersInScope(OperationAnalysisContext context)
+        {
+            foreach (var parameter in context.ContainingSymbol.GetParameters())
+            {
+                yield return parameter.Name;
+            }
+
+            var parentOperation = context.Operation.Parent;
+            while (parentOperation != null)
+            {
+                if (parentOperation.Kind == OperationKind.AnonymousFunction)
+                {
+                    IMethodSymbol lambdaSymbol = ((IAnonymousFunctionOperation)parentOperation).Symbol;
+                    if (lambdaSymbol != null)
+                    {
+                        foreach (var lambdaParameter in lambdaSymbol.Parameters)
+                        {
+                            yield return lambdaParameter.Name;
+                        }
+                    }
+                }
+
+                parentOperation = parentOperation.Parent;
+            }
+        }
+
+        private static bool HasAMatchInScope(string stringText, IEnumerable<string> searchCollection)
         {
             foreach (var name in searchCollection)
             {

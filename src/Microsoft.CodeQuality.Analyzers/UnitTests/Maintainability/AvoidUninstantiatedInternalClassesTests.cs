@@ -216,45 +216,49 @@ Friend Class MyOtherAttribute
 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
+        [Fact]
         public void CA1812_CSharp_NoDiagnostic_TypeContainingAssemblyEntryPointReturningVoid()
         {
             VerifyCSharp(
 @"internal class C
 {
     private static void Main() {}
-}");
+}",
+            compilationOptions: s_CSharpDefaultOptions.WithOutputKind(CodeAnalysis.OutputKind.ConsoleApplication));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
+        [Fact]
         public void CA1812_Basic_NoDiagnostic_TypeContainingAssemblyEntryPointReturningVoid()
         {
             VerifyBasic(
 @"Friend Class C
-    Private Shared Sub Main()
+    Public Shared Sub Main()
     End Sub
-End Class");
+End Class",
+            compilationOptions: s_visualBasicDefaultOptions.WithOutputKind(CodeAnalysis.OutputKind.ConsoleApplication));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
+        [Fact]
         public void CA1812_CSharp_NoDiagnostic_TypeContainingAssemblyEntryPointReturningInt()
         {
             VerifyCSharp(
 @"internal class C
 {
     private static int Main() { return 1; }
-}");
+}",
+            compilationOptions: s_CSharpDefaultOptions.WithOutputKind(CodeAnalysis.OutputKind.ConsoleApplication));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
+        [Fact]
         public void CA1812_Basic_NoDiagnostic_TypeContainingAssemblyEntryPointReturningInt()
         {
             VerifyBasic(
 @"Friend Class C
-    Private Shared Function Main() As Integer
+    Public Shared Function Main() As Integer
         Return 1
-    End Sub
-End Class");
+    End Function
+End Class",
+            compilationOptions: s_visualBasicDefaultOptions.WithOutputKind(CodeAnalysis.OutputKind.ConsoleApplication));
         }
 
         [Fact]
@@ -279,14 +283,16 @@ End Class",
                 GetBasicResultAt(1, 14, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
+        [Fact]
         public void CA1812_Basic_NoDiagnostic_MainMethodIsDifferentlyCased()
         {
             VerifyBasic(
 @"Friend Class C
     Private Shared Sub mAiN()
     End Sub
-End Class");
+End Class",
+            validationMode: TestValidationMode.AllowCompileErrors, // No Main method
+            compilationOptions: s_visualBasicDefaultOptions.WithOutputKind(CodeAnalysis.OutputKind.ConsoleApplication));
         }
 
         // The following tests are just to ensure that the messages are formatted properly

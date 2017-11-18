@@ -188,8 +188,6 @@ namespace Test.Utilities
             var fixableDiagnostics = getFixableDiagnostics(analyzerDiagnostics.Concat(compilerDiagnostics));
 
             var fixAllProvider = codeFixProvider.GetFixAllProvider();
-            // TODO what is code action equivalence key
-            // TODO what is Diagnostic Provider?
             var diagnosticProvider = new FixAllDiagnosticProvider(analyzerOpt, additionalFiles, validationMode, getFixableDiagnostics);
             var fixAllContent = new FixAllContext(document, codeFixProvider, FixAllScope.Document, string.Empty, fixableDiagnostics.Select(d => d.Id), diagnosticProvider, CancellationToken.None);
             var codeAction = fixAllProvider.GetFixAsync(fixAllContent).Result;

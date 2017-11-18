@@ -4,6 +4,7 @@ Imports System.Collections.Immutable
 Imports System.Composition
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
+Imports Microsoft.CodeAnalysis.Editing
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 Imports Microsoft.CodeQuality.Analyzers.Maintainability
@@ -29,7 +30,7 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
         Private Class BasicNodesProvider
             Inherits NodesProvider
 
-            Protected Overrides Function GetAssignmentStatement(node As SyntaxNode) As SyntaxNode
+            Public Overrides Function GetNodeToRemoveOrReplace(node As SyntaxNode) As SyntaxNode
                 node = node.Parent
                 If (node.Kind() = SyntaxKind.SimpleAssignmentStatement) Then
                     Return node
@@ -60,6 +61,10 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                         Next
                     End If
                 Next
+            End Sub
+
+            Public Overrides Sub RemoveNode(editor As DocumentEditor, node As SyntaxNode)
+                editor.RemoveNode(node)
             End Sub
         End Class
     End Class

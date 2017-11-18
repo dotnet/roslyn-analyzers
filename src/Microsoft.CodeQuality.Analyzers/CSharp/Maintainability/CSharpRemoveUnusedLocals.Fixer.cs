@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeQuality.Analyzers.Maintainability;
 
 namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
@@ -20,16 +21,24 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create("CS0168", "CS0219", "CS8321");
 
-        public CSharpRemoveUnusedLocalsFixer(): base(new CSharpNodesProvider()) { }
+        public CSharpRemoveUnusedLocalsFixer() : base(new CSharpNodesProvider()) { }
 
         private class CSharpNodesProvider : NodesProvider
         {
-            protected override SyntaxNode GetAssignmentStatement(SyntaxNode node)
+            public override SyntaxNode GetNodeToRemoveOrReplace(SyntaxNode node)
             {
                 node = node.Parent;
                 if (node.Kind() == SyntaxKind.SimpleAssignmentExpression)
                 {
-                    return node.Parent;
+                    var parent = node.Parent;
+                    if (parent.Kind() == SyntaxKind.ExpressionStatement)
+                    {
+                        return parent;
+                    }
+                    else
+                    {
+                        return node;
+                    }
                 }
 
                 return null;
@@ -64,6 +73,18 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
                             nodesToRemove.Remove(variable);
                         }
                     }
+                }
+            }
+
+            public override void RemoveNode(DocumentEditor editor, SyntaxNode node)
+            {
+                if (node.Kind() == SyntaxKind.SimpleAssignmentExpression)
+                {
+                    editor.ReplaceNode(node, ((AssignmentExpressionSyntax)node).Right);
+                }
+                else
+                {
+                    editor.RemoveNode(node);
                 }
             }
         }

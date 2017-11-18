@@ -37,26 +37,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             context.RegisterCodeFix(
                 new RemoveLocalAction(
                     MicrosoftMaintainabilityAnalyzersResources.RemoveUnusedLocalsMessage,
-                    async ct => await RemoveNodes(context.Document, nodesToRemove, ct).ConfigureAwait(false)),
+                    async ct => await _nodesProvider.RemoveNodes(context.Document, nodesToRemove, ct).ConfigureAwait(false)),
                 diagnostic);
-
-            return;
-        }
-
-        private static async Task<Document> RemoveNodes(Document document, IEnumerable<SyntaxNode> nodes, CancellationToken cancellationToken)
-        {
-            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            foreach (var node in nodes.Where(n => n != null).OrderByDescending(n => n.SpanStart))
-            {
-                editor.RemoveNode(node);
-            }
-
-            return editor.GetChangedDocument();
         }
 
         protected abstract class NodesProvider
         {
-            protected abstract SyntaxNode GetAssignmentStatement(SyntaxNode node);
+            public abstract SyntaxNode GetNodeToRemoveOrReplace(SyntaxNode node);
 
             public abstract void RemoveAllUnusedLocalDeclarations(HashSet<SyntaxNode> nodesToRemove);
 
@@ -67,7 +54,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                 DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
                 ISymbol symbol = editor.SemanticModel.GetDeclaredSymbol(node);
-                var referencedSymbols = await SymbolFinder.FindReferencesAsync(symbol, document.Project.Solution, cancellationToken);
+                var referencedSymbols = await SymbolFinder.FindReferencesAsync(symbol, document.Project.Solution, cancellationToken).ConfigureAwait(false);
 
                 var nodesToRemoveBuilder = ImmutableArray.CreateBuilder<SyntaxNode>();
                 foreach (var referencedSymbol in referencedSymbols)
@@ -79,7 +66,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             var referencedSymbolNode = root.FindNode(location.Location.SourceSpan);
                             if (referencedSymbolNode != null)
                             {
-                                var assignmentNode = GetAssignmentStatement(referencedSymbolNode);
+                                var assignmentNode = GetNodeToRemoveOrReplace(referencedSymbolNode);
                                 if (assignmentNode != null)
                                 {
                                     nodesToRemoveBuilder.Add(assignmentNode);
@@ -95,6 +82,19 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 var nodesToRemove = nodesToRemoveBuilder.ToImmutable();
                 return nodesToRemove;
             }
+
+            public async Task<Document> RemoveNodes(Document document, IEnumerable<SyntaxNode> nodes, CancellationToken cancellationToken)
+            {
+                DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+                foreach (var node in nodes.Where(n => n != null).OrderByDescending(n => n.SpanStart))
+                {
+                    RemoveNode(editor, node);
+                }
+
+                return editor.GetChangedDocument();
+            }
+
+            public abstract void RemoveNode(DocumentEditor editor, SyntaxNode node);
         }
 
         private sealed class RemoveLocalAction : DocumentChangeAction
@@ -109,11 +109,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         {
             private readonly Solution _solution;
             private readonly Dictionary<Document, HashSet<SyntaxNode>> _nodesToRemoveMap;
+            private readonly NodesProvider _nodesProvider;
 
-            public RemoveLocalFixAllAction(Solution solution, Dictionary<Document, HashSet<SyntaxNode>> nodesToRemoveMap)
+            public RemoveLocalFixAllAction(Solution solution, Dictionary<Document, HashSet<SyntaxNode>> nodesToRemoveMap, NodesProvider nodesProvider)
             {
                 _solution = solution;
                 _nodesToRemoveMap = nodesToRemoveMap;
+                _nodesProvider = nodesProvider;
             }
 
             public override string Title { get => MicrosoftMaintainabilityAnalyzersResources.RemoveUnusedLocalsMessage; }
@@ -121,13 +123,14 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             protected override async Task<Solution> GetChangedSolutionAsync(CancellationToken cancellationToken)
             {
                 Solution newSolution = _solution;
-
                 foreach (KeyValuePair<Document, HashSet<SyntaxNode>> pair in _nodesToRemoveMap)
                 {
                     var document = pair.Key;
                     var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+                    
                     var syntaxGenerator = SyntaxGenerator.GetGenerator(document);
-                    var newRoot = syntaxGenerator.RemoveNodes(root, pair.Value.OrderByDescending(n => n.GetLocation().SourceSpan));
+                    var newDocument = await _nodesProvider.RemoveNodes(document, pair.Value, cancellationToken);
+                    var newRoot = await newDocument.GetSyntaxRootAsync();
                     newSolution = newSolution.WithDocumentSyntaxRoot(document.Id, newRoot);
                 }
 
@@ -164,7 +167,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     nodesToRemoveMap.Add(document, allNodesToRemove);
                 }
 
-                return new RemoveLocalFixAllAction(fixAllContext.Solution, nodesToRemoveMap);
+                return new RemoveLocalFixAllAction(fixAllContext.Solution, nodesToRemoveMap, _nodesProvider);
             }
         }
     }

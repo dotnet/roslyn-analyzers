@@ -80,6 +80,23 @@ public class Tester
         };
         debt = debt + (debt * localRate / b);
     }
+
+    int Method1()
+    {
+        int a1 = 0;
+        int b1 = 0;
+        a1 = b1 = 0;
+        return a1;
+    }
+
+    // a2 not found by analyzers
+    int Method2()
+    {
+        int a2 = 0;
+        int b2 = 0;
+        a2 = b2 = 0;
+        return b2;
+    }
 }
 ";
         private const string CSharpFix = @"
@@ -117,6 +134,22 @@ public class Tester
         };
         debt = debt + (debt * localRate / b);
     }
+
+    int Method1()
+    {
+        int a1 = 0;
+        a1 = 0;
+        return a1;
+    }
+
+    // a2 not found by analyzers
+    int Method2()
+    {
+        int a2 = 0;
+        int b2 = 0;
+        a2 = b2 = 0;
+        return b2;
+    }
 }
 ";
 
@@ -148,6 +181,21 @@ Public Class Tester
         End Function
         debt = debt + (debt * localRate / b * lambda())
     End Sub
+
+    Function Function1() As Integer
+        Dim a1 As Integer = 0
+        Dim b1 As Integer = 0
+        a1 = b1 = 0
+        Return a1
+    End Function
+
+    ' Here b2 = 0 is an equivalence expression not an assignment
+    Function Function2() As Integer
+        Dim a2 As Integer = 0
+        Dim b2 As Integer = 0
+        a2 = b2 = 0
+        Return b2
+    End Function
 End Class
 ";
 
@@ -171,9 +219,22 @@ Public Class Tester
         End Function
         debt = debt + (debt * localRate / b * lambda())
     End Sub
+
+    Function Function1() As Integer
+        Dim a1 As Integer = 0
+        Dim b1 As Integer = 0
+        a1 = b1 = 0
+        Return a1
+    End Function
+
+    ' Here b2 = 0 is an equivalence expression not an assignment
+    Function Function2() As Integer
+        Dim b2 As Integer = 0
+        Return b2
+    End Function
 End Class
 ";
-        
+
         [Fact, WorkItem(22921, "https://github.com/dotnet/roslyn/issues/22921")]
         public void UnusedLocal_CSharp()
         {
@@ -191,7 +252,6 @@ End Class
         {
             VerifyBasicFix(BasicOriginalCode, BasicFix, allowNewCompilerDiagnostics: true);
         }
-
 
         [Fact]
         public void UnusedLocal_FixAll_VisualBasic()

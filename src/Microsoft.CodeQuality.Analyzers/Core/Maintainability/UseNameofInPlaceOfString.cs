@@ -8,20 +8,23 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
-
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
+    // TODO summary
     /// <summary>
     /// 
     /// 
     /// </summary>
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UseNameofInPlaceOfStringAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class UseNameofInPlaceOfStringAnalyzer : DiagnosticAnalyzer
 
     {
-        // TODO: need a RuleId
+        // TODO: RuleId 
         internal const string RuleId = "NAMEOFANALYZER";
+        private const string ParamName = "paramName";
+        private const string PropertyName = "propertyName";
 
+        // TODO: need final wording for feature
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.UseNameOfInPlaceOfStringTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.UseNameOfInPlaceOfStringMessage), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.UseNameOfInPlaceOfStringDescription), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
@@ -36,11 +39,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                          // TODO: add MSDN url
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182181.aspx",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleWithSuggestion);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            // TODO correct setting?
+            analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
             analysisContext.RegisterOperationAction(AnalyzeArgument, OperationKind.Argument);
@@ -51,27 +55,31 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             var argument = (IArgumentOperation)context.Operation;
 
-            if (argument.Value.Type.SpecialType != SpecialType.System_String)
+            if (argument.Value.Kind != OperationKind.Literal)
             {
                 return;
             }
+            // TODO better way to get the string?
             var stringText = argument.Value.ConstantValue.Value.ToString();
+            var properties = ImmutableDictionary<string, string>.Empty.Add("StringText", stringText);
 
+            // TODO when showing diagnostic on a named argument, should just squiggle the string and not the argument name
             var matchingParameter = (IParameterSymbol)argument.Parameter;
             switch (matchingParameter.Name)
             {
-                case "paramName":
+                case ParamName:
                     var parametersInScope = GetParametersInScope(context);
+                    // TODO if argument doesn't match any parameters, give a warning
                     if (HasAMatchInScope(stringText, parametersInScope))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(RuleWithSuggestion, argument.Syntax.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(RuleWithSuggestion, argument.Syntax.GetLocation(), properties: properties));
                     }
                     return;
-                case "propertyName":
+                case PropertyName:
                     var propertiesInScope = GetPropertiesInScope(context);
                     if (HasAMatchInScope(stringText, propertiesInScope))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(RuleWithSuggestion, argument.Syntax.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(RuleWithSuggestion, argument.Syntax.GetLocation(), properties: properties));
                     }
                     return;
                 default:

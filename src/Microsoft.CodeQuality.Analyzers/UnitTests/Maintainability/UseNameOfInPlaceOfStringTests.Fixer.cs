@@ -3,6 +3,7 @@
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeQuality.CSharp.Analyzers.Maintainability;
+using Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability;
 using Test.Utilities;
 using Xunit;
 
@@ -23,12 +24,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
-            return new UseNameOfInPlaceOfStringFixer();
+            return new BasicUseNameofInPlaceOfStringFixer();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new UseNameOfInPlaceOfStringFixer();
+            return new CSharpUseNameofInPlaceOfStringFixer();
         }
 
         [Fact]
@@ -54,7 +55,7 @@ class C
 }", allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors );
         }
 
-//        [Fact]
+        [Fact]
         public void Fixer_VB_ArgumentMatchesAParameterInScope()
         {
             VerifyBasicFix(@"

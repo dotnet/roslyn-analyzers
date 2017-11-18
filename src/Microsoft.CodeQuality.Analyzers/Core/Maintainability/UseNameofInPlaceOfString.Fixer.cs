@@ -2,21 +2,24 @@
 
 using System.Collections.Immutable;
 using System.Composition;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
+using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.Text;
+
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
+    // TODO summary
     /// <summary>
-    /// NEEDCODE
+    /// 
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
-    public class UseNameOfInPlaceOfStringFixer : CodeFixProvider
+   // [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
+    public abstract class UseNameOfInPlaceOfStringFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(UseNameofInPlaceOfStringAnalyzer.RuleId);
 
@@ -26,32 +29,39 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(CancellationToken.None);
 
-            var literalExpression = root.FindNode(context.Span, getInnermostNodeForTie: true) as LiteralExpressionSyntax;
-            if (literalExpression != null)
+            var root = await context.Document.GetSyntaxRootAsync(CancellationToken.None);
+            var diagnostics = context.Diagnostics;
+            TextSpan diagnosticSpan = diagnostics.First().Location.SourceSpan;
+            SyntaxNode nodeToReplace = root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
+
+            if (nodeToReplace != null)
             {
+                if (!diagnostics.Single().Properties.TryGetValue("case", out var stringText))
+                {
+                    return;
+                };
                 context.RegisterCodeFix(
-                    CodeAction.Create("Use NameOf", c => ReplaceWithNameOf(context.Document, literalExpression, c), equivalenceKey: nameof(UseNameOfInPlaceOfStringFixer)),
+                    CodeAction.Create("Use NameOf", c => ReplaceWithNameOf(context.Document, nodeToReplace, stringText, c), equivalenceKey: nameof(UseNameOfInPlaceOfStringFixer)),
                     context.Diagnostics);
             }
         }
 
-        private async Task<Document> ReplaceWithNameOf(Document document, LiteralExpressionSyntax literalExpression, CancellationToken cancellationToken)
+        private async Task<Document> ReplaceWithNameOf(Document document, SyntaxNode nodeToReplace, string stringText, CancellationToken cancellationToken)
         {
-            var stringText = literalExpression.Token.ValueText;
+            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            var generator = editor.Generator;
 
-            var nameOfExpression = InvocationExpression(
-                expression: IdentifierName("nameof"),
-                argumentList: ArgumentList(
-                    arguments: SingletonSeparatedList(Argument(IdentifierName(stringText)))));
+            var nameOfExpression = GetNameOfExpression(stringText);
 
             var root = await document.GetSyntaxRootAsync(cancellationToken);
-            var newRoot = root.ReplaceNode(literalExpression, nameOfExpression);
+            var newRoot = root.ReplaceNode(nodeToReplace, nameOfExpression);
 
             return document.WithSyntaxRoot(newRoot);
         }
+
+        internal abstract SyntaxNode GetNameOfExpression(string stringText);
     }
 }

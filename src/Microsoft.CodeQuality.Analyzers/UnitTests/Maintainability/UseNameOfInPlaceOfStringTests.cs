@@ -19,7 +19,7 @@ class C
 {
     void M(int x)
     {
-        throw new ArgumentNullException([||]);
+        throw new ArgumentNullException();
     }
 }");
         }
@@ -33,7 +33,7 @@ class C
 {
     void M(int y)
     {
-        throw new ArgumentNullException([|""x""|]);
+        throw new ArgumentNullException(""x"");
     }
 }");
         }
@@ -47,7 +47,7 @@ class C
 {
     void M(int y)
     {
-        Console.WriteLine(format:[|""x""|]);
+        Console.WriteLine(format:""x"");
     }
 }");
         }
@@ -61,7 +61,7 @@ class C
 {
     void M(int x)
     {
-        string param = [|""x""|];
+        string param = ""x"";
         throw new ArgumentNullException(param);
     }
 }");
@@ -76,7 +76,7 @@ class C
 {
     void M(int x)
     {
-        throw new ArgumentNullException([|""9x""|]);
+        throw new ArgumentNullException(""9x"");
     }
 }");
         }
@@ -170,7 +170,7 @@ class C
 {
     void M(int x)
     {
-        throw new ArgumentNullException([|""x""|]);
+        throw new ArgumentNullException(""x"");
     }
 }",
     GetCSharpNameofResultAt(7, 41));
@@ -184,7 +184,7 @@ Imports System
 
 Module Mod1
     Sub f(s As String)
-        Throw New ArgumentNullException([|""s""|])
+        Throw New ArgumentNullException(""s"")
     End Sub
 End Module",
     GetBasicNameofResultAt(6, 41));
@@ -262,7 +262,7 @@ public class Person : INotifyPropertyChanged
         }
     }
 }",
-    GetCSharpNameofResultAt(8, 79));
+    GetCSharpNameofResultAt(15, 31));
         }
 
         [Fact]
@@ -274,10 +274,10 @@ class C
 {
     void M(int x)
     {
-        throw new ArgumentNullException(paramName:[|""x""|]);
+        throw new ArgumentNullException(paramName:""x"");
     }
 }",
-    GetCSharpNameofResultAt(7, 51));
+    GetCSharpNameofResultAt(7, 41));
         }
 
         [Fact]
@@ -309,7 +309,7 @@ public class Person : INotifyPropertyChanged
         }
     }
 }",
-    GetCSharpNameofResultAt(14, 44));
+    GetCSharpNameofResultAt(14, 31));
         }
 
 

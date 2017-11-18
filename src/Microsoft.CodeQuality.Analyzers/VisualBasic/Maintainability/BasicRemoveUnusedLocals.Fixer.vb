@@ -3,7 +3,6 @@
 Imports System.Collections.Immutable
 Imports System.Composition
 Imports Microsoft.CodeAnalysis
-Imports Microsoft.CodeAnalysis.CodeActions
 Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
@@ -23,40 +22,22 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
             End Get
         End Property
 
-        Protected Overrides Function GetAssignmentStatement(node As SyntaxNode) As SyntaxNode
-            node = node.Parent
-            If (node.Kind() = SyntaxKind.SimpleAssignmentStatement) Then
-                Return node
-            End If
-            Return Nothing
-        End Function
+        Public Sub New()
+            MyBase.New(New BasicNodesProvider())
+        End Sub
 
-        Public Overrides Function GetFixAllProvider() As FixAllProvider
-            Return New BasicRemoveLocalFixAllProvider()
-        End Function
+        Private Class BasicNodesProvider
+            Inherits NodesProvider
 
-        Private Class BasicRemoveLocalFixAllProvider
-            Inherits FixAllProvider
-
-            Public Overrides Async Function GetFixAsync(fixAllContext As FixAllContext) As Task(Of CodeAction)
-                Dim diagnostics = New List(Of KeyValuePair(Of Document, ImmutableArray(Of Diagnostic)))()
-                For Each document In fixAllContext.Project.Documents
-                    diagnostics.Add(New KeyValuePair(Of Document, ImmutableArray(Of Diagnostic))(document, Await fixAllContext.GetDocumentDiagnosticsAsync(document)))
-                Next
-
-                ' TODO rename/review name
-                Return New BasicRemoveLocalFixAllAction(fixAllContext.Solution, diagnostics)
+            Protected Overrides Function GetAssignmentStatement(node As SyntaxNode) As SyntaxNode
+                node = node.Parent
+                If (node.Kind() = SyntaxKind.SimpleAssignmentStatement) Then
+                    Return node
+                End If
+                Return Nothing
             End Function
-        End Class
 
-        Friend Class BasicRemoveLocalFixAllAction
-            Inherits RemoveLocalFixAllAction
-
-            Public Sub New(solution As Solution, diagnosticsToFix As List(Of KeyValuePair(Of Document, ImmutableArray(Of Diagnostic))))
-                MyBase.New(solution, diagnosticsToFix)
-            End Sub
-
-            Protected Overrides Sub RemoveAllUnusedLocalDeclarations(nodesToRemove As HashSet(Of SyntaxNode))
+            Public Overrides Sub RemoveAllUnusedLocalDeclarations(nodesToRemove As HashSet(Of SyntaxNode))
                 Dim candidateLocalDeclarationsToRemove = New HashSet(Of LocalDeclarationStatementSyntax)()
                 For Each variableDeclarator In nodesToRemove.OfType(Of VariableDeclaratorSyntax)()
                     Dim localDeclaration = DirectCast(variableDeclarator.Parent.Parent, LocalDeclarationStatementSyntax)
@@ -80,22 +61,6 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                     End If
                 Next
             End Sub
-
-            Friend Overrides Function GetNodesProvider() As NodesProvider
-                Return New BasicNodesProvider()
-            End Function
-        End Class
-
-        Private Class BasicNodesProvider
-            Inherits NodesProvider
-
-            Protected Overrides Function GetAssignmentStatement(node As SyntaxNode) As SyntaxNode
-                node = node.Parent
-                If (node.Kind() = SyntaxKind.SimpleAssignmentStatement) Then
-                    Return node
-                End If
-                Return Nothing
-            End Function
         End Class
     End Class
 End Namespace

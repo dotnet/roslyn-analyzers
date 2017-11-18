@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -22,21 +20,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create("CS0168", "CS0219", "CS8321");
 
-        protected override SyntaxNode GetAssignmentStatement(SyntaxNode node)
-        {
-            node = node.Parent;
-            if (node.Kind() == SyntaxKind.SimpleAssignmentExpression)
-            {
-                return node.Parent;
-            }
-
-            return null;
-        }
-
-        public override FixAllProvider GetFixAllProvider()
-        {
-            return new CSharpRemoveLocalFixAllProvider();
-        }
+        public CSharpRemoveUnusedLocalsFixer(): base(new CSharpNodesProvider()) { }
 
         private class CSharpNodesProvider : NodesProvider
         {
@@ -50,22 +34,8 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
 
                 return null;
             }
-        }
 
-        private class CSharpRemoveLocalFixAllProvider : FixAllProvider
-        {
-            public override async Task<CodeAction> GetFixAsync(FixAllContext fixAllContext)
-            {
-                var diagnostics = await GetDiagnostics(fixAllContext);
-                return new CSharpRemoveLocalFixAllAction(fixAllContext.Solution, diagnostics);
-            }
-        }
-
-        internal class CSharpRemoveLocalFixAllAction : RemoveLocalFixAllAction
-        {
-            public CSharpRemoveLocalFixAllAction(Solution solution, List<KeyValuePair<Document, ImmutableArray<Diagnostic>>> diagnosticsToFix): base(solution, diagnosticsToFix) { }
-
-            protected override void RemoveAllUnusedLocalDeclarations(HashSet<SyntaxNode> nodesToRemove)
+            public override void RemoveAllUnusedLocalDeclarations(HashSet<SyntaxNode> nodesToRemove)
             {
                 var candidateLocalDeclarationsToRemove = new HashSet<LocalDeclarationStatementSyntax>();
                 foreach (var variableDeclarator in nodesToRemove.OfType<VariableDeclaratorSyntax>())
@@ -95,12 +65,6 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
                         }
                     }
                 }
-            }
-
-            internal override NodesProvider GetNodesProvider()
-            {
-                // TODO at least do not return new each time. return a static instance if not able to refactor
-                return new CSharpNodesProvider();
             }
         }
     }

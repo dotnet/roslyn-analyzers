@@ -6,11 +6,9 @@ using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
-using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
-using Microsoft.CodeAnalysis.Semantics;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -30,7 +28,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            SyntaxNode nodeToFix = root.FindNode(context.Span);
+            // In case the ArrayCreationExpressionSyntax is wrapped in an ArgumentSyntax or some other node with the same span,
+            // get the innermost node for ties.
+            SyntaxNode nodeToFix = root.FindNode(context.Span, getInnermostNodeForTie: true);
             if (nodeToFix == null)
             {
                 return;
@@ -50,39 +50,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             SyntaxGenerator generator = editor.Generator;
 
-            var operation = semanticModel.GetOperationInternal(nodeToFix, cancellationToken);
-            var arrayCreationExpression = FindArrayCreation(operation);
-            nodeToFix = arrayCreationExpression.Syntax;
-
-            ITypeSymbol elementType = arrayCreationExpression.GetElementType();
+            ITypeSymbol elementType = GetArrayElementType(nodeToFix, semanticModel, cancellationToken);
             SyntaxNode arrayEmptyInvocation = GenerateArrayEmptyInvocation(generator, elementType, semanticModel).WithTriviaFrom(nodeToFix);
 
             editor.ReplaceNode(nodeToFix, arrayEmptyInvocation);
             return editor.GetChangedDocument();
         }
 
-        private static IArrayCreationExpression FindArrayCreation(IOperation operation)
+        private static ITypeSymbol GetArrayElementType(SyntaxNode arrayCreationExpression, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            switch (operation.Kind)
-            {
-                case OperationKind.Argument:
-                    // Happens if the array is passed as a method argument as it's being created.
-                    // e.g. M(new object[0])
-                    return FindArrayCreation(
-                        ((IArgument)operation).Value);
-
-                case OperationKind.ArrayCreationExpression:
-                    return (IArrayCreationExpression)operation;
-
-                case OperationKind.ConversionExpression:
-                    // Happens when the array is converted to a different type as it's created.
-                    // e.g. M's signature is M(object obj), M(new object[0])
-                    //      In this case, the IConversionExpression is the child of the IArgument.
-                    return FindArrayCreation(
-                        ((IConversionExpression)operation).Operand);
-            }
-
-            return null;
+            var typeInfo = semanticModel.GetTypeInfo(arrayCreationExpression, cancellationToken);
+            var arrayType = (IArrayTypeSymbol)typeInfo.Type;
+            return arrayType.ElementType;
         }
 
         private static SyntaxNode GenerateArrayEmptyInvocation(SyntaxGenerator generator, ITypeSymbol elementType, SemanticModel semanticModel)

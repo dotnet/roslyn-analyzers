@@ -81,7 +81,7 @@ class C
         }
 
         [Fact]
-        public void WipCSharp_InstanceCancellationTokenFieldInScope()
+        public void WipCSharp_CancellationTokenInScope_InstanceField()
         {
             var source = @"
 using System.Threading;
@@ -102,7 +102,7 @@ class C
         }
 
         [Fact]
-        public void WipCSharp_StaticCancellationTokenFieldInScope()
+        public void WipCSharp_CancellationTokenInScope_StaticField()
         {
             var source = @"
 using System.Threading;
@@ -120,6 +120,65 @@ class C
 }
 ";
             VerifyCSharp(source, GetCSharpResultAt(13, 18));
+        }
+
+        [Fact]
+        public void WipCSharp_CancellationTokenInScope_LocalVariable()
+        {
+            var source = @"
+using System.Threading;
+using System.Threading.Tasks;
+
+class C
+{
+    Task M1() => throw null;
+
+    Task M1(CancellationToken p1) => throw null;
+
+    Task M2()
+    {
+        var l1 = CancellationToken.None; // No dataflow
+        return M1();
+    }
+}
+";
+            VerifyCSharp(source, GetCSharpResultAt(14, 16));
+        }
+
+        [Fact]
+        public void WipCSharp_CancellationTokenIsPropagated_NoDiagnostics()
+        {
+            var source = @"
+using System.Threading;
+using System.Threading.Tasks;
+
+class C
+{
+    Task M1() => throw null;
+
+    Task M1(CancellationToken p1) => throw null;
+
+    Task M2(CancellationToken p1) => M1(p1);
+}
+";
+            VerifyCSharp(source);
+        }
+
+        [Fact]
+        public void WipCSharp_NoCancellationTokenOverloadAvailable_NoDiagnostics()
+        {
+            var source = @"
+using System.Threading;
+using System.Threading.Tasks;
+
+class C
+{
+    Task M1() => throw null;
+
+    Task M2(CancellationToken p1) => M1();
+}
+";
+            VerifyCSharp(source);
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

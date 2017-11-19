@@ -181,6 +181,50 @@ class C
             VerifyCSharp(source);
         }
 
+        [Fact]
+        public void WipCSharp_CancellationTokenInScope_UninitializedLocalVariable_NoDiagnostics()
+        {
+            var source = @"
+using System.Threading;
+using System.Threading.Tasks;
+
+class C
+{
+    Task M1(CancellationToken p1 = default(CancellationToken)) => throw null;
+
+    Task M2()
+    {
+        CancellationToken l1;
+        var l2 = M1();
+        return l2;
+    }
+}
+";
+            VerifyCSharp(source);
+        }
+
+        [Fact]
+        public void WipCSharp_CancellationTokenInScope_LocalVariableDeclaredAfterwards_NoDiagnostics()
+        {
+            var source = @"
+using System.Threading;
+using System.Threading.Tasks;
+
+class C
+{
+    Task M1(CancellationToken p1 = default(CancellationToken)) => throw null;
+
+    Task M2()
+    {
+        var l1 = M1();
+        var l2 = CancellationToken.None;
+        return l1;
+    }
+}
+";
+            VerifyCSharp(source);
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new BasicPropagateCancellationTokensWhenPossibleAnalyzer();

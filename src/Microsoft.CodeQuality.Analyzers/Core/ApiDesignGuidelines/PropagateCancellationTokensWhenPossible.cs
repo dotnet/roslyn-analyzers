@@ -65,69 +65,81 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return false;
             }
 
-            if (!AcceptsCancellationTokens(targetMethod))
+            if (!targetMethod.Parameters.Any(p => p.Type == cancellationTokenType))
             {
                 // Check if there is a different overload of the method that accepts a CancellationToken.
                 var methodName = targetMethod.Name;
                 var overloads = targetMethod.ContainingType.GetMembers(methodName).OfType<IMethodSymbol>();
                 var targetOverload = overloads.FirstOrDefault(
-                    m => AcceptsCancellationTokens(m) && StartsWithSameParameters(m, targetMethod));
+                    m => IsOverloadWithCancellationToken(m, targetMethod, cancellationTokenType));
 
                 if (targetOverload == null)
                 {
+                    // No suitable overload available.
                     return false;
                 }
             }
             else
             {
-                // Check if default(CancellationToken) or CancellationToken.None is being passed in.
+                // Check if default(CancellationToken) or CancellationToken.None is being passed.
                 var argument = invocation.Arguments.FirstOrDefault(a => a.Type == cancellationTokenType);
-                if (argument != null && !IsCancellationTokenNone(argument))
+                if (argument != null && !IsCancellationTokenNone(argument, cancellationTokenType))
                 {
+                    // A non-default CancellationToken is being passed.
                     return false;
                 }
             }
 
             return true;
-
-            bool AcceptsCancellationTokens(IMethodSymbol method)
-            {
-                return method.Parameters.Any(p => p.Type == cancellationTokenType);
-            }
-
-            bool IsCancellationTokenNone(IArgumentOperation argument)
-            {
-                var argumentValue = argument.Value;
-                switch (argumentValue.Kind)
-                {
-                    case OperationKind.DefaultValue:
-                        return true;
-                    case OperationKind.PropertyReference:
-                        var property = ((IPropertyReferenceOperation)argumentValue).Property;
-                        if (property.Name == "None" && property.ContainingType == cancellationTokenType)
-                        {
-                            return true;
-                        }
-                        break;
-                }
-
-                return false;
-            }
         }
 
-        private static bool StartsWithSameParameters(IMethodSymbol first, IMethodSymbol second)
+        private static bool IsCancellationTokenNone(IArgumentOperation argument, INamedTypeSymbol cancellationTokenType)
         {
-            int count = Math.Min(first.Parameters.Length, second.Parameters.Length);
+            Debug.Assert(argument.Type == cancellationTokenType);
 
+            var argumentValue = argument.Value;
+            switch (argumentValue.Kind)
+            {
+                case OperationKind.DefaultValue:
+                    // default(CancellationToken) is equivalent to CancellationToken.None.
+                    return true;
+                case OperationKind.PropertyReference:
+                    var property = ((IPropertyReferenceOperation)argumentValue).Property;
+                    if (property.Name == "None" && property.ContainingType == cancellationTokenType)
+                    {
+                        return true;
+                    }
+                    break;
+            }
+
+            return false;
+        }
+
+        private static bool IsOverloadWithCancellationToken(
+            IMethodSymbol overload,
+            IMethodSymbol original,
+            INamedTypeSymbol cancellationTokenType)
+        {
+            var overloadParameters = overload.Parameters;
+            var originalParameters = original.Parameters;
+
+            if (overloadParameters.Length != originalParameters.Length + 1)
+            {
+                return false;
+            }
+
+            // Check whether they start with the same parameters.
+            int count = originalParameters.Length;
             for (int i = 0; i < count; i++)
             {
-                if (first.Parameters[i].Type != second.Parameters[i].Type)
+                if (overloadParameters[i].Type != originalParameters[i].Type)
                 {
                     return false;
                 }
             }
 
-            return true;
+            // Check whether the overload's last parameter has type CancellationToken.
+            return overloadParameters.Last().Type == cancellationTokenType;
         }
     }
 }

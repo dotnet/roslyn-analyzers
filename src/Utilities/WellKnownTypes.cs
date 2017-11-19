@@ -201,6 +201,11 @@ namespace Analyzer.Utilities
             return compilation.GetTypeByMetadataName("System.Reflection.AssemblyVersionAttribute");
         }
 
+        public static INamedTypeSymbol CancellationToken(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Threading.CancellationToken");
+        }
+
         public static INamedTypeSymbol CLSCompliantAttribute(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName("System.CLSCompliantAttribute");

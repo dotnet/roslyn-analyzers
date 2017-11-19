@@ -15,6 +15,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     /// <summary>
     /// Async005: Propagate CancellationTokens When Possible
     /// </summary>
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public abstract class PropagateCancellationTokensWhenPossibleAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "Async005";

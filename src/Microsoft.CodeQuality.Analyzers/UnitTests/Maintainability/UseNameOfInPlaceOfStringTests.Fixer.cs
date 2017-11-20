@@ -77,7 +77,7 @@ End Module", allowNewCompilerDiagnostics: true, validationMode: TestValidationMo
         }
 
         [Fact]
-        public void Fixer_ArgumentMatchesPropertyInScope()
+        public void Fixer_CSharp_ArgumentMatchesPropertyInScope()
         {
             VerifyCSharpFix(@"
 using System.ComponentModel;

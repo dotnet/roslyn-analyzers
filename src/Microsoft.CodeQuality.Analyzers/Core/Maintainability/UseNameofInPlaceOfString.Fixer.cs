@@ -39,7 +39,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             if (nodeToReplace != null)
             {
-                if (!diagnostics.Single().Properties.TryGetValue("case", out var stringText))
+                if (!diagnostics.Single().Properties.TryGetValue("StringText", out var stringText))
                 {
                     return;
                 };
@@ -54,7 +54,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
 
-            var nameOfExpression = GetNameOfExpression(stringText);
+            var nameOfExpression = GetNameOfExpression(stringText, document);
 
             var root = await document.GetSyntaxRootAsync(cancellationToken);
             var newRoot = root.ReplaceNode(nodeToReplace, nameOfExpression);
@@ -62,6 +62,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             return document.WithSyntaxRoot(newRoot);
         }
 
-        internal abstract SyntaxNode GetNameOfExpression(string stringText);
+        internal abstract SyntaxNode GetNameOfExpression(string stringText, Document document);
     }
 }

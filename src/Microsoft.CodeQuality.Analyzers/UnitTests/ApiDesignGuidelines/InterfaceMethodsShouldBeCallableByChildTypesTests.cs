@@ -32,7 +32,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
         #endregion
 
-        #region CSharp 
+        #region CSharp
 
         [Fact]
         public void CA1033SimpleDiagnosticCasesCSharp()
@@ -209,7 +209,7 @@ public class NestedExplicitInterfaceImplementation
             CSharpResult(50, 13, "ImplementsNestedGeneral", "NestedExplicitInterfaceImplementation.INestedGeneral.remove_TheEvent"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1008")]
+        [Fact]
         public void CA1033NoDiagnosticCasesCSharp()
         {
             VerifyCSharp(@"
@@ -225,9 +225,13 @@ public interface IGeneral
     string Name { get; }
 }
 
-public class ImplementsGeneral  : IGeneral
+public class ImplementsGeneral : IGeneral
 {
-    object IGeneral.DoSomething() { DoSomething(x); }
+    object IGeneral.DoSomething()
+    {
+        DoSomething(true);
+        return null;
+    }
     public object DoSomething(bool x) { return x; }
 
     void IGeneral.DoNothing() { }
@@ -237,14 +241,13 @@ public class ImplementsGeneral  : IGeneral
     {
         get
         {
+            throw new Exception();
         }
     }
 
     string IGeneral.Name
     {
-        get
-        {
-        }
+        get => throw new Exception();
     }
 }
 
@@ -252,14 +255,18 @@ public class ImplementsGeneralThree : IGeneral
 {
     public ImplementsGeneralThree()
     {
-        DoSomething();
+        DoSomething(true);
         int i = this[0];
         i = i + 1;
         string name = Name;
         Console.WriteLine(name);
     }
 
-    object IGeneral.DoSomething() { DoSomething(x); }
+    object IGeneral.DoSomething()
+    {
+        DoSomething(true);
+        return null;
+    }
     public object DoSomething(bool x) { return x; }
 
     void IGeneral.DoNothing() { }
@@ -315,9 +322,13 @@ public class NestedExplicitInterfaceImplementation
 
     public class ImplementsNestedGeneral : INestedGeneral
     {
-        object IGeneral.DoSomething() { DoSomething(x); }
+        object INestedGeneral.DoSomething()
+        {
+            DoSomething(true);
+            return null;
+        }
         public object DoSomething(bool x) { return x; }
-    
+
         void INestedGeneral.DoNothing() { }
         void INestedGeneral.JustThrow() { throw new Exception(); }
 
@@ -325,14 +336,13 @@ public class NestedExplicitInterfaceImplementation
         {
             get
             {
+                throw new Exception();
             }
         }
 
         string INestedGeneral.Name
         {
-            get
-            {
-            }
+            get => throw new Exception();
         }
 
         event EventHandler INestedGeneral.TheEvent
@@ -382,7 +392,7 @@ public class ImplementsGeneralThree : IGeneral
 
         #region VisualBasic
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7397")]
+        [Fact]
         public void CA1033SimpleDiagnosticCasesBasic()
         {
             VerifyBasic(@"
@@ -492,7 +502,7 @@ End Class
             BasicResult(74, 9, "ImplementsGeneralThree", "get_IGeneral_Name"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7397")]
+        [Fact]
         public void CA1033NestedDiagnosticCasesBasic()
         {
             VerifyBasic(@"
@@ -561,8 +571,8 @@ End Class
             BasicResult(50, 13, "ImplementsNestedGeneral", "remove_TheEvent"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7397")]
-        public void CA1033NoDiagnosticCasesBasic()
+        [Fact]
+        public void CA1033NoUnderlyingImplementationsDiagnostics()
         {
             VerifyBasic(@"
 Imports System
@@ -597,6 +607,7 @@ Public Class ImplementsGeneral
 
     Private ReadOnly Property IGeneral_Item(item As Integer) As Integer Implements IGeneral.Item
         Get
+            Throw New Exception()
         End Get
     End Property
 
@@ -668,7 +679,7 @@ Public Class NestedExplicitInterfaceImplementation
 
     Public Class ImplementsNestedGeneral
         Implements INestedGeneral
-        
+
         Private Function INestedGeneral_DoSomething() As Object Implements INestedGeneral.DoSomething
             Return Nothing
         End Function
@@ -677,7 +688,7 @@ Public Class NestedExplicitInterfaceImplementation
             Console.WriteLine(Me)
             Return 0
         End Function
-    
+
         Private Sub INestedGeneral_DoNothing() Implements INestedGeneral.DoNothing
         End Sub
         Private Sub INestedGeneral_JustThrow() Implements INestedGeneral.JustThrow
@@ -686,6 +697,7 @@ Public Class NestedExplicitInterfaceImplementation
 
         Private ReadOnly Property INestedGeneral_Item(item As Integer) As Integer Implements INestedGeneral.Item
             Get
+                Throw New Exception()
             End Get
         End Property
 
@@ -709,6 +721,6 @@ End Class
 ");
         }
 
-        #endregion 
+        #endregion
     }
 }

@@ -84,7 +84,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 {
                     // Ignore Object.GetType, as it's commonly seen and Type is a commonly-used property name.
                     if (member.ContainingType.SpecialType == SpecialType.System_Object &&
-                        member.Name == "GetType")
+                        member.Name == nameof(GetType))
                     {
                         continue;
                     }

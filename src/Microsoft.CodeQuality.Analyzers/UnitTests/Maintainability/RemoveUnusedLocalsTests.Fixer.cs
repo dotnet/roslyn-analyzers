@@ -32,231 +32,484 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
         {
             return new CSharpRemoveUnusedLocalsFixer();
         }
-
-        private const string CSharpOriginalCode = @"
-using System;
-
-public class Tester
-{
-    public void Testing()
-    {
-        double localRate; // inline comment also to be deleted.
-        int c;
-        c = 0;
-        void localFunction()
+    
+        [Fact]
+        public void UnusedLocal_BaseFunctionality_CSharp()
         {
-            var lambdaA = 0;
-            lambdaA = 3;
-        }
-
-        var rateIt = 3;
+            var code = @"
+class C
+{
+    int M()
+    {
+        int a = 0; // remove also comment
+        int b = 0;
+        b = 0;
+        var c = 3;
         unsafe
         {
             int* p;
-            p = & rateIt;
+            p = & c;
+        }
+        return 0;
+    }
+}
+";
+            var fix = @"
+class C
+{
+    int M()
+    {
+        var c = 3;
+        unsafe
+        {
+            int* p;
+            p = & c;
+        }
+        return 0;
+    }
+}
+";
+            VerifyCSharpFix(code, fix, allowNewCompilerDiagnostics: true);
+            VerifyCSharpFixAll(code, fix, allowNewCompilerDiagnostics: true);
         }
 
-        double debitIt = 4;
-        Calculate(rateIt, ref debitIt);
+        [Fact]
+        public void UnusedLocal_Parameters_CSharp()
+        {
+            var code = @"
+class C
+{
+    int M()
+    {
+        var a = 0;
+        var b = N1(a);
+        return 0;
     }
 
-    void Calculate(double rate, ref double debt)
+    int N1(int d)
     {
-        double GetRate(double rateParam)
-        {
-            double rateIt;
-            int AnotherLocal(int anotherRateParam) => 1;
-            return rateParam;
+        int a = 0;
+        return a;
+    }
+
+    int N2(ref int d) 
+    {
+        d = 1;
+        return 0;
+    }
+}
+";
+
+            VerifyCSharpFix(code, code, allowNewCompilerDiagnostics: true);
+            VerifyCSharpFixAll(code, code, allowNewCompilerDiagnostics: true);
         }
 
-        int a = 2, b = 100;
-        double c, localRate;
-        localRate = GetRate(rate);
+        [Fact]
+        public void UnusedLocal_JointDeclaration_RemoveFirst_CSharp()
+        {
+            var code = @"
+class C
+{
+    int M()
+    {
+        int a = 0, b = 0;
+        return b;
+    }
+}
+";
+            var fix = @"
+class C
+{
+    int M()
+    {
+        int b = 0;
+        return b;
+    }
+}
+";
+            VerifyCSharpFix(code, fix, allowNewCompilerDiagnostics: true);
+            VerifyCSharpFixAll(code, fix, allowNewCompilerDiagnostics: true);
+        }
+
+        [Fact]
+        public void UnusedLocal_JointDeclaration_RemoveSecond_CSharp()
+        {
+            var code = @"
+class C
+{
+    int M()
+    {
+        int a = 0, b = 0;
+        return a;
+    }
+}
+";
+            var fix = @"
+class C
+{
+    int M()
+    {
+        int a = 0;
+        return a;
+    }
+}
+";
+            VerifyCSharpFix(code, fix, allowNewCompilerDiagnostics: true);
+            VerifyCSharpFixAll(code, fix, allowNewCompilerDiagnostics: true);
+        }
+
+        [Fact]
+        public void UnusedLocal_JointDeclaration_RemoveBoth_CSharp()
+        {
+            var code = @"
+class C
+{
+    int M()
+    {
+        int a = 0, b = 0;
+        return 0;
+    }
+}
+";
+            var fix = @"
+class C
+{
+    int M()
+    {
+        return 0;
+    }
+}
+";
+            VerifyCSharpFix(code, fix, allowNewCompilerDiagnostics: true);
+            VerifyCSharpFixAll(code, fix, allowNewCompilerDiagnostics: true);
+        }
+
+        [Fact(Skip ="https://github.com/dotnet/roslyn/issues/23322")]
+        public void UnusedLocal_JointAssignment_RemoveFirst_CSharp()
+        {
+            var code = @"
+class C
+{
+    int M()
+    {
+        int a = 0;
+        int b = 0;
+        a = b = 0;
+        return b;
+    }
+}
+";
+            var fix = @"
+class C
+{
+    int M()
+    {
+        int b = 0;
+        b = 0;
+        return b;
+    }
+}
+";
+            VerifyCSharpFix(code, fix, allowNewCompilerDiagnostics: true);
+            VerifyCSharpFixAll(code, fix, allowNewCompilerDiagnostics: true);
+        }
+
+        [Fact]
+        public void UnusedLocal_JointAssignment_RemoveSecond_CSharp()
+        {
+            var code = @"
+class C
+{
+    int M()
+    {
+        int a = 0;
+        int b = 0;
+        a = b = 0;
+        return a;
+    }
+}
+";
+            var fix = @"
+class C
+{
+    int M()
+    {
+        int a = 0;
+        a = 0;
+        return a;
+    }
+}
+";
+            VerifyCSharpFix(code, fix, allowNewCompilerDiagnostics: true);
+            VerifyCSharpFixAll(code, fix, allowNewCompilerDiagnostics: true);
+        }
+
+        [Fact]
+        public void UnusedLocal_JointAssignment_RemoveBoth_CSharp()
+        {
+            var code = @"
+class C
+{
+    int M()
+    {
+        int a = 0;
+        int b = 0;
+        a = b = 0;
+        return 0;
+    }
+}
+";
+            var fix = @"
+class C
+{
+    int M()
+    {
+        return 0;
+    }
+}
+";
+            // fixAll removes unused locals found in a single iteration.
+            // a is used in the first iteration.
+            var fixAll = @"
+class C
+{
+    int M()
+    {
+        int a = 0;
+        a = 0;
+        return 0;
+    }
+}
+";
+            VerifyCSharpFix(code, fix, allowNewCompilerDiagnostics: true);
+            VerifyCSharpFixAll(code, fixAll, allowNewCompilerDiagnostics: true);
+        }
+
+        [Fact]
+        public void UnusedLocal_LocalFunction_CSharp()
+        {
+            var code = @"
+class C
+{
+    int M()
+    {
+        int L() { int a = 1; return 1; }
+        return 1;
+    }
+}
+";
+            var fix = @"
+class C
+{
+    int M()
+    {
+        return 1;
+    }
+}
+";
+            VerifyCSharpFix(code, fix, allowNewCompilerDiagnostics: true);
+            VerifyCSharpFixAll(code, fix, allowNewCompilerDiagnostics: true);
+        }
+
+        [Fact (Skip = "https://github.com/dotnet/roslyn/issues/22921")]
+        public void UnusedLocal_Lambda_CSharp()
+        {
+            var code = @"
+class C
+{
+    int M()
+    {
         Func<int> lambda = () =>
         {
-            int bb = 4;
+            int a = 4;
             Func<int> internalLambda = () => { int bbb = 4; return 2; };
             return 1;
         };
-        debt = debt + (debt * localRate / b);
-    }
-
-    int Method1()
-    {
-        int a1 = 0;
-        int b1 = 0;
-        a1 = b1 = 0;
-        return a1;
-    }
-
-    // a2 not found by analyzers
-    int Method2()
-    {
-        int a2 = 0;
-        int b2 = 0;
-        a2 = b2 = 0;
-        return b2;
+        return 1;
     }
 }
 ";
-        private const string CSharpFix = @"
-using System;
-
-public class Tester
+            var fix = @"
+class C
 {
-    public void Testing()
+    int M()
     {
-        var rateIt = 3;
-        unsafe
-        {
-            int* p;
-            p = & rateIt;
-        }
-
-        double debitIt = 4;
-        Calculate(rateIt, ref debitIt);
-    }
-
-    void Calculate(double rate, ref double debt)
-    {
-        double GetRate(double rateParam)
-        {
-            return rateParam;
-        }
-
-        int b = 100;
-        double localRate;
-        localRate = GetRate(rate);
-        Func<int> lambda = () =>
-        {
-            Func<int> internalLambda = () => { return 2; };
-            return 1;
-        };
-        debt = debt + (debt * localRate / b);
-    }
-
-    int Method1()
-    {
-        int a1 = 0;
-        a1 = 0;
-        return a1;
-    }
-
-    // a2 not found by analyzers
-    int Method2()
-    {
-        int a2 = 0;
-        int b2 = 0;
-        a2 = b2 = 0;
-        return b2;
+        return 1;
     }
 }
 ";
+            VerifyCSharpFix(code, fix, allowNewCompilerDiagnostics: true);
+            VerifyCSharpFixAll(code, fix, allowNewCompilerDiagnostics: true);
+        }
 
-        private const string BasicOriginalCode = @"
+        [Fact]
+        public void UnusedLocal_BaseFunctionality_Basic()
+        {
+            var code = @"
+Public Class C
+    Function F() As Integer
+        Dim a As Integer = 0 ' inline comment also to be deleted. 
+        Dim b As Integer
+        b = 0
+        Return 0
+    End Function
+
+    Function G() As Integer
+        Dim a As Integer = 0
+        Return a
+    End Function
+End Class
+";
+            var fix = @"
+Public Class C
+    Function F() As Integer
+        Return 0
+    End Function
+
+    Function G() As Integer
+        Dim a As Integer = 0
+        Return a
+    End Function
+End Class
+";
+            VerifyBasicFix(code, fix, allowNewCompilerDiagnostics: true);
+            VerifyBasicFixAll(code, fix, allowNewCompilerDiagnostics: true);
+        }
+
+        [Fact]
+        public void UnusedLocal_Parameters_Basic()
+        {
+            var code = @"
+Public Class C
+    Function F() As Integer
+        Dim a As Integer = 0
+        a = G(a)
+        Return 0
+    End Function
+
+    Function G(p As Integer) As Integer
+        Return 1
+    End Function
+End Class
+";
+          
+            VerifyBasicFix(code, code, allowNewCompilerDiagnostics: true);
+            VerifyBasicFixAll(code, code, allowNewCompilerDiagnostics: true);
+        }
+
+        [Fact]
+        public void UnusedLocal_JointDeclaration_RemoveFirst_Basic()
+        {
+            var code = @"
+Public Class C
+    Function F() As Integer
+        Dim a As Integer, b As Integer
+        Dim c = 0, d = 0
+        a = 0
+        b = 0
+        Return b + d
+    End Function
+End Class
+";
+            var fix = @"
+Public Class C
+    Function F() As Integer
+        Dim b As Integer
+        Dim d = 0
+        b = 0
+        Return b + d
+    End Function
+End Class
+";
+            VerifyBasicFix(code, fix, allowNewCompilerDiagnostics: true);
+            VerifyBasicFixAll(code, fix, allowNewCompilerDiagnostics: true);
+        }
+
+        [Fact]
+        public void UnusedLocal_JointDeclaration_RemoveSecond_Basic()
+        {
+            var code = @"
+Public Class C
+    Function F() As Integer
+        Dim a As Integer, b As Integer
+        Dim c = 0, d = 0
+        a = 0
+        b = 0
+        Return a + c
+    End Function
+End Class
+";
+            var fix = @"
+Public Class C
+    Function F() As Integer
+        Dim a As Integer
+        Dim c = 0
+        a = 0
+        Return a + c
+    End Function
+End Class
+";
+            VerifyBasicFix(code, fix, allowNewCompilerDiagnostics: true);
+            VerifyBasicFixAll(code, fix, allowNewCompilerDiagnostics: true);
+        }
+
+        [Fact]
+        public void UnusedLocal_JointDeclaration_RemoveBoth_Basic()
+        {
+            var code = @"
+Public Class C
+    Function F() As Integer
+        Dim a As Integer, b As Integer
+        Dim c = 0, d = 0
+        a = 0
+        b = 0
+        Return 0
+    End Function
+End Class
+";
+            var fix = @"
+Public Class C
+    Function F() As Integer
+        Return 0
+    End Function
+End Class
+";
+            VerifyBasicFix(code, fix, allowNewCompilerDiagnostics: true);
+            VerifyBasicFixAll(code, fix, allowNewCompilerDiagnostics: true);
+        }
+
+        [Fact]
+        public void UnusedLocal_Lambda_Basic()
+        {
+            var code = @"
 Imports System
-
-Public Class Tester
-
-    Public Sub Testing()
-        Dim localRate As Double ' inline comment also to be deleted. 
-        Dim c As Integer
-        c = 0
-        Dim rateIt = 3
-        Dim debitIt As Double = 4
-        Calculate(rateIt, debitIt)
-    End Sub
-
-    Sub Calculate(rate As Double, ByRef debt As Double)
-        Dim a As Integer = 2, b As Integer = 100
-        Dim c As Double, localRate As Double
-        localRate = rate
-        Dim lambda As Func(Of Integer) = Function()
-            Dim bb As Integer = 4
-            Dim internalLambda As Func(Of Integer) = Function()
-                Dim bbb As Integer = 4
-                Return 2
+Public Class C
+    Function F() As Integer
+        Dim L As Func(Of Integer) = Function()
+            Dim a As Integer = 0
+            Dim internalL As Func(Of Integer) = Function()
+                Dim b As Integer = 0
+                Return 1
             End Function
             Return 1
         End Function
-        debt = debt + (debt * localRate / b * lambda())
-    End Sub
-
-    Function Function1() As Integer
-        Dim a1 As Integer = 0
-        Dim b1 As Integer = 0
-        a1 = b1 = 0
-        Return a1
-    End Function
-
-    ' Here b2 = 0 is an equivalence expression not an assignment
-    Function Function2() As Integer
-        Dim a2 As Integer = 0
-        Dim b2 As Integer = 0
-        a2 = b2 = 0
-        Return b2
+        Return L()
     End Function
 End Class
 ";
-
-        private const string BasicFix = @"
+            var fix = @"
 Imports System
-
-Public Class Tester
-
-    Public Sub Testing()
-        Dim rateIt = 3
-        Dim debitIt As Double = 4
-        Calculate(rateIt, debitIt)
-    End Sub
-
-    Sub Calculate(rate As Double, ByRef debt As Double)
-        Dim b As Integer = 100
-        Dim localRate As Double
-        localRate = rate
-        Dim lambda As Func(Of Integer) = Function()
-                                             Return 1
+Public Class C
+    Function F() As Integer
+        Dim L As Func(Of Integer) = Function()
+                                        Return 1
         End Function
-        debt = debt + (debt * localRate / b * lambda())
-    End Sub
-
-    Function Function1() As Integer
-        Dim a1 As Integer = 0
-        Dim b1 As Integer = 0
-        a1 = b1 = 0
-        Return a1
-    End Function
-
-    ' Here b2 = 0 is an equivalence expression not an assignment
-    Function Function2() As Integer
-        Dim b2 As Integer = 0
-        Return b2
+        Return L()
     End Function
 End Class
 ";
-
-        [Fact, WorkItem(22921, "https://github.com/dotnet/roslyn/issues/22921")]
-        public void UnusedLocal_CSharp()
-        {
-            VerifyCSharpFix(CSharpOriginalCode, CSharpFix, allowNewCompilerDiagnostics: true);
-        }
-
-        [Fact, WorkItem(22921, "https://github.com/dotnet/roslyn/issues/22921")]
-        public void UnusedLocal_FixAll_CSharp()
-        {
-            VerifyCSharpFixAll(CSharpOriginalCode, CSharpFix, allowNewCompilerDiagnostics: true);
-        }
-
-        [Fact]
-        public void UnusedLocal_VisualBasic()
-        {
-            VerifyBasicFix(BasicOriginalCode, BasicFix, allowNewCompilerDiagnostics: true);
-        }
-
-        [Fact]
-        public void UnusedLocal_FixAll_VisualBasic()
-        {
-            VerifyBasicFixAll(BasicOriginalCode, BasicFix, allowNewCompilerDiagnostics: true);
+            VerifyBasicFix(code, fix, allowNewCompilerDiagnostics: true);
+            VerifyBasicFixAll(code, fix, allowNewCompilerDiagnostics: true);
         }
     }
 }

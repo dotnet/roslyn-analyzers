@@ -278,6 +278,24 @@ End Class",
             GetCA1721BasicResultAt(line: 13, column: 21, identifierName: "Date", otherIdentifierName: "GetDate"));
         }
 
+        [Fact, WorkItem(1374, "https://github.com/dotnet/roslyn-analyzers/issues/1374")]
+        public void CA1721_TypePropertyNoDiagnostic()
+        {
+            VerifyCSharp(@"
+class T { }
+class C
+{
+    public T Type { get; }
+}");
+
+            VerifyBasic(@"
+Class T
+End Class
+Class C
+    Public Property Type As T
+End Class");
+        }
+
         #region Helpers
 
         private static DiagnosticResult GetCA1721CSharpResultAt(int line, int column, string identifierName, string otherIdentifierName)

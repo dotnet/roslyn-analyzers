@@ -7,7 +7,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -91,9 +91,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 overloadMapBuilder.AddKeyValueIfNotNull(stringCompareParameterStringIntStringIntIntBool, stringCompareParameterStringIntStringIntIntComparison);
                 var overloadMap = overloadMapBuilder.ToImmutable();
 
-                csaContext.RegisterOperationActionInternal(oaContext =>
+                csaContext.RegisterOperationAction(oaContext =>
                 {
-                    var invocationExpression = (IInvocationExpression)oaContext.Operation;
+                    var invocationExpression = (IInvocationOperation)oaContext.Operation;
                     var targetMethod = invocationExpression.TargetMethod;
 
                     if (targetMethod.IsGenericMethod ||
@@ -130,13 +130,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 correctOverload);
                         }
                     }
-                }, OperationKind.InvocationExpression);
+                }, OperationKind.Invocation);
             });
         }
 
         private static void ReportDiagnostic(
             OperationAnalysisContext oaContext,
-            IInvocationExpression invocationExpression,
+            IInvocationOperation invocationExpression,
             IMethodSymbol targetMethod,
             IMethodSymbol correctOverload)
         {

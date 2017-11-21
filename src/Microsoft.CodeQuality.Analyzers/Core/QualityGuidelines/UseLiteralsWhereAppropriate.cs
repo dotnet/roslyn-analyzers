@@ -6,7 +6,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
@@ -51,9 +51,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterOperationActionInternal(saContext =>
+            analysisContext.RegisterOperationAction(saContext =>
             {
-                var fieldInitializer = saContext.Operation as IFieldInitializer;
+                var fieldInitializer = saContext.Operation as IFieldInitializerOperation;
 
                 // Diagnostics are reported on the last initialized field to retain the previous FxCop behavior
                 var lastField = fieldInitializer?.InitializedFields.LastOrDefault();

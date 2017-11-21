@@ -83,6 +83,13 @@ namespace Analyzer.Utilities.Extensions
             }
 
             IMethodSymbol overridden = method.OverriddenMethod;
+
+            if (method.ContainingType.SpecialType == SpecialType.System_Object)
+            {
+                // This is object.Finalize
+                return true;
+            }
+
             if (overridden == null)
             {
                 return false;

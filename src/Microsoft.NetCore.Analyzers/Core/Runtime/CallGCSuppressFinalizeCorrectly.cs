@@ -6,7 +6,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -85,7 +85,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                compilationContext.RegisterOperationBlockStartActionInternal(operationBlockContext =>
+                compilationContext.RegisterOperationBlockStartAction(operationBlockContext =>
                 {
                     if (operationBlockContext.OwningSymbol.Kind != SymbolKind.Method)
                     {
@@ -100,7 +100,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     var analyzer = new SuppressFinalizeAnalyzer(methodSymbol, gcSuppressFinalizeMethodSymbol, compilationContext.Compilation);
 
-                    operationBlockContext.RegisterOperationActionInternal(analyzer.Analyze, OperationKind.InvocationExpression);
+                    operationBlockContext.RegisterOperationAction(analyzer.Analyze, OperationKind.Invocation);
                     operationBlockContext.RegisterOperationBlockEndAction(analyzer.OperationBlockEndAction);
                 });
             });
@@ -135,7 +135,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             public void Analyze(OperationAnalysisContext analysisContext)
             {
-                var invocationExpression = (IInvocationExpression)analysisContext.Operation;
+                var invocationExpression = (IInvocationOperation)analysisContext.Operation;
                 if (invocationExpression.TargetMethod.OriginalDefinition.Equals(_gcSuppressFinalizeMethodSymbol))
                 {
                     _suppressFinalizeCalled = true;
@@ -155,12 +155,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     // Checks for GC.SuppressFinalize(this)
-                    if (invocationExpression.ArgumentsInEvaluationOrder.Count() != 1)
+                    if (invocationExpression.Arguments.Count() != 1)
                     {
                         return;
                     }
 
-                    var parameterSymbol = _semanticModel.GetSymbolInfo(invocationExpression.ArgumentsInEvaluationOrder.Single().Value.Syntax).Symbol as IParameterSymbol;
+                    var parameterSymbol = _semanticModel.GetSymbolInfo(invocationExpression.Arguments.Single().Value.Syntax).Symbol as IParameterSymbol;
                     if (parameterSymbol == null || !parameterSymbol.IsThis)
                     {
                         analysisContext.ReportDiagnostic(invocationExpression.Syntax.CreateDiagnostic(

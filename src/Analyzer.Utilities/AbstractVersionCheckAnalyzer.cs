@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -27,6 +28,15 @@ namespace Analyzer.Utilities
                                                         isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                         description: s_localizableDescription);
 
+        private static Version s_MicrosoftCodeAnalysisMinVersion = new Version("2.6");
+        private static Version s_MicrosoftCodeAnalysisDogfoodVersion = new Version("42.42");
+        private static readonly Version s_MicrosoftCodeAnalysisVersion = typeof(AnalysisContext).GetTypeInfo().Assembly.GetName().Version;
+
+        // Execute IOperation analyzers if we are either using dogfood bits of Microsoft.CodeAnalysis or its version is >= 2.6
+        private static bool s_ShouldExecuteOperationAnalyzers =>
+            s_MicrosoftCodeAnalysisVersion >= s_MicrosoftCodeAnalysisDogfoodVersion ||
+            s_MicrosoftCodeAnalysisVersion >= s_MicrosoftCodeAnalysisMinVersion;
+
         protected abstract string AnalyzerPackageName { get; }
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
@@ -43,11 +53,11 @@ namespace Analyzer.Utilities
             {
                 compilationStartContext.RegisterCompilationEndAction(compilationContext =>
                 {
-                    if (!AnalysisContextExtensions.ShouldExecuteOperationAnalyzers)
+                    if (!s_ShouldExecuteOperationAnalyzers)
                     {
                         // Version mismatch between the analyzer package '{0}' and Microsoft.CodeAnalysis '{1}'. Certain analyzers in this package will not run until the version mismatch is fixed.
                         var arg1 = AnalyzerPackageName + "-" + AnalyzerPackageVersion;
-                        var arg2 = AnalysisContextExtensions.s_MicrosoftCodeAnalysisVersion;
+                        var arg2 = s_ShouldExecuteOperationAnalyzers;
                         var diagnostic = Diagnostic.Create(Rule, Location.None, arg1, arg2);
                         compilationContext.ReportDiagnostic(diagnostic);
                     }

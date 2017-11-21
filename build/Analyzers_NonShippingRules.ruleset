@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="Common diagnostic rules for all non-shipping projects" Description="Enables/disable rules specific to all non-shipping projects." ToolsVersion="14.0">
+  <!-- Include all shipping Roslyn-Analyzers project build rules -->
+  <Include Path=".\Analyzers_ShippingRules.ruleset" Action="Default" />
+
+  <Rules AnalyzerId="Microsoft.ApiDesignGuidelines.Analyzers" RuleNamespace="Microsoft.ApiDesignGuidelines.Analyzers">
+    <!-- IdentifiersShouldNotContainUnderscores - test names contain underscores -->
+    <!-- Fix tracked by https://github.com/dotnet/roslyn-analyzers/issues/1354 -->
+    <Rule Id="CA1707" Action="None" />
+  </Rules>
+  
+  <Rules AnalyzerId="Microsoft.CodeQuality.Analyzers" RuleNamespace="Microsoft.CodeQuality.Analyzers.Maintainability">
+    <!-- Unused parameter rule has many violations in non-shipping projects -->
+    <!-- Reenabling is tracked by https://github.com/dotnet/roslyn-analyzers/issues/1355 -->
+    <Rule Id="CA1801" Action="None" />
+  </Rules>
+</RuleSet>

@@ -8,7 +8,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
@@ -69,18 +69,22 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     onSerializingAttribute,
                     obsoleteAttribute);
 
+                ImmutableHashSet<INamedTypeSymbol> exceptionsToSkip = ImmutableHashSet.Create(
+                    WellKnownTypes.NotImplementedException(compilationStartContext.Compilation),
+                    WellKnownTypes.NotSupportedException(compilationStartContext.Compilation));
+
                 UnusedParameterDictionary unusedMethodParameters = new ConcurrentDictionary<IMethodSymbol, ISet<IParameterSymbol>>();
                 ISet<IMethodSymbol> methodsUsedAsDelegates = new HashSet<IMethodSymbol>();
 
                 // Create a list of functions to exclude from analysis. We assume that any function that is used in an IMethodBindingExpression
                 // cannot have its signature changed, and add it to the list of methods to be excluded from analysis.
-                compilationStartContext.RegisterOperationActionInternal(operationContext =>
+                compilationStartContext.RegisterOperationAction(operationContext =>
                 {
-                    var methodBinding = (IMethodReferenceExpression)operationContext.Operation;
+                    var methodBinding = (IMethodReferenceOperation)operationContext.Operation;
                     methodsUsedAsDelegates.Add(methodBinding.Method.OriginalDefinition);
-                }, OperationKind.MethodReferenceExpression);
+                }, OperationKind.MethodReference);
 
-                compilationStartContext.RegisterOperationBlockStartActionInternal(startOperationBlockContext =>
+                compilationStartContext.RegisterOperationBlockStartAction(startOperationBlockContext =>
                 {
                     // We only care about methods.
                     if (startOperationBlockContext.OwningSymbol.Kind != SymbolKind.Method)
@@ -128,10 +132,10 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     }
 
                     // Initialize local mutable state in the start action.
-                    var analyzer = new UnusedParametersAnalyzer(method, unusedMethodParameters);
+                    var analyzer = new UnusedParametersAnalyzer(method, unusedMethodParameters, exceptionsToSkip);
 
                     // Register an intermediate non-end action that accesses and modifies the state.
-                    startOperationBlockContext.RegisterOperationActionInternal(analyzer.AnalyzeOperation, OperationKind.ParameterReferenceExpression);
+                    startOperationBlockContext.RegisterOperationAction(analyzer.AnalyzeOperation, OperationKind.ParameterReference);
 
                     // Register an end action to add unused parameters to the unusedMethodParameters dictionary
                     startOperationBlockContext.RegisterOperationBlockEndAction(analyzer.OperationBlockEndAction);
@@ -156,6 +160,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         {
             #region Per-CodeBlock mutable state
 
+            private readonly ImmutableHashSet<INamedTypeSymbol> _exceptionsToSkip;
             private readonly HashSet<IParameterSymbol> _unusedParameters;
             private readonly UnusedParameterDictionary _finalUnusedParameters;
             private readonly IMethodSymbol _method;
@@ -164,10 +169,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             #region State intialization
 
-            public UnusedParametersAnalyzer(IMethodSymbol method, UnusedParameterDictionary finalUnusedParameters)
+            public UnusedParametersAnalyzer(IMethodSymbol method, UnusedParameterDictionary finalUnusedParameters, ImmutableHashSet<INamedTypeSymbol> exceptionsToSkip)
             {
                 // Initialization: Assume all parameters are unused.
                 _unusedParameters = new HashSet<IParameterSymbol>(method.Parameters);
+                _exceptionsToSkip = exceptionsToSkip;
                 _finalUnusedParameters = finalUnusedParameters;
                 _method = method;
             }
@@ -185,7 +191,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 }
 
                 // Mark this parameter as used.
-                IParameterSymbol parameter = ((IParameterReferenceExpression)context.Operation).Parameter;
+                IParameterSymbol parameter = ((IParameterReferenceOperation)context.Operation).Parameter;
                 _unusedParameters.Remove(parameter);
             }
 
@@ -195,6 +201,47 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             public void OperationBlockEndAction(OperationBlockAnalysisContext context)
             {
+                // Check to see if the method just throws a NotImplementedException/NotSupportedException. If it does,
+                // we shouldn't warn about parameters.
+                // Note that VB method bodies with 1 action have 3 operations.
+                // The first is the actual operation, the second is a label statement, and the third is a return
+                // statement. The last two are implicit in these scenarios.
+                if (context.OperationBlocks.Length == 1)
+                {
+                    bool IsSingleStatementBody(IBlockOperation body)
+                    {
+                        return body.Operations.Length == 1 ||
+                            (body.Operations.Length == 3 && body.Syntax.Language == LanguageNames.VisualBasic &&
+                             body.Operations[1] is ILabeledOperation labeledOp && labeledOp.IsImplicit &&
+                             body.Operations[2] is IReturnOperation returnOp && returnOp.IsImplicit);
+                    }
+
+                    var methodBlock = (IBlockOperation)context.OperationBlocks[0];
+                    if (IsSingleStatementBody(methodBlock))
+                    {
+                        var innerOperation = methodBlock.Operations.First();
+
+                        // Because of https://github.com/dotnet/roslyn/issues/23152, there can be an expression-statement
+                        // wrapping expression-bodied throw operations. Compensate by unwrapping if necessary.
+                        if (innerOperation.Kind == OperationKind.ExpressionStatement &&
+                            innerOperation is IExpressionStatementOperation exprStatement)
+                        {
+                            innerOperation = exprStatement.Operation;
+                        }
+
+                        if (innerOperation.Kind == OperationKind.Throw &&
+                            innerOperation is IThrowOperation throwOperation &&
+                            throwOperation.Exception.Kind == OperationKind.ObjectCreation &&
+                            throwOperation.Exception is IObjectCreationOperation createdException)
+                        {
+                            if (_exceptionsToSkip.Contains(createdException.Type.OriginalDefinition))
+                            {
+                                return;
+                            }
+                        }
+                    }
+                }
+
                 _finalUnusedParameters.Add(_method, _unusedParameters);
             }
 

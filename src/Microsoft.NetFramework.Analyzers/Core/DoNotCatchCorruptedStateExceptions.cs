@@ -8,7 +8,7 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.NetFramework.Analyzers.Helpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetFramework.Analyzers
 {
@@ -46,7 +46,7 @@ namespace Microsoft.NetFramework.Analyzers
                     return;
                 }
 
-                compilationStartAnalysisContext.RegisterOperationBlockActionInternal(operationBlockAnalysisContext =>
+                compilationStartAnalysisContext.RegisterOperationBlockAction(operationBlockAnalysisContext =>
                 {
                     if (operationBlockAnalysisContext.OwningSymbol.Kind != SymbolKind.Method)
                     {
@@ -90,19 +90,19 @@ namespace Microsoft.NetFramework.Analyzers
             private readonly CompilationSecurityTypes _compilationTypes;
             private readonly Stack<bool> _seenEmptyThrowInCatchClauses = new Stack<bool>();
 
-            public ISet<ICatchClause> CatchAllCatchClausesWithoutEmptyThrow { get; } = new HashSet<ICatchClause>();
+            public ISet<ICatchClauseOperation> CatchAllCatchClausesWithoutEmptyThrow { get; } = new HashSet<ICatchClauseOperation>();
 
             public EmptyThrowInsideCatchAllWalker(CompilationSecurityTypes compilationTypes)
             {
                 _compilationTypes = compilationTypes;
             }
 
-            public override void VisitAnonymousFunctionExpression(IAnonymousFunctionExpression operation)
+            public override void VisitAnonymousFunction(IAnonymousFunctionOperation operation)
             {
                 // for now there doesn't seem to be any way to annotate lambdas with attributes
             }
 
-            public override void VisitCatchClause(ICatchClause operation)
+            public override void VisitCatchClause(ICatchClauseOperation operation)
             {
                 _seenEmptyThrowInCatchClauses.Push(false);
 
@@ -117,15 +117,15 @@ namespace Microsoft.NetFramework.Analyzers
                 }
             }
 
-            public override void VisitThrowExpression(IThrowExpression operation)
+            public override void VisitThrow(IThrowOperation operation)
             {
-                if (operation.Expression == null && _seenEmptyThrowInCatchClauses.Count > 0 && !_seenEmptyThrowInCatchClauses.Peek())
+                if (operation.Exception == null && _seenEmptyThrowInCatchClauses.Count > 0 && !_seenEmptyThrowInCatchClauses.Peek())
                 {
                     _seenEmptyThrowInCatchClauses.Pop();
                     _seenEmptyThrowInCatchClauses.Push(true);
                 }
 
-                base.VisitThrowExpression(operation);
+                base.VisitThrow(operation);
             }
 
             private bool IsCaughtTypeTooGeneral(ITypeSymbol caughtType)

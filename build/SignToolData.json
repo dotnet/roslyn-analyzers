@@ -59,6 +59,13 @@
         "VSSetup/Text.Analyzers.Setup.vsix",
         "VSSetup/Microsoft.CodeAnalysis.FxCopAnalyzers.Setup.vsix"
       ]
+    },
+    {
+      "certificate": null,
+      "strongName": null,
+      "values": [
+        "packages/*.nupkg"
+      ]
     }
   ]
 }

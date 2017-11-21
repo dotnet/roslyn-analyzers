@@ -7,7 +7,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -50,9 +50,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     INamedTypeSymbol stringComparisonType = context.Compilation.GetTypeByMetadataName(StringComparisonTypeName);
                     if (stringComparisonType != null)
                     {
-                        context.RegisterOperationActionInternal(operationContext => AnalyzeOperation(operationContext, stringComparisonType),
-                                                        OperationKind.InvocationExpression,
-                                                        OperationKind.BinaryOperatorExpression);
+                        context.RegisterOperationAction(operationContext => AnalyzeOperation(operationContext, stringComparisonType),
+                                                        OperationKind.Invocation,
+                                                        OperationKind.BinaryOperator);
                     }
                 });
         }
@@ -60,17 +60,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private void AnalyzeOperation(OperationAnalysisContext context, INamedTypeSymbol stringComparisonType)
         {
             OperationKind kind = context.Operation.Kind;
-            if (kind == OperationKind.InvocationExpression)
+            if (kind == OperationKind.Invocation)
             {
-                AnalyzeInvocationExpression((IInvocationExpression)context.Operation, stringComparisonType, context.ReportDiagnostic, GetMethodNameLocation);
+                AnalyzeInvocationExpression((IInvocationOperation)context.Operation, stringComparisonType, context.ReportDiagnostic, GetMethodNameLocation);
             }
             else
             {
-                AnalyzeBinaryExpression((IBinaryOperatorExpression)context.Operation, context.ReportDiagnostic, GetOperatorTokenLocation);
+                AnalyzeBinaryExpression((IBinaryOperation)context.Operation, context.ReportDiagnostic, GetOperatorTokenLocation);
             }
         }
 
-        private static void AnalyzeInvocationExpression(IInvocationExpression operation, INamedTypeSymbol stringComparisonType, Action<Diagnostic> reportDiagnostic, Func<SyntaxNode, Location> getMethodNameLocation)
+        private static void AnalyzeInvocationExpression(IInvocationOperation operation, INamedTypeSymbol stringComparisonType, Action<Diagnostic> reportDiagnostic, Func<SyntaxNode, Location> getMethodNameLocation)
         {
             IMethodSymbol methodSymbol = operation.TargetMethod;
             if (methodSymbol != null &&
@@ -84,10 +84,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
                 else
                 {
-                    IArgument lastArgument = operation.ArgumentsInEvaluationOrder.Last();
-                    if (lastArgument.Value.Kind == OperationKind.FieldReferenceExpression)
+                    IArgumentOperation lastArgument = operation.Arguments.Last();
+                    if (lastArgument.Value.Kind == OperationKind.FieldReference)
                     {
-                        IFieldSymbol fieldSymbol = ((IFieldReferenceExpression)lastArgument.Value).Field;
+                        IFieldSymbol fieldSymbol = ((IFieldReferenceOperation)lastArgument.Value).Field;
                         if (fieldSymbol != null &&
                             fieldSymbol.ContainingType.Equals(stringComparisonType) &&
                             !IsOrdinalOrOrdinalIgnoreCase(fieldSymbol.Name))
@@ -100,7 +100,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
         }
 
-        private static void AnalyzeBinaryExpression(IBinaryOperatorExpression operation, Action<Diagnostic> reportDiagnostic, Func<SyntaxNode, Location> getOperatorTokenLocation)
+        private static void AnalyzeBinaryExpression(IBinaryOperation operation, Action<Diagnostic> reportDiagnostic, Func<SyntaxNode, Location> getOperatorTokenLocation)
         {
             if (operation.OperatorKind == BinaryOperatorKind.Equals || operation.OperatorKind == BinaryOperatorKind.NotEquals)
             {

@@ -365,7 +365,7 @@ End Class",
             );
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1202")]
+        [Fact]
         public void UseXmlDocumentSetInnerXmlInlineShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
@@ -764,7 +764,7 @@ End Class",
             );
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1202")]
+        [Fact]
         public void UseXmlDataDocumentSetInnerXmlInlineShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"

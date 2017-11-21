@@ -13,7 +13,7 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
     ''' <summary>
     ''' CA1804: Remove unused locals
     ''' </summary>
-    <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
+    <ExportCodeFixProvider(LanguageNames.VisualBasic, Name:=BasicRemoveUnusedLocalsFixer.RuleId), [Shared]>
     Public NotInheritable Class BasicRemoveUnusedLocalsFixer
         Inherits RemoveUnusedLocalsFixer
 

@@ -1,25 +1,23 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using System.Composition;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
-using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.FindSymbols;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using Microsoft.CodeAnalysis.CodeActions;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
     /// <summary>
     /// CA1804: Remove unused locals
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic, Name = AvoidUnusedPrivateFieldsAnalyzer.RuleId), Shared]
     public abstract class RemoveUnusedLocalsFixer : CodeFixProvider
     {
         internal const string RuleId = "CA1804";
@@ -29,16 +27,17 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         public sealed override FixAllProvider GetFixAllProvider() => new RemoveLocalFixAllProvider(_nodesProvider);
 
-        public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             Diagnostic diagnostic = context.Diagnostics.Single();
-            var nodesToRemove = await _nodesProvider.GetNodesToRemoveAsync(context.Document, diagnostic, context.CancellationToken).ConfigureAwait(false);
 
             context.RegisterCodeFix(
                 new RemoveLocalAction(
                     MicrosoftMaintainabilityAnalyzersResources.RemoveUnusedLocalsMessage,
-                    async ct => await _nodesProvider.RemoveNodes(context.Document, nodesToRemove, ct).ConfigureAwait(false)),
+                    async ct => await _nodesProvider.RemoveNodes(context.Document, diagnostic, ct).ConfigureAwait(false)),
                 diagnostic);
+
+            return Task.CompletedTask;
         }
 
         protected abstract class NodesProvider
@@ -66,10 +65,10 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             var referencedSymbolNode = root.FindNode(location.Location.SourceSpan);
                             if (referencedSymbolNode != null)
                             {
-                                var assignmentNode = GetNodeToRemoveOrReplace(referencedSymbolNode);
-                                if (assignmentNode != null)
+                                var nodeToRemoveOrReplace = GetNodeToRemoveOrReplace(referencedSymbolNode);
+                                if (nodeToRemoveOrReplace != null)
                                 {
-                                    nodesToRemoveBuilder.Add(assignmentNode);
+                                    nodesToRemoveBuilder.Add(nodeToRemoveOrReplace);
                                 }
                             }
                         }
@@ -86,12 +85,20 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             public async Task<Document> RemoveNodes(Document document, IEnumerable<SyntaxNode> nodes, CancellationToken cancellationToken)
             {
                 DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+
+                // Start removing from bottom to top to keep spans of nodes that are removed later.
                 foreach (var node in nodes.Where(n => n != null).OrderByDescending(n => n.SpanStart))
                 {
                     RemoveNode(editor, node);
                 }
 
                 return editor.GetChangedDocument();
+            }
+
+            public async Task<Document> RemoveNodes(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+            {
+                var nodesToRemove = await GetNodesToRemoveAsync(document, diagnostic, cancellationToken).ConfigureAwait(false);
+                return await RemoveNodes(document, nodesToRemove, cancellationToken).ConfigureAwait(false);
             }
 
             public abstract void RemoveNode(DocumentEditor editor, SyntaxNode node);
@@ -107,14 +114,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         private sealed class RemoveLocalFixAllAction : CodeAction
         {
-            private readonly Solution _solution;
-            private readonly Dictionary<Document, HashSet<SyntaxNode>> _nodesToRemoveMap;
             private readonly NodesProvider _nodesProvider;
+            private readonly FixAllContext _fixAllContext;
 
-            public RemoveLocalFixAllAction(Solution solution, Dictionary<Document, HashSet<SyntaxNode>> nodesToRemoveMap, NodesProvider nodesProvider)
+            public RemoveLocalFixAllAction(FixAllContext fixAllContext, NodesProvider nodesProvider)
             {
-                _solution = solution;
-                _nodesToRemoveMap = nodesToRemoveMap;
+                _fixAllContext = fixAllContext;
                 _nodesProvider = nodesProvider;
             }
 
@@ -122,12 +127,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             protected override async Task<Solution> GetChangedSolutionAsync(CancellationToken cancellationToken)
             {
-                Solution newSolution = _solution;
-                foreach (KeyValuePair<Document, HashSet<SyntaxNode>> pair in _nodesToRemoveMap)
+                var nodesToRemoveMap = await BuildNodesToRemoveMap(cancellationToken).ConfigureAwait(false);
+                Solution newSolution = _fixAllContext.Solution;
+                foreach (KeyValuePair<Document, HashSet<SyntaxNode>> pair in nodesToRemoveMap)
                 {
                     var document = pair.Key;
                     var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-                    
+
                     var syntaxGenerator = SyntaxGenerator.GetGenerator(document);
                     var newDocument = await _nodesProvider.RemoveNodes(document, pair.Value, cancellationToken);
                     var newRoot = await newDocument.GetSyntaxRootAsync();
@@ -136,24 +142,17 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                 return newSolution;
             }
-        }
 
-        private sealed class RemoveLocalFixAllProvider : FixAllProvider
-        {
-            private readonly NodesProvider _nodesProvider;
-
-            public RemoveLocalFixAllProvider(NodesProvider nodesProvider) => _nodesProvider = nodesProvider;
-
-            public override async Task<CodeAction> GetFixAsync(FixAllContext fixAllContext)
+            private async Task<Dictionary<Document, HashSet<SyntaxNode>>> BuildNodesToRemoveMap(CancellationToken cancellationToken)
             {
                 var nodesToRemoveMap = new Dictionary<Document, HashSet<SyntaxNode>>();
-                foreach (var document in fixAllContext.Project.Documents)
+                foreach (var document in _fixAllContext.Project.Documents)
                 {
-                    ImmutableArray<Diagnostic> diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                    ImmutableArray<Diagnostic> diagnostics = await _fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
                     var allNodesToRemove = new HashSet<SyntaxNode>();
                     foreach (var diagnostic in diagnostics)
                     {
-                        var nodesToRemove = await _nodesProvider.GetNodesToRemoveAsync(document, diagnostic, fixAllContext.CancellationToken).ConfigureAwait(false);
+                        var nodesToRemove = await _nodesProvider.GetNodesToRemoveAsync(document, diagnostic, cancellationToken).ConfigureAwait(false);
                         if (nodesToRemove != null)
                         {
                             foreach (var nodeToRemove in nodesToRemove)
@@ -167,8 +166,18 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     nodesToRemoveMap.Add(document, allNodesToRemove);
                 }
 
-                return new RemoveLocalFixAllAction(fixAllContext.Solution, nodesToRemoveMap, _nodesProvider);
+                return nodesToRemoveMap;
             }
+        }
+
+        private sealed class RemoveLocalFixAllProvider : FixAllProvider
+        {
+            private readonly NodesProvider _nodesProvider;
+
+            public RemoveLocalFixAllProvider(NodesProvider nodesProvider) => _nodesProvider = nodesProvider;
+
+            public override Task<CodeAction> GetFixAsync(FixAllContext fixAllContext) =>
+                Task.FromResult((CodeAction)new RemoveLocalFixAllAction(fixAllContext, _nodesProvider));
         }
     }
 }

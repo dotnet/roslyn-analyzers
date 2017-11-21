@@ -16,7 +16,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
     /// <summary>
     /// CA1804: Remove unused locals
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = CSharpRemoveUnusedLocalsFixer.RuleId), Shared]
     public sealed class CSharpRemoveUnusedLocalsFixer : RemoveUnusedLocalsFixer
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create("CS0168", "CS0219", "CS8321");

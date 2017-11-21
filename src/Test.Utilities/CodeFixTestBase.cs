@@ -189,8 +189,8 @@ namespace Test.Utilities
 
             var fixAllProvider = codeFixProvider.GetFixAllProvider();
             var diagnosticProvider = new FixAllDiagnosticProvider(analyzerOpt, additionalFiles, validationMode, getFixableDiagnostics);
-            var fixAllContent = new FixAllContext(document, codeFixProvider, FixAllScope.Document, string.Empty, fixableDiagnostics.Select(d => d.Id), diagnosticProvider, CancellationToken.None);
-            var codeAction = fixAllProvider.GetFixAsync(fixAllContent).Result;
+            var fixAllContext = new FixAllContext(document, codeFixProvider, FixAllScope.Document, string.Empty, fixableDiagnostics.Select(d => d.Id), diagnosticProvider, CancellationToken.None);
+            var codeAction = fixAllProvider.GetFixAsync(fixAllContext).Result;
             document = document.Apply(codeAction);
             additionalFiles = document.Project.AdditionalDocuments.Select(a => new TestAdditionalDocument(a));
 
@@ -244,7 +244,7 @@ namespace Test.Utilities
             public override async Task<IEnumerable<Diagnostic>> GetDocumentDiagnosticsAsync(Document document, CancellationToken cancellationToken)
             {
                 var analyzerDiagnostics = GetSortedDiagnostics(_analyzerOpt, new[] { document }, additionalFiles: _additionalFiles, validationMode: _testValidationMode);
-                var semanticModel = await document.GetSemanticModelAsync();
+                var semanticModel = await document.GetSemanticModelAsync().ConfigureAwait(false);
                 var compilerDiagnostics = semanticModel.GetDiagnostics();
                 var fixableDiagnostics = _getFixableDiagnostics(analyzerDiagnostics.Concat(compilerDiagnostics));
                 return fixableDiagnostics;

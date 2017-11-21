@@ -60,9 +60,14 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                             Dim declarations = DirectCast(operationContext.Operation, IVariableDeclarationStatement).Declarations
 
                             For Each declaration In declarations
-                                For Each local In declaration.Variables
-                                    mightBecomeUnusedLocals.Add(local)
-                                Next
+                                ' Declarations with complex initializers do not declare unused locals.
+                                If declaration.Initializer Is Nothing OrElse
+                                declaration.Initializer.Kind() = OperationKind.LiteralExpression OrElse
+                                declaration.Initializer.Kind() = OperationKind.DelegateCreationExpression Then
+                                    For Each local In declaration.Variables
+                                        mightBecomeUnusedLocals.Add(local)
+                                    Next
+                                End If
                             Next
                         End Sub, OperationKind.VariableDeclarationStatement)
 
@@ -71,10 +76,12 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                             Dim localReferenceExpression As ILocalReferenceExpression = DirectCast(operationContext.Operation, ILocalReferenceExpression)
                             Dim syntax = localReferenceExpression.Syntax
 
-                            ' The writeonly references should be ignored
-                            If syntax.Parent.IsKind(SyntaxKind.SimpleAssignmentStatement) AndAlso
-                                DirectCast(syntax.Parent, AssignmentStatementSyntax).Left Is syntax Then
-                                Return
+                            ' The writeonly references with trivial right hand side should be ignored.
+                            If syntax.Parent.IsKind(SyntaxKind.SimpleAssignmentStatement) Then
+                                Dim parent = DirectCast(syntax.Parent, AssignmentStatementSyntax)
+                                If parent.Left Is syntax AndAlso parent.Right.Kind() = SyntaxKind.NumericLiteralExpression Then
+                                    Return
+                                End If
                             End If
 
                             mightBecomeUnusedLocals.Remove(localReferenceExpression.Local)

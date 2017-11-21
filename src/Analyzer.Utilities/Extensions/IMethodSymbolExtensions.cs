@@ -120,7 +120,7 @@ namespace Analyzer.Utilities.Extensions
         /// </summary>
         public static bool IsDisposeImplementation(this IMethodSymbol method, Compilation compilation)
         {
-            if (method.Name != "Dispose")
+            if (!method.Name.Contains("Dispose"))
             {
                 return false;
             }

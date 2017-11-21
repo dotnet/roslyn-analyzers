@@ -471,6 +471,27 @@ End Class";
             VerifyBasic(code);
         }
 
+        [Fact]
+        public void Disposable_ImplementedExplicitly_NoDiagnostic()
+        {
+            var code = @"
+using System;
+
+public class ImplementsDisposableExplicitly : IDisposable
+{
+    void IDisposable.Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+    }
+}";
+            VerifyCSharp(code);
+        }
+
         #endregion
 
         #region DiagnosticCases

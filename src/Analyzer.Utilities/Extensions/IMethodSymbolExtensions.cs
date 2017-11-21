@@ -120,11 +120,6 @@ namespace Analyzer.Utilities.Extensions
         /// </summary>
         public static bool IsDisposeImplementation(this IMethodSymbol method, Compilation compilation)
         {
-            if (!method.Name.Contains("Dispose"))
-            {
-                return false;
-            }
-
             if (method.ReturnType.SpecialType == SpecialType.System_Void && method.Parameters.Length == 0)
             {
                 // Identify the implementor of IDisposable.Dispose in the given method's containing type and check

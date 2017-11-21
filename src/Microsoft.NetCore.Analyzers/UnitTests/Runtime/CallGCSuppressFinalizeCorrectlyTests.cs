@@ -474,7 +474,7 @@ End Class";
         [Fact]
         public void Disposable_ImplementedExplicitly_NoDiagnostic()
         {
-            var code = @"
+            var csharpCode = @"
 using System;
 
 public class ImplementsDisposableExplicitly : IDisposable
@@ -489,7 +489,23 @@ public class ImplementsDisposableExplicitly : IDisposable
     {
     }
 }";
-            VerifyCSharp(code);
+            VerifyCSharp(csharpCode);
+
+            var vbCode = @"
+Imports System
+
+Public Class C
+    Implements IDisposable
+
+    Protected Sub NamedDifferent() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Public Sub Dispose(disposing As Boolean)
+    End Sub
+End Class";
+            VerifyBasic(vbCode);
         }
 
         #endregion

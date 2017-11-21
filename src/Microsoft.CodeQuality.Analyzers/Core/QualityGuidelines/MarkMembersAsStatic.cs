@@ -52,7 +52,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 // those.
                 var reportedAssociatedSymbols = new HashSet<ISymbol>();
 
-                compilationContext.RegisterOperationBlockStartActionInternal(blockStartContext =>
+                compilationContext.RegisterOperationBlockStartAction(blockStartContext =>
                 {
                     var methodSymbol = blockStartContext.OwningSymbol as IMethodSymbol;
                     if (methodSymbol == null || !ShouldAnalyze(methodSymbol, blockStartContext.Compilation))
@@ -62,10 +62,10 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
                     bool isInstanceReferenced = false;
 
-                    blockStartContext.RegisterOperationActionInternal(operationContext =>
+                    blockStartContext.RegisterOperationAction(operationContext =>
                     {
                         isInstanceReferenced = true;
-                    }, OperationKind.InstanceReferenceExpression);
+                    }, OperationKind.InstanceReference);
 
                     blockStartContext.RegisterOperationBlockEndAction(blockEndContext =>
                     {

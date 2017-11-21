@@ -121,7 +121,7 @@ End Namespace"
             );
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1202")]
+        [Fact]
         public void XmlDocumentAsFieldSetInsecureResolverInInitializerShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"

@@ -1,4 +1,4 @@
-.NET Compiler Platform ("Roslyn") Analyzers
+﻿.NET Compiler Platform ("Roslyn") Analyzers
 ===========================================
 
 This repository contains a number of [Roslyn](https://github.com/dotnet/roslyn) diagnostic analyzers initially developed to help flesh out the design and implementation of the static analysis APIs. They have been migrated from the main [dotnet/roslyn](https://github.com/dotnet/roslyn) repository in order to continue and speed their further development.
@@ -43,7 +43,7 @@ Microsoft.CodeQuality.Analyzers
 
 Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
 
-[More info](src/Microsoft.CodeQuality.Analyzers/Documentation/Microsoft.CodeQuality.Analyzers.md)
+[More info](src/Microsoft.CodeQuality.Analyzers/Microsoft.CodeQuality.Analyzers.md)
 
 Microsoft.NetCore.Analyzers
 -----------------
@@ -111,6 +111,7 @@ Due to the fact that large number of our analyzers are based on the *not-yet-shi
 3. **Visual Studio 2015 Update 2 and 3**: Analyzer package **Version 1.2.0-beta2**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/1.2.0-beta2
 4. **Visual Studio 2017 RTW (15.0), 15.1 and 15.2**: Analyzer package **Version 2.0.0-beta2**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/2.0.0-beta2
 5.  **Visual Studio 2017 15.3**: Analyzer package **Version 2.3.0-beta1**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/2.3.0-beta1
+6.  **Visual Studio 2017 15.5 Preview 3**: Analyzer package **Version 2.6.0-beta1**, for example https://dotnet.myget.org/feed/roslyn-analyzers/package/nuget/Microsoft.CodeAnalysis.FxCopAnalyzers/2.6.0-beta1-62231-02
 
 On Visual Studio 2017 15.3 release, you can also install a custom **Microsoft Code Analysis VSIX** containing these analyzers as a Visual Studio extension for all your managed projects. See details here: https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.MicrosoftCodeAnalysis2017
 

@@ -6,7 +6,7 @@ Imports System.Linq
 Imports Analyzer.Utilities
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
-Imports Microsoft.CodeAnalysis.Semantics
+Imports Microsoft.CodeAnalysis.Operations
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 Imports Microsoft.CodeQuality.Analyzers.Maintainability
@@ -48,14 +48,14 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
 
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None)
 
-            analysisContext.RegisterOperationBlockStartActionInternal(
+            analysisContext.RegisterOperationBlockStartAction(
                 Sub(operationBlockContext)
                     Dim containingMethod = TryCast(operationBlockContext.OwningSymbol, IMethodSymbol)
 
                     If containingMethod IsNot Nothing Then
                         Dim mightBecomeUnusedLocals = New HashSet(Of ILocalSymbol)()
 
-                        operationBlockContext.RegisterOperationActionInternal(
+                        operationBlockContext.RegisterOperationAction(
                         Sub(operationContext)
                             Dim declarations = DirectCast(operationContext.Operation, IVariableDeclarationStatement).Declarations
 
@@ -69,11 +69,11 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                                     Next
                                 End If
                             Next
-                        End Sub, OperationKind.VariableDeclarationStatement)
+                        End Sub, OperationKind.VariableDeclarationGroup)
 
-                        operationBlockContext.RegisterOperationActionInternal(
+                        operationBlockContext.RegisterOperationAction(
                         Sub(operationContext)
-                            Dim localReferenceExpression As ILocalReferenceExpression = DirectCast(operationContext.Operation, ILocalReferenceExpression)
+                            Dim localReferenceExpression As ILocalReferenceOperation = DirectCast(operationContext.Operation, ILocalReferenceOperation)
                             Dim syntax = localReferenceExpression.Syntax
 
                             ' The writeonly references with trivial right hand side should be ignored.
@@ -85,7 +85,7 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                             End If
 
                             mightBecomeUnusedLocals.Remove(localReferenceExpression.Local)
-                        End Sub, OperationKind.LocalReferenceExpression)
+                        End Sub, OperationKind.LocalReference)
 
                         operationBlockContext.RegisterOperationBlockEndAction(
                         Sub(operationBlockEndContext)

@@ -82,6 +82,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 var exposedMembers = type.GetMembers(identifier).Where(member => ExposedAccessibilities.Contains(member.DeclaredAccessibility));
                 foreach (var member in exposedMembers)
                 {
+                    // Ignore Object.GetType, as it's commonly seen and Type is a commonly-used property name.
+                    if (member.ContainingType.SpecialType == SpecialType.System_Object &&
+                        member.Name == nameof(GetType))
+                    {
+                        continue;
+                    }
+
                     // If the declared type is a property, was a matching method found?
                     if (symbol.Kind == SymbolKind.Property && member.Kind == SymbolKind.Method)
                     {

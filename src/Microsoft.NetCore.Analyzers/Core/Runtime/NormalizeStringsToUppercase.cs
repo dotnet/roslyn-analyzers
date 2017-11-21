@@ -6,7 +6,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -78,9 +78,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                compilationStartContext.RegisterOperationActionInternal(operationAnalysisContext =>
+                compilationStartContext.RegisterOperationAction(operationAnalysisContext =>
                 {
-                    var invocation = (IInvocationExpression)operationAnalysisContext.Operation;
+                    var invocation = (IInvocationOperation)operationAnalysisContext.Operation;
                     if (invocation.TargetMethod == null)
                     {
                         return;
@@ -88,7 +88,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     var method = invocation.TargetMethod;
                     if (method.Equals(toLowerInvariant) ||
                         (method.Equals(toLowerWithCultureInfo) &&
-                         ((invocation.ArgumentsInEvaluationOrder.FirstOrDefault()?.Value as IMemberReferenceExpression)?.Member.Equals(invariantCulture) ?? false)))
+                         ((invocation.Arguments.FirstOrDefault()?.Value as IMemberReferenceOperation)?.Member.Equals(invariantCulture) ?? false)))
                     {
                         var suggestedMethod = toUpperInvariant ?? toUpperWithCultureInfo;
 
@@ -97,7 +97,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         operationAnalysisContext.ReportDiagnostic(diagnostic);
                     }
 
-                }, OperationKind.InvocationExpression);
+                }, OperationKind.Invocation);
             });
         }
     }

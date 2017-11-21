@@ -42,7 +42,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterOperationBlockStartActionInternal(context =>
+            analysisContext.RegisterOperationBlockStartAction(context =>
             {
                 var methodSymbol = context.OwningSymbol as IMethodSymbol;
 
@@ -71,10 +71,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
 
                 bool hasInvocations = false;
-                context.RegisterOperationActionInternal(operationContext =>
+                context.RegisterOperationAction(operationContext =>
                 {
                     hasInvocations = true;
-                }, OperationKind.InvocationExpression);
+                }, OperationKind.Invocation);
 
                 context.RegisterOperationBlockEndAction(endContext =>
                 {

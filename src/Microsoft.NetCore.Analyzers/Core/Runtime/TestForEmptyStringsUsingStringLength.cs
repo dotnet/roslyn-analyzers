@@ -7,7 +7,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -45,14 +45,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            context.RegisterOperationActionInternal(AnalyzeNode, OperationKind.InvocationExpression, OperationKind.BinaryOperatorExpression);
+            context.RegisterOperationAction(AnalyzeNode, OperationKind.Invocation, OperationKind.BinaryOperator);
         }
 
         private static void AnalyzeNode(OperationAnalysisContext context)
         {
             switch (context.Operation.Kind)
             {
-                case OperationKind.InvocationExpression:
+                case OperationKind.Invocation:
                     AnalyzeInvocationExpression(context);
                     break;
 
@@ -67,8 +67,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         /// </summary>
         private static void AnalyzeInvocationExpression(OperationAnalysisContext context)
         {
-            var invocationOperation = (IInvocationExpression)context.Operation;
-            if (invocationOperation.ArgumentsInEvaluationOrder.Length > 0)
+            var invocationOperation = (IInvocationOperation)context.Operation;
+            if (invocationOperation.Arguments.Length > 0)
             {
                 IMethodSymbol methodSymbol = invocationOperation.TargetMethod;
                 if (methodSymbol != null &&
@@ -86,7 +86,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         /// </summary>
         private static void AnalyzeBinaryExpression(OperationAnalysisContext context)
         {
-            var binaryOperation = (IBinaryOperatorExpression)context.Operation;
+            var binaryOperation = (IBinaryOperation)context.Operation;
 
             if (binaryOperation.OperatorKind != BinaryOperatorKind.Equals &&
                 binaryOperation.OperatorKind != BinaryOperatorKind.NotEquals)
@@ -133,9 +133,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return (constantValueOpt.Value as string)?.Length == 0;
             }
 
-            if (expression.Kind == OperationKind.FieldReferenceExpression)
+            if (expression.Kind == OperationKind.FieldReference)
             {
-                IFieldSymbol field = ((IFieldReferenceExpression)expression).Field;
+                IFieldSymbol field = ((IFieldReferenceOperation)expression).Field;
                 return string.Equals(field.Name, StringEmptyFieldName, StringComparison.Ordinal) &&
                     field.Type.SpecialType == SpecialType.System_String;
             }
@@ -146,9 +146,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         /// <summary>
         /// Checks if the given invocation has an argument that is an empty string.
         /// </summary>
-        private static bool HasAnEmptyStringArgument(IInvocationExpression invocation)
+        private static bool HasAnEmptyStringArgument(IInvocationOperation invocation)
         {
-            return invocation.ArgumentsInEvaluationOrder.Any(arg => IsEmptyString(arg.Value));
+            return invocation.Arguments.Any(arg => IsEmptyString(arg.Value));
         }
     }
 }

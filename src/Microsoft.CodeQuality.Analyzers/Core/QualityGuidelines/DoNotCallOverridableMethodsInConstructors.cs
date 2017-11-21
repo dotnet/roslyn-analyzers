@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
@@ -47,21 +47,21 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 INamedTypeSymbol webUiControlType = compilationContext.Compilation.GetTypeByMetadataName("System.Web.UI.Control");
                 INamedTypeSymbol componentModelComponentType = compilationContext.Compilation.GetTypeByMetadataName("System.ComponentModel.Component");
 
-                compilationContext.RegisterOperationBlockStartActionInternal(context =>
+                compilationContext.RegisterOperationBlockStartAction(context =>
                 {
                     if (ShouldOmitThisDiagnostic(context.OwningSymbol, webUiControlType, componentModelComponentType))
                     {
                         return;
                     }
 
-                    context.RegisterOperationActionInternal(oc => AnalyzeOperation(oc, context.OwningSymbol.ContainingType), OperationKind.InvocationExpression);
+                    context.RegisterOperationAction(oc => AnalyzeOperation(oc, context.OwningSymbol.ContainingType), OperationKind.Invocation);
                 });
             });
         }
 
         private static void AnalyzeOperation(OperationAnalysisContext context, INamedTypeSymbol containingType)
         {
-            var operation = context.Operation as IInvocationExpression;
+            var operation = context.Operation as IInvocationOperation;
             IMethodSymbol method = operation.TargetMethod;
             if (method != null &&
                 (method.IsAbstract || method.IsVirtual) &&

@@ -8,4 +8,10 @@
     <!-- Fix tracked by https://github.com/dotnet/roslyn-analyzers/issues/1354 -->
     <Rule Id="CA1707" Action="None" />
   </Rules>
+  
+  <Rules AnalyzerId="Microsoft.CodeQuality.Analyzers" RuleNamespace="Microsoft.CodeQuality.Analyzers.Maintainability">
+    <!-- Unused parameter rule has many violations in non-shipping projects -->
+    <!-- Reenabling is tracked by https://github.com/dotnet/roslyn-analyzers/issues/1355 -->
+    <Rule Id="CA1801" Action="None" />
+  </Rules>
 </RuleSet>

@@ -471,6 +471,43 @@ End Class";
             VerifyBasic(code);
         }
 
+        [Fact]
+        public void Disposable_ImplementedExplicitly_NoDiagnostic()
+        {
+            var csharpCode = @"
+using System;
+
+public class ImplementsDisposableExplicitly : IDisposable
+{
+    void IDisposable.Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+    }
+}";
+            VerifyCSharp(csharpCode);
+
+            var vbCode = @"
+Imports System
+
+Public Class C
+    Implements IDisposable
+
+    Protected Sub NamedDifferent() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Public Sub Dispose(disposing As Boolean)
+    End Sub
+End Class";
+            VerifyBasic(vbCode);
+        }
+
         #endregion
 
         #region DiagnosticCases

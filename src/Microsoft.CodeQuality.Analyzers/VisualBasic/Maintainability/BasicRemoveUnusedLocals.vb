@@ -77,12 +77,11 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                             Dim syntax = localReferenceExpression.Syntax
                             If syntax.Parent.IsKind(SyntaxKind.SimpleAssignmentStatement) Then
                                 Dim parent = DirectCast(syntax.Parent, AssignmentStatementSyntax)
-                                Dim simpleAssignmentExpression As IAssignmentOperation = DirectCast(localReferenceExpression.Parent, IAssignmentOperation)
-                                Dim rightHandSide = simpleAssignmentExpression.Value
-
-                                ' The writeonly references without constant right-hand side should be ignored.
-                                If parent.Left Is syntax AndAlso rightHandSide.ConstantValue.HasValue Then
-                                    Return
+                                If parent.Left Is syntax Then
+                                    Dim simpleAssignmentExpression As IAssignmentOperation = DirectCast(localReferenceExpression.Parent, IAssignmentOperation)
+                                    If simpleAssignmentExpression.Value.ConstantValue.HasValue Then
+                                        Return
+                                    End If
                                 End If
                             End If
 

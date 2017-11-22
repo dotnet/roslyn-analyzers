@@ -439,6 +439,39 @@ End Class
         }
 
         [Fact]
+        public void UnusedLocal_ImplicitConversion_Basic()
+        {
+            var code = @"
+Class C
+    Sub M()
+        Dim a As Short = 0
+        a = 1
+    End Sub
+
+    Sub N()
+        Dim a As Short = 0, b As Integer = 0
+        a = b
+    End Sub
+End Class
+";
+
+            var fix = @"
+Class C
+    Sub M()
+    End Sub
+
+    Sub N()
+        Dim a As Short = 0, b As Integer = 0
+        a = b
+    End Sub
+End Class
+";
+
+            VerifyBasicFix(code, fix, allowNewCompilerDiagnostics: true);
+            VerifyBasicFixAll(code, fix, allowNewCompilerDiagnostics: true);
+        }
+
+        [Fact]
         public void UnusedLocal_JointDeclaration_RemoveFirst_Basic()
         {
             var code = @"

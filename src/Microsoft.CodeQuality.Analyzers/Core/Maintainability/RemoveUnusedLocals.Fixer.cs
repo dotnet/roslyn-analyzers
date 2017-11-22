@@ -75,7 +75,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     }
                 }
 
-                var declarationNode = editor.Generator.GetDeclaration(node);
                 nodesToRemoveBuilder.Add(node);
 
                 var nodesToRemove = nodesToRemoveBuilder.ToImmutable();

@@ -502,8 +502,11 @@ Public Class C
     Function F() As Integer
         Dim a As Integer, b As Integer
         Dim c = 0, d = 0
+        Dim g, h As New Integer
         a = 0
         b = 0
+        g = 0
+        h = 0
         Return 0
     End Function
 End Class
@@ -511,6 +514,9 @@ End Class
             var fix = @"
 Public Class C
     Function F() As Integer
+        Dim g, h As New Integer
+        g = 0
+        h = 0
         Return 0
     End Function
 End Class

@@ -62,8 +62,8 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                             For Each declaration In declarations
                                 ' Declarations with invocation expressions as initializers declare unused locals.
                                 If declaration.Initializer Is Nothing OrElse
-                                    (declaration.Initializer.Syntax.Kind() = SyntaxKind.EqualsValue AndAlso
-                                    (DirectCast(declaration.Initializer.Syntax, EqualsValueSyntax).Value.Kind() <> SyntaxKind.InvocationExpression)) Then
+                                declaration.Initializer.Value.ConstantValue.HasValue OrElse
+                                declaration.Initializer.Value.Kind() = OperationKind.DelegateCreation Then
                                     For Each local In declaration.GetDeclaredVariables()
                                         mightBecomeUnusedLocals.Add(local)
                                     Next
@@ -75,11 +75,13 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                         Sub(operationContext)
                             Dim localReferenceExpression As ILocalReferenceOperation = DirectCast(operationContext.Operation, ILocalReferenceOperation)
                             Dim syntax = localReferenceExpression.Syntax
-
-                            ' The writeonly references with non-invocation right-hand side should be ignored.
                             If syntax.Parent.IsKind(SyntaxKind.SimpleAssignmentStatement) Then
                                 Dim parent = DirectCast(syntax.Parent, AssignmentStatementSyntax)
-                                If parent.Left Is syntax AndAlso parent.Right.Kind() <> SyntaxKind.InvocationExpression Then
+                                Dim simpleAssignmentExpression As IAssignmentOperation = DirectCast(localReferenceExpression.Parent, IAssignmentOperation)
+                                Dim rightHandSide = simpleAssignmentExpression.Value
+
+                                ' The writeonly references without constant right-hand side should be ignored.
+                                If parent.Left Is syntax AndAlso rightHandSide.ConstantValue.HasValue Then
                                     Return
                                 End If
                             End If

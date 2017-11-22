@@ -135,8 +135,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
                     var syntaxGenerator = SyntaxGenerator.GetGenerator(document);
-                    var newDocument = await _nodesProvider.RemoveNodes(document, pair.Value, cancellationToken);
-                    var newRoot = await newDocument.GetSyntaxRootAsync();
+                    var newDocument = await _nodesProvider.RemoveNodes(document, pair.Value, cancellationToken).ConfigureAwait(false);
+                    var newRoot = await newDocument.GetSyntaxRootAsync().ConfigureAwait(false);
                     newSolution = newSolution.WithDocumentSyntaxRoot(document.Id, newRoot);
                 }
 

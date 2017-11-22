@@ -11,8 +11,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
     public class RemoveUnusedLocalsFixerTests : CodeFixTestBase
     {
-        private const string CA1804RuleId = "CA1804";
-
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new BasicRemoveUnusedLocalsAnalyzer();

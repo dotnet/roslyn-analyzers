@@ -57,14 +57,14 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
 
                         operationBlockContext.RegisterOperationAction(
                         Sub(operationContext)
-                            Dim declarations = DirectCast(operationContext.Operation, IVariableDeclarationStatement).Declarations
+                            Dim declarations = DirectCast(operationContext.Operation, IVariableDeclarationGroupOperation).Declarations
 
                             For Each declaration In declarations
-                                ' Declarations with complex initializers do not declare unused locals.
+                                ' Declarations with invocation expressions as initializers declare unused locals.
                                 If declaration.Initializer Is Nothing OrElse
-                                declaration.Initializer.Kind() = OperationKind.LiteralExpression OrElse
-                                declaration.Initializer.Kind() = OperationKind.DelegateCreationExpression Then
-                                    For Each local In declaration.Variables
+                                    (declaration.Initializer.Syntax.Kind() = SyntaxKind.EqualsValue AndAlso
+                                    (DirectCast(declaration.Initializer.Syntax, EqualsValueSyntax).Value.Kind() <> SyntaxKind.InvocationExpression)) Then
+                                    For Each local In declaration.GetDeclaredVariables()
                                         mightBecomeUnusedLocals.Add(local)
                                     Next
                                 End If
@@ -76,10 +76,10 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                             Dim localReferenceExpression As ILocalReferenceOperation = DirectCast(operationContext.Operation, ILocalReferenceOperation)
                             Dim syntax = localReferenceExpression.Syntax
 
-                            ' The writeonly references with trivial right hand side should be ignored.
+                            ' The writeonly references with non-invocation right-hand side should be ignored.
                             If syntax.Parent.IsKind(SyntaxKind.SimpleAssignmentStatement) Then
                                 Dim parent = DirectCast(syntax.Parent, AssignmentStatementSyntax)
-                                If parent.Left Is syntax AndAlso parent.Right.Kind() = SyntaxKind.NumericLiteralExpression Then
+                                If parent.Left Is syntax AndAlso parent.Right.Kind() <> SyntaxKind.InvocationExpression Then
                                     Return
                                 End If
                             End If

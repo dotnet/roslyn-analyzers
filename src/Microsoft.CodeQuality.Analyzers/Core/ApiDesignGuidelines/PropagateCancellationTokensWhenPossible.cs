@@ -40,9 +40,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         public override void Initialize(AnalysisContext analysisContext)
         {
             analysisContext.EnableConcurrentExecution();
-
-            // TODO: Include this?
-            // analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
             analysisContext.RegisterOperationAction(AnalyzeInvocation, OperationKind.Invocation);
         }

@@ -153,7 +153,7 @@ End Class
 
         #region Diagnostic Tests
 
-        [Theory]
+        [Theory(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1318")]
         [MemberData(nameof(CollectionNames_Arity1))]
         public void DiagnosticCases_Arity1(string collectionName)
         {
@@ -208,7 +208,7 @@ End Class
     GetBasicResultAt(15, 3, collectionName));
         }
 
-        [Theory]
+        [Theory(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1318")]
         [MemberData(nameof(CollectionNames_Arity2))]
         public void DiagnosticCases_Arity2(string collectionName)
         {

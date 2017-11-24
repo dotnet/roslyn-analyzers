@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="DoNotCallToImmutableArrayOnAnImmutableArrayValueTitle">
         <source>Do not call ToImmutableArray on an ImmutableArray value</source>
-        <target state="new">Do not call ToImmutableArray on an ImmutableArray value</target>
+        <target state="translated">Non chiamare ToImmutableArray su un valore ImmutableArray</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallToImmutableArrayOnAnImmutableArrayValueMessage">
         <source>Do not call ToImmutableArray on an ImmutableArray value</source>
-        <target state="new">Do not call ToImmutableArray on an ImmutableArray value</target>
+        <target state="translated">Non chiamare ToImmutableArray su un valore ImmutableArray</target>
         <note />
       </trans-unit>
       <trans-unit id="CategoryReliability">
         <source>Reliability</source>
-        <target state="new">Reliability</target>
+        <target state="translated">Affidabilità</target>
         <note />
       </trans-unit>
     </body>

@@ -4,22 +4,22 @@
     <body>
       <trans-unit id="DoNotUseMD5">
         <source>Do not use insecure cryptographic algorithm MD5.</source>
-        <target state="new">Do not use insecure cryptographic algorithm MD5.</target>
+        <target state="translated">Güvenli olmayan MD5 kriptografik algoritmasını kullanmayın.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseMD5Description">
         <source>This type implements MD5, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the MD5 and HMACMD5 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</source>
-        <target state="new">This type implements MD5, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the MD5 and HMACMD5 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</target>
+        <target state="translated">Bu tür, kriptografik olarak güvenli olmayan bir karma işlevi olan MD5 uygular. MD5 ve HMACMD5 algoritmaları için karma çakışmaları işlemsel olarak uygundur. Bu kullanımı bir SHA-2 aile karma algoritmasıyla (SHA512, SHA384, SHA256) değiştirin.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseSHA1">
         <source>Do not use insecure cryptographic algorithm SHA1.</source>
-        <target state="new">Do not use insecure cryptographic algorithm SHA1.</target>
+        <target state="translated">Güvenli olmayan SHA1 kriptografik algoritmasını kullanmayın.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseSHA1Description">
         <source>This type implements SHA1, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the SHA-1 and SHA-0 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</source>
-        <target state="new">This type implements SHA1, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the SHA-1 and SHA-0 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</target>
+        <target state="translated">Bu tür, kriptografik olarak güvenli olmayan bir karma işlevi olan SHA1 uygular. SHA-1 ve SHA-0 algoritmaları için karma çakışmaları işlemsel olarak uygundur. Bu kullanımı bir SHA-2 aile karma algoritmasıyla (SHA512, SHA384, SHA256) değiştirin.</target>
         <note />
       </trans-unit>
     </body>

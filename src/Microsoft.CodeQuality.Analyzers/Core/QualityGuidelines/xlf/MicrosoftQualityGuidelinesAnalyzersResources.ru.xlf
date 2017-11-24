@@ -4,192 +4,192 @@
     <body>
       <trans-unit id="UseLiteralsWhereAppropriateTitle">
         <source>Use literals where appropriate</source>
-        <target state="new">Use literals where appropriate</target>
+        <target state="translated">Используйте литералы, когда это уместно</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateDescription">
         <source>A field is declared static and read-only (Shared and ReadOnly in Visual Basic), and is initialized by using a value that is computable at compile time. Because the value that is assigned to the targeted field is computable at compile time, change the declaration to a const (Const in Visual Basic) field so that the value is computed at compile time instead of at run?time.</source>
-        <target state="new">A field is declared static and read-only (Shared and ReadOnly in Visual Basic), and is initialized by using a value that is computable at compile time. Because the value that is assigned to the targeted field is computable at compile time, change the declaration to a const (Const in Visual Basic) field so that the value is computed at compile time instead of at run?time.</target>
+        <target state="translated">Поле объявлено как статическое и доступное только для чтения (Shared и ReadOnly в Visual Basic) и инициализировано с помощью значения, вычисляемого во время компиляции. Так как значение, присвоенное целевому полю, вычисляется во время компиляции, измените объявление на поле константы (Const в Visual Basic), чтобы значение вычислялось во время компиляции, а не во время выполнения.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">
         <source>Field '{0}' is declared as 'static readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
-        <target state="new">Field '{0}' is declared as 'static readonly' but is initialized with a constant value. Mark this field as 'const' instead.</target>
+        <target state="translated">Поле "{0}" объявлено как "static readonly", но инициализировано как константа. Вместо этого пометьте поле как "const".</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageEmptyString">
         <source>Field '{0}' is declared as 'static readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
-        <target state="new">Field '{0}' is declared as 'static readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</target>
+        <target state="translated">Поле "{0}" объявлено как "static readonly", но инициализировано как пустая строка (""). Вместо этого пометьте поле как "const".</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyTitle">
         <source>Do not initialize unnecessarily</source>
-        <target state="new">Do not initialize unnecessarily</target>
+        <target state="translated">Не делайте лишних инициализаций</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyDescription">
         <source>The common language runtime initializes all fields to their default values before running the constructor. In most cases, initializing a field to its default value in a constructor is redundant, which degrades performance and adds to maintenance costs. One case where it is not redundant occurs when the constructor calls another constructor of the same class or a base class constructor and that constructor initializes the field to a non-default value. In this case, changing the value of the field back to its default value can be appropriate.</source>
-        <target state="new">The common language runtime initializes all fields to their default values before running the constructor. In most cases, initializing a field to its default value in a constructor is redundant, which degrades performance and adds to maintenance costs. One case where it is not redundant occurs when the constructor calls another constructor of the same class or a base class constructor and that constructor initializes the field to a non-default value. In this case, changing the value of the field back to its default value can be appropriate.</target>
+        <target state="translated">Перед запуском конструктора среда CLR инициализирует все поля с их значениями по умолчанию. В большинстве случаев инициализация поля со значением по умолчанию в конструкторе является избыточной, снижает производительность и повышает расходы на обслуживание. Эта операция не является избыточной лишь тогда, когда конструктор вызывает другой конструктор того же класса или конструктор базового класса, инициализирующий поле с нестандартным значением. В этом случае восстановление значения по умолчанию для поля может быть уместным.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyMessage">
         <source>Do not initialize unnecessarily</source>
-        <target state="new">Do not initialize unnecessarily</target>
+        <target state="translated">Не делайте лишних инициализаций</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalTitle">
         <source>Prefer jagged arrays over multidimensional</source>
-        <target state="new">Prefer jagged arrays over multidimensional</target>
+        <target state="translated">Используйте массивы массивов вместо многомерных массивов</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalDescription">
         <source>A jagged array is an array whose elements are arrays. The arrays that make up the elements can be of different sizes, leading to less wasted space for some sets of data.</source>
-        <target state="new">A jagged array is an array whose elements are arrays. The arrays that make up the elements can be of different sizes, leading to less wasted space for some sets of data.</target>
+        <target state="translated">Массив массивов состоит из массивов. Массивы, элементы которых могут иметь разный размер, позволяют экономнее расходовать место для нескольких наборов данных.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalMessageDefault">
         <source>{0} is a multidimensional array. Replace it with a jagged array if possible.</source>
-        <target state="new">{0} is a multidimensional array. Replace it with a jagged array if possible.</target>
+        <target state="translated">{0} является многомерным массивом. По возможности замените его массивом массивов.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalMessageReturn">
         <source>{0} returns a multidimensional array of {1}. Replace it with a jagged array if possible.</source>
-        <target state="new">{0} returns a multidimensional array of {1}. Replace it with a jagged array if possible.</target>
+        <target state="translated">{0} возвращает многомерный массив размером {1}. По возможности замените его массивом массивов.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalMessageBody">
         <source>{0} uses a multidimensional array of {1}. Replace it with a jagged array if possible.</source>
-        <target state="new">{0} uses a multidimensional array of {1}. Replace it with a jagged array if possible.</target>
+        <target state="translated">{0} использует многомерный массив размером {1}. По возможности замените его массивом массивов.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkMembersAsStaticTitle">
         <source>Mark members as static</source>
-        <target state="new">Mark members as static</target>
+        <target state="translated">Пометьте члены как статические</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkMembersAsStaticDescription">
         <source>Members that do not access instance data or call instance methods can be marked as static (Shared in Visual Basic). After you mark the methods as static, the compiler will emit nonvirtual call sites to these members. This can give you a measurable performance gain for performance-sensitive code.</source>
-        <target state="new">Members that do not access instance data or call instance methods can be marked as static (Shared in Visual Basic). After you mark the methods as static, the compiler will emit nonvirtual call sites to these members. This can give you a measurable performance gain for performance-sensitive code.</target>
+        <target state="translated">Члены, которые не обращаются к данным экземпляров и не вызывают методы экземпляров, можно пометить как статические (Shared в Visual Basic). После этого компилятор создаст невиртуальные места для вызова этих членов. Это может привести к ощутимому росту производительности для чувствительного к производительности кода.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkMembersAsStaticMessage">
         <source>Member {0} does not access instance data and can be marked as static (Shared in VisualBasic)</source>
-        <target state="new">Member {0} does not access instance data and can be marked as static (Shared in VisualBasic)</target>
+        <target state="translated">Член {0} не обращается к данным экземпляров, поэтому его можно пометить как статический (Shared в Visual Basic).</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeTitle">
         <source>Dispose Objects Before Losing Scope</source>
-        <target state="new">Dispose Objects Before Losing Scope</target>
+        <target state="translated">Ликвидировать объекты перед потерей области</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeDescription">
         <source>Because an exceptional event might occur that will prevent the finalizer of an object from running, the object should be explicitly disposed before all references to it are out of scope.</source>
-        <target state="new">Because an exceptional event might occur that will prevent the finalizer of an object from running, the object should be explicitly disposed before all references to it are out of scope.</target>
+        <target state="translated">Так как может возникнуть событие исключения, препятствующее выполнению метода завершения объекта, объект следует ликвидировать в явной форме, прежде чем все ссылки на него выйдут за пределы области действия.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeMessage">
         <source>Dispose Objects Before Losing Scope</source>
-        <target state="new">Dispose Objects Before Losing Scope</target>
+        <target state="translated">Ликвидировать объекты перед потерей области</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewVisibleEventHandlersTitle">
         <source>Review visible event handlers</source>
-        <target state="new">Review visible event handlers</target>
+        <target state="translated">Проверьте видимые обработчики событий</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewVisibleEventHandlersDescription">
         <source>A public or protected event-handling method was detected. Event-handling methods should not be exposed unless absolutely necessary.</source>
-        <target state="new">A public or protected event-handling method was detected. Event-handling methods should not be exposed unless absolutely necessary.</target>
+        <target state="translated">Обнаружен общий или защищенный метод обработки событий. Такие методы следует предоставлять только в крайнем случае.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewVisibleEventHandlersMessageSecurity">
         <source>Consider making {0} not externally visible or ensure that it is benign code.</source>
-        <target state="new">Consider making {0} not externally visible or ensure that it is benign code.</target>
+        <target state="translated">Рекомендуется сделать {0} невидимым снаружи или убедиться, что код не опасен.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewVisibleEventHandlersMessageDefault">
         <source>Consider making {0} not externally visible.</source>
-        <target state="new">Consider making {0} not externally visible.</target>
+        <target state="translated">Рекомендуется сделать {0} невидимым снаружи.</target>
         <note />
       </trans-unit>
       <trans-unit id="SealMethodsThatSatisfyPrivateInterfacesTitle">
         <source>Seal methods that satisfy private interfaces</source>
-        <target state="new">Seal methods that satisfy private interfaces</target>
+        <target state="translated">Запечатайте методы, соответствующие частным интерфейсам</target>
         <note />
       </trans-unit>
       <trans-unit id="SealMethodsThatSatisfyPrivateInterfacesDescription">
         <source>An inheritable public type provides an overridable method implementation of an internal (Friend in Visual Basic) interface. To fix a violation of this rule, prevent the method from being overridden outside the assembly.</source>
-        <target state="new">An inheritable public type provides an overridable method implementation of an internal (Friend in Visual Basic) interface. To fix a violation of this rule, prevent the method from being overridden outside the assembly.</target>
+        <target state="translated">Наследуемый общий тип предоставляет переопределяемую реализацию метода для внутреннего интерфейса (Friend в Visual Basic). Чтобы устранить нарушение этого правила, предотвратите переопределение этого метода вне сборки.</target>
         <note />
       </trans-unit>
       <trans-unit id="SealMethodsThatSatisfyPrivateInterfacesMessage">
         <source>Seal methods that satisfy private interfaces</source>
-        <target state="new">Seal methods that satisfy private interfaces</target>
+        <target state="translated">Запечатайте методы, соответствующие частным интерфейсам</target>
         <note />
       </trans-unit>
       <trans-unit id="RemoveEmptyFinalizers">
         <source>Remove empty Finalizers</source>
-        <target state="new">Remove empty Finalizers</target>
+        <target state="translated">Удалите пустые завершающие методы</target>
         <note />
       </trans-unit>
       <trans-unit id="RemoveEmptyFinalizersDescription">
         <source>Finalizers should be avoided where possible, to avoid the additional performance overhead involved in tracking object lifetime.</source>
-        <target state="new">Finalizers should be avoided where possible, to avoid the additional performance overhead involved in tracking object lifetime.</target>
+        <target state="translated">Если возможно, следует избегать завершающих методов, чтобы исключить дополнительные издержки, связанные с отслеживанием времени существования объектов.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallOverridableMethodsInConstructors">
         <source>Do not call overridable methods in constructors</source>
-        <target state="new">Do not call overridable methods in constructors</target>
+        <target state="translated">Не вызывайте переопределяемые методы в конструкторах</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallOverridableMethodsInConstructorsDescription">
         <source>Virtual methods defined on the class should not be called from constructors. If a derived class has overridden the method, the derived class version will be called (before the derived class constructor is called).</source>
-        <target state="new">Virtual methods defined on the class should not be called from constructors. If a derived class has overridden the method, the derived class version will be called (before the derived class constructor is called).</target>
+        <target state="translated">Виртуальные методы, определенные в классе, не следует вызывать из конструкторов. Если производный класс переопределил метод, будет вызвана версия производного класса (до вызова конструктора производного класса).</target>
         <note />
       </trans-unit>
       <trans-unit id="RethrowToPreserveStackDetailsMessage">
         <source>Re-throwing caught exception changes stack information.</source>
-        <target state="new">Re-throwing caught exception changes stack information.</target>
+        <target state="translated">Повторное порождение перехваченного исключения изменяет сведения стека.</target>
         <note />
       </trans-unit>
       <trans-unit id="RethrowToPreserveStackDetailsTitle">
         <source>Rethrow to preserve stack details.</source>
-        <target state="new">Rethrow to preserve stack details.</target>
+        <target state="translated">Повторно порождайте исключения для сохранения сведений стека.</target>
         <note />
       </trans-unit>
       <trans-unit id="MakeDeclaringTypeInternal">
         <source>Make declaring type internal.</source>
-        <target state="new">Make declaring type internal.</target>
+        <target state="translated">Сделайте объявляющий тип внутренним.</target>
         <note />
       </trans-unit>
       <trans-unit id="MakeDeclaringTypeSealed">
         <source>Make declaring type sealed.</source>
-        <target state="new">Make declaring type sealed.</target>
+        <target state="translated">Сделайте объявляющий тип запечатанным.</target>
         <note />
       </trans-unit>
       <trans-unit id="MakeMemberNotOverridable">
         <source>Make member not overridable.</source>
-        <target state="new">Make member not overridable.</target>
+        <target state="translated">Сделайте член непереопределяемым.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseExceptionsInExceptionClausesDescription">
         <source>When an exception is raised in a finally clause, the new exception hides the active exception. This makes the original error difficult to detect and debug.</source>
-        <target state="new">When an exception is raised in a finally clause, the new exception hides the active exception. This makes the original error difficult to detect and debug.</target>
+        <target state="translated">Когда в предложении finally порождается исключение, новое исключение скрывает активное исключение. Это затрудняет обнаружение и отладку исходной ошибки.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseExceptionsInExceptionClausesMessageFinally">
         <source>Do not raise an exception from within a finally clause. </source>
-        <target state="new">Do not raise an exception from within a finally clause. </target>
+        <target state="translated">Не порождайте исключение изнутри предложения finally. </target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseExceptionsInExceptionClausesTitle">
         <source>Do not raise exceptions in finally clauses</source>
-        <target state="new">Do not raise exceptions in finally clauses</target>
+        <target state="translated">Не порождайте исключения в предложениях finally</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateCodeActionTitle">
         <source>Change to constant</source>
-        <target state="new">Change to constant</target>
+        <target state="translated">Измените на константу</target>
         <note />
       </trans-unit>
     </body>

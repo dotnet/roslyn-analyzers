@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="AnalyzerDescription">
         <source>Type names should be all uppercase.</source>
-        <target state="new">Type names should be all uppercase.</target>
+        <target state="translated">Les noms de types doivent être en majuscules.</target>
         <note>An optional longer localizable description of the diagnostic.</note>
       </trans-unit>
       <trans-unit id="AnalyzerMessageFormat">
         <source>Type name '{0}' contains lowercase letters</source>
-        <target state="new">Type name '{0}' contains lowercase letters</target>
+        <target state="translated">Le nom de type '{0}' contient des lettres minuscules</target>
         <note>The format-able message the diagnostic displays.</note>
       </trans-unit>
       <trans-unit id="AnalyzerTitle">
         <source>Type name contains lowercase letters</source>
-        <target state="new">Type name contains lowercase letters</target>
+        <target state="translated">Le nom de type contient des lettres minuscules</target>
         <note>The title of the diagnostic.</note>
       </trans-unit>
     </body>

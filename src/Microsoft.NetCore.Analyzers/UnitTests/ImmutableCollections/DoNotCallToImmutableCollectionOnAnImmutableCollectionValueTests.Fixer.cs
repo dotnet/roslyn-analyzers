@@ -8,26 +8,26 @@ using Test.Utilities;
 
 namespace Microsoft.NetCore.Analyzers.ImmutableCollections.UnitTests
 {
-    public class DoNotCallToImmutableArrayOnAnImmutableArrayValueFixerTests : CodeFixTestBase
+    public class DoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixerTests : CodeFixTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new DoNotCallToImmutableArrayOnAnImmutableArrayValueAnalyzer();
+            return new DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new DoNotCallToImmutableArrayOnAnImmutableArrayValueAnalyzer();
+            return new DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
-            return new BasicDoNotCallToImmutableArrayOnAnImmutableArrayValueFixer();
+            return new BasicDoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new CSharpDoNotCallToImmutableArrayOnAnImmutableArrayValueFixer();
+            return new CSharpDoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer();
         }
     }
 }

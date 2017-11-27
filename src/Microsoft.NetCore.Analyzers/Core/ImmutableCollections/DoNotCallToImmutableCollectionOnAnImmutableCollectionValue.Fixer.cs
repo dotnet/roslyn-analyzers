@@ -7,11 +7,11 @@ using Microsoft.CodeAnalysis.CodeFixes;
 namespace Microsoft.NetCore.Analyzers.ImmutableCollections
 {
     /// <summary>
-    /// RS0012: Do not call ToImmutableArray on an ImmutableArray value
+    /// RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
     /// </summary>
-    public abstract class DoNotCallToImmutableArrayOnAnImmutableArrayValueFixer : CodeFixProvider
+    public abstract class DoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DoNotCallToImmutableArrayOnAnImmutableArrayValueAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

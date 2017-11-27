@@ -8,10 +8,10 @@ using Microsoft.CodeAnalysis.CodeFixes;
 namespace Microsoft.NetCore.CSharp.Analyzers.ImmutableCollections
 {
     /// <summary>
-    /// RS0012: Do not call ToImmutableArray on an ImmutableArray value
+    /// RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
-    public class CSharpDoNotCallToImmutableArrayOnAnImmutableArrayValueFixer : DoNotCallToImmutableArrayOnAnImmutableArrayValueFixer
+    public class CSharpDoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer : DoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer
     {
     }
 }

@@ -7,11 +7,11 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 
 Namespace Microsoft.NetCore.VisualBasic.Analyzers.ImmutableCollections
     ''' <summary>
-    ''' RS0012: Do not call ToImmutableArray on an ImmutableArray value
+    ''' RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
-    Public NotInheritable Class BasicDoNotCallToImmutableArrayOnAnImmutableArrayValueFixer
-        Inherits DoNotCallToImmutableArrayOnAnImmutableArrayValueFixer
+    Public NotInheritable Class BasicDoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer
+        Inherits DoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer
 
     End Class
 End Namespace

@@ -36,8 +36,10 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines
             ClassDeclarationSyntax classDeclaration = root.FindToken(span.Start).Parent?.FirstAncestorOrSelf<ClassDeclarationSyntax>();
             if (classDeclaration != null)
             {
-                var codeAction = new MyCodeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.MakeClassStatic,
-                                                  async ct => await MakeClassStatic(document, classDeclaration, ct).ConfigureAwait(false));
+                string title = MicrosoftApiDesignGuidelinesAnalyzersResources.MakeClassStatic;
+                var codeAction = new MyCodeAction(title,
+                                                  async ct => await MakeClassStatic(document, classDeclaration, ct).ConfigureAwait(false),
+                                                  equivalenceKey: title);
                 context.RegisterCodeFix(codeAction, context.Diagnostics);
             }
         }
@@ -58,14 +60,16 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines
             return editor.GetChangedDocument();
         }
 
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
         private class MyCodeAction : DocumentChangeAction
         {
-            public override string EquivalenceKey => nameof(CSharpStaticHolderTypesFixer);
-
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument) :
-                base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
+
+            // Workaround for https://github.com/dotnet/roslyn-analyzers/issues/1413
+            public override string EquivalenceKey => base.EquivalenceKey;
         }
     }
 

@@ -45,9 +45,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             if (expression != null)
             {
+                string title = MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDecreaseInheritedMemberVisibilityCodeFix;
                 context.RegisterCodeFix(new MakeInheritedMemberVisibleCodeAction(
-                    string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDecreaseInheritedMemberVisibilityCodeFix, symbol.Name),
-                    async c => await IncreaseVisibility(context.Document, expression, c).ConfigureAwait(false)),
+                        string.Format(title, symbol.Name),
+                        async c => await IncreaseVisibility(context.Document, expression, c).ConfigureAwait(false),
+                        equivalenceKey: title),
                     context.Diagnostics);
             }
         }
@@ -124,12 +126,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private class MakeInheritedMemberVisibleCodeAction : DocumentChangeAction
         {
-            public MakeInheritedMemberVisibleCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument) :
-                base(title, createChangedDocument)
+            public MakeInheritedMemberVisibleCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey) :
+                base(title, createChangedDocument, equivalenceKey)
             {
             }
-
-            public override string EquivalenceKey => Title;
         }
     }
 }

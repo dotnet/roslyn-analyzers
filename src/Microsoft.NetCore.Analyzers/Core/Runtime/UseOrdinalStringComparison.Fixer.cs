@@ -25,30 +25,34 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             // We cannot have multiple overlapping diagnostics of this id.
             Diagnostic diagnostic = context.Diagnostics.Single();
+            string title = SystemRuntimeAnalyzersResources.UseOrdinalStringComparisonTitle;
 
             if (IsInArgumentContext(node))
             {
                 // StringComparison.CurrentCulture => StringComparison.Ordinal
                 // StringComparison.CurrentCultureIgnoreCase => StringComparison.OrdinalIgnoreCase
-                context.RegisterCodeFix(new MyCodeAction(SystemRuntimeAnalyzersResources.UseOrdinalStringComparisonTitle,
-                                                         async ct => await FixArgument(context.Document, syntaxGenerator, root, node).ConfigureAwait(false)),
+                context.RegisterCodeFix(new MyCodeAction(title,
+                                                         async ct => await FixArgument(context.Document, syntaxGenerator, root, node).ConfigureAwait(false),
+                                                         equivalenceKey: title),
                                                     diagnostic);
             }
             else if (IsInIdentifierNameContext(node))
             {
                 // string.Equals(a, b) => string.Equals(a, b, StringComparison.Ordinal)
                 // string.Compare(a, b) => string.Compare(a, b, StringComparison.Ordinal)
-                context.RegisterCodeFix(new MyCodeAction(SystemRuntimeAnalyzersResources.UseOrdinalStringComparisonTitle,
-                                                         async ct => await FixIdentifierName(context.Document, syntaxGenerator, root, node, context.CancellationToken).ConfigureAwait(false)),
+                context.RegisterCodeFix(new MyCodeAction(title,
+                                                         async ct => await FixIdentifierName(context.Document, syntaxGenerator, root, node, context.CancellationToken).ConfigureAwait(false),
+                                                         equivalenceKey: title),
                                                     diagnostic);
             }
             else if (IsInEqualsContext(node))
             {
                 // "a == b" => "string.Equals(a, b, StringComparison.Ordinal)"
                 // "a != b" => "!string.Equals(a, b, StringComparison.Ordinal)"
-                context.RegisterCodeFix(new MyCodeAction(SystemRuntimeAnalyzersResources.UseOrdinalStringComparisonTitle,
-                                async ct => await FixEquals(context.Document, syntaxGenerator, root, node, context.CancellationToken).ConfigureAwait(false)),
-                        diagnostic);
+                context.RegisterCodeFix(new MyCodeAction(title,
+                                                         async ct => await FixEquals(context.Document, syntaxGenerator, root, node, context.CancellationToken).ConfigureAwait(false),
+                                                         equivalenceKey: title),
+                                                    diagnostic);
             }
         }
 
@@ -135,12 +139,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return false;
         }
 
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
+        }
+
+        public sealed override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
         }
     }
 }

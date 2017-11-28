@@ -59,22 +59,24 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             if (type.TypeKind == TypeKind.Struct && !TypeImplementsEquatable(type, equatableType))
             {
+                string title = MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementEquatable;
                 context.RegisterCodeFix(new MyCodeAction(
-                    MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementEquatable,
+                    title,
                     async ct =>
                         await ImplementEquatableInStructAsync(context.Document, declaration, type, model.Compilation,
                             equatableType, ct).ConfigureAwait(false),
-                    equivalenceKey: MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementEquatable), diagnostic);
+                    equivalenceKey: title), diagnostic);
             }
 
             if (!type.OverridesEquals())
             {
+                string title = MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsOnImplementingIEquatableCodeActionTitle;
                 context.RegisterCodeFix(new MyCodeAction(
-                    MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsOnImplementingIEquatableCodeActionTitle,
+                    title,
                     async ct =>
                         await OverrideObjectEqualsAsync(context.Document, declaration, type, equatableType,
                             ct).ConfigureAwait(false),
-                    equivalenceKey: MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsOnImplementingIEquatableCodeActionTitle), diagnostic);
+                    equivalenceKey: title), diagnostic);
             }
         }
 
@@ -235,13 +237,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
         private class MyCodeAction : DocumentChangeAction
         {
-            public override string EquivalenceKey { get; }
-
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument,
-                string equivalenceKey)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
-                EquivalenceKey = equivalenceKey;
             }
         }
     }

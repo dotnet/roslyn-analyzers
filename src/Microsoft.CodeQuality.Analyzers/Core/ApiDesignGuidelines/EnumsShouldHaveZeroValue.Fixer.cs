@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -38,29 +39,42 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             ISymbol declaredSymbol = model.GetDeclaredSymbol(node, context.CancellationToken);
             Debug.Assert(declaredSymbol != null);
-
+            string title;
+            
             foreach (string customTag in diagnostic.Descriptor.CustomTags)
             {
                 switch (customTag)
                 {
                     case EnumsShouldHaveZeroValueAnalyzer.RuleRenameCustomTag:
-                        context.RegisterCodeFix(new DocumentChangeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldZeroValueFlagsRenameCodeFix,
-                                                    async ct => await GetUpdatedDocumentForRuleNameRenameAsync(context.Document, (IFieldSymbol)declaredSymbol, context.CancellationToken).ConfigureAwait(false)),
+                        title = MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldZeroValueFlagsRenameCodeFix;
+                        context.RegisterCodeFix(new MyCodeAction(title,
+                                                    async ct => await GetUpdatedDocumentForRuleNameRenameAsync(context.Document, (IFieldSymbol)declaredSymbol, context.CancellationToken).ConfigureAwait(false),
+                                                    equivalenceKey: title),
                                                 diagnostic);
                         return;
                     case EnumsShouldHaveZeroValueAnalyzer.RuleMultipleZeroCustomTag:
-                        context.RegisterCodeFix(new DocumentChangeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldZeroValueFlagsMultipleZeroCodeFix,
-                            async ct => await ApplyRuleNameMultipleZeroAsync(context.Document, (INamedTypeSymbol)declaredSymbol, context.CancellationToken).ConfigureAwait(false)),
-                        diagnostic);
+                        title = MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldZeroValueFlagsMultipleZeroCodeFix;
+                        context.RegisterCodeFix(new MyCodeAction(title,
+                                                    async ct => await ApplyRuleNameMultipleZeroAsync(context.Document, (INamedTypeSymbol)declaredSymbol, context.CancellationToken).ConfigureAwait(false),
+                                                    equivalenceKey: title),
+                                                diagnostic);
                         return;
 
                     case EnumsShouldHaveZeroValueAnalyzer.RuleNoZeroCustomTag:
-                        context.RegisterCodeFix(new DocumentChangeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldZeroValueNotFlagsNoZeroValueCodeFix,
-                                                    async ct => await ApplyRuleNameNoZeroValueAsync(context.Document, (INamedTypeSymbol)declaredSymbol, context.CancellationToken).ConfigureAwait(false)),
+                        title = MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldZeroValueNotFlagsNoZeroValueCodeFix;
+                        context.RegisterCodeFix(new MyCodeAction(title,
+                                                    async ct => await ApplyRuleNameNoZeroValueAsync(context.Document, (INamedTypeSymbol)declaredSymbol, context.CancellationToken).ConfigureAwait(false),
+                                                    equivalenceKey: title),
                                                 diagnostic);
                         return;
                 }
             }
+        }
+
+        public override FixAllProvider GetFixAllProvider()
+        {
+            // No trivial way to FixAll diagnostics for this code fix.
+            return null;
         }
 
         private SyntaxNode GetExplicitlyAssignedField(IFieldSymbol originalField, SyntaxNode declaration, SyntaxGenerator generator)
@@ -145,6 +159,15 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         protected virtual SyntaxNode GetParentNodeOrSelfToFix(SyntaxNode nodeToFix)
         {
             return nodeToFix;
+        }
+
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
+        private class MyCodeAction : DocumentChangeAction
+        {
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
+            {
+            }
         }
     }
 }

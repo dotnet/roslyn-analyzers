@@ -27,9 +27,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             if (expression != null)
             {
+                string title = MicrosoftApiDesignGuidelinesAnalyzersResources.AppendConfigureAwaitFalse;
                 context.RegisterCodeFix(
-                    new MyCodeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.AppendConfigureAwaitFalse,
-                        async ct => await GetFix(context.Document, expression, ct).ConfigureAwait(false)),
+                    new MyCodeAction(title,
+                        async ct => await GetFix(context.Document, expression, ct).ConfigureAwait(false),
+                        equivalenceKey: title),
                     context.Diagnostics);
             }
         }
@@ -56,8 +58,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument) :
-                base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey) :
+                base(title, createChangedDocument, equivalenceKey)
             {
             }
 

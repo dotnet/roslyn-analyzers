@@ -42,17 +42,20 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             // We cannot have multiple overlapping diagnostics of this id.
             Diagnostic diagnostic = context.Diagnostics.Single();
+            string title = SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle;
 
             if (IsAttribute(node))
             {
-                context.RegisterCodeFix(new MyCodeAction(SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle,
-                                                         async ct => await FixAttributeArguments(context.Document, node, charSetType, dllImportType, marshalAsType, unmanagedType, ct).ConfigureAwait(false)),
+                context.RegisterCodeFix(new MyCodeAction(title,
+                                                         async ct => await FixAttributeArguments(context.Document, node, charSetType, dllImportType, marshalAsType, unmanagedType, ct).ConfigureAwait(false),
+                                                         equivalenceKey: title),
                                         diagnostic);
             }
             else if (IsDeclareStatement(node))
             {
-                context.RegisterCodeFix(new MyCodeAction(SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle,
-                                                         async ct => await FixDeclareStatement(context.Document, node, ct).ConfigureAwait(false)),
+                context.RegisterCodeFix(new MyCodeAction(title,
+                                                         async ct => await FixDeclareStatement(context.Document, node, ct).ConfigureAwait(false),
+                                                         equivalenceKey: title),
                                         diagnostic);
             }
         }
@@ -108,12 +111,18 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         }
 
 
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
+        }
+
+        public sealed override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
         }
     }
 }

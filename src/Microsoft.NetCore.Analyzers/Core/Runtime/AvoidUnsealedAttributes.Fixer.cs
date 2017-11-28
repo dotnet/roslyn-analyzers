@@ -33,8 +33,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 // We cannot have multiple overlapping diagnostics of this id.
                 Diagnostic diagnostic = context.Diagnostics.Single();
 
-                context.RegisterCodeFix(new MyCodeAction(SystemRuntimeAnalyzersResources.AvoidUnsealedAttributesMessage,
-                    async ct => await MakeSealed(editor, declaration).ConfigureAwait(false)),
+                string title = SystemRuntimeAnalyzersResources.AvoidUnsealedAttributesMessage;
+                context.RegisterCodeFix(new MyCodeAction(title,
+                    async ct => await MakeSealed(editor, declaration).ConfigureAwait(false),
+                    equivalenceKey: title),
                     diagnostic);
             }
         }
@@ -48,10 +50,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
+        }
+
+        public sealed override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
         }
     }
 }

@@ -665,6 +665,76 @@ End Class",
 }");
         }
 
+        [Fact, WorkItem(1370, "https://github.com/dotnet/roslyn-analyzers/issues/1370")]
+        public void CA1812_CSharp_NoDiagnostic_ImplicitlyInstantiatedFromSubTypeConstructor()
+        {
+            VerifyCSharp(
+@"
+internal class A
+{
+    public A()
+    {
+    }
+}
+
+internal class B : A
+{
+    public B()
+    {
+    }
+}
+
+internal class C<T>
+{
+}
+
+internal class D : C<int>
+{
+    static void M()
+    {
+        var x = new B();
+        var y = new D();
+    }
+}");
+        }
+
+        [Fact, WorkItem(1370, "https://github.com/dotnet/roslyn-analyzers/issues/1370")]
+        public void CA1812_CSharp_NoDiagnostic_ExplicitlyInstantiatedFromSubTypeConstructor()
+        {
+            VerifyCSharp(
+@"
+internal class A
+{
+    public A(int x)
+    {
+    }
+}
+
+internal class B : A
+{
+    public B(int x): base (x)
+    {
+    }
+}
+
+internal class C<T>
+{
+}
+
+internal class D : C<int>
+{
+    public D(): base()
+    {
+    }
+
+    static void M()
+    {
+        var x = new B(0);
+        var y = new D();
+    }
+}");
+        }
+
         [Fact]
         public void CA1812_Basic_NoDiagnostic_StaticHolderClass()
         {
@@ -712,6 +782,68 @@ internal class C { }"
 Friend Class C
 End Class"
                 );
+        }
+
+        [Fact, WorkItem(1370, "https://github.com/dotnet/roslyn-analyzers/issues/1370")]
+        public void CA1812_Basic_NoDiagnostic_ImplicitlyInstantiatedFromSubTypeConstructor()
+        {
+            VerifyBasic(
+@"
+Friend Class A
+    Public Sub New()
+    End Sub
+End Class
+
+Friend Class B
+    Inherits A
+    Public Sub New()
+    End Sub
+End Class
+
+Friend Class C(Of T)
+End Class
+
+Friend Class D
+    Inherits C(Of Integer)
+    Private Shared Sub M()
+        Dim x = New B()
+        Dim y = New D()
+    End Sub
+End Class");
+        }
+
+        [Fact, WorkItem(1370, "https://github.com/dotnet/roslyn-analyzers/issues/1370")]
+        public void CA1812_Basic_NoDiagnostic_ExplicitlyInstantiatedFromSubTypeConstructor()
+        {
+            VerifyBasic(
+@"
+Friend Class A
+    Public Sub New(ByVal x As Integer)
+    End Sub
+End Class
+
+Friend Class B
+    Inherits A
+
+    Public Sub New(ByVal x As Integer)
+        MyBase.New(x)
+    End Sub
+End Class
+
+Friend Class C(Of T)
+End Class
+
+Friend Class D
+    Inherits C(Of Integer)
+    Public Sub New()
+        MyBase.New()
+    End Sub
+
+    Private Shared Sub M()
+        Dim x = New B(0)
+        Dim y = New D()
+    End Sub
+End Class");
         }
 
         [Fact, WorkItem(1154, "https://github.com/dotnet/roslyn-analyzers/issues/1154")]

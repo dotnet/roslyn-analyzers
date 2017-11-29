@@ -15,9 +15,8 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
-    // TODO summary
     /// <summary>
-    /// 
+    /// CA1507
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.VisualBasic, LanguageNames.CSharp), Shared]
     public class UseNameOfInPlaceOfStringFixer : CodeFixProvider

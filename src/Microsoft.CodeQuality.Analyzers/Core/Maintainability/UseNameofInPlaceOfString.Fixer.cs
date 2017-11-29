@@ -16,7 +16,7 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
     /// <summary>
-    /// CA1507
+    /// CA1507 Use nameof to express symbol names
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.VisualBasic, LanguageNames.CSharp), Shared]
     public class UseNameOfInPlaceOfStringFixer : CodeFixProvider

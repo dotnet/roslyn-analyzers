@@ -18,8 +18,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
     /// <summary>
     /// 
     /// </summary>
-   // [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
-    public abstract class UseNameOfInPlaceOfStringFixer : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.VisualBasic, LanguageNames.CSharp), Shared]
+    public class UseNameOfInPlaceOfStringFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(UseNameofInPlaceOfStringAnalyzer.RuleId);
 
@@ -31,20 +31,17 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-
             var root = await context.Document.GetSyntaxRootAsync(CancellationToken.None);
             var diagnostics = context.Diagnostics;
-            TextSpan diagnosticSpan = diagnostics.First().Location.SourceSpan;
-            SyntaxNode nodeToReplace = root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
+            var diagnosticSpan = diagnostics.First().Location.SourceSpan;
+            // getInnerModeNodeForTie = true so we are replacing the string literal node and not the whole argument node
+            var nodeToReplace = root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
 
             if (nodeToReplace != null)
-            {
-                if (!diagnostics.Single().Properties.TryGetValue("StringText", out var stringText))
-                {
-                    return;
-                };
+            {   
+                var stringText = diagnostics.First().Properties[UseNameofInPlaceOfStringAnalyzer.StringText];
                 context.RegisterCodeFix(
-                    CodeAction.Create("Use NameOf", c => ReplaceWithNameOf(context.Document, nodeToReplace, stringText, c), equivalenceKey: nameof(UseNameOfInPlaceOfStringFixer)),
+                    CodeAction.Create(MicrosoftMaintainabilityAnalyzersResources.UseNameOfInPlaceOfStringTitle, c => ReplaceWithNameOf(context.Document, nodeToReplace, stringText, c), equivalenceKey: nameof(UseNameOfInPlaceOfStringFixer)),
                     context.Diagnostics);
             }
         }
@@ -54,14 +51,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
 
-            var nameOfExpression = GetNameOfExpression(stringText, document);
+            var nameOfExpression = generator.NameOfExpression(generator.IdentifierName(stringText));
 
-            var root = await document.GetSyntaxRootAsync(cancellationToken);
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var newRoot = root.ReplaceNode(nodeToReplace, nameOfExpression);
 
             return document.WithSyntaxRoot(newRoot);
         }
-
-        internal abstract SyntaxNode GetNameOfExpression(string stringText, Document document);
     }
-}
+}   

@@ -96,6 +96,20 @@ class C
         }
 
         [Fact]
+        public void NoDiagnostic_NoMatchingParameter()
+        {
+            VerifyCSharp(@"
+using System;
+class C
+{
+    void M(int x)
+    {
+        throw new ArgumentNullException(""test"", ""test2"", ""test3"");
+    }
+}", TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact]
         public void NoDiagnostic_MatchesParameterButNotCalledParamName()
         {
             VerifyCSharp(@"
@@ -173,7 +187,7 @@ class C
         throw new ArgumentNullException(""x"");
     }
 }",
-    GetCSharpNameofResultAt(7, 41));
+    GetCSharpNameofResultAt(7, 41, "x"));
         }
 
         [Fact]
@@ -187,7 +201,7 @@ Module Mod1
         Throw New ArgumentNullException(""s"")
     End Sub
 End Module",
-    GetBasicNameofResultAt(6, 41));
+    GetBasicNameofResultAt(6, 41, "s"));
         }
 
         [Fact]
@@ -219,7 +233,7 @@ public class Person : INotifyPropertyChanged
         }
     }
 }",
-    GetCSharpNameofResultAt(14, 31));
+    GetCSharpNameofResultAt(14, 31, "PersonName"));
         }
 
         [Fact]
@@ -262,7 +276,7 @@ public class Person : INotifyPropertyChanged
         }
     }
 }",
-    GetCSharpNameofResultAt(15, 31));
+    GetCSharpNameofResultAt(15, 31, "PersonName"));
         }
 
         [Fact]
@@ -277,7 +291,7 @@ class C
         throw new ArgumentNullException(paramName:""x"");
     }
 }",
-    GetCSharpNameofResultAt(7, 41));
+    GetCSharpNameofResultAt(7, 51, "x"));
         }
 
         [Fact]
@@ -309,12 +323,12 @@ public class Person : INotifyPropertyChanged
         }
     }
 }",
-    GetCSharpNameofResultAt(14, 31));
+    GetCSharpNameofResultAt(14, 44, "PersonName"));
         }
 
 
         [Fact]
-        public void Diagnostic_AnonymousFunction1()
+        public void Diagnostic_AnonymousFunctionMultiline1()
         {
             VerifyCSharp(@"
 using System;
@@ -329,11 +343,11 @@ class Test
         };
     }
 }",
-    GetCSharpNameofResultAt(10, 56));
+    GetCSharpNameofResultAt(10, 56, "x"));
         }
 
         [Fact]
-        public void Diagnostic_AnonymousFunction2()
+        public void Diagnostic_AnonymousFunctionMultiLine2()
         {
             VerifyCSharp(@"
 using System;
@@ -348,11 +362,11 @@ class Test
         };
     }
 }",
-    GetCSharpNameofResultAt(10, 56));
+    GetCSharpNameofResultAt(10, 56, "y"));
         }
 
         [Fact]
-        public void Diagnostic_AnonymousFunction3()
+        public void Diagnostic_AnonymousFunctionSingleLine1()
         {
             VerifyCSharp(@"
 using System;
@@ -364,11 +378,11 @@ class Test
         Action<int> a = (int y) => throw new ArgumentException(""somemessage"", ""y"");
     }
 }",
-    GetCSharpNameofResultAt(8, 79));
+    GetCSharpNameofResultAt(8, 79, "y"));
         }
 
         [Fact]
-        public void Diagnostic_AnonymousFunction4()
+        public void Diagnostic_AnonymousFunctionSingleLine2()
         {
             VerifyCSharp(@"
 using System;
@@ -380,21 +394,96 @@ class Test
         Action<int> a = (int y) => throw new ArgumentException(""somemessage"", ""x"");
     }
 }",
-    GetCSharpNameofResultAt(8, 79));
+    GetCSharpNameofResultAt(8, 79, "x"));
         }
 
+        [Fact]
+        public void Diagnostic_AnonymousFunctionMultipleParameters()
+        {
+            VerifyCSharp(@"
+using System;
+
+class Test
+{
+    void Method(int x)
+    {
+        Action<int, int> a = (j, k) => throw new ArgumentException(""somemessage"", ""x"");
+    }
+}",
+    GetCSharpNameofResultAt(8, 83, "x"));
+        }
+
+        [Fact]
+        public void Diagnostic_LocalFunction1()
+        {
+            VerifyCSharp(@"
+using System;
+
+class Test
+{
+    void Method(int x)
+    {
+        void AnotherMethod(int y, int z)
+            {
+                throw new ArgumentException(""somemessage"", ""x"");
+            }
+    }
+}",
+    GetCSharpNameofResultAt(10, 60, "x"));
+        }
+
+        [Fact]
+        public void Diagnostic_LocalFunction2()
+        {
+            VerifyCSharp(@"
+using System;
+
+class Test
+{
+    void Method(int x)
+    {
+        void AnotherMethod(int y, int z)
+            {
+                throw new ArgumentException(""somemessage"", ""y"");
+            }
+    }
+}",
+    GetCSharpNameofResultAt(10, 60, "y"));
+        }
+
+        [Fact]
+        public void Diagnostic_Delegate()
+        {
+            VerifyCSharp(@"
+using System;
+
+namespace ConsoleApp14
+{
+    class Program
+    {
+         class test
+        {
+            Action<int> x2 = delegate (int xyz)
+            {
+                throw new ArgumentNullException(""xyz"");
+            };
+        }
+    }
+}",
+    GetCSharpNameofResultAt(12, 49, "xyz"));
+        }
 
         #endregion
 
-        private DiagnosticResult GetBasicNameofResultAt(int line, int column)
+        private DiagnosticResult GetBasicNameofResultAt(int line, int column, string name)
         {
-            string message = string.Format(MicrosoftMaintainabilityAnalyzersResources.UseNameOfInPlaceOfStringMessage, "test");
+            var message = string.Format(MicrosoftMaintainabilityAnalyzersResources.UseNameOfInPlaceOfStringMessage, name);
             return GetBasicResultAt(line, column, UseNameofInPlaceOfStringAnalyzer.RuleId, message);
         }
 
-        private DiagnosticResult GetCSharpNameofResultAt(int line, int column)
+        private DiagnosticResult GetCSharpNameofResultAt(int line, int column, string name)
         {
-            string message = string.Format(MicrosoftMaintainabilityAnalyzersResources.UseNameOfInPlaceOfStringMessage, "test");
+            var message = string.Format(MicrosoftMaintainabilityAnalyzersResources.UseNameOfInPlaceOfStringMessage, name);
             return GetCSharpResultAt(line, column, UseNameofInPlaceOfStringAnalyzer.RuleId, message);
         }
 

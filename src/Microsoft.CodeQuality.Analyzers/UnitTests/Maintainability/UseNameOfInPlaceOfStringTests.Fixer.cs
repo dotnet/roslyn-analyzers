@@ -24,12 +24,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
-            return new BasicUseNameofInPlaceOfStringFixer();
+                return new UseNameOfInPlaceOfStringFixer();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new CSharpUseNameofInPlaceOfStringFixer();
+                return new UseNameOfInPlaceOfStringFixer();
         }
 
         [Fact]

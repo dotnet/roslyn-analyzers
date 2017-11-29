@@ -128,18 +128,18 @@
         <note />
       </trans-unit>
       <trans-unit id="UseNameOfInPlaceOfStringDescription">
-        <source>Use nameof in place of string description</source>
-        <target state="new">Use nameof in place of string description</target>
+        <source>Using nameof helps keep your code valid when refactoring.</source>
+        <target state="new">Using nameof helps keep your code valid when refactoring.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseNameOfInPlaceOfStringMessage">
-        <source>Use nameof in place of string literal</source>
-        <target state="new">Use nameof in place of string literal</target>
+        <source>Use nameof in place of string literal '{0}'</source>
+        <target state="new">Use nameof in place of string literal '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="UseNameOfInPlaceOfStringTitle">
-        <source>Use nameof in place of string literal</source>
-        <target state="new">Use nameof in place of string literal</target>
+        <source>Use nameof to express symbol names</source>
+        <target state="new">Use nameof to express symbol names</target>
         <note />
       </trans-unit>
     </body>

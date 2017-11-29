@@ -2,7 +2,7 @@
 
 namespace Analyzer.Utilities
 {
-    public static class DiagnosticCategory
+    internal static class DiagnosticCategory
     {
         public static readonly string Design = AnalyzerUtilitiesResources.CategoryDesign;
         public static readonly string Globalization = AnalyzerUtilitiesResources.CategoryGlobalization;

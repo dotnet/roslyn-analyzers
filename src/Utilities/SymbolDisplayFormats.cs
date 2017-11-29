@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities
 {
-    public static class SymbolDisplayFormats
+    internal static class SymbolDisplayFormats
     {
         public static readonly SymbolDisplayFormat ShortSymbolDisplayFormat = new SymbolDisplayFormat(
                 SymbolDisplayGlobalNamespaceStyle.Omitted,

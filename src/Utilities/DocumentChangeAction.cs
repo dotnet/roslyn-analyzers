@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 
 namespace Analyzer.Utilities
 {
-    public abstract class DocumentChangeAction : CodeAction
+    internal abstract class DocumentChangeAction : CodeAction
     {
         private readonly Func<CancellationToken, Task<Document>> _createChangedDocument;
 

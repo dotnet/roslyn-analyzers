@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities.Extensions
 {
-    public static class IEnumerableOfIMethodSymbolExtensions
+    internal static class IEnumerableOfIMethodSymbolExtensions
     {
         /// <summary>
         /// Excludes <paramref name="methods"/> that have an attribute that precisely matches <paramref name="attributeType"/>.

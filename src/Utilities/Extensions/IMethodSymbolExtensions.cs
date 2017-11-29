@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities.Extensions
 {
-    public static class IMethodSymbolExtensions
+    internal static class IMethodSymbolExtensions
     {
         /// <summary>
         /// Checks if the given method overrides Object.Equals.

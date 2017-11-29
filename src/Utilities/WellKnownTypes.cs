@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities
 {
-    public static class WellKnownTypes
+    internal static class WellKnownTypes
     {
         public static INamedTypeSymbol ICollection(Compilation compilation)
         {

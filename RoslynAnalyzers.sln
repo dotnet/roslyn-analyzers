@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26621.2
+VisualStudioVersion = 15.0.27110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.NetFramework.Analyzers", "Microsoft.NetFramework.Analyzers", "{AB503AAC-EE72-4DD4-A339-C7DD545494DB}"
 EndProject
@@ -21,8 +21,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Utilities", "src\Test.Utilities\Test.Utilities.csproj", "{0A0621F2-D1DC-47FF-B643-C6646557505E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzer.Utilities", "src\Analyzer.Utilities\Analyzer.Utilities.csproj", "{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.CodeAnalysis.Analyzers", "Microsoft.CodeAnalysis.Analyzers", "{041E93F2-E703-4AB1-B6DF-13EC899D1C6E}"
 EndProject
@@ -120,7 +118,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.Net.RoslynDiagnos
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Net.RoslynDiagnostics.Package", "nuget\Microsoft.Net.RoslynDiagnostics\Microsoft.Net.RoslynDiagnostics.Package.csproj", "{923A69C8-83DE-46FF-92DF-7CA79438FB02}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Analyzer.Utilities", "src\Utilities\Analyzer.Utilities.shproj", "{EC946164-1E17-410B-B7D9-7DE7E6268D63}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\Utilities\Analyzer.Utilities.projitems*{ec946164-1e17-410b-b7d9-7de7e6268d63}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
@@ -176,14 +179,6 @@ Global
 		{0A0621F2-D1DC-47FF-B643-C6646557505E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0A0621F2-D1DC-47FF-B643-C6646557505E}.Release|x86.ActiveCfg = Release|Any CPU
 		{0A0621F2-D1DC-47FF-B643-C6646557505E}.Release|x86.Build.0 = Release|Any CPU
-		{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}.Debug|x86.Build.0 = Debug|Any CPU
-		{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}.Release|x86.ActiveCfg = Release|Any CPU
-		{F8502E24-5EB1-4CDC-8887-1A0CC8008D96}.Release|x86.Build.0 = Release|Any CPU
 		{D8762A0A-3832-47BE-BCF6-8B1060BE6B28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D8762A0A-3832-47BE-BCF6-8B1060BE6B28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8762A0A-3832-47BE-BCF6-8B1060BE6B28}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -499,7 +494,6 @@ Global
 		{D90E7402-70E7-4A95-A292-47EA163D6309} = {72AAA528-FD70-45DA-82F8-1D29FC27F81F}
 		{BD80CDC4-25FF-4268-8131-F7A43260122B} = {72AAA528-FD70-45DA-82F8-1D29FC27F81F}
 		{0A0621F2-D1DC-47FF-B643-C6646557505E} = {80E410B3-D8D1-4C67-93FF-078530E20816}
-		{F8502E24-5EB1-4CDC-8887-1A0CC8008D96} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
 		{D8762A0A-3832-47BE-BCF6-8B1060BE6B28} = {041E93F2-E703-4AB1-B6DF-13EC899D1C6E}
 		{921B412A-5551-4853-82B4-46AD5A05A03E} = {041E93F2-E703-4AB1-B6DF-13EC899D1C6E}
 		{B1A6A74B-E484-48FB-8745-7A30A06DB631} = {041E93F2-E703-4AB1-B6DF-13EC899D1C6E}
@@ -538,6 +532,7 @@ Global
 		{390DBE36-C8AF-4882-BB5D-87EFBF06B8A8} = {7FEEECAE-4EC2-469C-868A-0B38435C756C}
 		{722141A2-91FE-411A-A64F-A2A2A7150122} = {7FEEECAE-4EC2-469C-868A-0B38435C756C}
 		{923A69C8-83DE-46FF-92DF-7CA79438FB02} = {7CBF63F7-C0A0-4023-9575-B08CDCCD3AFC}
+		{EC946164-1E17-410B-B7D9-7DE7E6268D63} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FC44ACA9-AEA3-4EE6-881C-2E08ED281B5F}

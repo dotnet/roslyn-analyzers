@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Analyzer.Utilities.Extensions
 {
-    public static class IOperationExtensions
+    internal static class IOperationExtensions
     {
         /// <summary>
         /// Gets the receiver type for an invocation expression (i.e. type of 'A' in invocation 'A.B()')

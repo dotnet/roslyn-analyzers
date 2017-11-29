@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities.Extensions
 {
-    public static class ITypeSymbolExtensions
+    internal static class ITypeSymbolExtensions
     {
         public static bool IsPrimitiveType(this ITypeSymbol type)
         {

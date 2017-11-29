@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities.Extensions
 {
-    public static class SyntaxNodeExtensions
+    internal static class SyntaxNodeExtensions
     {
         public static ISymbol GetDeclaredOrReferencedSymbol(this SyntaxNode node, SemanticModel model)
         {

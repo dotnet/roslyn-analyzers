@@ -4,7 +4,7 @@ using System;
 
 namespace Analyzer.Utilities.Extensions
 {
-    public static class StringExtensions
+    internal static class StringExtensions
     {
         /// <summary>
         ///  Note: This doesnot handle all cases of plural for example "Men", "Vertices" etc

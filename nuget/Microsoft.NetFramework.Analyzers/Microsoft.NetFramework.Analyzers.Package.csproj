@@ -16,7 +16,6 @@
     <AnalyzerNupkgAssembly Include="Microsoft.NetFramework.Analyzers.dll" />
     <AnalyzerNupkgAssembly Include="Microsoft.NetFramework.CSharp.Analyzers.dll" />
     <AnalyzerNupkgAssembly Include="Microsoft.NetFramework.VisualBasic.Analyzers.dll" />
-    <AnalyzerNupkgAssembly Include="Analyzer.Utilities.dll" />
     
     <AnalyzerNupkgFile Include="Microsoft.NetFramework.Analyzers.props" />
     <AnalyzerNupkgFile Include="Microsoft.NetFramework.CSharp.Analyzers.props" />

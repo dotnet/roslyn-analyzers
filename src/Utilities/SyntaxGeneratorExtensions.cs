@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Editing;
 
 namespace Analyzer.Utilities
 {
-    public static class SyntaxGeneratorExtensions
+    internal static class SyntaxGeneratorExtensions
     {
         private const string LeftIdentifierName = "left";
         private const string RightIdentifierName = "right";

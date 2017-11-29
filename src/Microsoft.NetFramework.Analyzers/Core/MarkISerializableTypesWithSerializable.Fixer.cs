@@ -33,8 +33,10 @@ namespace Microsoft.NetFramework.Analyzers
             }
 
             Diagnostic diagnostic = context.Diagnostics.Single();
-            context.RegisterCodeFix(new MyCodeAction(MicrosoftNetFrameworkAnalyzersResources.AddSerializableAttributeCodeActionTitle,
-                                        async ct => await AddSerializableAttribute(context.Document, node, ct).ConfigureAwait(false)),
+            string title = MicrosoftNetFrameworkAnalyzersResources.AddSerializableAttributeCodeActionTitle;
+            context.RegisterCodeFix(new MyCodeAction(title,
+                                        async ct => await AddSerializableAttribute(context.Document, node, ct).ConfigureAwait(false),
+                                        equivalenceKey: title),
                                     diagnostic);
         }
 
@@ -46,12 +48,18 @@ namespace Microsoft.NetFramework.Analyzers
             return editor.GetChangedDocument();
         }
 
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument) :
-                base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
+        }
+
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
         }
     }
 }

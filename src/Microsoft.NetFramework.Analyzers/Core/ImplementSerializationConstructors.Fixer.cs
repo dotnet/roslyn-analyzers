@@ -44,17 +44,20 @@ namespace Microsoft.NetFramework.Analyzers
             Diagnostic diagnostic = context.Diagnostics.Single();
 
             // There was no constructor and so the diagnostic was on the type. Generate a serialization ctor.
+            string title = MicrosoftNetFrameworkAnalyzersResources.ImplementSerializationConstructorsCodeActionTitle;
             if (symbol.Kind == SymbolKind.NamedType)
             {
-                context.RegisterCodeFix(new MyCodeAction(MicrosoftNetFrameworkAnalyzersResources.ImplementSerializationConstructorsCodeActionTitle,
-                     async ct => await GenerateConstructor(context.Document, node, symbol, notImplementedExceptionType, ct).ConfigureAwait(false)),
+                context.RegisterCodeFix(new MyCodeAction(title,
+                     async ct => await GenerateConstructor(context.Document, node, symbol, notImplementedExceptionType, ct).ConfigureAwait(false),
+                     equivalenceKey: title),
                 diagnostic);
             }
             // There is a serialization constructor but with incorrect accessibility. Set that right.
             else if (symbol.Kind == SymbolKind.Method)
             {
-                context.RegisterCodeFix(new MyCodeAction(MicrosoftNetFrameworkAnalyzersResources.ImplementSerializationConstructorsCodeActionTitle,
-                     async ct => await SetAccessibility(context.Document, symbol, ct).ConfigureAwait(false)),
+                context.RegisterCodeFix(new MyCodeAction(title,
+                     async ct => await SetAccessibility(context.Document, symbol, ct).ConfigureAwait(false),
+                     equivalenceKey: title),
                 diagnostic);
             }
         }
@@ -100,12 +103,18 @@ namespace Microsoft.NetFramework.Analyzers
             return editor.GetChangedDocuments().First();
         }
 
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
+        }
+
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
         }
     }
 }

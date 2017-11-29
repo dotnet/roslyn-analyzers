@@ -2,7 +2,7 @@
 
 namespace Analyzer.Utilities.Extensions
 {
-    public static class IDictionaryExtensions
+    internal static class IDictionaryExtensions
     {
         public static void AddKeyValueIfNotNull<TKey, TValue>(
             this IDictionary<TKey, TValue> dictionary,

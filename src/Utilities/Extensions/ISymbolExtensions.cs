@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities.Extensions
 {
-    public static class ISymbolExtensions
+    internal static class ISymbolExtensions
     {
         public static bool IsType(this ISymbol symbol)
         {

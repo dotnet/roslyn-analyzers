@@ -4,8 +4,6 @@
       "certificate": "MicrosoftSHA2",
       "strongName": "MsSharedLib72",
       "values": [
-        "bin/Analyzer.Utilities/netstandard1.3/Analyzer.Utilities.dll",
-        "bin/Analyzer.Utilities/netstandard1.3/*/Analyzer.Utilities.resources.dll",
         "bin/MetaCompilation.Analyzers/netstandard1.3/MetaCompilation.Analyzers.dll",
         "bin/MetaCompilation.Analyzers/netstandard1.3/*/MetaCompilation.Analyzers.resources.dll",
         "bin/Microsoft.CodeAnalysis.Analyzers/netstandard1.3/Microsoft.CodeAnalysis.Analyzers.dll",

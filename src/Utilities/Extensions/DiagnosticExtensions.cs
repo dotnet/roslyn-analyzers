@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities.Extensions
 {
-    public static class DiagnosticExtensions
+    internal static class DiagnosticExtensions
     {
         public static IEnumerable<Diagnostic> CreateDiagnostics(
             this IEnumerable<SyntaxNode> nodes,

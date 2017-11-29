@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities
 {
-    public static class DiagnosticHelpers
+    internal static class DiagnosticHelpers
     {
         public const DiagnosticSeverity DefaultDiagnosticSeverity =
 #if DEFAULT_SEVERITY_SUGGESTION

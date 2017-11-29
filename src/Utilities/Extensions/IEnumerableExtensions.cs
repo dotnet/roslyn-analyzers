@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Analyzer.Utilities.Extensions
 {
-    public static class IEnumerableExtensions
+    internal static class IEnumerableExtensions
     {
         public static IEnumerable<T> Concat<T>(this IEnumerable<T> source, T value)
         {

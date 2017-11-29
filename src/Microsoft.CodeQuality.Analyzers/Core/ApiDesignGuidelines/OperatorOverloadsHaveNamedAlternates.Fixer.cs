@@ -35,7 +35,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             SyntaxGenerator generator = context.Document.Project?.LanguageServices?.GetService<SyntaxGenerator>();
             if (semanticModel != null && generator != null)
             {
-                context.RegisterCodeFix(new MyCodeAction(ct => Fix(context, root, generator, semanticModel, ct)), context.Diagnostics.First());
+                string title = MicrosoftApiDesignGuidelinesAnalyzersResources.OperatorOverloadsHaveNamedAlternatesTitle;
+                context.RegisterCodeFix(new MyCodeAction(title, ct => Fix(context, root, generator, semanticModel, ct), equivalenceKey: title), context.Diagnostics.First());
             }
         }
 
@@ -160,10 +161,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private class MyCodeAction : DocumentChangeAction
         {
-            public override string EquivalenceKey => MicrosoftApiDesignGuidelinesAnalyzersResources.OperatorOverloadsHaveNamedAlternatesTitle;
-
-            public MyCodeAction(Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(MicrosoftApiDesignGuidelinesAnalyzersResources.OperatorOverloadsHaveNamedAlternatesTitle, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
         }

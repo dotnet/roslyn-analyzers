@@ -2,7 +2,7 @@ using System;
 
 namespace Analyzer.Utilities.Extensions
 {
-    public enum SymbolVisibility
+    internal enum SymbolVisibility
     {
         Public,
         Internal,
@@ -12,7 +12,7 @@ namespace Analyzer.Utilities.Extensions
     /// <summary>
     /// Extensions for <see cref="SymbolVisibility"/>.
     /// </summary>
-    public static class SymbolVisibilityExtensions
+    internal static class SymbolVisibilityExtensions
     {
         /// <summary>
         /// Determines whether <paramref name="typeVisibility"/> is at least as visible as <paramref name="comparisonVisibility"/>.

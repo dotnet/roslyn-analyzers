@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities.Extensions
 {
-    public static class INamedTypeSymbolExtensions
+    internal static class INamedTypeSymbolExtensions
     {
         public static IEnumerable<INamedTypeSymbol> GetBaseTypesAndThis(this INamedTypeSymbol type)
         {

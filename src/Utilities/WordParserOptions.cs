@@ -8,7 +8,7 @@ namespace Analyzer.Utilities
     ///   Defines the word parsing and delimiting options for use with <see cref="WordParser.Parse(String,WordParserOptions)"/>.
     /// </summary>
     [Flags]
-    public enum WordParserOptions
+    internal enum WordParserOptions
     {
         /// <summary>
         ///   Indicates the default options for word parsing.

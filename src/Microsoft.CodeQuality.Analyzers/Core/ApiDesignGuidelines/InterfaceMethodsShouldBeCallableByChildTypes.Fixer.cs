@@ -217,15 +217,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private class MyCodeAction : DocumentChangeAction
         {
-            private readonly string _equivalenceKey;
-
             public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
-                : base(title, createChangedDocument)
+                : base(title, createChangedDocument, equivalenceKey)
             {
-                _equivalenceKey = equivalenceKey;
             }
-
-            public override string EquivalenceKey => _equivalenceKey;
         }
     }
 }

@@ -45,11 +45,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             // We cannot have multiple overlapping diagnostics of this id.
             Diagnostic diagnostic = context.Diagnostics.Single();
-
+            string title = MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsOnOverloadingOperatorEqualsCodeActionTitle;
             context.RegisterCodeFix(
                 new MyCodeAction(
-                    MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsOnOverloadingOperatorEqualsCodeActionTitle,
-                    cancellationToken => OverrideObjectEquals(context.Document, typeDeclaration, typeSymbol, cancellationToken)),
+                    title,
+                    cancellationToken => OverrideObjectEquals(context.Document, typeDeclaration, typeSymbol, cancellationToken),
+                    equivalenceKey: title),
                 diagnostic);
         }
 
@@ -64,14 +65,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return editor.GetChangedDocument();
         }
 
-        /// <remarks>
-        /// This type exists for telemetry purposes - it has the same functionality as 
-        /// <see cref="DocumentChangeAction"/> but different metadata.
-        /// </remarks>
-        private sealed class MyCodeAction : DocumentChangeAction
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
+        private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
         }

@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using System.Composition;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,22 +32,23 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(CancellationToken.None);
+            var root = await context.Document.GetSyntaxRootAsync(CancellationToken.None).ConfigureAwait(false);
             var diagnostics = context.Diagnostics;
             var diagnosticSpan = diagnostics.First().Location.SourceSpan;
             // getInnerModeNodeForTie = true so we are replacing the string literal node and not the whole argument node
             var nodeToReplace = root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
 
-            if (nodeToReplace != null)
-            {   
-                var stringText = diagnostics.First().Properties[UseNameofInPlaceOfStringAnalyzer.StringText];
-                context.RegisterCodeFix(
-                    CodeAction.Create(MicrosoftMaintainabilityAnalyzersResources.UseNameOfInPlaceOfStringTitle, c => ReplaceWithNameOf(context.Document, nodeToReplace, stringText, c), equivalenceKey: nameof(UseNameOfInPlaceOfStringFixer)),
-                    context.Diagnostics);
-            }
+            Debug.Assert(nodeToReplace != null);
+            var stringText = diagnostics.First().Properties[UseNameofInPlaceOfStringAnalyzer.StringText];
+            context.RegisterCodeFix(CodeAction.Create(
+                    MicrosoftMaintainabilityAnalyzersResources.UseNameOfInPlaceOfStringTitle, 
+                    c => ReplaceWithNameOf(context.Document, nodeToReplace, stringText, c), 
+                    equivalenceKey: nameof(UseNameOfInPlaceOfStringFixer)),
+                context.Diagnostics);
         }
 
-        private async Task<Document> ReplaceWithNameOf(Document document, SyntaxNode nodeToReplace, string stringText, CancellationToken cancellationToken)
+        private async Task<Document> ReplaceWithNameOf(Document document, SyntaxNode nodeToReplace, 
+            string stringText, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;

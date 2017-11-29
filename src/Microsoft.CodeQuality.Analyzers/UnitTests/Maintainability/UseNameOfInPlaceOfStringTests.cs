@@ -25,6 +25,20 @@ class C
         }
 
         [Fact]
+        public void NoDiagnostic_StringIsAReservedWord()
+        {
+            VerifyCSharp(@"
+using System;
+class C
+{
+    void M(int x)
+    {
+        throw new ArgumentNullException(""static"");
+    }
+}");
+        }
+
+        [Fact]
         public void NoDiagnostic_NoMatchingParametersInScope()
         {
             VerifyCSharp(@"

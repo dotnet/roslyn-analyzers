@@ -11,13 +11,12 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
     /// <summary>
-    /// 
-    /// 
+    /// CA1507 Use nameof to express symbol names
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class UseNameofInPlaceOfStringAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA2211";
+        internal const string RuleId = "CA1507";
         private const string ParamName = "paramName";
         private const string PropertyName = "propertyName";
         internal const string StringText = "StringText";
@@ -49,7 +48,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         private void AnalyzeArgument(OperationAnalysisContext context)
         {
             var argument = (IArgumentOperation)context.Operation;
-            if ((argument.Value.Kind != OperationKind.Literal || argument.Value.Type.SpecialType != SpecialType.System_String))
+            if ((argument.Value.Kind != OperationKind.Literal 
+                || argument.Value.Type.SpecialType != SpecialType.System_String))
             {
                 return;
             }
@@ -70,14 +70,16 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     var parametersInScope = GetParametersInScope(context);
                     if (HasAMatchInScope(stringText, parametersInScope))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(RuleWithSuggestion, argument.Value.Syntax.GetLocation(), properties, stringText ));
+                        context.ReportDiagnostic(Diagnostic.Create(
+                            RuleWithSuggestion, argument.Value.Syntax.GetLocation(), properties, stringText ));
                     }
                     return;
                 case PropertyName:
                     var propertiesInScope = GetPropertiesInScope(context);
                     if (HasAMatchInScope(stringText, propertiesInScope))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(RuleWithSuggestion, argument.Value.Syntax.GetLocation(), properties, stringText));
+                        context.ReportDiagnostic(Diagnostic.Create(
+                            RuleWithSuggestion, argument.Value.Syntax.GetLocation(), properties, stringText));
                     }
                     return;
                 default:

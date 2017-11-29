@@ -25,6 +25,20 @@ class C
         }
 
         [Fact]
+        public void NoDiagnostic_NullLiteral()
+        {
+            VerifyCSharp(@"
+using System;
+class C
+{
+    void M(int x)
+    {
+        throw new ArgumentNullException(null);
+    }
+}");
+        }
+
+        [Fact]
         public void NoDiagnostic_StringIsAReservedWord()
         {
             VerifyCSharp(@"

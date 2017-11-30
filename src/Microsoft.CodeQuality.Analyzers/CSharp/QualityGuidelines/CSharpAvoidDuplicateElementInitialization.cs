@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
 {
@@ -23,24 +24,28 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
 
-            analysisContext.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.ObjectInitializerExpression);
+            analysisContext.RegisterOperationAction(AnalyzeOperation, OperationKind.ObjectCreation);
         }
 
-        private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        private static void AnalyzeOperation(OperationAnalysisContext context)
         {
-            var objectInitializer = (InitializerExpressionSyntax)context.Node;
+            var objectInitializer = (IObjectCreationOperation)context.Operation;
+            var semanticModel = context.Compilation.GetSemanticModel(objectInitializer.Syntax.SyntaxTree);
             var initializedElementIndexes = new HashSet<object[]>(ConstantArgumentEqualityComparer.Instance);
 
-            foreach (var intializationExpression in objectInitializer.Expressions.OfType<AssignmentExpressionSyntax>())
+            foreach (var initializer in objectInitializer.Initializer.Initializers)
             {
-                if (intializationExpression.Left is ImplicitElementAccessSyntax elementAccess)
+                if (initializer is ISimpleAssignmentOperation assignment &&
+                    assignment.Target is IPropertyReferenceOperation propertyReference &&
+                    propertyReference.Arguments.Length != 0 &&
+                    ((AssignmentExpressionSyntax)assignment.Syntax).Left is ImplicitElementAccessSyntax elementAccess)
                 {
-                    var argumentList = elementAccess.ArgumentList;
-                    var values = TryGetResolvedArgumentValues(argumentList, context);
+                    var values = GetConstantArgumentValues(propertyReference.Arguments, semanticModel, context);
                     if (values != null && !initializedElementIndexes.Add(values))
                     {
                         var indexesText = string.Join(", ", values.Select(value => s_generator.LiteralExpression(value)));
-                        context.ReportDiagnostic(Diagnostic.Create(Rule, argumentList.GetLocation(), indexesText));
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(Rule, elementAccess.ArgumentList.GetLocation(), indexesText));
                     }
                 }
 
@@ -51,90 +56,47 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
             }
         }
 
-        private static int GetParameterIndex(ImmutableArray<IParameterSymbol> parameters, string parameterName)
+        /// <summary>
+        /// Gets the argument values in parameter order, filling in defaults if necessary, if all
+        /// arguments are constants. Otherwise, returns null.
+        /// </summary>
+        private static object[] GetConstantArgumentValues(
+            ImmutableArray<IArgumentOperation> arguments,
+            SemanticModel semanticModel,
+            OperationAnalysisContext context)
         {
-            for (int i = 0; i < parameters.Length; i++)
+            var result = new object[arguments.Length];
+            foreach(var argument in arguments)
             {
-                if (parameters[i].Name.Equals(parameterName, StringComparison.Ordinal))
-                {
-                    return i;
-                }
-            }
-
-            return -1;
-        }
-
-        private static int GetParameterIndex(ImmutableArray<IParameterSymbol> parameters, ArgumentSyntax argument, int argumentIndex)
-        {
-            if (argument.NameColon != null)
-            {
-                return GetParameterIndex(parameters, GetParameterName(argument));
-            }
-
-            if (argumentIndex < parameters.Length)
-            {
-                return argumentIndex;
-            }
-
-            return -1;
-        }
-
-        private static string GetParameterName(ArgumentSyntax argument)
-        {
-            var name = argument.NameColon.Name.ToString();
-            if (name.Length != 0 && name[0] == '@')
-            {
-                return name.Substring(1);
-            }
-            return name;
-        }
-
-        private static object[] TryGetResolvedArgumentValues(BracketedArgumentListSyntax node, SyntaxNodeAnalysisContext context)
-        {
-            var propertySymbol = context.SemanticModel.GetSymbolInfo(node.Parent, context.CancellationToken).Symbol as IPropertySymbol;
-            if (propertySymbol == null)
-            {
-                return null;
-            }
-
-            var parameters = propertySymbol.Parameters;
-            var usedParameterIndexes = new HashSet<int>();
-            var result = new object[parameters.Length];
-            for (int argumentIndex = 0; argumentIndex < node.Arguments.Count; argumentIndex++)
-            {
-                var argument = node.Arguments[argumentIndex];
-                var constant = context.SemanticModel.GetConstantValue(argument.Expression, context.CancellationToken);
-                if (!constant.HasValue)
+                var parameter = argument.Parameter;
+                if (parameter == null ||
+                    parameter.Ordinal >= result.Length ||
+                    !TryGetConstantValue(argument, out result[parameter.Ordinal]))
                 {
                     return null;
                 }
-
-                int parameterIndex = GetParameterIndex(parameters, argument, argumentIndex);
-                if (parameterIndex < 0 || !usedParameterIndexes.Add(parameterIndex))
-                {
-                    return null;
-                }
-                
-                result[parameterIndex] = constant.Value;
             }
-
-            if (usedParameterIndexes.Count < parameters.Length)
-            {
-                for (int parameterIndex = 0; parameterIndex < parameters.Length; parameterIndex++)
-                {
-                    if (usedParameterIndexes.Add(parameterIndex))
-                    {
-                        var parameter = parameters[parameterIndex];
-                        if (!parameter.HasExplicitDefaultValue)
-                        {
-                            return null;
-                        }
-                        result[parameterIndex] = parameter.ExplicitDefaultValue;
-                    }
-                }
-            }
-
             return result;
+
+            bool TryGetConstantValue(IArgumentOperation argument, out object value)
+            {
+                var parameter = argument.Parameter;
+                switch (argument.ArgumentKind)
+                {
+                    case ArgumentKind.DefaultValue:
+                        value = parameter.ExplicitDefaultValue;
+                        return parameter.HasExplicitDefaultValue;
+                    case ArgumentKind.Explicit:
+                        var constantValue = semanticModel.GetConstantValue(
+                            ((ArgumentSyntax)argument.Syntax).Expression,
+                            context.CancellationToken);
+                        value = constantValue.Value;
+                        return constantValue.HasValue;
+                    default:
+                        value = null;
+                        return false;
+                }
+            }
         }
 
         private sealed class ConstantArgumentEqualityComparer : IEqualityComparer<object[]>

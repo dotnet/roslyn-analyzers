@@ -109,7 +109,6 @@ namespace Test.Utilities
             // Also verify FixAll.
             if (testFixAll && codeFixProvider.GetFixAllProvider() != null)
             {
-                // By default, only execute a single
                 VerifyFixOrFixAllCore(document, analyzerOpt, codeFixProvider, newSource, newSourceFileName, additionalFiles,
                     codeFixIndex, allowNewCompilerDiagnostics, validationMode, testFixAll: true, applySingleFixOrFixAll: true);
             }

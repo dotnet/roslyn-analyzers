@@ -4,22 +4,22 @@
     <body>
       <trans-unit id="DoNotUseMD5">
         <source>Do not use insecure cryptographic algorithm MD5.</source>
-        <target state="new">Do not use insecure cryptographic algorithm MD5.</target>
+        <target state="translated">Não use o algoritmo de criptografia não seguro MD5.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseMD5Description">
         <source>This type implements MD5, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the MD5 and HMACMD5 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</source>
-        <target state="new">This type implements MD5, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the MD5 and HMACMD5 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</target>
+        <target state="translated">Esse tipo implementa MD5, uma função de hash criptograficamente não segura. As colisões de hash são computacionalmente viáveis para os algoritmos MD5 e HMACMD5. Substitua esse uso por um algoritmo hash da família SHA-2 (SHA512, SHA384, SHA256).</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseSHA1">
         <source>Do not use insecure cryptographic algorithm SHA1.</source>
-        <target state="new">Do not use insecure cryptographic algorithm SHA1.</target>
+        <target state="translated">Não use o algoritmo de criptografia não seguro SHA1.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseSHA1Description">
         <source>This type implements SHA1, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the SHA-1 and SHA-0 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</source>
-        <target state="new">This type implements SHA1, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the SHA-1 and SHA-0 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</target>
+        <target state="translated">Esse tipo implementa SHA1, uma função de hash criptograficamente não segura. As colisões de hash são computacionalmente viáveis para os algoritmos SHA-1 e SHA-0. Substitua esse uso por um algoritmo hash da família SHA-2 (SHA512, SHA384, SHA256).</target>
         <note />
       </trans-unit>
     </body>

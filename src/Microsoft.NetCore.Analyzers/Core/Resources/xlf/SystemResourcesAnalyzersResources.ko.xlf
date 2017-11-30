@@ -4,22 +4,22 @@
     <body>
       <trans-unit id="MarkAssembliesWithNeutralResourcesLanguageTitle">
         <source>Mark assemblies with NeutralResourcesLanguageAttribute</source>
-        <target state="new">Mark assemblies with NeutralResourcesLanguageAttribute</target>
+        <target state="translated">NeutralResourcesLanguageAttribute로 어셈블리를 표시하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithNeutralResourcesLanguageDescription">
         <source>The NeutralResourcesLanguage attribute informs the ResourceManager of the language that was used to display the resources of a neutral culture for an assembly. This improves lookup performance for the first resource that you load and can reduce your working set.</source>
-        <target state="new">The NeutralResourcesLanguage attribute informs the ResourceManager of the language that was used to display the resources of a neutral culture for an assembly. This improves lookup performance for the first resource that you load and can reduce your working set.</target>
+        <target state="translated">NeutralResourcesLanguage 특성은 어셈블리의 중립 문화권 리소스를 표시하는 데 사용된 언어 정보를 ResourceManager에 제공합니다. 그 결과 로드되는 첫 번째 리소스에 대한 조회 성능이 향상되고 작업 집합이 줄어듭니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithNeutralResourcesLanguageMessage">
         <source>Mark assemblies with NeutralResourcesLanguageAttribute</source>
-        <target state="new">Mark assemblies with NeutralResourcesLanguageAttribute</target>
+        <target state="translated">NeutralResourcesLanguageAttribute로 어셈블리를 표시하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="CategoryPerformance">
         <source>Performance</source>
-        <target state="new">Performance</target>
+        <target state="translated">성능</target>
         <note />
       </trans-unit>
     </body>

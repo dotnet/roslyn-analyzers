@@ -51,8 +51,10 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             var generator = editor.Generator;
 
             var trailingTrivia = nodeToReplace.GetTrailingTrivia();
+            var leadingTrivia = nodeToReplace.GetLeadingTrivia();
             var nameOfExpression = generator.NameOfExpression(generator.IdentifierName(stringText))
-                .WithTrailingTrivia(trailingTrivia);
+                .WithTrailingTrivia(trailingTrivia)
+                .WithLeadingTrivia(leadingTrivia);
 
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var newRoot = root.ReplaceNode(nodeToReplace, nameOfExpression);

@@ -56,6 +56,29 @@ class C
         }
 
         [Fact]
+        public void Fixer_CSharp_ArgumentWithComments()
+        {
+            VerifyCSharpFix(@"
+using System;
+class C
+{
+    void M(int x)
+    {
+        throw new ArgumentNullException(/*Leading*/""x""/*Trailing*/);
+    }
+}",
+@"
+using System;
+class C
+{
+    void M(int x)
+    {
+        throw new ArgumentNullException(/*Leading*/nameof(x)/*Trailing*/);
+    }
+}", allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact]
         public void Fixer_VB_ArgumentMatchesAParameterInScope()
         {
             VerifyBasicFix(@"

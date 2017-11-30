@@ -10,8 +10,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
-using Microsoft.CodeAnalysis.Text;
-
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
@@ -52,7 +50,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
 
-            var nameOfExpression = generator.NameOfExpression(generator.IdentifierName(stringText));
+            var trailingTrivia = nodeToReplace.GetTrailingTrivia();
+            var nameOfExpression = generator.NameOfExpression(generator.IdentifierName(stringText))
+                .WithTrailingTrivia(trailingTrivia);
 
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var newRoot = root.ReplaceNode(nodeToReplace, nameOfExpression);

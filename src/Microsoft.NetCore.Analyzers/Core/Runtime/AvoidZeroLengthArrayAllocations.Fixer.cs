@@ -34,8 +34,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            context.RegisterCodeFix(new MyCodeAction(SystemRuntimeAnalyzersResources.UseArrayEmpty,
-                                                     async ct => await ConvertToArrayEmpty(context.Document, nodeToFix, ct).ConfigureAwait(false)),
+            string title = SystemRuntimeAnalyzersResources.UseArrayEmpty;
+            context.RegisterCodeFix(new MyCodeAction(title,
+                                                     async ct => await ConvertToArrayEmpty(context.Document, nodeToFix, ct).ConfigureAwait(false),
+                                                     equivalenceKey: title),
                                     context.Diagnostics);
         }
 
@@ -60,14 +62,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return editor.GetChangedDocument();
         }
 
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
-
-            public override string EquivalenceKey => Title;
         }
     }
 }

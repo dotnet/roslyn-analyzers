@@ -30,11 +30,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             Diagnostic diagnostic = context.Diagnostics.Single();
-
+            string title = MicrosoftMaintainabilityAnalyzersResources.RemoveUnusedLocalsTitle;
             context.RegisterCodeFix(
-                new RemoveLocalAction(
-                    MicrosoftMaintainabilityAnalyzersResources.RemoveUnusedLocalsMessage,
-                    async ct => await _nodesProvider.RemoveNodes(context.Document, diagnostic, ct).ConfigureAwait(false)),
+                new MyCodeAction(
+                    title,
+                    async ct => await _nodesProvider.RemoveNodes(context.Document, diagnostic, ct).ConfigureAwait(false),
+                    equivalenceKey: title),
                 diagnostic);
 
             return Task.CompletedTask;
@@ -103,12 +104,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             public abstract void RemoveNode(DocumentEditor editor, SyntaxNode node);
         }
 
-        private sealed class RemoveLocalAction : DocumentChangeAction
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
+        private class MyCodeAction : DocumentChangeAction
         {
-            public RemoveLocalAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument) { }
-
-            public override string EquivalenceKey => null;
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
+            {
+            }
         }
 
         private sealed class RemoveLocalFixAllAction : CodeAction

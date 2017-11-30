@@ -39,7 +39,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             // Register fixer
             context.RegisterCodeFix(new MyCodeAction(title,
-                     c => ChangeEnumTypeToInt32Async(context.Document, diagnostic, root, c)), context.Diagnostics.First());
+                     c => ChangeEnumTypeToInt32Async(context.Document, diagnostic, root, c),
+                     equivalenceKey: title), context.Diagnostics.First());
         }
 
         private async Task<Document> ChangeEnumTypeToInt32Async(Document document, Diagnostic diagnostic, SyntaxNode root, CancellationToken cancellationToken)
@@ -61,10 +62,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return editor.GetChangedDocument();
         }
 
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
         }

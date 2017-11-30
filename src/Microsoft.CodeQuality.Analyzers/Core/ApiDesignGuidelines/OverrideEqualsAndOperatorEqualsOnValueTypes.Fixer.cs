@@ -46,11 +46,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             Diagnostic diagnostic = context.Diagnostics.First();
-
+            string title = MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesTitle;
             context.RegisterCodeFix(
                 new MyCodeAction(
-                    MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesTitle,
-                    async ct => await ImplementMissingMembersAsync(declaration, typeSymbol, context.Document, context.CancellationToken).ConfigureAwait(false)),
+                    title,
+                    async ct => await ImplementMissingMembersAsync(declaration, typeSymbol, context.Document, context.CancellationToken).ConfigureAwait(false),
+                    equivalenceKey: title),
                 diagnostic);
         }
 
@@ -98,8 +99,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
         }

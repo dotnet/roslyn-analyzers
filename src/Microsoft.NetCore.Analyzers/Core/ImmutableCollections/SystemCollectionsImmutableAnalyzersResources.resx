@@ -118,11 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="DoNotCallToImmutableArrayOnAnImmutableArrayValueTitle" xml:space="preserve">
-    <value>Do not call ToImmutableArray on an ImmutableArray value</value>
+  <data name="DoNotCallToImmutableCollectionOnAnImmutableCollectionValueTitle" xml:space="preserve">
+    <value>Do not call ToImmutableCollection on an ImmutableCollection value</value>
   </data>
-  <data name="DoNotCallToImmutableArrayOnAnImmutableArrayValueMessage" xml:space="preserve">
-    <value>Do not call ToImmutableArray on an ImmutableArray value</value>
+  <data name="DoNotCallToImmutableCollectionOnAnImmutableCollectionValueMessage" xml:space="preserve">
+    <value>Do not call {0} on an {1} value</value>
   </data>
   <data name="CategoryReliability" xml:space="preserve">
     <value>Reliability</value>

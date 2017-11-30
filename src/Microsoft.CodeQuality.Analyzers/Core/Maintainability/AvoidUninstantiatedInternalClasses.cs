@@ -96,6 +96,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     {
                         internalTypes.Add(type);
                     }
+
+                    // Instantiation from the subtype constructor initializer.
+                    if (type.BaseType != null)
+                    {
+                        instantiatedTypes.Add(type.BaseType);
+                    }
                 }, SymbolKind.NamedType);
 
                 // If a type is passed a generic argument to another type or a method that specifies that the type must have a constructor,

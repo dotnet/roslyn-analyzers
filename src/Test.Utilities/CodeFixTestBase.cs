@@ -106,7 +106,7 @@ namespace Test.Utilities
             VerifyFixOrFixAllCore(document, analyzerOpt, codeFixProvider, newSource, newSourceFileName, additionalFiles,
                 codeFixIndex, allowNewCompilerDiagnostics, validationMode, testFixAll: false, applySingleFixOrFixAll: onlyFixFirstFixableDiagnostic);
 
-            // Also verify FixAll when the fix did not involve multiple iterations (possibly due to new diagnostics produced from previous iteration)
+            // Also verify FixAll.
             if (testFixAll && codeFixProvider.GetFixAllProvider() != null)
             {
                 // By default, only execute a single

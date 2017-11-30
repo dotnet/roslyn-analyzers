@@ -24,37 +24,37 @@ namespace Test.Utilities
 
         protected abstract CodeFixProvider GetBasicCodeFixProvider();
 
-        protected void VerifyCSharpUnsafeCodeFix(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, bool onlyFixFirstFixableDiagnostic = false)
+        protected void VerifyCSharpUnsafeCodeFix(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, bool onlyFixFirstFixableDiagnostic = false, bool testFixAll = true)
         {
-            VerifyFix(LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, onlyFixFirstFixableDiagnostic, DefaultTestValidationMode, true);
+            VerifyFix(LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, onlyFixFirstFixableDiagnostic, validationMode: DefaultTestValidationMode, testFixAll: testFixAll, allowUnsafeCode: true);
         }
 
-        protected void VerifyCSharpFix(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, bool onlyFixFirstFixableDiagnostic = false, TestValidationMode validationMode = DefaultTestValidationMode)
+        protected void VerifyCSharpFix(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, bool onlyFixFirstFixableDiagnostic = false, TestValidationMode validationMode = DefaultTestValidationMode, bool testFixAll = true)
         {
-            VerifyFix(LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, onlyFixFirstFixableDiagnostic, validationMode, false);
+            VerifyFix(LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, onlyFixFirstFixableDiagnostic, validationMode, testFixAll, allowUnsafeCode: false);
         }
 
         protected void VerifyCSharpFixAll(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, TestValidationMode validationMode = DefaultTestValidationMode)
         {
-            VerifyFixAll(LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, validationMode, false);
+            VerifyFixAll(LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, validationMode, allowUnsafeCode: false);
         }
 
-        protected void VerifyBasicFix(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, bool onlyFixFirstFixableDiagnostic = false, TestValidationMode validationMode = DefaultTestValidationMode)
+        protected void VerifyBasicFix(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, bool onlyFixFirstFixableDiagnostic = false, bool testFixAll = true, TestValidationMode validationMode = DefaultTestValidationMode)
         {
-            VerifyFix(LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), GetBasicCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, onlyFixFirstFixableDiagnostic, validationMode, false);
+            VerifyFix(LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), GetBasicCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, onlyFixFirstFixableDiagnostic, validationMode, testFixAll, allowUnsafeCode: false);
         }
 
         protected void VerifyBasicFixAll(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, TestValidationMode validationMode = DefaultTestValidationMode)
         {
-            VerifyFixAll(LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), GetBasicCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, validationMode, false);
+            VerifyFixAll(LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), GetBasicCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, validationMode, allowUnsafeCode: false);
         }
 
-        private void VerifyFix(string language, DiagnosticAnalyzer analyzerOpt, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex, bool allowNewCompilerDiagnostics, bool onlyFixFirstFixableDiagnostic, TestValidationMode validationMode, bool allowUnsafeCode)
+        private void VerifyFix(string language, DiagnosticAnalyzer analyzerOpt, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex, bool allowNewCompilerDiagnostics, bool onlyFixFirstFixableDiagnostic, TestValidationMode validationMode, bool testFixAll, bool allowUnsafeCode)
         {
             Document document = CreateDocument(oldSource, language, allowUnsafeCode: allowUnsafeCode);
             var newSourceFileName = document.Name;
 
-            VerifyFix(document, analyzerOpt, codeFixProvider, newSource, newSourceFileName, ImmutableArray<TestAdditionalDocument>.Empty, codeFixIndex, allowNewCompilerDiagnostics, onlyFixFirstFixableDiagnostic, validationMode);
+            VerifyFix(document, analyzerOpt, codeFixProvider, newSource, newSourceFileName, ImmutableArray<TestAdditionalDocument>.Empty, codeFixIndex, allowNewCompilerDiagnostics, onlyFixFirstFixableDiagnostic, validationMode, testFixAll);
         }
 
         private void VerifyFixAll(string language, DiagnosticAnalyzer analyzerOpt, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex, bool allowNewCompilerDiagnostics, TestValidationMode validationMode, bool allowUnsafeCode)
@@ -62,15 +62,14 @@ namespace Test.Utilities
             Document document = CreateDocument(oldSource, language, allowUnsafeCode: allowUnsafeCode);
             var newSourceFileName = document.Name;
             var additionalFiles = ImmutableArray<TestAdditionalDocument>.Empty;
-            var testFixAll = true;
-            var executeSingleFixOrFixAllPass = true;
-
+            
             VerifyFixOrFixAllCore(document, analyzerOpt, codeFixProvider, newSource, newSourceFileName, additionalFiles,
-                codeFixIndex, allowNewCompilerDiagnostics, validationMode, testFixAll, executeSingleFixOrFixAllPass);
+                codeFixIndex, allowNewCompilerDiagnostics, validationMode, testFixAll: true, applySingleFixOrFixAll: true);
         }
 
         protected void VerifyAdditionalFileFix(string language, DiagnosticAnalyzer analyzerOpt, CodeFixProvider codeFixProvider, string source,
-            IEnumerable<TestAdditionalDocument> additionalFiles, TestAdditionalDocument newAdditionalFileToVerify, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, bool onlyFixFirstFixableDiagnostic = false)
+            IEnumerable<TestAdditionalDocument> additionalFiles, TestAdditionalDocument newAdditionalFileToVerify, int? codeFixIndex = null,
+            bool allowNewCompilerDiagnostics = false, bool onlyFixFirstFixableDiagnostic = false, bool testFixAll = true)
         {
             Document document = CreateDocument(source, language);
             if (additionalFiles != null)
@@ -87,7 +86,7 @@ namespace Test.Utilities
             var additionalFileName = newAdditionalFileToVerify.Name;
             var additionalFileText = newAdditionalFileToVerify.GetText().ToString();
 
-            VerifyFix(document, analyzerOpt, codeFixProvider, additionalFileText, additionalFileName, additionalFiles, codeFixIndex, allowNewCompilerDiagnostics, onlyFixFirstFixableDiagnostic, DefaultTestValidationMode);
+            VerifyFix(document, analyzerOpt, codeFixProvider, additionalFileText, additionalFileName, additionalFiles, codeFixIndex, allowNewCompilerDiagnostics, onlyFixFirstFixableDiagnostic, DefaultTestValidationMode, testFixAll);
         }
 
         private void VerifyFix(
@@ -100,17 +99,19 @@ namespace Test.Utilities
             int? codeFixIndex,
             bool allowNewCompilerDiagnostics,
             bool onlyFixFirstFixableDiagnostic,
-            TestValidationMode validationMode)
+            TestValidationMode validationMode,
+            bool testFixAll)
         {
             // Verify code fix.
             VerifyFixOrFixAllCore(document, analyzerOpt, codeFixProvider, newSource, newSourceFileName, additionalFiles,
-                codeFixIndex, allowNewCompilerDiagnostics, validationMode, testFixAll: false, executeSingleFixOrFixAllPass: onlyFixFirstFixableDiagnostic);
+                codeFixIndex, allowNewCompilerDiagnostics, validationMode, testFixAll: false, applySingleFixOrFixAll: onlyFixFirstFixableDiagnostic);
 
-            // Verify FixAll.
-            if (!onlyFixFirstFixableDiagnostic && codeFixProvider.GetFixAllProvider() != null)
+            // Also verify FixAll when the fix did not involve multiple iterations (possibly due to new diagnostics produced from previous iteration)
+            if (testFixAll && codeFixProvider.GetFixAllProvider() != null)
             {
+                // By default, only execute a single
                 VerifyFixOrFixAllCore(document, analyzerOpt, codeFixProvider, newSource, newSourceFileName, additionalFiles,
-                    codeFixIndex, allowNewCompilerDiagnostics, validationMode, testFixAll: true, executeSingleFixOrFixAllPass: false);
+                    codeFixIndex, allowNewCompilerDiagnostics, validationMode, testFixAll: true, applySingleFixOrFixAll: true);
             }
         }
 
@@ -125,7 +126,7 @@ namespace Test.Utilities
             bool allowNewCompilerDiagnostics,
             TestValidationMode validationMode,
             bool testFixAll,
-            bool executeSingleFixOrFixAllPass)
+            bool applySingleFixOrFixAll)
         {
             var fixableDiagnosticIds = codeFixProvider.FixableDiagnosticIds.ToSet();
             Func<IEnumerable<Diagnostic>, ImmutableArray<Diagnostic>> getFixableDiagnostics = diags =>
@@ -171,13 +172,12 @@ namespace Test.Utilities
                     document = ApplyFixAll(document, codeAction, codeFixProvider, codeFixProvider.GetFixAllProvider(), diagnosticIdToFix, diagnosticsToFix);
                 }
 
-                additionalFiles = document.Project.AdditionalDocuments.Select(a => new TestAdditionalDocument(a));
-
-                if (executeSingleFixOrFixAllPass)
+                if (applySingleFixOrFixAll)
                 {
                     break;
                 }
 
+                additionalFiles = document.Project.AdditionalDocuments.Select(a => new TestAdditionalDocument(a));
                 analyzerDiagnostics = GetSortedDiagnostics(analyzerOpt, new[] { document }, additionalFiles: additionalFiles, validationMode: validationMode);
 
                 var updatedCompilerDiagnostics = document.GetSemanticModelAsync().Result.GetDiagnostics();
@@ -220,14 +220,7 @@ namespace Test.Utilities
             var diagnosticProvider = new FixAllDiagnosticProvider(fixableDiagnostics);
             IEnumerable<string> fixableDiagnosticIds = new string[] { diagnosticIdToFix };
             var fixAllContext = new FixAllContext(document, codeFixProvider, FixAllScope.Document, codeAction.EquivalenceKey, fixableDiagnosticIds, diagnosticProvider, CancellationToken.None);
-            var fixTask = fixAllProvider.GetFixAsync(fixAllContext);
-            if (fixTask == null)
-            {
-                return document;
-            }
-
-            fixTask.Wait();
-            var fixAllCodeAction = fixTask.Result;
+            var fixAllCodeAction = fixAllProvider.GetFixAsync(fixAllContext).Result;
             return fixAllCodeAction != null ? document.Apply(fixAllCodeAction) : document;
         }
 

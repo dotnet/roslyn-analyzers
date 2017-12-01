@@ -29,14 +29,14 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(CancellationToken.None).ConfigureAwait(false);
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var diagnostics = context.Diagnostics;
-            var diagnosticSpan = diagnostics.First().Location.SourceSpan;
+            var diagnosticSpan = context.Span;
             // getInnerModeNodeForTie = true so we are replacing the string literal node and not the whole argument node
             var nodeToReplace = root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
 
             Debug.Assert(nodeToReplace != null);
-            var stringText = diagnostics.First().Properties[UseNameofInPlaceOfStringAnalyzer.StringText];
+            var stringText = nodeToReplace.FindToken(diagnosticSpan.Start).ValueText;
             context.RegisterCodeFix(CodeAction.Create(
                     MicrosoftMaintainabilityAnalyzersResources.UseNameOfInPlaceOfStringTitle, 
                     c => ReplaceWithNameOf(context.Document, nodeToReplace, stringText, c), 
@@ -62,4 +62,4 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             return document.WithSyntaxRoot(newRoot);
         }
     }
-}   
+}

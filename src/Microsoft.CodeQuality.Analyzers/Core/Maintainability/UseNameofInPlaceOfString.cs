@@ -60,7 +60,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             }
 
             var stringText = (string)argument.Value.ConstantValue.Value;
-            var properties = ImmutableDictionary<string, string>.Empty.Add(StringText, stringText);
 
             var matchingParameter = argument.Parameter;
 
@@ -71,7 +70,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     if (HasAMatchInScope(stringText, parametersInScope))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(
-                            RuleWithSuggestion, argument.Value.Syntax.GetLocation(), properties, stringText ));
+                            RuleWithSuggestion, argument.Value.Syntax.GetLocation(), stringText ));
                     }
                     return;
                 case PropertyName:
@@ -79,7 +78,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     if (HasAMatchInScope(stringText, propertiesInScope))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(
-                            RuleWithSuggestion, argument.Value.Syntax.GetLocation(), properties, stringText));
+                            RuleWithSuggestion, argument.Value.Syntax.GetLocation(), stringText));
                     }
                     return;
                 default:

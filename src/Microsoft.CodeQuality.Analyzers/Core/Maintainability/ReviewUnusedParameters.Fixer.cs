@@ -73,7 +73,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var parametersDeclarartionNode = node.Parent;
             var parameterSymbol = editor.SemanticModel.GetDeclaredSymbol(node);
-            // TODO add check for type
             var methodDeclarationNode = parametersDeclarartionNode.Parent;
             ISymbol symbol = editor.SemanticModel.GetDeclaredSymbol(methodDeclarationNode);
             var referencedSymbols = await SymbolFinder.FindReferencesAsync(symbol, document.Project.Solution, cancellationToken).ConfigureAwait(false);
@@ -83,11 +82,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             {
                 if (referencedSymbol.Locations != null)
                 {
-                    foreach (var location in referencedSymbol.Locations)
+                    foreach (var referenceLocation in referencedSymbol.Locations)
                     {
-                        var referencedSymbolNode = location.Location.SourceTree.GetRoot().FindNode(location.Location.SourceSpan).Parent;
+                        var referencedSymbolNode = referenceLocation.Location.SourceTree.GetRoot().FindNode(referenceLocation.Location.SourceSpan).Parent;
                         referencedSymbolNode = GetOperationNode(referencedSymbolNode);
-                        var localEditor = await DocumentEditor.CreateAsync(location.Document, cancellationToken).ConfigureAwait(false);
+                        var localEditor = await DocumentEditor.CreateAsync(referenceLocation.Document, cancellationToken).ConfigureAwait(false);
                         var operation = localEditor.SemanticModel.GetOperation(referencedSymbolNode, cancellationToken);
                         var arguments = (operation as IObjectCreationOperation)?.Arguments;
                         if (arguments == null)
@@ -103,7 +102,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                 {
                                     if (argument.ArgumentKind == ArgumentKind.Explicit)
                                     {
-                                        nodesToRemoveBuilder.Add(new KeyValuePair<DocumentId, SyntaxNode>(location.Document.Id, referencedSymbolNode.FindNode(argument.Syntax.GetLocation().SourceSpan)));
+                                        nodesToRemoveBuilder.Add(new KeyValuePair<DocumentId, SyntaxNode>(referenceLocation.Document.Id, referencedSymbolNode.FindNode(argument.Syntax.GetLocation().SourceSpan)));
                                     }
                                 }
                             }

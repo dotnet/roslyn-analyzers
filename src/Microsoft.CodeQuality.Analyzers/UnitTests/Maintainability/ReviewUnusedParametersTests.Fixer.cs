@@ -327,5 +327,78 @@ End Class
 ";
             VerifyBasicFix(code, fix, allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors);
         }
+
+        [Fact]
+        public void ExternalFileScenario_Basic()
+        {
+            var code = @"
+Class C
+    Public Shared Sub UnusedParamStaticMethod(param1 As Integer)
+    End Sub
+End Class
+
+Class D
+    Public Sub Caller()
+        C.UnusedParamStaticMethod(0)
+        E.M(0)
+    End Sub
+End Class
+";
+            var fix = @"
+Class C
+    Public Shared Sub UnusedParamStaticMethod()
+    End Sub
+End Class
+
+Class D
+    Public Sub Caller()
+        C.UnusedParamStaticMethod()
+        E.M()
+    End Sub
+End Class
+";
+
+            var anotherCode = @"
+Class E
+    Public Shared Sub M(param1 As Integer)
+    End Sub
+End Class
+";
+            var anotherCodeFix = @"
+Class E
+    Public Shared Sub M()
+    End Sub
+End Class
+";
+            VerifyBasicFix(new[] { code, anotherCode }, new[] { fix, anotherCodeFix });
+        }
+
+        [Fact]
+        public void NamedParams_Basic()
+        {
+            var code = @"
+Class C
+    Public Function UnusedParamMethod(param1 As Integer, param2 As Integer) As Integer
+        Return param1
+    End Function
+
+    Public Sub Caller()
+        UnusedParamMethod(param2:=0, param1:=1)
+    End Sub
+End Class
+";
+            var fix = @"
+Class C
+    Public Function UnusedParamMethod(param1 As Integer) As Integer
+        Return param1
+    End Function
+
+    Public Sub Caller()
+        UnusedParamMethod(param1:=1)
+    End Sub
+End Class
+";
+            VerifyBasicFix(code, fix, allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors);
+        }
     }
 }

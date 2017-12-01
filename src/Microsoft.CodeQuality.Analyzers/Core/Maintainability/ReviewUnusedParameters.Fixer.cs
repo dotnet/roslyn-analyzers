@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.Operations;
@@ -44,12 +45,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             return Task.CompletedTask;
         }
 
-        private sealed class RemoveParameterAction : DocumentChangeAction
+        private sealed class RemoveParameterAction : SolutionChangeAction
         {
             private readonly string _equivalenceKey;
 
-            public RemoveParameterAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
-                : base(title, createChangedDocument)
+            public RemoveParameterAction(string title, Func<CancellationToken, Task<Solution>> createChangedSolution, string equivalenceKey)
+                : base(title, createChangedSolution)
             {
                 _equivalenceKey = equivalenceKey;
             }
@@ -65,7 +66,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             public abstract SyntaxNode GetParameterNodeToRemove(DocumentEditor editor, SyntaxNode node, string name);
 
-            public async Task<ImmutableArray<SyntaxNode>> GetNodesToRemoveAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+            public async Task<ImmutableArray<KeyValuePair<DocumentId, SyntaxNode>>> GetNodesToRemoveAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
             {
                 SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
                 SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan);
@@ -76,17 +77,23 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 // TODO add check for type
                 var methodDeclarationNode = parametersDeclarartionNode.Parent;
                 ISymbol symbol = editor.SemanticModel.GetDeclaredSymbol(methodDeclarationNode);
-                var symbolCallerInfos = await SymbolFinder.FindCallersAsync(symbol, document.Project.Solution, cancellationToken).ConfigureAwait(false);
+                var symbolCallerInfos = await SymbolFinder.FindReferencesAsync(symbol, document.Project.Solution, cancellationToken).ConfigureAwait(false);
 
-                var nodesToRemoveBuilder = ImmutableArray.CreateBuilder<SyntaxNode>();
+                var nodesToRemoveBuilder = ImmutableArray.CreateBuilder<KeyValuePair<DocumentId, SyntaxNode>>();
                 foreach (var symbolCallerInfo in symbolCallerInfos)
                 {
                     if (symbolCallerInfo.Locations != null)
                     {
                         foreach (var location in symbolCallerInfo.Locations)
                         {
-                            var referencedSymbolNode = root.FindNode(location.SourceSpan).Parent;
-                            var operation = editor.SemanticModel.GetOperation(referencedSymbolNode, cancellationToken);
+                            var referencedSymbolNode = location.Location.SourceTree.GetRoot().FindNode(location.Location.SourceSpan).Parent;
+                            // TODO this is C# MemberAccessExpressionSyntax. Need to generalize this to both languages
+                            if (referencedSymbolNode is MemberAccessExpressionSyntax)
+                            {
+                                referencedSymbolNode = referencedSymbolNode.Parent;
+                            }
+                            var localEditor = await DocumentEditor.CreateAsync(location.Document, cancellationToken).ConfigureAwait(false);
+                            var operation = localEditor.SemanticModel.GetOperation(referencedSymbolNode, cancellationToken);
                             var arguments = (operation as IObjectCreationOperation)?.Arguments;
                             if (arguments == null)
                             {
@@ -95,13 +102,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                             if (arguments != null)
                             {
-                                foreach(IArgumentOperation argument in arguments)
+                                foreach (IArgumentOperation argument in arguments)
                                 {
                                     if (argument.Parameter.Equals(parameterSymbol))
                                     {
                                         if (argument.ArgumentKind == ArgumentKind.Explicit)
                                         {
-                                            nodesToRemoveBuilder.Add(referencedSymbolNode.FindNode(argument.Syntax.GetLocation().SourceSpan));
+                                            nodesToRemoveBuilder.Add(new KeyValuePair<DocumentId, SyntaxNode>(location.Document.Id, referencedSymbolNode.FindNode(argument.Syntax.GetLocation().SourceSpan)));
                                         }
                                     }
                                 }
@@ -110,29 +117,34 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     }
                 }
 
-                nodesToRemoveBuilder.Add(node);
+                nodesToRemoveBuilder.Add(new KeyValuePair<DocumentId, SyntaxNode>(document.Id, node));
 
                 var nodesToRemove = nodesToRemoveBuilder.ToImmutable();
                 return nodesToRemove;
             }
 
-            public async Task<Document> RemoveNodes(Document document, IEnumerable<SyntaxNode> nodes, CancellationToken cancellationToken)
+            public async Task<Solution> RemoveNodes(Solution solution, IEnumerable<KeyValuePair<DocumentId, SyntaxNode>> pairs, CancellationToken cancellationToken)
             {
-                DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-
                 // Start removing from bottom to top to keep spans of nodes that are removed later.
-                foreach (var node in nodes.Where(n => n != null).OrderByDescending(n => n.SpanStart))
+                var groupedPairs = pairs.GroupBy(p => p.Key);
+                foreach(var group in groupedPairs)
                 {
-                    RemoveNode(editor, node);
+                    DocumentEditor editor = await DocumentEditor.CreateAsync(solution.GetDocument(group.Key), cancellationToken).ConfigureAwait(false);
+                    foreach(var value in group.OrderByDescending(v => v.Value.SpanStart))
+                    {
+                        RemoveNode(editor, value.Value);
+                        
+                    }
+                    solution = solution.WithDocumentSyntaxRoot(group.Key, editor.GetChangedRoot());
                 }
 
-                return editor.GetChangedDocument();
+                return solution;
             }
 
-            public async Task<Document> RemoveNodes(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+            public async Task<Solution> RemoveNodes(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
             {
                 var nodesToRemove = await GetNodesToRemoveAsync(document, diagnostic, cancellationToken).ConfigureAwait(false);
-                return await RemoveNodes(document, nodesToRemove, cancellationToken).ConfigureAwait(false);
+                return await RemoveNodes(document.Project.Solution, nodesToRemove, cancellationToken).ConfigureAwait(false);
             }
         }
     }

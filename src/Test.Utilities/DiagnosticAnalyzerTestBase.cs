@@ -339,6 +339,11 @@ namespace Test.Utilities
             return CreateProject(new[] { source }.ToFileAndSource(), language, addLanguageSpecificCodeAnalysisReference, allowUnsafeCode: allowUnsafeCode).Documents.First();
         }
 
+        protected static Document[] CreateDocuments(string[] sources, string language = LanguageNames.CSharp, bool addLanguageSpecificCodeAnalysisReference = true, bool allowUnsafeCode = false)
+        {
+            return CreateProject(sources.ToFileAndSource(), language, addLanguageSpecificCodeAnalysisReference, allowUnsafeCode: allowUnsafeCode).Documents.ToArray();
+        }
+
         protected static Project CreateProject(string[] sources, string language = LanguageNames.CSharp, bool addLanguageSpecificCodeAnalysisReference = true, Solution addToSolution = null)
         {
             return CreateProject(sources.ToFileAndSource(), language, addLanguageSpecificCodeAnalysisReference, addToSolution);

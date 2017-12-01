@@ -138,6 +138,59 @@ class C
         }
 
         [Fact]
+        public void ExternalFileScenario_CSharp()
+        {
+            var code = @"
+class C
+{
+    public static void UnusedParamStaticMethod(int param1)
+    {
+    }
+}
+
+class D
+{
+    public void Caller()
+    {
+        C.UnusedParamStaticMethod(0);
+        E.M(0);
+    }
+}
+";
+            var fix = @"
+class C
+{
+    public static void UnusedParamStaticMethod()
+    {
+    }
+}
+
+class D
+{
+    public void Caller()
+    {
+        C.UnusedParamStaticMethod();
+        E.M();
+    }
+}
+";
+
+            var anotherCode = @"
+class E
+{
+    public static void M(int param1) { }
+}
+";
+            var anotherCodeFix = @"
+class E
+{
+    public static void M() { }
+}
+";
+            VerifyCSharpFix(new[] { code, anotherCode },new[] { fix, anotherCodeFix });
+        }
+
+        [Fact]
         public void BaseScenario_Basic()
         {
             var code = @"

@@ -15,5 +15,11 @@ namespace Test.Utilities
             Solution solution = operations.OfType<ApplyChangesOperation>().Single().ChangedSolution;
             return solution.GetDocument(document.Id);
         }
+
+        internal static Solution Apply(CodeAction action)
+        {
+            System.Collections.Immutable.ImmutableArray<CodeActionOperation> operations = action.GetOperationsAsync(CancellationToken.None).Result;
+            return operations.OfType<ApplyChangesOperation>().Single().ChangedSolution;
+        }
     }
 }

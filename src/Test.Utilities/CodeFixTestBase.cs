@@ -58,6 +58,11 @@ namespace Test.Utilities
             VerifyFix(LanguageNames.VisualBasic, runner, oldSources, newSources, codeFixIndex, allowNewCompilerDiagnostics, onlyFixFirstFixableDiagnostic, allowUnsafeCode: false);
         }
 
+        protected void VerifyBasicFix(string[] oldSources, string[] newSources, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, bool onlyFixFirstFixableDiagnostic = false, TestValidationMode validationMode = DefaultTestValidationMode)
+        {
+            VerifyFix(LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), GetBasicCodeFixProvider(), oldSources, newSources, codeFixIndex, allowNewCompilerDiagnostics, onlyFixFirstFixableDiagnostic, validationMode, false);
+        }
+
         protected void VerifyBasicFixAll(string oldSource, string newSource, bool allowNewCompilerDiagnostics = false, TestValidationMode validationMode = DefaultTestValidationMode)
         {
             var runner = new CodeFixRunner(GetBasicDiagnosticAnalyzer(), GetBasicCodeFixProvider(), validationMode: validationMode);

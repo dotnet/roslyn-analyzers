@@ -69,25 +69,26 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan);
             node = GetParameterNode(node);
+            var nodesToRemove = ImmutableArray.CreateBuilder<KeyValuePair<DocumentId, SyntaxNode>>();
+            nodesToRemove.Add(new KeyValuePair<DocumentId, SyntaxNode>(document.Id, node));
 
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            var parametersDeclarartionNode = node.Parent;
-            var parameterSymbol = editor.SemanticModel.GetDeclaredSymbol(node);
-            var methodDeclarationNode = parametersDeclarartionNode.Parent;
-            ISymbol symbol = editor.SemanticModel.GetDeclaredSymbol(methodDeclarationNode);
-            var referencedSymbols = await SymbolFinder.FindReferencesAsync(symbol, document.Project.Solution, cancellationToken).ConfigureAwait(false);
+            ISymbol parameterSymbol = editor.SemanticModel.GetDeclaredSymbol(node);
+            ISymbol methodDeclarationSymbol = editor.SemanticModel.GetDeclaredSymbol(node.Parent.Parent);
+            var referencedSymbols = await SymbolFinder.FindReferencesAsync(methodDeclarationSymbol, document.Project.Solution, cancellationToken).ConfigureAwait(false);
 
-            var nodesToRemoveBuilder = ImmutableArray.CreateBuilder<KeyValuePair<DocumentId, SyntaxNode>>();
             foreach (var referencedSymbol in referencedSymbols)
             {
                 if (referencedSymbol.Locations != null)
                 {
                     foreach (var referenceLocation in referencedSymbol.Locations)
                     {
-                        var referencedSymbolNode = referenceLocation.Location.SourceTree.GetRoot().FindNode(referenceLocation.Location.SourceSpan).Parent;
+                        Location location = referenceLocation.Location;
+                        var referencedSymbolNode = location.SourceTree.GetRoot().FindNode(location.SourceSpan).Parent;
                         referencedSymbolNode = GetOperationNode(referencedSymbolNode);
-                        var localEditor = await DocumentEditor.CreateAsync(referenceLocation.Document, cancellationToken).ConfigureAwait(false);
+                        DocumentEditor localEditor = await DocumentEditor.CreateAsync(referenceLocation.Document, cancellationToken).ConfigureAwait(false);
                         var operation = localEditor.SemanticModel.GetOperation(referencedSymbolNode, cancellationToken);
+
                         var arguments = (operation as IObjectCreationOperation)?.Arguments;
                         if (arguments == null)
                         {
@@ -98,12 +99,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                         {
                             foreach (IArgumentOperation argument in arguments)
                             {
-                                if (argument.Parameter.Equals(parameterSymbol))
+                                if (argument.Parameter.Equals(parameterSymbol) && (argument.ArgumentKind == ArgumentKind.Explicit))
                                 {
-                                    if (argument.ArgumentKind == ArgumentKind.Explicit)
-                                    {
-                                        nodesToRemoveBuilder.Add(new KeyValuePair<DocumentId, SyntaxNode>(referenceLocation.Document.Id, referencedSymbolNode.FindNode(argument.Syntax.GetLocation().SourceSpan)));
-                                    }
+                                    nodesToRemove.Add(new KeyValuePair<DocumentId, SyntaxNode>(referenceLocation.Document.Id, referencedSymbolNode.FindNode(argument.Syntax.GetLocation().SourceSpan)));
                                 }
                             }
                         }
@@ -111,10 +109,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 }
             }
 
-            nodesToRemoveBuilder.Add(new KeyValuePair<DocumentId, SyntaxNode>(document.Id, node));
-
-            var nodesToRemove = nodesToRemoveBuilder.ToImmutable();
-            return nodesToRemove;
+            return nodesToRemove.ToImmutable();
         }
 
         private sealed class RemoveParameterAction : SolutionChangeAction

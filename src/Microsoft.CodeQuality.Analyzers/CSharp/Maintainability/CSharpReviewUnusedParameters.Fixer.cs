@@ -1,10 +1,9 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeQuality.Analyzers.Maintainability;
 
@@ -20,28 +19,24 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
 
         private sealed class CSharpNodesProvider : NodesProvider
         {
-            public override SyntaxNode GetParameterNodeToRemove(DocumentEditor editor, SyntaxNode node, string name)
+            protected override SyntaxNode GetOperationNode(SyntaxNode node)
             {
-                var arguments = ((ObjectCreationExpressionSyntax)node.Parent).ArgumentList.Arguments;
-                foreach(var argument in arguments)
+                if (node.Kind() == SyntaxKind.SimpleMemberAccessExpression)
                 {
-                    if (argument.NameColon.Name.ToString() == name)
-                    {
-                        return node;
-                    }
+                    return node.Parent;
                 }
 
-                throw new System.ArgumentException(name);
-            }
-
-            public override void RemoveAllUnusedLocalDeclarations(HashSet<SyntaxNode> nodesToRemove)
-            {
-                throw new System.NotImplementedException();
+                return node;
             }
 
             public override void RemoveNode(DocumentEditor editor, SyntaxNode node)
             {
                 editor.RemoveNode(node);
+            }
+
+            protected override SyntaxNode GetParameterNode(SyntaxNode node)
+            {
+                return node;
             }
         }
     }

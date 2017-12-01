@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.Operations;
@@ -60,16 +59,17 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         protected abstract class NodesProvider
         {
-            public abstract void RemoveAllUnusedLocalDeclarations(HashSet<SyntaxNode> nodesToRemove);
-
             public abstract void RemoveNode(DocumentEditor editor, SyntaxNode node);
 
-            public abstract SyntaxNode GetParameterNodeToRemove(DocumentEditor editor, SyntaxNode node, string name);
+            protected abstract SyntaxNode GetOperationNode(SyntaxNode node);
+
+            protected abstract SyntaxNode GetParameterNode(SyntaxNode node);
 
             public async Task<ImmutableArray<KeyValuePair<DocumentId, SyntaxNode>>> GetNodesToRemoveAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
             {
                 SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
                 SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan);
+                node = GetParameterNode(node);
 
                 DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
                 var parametersDeclarartionNode = node.Parent;
@@ -87,11 +87,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                         foreach (var location in referencedSymbol.Locations)
                         {
                             var referencedSymbolNode = location.Location.SourceTree.GetRoot().FindNode(location.Location.SourceSpan).Parent;
-                            // TODO this is C# MemberAccessExpressionSyntax. Need to generalize this to both languages
-                            if (referencedSymbolNode is MemberAccessExpressionSyntax)
-                            {
-                                referencedSymbolNode = referencedSymbolNode.Parent;
-                            }
+                            referencedSymbolNode = GetOperationNode(referencedSymbolNode);
                             var localEditor = await DocumentEditor.CreateAsync(location.Document, cancellationToken).ConfigureAwait(false);
                             var operation = localEditor.SemanticModel.GetOperation(referencedSymbolNode, cancellationToken);
                             var arguments = (operation as IObjectCreationOperation)?.Arguments;
@@ -132,7 +128,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     foreach (var value in group.OrderByDescending(v => v.Value.SpanStart))
                     {
                         RemoveNode(editor, value.Value);
-
                     }
 
                     solution = solution.WithDocumentSyntaxRoot(group.Key, editor.GetChangedRoot());

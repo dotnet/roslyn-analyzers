@@ -4,6 +4,8 @@ Imports System.Composition
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.Editing
+Imports Microsoft.CodeAnalysis.VisualBasic
+Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 Imports Microsoft.CodeQuality.Analyzers.Maintainability
 
 Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
@@ -21,17 +23,21 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
         Private NotInheritable Class BasicNodesProvider
             Inherits NodesProvider
 
-            Public Overrides Function GetParameterNodeToRemove(editor As DocumentEditor, node As SyntaxNode, name As String) As SyntaxNode
-                Throw New NotImplementedException()
-            End Function
+            Protected Overrides Function GetOperationNode(node As SyntaxNode) As SyntaxNode
+                If node.Kind() = SyntaxKind.SimpleMemberAccessExpression Then
+                    Return node.Parent
+                End If
 
-            Public Overrides Sub RemoveAllUnusedLocalDeclarations(nodesToRemove As HashSet(Of SyntaxNode))
-                Throw New NotImplementedException()
-            End Sub
+                Return node
+            End Function
 
             Public Overrides Sub RemoveNode(editor As DocumentEditor, node As SyntaxNode)
                 editor.RemoveNode(node)
             End Sub
+
+            Protected Overrides Function GetParameterNode(node As SyntaxNode) As SyntaxNode
+                Return node.Parent
+            End Function
         End Class
     End Class
 End Namespace

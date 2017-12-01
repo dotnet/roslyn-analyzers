@@ -12,8 +12,8 @@
     <MicrosoftVSSDKVersion>15.0.26201-alpha</MicrosoftVSSDKVersion>
 
     <!-- Roslyn -->
-    <MicrosoftCodeAnalysisVersion>2.6.0-beta3</MicrosoftCodeAnalysisVersion>
-    <MicrosoftNetCompilersVersion>2.6.0-beta3</MicrosoftNetCompilersVersion>
+    <MicrosoftCodeAnalysisVersion>2.6.0-beta3-62326-01</MicrosoftCodeAnalysisVersion>
+    <MicrosoftNetCompilersVersion>2.6.0-beta3-62326-01</MicrosoftNetCompilersVersion>
     <MicrosoftCodeAnalysisFXCopAnalyersVersion>2.6.0-beta1</MicrosoftCodeAnalysisFXCopAnalyersVersion>
     <MicrosoftCodeAnalysisAnalyersVersion>2.6.0-beta1</MicrosoftCodeAnalysisAnalyersVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>

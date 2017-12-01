@@ -210,16 +210,14 @@ namespace Test.Utilities
             var fixAllProvider = codeFixProvider.GetFixAllProvider();
             var diagnosticProvider = new FixAllDiagnosticProvider(analyzerOpt, additionalFiles, validationMode, getFixableDiagnostics);
 
-            foreach (var fixableDiagnosticId in fixableDiagnosticIds)
-            {
-                var fixAllContext = new FixAllContext(document, codeFixProvider, FixAllScope.Document, fixableDiagnosticId, fixableDiagnostics.Select(d => d.Id), diagnosticProvider, CancellationToken.None);
-                var codeAction = fixAllProvider.GetFixAsync(fixAllContext).Result;
-                document = document.Apply(codeAction);
+            var fixAllContext = new FixAllContext(document, codeFixProvider, FixAllScope.Document, string.Empty, fixableDiagnostics.Select(d => d.Id), diagnosticProvider, CancellationToken.None);
+            var codeAction = fixAllProvider.GetFixAsync(fixAllContext).Result;
+            document = document.Apply(codeAction);
 
-                additionalFiles = document.Project.AdditionalDocuments.Select(a => new TestAdditionalDocument(a));
+            additionalFiles = document.Project.AdditionalDocuments.Select(a => new TestAdditionalDocument(a));
 
-                analyzerDiagnostics = GetSortedDiagnostics(analyzerOpt, new[] { document }, additionalFiles: additionalFiles, validationMode: validationMode);
-            }
+            analyzerDiagnostics = GetSortedDiagnostics(analyzerOpt, new[] { document }, additionalFiles: additionalFiles, validationMode: validationMode);
+
             var updatedCompilerDiagnostics = document.GetSemanticModelAsync().Result.GetDiagnostics();
             var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, updatedCompilerDiagnostics);
             if (!allowNewCompilerDiagnostics && newCompilerDiagnostics.Any())

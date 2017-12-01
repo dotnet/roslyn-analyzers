@@ -127,6 +127,21 @@
         <target state="translated">{0} は {1} を呼び出しますが、メソッドから返される値は使用されません。{1} は Pure メソッドとしてマークされているため、副作用は発生しません。条件ステートメントで結果を使用するか、結果を変数に割り当てるか、引数として他のメソッドに渡してください。</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseNameOfInPlaceOfStringDescription">
+        <source>Using nameof helps keep your code valid when refactoring.</source>
+        <target state="new">Using nameof helps keep your code valid when refactoring.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseNameOfInPlaceOfStringMessage">
+        <source>Use nameof in place of string literal '{0}'</source>
+        <target state="new">Use nameof in place of string literal '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseNameOfInPlaceOfStringTitle">
+        <source>Use nameof to express symbol names</source>
+        <target state="new">Use nameof to express symbol names</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -127,6 +127,21 @@
         <target state="translated">{0} вызывает {1}, но не использует значение, возвращаемое методом. Так как {1} помечен как метод Pure, он не может иметь побочные эффекты. Используйте результат в условном операторе, присвойте его переменной или передайте его в качестве аргумента другому методу.</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseNameOfInPlaceOfStringDescription">
+        <source>Using nameof helps keep your code valid when refactoring.</source>
+        <target state="new">Using nameof helps keep your code valid when refactoring.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseNameOfInPlaceOfStringMessage">
+        <source>Use nameof in place of string literal '{0}'</source>
+        <target state="new">Use nameof in place of string literal '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseNameOfInPlaceOfStringTitle">
+        <source>Use nameof to express symbol names</source>
+        <target state="new">Use nameof to express symbol names</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

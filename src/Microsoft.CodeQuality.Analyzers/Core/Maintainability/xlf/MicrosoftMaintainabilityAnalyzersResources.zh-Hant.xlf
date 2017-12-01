@@ -127,6 +127,21 @@
         <target state="translated">{0} 呼叫了 {1}，但未使用方法傳回的值。因為 {1} 標記為 Pure 方法，所以不能有副作用。請使用條件陳述式中的結果、將結果指派到變數，或將其以引數方式傳遞到另一個方法。</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseNameOfInPlaceOfStringDescription">
+        <source>Using nameof helps keep your code valid when refactoring.</source>
+        <target state="new">Using nameof helps keep your code valid when refactoring.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseNameOfInPlaceOfStringMessage">
+        <source>Use nameof in place of string literal '{0}'</source>
+        <target state="new">Use nameof in place of string literal '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseNameOfInPlaceOfStringTitle">
+        <source>Use nameof to express symbol names</source>
+        <target state="new">Use nameof to express symbol names</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

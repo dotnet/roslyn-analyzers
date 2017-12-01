@@ -285,6 +285,14 @@ Category: Design
 
 Severity: Warning
 
+### CA1507: Use nameof to express symbol names ###
+
+Using nameof helps keep your code valid when refactoring.
+
+Category: Maintainability
+
+Severity: Warning
+
 ### CA1708: Identifiers should differ by more than case ###
 
 Identifiers for namespaces, types, members, and parameters cannot differ only by case because languages that target the common language runtime are not required to be case-sensitive.

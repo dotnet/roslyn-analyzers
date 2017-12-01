@@ -490,6 +490,14 @@ Help: [Source](https://github.com/dotnet/roslyn-analyzers/blob/master/src/Micros
 
 Maintainability
 ----------------------------------
+### CA1507: Use nameof to express symbol names ###
+
+Using nameof helps keep your code valid when refactoring.
+
+Category: Usage
+
+Severity: Warning
+
 ### CA1801: Review unused parameters ###
 
 A method signature includes a parameter that is not used in the method body.

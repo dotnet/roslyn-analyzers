@@ -97,7 +97,7 @@ namespace Test.Utilities
             DiagnosticAnalyzer analyzerOpt,
             CodeFixProvider codeFixProvider,
             string[] newSources,
-            string[] newSourceFileName,
+            string[] newSourceFileNames,
             IEnumerable<TestAdditionalDocument> additionalFiles,
             int? codeFixIndex,
             bool allowNewCompilerDiagnostics,
@@ -179,7 +179,7 @@ namespace Test.Utilities
             for (int i = 0; i < documentIds.Length; i++)
             {
                 var document = solution.GetDocument(documentIds[i]);
-                var actualText = GetActualTextForNewDocument(document, newSourceFileName[i]);
+                var actualText = GetActualTextForNewDocument(document, newSourceFileNames[i]);
                 Assert.Equal(newSources[i], actualText.ToString());
             }
         }

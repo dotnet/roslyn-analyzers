@@ -187,7 +187,85 @@ class E
     public static void M() { }
 }
 ";
-            VerifyCSharpFix(new[] { code, anotherCode },new[] { fix, anotherCodeFix });
+            VerifyCSharpFix(new[] { code, anotherCode }, new[] { fix, anotherCodeFix });
+        }
+
+        [Fact]
+        public void CommentsNearParams_CSharp()
+        {
+            var code = @"
+class C
+{
+    public C(/* comment left */ int /* comment middle */ param /* comment right */)
+    {
+    }
+
+    public int M(/* comment 1 */ int /* comment 2 */ param1 /* comment 3 */, /* comment 4 */ int /* comment 5 */ param2 /* comment 6 */)
+    {   
+        return param2;
+    }
+
+    public void Caller()
+    {
+        var c = new C(/* caller comment left */ 0 /* caller comment right */);
+        M(/* comment 1 */ 0 /* comment 2 */, /* comment 3 */ 1 /* comment 4 */);
+    }
+}
+";
+            var fix = @"
+class C
+{
+    public C(/* comment left */ )
+    {
+    }
+
+    public int M(/* comment 1 */ int /* comment 5 */ param2 /* comment 6 */)
+    {   
+        return param2;
+    }
+
+    public void Caller()
+    {
+        var c = new C(/* caller comment left */ );
+        M(/* comment 1 */ 1 /* comment 4 */);
+    }
+}
+";
+            VerifyCSharpFix(code, fix, allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact]
+        public void NamedParams_CSharp()
+        {
+            var code = @"
+class C
+{
+    public int UnusedParamMethod(int param1, int param2)
+    {
+        return param1;
+    }
+
+    public void Caller()
+    {
+        UnusedParamMethod(param2: 0, param1: 1);
+    }
+}
+";
+            var fix = @"
+class C
+{
+    public int UnusedParamMethod(int param1)
+    {
+        return param1;
+    }
+
+    public void Caller()
+    {
+        UnusedParamMethod(param1: 1);
+    }
+}
+";
+            VerifyCSharpFix(code, fix, allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]

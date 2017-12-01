@@ -77,14 +77,14 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 // TODO add check for type
                 var methodDeclarationNode = parametersDeclarartionNode.Parent;
                 ISymbol symbol = editor.SemanticModel.GetDeclaredSymbol(methodDeclarationNode);
-                var symbolCallerInfos = await SymbolFinder.FindReferencesAsync(symbol, document.Project.Solution, cancellationToken).ConfigureAwait(false);
+                var referencedSymbols = await SymbolFinder.FindReferencesAsync(symbol, document.Project.Solution, cancellationToken).ConfigureAwait(false);
 
                 var nodesToRemoveBuilder = ImmutableArray.CreateBuilder<KeyValuePair<DocumentId, SyntaxNode>>();
-                foreach (var symbolCallerInfo in symbolCallerInfos)
+                foreach (var referencedSymbol in referencedSymbols)
                 {
-                    if (symbolCallerInfo.Locations != null)
+                    if (referencedSymbol.Locations != null)
                     {
-                        foreach (var location in symbolCallerInfo.Locations)
+                        foreach (var location in referencedSymbol.Locations)
                         {
                             var referencedSymbolNode = location.Location.SourceTree.GetRoot().FindNode(location.Location.SourceSpan).Parent;
                             // TODO this is C# MemberAccessExpressionSyntax. Need to generalize this to both languages
@@ -125,16 +125,16 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             public async Task<Solution> RemoveNodes(Solution solution, IEnumerable<KeyValuePair<DocumentId, SyntaxNode>> pairs, CancellationToken cancellationToken)
             {
-                // Start removing from bottom to top to keep spans of nodes that are removed later.
-                var groupedPairs = pairs.GroupBy(p => p.Key);
-                foreach(var group in groupedPairs)
+                foreach (var group in pairs.GroupBy(p => p.Key))
                 {
                     DocumentEditor editor = await DocumentEditor.CreateAsync(solution.GetDocument(group.Key), cancellationToken).ConfigureAwait(false);
-                    foreach(var value in group.OrderByDescending(v => v.Value.SpanStart))
+                    // Start removing from bottom to top to keep spans of nodes that are removed later.
+                    foreach (var value in group.OrderByDescending(v => v.Value.SpanStart))
                     {
                         RemoveNode(editor, value.Value);
-                        
+
                     }
+
                     solution = solution.WithDocumentSyntaxRoot(group.Key, editor.GetChangedRoot());
                 }
 

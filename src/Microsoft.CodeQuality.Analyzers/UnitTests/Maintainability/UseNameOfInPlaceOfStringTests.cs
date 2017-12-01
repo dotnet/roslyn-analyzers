@@ -197,6 +197,29 @@ class C
 }");
         }
 
+        [WorkItem(1426, "https://github.com/dotnet/roslyn-analyzers/issues/1426")]
+        [Fact]
+        public void NoDiagnostic_1426()
+        {
+            VerifyCSharp(@"
+using System.Runtime.CompilerServices;
+
+public class C
+{
+    int M([CallerMemberName] string propertyName = """")
+    {
+        return 0;
+    }
+
+    public bool Property
+    {
+        set
+        {
+            M();
+        }
+    }
+}");
+        }
 
         #endregion
 

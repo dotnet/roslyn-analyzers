@@ -49,6 +49,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         {
             var argument = (IArgumentOperation)context.Operation;
             if ((argument.Value.Kind != OperationKind.Literal 
+                || argument.ArgumentKind != ArgumentKind.Explicit
                 || argument.Value.Type.SpecialType != SpecialType.System_String))
             {
                 return;

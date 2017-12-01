@@ -9,13 +9,6 @@ namespace Test.Utilities
 {
     public static class DiagnosticFixerTestsExtensions
     {
-        internal static Document Apply(this Document document, CodeAction action)
-        {
-            System.Collections.Immutable.ImmutableArray<CodeActionOperation> operations = action.GetOperationsAsync(CancellationToken.None).Result;
-            Solution solution = operations.OfType<ApplyChangesOperation>().Single().ChangedSolution;
-            return solution.GetDocument(document.Id);
-        }
-
         internal static Solution Apply(CodeAction action)
         {
             System.Collections.Immutable.ImmutableArray<CodeActionOperation> operations = action.GetOperationsAsync(CancellationToken.None).Result;

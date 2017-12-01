@@ -4,7 +4,6 @@ using System.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeQuality.Analyzers.Maintainability;
 
 namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
@@ -15,29 +14,19 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpReviewUnusedParametersFixer : ReviewUnusedParametersFixer
     {
-        public CSharpReviewUnusedParametersFixer(): base(new CSharpNodesProvider()) { }
-
-        private sealed class CSharpNodesProvider : NodesProvider
+        protected override SyntaxNode GetOperationNode(SyntaxNode node)
         {
-            protected override SyntaxNode GetOperationNode(SyntaxNode node)
+            if (node.Kind() == SyntaxKind.SimpleMemberAccessExpression)
             {
-                if (node.Kind() == SyntaxKind.SimpleMemberAccessExpression)
-                {
-                    return node.Parent;
-                }
-
-                return node;
+                return node.Parent;
             }
 
-            public override void RemoveNode(DocumentEditor editor, SyntaxNode node)
-            {
-                editor.RemoveNode(node);
-            }
+            return node;
+        }
 
-            protected override SyntaxNode GetParameterNode(SyntaxNode node)
-            {
-                return node;
-            }
+        protected override SyntaxNode GetParameterNode(SyntaxNode node)
+        {
+            return node;
         }
     }
 }

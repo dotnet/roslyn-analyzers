@@ -3,9 +3,7 @@
 Imports System.Composition
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
-Imports Microsoft.CodeAnalysis.Editing
 Imports Microsoft.CodeAnalysis.VisualBasic
-Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 Imports Microsoft.CodeQuality.Analyzers.Maintainability
 
 Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
@@ -16,28 +14,16 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
     Public NotInheritable Class BasicReviewUnusedParametersFixer
         Inherits ReviewUnusedParametersFixer
 
-        Public Sub New()
-            MyBase.New(New BasicNodesProvider())
-        End Sub
-
-        Private NotInheritable Class BasicNodesProvider
-            Inherits NodesProvider
-
-            Protected Overrides Function GetOperationNode(node As SyntaxNode) As SyntaxNode
-                If node.Kind() = SyntaxKind.SimpleMemberAccessExpression Then
-                    Return node.Parent
-                End If
-
-                Return node
-            End Function
-
-            Public Overrides Sub RemoveNode(editor As DocumentEditor, node As SyntaxNode)
-                editor.RemoveNode(node)
-            End Sub
-
-            Protected Overrides Function GetParameterNode(node As SyntaxNode) As SyntaxNode
+        Protected Overrides Function GetOperationNode(node As SyntaxNode) As SyntaxNode
+            If node.Kind() = SyntaxKind.SimpleMemberAccessExpression Then
                 Return node.Parent
-            End Function
-        End Class
+            End If
+
+            Return node
+        End Function
+
+        Protected Overrides Function GetParameterNode(node As SyntaxNode) As SyntaxNode
+            Return node.Parent
+        End Function
     End Class
 End Namespace

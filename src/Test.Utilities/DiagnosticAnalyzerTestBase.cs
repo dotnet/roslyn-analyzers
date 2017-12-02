@@ -422,11 +422,6 @@ namespace Test.Utilities
 
         protected static Diagnostic[] GetSortedDiagnostics(DiagnosticAnalyzer analyzerOpt, Document[] documents, TextSpan?[] spans = null, TestValidationMode validationMode = DefaultTestValidationMode, IEnumerable<TestAdditionalDocument> additionalFiles = null)
         {
-            if (analyzerOpt == null)
-            {
-                return Array.Empty<Diagnostic>();
-            }
-
             var projects = new HashSet<Project>();
             foreach (Document document in documents)
             {
@@ -438,9 +433,8 @@ namespace Test.Utilities
             foreach (Project project in projects)
             {
                 Compilation compilation = project.GetCompilationAsync().Result;
-                compilation = EnableAnalyzer(analyzerOpt, compilation);
-
-                ImmutableArray<Diagnostic> diags = compilation.GetAnalyzerDiagnostics(new[] { analyzerOpt }, validationMode, analyzerOptions);
+                var diags = GetSortedDiagnostics(analyzerOpt, compilation, validationMode, additionalFiles);
+                
                 if (spans == null)
                 {
                     diagnostics.AddRange(diags);
@@ -477,6 +471,20 @@ namespace Test.Utilities
             Diagnostic[] results = diagnostics.AsEnumerable().OrderBy(d => d.Location.SourceSpan.Start).ToArray();
             diagnostics.Free();
             return results;
+        }
+
+        protected static Diagnostic[] GetSortedDiagnostics(DiagnosticAnalyzer analyzerOpt, Compilation compilation, TestValidationMode validationMode = DefaultTestValidationMode, IEnumerable<TestAdditionalDocument> additionalFiles = null)
+        {
+            if (analyzerOpt == null)
+            {
+                return Array.Empty<Diagnostic>();
+            }
+
+            var analyzerOptions = additionalFiles != null ? new AnalyzerOptions(additionalFiles.ToImmutableArray<AdditionalText>()) : null;
+            DiagnosticBag diagnostics = DiagnosticBag.GetInstance();
+            compilation = EnableAnalyzer(analyzerOpt, compilation);
+
+            return compilation.GetAnalyzerDiagnostics(new[] { analyzerOpt }, validationMode, analyzerOptions).OrderBy(d => d.Location.SourceSpan.Start).ToArray();
         }
 
         private static Compilation EnableAnalyzer(DiagnosticAnalyzer analyzer, Compilation compilation)

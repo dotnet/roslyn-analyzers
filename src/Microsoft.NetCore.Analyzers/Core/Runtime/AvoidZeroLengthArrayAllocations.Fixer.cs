@@ -51,8 +51,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxGenerator generator = editor.Generator;
 
             ITypeSymbol elementType = GetArrayElementType(nodeToFix, semanticModel, cancellationToken);
-            SyntaxNode arrayEmptyInvocation = GenerateArrayEmptyInvocation(generator, elementType, semanticModel).WithTriviaFrom(nodeToFix);
+            if (elementType == null)
+            {
+                return document;
+            }
 
+            SyntaxNode arrayEmptyInvocation = GenerateArrayEmptyInvocation(generator, elementType, semanticModel).WithTriviaFrom(nodeToFix);
             editor.ReplaceNode(nodeToFix, arrayEmptyInvocation);
             return editor.GetChangedDocument();
         }
@@ -60,8 +64,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static ITypeSymbol GetArrayElementType(SyntaxNode arrayCreationExpression, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var typeInfo = semanticModel.GetTypeInfo(arrayCreationExpression, cancellationToken);
-            var arrayType = (IArrayTypeSymbol)typeInfo.Type;
-            return arrayType.ElementType;
+            // Use ConvertedType instead of Type to handle cases like 'T[] goo = { }'.
+            // https://github.com/dotnet/roslyn/issues/23545
+            var arrayType = (IArrayTypeSymbol)typeInfo.ConvertedType;
+            return arrayType?.ElementType;
         }
 
         private static SyntaxNode GenerateArrayEmptyInvocation(SyntaxGenerator generator, ITypeSymbol elementType, SemanticModel semanticModel)
@@ -74,7 +80,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
-=       private class MyCodeAction : DocumentChangeAction
+        private class MyCodeAction : DocumentChangeAction
         {
             public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
                 : base(title, createChangedDocument, equivalenceKey)

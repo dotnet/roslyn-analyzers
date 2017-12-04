@@ -178,7 +178,7 @@ End Class
             VerifyBasicFix(code, fix);
         }
 
-        [Fact]
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
         public void TestNestedAbstractClassWithPublicConstructor3()
         {
             var code = @"
@@ -190,16 +190,7 @@ internal abstract class C
     }
 }
 ";
-            var fix = @"
-internal abstract class C
-{
-    public abstract class D
-    {
-        protected D() { }
-    }
-}
-";
-            VerifyCSharpFix(code, fix);
+            VerifyCSharpFix(code, code);
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]

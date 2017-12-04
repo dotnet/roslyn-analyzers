@@ -12,12 +12,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicAvoidEmptyInterfacesAnalyzer();
+            return new AvoidEmptyInterfacesAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpAvoidEmptyInterfacesAnalyzer();
+            return new AvoidEmptyInterfacesAnalyzer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

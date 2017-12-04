@@ -33,7 +33,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             Diagnostic diagnostic = context.Diagnostics.Single();
 
             context.RegisterCodeFix(
-                new RemoveParameterAction(
+                new MyCodeAction(
                     MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersMessage,
                     async ct => await RemoveNodes(context.Document, diagnostic, ct).ConfigureAwait(false), diagnostic.Id),
                 diagnostic);
@@ -112,17 +112,10 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             return nodesToRemove.ToImmutable();
         }
 
-        private sealed class RemoveParameterAction : SolutionChangeAction
+        private sealed class MyCodeAction : SolutionChangeAction
         {
-            private readonly string _equivalenceKey;
-
-            public RemoveParameterAction(string title, Func<CancellationToken, Task<Solution>> createChangedSolution, string equivalenceKey)
-                : base(title, createChangedSolution)
-            {
-                _equivalenceKey = equivalenceKey;
-            }
-
-            public override string EquivalenceKey => _equivalenceKey;
+            public MyCodeAction(string title, Func<CancellationToken, Task<Solution>> createChangedSolution, string equivalenceKey)
+                : base(title, createChangedSolution, equivalenceKey) { }
         }
     }
 }

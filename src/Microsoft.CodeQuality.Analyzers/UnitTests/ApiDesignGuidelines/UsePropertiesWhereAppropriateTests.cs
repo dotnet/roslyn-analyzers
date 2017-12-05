@@ -183,6 +183,37 @@ public class Class
             GetCA1024CSharpResultAt(21, 22, "GetFileNameProtected"));
         }
 
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CSharp_CA1024NoDiagnosticCases_Internal()
+        {
+            VerifyCSharp(@"
+public class Class
+{
+    private string fileName = ""data.txt"";
+
+    internal string GetFileName()
+    {
+        return fileName;
+    }
+
+    private string Get_FileName2()
+    {
+        return fileName;
+    }
+
+    private class InnerClass
+    {
+        private string fileName = ""data.txt"";
+
+        public string Get123()
+        {
+            return fileName;
+        }
+    }
+}
+");
+        }
+
         [Fact]
         public void VisualBasic_CA1024NoDiagnosticCases()
         {
@@ -343,6 +374,32 @@ End Class
             GetCA1024BasicResultAt(9, 18, "Get_FileName2"),
             GetCA1024BasicResultAt(13, 18, "Get123"),
             GetCA1024BasicResultAt(17, 24, "GetFileNameProtected"));
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void VisualBasic_CA1024NoDiagnosticCases_Internal()
+        {
+            VerifyBasic(@"
+Public Class Class1
+	Private fileName As String
+
+	Friend Function GetFileName() As String
+		Return filename
+	End Function
+
+	Private Function Get_FileName2() As String
+		Return filename
+	End Function
+
+    Private Class InnerClass
+	    Private fileName As String
+
+	    Public Function Get123() As String
+		    Return filename
+	    End Function
+    End Class
+End Class
+");
         }
 
         private static DiagnosticResult GetCA1024CSharpResultAt(int line, int column, string methodName)

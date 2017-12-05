@@ -554,7 +554,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         var expressionStatement = (IExpressionStatementOperation)operation;
                         return ValidateExpression(expressionStatement);
                     default:
-                        return false;
+                        // Ignore attribute operation blocks.
+                        return operation.IsAttribute();
                 }
             }
 
@@ -685,7 +686,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     case OperationKind.Try:
                         return ValidateTryOperation((ITryOperation)operation);
                     default:
-                        return false;
+                        // Ignore attribute operation blocks.
+                        return operation.IsAttribute();
                 }
             }
 

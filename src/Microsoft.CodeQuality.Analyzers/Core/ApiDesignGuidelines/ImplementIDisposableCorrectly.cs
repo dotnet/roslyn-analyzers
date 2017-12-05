@@ -554,7 +554,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         var expressionStatement = (IExpressionStatementOperation)operation;
                         return ValidateExpression(expressionStatement);
                     default:
-                        return false;
+                        // Ignore operation roots with no IOperation API support (OperationKind.None) 
+                        return operation.IsOperationNoneRoot();
                 }
             }
 
@@ -685,7 +686,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     case OperationKind.Try:
                         return ValidateTryOperation((ITryOperation)operation);
                     default:
-                        return false;
+                        // Ignore operation roots with no IOperation API support (OperationKind.None) 
+                        return operation.IsOperationNoneRoot();
                 }
             }
 

@@ -20,7 +20,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class ReviewUnusedParametersAnalyzer : DiagnosticAnalyzer
     {
-
         internal const string RuleId = "CA1801";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
@@ -99,8 +98,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                         return;
                     }
 
-                    // Ignore implicitly declared methods, abstract methods, virtual methods, interface implementations and finalizers (FxCop compat).
+                    // Ignore implicitly declared methods, extern methods, abstract methods, virtual methods, interface implementations and finalizers (FxCop compat).
                     if (method.IsImplicitlyDeclared ||
+                        method.IsExtern ||
                         method.IsAbstract ||
                         method.IsVirtual ||
                         method.IsOverride ||
@@ -206,7 +206,16 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 // Note that VB method bodies with 1 action have 3 operations.
                 // The first is the actual operation, the second is a label statement, and the third is a return
                 // statement. The last two are implicit in these scenarios.
-                if (context.OperationBlocks.Length == 1)
+
+                // Filter out operation roots with no IOperation API support (OperationKind.None)
+                var operationBlocks = context.OperationBlocks;
+                if (operationBlocks.Any(operation => operation.IsOperationNoneRoot()))
+                {
+                    operationBlocks = operationBlocks.Where(operation => !operation.IsOperationNoneRoot()).ToImmutableArray();
+                }
+
+                if (operationBlocks.Length == 1 &&
+                    operationBlocks[0] is IBlockOperation methodBlock)
                 {
                     bool IsSingleStatementBody(IBlockOperation body)
                     {
@@ -216,7 +225,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                              body.Operations[2] is IReturnOperation returnOp && returnOp.IsImplicit);
                     }
 
-                    var methodBlock = (IBlockOperation)context.OperationBlocks[0];
                     if (IsSingleStatementBody(methodBlock))
                     {
                         var innerOperation = methodBlock.Operations.First();

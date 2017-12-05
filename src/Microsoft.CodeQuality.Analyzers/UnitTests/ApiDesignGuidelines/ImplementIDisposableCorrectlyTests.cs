@@ -46,6 +46,40 @@ public class C : IDisposable
 ");
         }
 
+        [Fact, WorkItem(1435, "https://github.com/dotnet/roslyn-analyzers/issues/1435")]
+        public void CSharp_CA1063_DisposeSignature_NoDiagnostic_GoodDisposablePattern_WithAttributes()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class MyAttribute : Attribute
+{
+    public MyAttribute(int x) { }
+}
+
+public class C : IDisposable
+{
+    [MyAttribute(0)]
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    [MyAttribute(0)]
+    ~C()
+    {
+        Dispose(false);
+    }
+
+    [MyAttribute(0)]
+    protected virtual void Dispose(bool disposing)
+    {
+    }
+}
+");
+        }
+
         [Fact]
         public void CSharp_CA1063_DisposeSignature_NoDiagnostic_NotImplementingDisposable()
         {

@@ -209,7 +209,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static bool IsInvalidSymbol(ISymbol symbol)
         {
-            return (!(symbol.GetResultantVisibility() == SymbolVisibility.Public && !symbol.IsOverride)) ||
+            return (!(symbol.IsExternallyVisible() && !symbol.IsOverride)) ||
                 symbol.IsAccessorMethod() || symbol.IsImplementationOfAnyInterfaceMember();
         }
 

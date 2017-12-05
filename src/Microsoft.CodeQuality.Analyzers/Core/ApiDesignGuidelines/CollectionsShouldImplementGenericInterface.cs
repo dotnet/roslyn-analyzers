@@ -91,7 +91,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
 
             // FxCop compat: only fire on externally visible types.
-            if (namedTypeSymbol.GetResultantVisibility() != SymbolVisibility.Public)
+            if (!namedTypeSymbol.IsExternallyVisible())
             {
                 return;
             }

@@ -65,7 +65,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             if (namedTypeSymbol.TypeKind == TypeKind.Interface ||
                 namedTypeSymbol.TypeKind == TypeKind.Enum ||
-                namedTypeSymbol.GetResultantVisibility() != SymbolVisibility.Public)
+                !namedTypeSymbol.IsExternallyVisible())
             {
                 return;
             }

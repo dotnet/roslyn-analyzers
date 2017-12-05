@@ -47,7 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var symbol = (INamedTypeSymbol)context.Symbol;
 
             if (symbol.TypeKind == TypeKind.Interface &&
-                symbol.GetResultantVisibility() == SymbolVisibility.Public &&
+                symbol.IsExternallyVisible() &&
                 !symbol.GetMembers().Any() &&
                 !symbol.AllInterfaces.SelectMany(s => s.GetMembers()).Any())
             {

@@ -89,7 +89,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             if (symbol != null &&
                 symbol.TypeKind == TypeKind.Enum &&
-                symbol.GetResultantVisibility() == SymbolVisibility.Public)
+                symbol.IsExternallyVisible())
             {
                 if (EnumHelpers.TryGetEnumMemberValues(symbol, out IList<ulong> memberValues))
                 {

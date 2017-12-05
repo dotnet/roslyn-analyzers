@@ -45,7 +45,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     if (!symbol.IsStatic ||
                         symbol.DeclaredAccessibility != Accessibility.Public ||
                         !symbol.ContainingType.IsGenericType ||
-                        symbol.ContainingType.GetResultantVisibility() != SymbolVisibility.Public)
+                        !symbol.ContainingType.IsExternallyVisible())
                     {
                         return;
                     }

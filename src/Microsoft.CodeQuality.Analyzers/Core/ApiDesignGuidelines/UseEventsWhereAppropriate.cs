@@ -62,7 +62,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     method.IsImplementationOfAnyInterfaceMember() ||
                     method.IsConstructor() ||
                     method.IsFinalizer() ||
-                    method.GetResultantVisibility() != SymbolVisibility.Public)
+                    !method.IsExternallyVisible())
                 {
                     return;
                 }

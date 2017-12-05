@@ -59,7 +59,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 var lastField = fieldInitializer?.InitializedFields.LastOrDefault();
                 var fieldInitializerValue = fieldInitializer?.Value;
                 if (fieldInitializerValue == null || lastField.IsConst ||
-                    lastField.GetResultantVisibility() == SymbolVisibility.Public || !lastField.IsStatic ||
+                    lastField.IsExternallyVisible() || !lastField.IsStatic ||
                     !lastField.IsReadOnly || !fieldInitializerValue.ConstantValue.HasValue)
                 {
                     return;

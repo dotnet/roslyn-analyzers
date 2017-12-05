@@ -104,7 +104,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             // FxCop compat: only fire on externally visible types.
-            if (symbol.GetResultantVisibility() != SymbolVisibility.Public)
+            if (!symbol.IsExternallyVisible())
             {
                 return;
             }

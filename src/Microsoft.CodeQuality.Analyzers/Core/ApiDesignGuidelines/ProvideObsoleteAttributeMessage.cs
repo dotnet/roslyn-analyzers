@@ -59,7 +59,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol obsoleteAttributeType)
         {
             // FxCop compat: only analyze externally visible symbols
-            if (context.Symbol.GetResultantVisibility() != SymbolVisibility.Public)
+            if (!context.Symbol.IsExternallyVisible())
             {
                 return;
             }

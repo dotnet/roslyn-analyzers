@@ -47,7 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 if (!field.IsStatic &&
                     !field.IsConst &&
                     field.IsPublic() &&
-                    field.ContainingType.GetResultantVisibility() == SymbolVisibility.Public)
+                    field.ContainingType.IsExternallyVisible())
                 {
                     obj.ReportDiagnostic(field.CreateDiagnostic(Rule));
                 }

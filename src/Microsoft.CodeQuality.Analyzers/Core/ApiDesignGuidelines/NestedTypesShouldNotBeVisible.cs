@@ -93,7 +93,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                             // Even if the nested type is declared public, don't complain if it's within
                             // a type that's not visible outside the assembly.
-                            if (containingType.GetResultantVisibility() != SymbolVisibility.Public)
+                            if (!containingType.IsExternallyVisible())
                             {
                                 return;
                             }

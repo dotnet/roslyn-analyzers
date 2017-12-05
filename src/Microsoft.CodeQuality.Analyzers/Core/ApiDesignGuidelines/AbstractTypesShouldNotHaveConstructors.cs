@@ -43,7 +43,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static void AnalyzeSymbol(SymbolAnalysisContext context)
         {
             var symbol = context.Symbol as INamedTypeSymbol;
-            if (symbol.IsAbstract && symbol.GetResultantVisibility() == SymbolVisibility.Public)
+            if (symbol.IsAbstract && symbol.IsExternallyVisible())
             {
                 bool hasAnyPublicConstructors =
                     symbol.InstanceConstructors.Any(

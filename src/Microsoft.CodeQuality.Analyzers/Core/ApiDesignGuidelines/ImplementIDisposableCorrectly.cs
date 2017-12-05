@@ -198,7 +198,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 if (context.Symbol is INamedTypeSymbol type &&
                     type.TypeKind == TypeKind.Class &&
-                    type.GetResultantVisibility() == SymbolVisibility.Public)
+                    type.IsExternallyVisible())
                 {
                     bool implementsDisposableInBaseType = ImplementsDisposableInBaseType(type);
 

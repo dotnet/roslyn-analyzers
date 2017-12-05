@@ -84,7 +84,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return;
                 }
 
-                if (method.GetResultantVisibility() != SymbolVisibility.Public)
+                if (!method.IsExternallyVisible())
                 {
                     // only apply to methods that are exposed outside
                     return;

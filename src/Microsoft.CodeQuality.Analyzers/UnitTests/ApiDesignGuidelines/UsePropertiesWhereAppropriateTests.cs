@@ -373,7 +373,7 @@ End Class
             GetCA1024BasicResultAt(5, 21, "GetFileName"),
             GetCA1024BasicResultAt(9, 21, "Get_FileName2"),
             GetCA1024BasicResultAt(13, 21, "Get123"),
-            GetCA1024BasicResultAt(17, 27, "GetFileNameProtected"));
+            GetCA1024BasicResultAt(17, 24, "GetFileNameProtected"));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]

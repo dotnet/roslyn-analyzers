@@ -207,11 +207,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 // The first is the actual operation, the second is a label statement, and the third is a return
                 // statement. The last two are implicit in these scenarios.
 
-                // Filter out Attribute operation blocks.
+                // Filter out operation roots with no IOperation API support (OperationKind.None)
                 var operationBlocks = context.OperationBlocks;
-                if (operationBlocks.Any(operation => operation.IsAttribute()))
+                if (operationBlocks.Any(operation => operation.IsOperationNoneRoot()))
                 {
-                    operationBlocks = operationBlocks.Where(operation => !operation.IsAttribute()).ToImmutableArray();
+                    operationBlocks = operationBlocks.Where(operation => !operation.IsOperationNoneRoot()).ToImmutableArray();
                 }
 
                 if (operationBlocks.Length == 1 &&

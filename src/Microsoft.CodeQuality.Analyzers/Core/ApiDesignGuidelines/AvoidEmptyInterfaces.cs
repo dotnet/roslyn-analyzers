@@ -48,7 +48,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             if (symbol.TypeKind == TypeKind.Interface &&
                 symbol.IsExternallyVisible() &&
-                !symbol.GetMembers().Any() &&
+                symbol.GetMembers().IsEmpty &&
                 !symbol.AllInterfaces.SelectMany(s => s.GetMembers()).Any())
             {
                 context.ReportDiagnostic(symbol.CreateDiagnostic(Rule));

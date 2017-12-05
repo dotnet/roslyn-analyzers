@@ -221,94 +221,94 @@ public class Class
 Imports System.Collections
 
 Public Class Base
-	Public Overridable Function GetSomething() As Integer
-		Return 0
-	End Function
+    Public Overridable Function GetSomething() As Integer
+        Return 0
+    End Function
 End Class
 
 Public Class Class1
-	Inherits Base
-	Private fileName As String
+    Inherits Base
+    Private fileName As String
 
-	' 1) Returns void
-	Public Sub GetWronglyNamedMethod()
-	End Sub
+    ' 1) Returns void
+    Public Sub GetWronglyNamedMethod()
+    End Sub
 
-	' 2) Not a method
-	Public ReadOnly Property LogFile() As String
-		Get
-			Return fileName
-		End Get
-	End Property
+    ' 2) Not a method
+    Public ReadOnly Property LogFile() As String
+        Get
+            Return fileName
+        End Get
+    End Property
 
-	' 3) Returns an array type
-	Public Function GetValues() As Integer()
-		Return Nothing
-	End Function
+    ' 3) Returns an array type
+    Public Function GetValues() As Integer()
+        Return Nothing
+    End Function
 
-	' 4) Has parameters
-	Public Function GetMethodWithParameters(p As Integer) As Integer()
-		Return New Integer() {p}
-	End Function
+    ' 4) Has parameters
+    Public Function GetMethodWithParameters(p As Integer) As Integer()
+        Return New Integer() {p}
+    End Function
 
-	' 5a) Name doesn't start with a 'Get'
-	Public Function SomeMethod() As Integer
-		Return 0
-	End Function
+    ' 5a) Name doesn't start with a 'Get'
+    Public Function SomeMethod() As Integer
+        Return 0
+    End Function
 
-	' 5b) First compound word is not 'Get'
-	Public Function GetterMethod() As Integer
-		Return 0
-	End Function
+    ' 5b) First compound word is not 'Get'
+    Public Function GetterMethod() As Integer
+        Return 0
+    End Function
 
-	' 6) Generic method
-	Public Function GetGenericMethod(Of T)() As Object
-		Return New GenericType(Of T)()
-	End Function
+    ' 6) Generic method
+    Public Function GetGenericMethod(Of T)() As Object
+        Return New GenericType(Of T)()
+    End Function
 
-	' 7) Override
-	Public Overrides Function GetSomething() As Integer
-		Return 1
-	End Function
+    ' 7) Override
+    Public Overrides Function GetSomething() As Integer
+        Return 1
+    End Function
 
-	' 8) Method with overloads
-	Public Function GetOverloadedMethod() As Integer
-		Return 1
-	End Function
+    ' 8) Method with overloads
+    Public Function GetOverloadedMethod() As Integer
+        Return 1
+    End Function
 
-	Public Function GetOverloadedMethod(i As Integer) As Integer
-		Return i
-	End Function
+    Public Function GetOverloadedMethod(i As Integer) As Integer
+        Return i
+    End Function
 
-	' 9) Methods with special name
-	Public Overloads Function GetHashCode() As Integer
-		Return 0
-	End Function
+    ' 9) Methods with special name
+    Public Overloads Function GetHashCode() As Integer
+        Return 0
+    End Function
 
-	Public Function GetEnumerator() As IEnumerator
-		Return Nothing
-	End Function
+    Public Function GetEnumerator() As IEnumerator
+        Return Nothing
+    End Function
 
-	' 10) Method with invocation expressions
-	Public Function GetSomethingWithInvocation() As Integer
-		System.Console.WriteLine(Me)
-		Return 0
-	End Function
+    ' 10) Method with invocation expressions
+    Public Function GetSomethingWithInvocation() As Integer
+        System.Console.WriteLine(Me)
+        Return 0
+    End Function
 
-	' 11) Method named 'Get'
-	Public Function [Get]() As String
-		Return fileName
-	End Function
+    ' 11) Method named 'Get'
+    Public Function [Get]() As String
+        Return fileName
+    End Function
 
-	' 12) Private method
-	Private Function GetSomethingPrivate() As String
-		Return fileName
-	End Function
+    ' 12) Private method
+    Private Function GetSomethingPrivate() As String
+        Return fileName
+    End Function
 
-	' 13) Friend method
-	Friend Function GetSomethingInternal() As String
-		Return fileName
-	End Function
+    ' 13) Friend method
+    Friend Function GetSomethingInternal() As String
+        Return fileName
+    End Function
 End Class
 
 Public Class GenericType(Of T)
@@ -338,10 +338,10 @@ public class class1
         {
             VerifyBasic(@"
 Public Class class1
-	Public Function GetSomethingWithUnboundInvocation() As Integer
-		Console.WriteLine(Me)
-		Return 0
-	End Function
+    Public Function GetSomethingWithUnboundInvocation() As Integer
+        Console.WriteLine(Me)
+        Return 0
+    End Function
 End Class
 ");
         }
@@ -351,29 +351,29 @@ End Class
         {
             VerifyBasic(@"
 Public Class Class1
-	Private fileName As String
+    Private fileName As String
 
-	Public Function GetFileName() As String
-		Return filename
-	End Function
+    Public Function GetFileName() As String
+        Return filename
+    End Function
 
-	Public Function Get_FileName2() As String
-		Return filename
-	End Function
+    Public Function Get_FileName2() As String
+        Return filename
+    End Function
 
-	Public Function Get123() As String
-		Return filename
-	End Function
+    Public Function Get123() As String
+        Return filename
+    End Function
 
     Protected Function GetFileNameProtected() As String
-		Return filename
-	End Function
+        Return filename
+    End Function
 End Class
 ",
-            GetCA1024BasicResultAt(5, 18, "GetFileName"),
-            GetCA1024BasicResultAt(9, 18, "Get_FileName2"),
-            GetCA1024BasicResultAt(13, 18, "Get123"),
-            GetCA1024BasicResultAt(17, 24, "GetFileNameProtected"));
+            GetCA1024BasicResultAt(5, 21, "GetFileName"),
+            GetCA1024BasicResultAt(9, 21, "Get_FileName2"),
+            GetCA1024BasicResultAt(13, 21, "Get123"),
+            GetCA1024BasicResultAt(17, 27, "GetFileNameProtected"));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -381,22 +381,22 @@ End Class
         {
             VerifyBasic(@"
 Public Class Class1
-	Private fileName As String
+    Private fileName As String
 
-	Friend Function GetFileName() As String
-		Return filename
-	End Function
+    Friend Function GetFileName() As String
+        Return filename
+    End Function
 
-	Private Function Get_FileName2() As String
-		Return filename
-	End Function
+    Private Function Get_FileName2() As String
+        Return filename
+    End Function
 
     Private Class InnerClass
-	    Private fileName As String
+        Private fileName As String
 
-	    Public Function Get123() As String
-		    Return filename
-	    End Function
+        Public Function Get123() As String
+            Return filename
+        End Function
     End Class
 End Class
 ");

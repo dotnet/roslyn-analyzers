@@ -55,12 +55,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return;
                 }
 
-                // Bail out for implicitly declared methods, overridden methods, interface implementations, constructors and finalizers (FxCop compat).
+                // FxCop compat: bail out for implicitly declared methods, overridden methods, interface implementations,
+                // constructors and finalizers and non-externally visible methods.
                 if (method.IsImplicitlyDeclared ||
                     method.IsOverride ||
                     method.IsImplementationOfAnyInterfaceMember() ||
                     method.IsConstructor() ||
-                    method.IsFinalizer())
+                    method.IsFinalizer() ||
+                    !method.IsExternallyVisible())
                 {
                     return;
                 }

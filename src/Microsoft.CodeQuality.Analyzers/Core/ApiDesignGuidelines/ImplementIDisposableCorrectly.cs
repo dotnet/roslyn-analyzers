@@ -196,7 +196,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             private void AnalyzeNamedTypeSymbol(SymbolAnalysisContext context)
             {
-                if (context.Symbol is INamedTypeSymbol type && type.TypeKind == TypeKind.Class)
+                if (context.Symbol is INamedTypeSymbol type &&
+                    type.TypeKind == TypeKind.Class &&
+                    type.IsExternallyVisible())
                 {
                     bool implementsDisposableInBaseType = ImplementsDisposableInBaseType(type);
 

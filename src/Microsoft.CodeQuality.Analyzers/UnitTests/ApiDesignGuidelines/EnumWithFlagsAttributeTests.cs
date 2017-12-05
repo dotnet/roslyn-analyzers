@@ -62,6 +62,39 @@ public enum HexFlagsEnumClass
             VerifyCSharp(codeWithFlags);
         }
 
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CSharp_EnumWithFlagsAttributes_SimpleCase_Internal()
+        {
+            var code = @"{0}
+internal enum SimpleFlagsEnumClass
+{{
+    Zero = 0,
+    One = 1,
+    Two = 2,
+    Four = 4
+}}
+
+internal class OuterClass
+{{
+    {0}
+    public enum HexFlagsEnumClass
+    {{
+        One = 0x1,
+        Two = 0x2,
+        Four = 0x4,
+        All = 0x7
+    }}
+}}";
+
+            // Verify no CA1027: Mark enums with FlagsAttribute
+            string codeWithoutFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: false);
+            VerifyCSharp(codeWithoutFlags);
+
+            // Verify no CA2217: Do not mark enums with FlagsAttribute
+            string codeWithFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: true);
+            VerifyCSharp(codeWithFlags);
+        }
+
         [Fact]
         public void CSharp_EnumWithFlagsAttributes_SimpleCaseWithScope()
         {
@@ -113,6 +146,36 @@ End Enum";
             VerifyBasic(codeWithoutFlags,
                 GetCA1027BasicResultAt(2, 13, "SimpleFlagsEnumClass"),
                 GetCA1027BasicResultAt(10, 13, "HexFlagsEnumClass"));
+
+            // Verify no CA2217: Do not mark enums with FlagsAttribute
+            string codeWithFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: true);
+            VerifyBasic(codeWithFlags);
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void VisualBasic_EnumWithFlagsAttributes_SimpleCase_Internal()
+        {
+            var code = @"{0}
+Friend Enum SimpleFlagsEnumClass
+	Zero = 0
+	One = 1
+	Two = 2
+	Four = 4
+End Enum
+
+Friend Class OuterClass
+    {0}
+    Public Enum HexFlagsEnumClass
+	    One = &H1
+	    Two = &H2
+	    Four = &H4
+	    All = &H7
+    End Enum
+End Class";
+
+            // Verify no CA1027: Mark enums with FlagsAttribute
+            string codeWithoutFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: false);
+            VerifyBasic(codeWithoutFlags);
 
             // Verify no CA2217: Do not mark enums with FlagsAttribute
             string codeWithFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: true);

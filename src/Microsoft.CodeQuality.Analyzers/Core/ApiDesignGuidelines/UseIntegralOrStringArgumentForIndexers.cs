@@ -56,7 +56,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private void AnalyzeSymbol(SymbolAnalysisContext context)
         {
             var symbol = (IPropertySymbol)context.Symbol;
-            if (symbol.IsIndexer && !symbol.IsOverride)
+            if (symbol.IsIndexer &&
+                !symbol.IsOverride &&
+                symbol.IsExternallyVisible())
             {
                 if (symbol.GetParameters().Length == 1)
                 {

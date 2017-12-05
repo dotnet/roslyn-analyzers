@@ -114,7 +114,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 INamedTypeSymbol type = (INamedTypeSymbol)context.Symbol;
 
                 // Don't complain about a namespace unless it contains at least one public type.
-                if (type.GetResultantVisibility() != SymbolVisibility.Public)
+                if (!type.IsExternallyVisible())
                 {
                     return;
                 }
@@ -157,7 +157,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private void AnalyzeTypeRule(SymbolAnalysisContext context)
         {
             INamedTypeSymbol type = (INamedTypeSymbol)context.Symbol;
-            if (type.GetResultantVisibility() != SymbolVisibility.Public)
+            if (!type.IsExternallyVisible())
             {
                 return;
             }
@@ -175,7 +175,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private void AnalyzeMemberRule(SymbolAnalysisContext context)
         {
             ISymbol symbol = context.Symbol;
-            if (symbol.GetResultantVisibility() != SymbolVisibility.Public)
+            if (!symbol.IsExternallyVisible())
             {
                 return;
             }
@@ -199,7 +199,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private void AnalyzeMemberParameterRule(SymbolAnalysisContext context)
         {
             var method = (IMethodSymbol)context.Symbol;
-            if (method.GetResultantVisibility() != SymbolVisibility.Public)
+            if (!method.IsExternallyVisible())
             {
                 return;
             }

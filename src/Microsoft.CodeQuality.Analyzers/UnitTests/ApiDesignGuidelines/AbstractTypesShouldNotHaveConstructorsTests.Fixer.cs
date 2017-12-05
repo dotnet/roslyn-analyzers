@@ -69,7 +69,7 @@ End Class
             VerifyBasicFix(code, fix);
         }
 
-        [Fact]
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
         public void TestCSInternalAbstractClass()
         {
             var code = @"
@@ -80,18 +80,10 @@ abstract class C
     }
 }
 ";
-            var fix = @"
-abstract class C
-{
-    protected C()
-    {
-    }
-}
-";
-            VerifyCSharpFix(code, fix);
+            VerifyCSharpFix(code, code);
         }
 
-        [Fact]
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
         public void TestVBInternalAbstractClass()
         {
             var code = @"
@@ -100,16 +92,10 @@ MustInherit Class C
     End Sub
 End Class
 ";
-            var fix = @"
-MustInherit Class C
-    Protected Sub New()
-    End Sub
-End Class
-";
-            VerifyBasicFix(code, fix);
+            VerifyBasicFix(code, code);
         }
 
-        [Fact]
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
         public void TestCSNestedAbstractClassWithPublicConstructor1()
         {
             var code = @"
@@ -121,16 +107,7 @@ public struct C
     }
 }
 ";
-            var fix = @"
-public struct C
-{
-    abstract class D
-    {
-        protected D() { }
-    }
-}
-";
-            VerifyCSharpFix(code, fix);
+            VerifyCSharpFix(code, code);
         }
 
         [Fact]
@@ -201,7 +178,7 @@ End Class
             VerifyBasicFix(code, fix);
         }
 
-        [Fact]
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
         public void TestNestedAbstractClassWithPublicConstructor3()
         {
             var code = @"
@@ -213,19 +190,10 @@ internal abstract class C
     }
 }
 ";
-            var fix = @"
-internal abstract class C
-{
-    public abstract class D
-    {
-        protected D() { }
-    }
-}
-";
-            VerifyCSharpFix(code, fix);
+            VerifyCSharpFix(code, code);
         }
 
-        [Fact]
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
         public void TestVBNestedAbstractClassWithPublicConstructor3()
         {
             var code = @"
@@ -236,15 +204,7 @@ MustInherit Class C
     End Class
 End Class
 ";
-            var fix = @"
-MustInherit Class C
-   Public MustInherit Class D
-        Protected Sub New()
-        End Sub
-    End Class
-End Class
-";
-            VerifyBasicFix(code, fix);
+            VerifyBasicFix(code, code);
         }
     }
 }

@@ -71,7 +71,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             // If accessibility of enum is not public exit
-            if (symbol.GetResultantVisibility() != SymbolVisibility.Public)
+            if (!symbol.IsExternallyVisible())
             {
                 return;
             }

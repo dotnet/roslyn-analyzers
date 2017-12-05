@@ -152,8 +152,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 // If we are supposed to analyze only public methods get the resultant visibility
                 // i.e public method inside an internal class is not considered public.
-                if (_analyzeOnlyPublicMethods &&
-                    method.GetResultantVisibility() != SymbolVisibility.Public)
+                if (_analyzeOnlyPublicMethods && !method.IsExternallyVisible())
                 {
                     return false;
                 }

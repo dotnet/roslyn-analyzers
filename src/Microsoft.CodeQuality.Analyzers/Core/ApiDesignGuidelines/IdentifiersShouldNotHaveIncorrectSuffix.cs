@@ -141,7 +141,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         (SymbolAnalysisContext symbolAnalysisContext) =>
                         {
                             var namedTypeSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
-                            if (namedTypeSymbol.GetResultantVisibility() != SymbolVisibility.Public)
+                            if (!namedTypeSymbol.IsExternallyVisible())
                             {
                                 return;
                             }
@@ -201,7 +201,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 (SymbolAnalysisContext context) =>
                 {
                     var memberSymbol = context.Symbol;
-                    if (memberSymbol.GetResultantVisibility() != SymbolVisibility.Public)
+                    if (!memberSymbol.IsExternallyVisible())
                     {
                         return;
                     }

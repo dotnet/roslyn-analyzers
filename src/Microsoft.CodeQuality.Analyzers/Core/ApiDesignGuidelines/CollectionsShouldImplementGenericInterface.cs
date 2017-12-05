@@ -3,6 +3,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -88,6 +89,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             INamedTypeSymbol gListType)
         {
             var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
+
+            // FxCop compat: only fire on externally visible types.
+            if (!namedTypeSymbol.IsExternallyVisible())
+            {
+                return;
+            }
+
             var allInterfaces = namedTypeSymbol.AllInterfaces.Select(t => t.OriginalDefinition).ToImmutableHashSet();
 
             foreach (INamedTypeSymbol @interface in allInterfaces)

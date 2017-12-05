@@ -68,7 +68,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     //  3. Do not fire for value types without members.
                     if (!namedType.IsValueType ||
                         namedType.TypeKind == TypeKind.Enum ||
-                        namedType.GetResultantVisibility() != SymbolVisibility.Public ||
+                        !namedType.IsExternallyVisible() ||
                         !namedType.GetMembers().Any(m => !m.IsConstructor()))
                     {
                         return;

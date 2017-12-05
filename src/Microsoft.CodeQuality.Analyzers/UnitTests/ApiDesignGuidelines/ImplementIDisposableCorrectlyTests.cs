@@ -111,6 +111,39 @@ public class B : IDisposable
             GetCA1063CSharpDisposeSignatureResultAt(13, 26, "C", "Dispose"));
         }
 
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CSharp_CA1063_IDisposableReimplementation_NoDiagnostic_ReimplementingIDisposable_Internal()
+        {
+            VerifyCSharp(@"
+using System;
+
+internal class B : IDisposable
+{
+    public virtual void Dispose()
+    {
+    }
+}
+
+[|internal class C : B, IDisposable
+{
+    public override void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~C()
+    {
+        Dispose(false);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+    }
+}|]
+");
+        }
+
         [Fact]
         public void CSharp_CA1063_IDisposableReimplementation_Diagnostic_ReimplementingIDisposableWithDeepInheritance()
         {
@@ -1214,6 +1247,40 @@ End Class|]
 ",
             GetCA1063BasicIDisposableReimplementationResultAt(11, 14, "C", "B"),
             GetCA1063BasicDisposeSignatureResultAt(15, 26, "C", "Dispose"));
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void Basic_CA1063_IDisposableReimplementation_NoDiagnostic_ReimplementingIDisposable_Internal()
+        {
+            VerifyBasic(@"
+Imports System
+
+Friend Class B
+    Implements IDisposable
+
+    Public Overridable Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+[|Friend Class C
+    Inherits B
+    Implements IDisposable
+
+    Public Overrides Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+
+    Protected Overridable Overloads Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class|]
+");
         }
 
         [Fact]

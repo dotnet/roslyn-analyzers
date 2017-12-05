@@ -37,6 +37,23 @@ End Class
                 GetBasicResultAt(4, 14, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
         }
 
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void Test_WithCollectionBase_Internal()
+        {
+            VerifyCSharp(@"
+using System.Collections;
+
+internal class TestClass : CollectionBase { }");
+
+            VerifyBasic(@"
+Imports System.Collections
+
+Friend Class TestClass 
+    Inherits CollectionBase
+End Class
+");
+        }
+
         [Fact]
         public void Test_WithCollection()
         {
@@ -77,6 +94,46 @@ Public Class TestClass
 End Class
 ",
                 GetBasicResultAt(5, 14, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void Test_WithCollection_Internal()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections;
+
+internal class TestClass : ICollection
+{
+    public int Count => 0;
+    public object SyncRoot => null;
+    public bool IsSynchronized => false;
+
+    public IEnumerator GetEnumerator() { throw new NotImplementedException(); }
+    public void CopyTo(Array array, int index) { throw new NotImplementedException(); }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+Imports System.Collections
+
+Friend Class TestClass
+	Implements ICollection
+
+    Public ReadOnly Property Count As Integer Implements ICollection.Count
+    Public ReadOnly Property SyncRoot As Object Implements ICollection.SyncRoot
+    Public ReadOnly Property IsSynchronized As Boolean Implements ICollection.IsSynchronized
+
+    Public Function GetEnumerator() As IEnumerator Implements IEnumerable.GetEnumerator
+        Throw New NotImplementedException
+    End Function
+
+    Public Sub CopyTo(array As Array, index As Integer) Implements ICollection.CopyTo
+        Throw New NotImplementedException
+    End Sub
+End Class
+");
         }
 
         [Fact]

@@ -61,7 +61,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             // Note: This is the behavior of FxCop, it might be more correct to descend into internal but not private
             // types because "InternalsVisibleTo" could be set. But it might be bad for users to start seeing warnings
             // where they previously did not from FxCop.
-            if (namedTypeSymbol.GetResultantVisibility() != SymbolVisibility.Public)
+            if (!namedTypeSymbol.IsExternallyVisible())
             {
                 return;
             }

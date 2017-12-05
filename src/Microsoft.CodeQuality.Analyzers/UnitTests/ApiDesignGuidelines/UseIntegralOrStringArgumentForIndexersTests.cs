@@ -34,6 +34,33 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     End Class
 ", CreateBasicResult(6, 35));
         }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void TestBasicUseIntegralOrStringArgumentForIndexersNoWarning_Internal()
+        {
+            VerifyBasic(@"
+    Imports System
+
+    Friend Class Months
+        Private month() As String = {""Jan"", ""Feb"", ""...""}
+        Public Default ReadOnly Property Item(index As Single) As String
+            Get
+                Return month(index)
+            End Get
+        End Property
+    End Class
+
+    Public Class Months2
+        Private month() As String = {""Jan"", ""Feb"", ""...""}
+        Friend Default ReadOnly Property Item(index As Single) As String
+            Get
+                Return month(index)
+            End Get
+        End Property
+    End Class
+");
+        }
+
         [Fact]
         public void TestBasicUseIntegralOrStringArgumentForIndexersNoWarning1()
         {
@@ -64,6 +91,35 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             }
         }
     }", CreateCSharpResult(5, 23));
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void TestCSharpUseIntegralOrStringArgumentForIndexersNoWarning_Internal()
+        {
+            VerifyCSharp(@"
+    internal class Months
+    {
+        string[] month = new string[] {""Jan"", ""Feb"", ""...""};
+        public string this[char index]
+        {
+            get
+            {
+                return month[index];
+            }
+        }
+    }
+
+    public class Months2
+    {
+        string[] month = new string[] {""Jan"", ""Feb"", ""...""};
+        internal string this[char index]
+        {
+            get
+            {
+                return month[index];
+            }
+        }
+    }");
         }
 
         [Fact]

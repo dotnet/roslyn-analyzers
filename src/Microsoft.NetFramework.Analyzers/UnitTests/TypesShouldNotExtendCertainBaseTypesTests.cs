@@ -36,16 +36,30 @@ class C : Attribute
             var source = @"
 using System;
 
-class C1 : ApplicationException
+public class C1 : ApplicationException
 {
 }
 ";
             DiagnosticResult[] expected = new[]
             {
-                GetCSharpApplicationExceptionResultAt(4, 7, "C1", "System.ApplicationException")
+                GetCSharpApplicationExceptionResultAt(4, 14, "C1", "System.ApplicationException")
             };
 
             VerifyCSharp(source, expected);
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void TypesShouldNotExtendCertainBaseTypes_CSharp_ApplicationException_Internal()
+        {
+            var source = @"
+using System;
+
+class C1 : ApplicationException
+{
+}
+";
+
+            VerifyCSharp(source);
         }
 
         [Fact]
@@ -54,20 +68,76 @@ class C1 : ApplicationException
             var source = @"
 using System.Xml;
 
-class C1 : XmlDocument
+public class C1 : XmlDocument
 {
 }
 ";
             DiagnosticResult[] expected = new[]
             {
-                GetCSharpXmlDocumentResultAt(4, 7, "C1", "System.Xml.XmlDocument")
+                GetCSharpXmlDocumentResultAt(4, 14, "C1", "System.Xml.XmlDocument")
             };
 
             VerifyCSharp(source, expected);
         }
 
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void TypesShouldNotExtendCertainBaseTypes_CSharp_XmlDocument_Internal()
+        {
+            var source = @"
+using System.Xml;
+
+class C1 : XmlDocument
+{
+}
+";
+
+            VerifyCSharp(source);
+        }
+
         [Fact]
         public void TypesShouldNotExtendCertainBaseTypes_CSharp_Collection()
+        {
+            var source = @"
+using System.Collections;
+
+public class C1 : CollectionBase
+{
+}
+
+public class C2 : DictionaryBase
+{
+}
+
+public class C3 : Queue
+{
+}
+
+public class C4 : ReadOnlyCollectionBase
+{
+}
+
+public class C5 : SortedList
+{
+}
+
+public class C6 : Stack
+{
+}";
+            DiagnosticResult[] expected = new[]
+            {
+                GetCSharpCollectionBaseResultAt(4, 14, "C1", "System.Collections.CollectionBase"),
+                GetCSharpDictionaryBaseResultAt(8, 14, "C2", "System.Collections.DictionaryBase"),
+                GetCSharpQueueResultAt(12, 14, "C3", "System.Collections.Queue"),
+                GetCSharpReadOnlyCollectionResultAt(16, 14, "C4", "System.Collections.ReadOnlyCollectionBase"),
+                GetCSharpSortedListResultAt(20, 14, "C5", "System.Collections.SortedList"),
+                GetCSharpStackResultAt(24, 14, "C6", "System.Collections.Stack")
+            };
+
+            VerifyCSharp(source, expected);
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void TypesShouldNotExtendCertainBaseTypes_CSharp_Collection_Internal()
         {
             var source = @"
 using System.Collections;
@@ -88,24 +158,18 @@ class C4 : ReadOnlyCollectionBase
 {
 }
 
-class C5 : SortedList
+internal class C5 : SortedList
 {
 }
 
-class C6 : Stack
+public class C6
 {
+    private class Inner : Stack
+    {
+    }
 }";
-            DiagnosticResult[] expected = new[]
-            {
-                GetCSharpCollectionBaseResultAt(4, 7, "C1", "System.Collections.CollectionBase"),
-                GetCSharpDictionaryBaseResultAt(8, 7, "C2", "System.Collections.DictionaryBase"),
-                GetCSharpQueueResultAt(12, 7, "C3", "System.Collections.Queue"),
-                GetCSharpReadOnlyCollectionResultAt(16, 7, "C4", "System.Collections.ReadOnlyCollectionBase"),
-                GetCSharpSortedListResultAt(20, 7, "C5", "System.Collections.SortedList"),
-                GetCSharpStackResultAt(24, 7, "C6", "System.Collections.Stack")
-            };
 
-            VerifyCSharp(source, expected);
+            VerifyCSharp(source);
         }
 
         [Fact]
@@ -141,6 +205,24 @@ End Class
             VerifyBasic(source, expected);
         }
 
+
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void TypesShouldNotExtendCertainBaseTypes_Basic_ApplicationException_Internal()
+        {
+            var source = @"
+Imports System
+
+Friend Class C1
+    Inherits ApplicationException
+
+End Class
+
+";
+
+            VerifyBasic(source);
+        }
+
         [Fact]
         public void TypesShouldNotExtendCertainBaseTypes_Basic_XmlDocument()
         {
@@ -158,6 +240,21 @@ End Class
             };
 
             VerifyBasic(source, expected);
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void TypesShouldNotExtendCertainBaseTypes_Basic_XmlDocument_Internal()
+        {
+            var source = @"
+Imports System.Xml
+
+Friend Class C1
+    Inherits XmlDocument
+
+End Class
+";
+
+            VerifyBasic(source);
         }
 
         [Fact]
@@ -207,6 +304,46 @@ End Class
             };
 
             VerifyBasic(source, expected);
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void TypesShouldNotExtendCertainBaseTypes_Basic_Collection_Internal()
+        {
+            var source = @"
+Imports System.Collections
+
+Class C1
+    Inherits CollectionBase
+
+End Class
+
+Class C2
+    Inherits DictionaryBase
+
+End Class
+
+Class C3
+    Inherits Queue
+
+End Class
+
+Class C4
+    Inherits ReadOnlyCollectionBase
+
+End Class
+
+Friend Class C5
+    Inherits SortedList
+
+End Class
+
+Public Class C6
+    Private Class InnerClass
+        Inherits Stack
+    End Class
+End Class
+";
+            VerifyBasic(source);
         }
 
         private static DiagnosticResult GetCSharpCollectionBaseResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)

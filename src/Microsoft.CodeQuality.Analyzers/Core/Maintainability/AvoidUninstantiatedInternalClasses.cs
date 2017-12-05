@@ -84,7 +84,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 startContext.RegisterSymbolAction(context =>
                 {
                     var type = (INamedTypeSymbol)context.Symbol;
-                    if (type.GetResultantVisibility() != SymbolVisibility.Public &&
+                    if (!type.IsExternallyVisible() &&
                         !IsOkToBeUnused(type, compilation,
                             systemAttributeSymbol,
                             iConfigurationSectionHandlerSymbol,

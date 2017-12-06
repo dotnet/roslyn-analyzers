@@ -1,6 +1,6 @@
 #### Analyzer package
 
-Example: Microsoft.CodeQuality.Analyzers, version [2.6.0-beta1-62322-01](https://dotnet.myget.org/feed/roslyn-analyzers/package/nuget/Microsoft.CodeQuality.Analyzers/2.6.0-beta1-62322-01)
+Example: Microsoft.CodeQuality.Analyzers, version [2.6.0-beta1](https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers/2.6.0-beta1)
 
 #### Analyzer
 

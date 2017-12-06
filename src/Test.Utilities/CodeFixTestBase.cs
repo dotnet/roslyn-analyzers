@@ -148,9 +148,14 @@ namespace Test.Utilities
                 }
             }
 
-            if (((newDocument as Document)?.SupportsSyntaxTree).GetValueOrDefault())
+            return GetSourceText(newDocument);
+        }
+
+        private static SourceText GetSourceText(TextDocument textDocument)
+        {
+            if (((textDocument as Document)?.SupportsSyntaxTree).GetValueOrDefault())
             {
-                var newSourceDocument = (Document)newDocument;
+                var newSourceDocument = (Document)textDocument;
                 newSourceDocument = Simplifier.ReduceAsync(newSourceDocument, Simplifier.Annotation).Result;
                 SyntaxNode root = newSourceDocument.GetSyntaxRootAsync().Result;
                 root = Formatter.Format(root, Formatter.Annotation, newSourceDocument.Project.Solution.Workspace);
@@ -158,7 +163,7 @@ namespace Test.Utilities
             }
             else
             {
-                return newDocument.GetTextAsync(CancellationToken.None).Result;
+                return textDocument.GetTextAsync(CancellationToken.None).Result;
             }
         }
     }

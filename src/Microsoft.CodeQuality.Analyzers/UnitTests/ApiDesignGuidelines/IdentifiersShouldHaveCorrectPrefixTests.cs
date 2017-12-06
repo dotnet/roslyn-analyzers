@@ -165,6 +165,57 @@ public class Class6<TTypeParameter>
                 GetCA1715CSharpResultAt(58, 28, CA1715TypeParameterMessage, "_V"));
         }
 
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void TestInternalInterfaceNamesCSharp_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+internal interface Controller
+{
+    void SomeMethod();
+}
+
+internal class C
+{
+    public interface 日本語
+    {
+        void SomeMethod();
+    }
+}
+
+public class C2
+{
+    private interface _Controller
+    {
+        void SomeMethod();
+    }
+}
+");
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void TestTypeParameterNamesInternalCSharp_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+internal class IInterface<VSome>
+{
+}
+
+internal class C
+{
+    public class IAnotherInterface<本語>
+    {
+    }
+}
+
+public class C2
+{
+    private delegate void Callback<VSome>();
+}
+");
+        }
+
         [Fact]
         public void TestTypeParameterNamesCSharp_NoDiagnosticCases()
         {
@@ -317,6 +368,48 @@ End Class
                 GetCA1715BasicResultAt(45, 24, CA1715TypeParameterMessage, "_Type1"),
                 GetCA1715BasicResultAt(46, 26, CA1715TypeParameterMessage, "_K"),
                 GetCA1715BasicResultAt(46, 30, CA1715TypeParameterMessage, "_V"));
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void TestInterfaceNamesInternalBasic_NoDiagnostic()
+        {
+            VerifyBasic(@"
+Friend Interface Controller
+    Sub SomeMethod()
+End Interface
+
+Friend Class C
+    Public Interface 日本語
+        Sub SomeMethod()
+    End Interface
+End Class
+
+Public Class C2
+    Private Interface _Controller
+        Sub SomeMethod()
+    End Interface
+End Class
+");
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void TestTypeParameterNamesInternalBasic_NoDiagnostic()
+        {
+            VerifyBasic(@"
+Imports System
+
+Friend Class IInterface(Of VSome)
+End Class
+
+Friend Class C
+    Public Class IAnotherInterface(Of 本語)
+    End Class
+End Class
+
+Friend Class C2
+    Private Delegate Sub Callback(Of VSome)()
+End Class
+");
         }
 
         [Fact]

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -122,6 +123,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static void AnalyzeSymbol(ISymbol symbol, SymbolAnalysisContext context)
         {
+            // FxCop compat: only analyze externally visible symbols.
+            if (!symbol.IsExternallyVisible())
+            {
+                return;
+            }
+
             var identifier = symbol.Name;
             if (s_typeNames.Contains(identifier))
             {

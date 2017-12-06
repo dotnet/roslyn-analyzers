@@ -3,9 +3,9 @@
 Imports System.Composition
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
-Imports Microsoft.NetCore.Analyzers.Composition
+Imports Roslyn.Diagnostics.Analyzers
 
-Namespace Microsoft.NetCore.VisualBasic.Analyzers.Composition
+Namespace Roslyn.Diagnostics.VisualBasic.Analyzers
     ''' <summary>
     ''' RS0006: Do not mix attributes from different versions of MEF
     ''' </summary>

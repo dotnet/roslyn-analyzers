@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.NetCore.Analyzers.Composition.UnitTests
+namespace Roslyn.Diagnostics.Analyzers.UnitTests
 {
     public class PartsExportedWithMEFv2MustBeMarkedAsSharedTests : DiagnosticAnalyzerTestBase
     {
@@ -162,14 +162,14 @@ End Class
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, string typeName)
         {
-            var message = string.Format(MicrosoftCompositionAnalyzersResources.PartsExportedWithMEFv2MustBeMarkedAsSharedMessage, typeName);
-            return GetCSharpResultAt(line, column, PartsExportedWithMEFv2MustBeMarkedAsSharedAnalyzer.RuleId, message);
+            var message = string.Format(RoslynDiagnosticsAnalyzersResources.PartsExportedWithMEFv2MustBeMarkedAsSharedMessage, typeName);
+            return GetCSharpResultAt(line, column, RoslynDiagnosticIds.MissingSharedAttributeRuleId, message);
         }
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, string typeName)
         {
-            var message = string.Format(MicrosoftCompositionAnalyzersResources.PartsExportedWithMEFv2MustBeMarkedAsSharedMessage, typeName);
-            return GetBasicResultAt(line, column, PartsExportedWithMEFv2MustBeMarkedAsSharedAnalyzer.RuleId, message);
+            var message = string.Format(RoslynDiagnosticsAnalyzersResources.PartsExportedWithMEFv2MustBeMarkedAsSharedMessage, typeName);
+            return GetBasicResultAt(line, column, RoslynDiagnosticIds.MissingSharedAttributeRuleId, message);
         }
     }
 }

@@ -5,14 +5,14 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 
-namespace Microsoft.NetCore.Analyzers.Composition
+namespace Roslyn.Diagnostics.Analyzers
 {
     /// <summary>
     /// RS0006: Do not mix attributes from different versions of MEF
     /// </summary>
     public abstract class DoNotMixAttributesFromDifferentVersionsOfMEFFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DoNotMixAttributesFromDifferentVersionsOfMEFAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(RoslynDiagnosticIds.MixedVersionsOfMefAttributesRuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

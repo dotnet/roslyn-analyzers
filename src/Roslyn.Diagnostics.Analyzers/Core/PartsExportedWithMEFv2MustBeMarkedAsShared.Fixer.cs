@@ -5,14 +5,14 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 
-namespace Microsoft.NetCore.Analyzers.Composition
+namespace Roslyn.Diagnostics.Analyzers
 {
     /// <summary>
     /// RS0023: Parts exported with MEFv2 must be marked as Shared
     /// </summary>
     public abstract class PartsExportedWithMEFv2MustBeMarkedAsSharedFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PartsExportedWithMEFv2MustBeMarkedAsSharedAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(RoslynDiagnosticIds.MissingSharedAttributeRuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

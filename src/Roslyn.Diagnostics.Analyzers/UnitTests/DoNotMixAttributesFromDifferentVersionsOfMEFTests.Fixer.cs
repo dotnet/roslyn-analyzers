@@ -2,11 +2,11 @@
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.NetCore.CSharp.Analyzers.Composition;
-using Microsoft.NetCore.VisualBasic.Analyzers.Composition;
+using Roslyn.Diagnostics.CSharp.Analyzers;
+using Roslyn.Diagnostics.VisualBasic.Analyzers;
 using Test.Utilities;
 
-namespace Microsoft.NetCore.Analyzers.Composition.UnitTests
+namespace Roslyn.Diagnostics.Analyzers.UnitTests
 {
     public class DoNotMixAttributesFromDifferentVersionsOfMEFFixerTests : CodeFixTestBase
     {

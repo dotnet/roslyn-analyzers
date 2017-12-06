@@ -7,7 +7,7 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.NetCore.Analyzers.Composition
+namespace Roslyn.Diagnostics.Analyzers
 {
     /// <summary>
     /// RS0023: Parts exported with MEFv2 must be marked as Shared
@@ -15,14 +15,12 @@ namespace Microsoft.NetCore.Analyzers.Composition
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class PartsExportedWithMEFv2MustBeMarkedAsSharedAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "RS0023";
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.PartsExportedWithMEFv2MustBeMarkedAsSharedTitle), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCompositionAnalyzersResources.PartsExportedWithMEFv2MustBeMarkedAsSharedTitle), MicrosoftCompositionAnalyzersResources.ResourceManager, typeof(MicrosoftCompositionAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.PartsExportedWithMEFv2MustBeMarkedAsSharedMessage), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.PartsExportedWithMEFv2MustBeMarkedAsSharedDescription), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCompositionAnalyzersResources.PartsExportedWithMEFv2MustBeMarkedAsSharedMessage), MicrosoftCompositionAnalyzersResources.ResourceManager, typeof(MicrosoftCompositionAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCompositionAnalyzersResources.PartsExportedWithMEFv2MustBeMarkedAsSharedDescription), MicrosoftCompositionAnalyzersResources.ResourceManager, typeof(MicrosoftCompositionAnalyzersResources));
-
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RoslynDiagnosticIds.MissingSharedAttributeRuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Reliability,

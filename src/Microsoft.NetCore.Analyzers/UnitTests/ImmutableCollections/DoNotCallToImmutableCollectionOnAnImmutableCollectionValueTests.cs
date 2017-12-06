@@ -174,6 +174,10 @@ namespace System.Collections.Immutable
     }
 }
 ";
+        #endregion
+
+        #region VisualBasicCollectionsDefinition
+
         private const string VisualBasicCollectionsDefinition = @"
 Imports System
 Imports System.Collections
@@ -328,18 +332,19 @@ End Namespace
 
         #region No Diagnostic Tests
 
-        [Theory]
+        [Theory, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
         [MemberData(nameof(CollectionNames_Arity1))]
         public void NoDiagnosticCases_Arity1(string collectionName)
         {
             VerifyCSharp(CSharpCollectionsDefinition + $@"
 class C
 {{
-    public void M(IEnumerable<int> p1, List<int> p2, {collectionName}<int> p3)
+    public void M(IEnumerable<int> p1, List<int> p2, {collectionName}<int> p3, IEqualityComparer<int> comparer)
     {{
         // Allowed
         p1.To{collectionName}();
         p2.To{collectionName}();
+        p3.To{collectionName}(comparer); // Potentially modifies the collection
 
         // No dataflow
         IEnumerable<int> l1 = p3;
@@ -350,10 +355,11 @@ class C
 
             VerifyBasic(VisualBasicCollectionsDefinition + $@"
 Class C
-	Public Sub M(p1 As IEnumerable(Of Integer), p2 As List(Of Integer), p3 As {collectionName}(Of Integer))
+	Public Sub M(p1 As IEnumerable(Of Integer), p2 As List(Of Integer), p3 As {collectionName}(Of Integer), comparer As IEqualityComparer(Of Integer))
 		' Allowed
 		p1.To{collectionName}()
 		p2.To{collectionName}()
+        p3.To{collectionName}(comparer) ' Potentially modifies the collection
 
 		' No dataflow
 		Dim l1 As IEnumerable(Of Integer) = p3
@@ -363,18 +369,19 @@ End Class
 ");
         }
 
-        [Theory]
+        [Theory, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
         [MemberData(nameof(CollectionNames_Arity2))]
         public void NoDiagnosticCases_Arity2(string collectionName)
         {
             VerifyCSharp(CSharpCollectionsDefinition + $@"
 class C
 {{
-    public void M(IEnumerable<KeyValuePair<int, int>> p1, List<KeyValuePair<int, int>> p2, {collectionName}<int, int> p3)
+    public void M(IEnumerable<KeyValuePair<int, int>> p1, List<KeyValuePair<int, int>> p2, {collectionName}<int, int> p3, IEqualityComparer<int> keyComparer)
     {{
         // Allowed
         p1.To{collectionName}();
         p2.To{collectionName}();
+        p3.To{collectionName}(keyComparer); // Potentially modifies the collection
 
         // No dataflow
         IEnumerable<KeyValuePair<int, int>> l1 = p3;
@@ -385,10 +392,11 @@ class C
 
             VerifyBasic(VisualBasicCollectionsDefinition + $@"
 Class C
-	Public Sub M(p1 As IEnumerable(Of KeyValuePair(Of Integer, Integer)), p2 As List(Of KeyValuePair(Of Integer, Integer)), p3 As {collectionName}(Of Integer, Integer))
+	Public Sub M(p1 As IEnumerable(Of KeyValuePair(Of Integer, Integer)), p2 As List(Of KeyValuePair(Of Integer, Integer)), p3 As {collectionName}(Of Integer, Integer), keyComparer As IEqualityComparer(Of Integer))
 		' Allowed
 		p1.To{collectionName}()
 		p2.To{collectionName}()
+        p3.To{collectionName}(keyComparer) ' Potentially modifies the collection
 
 		' No dataflow
 		Dim l1 As IEnumerable(Of KeyValuePair(Of Integer, Integer)) = p3

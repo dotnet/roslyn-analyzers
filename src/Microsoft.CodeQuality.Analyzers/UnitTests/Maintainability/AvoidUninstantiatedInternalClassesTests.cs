@@ -955,6 +955,69 @@ internal class Program
 }");
         }
 
+        [Fact, WorkItem(1447, "https://github.com/dotnet/roslyn-analyzers/issues/1447")]
+        public void CA1812_CSharp_NoDiagnostic_GenericMethodWithNewConstraintInvokedFromGenericMethod()
+        {
+            VerifyCSharp(@"
+internal class InstantiatedClass
+{
+    public InstantiatedClass()
+    {
+    }
+}
+
+internal class InstantiatedClass2
+{
+    public InstantiatedClass2()
+    {
+    }
+}
+
+internal class InstantiatedClass3
+{
+    public InstantiatedClass3()
+    {
+    }
+}
+
+internal static class C
+{
+    private static T Create<T>()
+        where T : new()
+    {
+        return new T();
+    }
+
+    public static void M<T>()
+        where T : InstantiatedClass, new()
+    {
+        Create<T>();
+    }
+
+    public static void M2<T, T2>()
+        where T : T2, new()
+        where T2 : InstantiatedClass2
+    {
+        Create<T>();
+    }
+
+    public static void M3<T, T2, T3>()
+        where T : T2, new()
+        where T2 : T3
+        where T3: InstantiatedClass3
+    {
+        Create<T>();
+    }
+
+    public static void M3()
+    {
+        M<InstantiatedClass>();
+        M2<InstantiatedClass2, InstantiatedClass2>();
+        M3<InstantiatedClass3, InstantiatedClass3, InstantiatedClass3>();
+    }
+}");
+        }
+
         [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
         public void CA1812_Basic_NoDiagnostic_GenericMethodWithNewConstraint()
         {

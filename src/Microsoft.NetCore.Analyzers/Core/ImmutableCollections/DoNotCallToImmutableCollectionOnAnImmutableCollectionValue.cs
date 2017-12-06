@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -67,6 +68,16 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
                     }
 
                     Debug.Assert(!string.IsNullOrEmpty(metadataName));
+
+                    // Do not flag invocations that take any explicit argument (comparer, converter, etc.)
+                    // as they can potentially modify the contents of the resulting collection.
+                    // See https://github.com/dotnet/roslyn/issues/23625 for language specific implementation below.
+                    var argumentsToSkip = targetMethod.IsExtensionMethod && invocation.Language != LanguageNames.VisualBasic ? 1 : 0;
+                    if (invocation.Arguments.Skip(argumentsToSkip).Any(arg => arg.ArgumentKind == ArgumentKind.Explicit))
+                    {
+                        return;
+                    }
+
                     var immutableCollectionType = compilation.GetTypeByMetadataName(metadataName);
                     if (immutableCollectionType == null)
                     {

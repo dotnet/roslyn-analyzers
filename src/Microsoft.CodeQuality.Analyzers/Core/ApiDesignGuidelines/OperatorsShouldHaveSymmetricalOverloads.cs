@@ -44,9 +44,15 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterSymbolAction(symbolAnalysisContext =>
             {
                 var namedType = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
+                
+                // FxCop compat: only analyze externally visible symbols.
+                if (!namedType.IsExternallyVisible())
+                {
+                    return;
+                }
 
                 // NOTE(cyrusn): We use the C# syntax when reporting diagnostics for these issues.
-                // That's what the old FxCop rule did so it doesn't seem like a bug deal.
+                // That's what the old FxCop rule did so it doesn't seem like a big deal.
                 CheckOperators(symbolAnalysisContext, namedType, WellKnownMemberNames.EqualityOperatorName, WellKnownMemberNames.InequalityOperatorName, "==", "!=");
                 CheckOperators(symbolAnalysisContext, namedType, WellKnownMemberNames.GreaterThanOperatorName, WellKnownMemberNames.LessThanOperatorName, ">", "<");
                 CheckOperators(symbolAnalysisContext, namedType, WellKnownMemberNames.GreaterThanOrEqualOperatorName, WellKnownMemberNames.LessThanOrEqualOperatorName, ">=", "<=");
@@ -71,6 +77,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             foreach (var operator1 in operators1)
             {
+                // FxCop compat: only analyze externally visible symbols.
+                if (!operator1.IsExternallyVisible())
+                {
+                    return;
+                }
+
                 if (!operator1.IsUserDefinedOperator())
                 {
                     continue;

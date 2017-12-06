@@ -38,7 +38,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterSymbolAction(context =>
             {
                 var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
-                if (namedTypeSymbol.IsValueType && namedTypeSymbol.OverridesEquals() && !namedTypeSymbol.ImplementsEqualityOperators())
+                if (namedTypeSymbol.IsValueType &&
+                    namedTypeSymbol.IsExternallyVisible() &&
+                    namedTypeSymbol.OverridesEquals() && 
+                    !namedTypeSymbol.ImplementsEqualityOperators())
                 {
                     context.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(Rule));
                 }

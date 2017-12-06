@@ -34,11 +34,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         {
             VerifyCSharpFix(
                 @"
-class A
+public class A
 {
     public static bool operator==(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '!=' to also be defined
 }", @"
-class A
+public class A
 {
     public static bool operator==(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '!=' to also be defined
 
@@ -54,12 +54,12 @@ class A
         {
             VerifyCSharpFix(
                 @"
-class A
+public class A
 {
     public static bool operator==(A a1, A a2) { return false; }      // error CS0216: The operator requires a matching operator '!=' to also be defined
     public static bool operator==(A a1, bool a2) { return false; }   // error CS0216: The operator requires a matching operator '!=' to also be defined
 }", @"
-class A
+public class A
 {
     public static bool operator==(A a1, A a2) { return false; }      // error CS0216: The operator requires a matching operator '!=' to also be defined
 
@@ -82,11 +82,11 @@ class A
         {
             VerifyCSharpFix(
                 @"
-class A
+public class A
 {
     public static bool operator!=(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '==' to also be defined
 }", @"
-class A
+public class A
 {
     public static bool operator!=(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '==' to also be defined
 
@@ -102,11 +102,11 @@ class A
         {
             VerifyCSharpFix(
                 @"
-class A
+public class A
 {
     public static bool operator<(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '>' to also be defined
 }", @"
-class A
+public class A
 {
     public static bool operator<(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '>' to also be defined
 
@@ -122,11 +122,11 @@ class A
         {
             VerifyCSharpFix(
                 @"
-class A
+public class A
 {
     public static bool operator<=(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '>=' to also be defined
 }", @"
-class A
+public class A
 {
     public static bool operator<=(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '>=' to also be defined
 
@@ -142,11 +142,11 @@ class A
         {
             VerifyCSharpFix(
                 @"
-class A
+public class A
 {
     public static bool operator>(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '<' to also be defined
 }", @"
-class A
+public class A
 {
     public static bool operator>(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '<' to also be defined
 
@@ -162,11 +162,11 @@ class A
         {
             VerifyCSharpFix(
                 @"
-class A
+public class A
 {
     public static bool operator>=(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '<=' to also be defined
 }", @"
-class A
+public class A
 {
     public static bool operator>=(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '<=' to also be defined
 
@@ -182,12 +182,12 @@ class A
         {
             VerifyBasicFix(
                 @"
-class A
+Public class A
     public shared operator =(a1 as A, a2 as A) as boolean   ' error BC33033: Matching '<>' operator is required
         return false
     end operator
 end class", @"
-class A
+Public class A
     public shared operator =(a1 as A, a2 as A) as boolean   ' error BC33033: Matching '<>' operator is required
         return false
     end operator
@@ -203,12 +203,12 @@ end class", validationMode: TestValidationMode.AllowCompileErrors);
         {
             VerifyBasicFix(
                 @"
-class A
+Public class A
     public shared operator <>(a1 as A, a2 as A) as boolean   ' error BC33033: Matching '=' operator is required
         return false
     end operator
 end class", @"
-class A
+Public class A
     public shared operator <>(a1 as A, a2 as A) as boolean   ' error BC33033: Matching '=' operator is required
         return false
     end operator
@@ -224,12 +224,12 @@ end class", validationMode: TestValidationMode.AllowCompileErrors);
         {
             VerifyBasicFix(
                 @"
-class A
+Public class A
     public shared operator <(a1 as A, a2 as A) as boolean   ' error BC33033: Matching '>' operator is required
         return false
     end operator
 end class", @"
-class A
+Public class A
     public shared operator <(a1 as A, a2 as A) as boolean   ' error BC33033: Matching '>' operator is required
         return false
     end operator

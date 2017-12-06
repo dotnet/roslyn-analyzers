@@ -39,13 +39,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         public void AddAlternateMethod_CSharp()
         {
             VerifyCSharpFix(@"
-class C
+public class C
 {
     public static C operator +(C left, C right) { return new C(); }
 }
 ",
 @"
-class C
+public class C
 {
     public static C operator +(C left, C right) { return new C(); }
 
@@ -61,13 +61,13 @@ class C
         public void AddAlternateOfMultiples_CSharp()
         {
             VerifyCSharpFix(@"
-class C
+public class C
 {
     public static C operator %(C left, C right) { return new C(); }
 }
 ",
 @"
-class C
+public class C
 {
     public static C operator %(C left, C right) { return new C(); }
 
@@ -83,14 +83,14 @@ class C
         public void AddAlternateProperty_CSharp()
         {
             VerifyCSharpFix(@"
-class C
+public class C
 {
     public static bool operator true(C item) { return true; }
     public static bool operator false(C item) { return false; }
 }
 ",
 @"
-class C
+public class C
 {
     public static bool operator true(C item) { return true; }
     public static bool operator false(C item) { return false; }
@@ -110,13 +110,13 @@ class C
         public void AddAlternateForConversion_CSharp()
         {
             VerifyCSharpFix(@"
-class C
+public class C
 {
     public static implicit operator int(C item) { return 0; }
 }
 ",
 @"
-class C
+public class C
 {
     public static implicit operator int(C item) { return 0; }
 
@@ -132,13 +132,13 @@ class C
         public void AddAlternateForCompare_CSharp()
         {
             VerifyCSharpFix(@"
-class C
+public class C
 {
     public static bool operator <(C left, C right) { return true; }   // error CS0216: The operator requires a matching operator '>' to also be defined
 }
 ",
 @"
-class C
+public class C
 {
     public static bool operator <(C left, C right) { return true; }   // error CS0216: The operator requires a matching operator '>' to also be defined
 
@@ -159,13 +159,13 @@ class C
         public void AddAlternateForStructCompare_CSharp()
         {
             VerifyCSharpFix(@"
-struct C
+public struct C
 {
     public static bool operator <(C left, C right) { return true; }   // error CS0216: The operator requires a matching operator '>' to also be defined
 }
 ",
 @"
-struct C
+public struct C
 {
     public static bool operator <(C left, C right) { return true; }   // error CS0216: The operator requires a matching operator '>' to also be defined
 
@@ -181,13 +181,13 @@ struct C
         public void AddAlternateForIncrement_CSharp()
         {
             VerifyCSharpFix(@"
-class C
+public class C
 {
     public static C operator ++(C item) { return new C(); }
 }
 ",
 @"
-class C
+public class C
 {
     public static C operator ++(C item) { return new C(); }
 
@@ -203,14 +203,14 @@ class C
         public void FixImproperMethodVisibility_CSharp()
         {
             VerifyCSharpFix(@"
-class C
+public class C
 {
     public static C operator +(C left, C right) { return new C(); }
     protected static C Add(C left, C right) { return new C(); }
 }
 ",
 @"
-class C
+public class C
 {
     public static C operator +(C left, C right) { return new C(); }
 
@@ -223,7 +223,7 @@ class C
         public void FixImproperPropertyVisibility_CSharp()
         {
             VerifyCSharpFix(@"
-class C
+public class C
 {
     public static bool operator true(C item) { return true; }
     public static bool operator false(C item) { return false; }
@@ -231,7 +231,7 @@ class C
 }
 ",
 @"
-class C
+public class C
 {
     public static bool operator true(C item) { return true; }
     public static bool operator false(C item) { return false; }
@@ -249,14 +249,14 @@ class C
         public void AddAlternateMethod_Basic()
         {
             VerifyBasicFix(@"
-Class C
+Public Class C
     Public Shared Operator +(left As C, right As C) As C
         Return New C()
     End Operator
 End Class
 ",
 @"
-Class C
+Public Class C
     Public Shared Operator +(left As C, right As C) As C
         Return New C()
     End Operator
@@ -272,14 +272,14 @@ End Class
         public void AddAlternateOfMultiples_Basic()
         {
             VerifyBasicFix(@"
-Class C
+Public Class C
     Public Shared Operator Mod(left As C, right As C) As C
         Return New C()
     End Operator
 End Class
 ",
 @"
-Class C
+Public Class C
     Public Shared Operator Mod(left As C, right As C) As C
         Return New C()
     End Operator
@@ -295,7 +295,7 @@ End Class
         public void AddAlternateProperty_Basic()
         {
             VerifyBasicFix(@"
-Class C
+Public Class C
     Public Shared Operator IsTrue(item As C) As Boolean
         Return True
     End Operator
@@ -305,7 +305,7 @@ Class C
 End Class
 ",
 @"
-Class C
+Public Class C
     Public Shared Operator IsTrue(item As C) As Boolean
         Return True
     End Operator
@@ -326,14 +326,14 @@ End Class
         public void AddAlternateForConversion_Basic()
         {
             VerifyBasicFix(@"
-Class C
+Public Class C
     Public Shared Widening Operator CType(ByVal item As C) As Integer
         Return 0
     End Operator
 End Class
 ",
 @"
-Class C
+Public Class C
     Public Shared Widening Operator CType(ByVal item As C) As Integer
         Return 0
     End Operator
@@ -349,14 +349,14 @@ End Class
         public void AddAlternateForCompare_Basic()
         {
             VerifyBasicFix(@"
-Class C
+Public Class C
     Public Shared Operator <(left As C, right As C) As Boolean   ' error BC33033: Matching '>' operator is required
         Return True
     End Operator
 End Class
 ",
 @"
-Class C
+Public Class C
     Public Shared Operator <(left As C, right As C) As Boolean   ' error BC33033: Matching '>' operator is required
         Return True
     End Operator
@@ -376,14 +376,14 @@ End Class
         public void AddAlternateForStructCompare_Basic()
         {
             VerifyBasicFix(@"
-Structure C
+Public Structure C
     Public Shared Operator <(left As C, right As C) As Boolean   ' error BC33033: Matching '>' operator is required
         Return True
     End Operator
 End Structure
 ",
 @"
-Structure C
+Public Structure C
     Public Shared Operator <(left As C, right As C) As Boolean   ' error BC33033: Matching '>' operator is required
         Return True
     End Operator
@@ -399,7 +399,7 @@ End Structure
         public void FixImproperMethodVisibility_Basic()
         {
             VerifyBasicFix(@"
-Class C
+Public Class C
     Public Shared Operator +(left As C, right As C) As C
         Return New C()
     End Operator
@@ -410,7 +410,7 @@ Class C
 End Class
 ",
 @"
-Class C
+Public Class C
     Public Shared Operator +(left As C, right As C) As C
         Return New C()
     End Operator
@@ -426,7 +426,7 @@ End Class
         public void FixImproperPropertyVisibility_Basic()
         {
             VerifyBasicFix(@"
-Class C
+Public Class C
     Public Shared Operator IsTrue(item As C) As Boolean
         Return True
     End Operator
@@ -442,7 +442,7 @@ Class C
 End Class
 ",
 @"
-Class C
+Public Class C
     Public Shared Operator IsTrue(item As C) As Boolean
         Return True
     End Operator

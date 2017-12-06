@@ -24,11 +24,42 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             VerifyCSharp(@"
 using System;
 
-class A
+public class A
 {
     public System.Collections.ICollection Col { get; set; }
 }
 ", GetCSharpResultAt(6, 43, CollectionPropertiesShouldBeReadOnlyAnalyzer.RuleId, CollectionPropertiesShouldBeReadOnlyAnalyzer.Rule.MessageFormat.ToString()));
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CSharp_CA2227_Test_Internal()
+        {
+            VerifyCSharp(@"
+using System;
+
+internal class A
+{
+    public System.Collections.ICollection Col { get; set; }
+}
+
+public class A2
+{
+    public System.Collections.ICollection Col { get; private set; }
+}
+
+public class A3
+{
+    internal System.Collections.ICollection Col { get; set; }
+}
+
+public class A4
+{
+    private class A5
+    {
+        public System.Collections.ICollection Col { get; set; }
+    }
+}
+");
         }
 
         [Fact]
@@ -37,10 +68,54 @@ class A
             VerifyBasic(@"
 Imports System
 
-Class A
+Public Class A
     Public Property Col As System.Collections.ICollection
 End Class
 ", GetBasicResultAt(5, 21, CollectionPropertiesShouldBeReadOnlyAnalyzer.RuleId, CollectionPropertiesShouldBeReadOnlyAnalyzer.Rule.MessageFormat.ToString()));
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void Basic_CA2227_Test_Internal()
+        {
+            VerifyBasic(@"
+Imports System
+
+Friend Class A
+    Public Property Col As System.Collections.ICollection
+End Class
+
+Public Class A2
+    Public Property Col As System.Collections.ICollection
+        Get
+            Return Nothing
+        End Get
+        Private Set(value As System.Collections.ICollection)
+        End Set
+    End Property
+End Class
+
+Public Class A3
+    Friend Property Col As System.Collections.ICollection
+        Get
+            Return Nothing
+        End Get
+        Set(value As System.Collections.ICollection)
+        End Set
+    End Property
+End Class
+
+Public Class A4
+    Private Class A5
+        Public Property Col As System.Collections.ICollection
+            Get
+                Return Nothing
+            End Get
+            Set(value As System.Collections.ICollection)
+            End Set
+        End Property
+    End Class
+End Class
+");
         }
 
         [Fact]
@@ -49,7 +124,7 @@ End Class
             VerifyCSharp(@"
 using System;
 
-class A<T>
+public class A<T>
 {
     public System.Collections.Generic.List<T> Col { get; set; }
 }

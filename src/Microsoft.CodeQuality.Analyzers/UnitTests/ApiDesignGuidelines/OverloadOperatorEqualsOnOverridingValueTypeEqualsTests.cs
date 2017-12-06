@@ -61,6 +61,33 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             GetCA2231CSharpResultAt(4, 19));
         }
 
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CA2231NoEqualsOperatorButNotExternallyVisibleCSharp()
+        {
+            VerifyCSharp(@"
+    using System;
+
+    struct A
+    {
+        public override bool Equals(Object obj)
+        {
+            return true;
+        }
+    }
+
+    public class A2
+    {
+        private struct B
+        {
+            public override bool Equals(Object obj)
+            {
+                return true;
+            }
+        }
+    }
+");
+        }
+
         [Fact]
         public void CA2231NoEqualsOperatorCSharpOutofScope()
         {
@@ -165,6 +192,28 @@ Public Structure A
 End Structure
 ",
             GetCA2231BasicResultAt(4, 18));
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CA2231NoEqualsOperatorButNotExternallyVisibleBasic()
+        {
+            VerifyBasic(@"
+Imports System
+
+Structure A
+    Public Overloads Overrides Function Equals(obj As Object) As Boolean
+        Return True
+    End Function
+End Structure
+
+Public Class A2
+    Private Structure B
+        Public Overloads Overrides Function Equals(obj As Object) As Boolean
+            Return True
+        End Function
+    End Structure
+End Class
+");
         }
 
         [Fact]

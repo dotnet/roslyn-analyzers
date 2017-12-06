@@ -22,7 +22,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         public void CSharpTestMissingEquality()
         {
             VerifyCSharp(@"
-class A
+public class A
 {
     public static bool operator==(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '!=' to also be defined
 }", TestValidationMode.AllowCompileErrors,
@@ -33,18 +33,67 @@ GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "
         public void CSharpTestMissingInequality()
         {
             VerifyCSharp(@"
-class A
+public class A
 {
     public static bool operator!=(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '==' to also be defined
 }", TestValidationMode.AllowCompileErrors,
 GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "!=", "=="));
         }
 
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CSharpTestMissingEquality_Internal()
+        {
+            VerifyCSharp(@"
+class A
+{
+    public static bool operator==(A a1, A a2) { return false; }
+}
+
+public class B
+{
+    private class C
+    {
+        public static bool operator==(C a1, C a2) { return false; }
+    }
+
+    public class D
+    {
+        internal static bool operator==(D a1, D a2) { return false; }
+    }
+}
+
+", TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CSharpTestMissingInequality_Internal()
+        {
+            VerifyCSharp(@"
+class A
+{
+    public static bool operator!=(A a1, A a2) { return false; }
+}
+
+public class B
+{
+    private class C
+    {
+        public static bool operator!=(C a1, C a2) { return false; }
+    }
+
+    public class D
+    {
+        internal static bool operator!=(D a1, D a2) { return false; }
+    }
+}
+", TestValidationMode.AllowCompileErrors);
+        }
+
         [Fact]
         public void CSharpTestBothEqualityOperators()
         {
             VerifyCSharp(@"
-class A
+public class A
 {
     public static bool operator==(A a1, A a2) { return false; }
     public static bool operator!=(A a1, A a2) { return false; }
@@ -55,7 +104,7 @@ class A
         public void CSharpTestMissingLessThan()
         {
             VerifyCSharp(@"
-class A
+public class A
 {
     public static bool operator<(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '>' to also be defined
 }", TestValidationMode.AllowCompileErrors,
@@ -66,7 +115,7 @@ GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "
         public void CSharpTestNotMissingLessThan()
         {
             VerifyCSharp(@"
-class A
+public class A
 {
     public static bool operator<(A a1, A a2) { return false; }
     public static bool operator>(A a1, A a2) { return false; }
@@ -77,7 +126,7 @@ class A
         public void CSharpTestMissingLessThanOrEqualTo()
         {
             VerifyCSharp(@"
-class A
+public class A
 {
     public static bool operator<=(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '>=' to also be defined
 }", TestValidationMode.AllowCompileErrors,
@@ -88,7 +137,7 @@ GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "
         public void CSharpTestNotMissingLessThanOrEqualTo()
         {
             VerifyCSharp(@"
-class A
+public class A
 {
     public static bool operator<=(A a1, A a2) { return false; }
     public static bool operator>=(A a1, A a2) { return false; }
@@ -99,7 +148,7 @@ class A
         public void CSharpTestOperatorType()
         {
             VerifyCSharp(@"
-class A
+public class A
 {
     public static bool operator==(A a1, int a2) { return false; }
     public static bool operator!=(A a1, string a2) { return false; }

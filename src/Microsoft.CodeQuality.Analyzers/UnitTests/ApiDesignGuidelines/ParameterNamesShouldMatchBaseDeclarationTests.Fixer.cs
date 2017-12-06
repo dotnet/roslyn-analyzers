@@ -215,10 +215,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                              End Class");
         }
 
-        [Fact]
-        public void VerifyExplicitInterfaceImplementationWithWrongParameterNames()
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void VerifyExplicitInterfaceImplementationWithWrongParameterNames_NoDiagnostic()
         {
-            VerifyCSharpFix(@"public interface IBase
+            var source = @"public interface IBase
                               {
                                   void TestMethod(string baseArg1, string baseArg2);
                               }
@@ -226,54 +226,30 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               public class TestClass : IBase
                               {
                                   void IBase.TestMethod(string arg1, string arg2) { }
-                              }",
-                            @"public interface IBase
-                              {
-                                  void TestMethod(string baseArg1, string baseArg2);
-                              }
+                              }";
+            VerifyCSharpFix(source, source);
 
-                              public class TestClass : IBase
-                              {
-                                  void IBase.TestMethod(string baseArg1, string baseArg2) { }
-                              }");
+            source = @"public interface IBase
+                        {
+                            void TestMethod(string baseArg1, string baseArg2, __arglist);
+                        }
 
-            VerifyCSharpFix(@"public interface IBase
-                              {
-                                  void TestMethod(string baseArg1, string baseArg2, __arglist);
-                              }
+                        public class TestClass : IBase
+                        {
+                            void IBase.TestMethod(string arg1, string arg2, __arglist) { }
+                        }";
+            VerifyCSharpFix(source, source);
 
-                              public class TestClass : IBase
-                              {
-                                  void IBase.TestMethod(string arg1, string arg2, __arglist) { }
-                              }",
-                            @"public interface IBase
-                              {
-                                  void TestMethod(string baseArg1, string baseArg2, __arglist);
-                              }
+            source = @"public interface IBase
+                        {
+                            void TestMethod(string baseArg1, string baseArg2, params string[] baseArg3);
+                        }
 
-                              public class TestClass : IBase
-                              {
-                                  void IBase.TestMethod(string baseArg1, string baseArg2, __arglist) { }
-                              }");
-
-            VerifyCSharpFix(@"public interface IBase
-                              {
-                                  void TestMethod(string baseArg1, string baseArg2, params string[] baseArg3);
-                              }
-
-                              public class TestClass : IBase
-                              {
-                                  void IBase.TestMethod(string arg1, string arg2, params string[] arg3) { }
-                              }",
-                            @"public interface IBase
-                              {
-                                  void TestMethod(string baseArg1, string baseArg2, params string[] baseArg3);
-                              }
-
-                              public class TestClass : IBase
-                              {
-                                  void IBase.TestMethod(string baseArg1, string baseArg2, params string[] baseArg3) { }
-                              }");
+                        public class TestClass : IBase
+                        {
+                            void IBase.TestMethod(string arg1, string arg2, params string[] arg3) { }
+                        }";
+            VerifyCSharpFix(source, source);
         }
 
         [Fact]

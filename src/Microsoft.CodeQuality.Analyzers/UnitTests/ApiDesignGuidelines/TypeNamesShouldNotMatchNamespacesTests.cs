@@ -59,6 +59,30 @@ public class Forms
         CSharpSystemResultAt(2, 14, "Forms", "System.Windows.Forms"));
         }
 
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CA1724CSharpInvalidNameMatchingFormsNamespaceInSystemRule_Internal_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+internal class Forms
+{
+}
+
+public class Outer
+{
+    private class Forms
+    {
+    }
+}
+
+internal class Outer2
+{
+    public class Forms
+    {
+    }
+}
+");
+        }
+
         [Fact]
         public void CA1724CSharpInvalidNameMatchingSdkNamespaceInDefaultRule()
         {
@@ -105,6 +129,25 @@ End Class");
 Public Class Forms
 End Class",
         BasicSystemResultAt(2, 14, "Forms", "System.Windows.Forms"));
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CA1724VisualBasicInvalidNameMatchingFormsNamespaceInSystemRule_Internal_NoDiagnostic()
+        {
+            VerifyBasic(@"
+Friend Class Forms
+End Class
+
+Public Class Outer
+    Private Class Forms
+    End Class
+End Class
+
+Friend Class Outer2
+    Public Class Forms
+    End Class
+End Class
+");
         }
 
         [Fact]

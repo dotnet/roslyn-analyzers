@@ -57,13 +57,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(
                 compilationStartAnalysisContext =>
                 {
-                    var namedTypesInCompilation = new ConcurrentBag<INamedTypeSymbol>();
+                    var externallyVisibleNamedTypes = new ConcurrentBag<INamedTypeSymbol>();
 
                     compilationStartAnalysisContext.RegisterSymbolAction(
                         symbolAnalysisContext =>
                         {
                             var namedType = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
-                            namedTypesInCompilation.Add(namedType);
+                            if (namedType.IsExternallyVisible())
+                            {
+                                externallyVisibleNamedTypes.Add(namedType);
+                            }
                         }, SymbolKind.NamedType);
 
                     compilationStartAnalysisContext.RegisterCompilationEndAction(
@@ -89,7 +92,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             UpdateNamespaceTable(namespaceComponentToNamespaceNameDictionary, namespaceNamesInCompilation.ToImmutableSortedSet());
 
                             InitializeWellKnownSystemNamespaceTable();
-                            foreach (INamedTypeSymbol symbol in namedTypesInCompilation)
+                            foreach (INamedTypeSymbol symbol in externallyVisibleNamedTypes)
                             {
                                 string symbolName = symbol.Name;
                                 if (s_wellKnownSystemNamespaceTable.ContainsKey(symbolName))

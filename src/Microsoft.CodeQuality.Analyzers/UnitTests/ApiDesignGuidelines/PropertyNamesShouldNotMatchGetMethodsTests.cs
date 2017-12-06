@@ -20,6 +20,21 @@ public class Test
     }}
 }}";
 
+        private const string CSharpNotExternallyVisibleTestTemplate = @"
+using System;
+
+internal class OuterClass
+{{
+    public class Test
+    {{
+        {0} DateTime Date {{ get; }}
+        {1} string GetDate()
+        {{
+            return DateTime.Today.ToString();
+        }}
+    }}
+}}";
+
         private const string BasicTestTemplate = @"
 Imports System
 
@@ -33,6 +48,23 @@ Public Class Test
         Return Me.Date.ToString()
     End Function 
 End Class";
+
+        private const string BasicNotExternallyVisibleTestTemplate = @"
+Imports System
+
+Friend Class OuterClass
+    Public Class Test
+        {0} ReadOnly Property [Date]() As DateTime
+            Get
+                Return DateTime.Today
+            End Get
+        End Property
+        {1} Function GetDate() As String
+            Return Me.Date.ToString()
+        End Function 
+    End Class
+End Class
+";
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
@@ -79,6 +111,9 @@ public class Test
                     column: $"    {propertyAccessibility} DateTime ".Length + 1,
                     identifierName: "Date",
                     otherIdentifierName: "GetDate"));
+
+            VerifyCSharp(
+                string.Format(CSharpNotExternallyVisibleTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
         [Theory]
@@ -92,7 +127,7 @@ public class Test
             VerifyCSharp(string.Format(CSharpTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
-        [Theory]
+        [Theory, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
         [InlineData("public", "private")]
         [InlineData("protected", "private")]
         [InlineData("protected internal", "private")]
@@ -183,7 +218,7 @@ Public Class Test
 End Class");
         }
 
-        [Theory]
+        [Theory, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
         [InlineData("Public", "Public")]
         [InlineData("Public", "Protected")]
         [InlineData("Public", "Protected Friend")]
@@ -202,6 +237,9 @@ End Class");
                     column: $"    {propertyAccessibility} ReadOnly Property ".Length + 1,
                     identifierName: "Date",
                     otherIdentifierName: "GetDate"));
+
+            VerifyBasic(
+                string.Format(BasicNotExternallyVisibleTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
         [Theory]

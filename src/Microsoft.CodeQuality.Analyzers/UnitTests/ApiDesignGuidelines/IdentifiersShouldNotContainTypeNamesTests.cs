@@ -22,7 +22,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         public void CSharp_CA1720_NoDiagnostic()
         {
             VerifyCSharp(@"
-class IntA
+public class IntA
 {
 }
 ");
@@ -32,80 +32,104 @@ class IntA
         public void CSharp_CA1720_SomeDiagnostic1()
         {
             VerifyCSharp(@"
-class Int
+public class Int
 {
 }
 ",
-    GetCA1720CSharpResultAt(line: 2, column: 7, identifierName: "Int"));
+    GetCA1720CSharpResultAt(line: 2, column: 14, identifierName: "Int"));
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CSharp_CA1720_Internal_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+class Int
+{
+}
+
+public class C
+{
+    private class Int
+    {
+    }
+}
+
+internal class C2
+{
+    public class Int
+    {
+    }
+}
+");
         }
 
         [Fact]
         public void CSharp_CA1720_SomeDiagnostic2()
         {
             VerifyCSharp(@"
-struct Int32
+public struct Int32
 {
 }
 ",
-    GetCA1720CSharpResultAt(line: 2, column: 8, identifierName: "Int32"));
+    GetCA1720CSharpResultAt(line: 2, column: 15, identifierName: "Int32"));
         }
 
         [Fact]
         public void CSharp_CA1720_SomeDiagnostic3()
         {
             VerifyCSharp(@"
-enum Int64
+public enum Int64
 {
 }
 ",
-    GetCA1720CSharpResultAt(line: 2, column: 6, identifierName: "Int64"));
+    GetCA1720CSharpResultAt(line: 2, column: 13, identifierName: "Int64"));
         }
 
         [Fact]
         public void CSharp_CA1720_SomeDiagnostic4()
         {
             VerifyCSharp(@"
-class Derived
+public class Derived
 {
-   void Int ()
+   public void Int()
    {
    }
 }
 ",
-    GetCA1720CSharpResultAt(line: 4, column: 9, identifierName: "Int"));
+    GetCA1720CSharpResultAt(line: 4, column: 16, identifierName: "Int"));
         }
 
         [Fact]
         public void CSharp_CA1720_SomeDiagnostic5()
         {
             VerifyCSharp(@"
-class Bar
+public class Bar
 {
-   void BarMethod (int Int)
+   public void BarMethod(int Int)
    {
    }
 }
 ",
-    GetCA1720CSharpResultAt(line: 4, column: 24, identifierName: "Int"));
+    GetCA1720CSharpResultAt(line: 4, column: 30, identifierName: "Int"));
         }
 
         [Fact]
         public void CSharp_CA1720_SomeDiagnostic6()
         {
             VerifyCSharp(@"
-class DerivedBar
+public class DerivedBar
 {
-   int Int;
+   public int Int;
 }
 ",
-    GetCA1720CSharpResultAt(line: 4, column: 8, identifierName: "Int"));
+    GetCA1720CSharpResultAt(line: 4, column: 15, identifierName: "Int"));
         }
 
         [Fact]
         public void CSharp_CA1720_NoDiagnosticOnEqualsOverride()
         {
             VerifyCSharp(@"
-class Bar
+public class Bar
 {
    public override bool Equals(object obj)
    {
@@ -121,13 +145,13 @@ class Bar
             VerifyCSharp(@"
 using System;
 
-abstract class Base
+public abstract class Base
 {
     public abstract void BaseMethod(object okay, object obj);
     public abstract int this[Guid guid] { get; }
 }
 
-class Derived : Base
+public class Derived : Base
 {
     public override void BaseMethod(object okay, object obj)
     {
@@ -148,7 +172,7 @@ class Derived : Base
             VerifyCSharp(@"
 using System;
 
-class Base
+public class Base
 {
     public virtual void BaseMethod(object okay, object obj) 
     { 
@@ -160,7 +184,7 @@ class Base
     }
 }
 
-class Derived : Base
+public class Derived : Base
 {
     public override void BaseMethod(object okay, object obj) 
     { 
@@ -179,18 +203,18 @@ class Derived : Base
         public void CSharp_CA1720_DiagnosticOnBaseNotNestedImplementation()
         {
             VerifyCSharp(@"
-class Base
+public class Base
 {
     public virtual void BaseMethod(object okay, object obj)
     {
     }
 }
 
-class Derived : Base
+public class Derived : Base
 {
 }
 
-class Bar : Derived
+public class Bar : Derived
 {
     public override void BaseMethod(object okay, object obj)
     {
@@ -205,12 +229,12 @@ class Bar : Derived
             VerifyCSharp(@"
 using System;
 
-interface IDerived
+public interface IDerived
 {
     void DerivedMethod(object okay, object obj);
 }
 
-class Derived : IDerived
+public class Derived : IDerived
 {
     public void DerivedMethod(object okay, object obj) 
     {
@@ -225,12 +249,12 @@ class Derived : IDerived
             VerifyCSharp(@"
 using System;
 
-interface IDerived
+public interface IDerived
 {
     void DerivedMethod(object okay, object obj);
 }
 
-class Derived : IDerived
+public class Derived : IDerived
 {
     void IDerived.DerivedMethod(object okay, object obj) 
     {
@@ -245,12 +269,12 @@ class Derived : IDerived
             VerifyCSharp(@"
 using System;
 
-interface IDerived<in T1, in T2>
+public interface IDerived<in T1, in T2>
 {
     void DerivedMethod(int okay, T1 obj, T2 @int);
 }
 
-class Derived : IDerived<int, string>
+public class Derived : IDerived<int, string>
 {
     public void DerivedMethod(int okay, int obj, string @int)
     {
@@ -266,12 +290,12 @@ class Derived : IDerived<int, string>
             VerifyCSharp(@"
 using System;
 
-interface IDerived<in T1, in T2>
+public interface IDerived<in T1, in T2>
 {
     void DerivedMethod(int okay, T1 obj, T2 @int);
 }
 
-class Derived : IDerived<int, string>
+public class Derived : IDerived<int, string>
 {
     void IDerived<int, string>.DerivedMethod(int okay, int obj, string @int)
     {
@@ -287,16 +311,16 @@ class Derived : IDerived<int, string>
             VerifyCSharp(@"
 using System;
 
-interface IDerived
+public interface IDerived
 {
     void DerivedMethod(object okay, object obj);
 }
 
-interface IBar : IDerived
+public interface IBar : IDerived
 {
 }
 
-class Derived : IBar
+public class Derived : IBar
 {
     public void DerivedMethod(object okay, object obj) 
     {
@@ -311,16 +335,16 @@ class Derived : IBar
             VerifyCSharp(@"
 using System;
 
-interface IDerived
+public interface IDerived
 {
     void DerivedMethod(object okay, object obj);
 }
 
-interface IBar : IDerived
+public interface IBar : IDerived
 {
 }
 
-class Derived : IBar
+public class Derived : IBar
 {
     void IDerived.DerivedMethod(object okay, object obj) 
     {
@@ -335,16 +359,16 @@ class Derived : IBar
             VerifyCSharp(@"
 using System;
 
-interface IDerived<in T1, in T2>
+public interface IDerived<in T1, in T2>
 {
     void DerivedMethod(int okay, T1 obj, T2 @int);
 }
 
-interface IBar<in T1, in T2> : IDerived<T1, T2>
+public interface IBar<in T1, in T2> : IDerived<T1, T2>
 {
 }
 
-class Derived : IBar<int, string>
+public class Derived : IBar<int, string>
 {
     public void DerivedMethod(int okay, int obj, string @int)
     {
@@ -360,16 +384,16 @@ class Derived : IBar<int, string>
             VerifyCSharp(@"
 using System;
 
-interface IDerived<in T1, in T2>
+public interface IDerived<in T1, in T2>
 {
     void DerivedMethod(int okay, T1 obj, T2 @int);
 }
 
-interface IBar<in T1, in T2> : IDerived<T1, T2>
+public interface IBar<in T1, in T2> : IDerived<T1, T2>
 {
 }
 
-class Derived : IBar<int, string>
+public class Derived : IBar<int, string>
 {
     void IDerived<int, string>.DerivedMethod(int okay, int obj, string @int)
     {
@@ -428,13 +452,6 @@ public sealed class SomeEqualityComparer : IEqualityComparer<string>, IEqualityC
         throw new NotImplementedException();
     }
 }
-");
-        }
-
-        [Fact]
-        public void Basic_CA1720_NoDiagnostic()
-        {
-            VerifyBasic(@"
 ");
         }
 

@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.NetCore.Analyzers.Composition.UnitTests
+namespace Roslyn.Diagnostics.Analyzers.UnitTests
 {
     public class DoNotMixAttributesFromDifferentVersionsOfMEFTests : DiagnosticAnalyzerTestBase
     {
@@ -575,14 +575,14 @@ End Class
 
         private static new DiagnosticResult GetCSharpResultAt(int line, int column, string attributeName, string typeName)
         {
-            var message = string.Format(MicrosoftCompositionAnalyzersResources.DoNotMixAttributesFromDifferentVersionsOfMEFMessage, attributeName, typeName);
-            return DiagnosticAnalyzerTestBase.GetCSharpResultAt(line, column, DoNotMixAttributesFromDifferentVersionsOfMEFAnalyzer.RuleId, message);
+            var message = string.Format(RoslynDiagnosticsAnalyzersResources.DoNotMixAttributesFromDifferentVersionsOfMEFMessage, attributeName, typeName);
+            return DiagnosticAnalyzerTestBase.GetCSharpResultAt(line, column, RoslynDiagnosticIds.MixedVersionsOfMefAttributesRuleId, message);
         }
 
         private static new DiagnosticResult GetBasicResultAt(int line, int column, string attributeName, string typeName)
         {
-            var message = string.Format(MicrosoftCompositionAnalyzersResources.DoNotMixAttributesFromDifferentVersionsOfMEFMessage, attributeName, typeName);
-            return DiagnosticAnalyzerTestBase.GetBasicResultAt(line, column, DoNotMixAttributesFromDifferentVersionsOfMEFAnalyzer.RuleId, message);
+            var message = string.Format(RoslynDiagnosticsAnalyzersResources.DoNotMixAttributesFromDifferentVersionsOfMEFMessage, attributeName, typeName);
+            return DiagnosticAnalyzerTestBase.GetBasicResultAt(line, column, RoslynDiagnosticIds.MixedVersionsOfMefAttributesRuleId, message);
         }
     }
 }

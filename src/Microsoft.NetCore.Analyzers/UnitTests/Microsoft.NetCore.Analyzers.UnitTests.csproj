@@ -9,4 +9,7 @@
     <ProjectReference Include="..\CSharp\Microsoft.NetCore.CSharp.Analyzers.csproj" />
     <ProjectReference Include="..\VisualBasic\Microsoft.NetCore.VisualBasic.Analyzers.vbproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Composition\" />
+  </ItemGroup>
 </Project>

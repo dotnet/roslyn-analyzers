@@ -115,6 +115,78 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                          GetBasicResultAt(8, 106, "Sub TestClass.TestMethod(arg1 As String, arg2 As String, ParamArray arg3 As String())", "arg3", "baseArg3", "Sub BaseClass.TestMethod(baseArg1 As String, baseArg2 As String, ParamArray baseArg3 As String())"));
         }
 
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void VerifyInternalOverrideWithWrongParameterNames_NoDiagnostic()
+        {
+            VerifyCSharp(@"public abstract class BaseClass
+                           {
+                               internal abstract void TestMethod(string baseArg1, string baseArg2);
+                           }
+
+                           public class TestClass : BaseClass
+                           {
+                               internal override void TestMethod(string arg1, string arg2) { }
+                           }");
+
+            VerifyCSharp(@"internal abstract class BaseClass
+                           {
+                               public abstract void TestMethod(string baseArg1, string baseArg2, __arglist);
+                           }
+
+                           internal class TestClass : BaseClass
+                           {
+                               public override void TestMethod(string arg1, string arg2, __arglist) { }
+                           }");
+
+            VerifyCSharp(@"internal class OuterClass
+                           {
+                               public abstract class BaseClass
+                               {
+                                   public abstract void TestMethod(string baseArg1, string baseArg2, params string[] baseArg3);
+                               }
+
+                               public class TestClass : BaseClass
+                               {
+                                   public override void TestMethod(string arg1, string arg2, params string[] arg3) { }
+                               }
+                           }");
+
+            VerifyBasic(@"Friend MustInherit Class BaseClass
+                              Public MustOverride Sub TestMethod(baseArg1 As String, baseArg2 As String)
+                          End Class
+
+                          Friend Class TestClass 
+                              Inherits BaseClass
+
+                              Public Overrides Sub TestMethod(arg1 As String, arg2 As String)
+                              End Sub
+                          End Class");
+
+            VerifyBasic(@"Public MustInherit Class BaseClass
+                              Friend MustOverride Sub TestMethod(baseArg1 As String, baseArg2 As String, ParamArray baseArg3 As String())
+                          End Class
+
+                          Public Class TestClass
+                              Inherits BaseClass
+
+                              Friend Overrides Sub TestMethod(arg1 As String, arg2 As String, ParamArray arg3 As String())
+                              End Sub
+                          End Class");
+
+            VerifyBasic(@"Friend Class OuterClass
+                              Public MustInherit Class BaseClass
+                                  Public MustOverride Sub TestMethod(baseArg1 As String, baseArg2 As String, ParamArray baseArg3 As String())
+                              End Class
+
+                              Public Class TestClass
+                                  Inherits BaseClass
+
+                                  Public Overrides Sub TestMethod(arg1 As String, arg2 As String, ParamArray arg3 As String())
+                                  End Sub
+                              End Class
+                          End Class");
+        }
+
         [Fact]
         public void VerifyInterfaceImplementationWithWrongParameterNames()
         {
@@ -183,8 +255,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                         GetBasicResultAt(8, 96, "Sub TestClass.TestMethod(arg1 As String, arg2 As String, ParamArray arg3 As String())", "arg3", "baseArg3", "Sub IBase.TestMethod(baseArg1 As String, baseArg2 As String, ParamArray baseArg3 As String())"));
         }
 
-        [Fact]
-        public void VerifyExplicitInterfaceImplementationWithWrongParameterNames()
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void VerifyExplicitInterfaceImplementationWithWrongParameterNames_NoDiagnostic()
         {
             VerifyCSharp(@"public interface IBase
                            {
@@ -194,9 +266,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                            public class TestClass : IBase
                            {
                                void IBase.TestMethod(string arg1, string arg2) { }
-                           }",
-                         GetCSharpResultAt(8, 61, "void TestClass.TestMethod(string arg1, string arg2)", "arg1", "baseArg1", "void IBase.TestMethod(string baseArg1, string baseArg2)"),
-                         GetCSharpResultAt(8, 74, "void TestClass.TestMethod(string arg1, string arg2)", "arg2", "baseArg2", "void IBase.TestMethod(string baseArg1, string baseArg2)"));
+                           }");
 
             VerifyCSharp(@"public interface IBase
                            {
@@ -206,9 +276,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                            public class TestClass : IBase
                            {
                                void IBase.TestMethod(string arg1, string arg2, __arglist) { }
-                           }",
-                         GetCSharpResultAt(8, 61, "void TestClass.TestMethod(string arg1, string arg2, __arglist)", "arg1", "baseArg1", "void IBase.TestMethod(string baseArg1, string baseArg2, __arglist)"),
-                         GetCSharpResultAt(8, 74, "void TestClass.TestMethod(string arg1, string arg2, __arglist)", "arg2", "baseArg2", "void IBase.TestMethod(string baseArg1, string baseArg2, __arglist)"));
+                           }");
 
             VerifyCSharp(@"public interface IBase
                            {
@@ -218,10 +286,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                            public class TestClass : IBase
                            {
                                void IBase.TestMethod(string arg1, string arg2, params string[] arg3) { }
-                           }",
-                         GetCSharpResultAt(8, 61, "void TestClass.TestMethod(string arg1, string arg2, params string[] arg3)", "arg1", "baseArg1", "void IBase.TestMethod(string baseArg1, string baseArg2, params string[] baseArg3)"),
-                         GetCSharpResultAt(8, 74, "void TestClass.TestMethod(string arg1, string arg2, params string[] arg3)", "arg2", "baseArg2", "void IBase.TestMethod(string baseArg1, string baseArg2, params string[] baseArg3)"),
-                         GetCSharpResultAt(8, 96, "void TestClass.TestMethod(string arg1, string arg2, params string[] arg3)", "arg3", "baseArg3", "void IBase.TestMethod(string baseArg1, string baseArg2, params string[] baseArg3)"));
+                           }");
         }
 
         [Fact]

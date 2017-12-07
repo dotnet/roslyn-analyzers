@@ -17,11 +17,6 @@
         <target state="translated">접두사와 cref 태그를 동시에 사용하지 마세요.</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryDocumentation">
-        <source>Documentation</source>
-        <target state="translated">문서</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

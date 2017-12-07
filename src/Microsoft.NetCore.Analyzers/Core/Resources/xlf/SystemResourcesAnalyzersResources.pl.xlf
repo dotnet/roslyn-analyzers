@@ -17,11 +17,6 @@
         <target state="translated">Oznacz zestawy atrybutem NeutralResourcesLanguageAttribute</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryPerformance">
-        <source>Performance</source>
-        <target state="translated">Wydajność</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

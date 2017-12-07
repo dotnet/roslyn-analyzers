@@ -17,11 +17,6 @@
         <target state="translated">NeutralResourcesLanguageAttribute로 어셈블리를 표시하세요.</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryPerformance">
-        <source>Performance</source>
-        <target state="translated">성능</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

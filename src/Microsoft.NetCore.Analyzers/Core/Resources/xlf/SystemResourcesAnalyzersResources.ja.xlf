@@ -17,11 +17,6 @@
         <target state="translated">アセンブリに NeutralResourcesLanguageAttribute を設定します</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryPerformance">
-        <source>Performance</source>
-        <target state="translated">パフォーマンス</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

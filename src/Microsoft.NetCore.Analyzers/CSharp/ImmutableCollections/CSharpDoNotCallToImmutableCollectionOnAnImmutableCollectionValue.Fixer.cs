@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 namespace Microsoft.NetCore.CSharp.Analyzers.ImmutableCollections
 {
     /// <summary>
-    /// RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
+    /// CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public class CSharpDoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer : DoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer

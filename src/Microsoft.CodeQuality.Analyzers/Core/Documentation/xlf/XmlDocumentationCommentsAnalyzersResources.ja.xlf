@@ -17,11 +17,6 @@
         <target state="translated">cref タグをプレフィックスと共に使用しない</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryDocumentation">
-        <source>Documentation</source>
-        <target state="translated">ドキュメント</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

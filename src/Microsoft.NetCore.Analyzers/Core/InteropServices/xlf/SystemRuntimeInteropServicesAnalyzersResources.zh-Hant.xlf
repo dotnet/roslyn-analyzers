@@ -97,31 +97,6 @@
         <target state="translated">使用 '{0}' 方法傳回的 hresult，並呼叫 Marshal.ThrowExceptionForHR。</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryGlobalization">
-        <source>Globalization</source>
-        <target state="translated">全球化</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CategoryInteroperability">
-        <source>Interoperability</source>
-        <target state="translated">互通性</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CategoryPortability">
-        <source>Portability</source>
-        <target state="translated">可攜式</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CategoryReliability">
-        <source>Reliability</source>
-        <target state="translated">可靠性</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CategoryUsage">
-        <source>Usage</source>
-        <target state="translated">使用方式</target>
-        <note />
-      </trans-unit>
       <trans-unit id="MarkBooleanPInvokeArgumentsWithMarshalAsTitle">
         <source>Mark boolean PInvoke arguments with MarshalAs</source>
         <target state="translated">將布林值 PInvoke 引數標記為 MarshalAs</target>

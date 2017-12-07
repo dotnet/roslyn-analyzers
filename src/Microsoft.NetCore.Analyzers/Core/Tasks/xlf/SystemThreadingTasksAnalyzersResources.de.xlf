@@ -17,11 +17,6 @@
         <target state="translated">Keine Tasks ohne Übergabe eines TaskSchedulers erstellen</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryReliability">
-        <source>Reliability</source>
-        <target state="translated">Zuverlässigkeit</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

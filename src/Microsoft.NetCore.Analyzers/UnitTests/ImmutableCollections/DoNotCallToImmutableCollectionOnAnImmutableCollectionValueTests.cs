@@ -203,9 +203,9 @@ class C
     }}
 }}
 ",
-    // Test0.cs(18,9): warning RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
+    // Test0.cs(18,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
     GetCSharpResultAt(18, 9, collectionName),
-    // Test0.cs(19,9): warning RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
+    // Test0.cs(19,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
     GetCSharpResultAt(19, 9, collectionName));
 
             VerifyBasic($@"
@@ -226,9 +226,9 @@ Class C
 	End Sub
 End Class
 ",
-    // Test0.vb(14,3): warning RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
+    // Test0.vb(14,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
     GetBasicResultAt(14, 3, collectionName),
-    // Test0.vb(15,3): warning RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
+    // Test0.vb(15,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
     GetBasicResultAt(15, 3, collectionName));
         }
 
@@ -258,9 +258,9 @@ class C
     }}
 }}
 ",
-    // Test0.cs(18,9): warning RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
+    // Test0.cs(18,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
     GetCSharpResultAt(18, 9, collectionName),
-    // Test0.cs(19,9): warning RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
+    // Test0.cs(19,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
     GetCSharpResultAt(19, 9, collectionName));
 
             VerifyBasic($@"
@@ -281,9 +281,9 @@ Class C
 	End Sub
 End Class
 ",
-    // Test0.vb(14,3): warning RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
+    // Test0.vb(14,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
     GetBasicResultAt(14, 3, collectionName),
-    // Test0.vb(15,3): warning RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
+    // Test0.vb(15,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
     GetBasicResultAt(15, 3, collectionName));
         }
 

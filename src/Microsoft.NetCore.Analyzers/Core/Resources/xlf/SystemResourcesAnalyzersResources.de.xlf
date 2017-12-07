@@ -17,11 +17,6 @@
         <target state="translated">Assemblys mit NeutralResourcesLanguageAttribute markieren</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryPerformance">
-        <source>Performance</source>
-        <target state="translated">Leistung</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

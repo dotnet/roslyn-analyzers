@@ -17,11 +17,6 @@
         <target state="translated">用 NeutralResourcesLanguageAttribute 标记程序集</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryPerformance">
-        <source>Performance</source>
-        <target state="translated">性能</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -97,31 +97,6 @@
         <target state="translated">메서드 '{0}'에서 반환된 HRESULT를 이용하고 Marshal.ThrowExceptionForHR을 호출하세요.</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryGlobalization">
-        <source>Globalization</source>
-        <target state="translated">세계화</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CategoryInteroperability">
-        <source>Interoperability</source>
-        <target state="translated">상호 운용성</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CategoryPortability">
-        <source>Portability</source>
-        <target state="translated">이식성</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CategoryReliability">
-        <source>Reliability</source>
-        <target state="translated">안정성</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CategoryUsage">
-        <source>Usage</source>
-        <target state="translated">사용법</target>
-        <note />
-      </trans-unit>
       <trans-unit id="MarkBooleanPInvokeArgumentsWithMarshalAsTitle">
         <source>Mark boolean PInvoke arguments with MarshalAs</source>
         <target state="translated">MarshalAs로 부울 PInvoke 인수를 표시하세요.</target>

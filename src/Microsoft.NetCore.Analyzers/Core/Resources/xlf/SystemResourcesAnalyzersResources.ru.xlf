@@ -17,11 +17,6 @@
         <target state="translated">Пометьте сборки с помощью NeutralResourcesLanguageAttribute</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryPerformance">
-        <source>Performance</source>
-        <target state="translated">Производительность</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

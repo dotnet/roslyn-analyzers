@@ -17,11 +17,6 @@
         <target state="translated">Contrassegnare gli assembly con NeutralResourcesLanguageAttribute</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryPerformance">
-        <source>Performance</source>
-        <target state="translated">Prestazioni</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

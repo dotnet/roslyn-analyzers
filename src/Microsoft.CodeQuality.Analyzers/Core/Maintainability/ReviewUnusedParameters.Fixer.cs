@@ -136,6 +136,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                 }
                             }
                         }
+                        else
+                        {
+                            // Could not find proper arguments in the caller. It is safer to cancel the fix.
+                            return ImmutableArray<KeyValuePair<DocumentId, SyntaxNode>>.Empty;
+                        }
                     }
                 }
             }

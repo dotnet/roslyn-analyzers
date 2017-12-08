@@ -54,7 +54,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         (methodSymbol.IsAccessorMethod() ||
                          (methodSymbol.MethodKind == MethodKind.UserDefinedOperator &&
                             (methodSymbol.Name == WellKnownMemberNames.EqualityOperatorName ||
-                             methodSymbol.Name == WellKnownMemberNames.InequalityOperatorName))))
+                             methodSymbol.Name == WellKnownMemberNames.InequalityOperatorName)) ||
+                             (methodSymbol.MethodKind == MethodKind.Conversion)))
                     {
                         return;
                     }

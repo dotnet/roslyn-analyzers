@@ -1,15 +1,20 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using System.Collections.Immutable;
+using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
-    public abstract class AvoidDuplicateElementInitialization : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class AvoidDuplicateElementInitialization : DiagnosticAnalyzer
     {
-        // TODO: Determinw which id to use.
+        // TODO: Determine which id to use.
         internal const string RuleId = "CA9999";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.AvoidDuplicateElementInitializationTitle), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
@@ -27,5 +32,111 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+
+        private static readonly SyntaxGenerator s_generator = SyntaxGenerator.GetGenerator(new AdhocWorkspace(), LanguageNames.CSharp);
+
+        public override void Initialize(AnalysisContext analysisContext)
+        {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
+            analysisContext.RegisterOperationAction(AnalyzeOperation, OperationKind.ObjectCreation);
+        }
+
+        private static void AnalyzeOperation(OperationAnalysisContext context)
+        {
+            var objectInitializer = (IObjectCreationOperation)context.Operation;
+            if (objectInitializer.Initializer == null)
+            {
+                return;
+            }
+
+            var initializedElementIndexes = new HashSet<object[]>(ConstantArgumentEqualityComparer.Instance);
+
+            foreach (var initializer in objectInitializer.Initializer.Initializers)
+            {
+                if (initializer is ISimpleAssignmentOperation assignment &&
+                    assignment.Target is IPropertyReferenceOperation propertyReference &&
+                    propertyReference.Arguments.Length != 0)
+                {
+                    var values = GetConstantArgumentValues(propertyReference.Arguments);
+                    if (values != null && !initializedElementIndexes.Add(values))
+                    {
+                        var indexesText = string.Join(", ", values.Select(value => s_generator.LiteralExpression(value)));
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(Rule, propertyReference.Syntax.GetLocation(), indexesText));
+                    }
+                }
+
+                if (context.CancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the argument values in parameter order, filling in defaults if necessary, if all
+        /// arguments are constants. Otherwise, returns null.
+        /// </summary>
+        private static object[] GetConstantArgumentValues(ImmutableArray<IArgumentOperation> arguments)
+        {
+            var result = new object[arguments.Length];
+            foreach(var argument in arguments)
+            {
+                var parameter = argument.Parameter;
+                if (parameter == null ||
+                    parameter.Ordinal >= result.Length ||
+                    !argument.Value.ConstantValue.HasValue)
+                {
+                    return null;
+                }
+
+                result[parameter.Ordinal] = argument.Value.ConstantValue.Value;
+            }
+            return result;
+        }
+
+        private sealed class ConstantArgumentEqualityComparer : IEqualityComparer<object[]>
+        {
+            public static readonly ConstantArgumentEqualityComparer Instance = new ConstantArgumentEqualityComparer();
+
+            private readonly EqualityComparer<object> _objectComparer = EqualityComparer<object>.Default;
+
+            private ConstantArgumentEqualityComparer() { }
+
+            bool IEqualityComparer<object[]>.Equals(object[] x, object[] y)
+            {
+                if (x == y)
+                {
+                    return true;
+                }
+
+                if (x == null || y == null || x.Length != y.Length)
+                {
+                    return false;
+                }
+
+                for (int i = 0; i < x.Length; i++)
+                {
+                    if (!_objectComparer.Equals(x[i], y[i]))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            int IEqualityComparer<object[]>.GetHashCode(object[] obj)
+            {
+                int hash = 0;
+                foreach (var item in obj)
+                {
+                    hash = unchecked((hash * (int)0xA5555529) + _objectComparer.GetHashCode(item));
+                }
+                return hash;
+            }
+        }
     }
 }

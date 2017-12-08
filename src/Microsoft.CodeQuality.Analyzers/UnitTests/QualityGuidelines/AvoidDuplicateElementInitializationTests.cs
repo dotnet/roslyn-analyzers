@@ -11,12 +11,26 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return null;
+            return new AvoidDuplicateElementInitialization();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpAvoidDuplicateElementInitialization();
+            return new AvoidDuplicateElementInitialization();
+        }
+
+        [Fact]
+        public void NoInitializer()
+        {
+            VerifyCSharp(@"
+class C
+{
+    void Foo()
+    {
+        var x = new System.Collections.Generic.Dictionary<int, string>();
+    }
+}
+");
         }
 
         [Fact]

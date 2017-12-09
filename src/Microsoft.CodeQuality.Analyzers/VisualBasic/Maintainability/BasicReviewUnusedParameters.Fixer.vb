@@ -3,6 +3,7 @@
 Imports System.Composition
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
+Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeQuality.Analyzers.Maintainability
 
 Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability

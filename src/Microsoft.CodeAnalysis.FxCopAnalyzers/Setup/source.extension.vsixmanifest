@@ -7,6 +7,8 @@
     <Description xml:space="preserve">Live code analysis rules and code fixes addressing API design, performance, security, and best practices for C# and Visual Basic.</Description>
     <MoreInfo>https://go.microsoft.com/fwlink/?linkid=849061</MoreInfo>
     <License>EULA.rtf</License>
+    <ReleaseNotes>ReleaseNotes.txt</ReleaseNotes>
+    <Icon>Icons\MsCodeAnalysisAnalyzer_72x.png</Icon>
     <Tags>code analysis; roslyn; analyzer; analyzers; live; fxcop; code quality;</Tags>
   </Metadata>
   <Installation>

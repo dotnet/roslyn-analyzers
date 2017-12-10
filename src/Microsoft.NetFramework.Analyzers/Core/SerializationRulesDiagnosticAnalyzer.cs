@@ -81,7 +81,7 @@ namespace Microsoft.NetFramework.Analyzers
                                                                         s_localizableMessageCA2235,
                                                                         DiagnosticCategory.Usage,
                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                        isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                                                                        isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                         description: s_localizableDescriptionCA2235,
                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182349.aspx",
                                                                         customTags: WellKnownDiagnosticTags.Telemetry);

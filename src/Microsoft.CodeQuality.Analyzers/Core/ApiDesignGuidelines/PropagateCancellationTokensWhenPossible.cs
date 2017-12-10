@@ -115,6 +115,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             // Note that default(CancellationToken) is equivalent to CancellationToken.None.
 
             var argumentValue = argument.Value;
+            Debug.Assert(argumentValue.Type == cancellationTokenType);
+
             switch (argumentValue.Kind)
             {
                 case OperationKind.DefaultValue:

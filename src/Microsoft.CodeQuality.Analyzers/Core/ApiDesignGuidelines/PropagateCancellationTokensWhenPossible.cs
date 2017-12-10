@@ -86,7 +86,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 // All valid code should result in 'argument' being non-null. Even if the CancellationToken is an optional
                 // parameter and the caller does not explicitly pass it, 'argument' will still correspond to a compiler-generated
                 // CancellationToken value. However, check for null to ensure we don't crash on invalid code.
-                if (argument != null && !IsCancellationTokenNone(argument, cancellationTokenType))
+                if (argument == null)
+                {
+                    // The code is invalid. The compiler error will be enough warning for the developer.
+                    return false;
+                }
+
+                if (!IsCancellationTokenNone(argument, cancellationTokenType))
                 {
                     // A non-default CancellationToken is being passed.
                     return false;
@@ -139,6 +145,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         return field.Type == cancellationTokenType;
                     case ILocalSymbol local:
                         return local.Type == cancellationTokenType && !local.IsInaccessibleLocal(position);
+                    case IParameterSymbol parameter:
+                        return parameter.Type == cancellationTokenType;
                     default:
                         return false;
                 }

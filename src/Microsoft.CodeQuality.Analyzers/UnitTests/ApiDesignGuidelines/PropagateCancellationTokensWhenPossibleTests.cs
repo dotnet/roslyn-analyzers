@@ -47,6 +47,28 @@ class C
         }
 
         [Fact]
+        public void WipCSharp_UninitializedCancellationTokenOutParameter_NoDiagnostics()
+        {
+            var source = @"
+using System.Threading;
+using System.Threading.Tasks;
+
+class C
+{
+    Task M1(CancellationToken p1 = default(CancellationToken)) => throw null;
+
+    Task M2(out CancellationToken p1)
+    {
+        var l1 = M1();
+        p1 = default(CancellationToken);
+        return l1;
+    }
+}
+";
+            VerifyCSharp(source);
+        }
+
+        [Fact]
         public void WipCSharp_DefaultCancellationTokenPassed()
         {
             var source = @"
@@ -223,6 +245,23 @@ class C
 }
 ";
             VerifyCSharp(source);
+        }
+
+        [Fact]
+        public void WipCSharp_RequiredCancellationTokenParameterIsNotPassed_NoCrash()
+        {
+            var source = @"
+using System.Threading;
+using System.Threading.Tasks;
+
+class C
+{
+    Task M1(CancellationToken p1) => throw null;
+
+    Task M2() => M1();
+}
+";
+            VerifyCSharp(source, TestValidationMode.AllowCompileErrors);
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

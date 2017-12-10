@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -33,7 +34,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        private static readonly SyntaxGenerator s_generator = SyntaxGenerator.GetGenerator(new AdhocWorkspace(), LanguageNames.CSharp);
+        private static readonly ConcurrentDictionary<string, SyntaxGenerator> s_generators = new ConcurrentDictionary<string, SyntaxGenerator>();
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -62,7 +63,10 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     var values = GetConstantArgumentValues(propertyReference.Arguments);
                     if (values != null && !initializedElementIndexes.Add(values))
                     {
-                        var indexesText = string.Join(", ", values.Select(value => s_generator.LiteralExpression(value)));
+                        var generator = s_generators.GetOrAdd(
+                            context.Compilation.Language,
+                            language => SyntaxGenerator.GetGenerator(new AdhocWorkspace(), language));
+                        var indexesText = string.Join(", ", values.Select(value => generator.LiteralExpression(value)));
                         context.ReportDiagnostic(
                             Diagnostic.Create(Rule, propertyReference.Syntax.GetLocation(), indexesText));
                     }
@@ -112,20 +116,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     return true;
                 }
 
-                if (x == null || y == null || x.Length != y.Length)
-                {
-                    return false;
-                }
-
-                for (int i = 0; i < x.Length; i++)
-                {
-                    if (!_objectComparer.Equals(x[i], y[i]))
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
+                return x != null && y != null && x.SequenceEqual(y, _objectComparer);
             }
 
             int IEqualityComparer<object[]>.GetHashCode(object[] obj)

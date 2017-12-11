@@ -52,9 +52,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                     if (symbol is IMethodSymbol methodSymbol &&
                         (methodSymbol.IsAccessorMethod() ||
-                         (methodSymbol.MethodKind == MethodKind.UserDefinedOperator &&
-                            (methodSymbol.Name == WellKnownMemberNames.EqualityOperatorName ||
-                             methodSymbol.Name == WellKnownMemberNames.InequalityOperatorName))))
+                        (methodSymbol.MethodKind == MethodKind.UserDefinedOperator &&
+                        (methodSymbol.Name == WellKnownMemberNames.EqualityOperatorName ||
+                        methodSymbol.Name == WellKnownMemberNames.InequalityOperatorName)) ||
+                        methodSymbol.MethodKind == MethodKind.Conversion))
                     {
                         return;
                     }

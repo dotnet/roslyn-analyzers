@@ -348,5 +348,33 @@ Public NotInheritable Class ClosedType
     End Property
 End Class");
         }
+
+        [Fact]
+        public void CSharp_CA1000_ShouldNotGenerate_ConversionOperator()
+        {
+            VerifyCSharp(@"
+public class Class1<T>
+{
+    public static implicit operator Class1<T>(T value) => new Class1<T>();
+    public static explicit operator T(Class1<T> value) => default(T);
+}
+");
+        }
+
+        [Fact]
+        public void Basic_CA1000_ShouldNotGenerate_ConversionOperator()
+        {
+            VerifyBasic(@"
+Public Class Class1(Of T)
+    Public Shared Narrowing Operator CType(value As T) As Class1(Of T)
+        Return New Class1(Of T)()
+    End Operator
+
+    Public Shared Widening Operator CType(value As Class1(Of T)) As T
+        Return Nothing
+    End Operator
+End Class
+");
+        }
     }
 }

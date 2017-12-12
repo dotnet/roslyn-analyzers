@@ -115,7 +115,7 @@ class C
     {
     }
 
-    public void UnusedParamsArrayParamMethod(params int[] paramsArr)
+    public void UnusedParamsArrayParamMethod()
     {
     }
 
@@ -139,7 +139,7 @@ class C
         UnusedParamMethod();
         UnusedParamStaticMethod();
         UnusedDefaultParamMethod();
-        UnusedParamsArrayParamMethod(new int[0]); // Unsafe to fix.
+        UnusedParamsArrayParamMethod();
         MultipleUnusedParamsMethod();
         int a = 0;
         UnusedRefParamMethod();
@@ -592,7 +592,7 @@ Class C
     Public Sub UnusedDefaultParamMethod()
     End Sub
 
-    Public Sub UnusedParamsArrayParamMethod(ParamArray paramsArr As Integer())
+    Public Sub UnusedParamsArrayParamMethod()
     End Sub
 
     Public Sub MultipleUnusedParamsMethod()
@@ -611,7 +611,7 @@ Class C
         UnusedParamMethod()
         UnusedParamStaticMethod()
         UnusedDefaultParamMethod()
-        UnusedParamsArrayParamMethod(New Integer() {}) ' Unsafe to fix
+        UnusedParamsArrayParamMethod()
         MultipleUnusedParamsMethod()
         Dim a As Integer = 0
         UnusedRefParamMethod()

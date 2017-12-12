@@ -136,12 +136,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                 }
                             }
                         }
-                        else
-                        {
-                            // Could not find proper arguments in the caller. It is safer to cancel the fix.
-                            // See also: https://github.com/dotnet/roslyn-analyzers/issues/1458
-                            return ImmutableArray<KeyValuePair<DocumentId, SyntaxNode>>.Empty;
-                        }
                     }
                 }
             }

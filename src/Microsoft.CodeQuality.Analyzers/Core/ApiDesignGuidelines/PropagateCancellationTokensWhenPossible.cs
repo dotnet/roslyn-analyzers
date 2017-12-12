@@ -137,18 +137,21 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             var semanticModel = compilation.GetSemanticModel(invocation.Syntax.SyntaxTree);
             int position = invocation.Syntax.SpanStart;
-            return semanticModel.LookupSymbols(position).Any(IsAccessibleCancellationTokenVariable);
+            return semanticModel.LookupSymbols(position).Any(IsUsableCancellationTokenVariable);
 
-            bool IsAccessibleCancellationTokenVariable(ISymbol symbol)
+            bool IsUsableCancellationTokenVariable(ISymbol symbol)
             {
                 switch (symbol)
                 {
                     case IFieldSymbol field:
                         return field.Type == cancellationTokenType;
                     case ILocalSymbol local:
-                        return local.Type == cancellationTokenType && !local.IsInaccessibleLocal(position);
+                        return local.Type == cancellationTokenType &&
+                            !local.IsInaccessibleLocal(position) &&
+                            !(local.IsUninitializedVariable(invocation.Syntax, semanticModel) ?? true);
                     case IParameterSymbol parameter:
-                        return parameter.Type == cancellationTokenType;
+                        return parameter.Type == cancellationTokenType &&
+                            !(parameter.IsUninitializedVariable(invocation.Syntax, semanticModel) ?? true);
                     default:
                         return false;
                 }

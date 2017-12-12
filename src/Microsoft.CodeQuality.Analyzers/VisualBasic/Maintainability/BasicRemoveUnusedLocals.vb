@@ -31,7 +31,7 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                                                         s_localizableMessage,
                                                         DiagnosticCategory.Performance,
                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                        True,
+                                                        DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                         s_localizableDescription,
                                                         "https://msdn.microsoft.com/en-us/library/ms182278.aspx",
                                                         WellKnownDiagnosticTags.Telemetry)
@@ -57,9 +57,17 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
 
                         operationBlockContext.RegisterOperationAction(
                         Sub(operationContext)
-                            Dim locals = DirectCast(operationContext.Operation, IVariableDeclarationGroupOperation).GetDeclaredVariables()
-                            For Each local In locals
-                                mightBecomeUnusedLocals.Add(local)
+                            Dim declarations = DirectCast(operationContext.Operation, IVariableDeclarationGroupOperation).Declarations
+
+                            For Each declaration In declarations
+                                ' Declarations with invocation expressions as initializers declare unused locals.
+                                If declaration.Initializer Is Nothing OrElse
+                                declaration.Initializer.Value.ConstantValue.HasValue OrElse
+                                declaration.Initializer.Value.Kind() = OperationKind.DelegateCreation Then
+                                    For Each local In declaration.GetDeclaredVariables()
+                                        mightBecomeUnusedLocals.Add(local)
+                                    Next
+                                End If
                             Next
                         End Sub, OperationKind.VariableDeclarationGroup)
 
@@ -67,11 +75,14 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                         Sub(operationContext)
                             Dim localReferenceExpression As ILocalReferenceOperation = DirectCast(operationContext.Operation, ILocalReferenceOperation)
                             Dim syntax = localReferenceExpression.Syntax
-
-                            ' The writeonly references should be ignored
-                            If syntax.Parent.IsKind(SyntaxKind.SimpleAssignmentStatement) AndAlso
-                                DirectCast(syntax.Parent, AssignmentStatementSyntax).Left Is syntax Then
-                                Return
+                            If syntax.Parent.IsKind(SyntaxKind.SimpleAssignmentStatement) Then
+                                Dim parent = DirectCast(syntax.Parent, AssignmentStatementSyntax)
+                                If parent.Left Is syntax Then
+                                    Dim simpleAssignmentExpression As IAssignmentOperation = DirectCast(localReferenceExpression.Parent, IAssignmentOperation)
+                                    If simpleAssignmentExpression.Value.ConstantValue.HasValue Then
+                                        Return
+                                    End If
+                                End If
                             End If
 
                             mightBecomeUnusedLocals.Remove(localReferenceExpression.Local)

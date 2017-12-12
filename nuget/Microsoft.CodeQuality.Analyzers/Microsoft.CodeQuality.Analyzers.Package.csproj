@@ -16,7 +16,6 @@
     <AnalyzerNupkgAssembly Include="Microsoft.CodeQuality.Analyzers.dll" />
     <AnalyzerNupkgAssembly Include="Microsoft.CodeQuality.CSharp.Analyzers.dll" />
     <AnalyzerNupkgAssembly Include="Microsoft.CodeQuality.VisualBasic.Analyzers.dll" />
-    <AnalyzerNupkgAssembly Include="Analyzer.Utilities.dll" />
 
     <AnalyzerNupkgFile Include="Microsoft.CodeQuality.Analyzers.props" />
     <AnalyzerNupkgFile Include="Microsoft.CodeQuality.VisualBasic.Analyzers.props" />

@@ -71,7 +71,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             // If property is not visible outside the assembly
-            if (property.GetResultantVisibility() != SymbolVisibility.Public)
+            if (!property.IsExternallyVisible())
             {
                 return;
             }

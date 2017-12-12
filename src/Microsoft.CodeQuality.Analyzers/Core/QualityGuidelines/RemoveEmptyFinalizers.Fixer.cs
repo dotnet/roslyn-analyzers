@@ -16,12 +16,10 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
     /// <summary>
     /// CA1821: Remove empty finalizers
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic, Name = RuleId), Shared]
+    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic, Name = AbstractRemoveEmptyFinalizersAnalyzer.RuleId), Shared]
     public sealed class RemoveEmptyFinalizersFixer : CodeFixProvider
     {
-        public const string RuleId = "CA1821";
-
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AbstractRemoveEmptyFinalizersAnalyzer.RuleId);
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
@@ -35,8 +33,10 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             // We cannot have multiple overlapping diagnostics of this id.
             Diagnostic diagnostic = context.Diagnostics.Single();
-            context.RegisterCodeFix(new MyCodeAction(MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers,
-                             async ct => await RemoveFinalizer(context.Document, node, ct).ConfigureAwait(false)),
+            string title = MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers;
+            context.RegisterCodeFix(new MyCodeAction(title,
+                             async ct => await RemoveFinalizer(context.Document, node, ct).ConfigureAwait(false),
+                             equivalenceKey: title),
                         diagnostic);
             return;
         }
@@ -53,10 +53,15 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
+        }
+
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
         }
     }
 }

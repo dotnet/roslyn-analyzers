@@ -108,7 +108,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol flagsAttribute)
         {
             var symbol = (INamedTypeSymbol)context.Symbol;
-            if (symbol.TypeKind != TypeKind.Enum)
+            if (symbol.TypeKind != TypeKind.Enum || !symbol.IsExternallyVisible())
             {
                 return;
             }

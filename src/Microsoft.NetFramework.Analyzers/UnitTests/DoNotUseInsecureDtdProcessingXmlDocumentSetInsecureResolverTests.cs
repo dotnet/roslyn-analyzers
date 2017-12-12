@@ -342,7 +342,7 @@ End Namespace",
             );
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1202")]
+        [Fact]
         public void XmlDocumentDerivedTypeSetInsecureResolverShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
@@ -425,7 +425,7 @@ End Namespace"
             );
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1202")]
+        [Fact]
         public void XmlDocumentCreatedAsTempSetInsecureResolverShouldGenerateDiagnostics()
         {
             VerifyCSharp(@"

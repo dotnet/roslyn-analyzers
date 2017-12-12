@@ -40,11 +40,12 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             // We cannot have multiple overlapping diagnostics of this id.
             Diagnostic diagnostic = context.Diagnostics.Single();
-
+            string title = MicrosoftQualityGuidelinesAnalyzersResources.UseLiteralsWhereAppropriateCodeActionTitle;
             context.RegisterCodeFix(
                 new MyCodeAction(
-                    MicrosoftQualityGuidelinesAnalyzersResources.UseLiteralsWhereAppropriateCodeActionTitle,
-                    cancellationToken => ToConstantDeclarationAsync(context.Document, fieldFeclaration, cancellationToken)),
+                    title,
+                    cancellationToken => ToConstantDeclarationAsync(context.Document, fieldFeclaration, cancellationToken),
+                    equivalenceKey: title),
                 diagnostic);
         }
 
@@ -101,14 +102,10 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         protected abstract SyntaxTokenList GetModifiers(SyntaxNode fieldSyntax);
         protected abstract SyntaxNode WithModifiers(SyntaxNode fieldSyntax, SyntaxTokenList modifiers);
 
-        /// <remarks>
-        /// This type exists for telemetry purposes - it has the same functionality as 
-        /// <see cref="DocumentChangeAction"/> but different metadata.
-        /// </remarks>
-        private sealed class MyCodeAction : DocumentChangeAction
+        private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
         }

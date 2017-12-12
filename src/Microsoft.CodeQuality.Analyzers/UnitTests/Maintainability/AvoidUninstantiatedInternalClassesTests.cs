@@ -216,45 +216,49 @@ Friend Class MyOtherAttribute
 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
+        [Fact]
         public void CA1812_CSharp_NoDiagnostic_TypeContainingAssemblyEntryPointReturningVoid()
         {
             VerifyCSharp(
 @"internal class C
 {
     private static void Main() {}
-}");
+}",
+            compilationOptions: s_CSharpDefaultOptions.WithOutputKind(CodeAnalysis.OutputKind.ConsoleApplication));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
+        [Fact]
         public void CA1812_Basic_NoDiagnostic_TypeContainingAssemblyEntryPointReturningVoid()
         {
             VerifyBasic(
 @"Friend Class C
-    Private Shared Sub Main()
+    Public Shared Sub Main()
     End Sub
-End Class");
+End Class",
+            compilationOptions: s_visualBasicDefaultOptions.WithOutputKind(CodeAnalysis.OutputKind.ConsoleApplication));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
+        [Fact]
         public void CA1812_CSharp_NoDiagnostic_TypeContainingAssemblyEntryPointReturningInt()
         {
             VerifyCSharp(
 @"internal class C
 {
     private static int Main() { return 1; }
-}");
+}",
+            compilationOptions: s_CSharpDefaultOptions.WithOutputKind(CodeAnalysis.OutputKind.ConsoleApplication));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
+        [Fact]
         public void CA1812_Basic_NoDiagnostic_TypeContainingAssemblyEntryPointReturningInt()
         {
             VerifyBasic(
 @"Friend Class C
-    Private Shared Function Main() As Integer
+    Public Shared Function Main() As Integer
         Return 1
-    End Sub
-End Class");
+    End Function
+End Class",
+            compilationOptions: s_visualBasicDefaultOptions.WithOutputKind(CodeAnalysis.OutputKind.ConsoleApplication));
         }
 
         [Fact]
@@ -279,14 +283,16 @@ End Class",
                 GetBasicResultAt(1, 14, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
+        [Fact]
         public void CA1812_Basic_NoDiagnostic_MainMethodIsDifferentlyCased()
         {
             VerifyBasic(
 @"Friend Class C
     Private Shared Sub mAiN()
     End Sub
-End Class");
+End Class",
+            validationMode: TestValidationMode.AllowCompileErrors, // No Main method
+            compilationOptions: s_visualBasicDefaultOptions.WithOutputKind(CodeAnalysis.OutputKind.ConsoleApplication));
         }
 
         // The following tests are just to ensure that the messages are formatted properly
@@ -665,6 +671,76 @@ End Class",
 }");
         }
 
+        [Fact, WorkItem(1370, "https://github.com/dotnet/roslyn-analyzers/issues/1370")]
+        public void CA1812_CSharp_NoDiagnostic_ImplicitlyInstantiatedFromSubTypeConstructor()
+        {
+            VerifyCSharp(
+@"
+internal class A
+{
+    public A()
+    {
+    }
+}
+
+internal class B : A
+{
+    public B()
+    {
+    }
+}
+
+internal class C<T>
+{
+}
+
+internal class D : C<int>
+{
+    static void M()
+    {
+        var x = new B();
+        var y = new D();
+    }
+}");
+        }
+
+        [Fact, WorkItem(1370, "https://github.com/dotnet/roslyn-analyzers/issues/1370")]
+        public void CA1812_CSharp_NoDiagnostic_ExplicitlyInstantiatedFromSubTypeConstructor()
+        {
+            VerifyCSharp(
+@"
+internal class A
+{
+    public A(int x)
+    {
+    }
+}
+
+internal class B : A
+{
+    public B(int x): base (x)
+    {
+    }
+}
+
+internal class C<T>
+{
+}
+
+internal class D : C<int>
+{
+    public D(): base()
+    {
+    }
+
+    static void M()
+    {
+        var x = new B(0);
+        var y = new D();
+    }
+}");
+        }
+
         [Fact]
         public void CA1812_Basic_NoDiagnostic_StaticHolderClass()
         {
@@ -712,6 +788,68 @@ internal class C { }"
 Friend Class C
 End Class"
                 );
+        }
+
+        [Fact, WorkItem(1370, "https://github.com/dotnet/roslyn-analyzers/issues/1370")]
+        public void CA1812_Basic_NoDiagnostic_ImplicitlyInstantiatedFromSubTypeConstructor()
+        {
+            VerifyBasic(
+@"
+Friend Class A
+    Public Sub New()
+    End Sub
+End Class
+
+Friend Class B
+    Inherits A
+    Public Sub New()
+    End Sub
+End Class
+
+Friend Class C(Of T)
+End Class
+
+Friend Class D
+    Inherits C(Of Integer)
+    Private Shared Sub M()
+        Dim x = New B()
+        Dim y = New D()
+    End Sub
+End Class");
+        }
+
+        [Fact, WorkItem(1370, "https://github.com/dotnet/roslyn-analyzers/issues/1370")]
+        public void CA1812_Basic_NoDiagnostic_ExplicitlyInstantiatedFromSubTypeConstructor()
+        {
+            VerifyBasic(
+@"
+Friend Class A
+    Public Sub New(ByVal x As Integer)
+    End Sub
+End Class
+
+Friend Class B
+    Inherits A
+
+    Public Sub New(ByVal x As Integer)
+        MyBase.New(x)
+    End Sub
+End Class
+
+Friend Class C(Of T)
+End Class
+
+Friend Class D
+    Inherits C(Of Integer)
+    Public Sub New()
+        MyBase.New()
+    End Sub
+
+    Private Shared Sub M()
+        Dim x = New B(0)
+        Dim y = New D()
+    End Sub
+End Class");
         }
 
         [Fact, WorkItem(1154, "https://github.com/dotnet/roslyn-analyzers/issues/1154")]
@@ -813,6 +951,69 @@ internal class Program
     public static void Main(string[] args)
     {
         Console.WriteLine(Factory.Create<InstantiatedType>());
+    }
+}");
+        }
+
+        [Fact, WorkItem(1447, "https://github.com/dotnet/roslyn-analyzers/issues/1447")]
+        public void CA1812_CSharp_NoDiagnostic_GenericMethodWithNewConstraintInvokedFromGenericMethod()
+        {
+            VerifyCSharp(@"
+internal class InstantiatedClass
+{
+    public InstantiatedClass()
+    {
+    }
+}
+
+internal class InstantiatedClass2
+{
+    public InstantiatedClass2()
+    {
+    }
+}
+
+internal class InstantiatedClass3
+{
+    public InstantiatedClass3()
+    {
+    }
+}
+
+internal static class C
+{
+    private static T Create<T>()
+        where T : new()
+    {
+        return new T();
+    }
+
+    public static void M<T>()
+        where T : InstantiatedClass, new()
+    {
+        Create<T>();
+    }
+
+    public static void M2<T, T2>()
+        where T : T2, new()
+        where T2 : InstantiatedClass2
+    {
+        Create<T>();
+    }
+
+    public static void M3<T, T2, T3>()
+        where T : T2, new()
+        where T2 : T3
+        where T3: InstantiatedClass3
+    {
+        Create<T>();
+    }
+
+    public static void M3()
+    {
+        M<InstantiatedClass>();
+        M2<InstantiatedClass2, InstantiatedClass2>();
+        M3<InstantiatedClass3, InstantiatedClass3, InstantiatedClass3>();
     }
 }");
         }

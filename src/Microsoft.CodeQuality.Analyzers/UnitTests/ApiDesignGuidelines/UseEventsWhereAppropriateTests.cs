@@ -248,6 +248,95 @@ End Class
 ");
         }
 
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void NoDiagnostic_FlaggedMethodKinds_NotExternallyVisible()
+        {
+            VerifyCSharp(@"
+using System;
+
+internal interface InterfaceWithViolations
+{
+    // Interface methods.
+    void FireOnSomething_InterfaceMethod1();
+    void FireOnSomething_InterfaceMethod2();
+}
+
+public abstract class ClassWithViolations
+{
+    private class InnerClass
+    {
+        // Static method.
+        public static void RaiseOnSomething_StaticMethod()
+        {
+        }
+    }
+
+    internal class InnerClass2
+    {
+        // Virtual method.
+        public virtual void FireOnSomething_VirtualMethod()
+        {
+        }
+    }
+
+    // Private method.
+    private static void RaiseOnSomething_StaticMethod()
+    {
+    }
+
+    // Abstract method.
+    internal abstract void FireOnSomething_AbstractMethod();
+
+    // Abstract method.
+    internal abstract void RaiseOnSomething_AbstractMethod();
+
+    // Abstract method.
+    internal abstract void AddOnSomething_AbstractMethod();
+
+    // Abstract method.
+    internal abstract void RemoveOnSomething_AbstractMethod();
+}
+");
+
+            VerifyBasic(@"
+Friend Interface InterfaceWithViolations
+    ' Interface methods.
+    Sub FireOnSomething_InterfaceMethod1()
+    Sub FireOnSomething_InterfaceMethod2()
+End Interface
+
+Public MustInherit Class ClassWithViolations
+    Private Class InnerClass
+        ' Static method.
+        Public Shared Sub RaiseOnSomething_StaticMethod()
+        End Sub
+    End Class
+
+    Friend Class InnerClass2
+        ' Virtual method.
+        Public Overridable Sub FireOnSomething_VirtualMethod()
+        End Sub
+    End Class
+
+    ' Private method.
+    Private Shared Sub RaiseOnSomething_StaticMethod()
+    End Sub
+
+    ' Abstract method.
+    Friend MustOverride Sub FireOnSomething_AbstractMethod()
+
+    ' Abstract method.
+    Friend MustOverride Sub RaiseOnSomething_AbstractMethod()
+
+    ' Abstract method.
+    Friend MustOverride Sub AddOnSomething_AbstractMethod()
+
+    ' Abstract method.
+    Friend MustOverride Sub RemoveOnSomething_AbstractMethod()
+End Class
+");
+        }
+
         #endregion
 
         #region Diagnostic Tests

@@ -33,7 +33,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb264491.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(Rule) : ImmutableArray<DiagnosticDescriptor>.Empty;
 
         private readonly BinaryOperatorKind[] _comparisonOperators = new[]
         {

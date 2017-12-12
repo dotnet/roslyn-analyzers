@@ -31,7 +31,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182265.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
@@ -84,7 +84,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 startContext.RegisterSymbolAction(context =>
                 {
                     var type = (INamedTypeSymbol)context.Symbol;
-                    if (type.GetResultantVisibility() != SymbolVisibility.Public &&
+                    if (!type.IsExternallyVisible() &&
                         !IsOkToBeUnused(type, compilation,
                             systemAttributeSymbol,
                             iConfigurationSectionHandlerSymbol,
@@ -95,6 +95,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             mef2ExportAttributeSymbol))
                     {
                         internalTypes.Add(type);
+                    }
+
+                    // Instantiation from the subtype constructor initializer.
+                    if (type.BaseType != null)
+                    {
+                        instantiatedTypes.Add(type.BaseType);
                     }
                 }, SymbolKind.NamedType);
 
@@ -107,19 +113,42 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     {
                         if (typeParam.HasConstructorConstraint)
                         {
-                            var namedTypeArg = (INamedTypeSymbol)typeArg;
-                            instantiatedTypes.Add(namedTypeArg);
-
-                            // We need to handle if this type param also has type params that have a generic constraint. Take the following example:
-                            // new Factory1<Factory2<InstantiatedType>>();
-                            // In this example, Factory1 and Factory2 have type params with constructor constraints. Therefore, we need to add all 3
-                            // types to the list of types that have actually been instantiated. However, in the following example:
-                            // new List<Factory<InstantiatedType>>();
-                            // List does not have a constructor constraint, so we can't reasonably infer anything about its type parameters.
-                            if (namedTypeArg.IsGenericType)
+                            void ProcessNamedTypeParamConstraint(INamedTypeSymbol namedTypeArg)
                             {
-                                var newGenerics = namedTypeArg.TypeParameters.Zip(namedTypeArg.TypeArguments, (parameter, argument) => (parameter, argument));
-                                ProcessGenericTypes(newGenerics);
+                                instantiatedTypes.Add(namedTypeArg);
+
+                                // We need to handle if this type param also has type params that have a generic constraint. Take the following example:
+                                // new Factory1<Factory2<InstantiatedType>>();
+                                // In this example, Factory1 and Factory2 have type params with constructor constraints. Therefore, we need to add all 3
+                                // types to the list of types that have actually been instantiated. However, in the following example:
+                                // new List<Factory<InstantiatedType>>();
+                                // List does not have a constructor constraint, so we can't reasonably infer anything about its type parameters.
+                                if (namedTypeArg.IsGenericType)
+                                {
+                                    var newGenerics = namedTypeArg.TypeParameters.Zip(namedTypeArg.TypeArguments, (parameter, argument) => (parameter, argument));
+                                    ProcessGenericTypes(newGenerics);
+                                }
+                            };
+
+                            if (typeArg is INamedTypeSymbol namedType)
+                            {
+                                ProcessNamedTypeParamConstraint(namedType);
+                            }
+                            else if (typeArg is ITypeParameterSymbol typeParameterArg && !typeParameterArg.ConstraintTypes.IsEmpty)
+                            {
+                                IEnumerable<INamedTypeSymbol> GetAllNamedTypeConstraints(ITypeParameterSymbol t)
+                                {
+                                    var directConstraints = t.ConstraintTypes.OfType<INamedTypeSymbol>();
+                                    var inheritedConstraints = t.ConstraintTypes.OfType<ITypeParameterSymbol>()
+                                        .SelectMany(constraintT => GetAllNamedTypeConstraints(constraintT));
+                                    return directConstraints.Concat(inheritedConstraints);
+                                };
+
+                                var constraints = GetAllNamedTypeConstraints(typeParameterArg);
+                                foreach (INamedTypeSymbol constraint in constraints)
+                                {
+                                    ProcessNamedTypeParamConstraint(constraint);
+                                }
                             }
                         }
                     }

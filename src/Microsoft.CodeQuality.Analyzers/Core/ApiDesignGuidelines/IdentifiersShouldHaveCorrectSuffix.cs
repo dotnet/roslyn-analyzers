@@ -108,7 +108,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 context.RegisterSymbolAction((saContext) =>
                 {
                     var namedTypeSymbol = (INamedTypeSymbol)saContext.Symbol;
-                    if (namedTypeSymbol.GetResultantVisibility() != SymbolVisibility.Public)
+                    if (!namedTypeSymbol.IsExternallyVisible())
                     {
                         return;
                     }

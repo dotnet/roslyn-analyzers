@@ -40,19 +40,22 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterSymbolAction(
                 symbolAnalysisContext =>
                 {
+                    // Fxcop compat: fire only on public static members within externally visible generic types.
                     ISymbol symbol = symbolAnalysisContext.Symbol;
-                    if (!symbol.ContainingType.IsGenericType ||
+                    if (!symbol.IsStatic ||
                         symbol.DeclaredAccessibility != Accessibility.Public ||
-                        !symbol.IsStatic)
+                        !symbol.ContainingType.IsGenericType ||
+                        !symbol.ContainingType.IsExternallyVisible())
                     {
                         return;
                     }
 
                     if (symbol is IMethodSymbol methodSymbol &&
-    (methodSymbol.IsAccessorMethod() ||
-     (methodSymbol.MethodKind == MethodKind.UserDefinedOperator &&
-      (methodSymbol.Name == WellKnownMemberNames.EqualityOperatorName ||
-       methodSymbol.Name == WellKnownMemberNames.InequalityOperatorName))))
+                        (methodSymbol.IsAccessorMethod() ||
+                        (methodSymbol.MethodKind == MethodKind.UserDefinedOperator &&
+                        (methodSymbol.Name == WellKnownMemberNames.EqualityOperatorName ||
+                        methodSymbol.Name == WellKnownMemberNames.InequalityOperatorName)) ||
+                        methodSymbol.MethodKind == MethodKind.Conversion))
                     {
                         return;
                     }

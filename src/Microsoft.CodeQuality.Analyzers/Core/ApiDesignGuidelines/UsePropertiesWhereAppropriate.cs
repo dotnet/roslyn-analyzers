@@ -50,7 +50,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     methodSymbol.ReturnsVoid ||
                     methodSymbol.ReturnType.Kind == SymbolKind.ArrayType ||
                     methodSymbol.Parameters.Length > 0 ||
-                    !(methodSymbol.DeclaredAccessibility == Accessibility.Public || methodSymbol.DeclaredAccessibility == Accessibility.Protected) ||
+                    !methodSymbol.IsExternallyVisible() ||
                     methodSymbol.IsAccessorMethod() ||
                     !IsPropertyLikeName(methodSymbol.Name))
                 {

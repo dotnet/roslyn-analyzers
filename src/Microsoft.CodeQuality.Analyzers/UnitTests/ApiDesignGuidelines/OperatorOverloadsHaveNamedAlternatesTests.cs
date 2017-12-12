@@ -63,7 +63,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         public void HasAlternateMethod_CSharp()
         {
             VerifyCSharp(@"
-class C
+public class C
 {
     public static C operator +(C left, C right) { return new C(); }
     public static C Add(C left, C right) { return new C(); }
@@ -75,7 +75,7 @@ class C
         public void HasMultipleAlternatePrimary_CSharp()
         {
             VerifyCSharp(@"
-class C
+public class C
 {
     public static C operator %(C left, C right) { return new C(); }
     public static C Mod(C left, C right) { return new C(); }
@@ -87,7 +87,7 @@ class C
         public void HasMultipleAlternateSecondary_CSharp()
         {
             VerifyCSharp(@"
-class C
+public class C
 {
     public static C operator %(C left, C right) { return new C(); }
     public static C Remainder(C left, C right) { return new C(); }
@@ -99,7 +99,7 @@ class C
         public void HasAppropriateConversionAlternate_CSharp()
         {
             VerifyCSharp(@"
-class C
+public class C
 {
     public static implicit operator int(C item) { return 0; }
     public int ToInt32() { return 0; }
@@ -111,7 +111,7 @@ class C
         public void MissingAlternateMethod_CSharp()
         {
             VerifyCSharp(@"
-class C
+public class C
 {
     public static C operator +(C left, C right) { return new C(); }
 }
@@ -119,11 +119,30 @@ class C
             GetCA2225CSharpDefaultResultAt(4, 30, "Add", "op_Addition"));
         }
 
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void MissingAlternateMethod_CSharp_Internal()
+        {
+            VerifyCSharp(@"
+class C
+{
+    public static C operator +(C left, C right) { return new C(); }
+}
+
+public class C2
+{
+    private class C3
+    {
+        public static C3 operator +(C3 left, C3 right) { return new C3(); }
+    }
+}
+");
+        }
+
         [Fact]
         public void MissingAlternateProperty_CSharp()
         {
             VerifyCSharp(@"
-class C
+public class C
 {
     public static bool operator true(C item) { return true; }
     public static bool operator false(C item) { return false; }
@@ -136,7 +155,7 @@ class C
         public void MissingMultipleAlternates_CSharp()
         {
             VerifyCSharp(@"
-class C
+public class C
 {
     public static C operator %(C left, C right) { return new C(); }
 }
@@ -148,7 +167,7 @@ class C
         public void ImproperAlternateMethodVisibility_CSharp()
         {
             VerifyCSharp(@"
-class C
+public class C
 {
     public static C operator +(C left, C right) { return new C(); }
     protected static C Add(C left, C right) { return new C(); }
@@ -161,7 +180,7 @@ class C
         public void ImproperAlternatePropertyVisibility_CSharp()
         {
             VerifyCSharp(@"
-class C
+public class C
 {
     public static bool operator true(C item) { return true; }
     public static bool operator false(C item) { return false; }
@@ -195,7 +214,7 @@ struct C
         public void HasAlternateMethod_VisualBasic()
         {
             VerifyBasic(@"
-Class C
+Public Class C
     Public Shared Operator +(left As C, right As C) As C
         Return New C()
     End Operator
@@ -210,7 +229,7 @@ End Class
         public void MissingAlternateMethod_VisualBasic()
         {
             VerifyBasic(@"
-Class C
+Public Class C
     Public Shared Operator +(left As C, right As C) As C
         Return New C()
     End Operator
@@ -219,11 +238,31 @@ End Class
             GetCA2225BasicDefaultResultAt(3, 28, "Add", "op_Addition"));
         }
 
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void MissingAlternateMethod_VisualBasic_Internal()
+        {
+            VerifyBasic(@"
+Class C
+    Public Shared Operator +(left As C, right As C) As C
+        Return New C()
+    End Operator
+End Class
+
+Public Class C2
+    Private Class C3
+        Public Shared Operator +(left As C3, right As C3) As C3
+            Return New C3()
+        End Operator
+    End Class
+End Class
+");
+        }
+
         [Fact]
         public void StructHasAlternateMethod_VisualBasic()
         {
             VerifyBasic(@"
-Structure C
+Public Structure C
     Public Shared Operator +(left As C, right As C) As C
         Return New C()
     End Operator

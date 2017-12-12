@@ -75,7 +75,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             // check whether it has a public setter
             IMethodSymbol setter = property.SetMethod;
-            if (setter == null || setter.DeclaredAccessibility != Accessibility.Public)
+            if (setter == null || !setter.IsExternallyVisible())
             {
                 return;
             }

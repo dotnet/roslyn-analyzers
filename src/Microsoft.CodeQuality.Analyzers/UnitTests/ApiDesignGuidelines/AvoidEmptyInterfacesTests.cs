@@ -1,7 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines;
-using Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
@@ -12,36 +10,53 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicAvoidEmptyInterfacesAnalyzer();
+            return new AvoidEmptyInterfacesAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpAvoidEmptyInterfacesAnalyzer();
+            return new AvoidEmptyInterfacesAnalyzer();
         }
 
         [Fact]
-        public void TestCSharpEmptyInterface1()
+        public void TestCSharpEmptyPublicInterface()
+        {
+            VerifyCSharp(@"
+public interface I
+{
+}", CreateCSharpResult(2, 18));
+        }
+
+        [Fact]
+        public void TestBasicEmptyPublicInterface()
+        {
+            VerifyBasic(@"
+Public Interface I
+End Interface", CreateBasicResult(2, 18));
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void TestCSharpEmptyInternalInterface()
         {
             VerifyCSharp(@"
 interface I
 {
-}", CreateCSharpResult(2, 11));
+}");
         }
 
-        [Fact]
-        public void TestBasicEmptyInterface1()
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void TestBasicEmptyInternalInterface()
         {
             VerifyBasic(@"
 Interface I
-End Interface", CreateBasicResult(2, 11));
+End Interface");
         }
 
         [Fact]
         public void TestCSharpNonEmptyInterface1()
         {
             VerifyCSharp(@"
-interface I
+public interface I
 {
     void DoStuff();
 }");
@@ -51,7 +66,7 @@ interface I
         public void TestBasicNonEmptyInterface1()
         {
             VerifyBasic(@"
-Interface I
+Public Interface I
     Function GetStuff() as Integer
 End Interface");
         }
@@ -60,34 +75,34 @@ End Interface");
         public void TestCSharpEmptyInterfaceWithNoInheritedMembers()
         {
             VerifyCSharp(@"
-interface I : IBase
+public interface I : IBase
 {
 }
 
-interface IBase { }", CreateCSharpResult(2, 11), CreateCSharpResult(6, 11));
+public interface IBase { }", CreateCSharpResult(2, 18), CreateCSharpResult(6, 18));
         }
 
         [Fact]
         public void TestBasicEmptyInterfaceWithNoInheritedMembers()
         {
             VerifyBasic(@"
-Interface I
+Public Interface I
     Inherits IBase
 End Interface
 
-Interface IBase
-End Interface", CreateBasicResult(2, 11), CreateBasicResult(6, 11));
+Public Interface IBase
+End Interface", CreateBasicResult(2, 18), CreateBasicResult(6, 18));
         }
 
         [Fact]
         public void TestCSharpEmptyInterfaceWithInheritedMembers()
         {
             VerifyCSharp(@"
-interface I : IBase
+public interface I : IBase
 {
 }
 
-interface IBase 
+public interface IBase 
 {
     void DoStuff(); 
 }");
@@ -97,11 +112,11 @@ interface IBase
         public void TestBasicEmptyInterfaceWithInheritedMembers()
         {
             VerifyBasic(@"
-Interface I
+Public Interface I
     Inherits IBase
 End Interface
 
-Interface IBase
+Public Interface IBase
     Sub DoStuff()
 End Interface");
         }

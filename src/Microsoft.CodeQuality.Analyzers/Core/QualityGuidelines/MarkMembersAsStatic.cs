@@ -107,7 +107,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             }
 
             // CA1000 says one shouldn't declare static members on generic types. So don't flag such cases.
-            if (methodSymbol.ContainingType.IsGenericType && methodSymbol.GetResultantVisibility() == SymbolVisibility.Public)
+            if (methodSymbol.ContainingType.IsGenericType && methodSymbol.IsExternallyVisible())
             {
                 return false;
             }
@@ -159,7 +159,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
         private static bool IsExplicitlyVisibleFromCom(IMethodSymbol methodSymbol, Compilation compilation)
         {
-            if (methodSymbol.GetResultantVisibility() != SymbolVisibility.Public || methodSymbol.IsGenericMethod)
+            if (!methodSymbol.IsExternallyVisible() || methodSymbol.IsGenericMethod)
             {
                 return false;
             }

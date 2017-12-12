@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="AnalyzerDescription">
         <source>Type names should be all uppercase.</source>
-        <target state="new">Type names should be all uppercase.</target>
+        <target state="translated">類型名稱應全部大寫。</target>
         <note>An optional longer localizable description of the diagnostic.</note>
       </trans-unit>
       <trans-unit id="AnalyzerMessageFormat">
         <source>Type name '{0}' contains lowercase letters</source>
-        <target state="new">Type name '{0}' contains lowercase letters</target>
+        <target state="translated">類型名稱 '{0}' 包含小寫字母</target>
         <note>The format-able message the diagnostic displays.</note>
       </trans-unit>
       <trans-unit id="AnalyzerTitle">
         <source>Type name contains lowercase letters</source>
-        <target state="new">Type name contains lowercase letters</target>
+        <target state="translated">類型名稱包含小寫字母</target>
         <note>The title of the diagnostic.</note>
       </trans-unit>
     </body>

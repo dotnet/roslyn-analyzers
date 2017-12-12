@@ -46,6 +46,40 @@ public class C : IDisposable
 ");
         }
 
+        [Fact, WorkItem(1435, "https://github.com/dotnet/roslyn-analyzers/issues/1435")]
+        public void CSharp_CA1063_DisposeSignature_NoDiagnostic_GoodDisposablePattern_WithAttributes()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class MyAttribute : Attribute
+{
+    public MyAttribute(int x) { }
+}
+
+public class C : IDisposable
+{
+    [MyAttribute(0)]
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    [MyAttribute(0)]
+    ~C()
+    {
+        Dispose(false);
+    }
+
+    [MyAttribute(0)]
+    protected virtual void Dispose(bool disposing)
+    {
+    }
+}
+");
+        }
+
         [Fact]
         public void CSharp_CA1063_DisposeSignature_NoDiagnostic_NotImplementingDisposable()
         {
@@ -109,6 +143,39 @@ public class B : IDisposable
 ",
             GetCA1063CSharpIDisposableReimplementationResultAt(11, 14, "C", "B"),
             GetCA1063CSharpDisposeSignatureResultAt(13, 26, "C", "Dispose"));
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CSharp_CA1063_IDisposableReimplementation_NoDiagnostic_ReimplementingIDisposable_Internal()
+        {
+            VerifyCSharp(@"
+using System;
+
+internal class B : IDisposable
+{
+    public virtual void Dispose()
+    {
+    }
+}
+
+[|internal class C : B, IDisposable
+{
+    public override void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~C()
+    {
+        Dispose(false);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+    }
+}|]
+");
         }
 
         [Fact]
@@ -570,7 +637,8 @@ public class C : IDisposable
 }
 ",
             GetCA1063CSharpProvideDisposeBoolResultAt(4, 14, "C"),
-            GetCA1063CSharpDisposeImplementationResultAt(6, 17, "C", "Dispose"));
+            GetCA1063CSharpDisposeImplementationResultAt(6, 17, "C", "Dispose"),
+            GetCA1063CSharpFinalizeImplementationResultAt(10, 6, "C", "Finalize"));
         }
 
         [Fact]
@@ -1007,7 +1075,7 @@ public sealed class C : IDisposable
 
         #region CSharp FinalizeImplementation Unit Tests
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void CSharp_CA1063_FinalizeImplementation_Diagnostic_MissingCallDisposeBool()
         {
             VerifyCSharp(@"
@@ -1030,10 +1098,10 @@ public class C : IDisposable
     }
 }
 ",
-            GetCA1063CSharpDisposeImplementationResultAt(12, 5, "C", "Finalize"));
+            GetCA1063CSharpFinalizeImplementationResultAt(12, 6, "C", "Finalize"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void CSharp_CA1063_FinalizeImplementation_Diagnostic_CallDisposeWithTrueArgument()
         {
             VerifyCSharp(@"
@@ -1057,10 +1125,10 @@ public class C : IDisposable
     }
 }
 ",
-            GetCA1063CSharpDisposeImplementationResultAt(12, 5, "C", "Finalize"));
+            GetCA1063CSharpFinalizeImplementationResultAt(12, 6, "C", "Finalize"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void CSharp_CA1063_FinalizeImplementation_Diagnostic_ConditionalStatement()
         {
             VerifyCSharp(@"
@@ -1089,10 +1157,10 @@ public class C : IDisposable
     }
 }
 ",
-            GetCA1063CSharpDisposeImplementationResultAt(14, 5, "C", "Finalize"));
+            GetCA1063CSharpFinalizeImplementationResultAt(14, 6, "C", "Finalize"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void CSharp_CA1063_FinalizeImplementation_Diagnostic_CallDisposeBoolTwice()
         {
             VerifyCSharp(@"
@@ -1117,7 +1185,7 @@ public class C : IDisposable
     }
 }
 ",
-            GetCA1063CSharpDisposeImplementationResultAt(12, 5, "C", "Finalize"));
+            GetCA1063CSharpFinalizeImplementationResultAt(12, 6, "C", "Finalize"));
         }
 
         #endregion
@@ -1213,6 +1281,40 @@ End Class|]
 ",
             GetCA1063BasicIDisposableReimplementationResultAt(11, 14, "C", "B"),
             GetCA1063BasicDisposeSignatureResultAt(15, 26, "C", "Dispose"));
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void Basic_CA1063_IDisposableReimplementation_NoDiagnostic_ReimplementingIDisposable_Internal()
+        {
+            VerifyBasic(@"
+Imports System
+
+Friend Class B
+    Implements IDisposable
+
+    Public Overridable Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+[|Friend Class C
+    Inherits B
+    Implements IDisposable
+
+    Public Overrides Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+
+    Protected Overridable Overloads Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class|]
+");
         }
 
         [Fact]
@@ -1792,7 +1894,8 @@ Public Class C
 End Class
 ",
             GetCA1063BasicProvideDisposeBoolResultAt(4, 14, "C"),
-            GetCA1063BasicDisposeImplementationResultAt(7, 16, "C", "Dispose"));
+            GetCA1063BasicDisposeImplementationResultAt(7, 16, "C", "Dispose"),
+            GetCA1063BasicFinalizeImplementationResultAt(10, 29, "C", "Finalize"));
         }
 
         [Fact]
@@ -2229,7 +2332,7 @@ End Class
 
         #region VB FinalizeImplementation Unit Tests
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void Basic_CA1063_FinalizeImplementation_Diagnostic_MissingCallDisposeBool()
         {
             VerifyBasic(@"
@@ -2251,10 +2354,10 @@ Public Class C
 
 End Class
 ",
-            GetCA1063BasicDisposeImplementationResultAt(15, 20, "C", "Finalize"));
+            GetCA1063BasicFinalizeImplementationResultAt(12, 29, "C", "Finalize"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void Basic_CA1063_FinalizeImplementation_Diagnostic_CallDisposeWithTrueArgument()
         {
             VerifyBasic(@"
@@ -2278,10 +2381,10 @@ Public Class C
 
 End Class
 ",
-            GetCA1063BasicDisposeImplementationResultAt(15, 20, "C", "Finalize"));
+            GetCA1063BasicFinalizeImplementationResultAt(12, 29, "C", "Finalize"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void Basic_CA1063_FinalizeImplementation_Diagnostic_ConditionalStatement()
         {
             VerifyBasic(@"
@@ -2309,10 +2412,10 @@ Public Class C
 
 End Class
 ",
-            GetCA1063BasicDisposeImplementationResultAt(17, 20, "C", "Finalize"));
+            GetCA1063BasicFinalizeImplementationResultAt(14, 29, "C", "Finalize"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void Basic_CA1063_FinalizeImplementation_Diagnostic_CallDisposeBoolTwice()
         {
             VerifyBasic(@"
@@ -2337,7 +2440,7 @@ Public Class C
 
 End Class
 ",
-            GetCA1063BasicDisposeImplementationResultAt(15, 20, "C", "Finalize"));
+            GetCA1063BasicFinalizeImplementationResultAt(12, 29, "C", "Finalize"));
         }
 
         #endregion
@@ -2437,6 +2540,22 @@ End Class
         private static DiagnosticResult GetCA1063BasicDisposeImplementationResultAt(int line, int column, string typeName, string disposeMethod)
         {
             string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeImplementation, typeName + "." + disposeMethod);
+            return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetCA1063CSharpFinalizeImplementationResultAt(int line, int column, string typeName, string disposeMethod)
+        {
+            string message = string.Format(
+                MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeImplementation, typeName + "." +
+                disposeMethod);
+            return GetCSharpResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetCA1063BasicFinalizeImplementationResultAt(int line, int column, string typeName, string disposeMethod)
+        {
+            string message = string.Format(
+                MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeImplementation, typeName + "." +
+                disposeMethod);
             return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 

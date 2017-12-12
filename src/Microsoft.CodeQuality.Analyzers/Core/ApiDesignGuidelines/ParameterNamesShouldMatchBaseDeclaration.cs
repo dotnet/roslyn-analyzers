@@ -47,9 +47,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static void AnalyzeMethodSymbol(SymbolAnalysisContext analysisContext)
         {
-            var methodSymbol = analysisContext.Symbol as IMethodSymbol;
+            var methodSymbol = (IMethodSymbol)analysisContext.Symbol;
 
-            if (!(methodSymbol.CanBeReferencedByName || methodSymbol.IsImplementationOfAnyExplicitInterfaceMember())
+            if (!methodSymbol.IsExternallyVisible() ||
+                !(methodSymbol.CanBeReferencedByName || methodSymbol.IsImplementationOfAnyExplicitInterfaceMember())
                 || !methodSymbol.Locations.Any(x => x.IsInSource)
                 || string.IsNullOrWhiteSpace(methodSymbol.Name))
             {

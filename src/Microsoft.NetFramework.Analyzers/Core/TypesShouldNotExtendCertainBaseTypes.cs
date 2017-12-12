@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -66,7 +67,9 @@ namespace Microsoft.NetFramework.Analyzers
                     {
                         var namedTypeSymbol = saContext.Symbol as INamedTypeSymbol;
 
-                        if (namedTypeSymbol.BaseType != null && badBaseTypes.Contains(namedTypeSymbol.BaseType))
+                        if (namedTypeSymbol.BaseType != null &&
+                            badBaseTypes.Contains(namedTypeSymbol.BaseType) &&
+                            namedTypeSymbol.IsExternallyVisible())
                         {
                             string baseTypeName = namedTypeSymbol.BaseType.ToDisplayString();
                             Debug.Assert(s_badBaseTypesToMessage.ContainsKey(baseTypeName));

@@ -49,6 +49,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterSymbolAction(
                 (context) =>
             {
+                // FxCop compat: only analyze externally visible symbols
+                if (!context.Symbol.IsExternallyVisible())
+                {
+                    return;
+                }
+
                 switch (context.Symbol.Kind)
                 {
                     case SymbolKind.NamedType:

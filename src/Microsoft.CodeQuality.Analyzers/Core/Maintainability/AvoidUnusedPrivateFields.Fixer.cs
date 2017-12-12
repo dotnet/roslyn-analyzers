@@ -39,10 +39,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             // We cannot have multiple overlapping diagnostics of this id. 
             Diagnostic diagnostic = context.Diagnostics.Single();
+            string title = MicrosoftMaintainabilityAnalyzersResources.AvoidUnusedPrivateFieldsTitle;
             context.RegisterCodeFix(
-                new RemoveFieldAction(
-                    MicrosoftMaintainabilityAnalyzersResources.AvoidUnusedPrivateFieldsMessage,
-                    async ct => await RemoveField(context.Document, node, ct).ConfigureAwait(false)),
+                new MyCodeAction(
+                    title,
+                    async ct => await RemoveField(context.Document, node, ct).ConfigureAwait(false),
+                    equivalenceKey: title),
                 diagnostic);
 
             return;
@@ -56,14 +58,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             return editor.GetChangedDocument();
         }
 
-        private class RemoveFieldAction : DocumentChangeAction
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
+        private class MyCodeAction : DocumentChangeAction
         {
-            public RemoveFieldAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
-
-            public override string EquivalenceKey => null;
         }
     }
 }

@@ -58,6 +58,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol obsoleteAttributeType)
         {
+            // FxCop compat: only analyze externally visible symbols
+            if (!context.Symbol.IsExternallyVisible())
+            {
+                return;
+            }
+
             ImmutableArray<AttributeData> attributes = context.Symbol.GetAttributes();
             foreach (AttributeData attribute in attributes)
             {

@@ -1,3 +1,4 @@
+
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis;
@@ -66,7 +67,7 @@ namespace HasNoUnderScore
             GetCA1707CSharpResultAt(line: 4, column: 15, symbolKind: SymbolKind.Namespace, identifierNames: "OuterNamespace.HasUnderScore_"));
         }
 
-        [Fact]
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
         public void CA1707_ForTypes_CSharp()
         {
             VerifyCSharp(@"
@@ -80,11 +81,22 @@ public class OuterType
     {
     }
 
-}",
+    internal class UnderScoreInNameButInternal_
+    {
+    }
+}
+
+internal class OuterType2
+{
+    public class UnderScoreInNameButNotExternallyVisible_
+    {
+    }
+}
+",
             GetCA1707CSharpResultAt(line: 4, column: 18, symbolKind: SymbolKind.NamedType, identifierNames: "OuterType.UnderScoreInName_"));
         }
 
-        [Fact]
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
         public void CA1707_ForFields_CSharp()
         {
             VerifyCSharp(@"
@@ -104,14 +116,23 @@ public enum DoesNotMatterEnum
 {
     _EnumWithUnderscore,
     _
-}",
+}
+
+public class C
+{
+    internal class C2
+    {
+        public const int ConstField_ = 5;
+    }
+}
+",
             GetCA1707CSharpResultAt(line: 4, column: 26, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.ConstField_"),
             GetCA1707CSharpResultAt(line: 5, column: 36, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.StaticReadOnlyField_"),
             GetCA1707CSharpResultAt(line: 16, column: 5, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatterEnum._EnumWithUnderscore"),
             GetCA1707CSharpResultAt(line: 17, column: 5, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatterEnum._"));
         }
 
-        [Fact]
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
         public void CA1707_ForMethods_CSharp()
         {
             VerifyCSharp(@"
@@ -137,6 +158,15 @@ public class ImplementI1 : I1
 public class Derives : ImplementI1
 {
     public override void M2_() { } // No diagnostic
+}
+
+internal class C
+{
+    public class DoesNotMatter2
+    {
+        public void PublicM1_() { } // No diagnostic
+        protected void ProtectedM4_() { } // No diagnostic
+    }
 }",
             GetCA1707CSharpResultAt(line: 4, column: 17, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.PublicM1_()"),
             GetCA1707CSharpResultAt(line: 7, column: 20, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.ProtectedM4_()"),
@@ -144,7 +174,7 @@ public class Derives : ImplementI1
             GetCA1707CSharpResultAt(line: 18, column: 25, symbolKind: SymbolKind.Member, identifierNames: "ImplementI1.M2_()"));
         }
 
-        [Fact]
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
         public void CA1707_ForProperties_CSharp()
         {
             VerifyCSharp(@"
@@ -170,6 +200,15 @@ public class ImplementI1 : I1
 public class Derives : ImplementI1
 {
     public override int P2_ { get; set; } // No diagnostic
+}
+
+internal class C
+{
+    public class DoesNotMatter2
+    {
+        public int PublicP1_ { get; set; }// No diagnostic
+        protected int ProtectedP4_ { get; set; } // No diagnostic
+    }
 }",
             GetCA1707CSharpResultAt(line: 4, column: 16, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.PublicP1_"),
             GetCA1707CSharpResultAt(line: 7, column: 19, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.ProtectedP4_"),
@@ -177,7 +216,7 @@ public class Derives : ImplementI1
             GetCA1707CSharpResultAt(line: 18, column: 24, symbolKind: SymbolKind.Member, identifierNames: "ImplementI1.P2_"));
         }
 
-        [Fact]
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
         public void CA1707_ForEvents_CSharp()
         {
             VerifyCSharp(@"
@@ -205,6 +244,15 @@ public class ImplementI1 : I1
 public class Derives : ImplementI1
 {
     public override event EventHandler E2_; // No diagnostic
+}
+
+internal class C
+{
+    public class DoesNotMatter
+    {
+        public event EventHandler PublicE1_; // No diagnostic
+        protected event EventHandler ProtectedE4_; // No diagnostic
+    }
 }",
             GetCA1707CSharpResultAt(line: 6, column: 31, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.PublicE1_"),
             GetCA1707CSharpResultAt(line: 9, column: 34, symbolKind: SymbolKind.Member, identifierNames: "DoesNotMatter.ProtectedE4_"),
@@ -821,7 +869,7 @@ End Class
         private void Verify(string source, string language, DiagnosticAnalyzer analyzer, string testProjectName, DiagnosticResult[] expected)
         {
             var sources = new[] { source };
-            var diagnostics = GetSortedDiagnostics(sources.ToFileAndSource(), language, analyzer, addLanguageSpecificCodeAnalysisReference: true, projectName: testProjectName);
+            var diagnostics = GetSortedDiagnostics(sources.ToFileAndSource(), language, analyzer, compilationOptions: null, addLanguageSpecificCodeAnalysisReference: true, projectName: testProjectName);
             diagnostics.Verify(analyzer, expected);
         }
 

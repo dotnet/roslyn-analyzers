@@ -4,22 +4,22 @@
     <body>
       <trans-unit id="MarkAssembliesWithNeutralResourcesLanguageTitle">
         <source>Mark assemblies with NeutralResourcesLanguageAttribute</source>
-        <target state="new">Mark assemblies with NeutralResourcesLanguageAttribute</target>
+        <target state="translated">Marcar assemblies com NeutralResourcesLanguageAttribute</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithNeutralResourcesLanguageDescription">
         <source>The NeutralResourcesLanguage attribute informs the ResourceManager of the language that was used to display the resources of a neutral culture for an assembly. This improves lookup performance for the first resource that you load and can reduce your working set.</source>
-        <target state="new">The NeutralResourcesLanguage attribute informs the ResourceManager of the language that was used to display the resources of a neutral culture for an assembly. This improves lookup performance for the first resource that you load and can reduce your working set.</target>
+        <target state="translated">O atributo NeutralResourcesLanguage informa o ResourceManager do idioma usado para renderizar os recursos de uma cultura neutra para um assembly. Isso melhorará o desempenho da pesquisa para o primeiro recurso carregado e poderá reduzir o conjunto de trabalho.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithNeutralResourcesLanguageMessage">
         <source>Mark assemblies with NeutralResourcesLanguageAttribute</source>
-        <target state="new">Mark assemblies with NeutralResourcesLanguageAttribute</target>
+        <target state="translated">Marcar assemblies com NeutralResourcesLanguageAttribute</target>
         <note />
       </trans-unit>
       <trans-unit id="CategoryPerformance">
         <source>Performance</source>
-        <target state="new">Performance</target>
+        <target state="translated">Desempenho</target>
         <note />
       </trans-unit>
     </body>

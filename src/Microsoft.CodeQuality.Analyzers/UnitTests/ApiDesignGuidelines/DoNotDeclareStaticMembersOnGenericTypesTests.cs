@@ -97,8 +97,78 @@ End Class",
     );
         }
 
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CSharp_CA1000_ShouldNotGenerate_ContainingTypeIsNotExternallyVisible()
+        {
+            VerifyCSharp(@"
+    using System;
+
+    internal class GenericType1<T>
+    {
+        private GenericType1()
+        {
+        }
+ 
+        public static void Output(T data)
+        {
+            Console.Write(data);
+        }
+ 
+        public static string Test
+        {
+            get { return string.Empty; }
+        }        
+    }
+ 
+    internal static class GenericType2<T>
+    {
+        public static void Output(T data)
+        {
+            Console.Write(data);
+        }
+ 
+        public static string Test
+        {
+            get { return string.Empty; }
+        }
+    }"
+    );
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void Basic_CA1000_ShouldNotGenerate_ContainingTypeIsNotExternallyVisible()
+        {
+            VerifyBasic(@"Imports System
+Friend Class GenericType1(Of T)
+    Private Sub New()
+    End Sub
+
+    Public Shared Sub Output(data As T)
+        Console.Write(data)
+    End Sub
+
+    Public Shared ReadOnly Property Test() As String
+        Get
+            Return String.Empty
+        End Get
+    End Property
+End Class
+
+Friend NotInheritable Class GenericType2(Of T)
+    Public Shared Sub Output(data As T)
+        Console.Write(data)
+    End Sub
+
+    Public Shared ReadOnly Property Test() As String
+        Get
+            Return String.Empty
+        End Get
+    End Property
+End Class");
+        }
+
         [Fact]
-        public void CSharp_CA1000_ShouldNotGenerate()
+        public void CSharp_CA1000_ShouldNotGenerate_MemberIsNotPublicStatic()
         {
             VerifyCSharp(@"
 using System;
@@ -193,7 +263,7 @@ public sealed class ClosedType : OpenType<String>
         }
 
         [Fact]
-        public void Basic_CA1000_ShouldNotGenerate()
+        public void Basic_CA1000_ShouldNotGenerate_MemberIsNotPublicStatic()
         {
             VerifyBasic(@"
 Imports System
@@ -277,6 +347,34 @@ Public NotInheritable Class ClosedType
         End Get
     End Property
 End Class");
+        }
+
+        [Fact]
+        public void CSharp_CA1000_ShouldNotGenerate_ConversionOperator()
+        {
+            VerifyCSharp(@"
+public class Class1<T>
+{
+    public static implicit operator Class1<T>(T value) => new Class1<T>();
+    public static explicit operator T(Class1<T> value) => default(T);
+}
+");
+        }
+
+        [Fact]
+        public void Basic_CA1000_ShouldNotGenerate_ConversionOperator()
+        {
+            VerifyBasic(@"
+Public Class Class1(Of T)
+    Public Shared Narrowing Operator CType(value As T) As Class1(Of T)
+        Return New Class1(Of T)()
+    End Operator
+
+    Public Shared Widening Operator CType(value As Class1(Of T)) As T
+        Return Nothing
+    End Operator
+End Class
+");
         }
     }
 }

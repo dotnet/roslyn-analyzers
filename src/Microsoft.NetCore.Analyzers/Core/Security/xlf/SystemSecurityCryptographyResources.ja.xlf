@@ -4,22 +4,22 @@
     <body>
       <trans-unit id="DoNotUseMD5">
         <source>Do not use insecure cryptographic algorithm MD5.</source>
-        <target state="new">Do not use insecure cryptographic algorithm MD5.</target>
+        <target state="translated">安全でない暗号アルゴリズム MD5 を使用しない。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseMD5Description">
         <source>This type implements MD5, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the MD5 and HMACMD5 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</source>
-        <target state="new">This type implements MD5, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the MD5 and HMACMD5 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</target>
+        <target state="translated">この型は、暗号として安全でないハッシュ関数である MD5 を実装しています。MD5 と HMACMD5 アルゴリズムでは、計算上、ハッシュの競合が起こる可能性があります。この使用を SHA-2 ファミリのハッシュ アルゴリズム (SHA512、SHA384、SHA256) に置き換えてください。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseSHA1">
         <source>Do not use insecure cryptographic algorithm SHA1.</source>
-        <target state="new">Do not use insecure cryptographic algorithm SHA1.</target>
+        <target state="translated">安全でない暗号アルゴリズム SHA1 を使用しない。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseSHA1Description">
         <source>This type implements SHA1, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the SHA-1 and SHA-0 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</source>
-        <target state="new">This type implements SHA1, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the SHA-1 and SHA-0 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</target>
+        <target state="translated">この型は、暗号として安全でないハッシュ関数である SHA1 を実装しています。SHA-1 と SHA-0 アルゴリズムでは、計算上、ハッシュの競合が起こる可能性があります。この使用を SHA-2 ファミリのハッシュ アルゴリズム (SHA512、SHA384、SHA256) に置き換えてください。</target>
         <note />
       </trans-unit>
     </body>

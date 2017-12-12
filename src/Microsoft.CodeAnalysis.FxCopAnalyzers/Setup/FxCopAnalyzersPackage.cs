@@ -6,6 +6,9 @@ using Microsoft.VisualStudio.Shell;
 
 namespace FxCopAnalyzersSetup
 {
+    // Avoid uninstantiated internal classes
+    // Package is used by VS
+#pragma warning disable CA1812
     [Guid(PackageGuid)]
     class FxCopAnalyzersPackage : Package
     {

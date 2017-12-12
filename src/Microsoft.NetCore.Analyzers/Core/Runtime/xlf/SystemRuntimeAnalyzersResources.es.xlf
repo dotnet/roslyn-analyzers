@@ -4,442 +4,442 @@
     <body>
       <trans-unit id="UseOrdinalStringComparisonTitle">
         <source>Use ordinal stringcomparison</source>
-        <target state="new">Use ordinal stringcomparison</target>
+        <target state="translated">Usar StringComparison ordinal</target>
         <note />
       </trans-unit>
       <trans-unit id="UseOrdinalStringComparisonDescription">
         <source>A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.</source>
-        <target state="new">A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.</target>
+        <target state="translated">Una operación no lingüística de comparación de cadenas no establece el parámetro StringComparison en Ordinal ni en OrdinalIgnoreCase. Si se establece explícitamente el parámetro en StringComparison.Ordinal o StringComparison.OrdinalIgnoreCase, el código será más rápido y ganará en precisión y confiabilidad.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseOrdinalStringComparisonMessageStringComparison">
         <source>{0} passes '{1}' as the 'StringComparison' parameter to {2}. To perform a non-linguistic comparison, specify 'StringComparison.Ordinal' or 'StringComparison.OrdinalIgnoreCase' instead.</source>
-        <target state="new">{0} passes '{1}' as the 'StringComparison' parameter to {2}. To perform a non-linguistic comparison, specify 'StringComparison.Ordinal' or 'StringComparison.OrdinalIgnoreCase' instead.</target>
+        <target state="translated">{0} pasa "{1}" como parámetro de "StringComparison" a {2}. Para llevar a cabo una comparación no lingüística, especifique en su lugar "StringComparison.Ordinal" o "StringComparison.OrdinalIgnoreCase".</target>
         <note />
       </trans-unit>
       <trans-unit id="UseOrdinalStringComparisonMessageStringComparer">
         <source>{0} passes '{1}' as the 'StringComparer' parameter to {2}. To perform a non-linguistic comparison, specify 'StringComparer.Ordinal' or 'StringComparer.OrdinalIgnoreCase' instead.</source>
-        <target state="new">{0} passes '{1}' as the 'StringComparer' parameter to {2}. To perform a non-linguistic comparison, specify 'StringComparer.Ordinal' or 'StringComparer.OrdinalIgnoreCase' instead.</target>
+        <target state="translated">{0} pasa "{1}" como parámetro de "StringComparer" a {2}. Para llevar a cabo una comparación no lingüística, especifique en su lugar "StringComparer.Ordinal" o "StringComparer.OrdinalIgnoreCase".</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseTimersThatPreventPowerStateChangesTitle">
         <source>Do not use timers that prevent power state changes</source>
-        <target state="new">Do not use timers that prevent power state changes</target>
+        <target state="translated">No usar temporizadores que impidan los cambios de estado de energía</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseTimersThatPreventPowerStateChangesDescription">
         <source>Higher-frequency periodic activity will keep the CPU busy and interfere with power-saving idle timers that turn off the display and hard disks.</source>
-        <target state="new">Higher-frequency periodic activity will keep the CPU busy and interfere with power-saving idle timers that turn off the display and hard disks.</target>
+        <target state="translated">Una actividad periódica más frecuente hará que la CPU no esté disponible e interferirá con los temporizadores de inactividad para ahorro de energía que apagan el monitor y los discos duros.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseTimersThatPreventPowerStateChangesMessage">
         <source>Do not use timers that prevent power state changes</source>
-        <target state="new">Do not use timers that prevent power state changes</target>
+        <target state="translated">No usar temporizadores que impidan los cambios de estado de energía</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnsealedAttributesTitle">
         <source>Avoid unsealed attributes</source>
-        <target state="new">Avoid unsealed attributes</target>
+        <target state="translated">Evitar atributos no sellados</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnsealedAttributesDescription">
         <source>The .NET Framework class library provides methods for retrieving custom attributes. By default, these methods search the attribute inheritance hierarchy. Sealing the attribute eliminates the search through the inheritance hierarchy and can improve performance.</source>
-        <target state="new">The .NET Framework class library provides methods for retrieving custom attributes. By default, these methods search the attribute inheritance hierarchy. Sealing the attribute eliminates the search through the inheritance hierarchy and can improve performance.</target>
+        <target state="translated">La biblioteca de clases de .NET Framework proporciona los métodos para recuperar los atributos personalizados. De forma predeterminada, estos métodos buscan la jerarquía de herencia del atributo. Al sellar el atributo, se elimina la búsqueda a través de la jerarquía de herencia y puede mejorarse el rendimiento.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnsealedAttributesMessage">
         <source>Avoid unsealed attributes</source>
-        <target state="new">Avoid unsealed attributes</target>
+        <target state="translated">Evitar atributos no sellados</target>
         <note />
       </trans-unit>
       <trans-unit id="TestForEmptyStringsUsingStringLengthTitle">
         <source>Test for empty strings using string length</source>
-        <target state="new">Test for empty strings using string length</target>
+        <target state="translated">Probar si las cadenas están vacías mediante la longitud de cadena</target>
         <note />
       </trans-unit>
       <trans-unit id="TestForEmptyStringsUsingStringLengthDescription">
         <source>Comparing strings by using the String.Length property or the String.IsNullOrEmpty method is significantly faster than using Equals.</source>
-        <target state="new">Comparing strings by using the String.Length property or the String.IsNullOrEmpty method is significantly faster than using Equals.</target>
+        <target state="translated">La comparación de cadenas utilizando la propiedad String.Length o el método String.IsNullOrEmpty es significativamente más rápida que si se utilizara Equals.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestForEmptyStringsUsingStringLengthMessage">
         <source>Test for empty strings using 'string.Length' property or 'string.IsNullOrEmpty' method instead of an Equality check.</source>
-        <target state="new">Test for empty strings using 'string.Length' property or 'string.IsNullOrEmpty' method instead of an Equality check.</target>
+        <target state="translated">Compruebe si las cadenas están vacías mediante la propiedad "string.Length" o el método "string.IsNullOrEmpty" en lugar de una comprobación de Equality.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotLockOnObjectsWithWeakIdentityTitle">
         <source>Do not lock on objects with weak identity</source>
-        <target state="new">Do not lock on objects with weak identity</target>
+        <target state="translated">No bloquear objetos con identidad débil</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotLockOnObjectsWithWeakIdentityDescription">
         <source>An object is said to have a weak identity when it can be directly accessed across application domain boundaries. A thread that tries to acquire a lock on an object that has a weak identity can be blocked by a second thread in a different application domain that has a lock on the same object.</source>
-        <target state="new">An object is said to have a weak identity when it can be directly accessed across application domain boundaries. A thread that tries to acquire a lock on an object that has a weak identity can be blocked by a second thread in a different application domain that has a lock on the same object.</target>
+        <target state="translated">Se dice que un objeto tiene una identidad débil cuando se puede tener acceso a él directamente a través de los límites del dominio de aplicación. Un subproceso que intenta obtener un bloqueo en un objeto que tiene identidad débil se puede bloquear con un segundo subproceso en un dominio de aplicación diferente que tenga bloqueado el mismo objeto.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotLockOnObjectsWithWeakIdentityMessage">
         <source>Do not lock on objects with weak identity</source>
-        <target state="new">Do not lock on objects with weak identity</target>
+        <target state="translated">No bloquear objetos con identidad débil</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersTitle">
         <source>Do not catch corrupted state exceptions in general handlers.</source>
-        <target state="new">Do not catch corrupted state exceptions in general handlers.</target>
+        <target state="translated">No aplique catch a excepciones de estado dañadas en controladores generales.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersDescription">
         <source>Do not author general catch handlers in code that receives corrupted state exceptions.</source>
-        <target state="new">Do not author general catch handlers in code that receives corrupted state exceptions.</target>
+        <target state="translated">No cree controladores catch en código que reciba excepciones de estado dañadas.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersMessage">
         <source>Do not catch corrupted state exceptions in general handlers.</source>
-        <target state="new">Do not catch corrupted state exceptions in general handlers.</target>
+        <target state="translated">No aplique catch a excepciones de estado dañadas en controladores generales.</target>
         <note />
       </trans-unit>
       <trans-unit id="RethrowToPreserveStackDetailsTitle">
         <source>Rethrow to preserve stack details</source>
-        <target state="new">Rethrow to preserve stack details</target>
+        <target state="translated">Iniciar de nuevo para preservar los detalles de la pila</target>
         <note />
       </trans-unit>
       <trans-unit id="RethrowToPreserveStackDetailsDescription">
         <source>An exception is rethrown and the exception is explicitly specified in the throw statement. If an exception is rethrown by specifying the exception in the throw statement, the list of method calls between the original method that threw the exception and the current method is lost.</source>
-        <target state="new">An exception is rethrown and the exception is explicitly specified in the throw statement. If an exception is rethrown by specifying the exception in the throw statement, the list of method calls between the original method that threw the exception and the current method is lost.</target>
+        <target state="translated">Se vuelve a producir una excepción y se especifica explícitamente en la instrucción throw. Si se vuelve a producir una excepción especificándola en la instrucción throw, se pierde la lista de llamadas al método entre el método original que produjo la excepción y el método actual.</target>
         <note />
       </trans-unit>
       <trans-unit id="RethrowToPreserveStackDetailsMessage">
         <source>Rethrow to preserve stack details</source>
-        <target state="new">Rethrow to preserve stack details</target>
+        <target state="translated">Iniciar de nuevo para preservar los detalles de la pila</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseReservedExceptionTypesTitle">
         <source>Do not raise reserved exception types</source>
-        <target state="new">Do not raise reserved exception types</target>
+        <target state="translated">No provocar tipos de excepción reservados</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseReservedExceptionTypesDescription">
         <source>An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type.</source>
-        <target state="new">An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type.</target>
+        <target state="translated">El código de usuario nunca debe provocar una excepción de tipo que no sea suficientemente específica o esté reservada por el tiempo de ejecución. Esto provoca que el error original sea difícil de detectar y depurar. Si puede iniciarse esta instancia de excepción, utilice un tipo de excepción diferente.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseReservedExceptionTypesMessageTooGeneric">
         <source>Exception type {0} is not sufficiently specific.</source>
-        <target state="new">Exception type {0} is not sufficiently specific.</target>
+        <target state="translated">El tipo de excepción {0} no es suficientemente específico.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseReservedExceptionTypesMessageReserved">
         <source>Exception type {0} is reserved by the runtime.</source>
-        <target state="new">Exception type {0} is reserved by the runtime.</target>
+        <target state="translated">El tipo de excepción {0} está reservado por el tiempo de ejecución.</target>
         <note />
       </trans-unit>
       <trans-unit id="InitializeValueTypeStaticFieldsInlineTitle">
         <source>Initialize value type static fields inline</source>
-        <target state="new">Initialize value type static fields inline</target>
+        <target state="translated">Inicializar campos estáticos de tipo de valor insertados</target>
         <note />
       </trans-unit>
       <trans-unit id="InitializeReferenceTypeStaticFieldsInlineTitle">
         <source>Initialize reference type static fields inline</source>
-        <target state="new">Initialize reference type static fields inline</target>
+        <target state="translated">Inicializar campos estáticos de tipo de referencia insertados</target>
         <note />
       </trans-unit>
       <trans-unit id="InitializeValueTypeStaticFieldsInlineDescription">
         <source>A value type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.</source>
-        <target state="new">A value type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.</target>
+        <target state="translated">Un tipo de valor declara un constructor estático explícito. Para corregir una infracción de esta regla, inicialice todos los datos estáticos cuando se declara y quite el constructor estático.</target>
         <note />
       </trans-unit>
       <trans-unit id="InitializeReferenceTypeStaticFieldsInlineDescription">
         <source>A reference type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.</source>
-        <target state="new">A reference type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.</target>
+        <target state="translated">Un tipo de referencia declara un constructor estático explícito. Para corregir una infracción de esta regla, inicialice todos los datos estáticos cuando se declara y quite el constructor estático.</target>
         <note />
       </trans-unit>
       <trans-unit id="InitializeStaticFieldsInlineMessage">
         <source>Initialize all static fields in '{0}' when those fields are declared and remove the explicit static constructor</source>
-        <target state="new">Initialize all static fields in '{0}' when those fields are declared and remove the explicit static constructor</target>
+        <target state="translated">Inicialice todos los campos estáticos de "{0}" cuando estos campos se declaran y quite el constructor estático explícito.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedTitle">
         <source>Disposable fields should be disposed</source>
-        <target state="new">Disposable fields should be disposed</target>
+        <target state="translated">Aplicar Dispose a los campos a los que se pueda</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedDescription">
         <source>A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type.</source>
-        <target state="new">A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type.</target>
+        <target state="translated">Un tipo que implementa System.IDisposable declara campos que son de tipos que también implementan IDisposable. El método Dispose del tipo declarado no llama al método Dispose del campo.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedMessage">
         <source>Disposable fields should be disposed</source>
-        <target state="new">Disposable fields should be disposed</target>
+        <target state="translated">Aplicar Dispose a los campos a los que se pueda</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallOverridableMethodsInConstructorsTitle">
         <source>Do not call overridable methods in constructors</source>
-        <target state="new">Do not call overridable methods in constructors</target>
+        <target state="translated">No llamar a métodos reemplazables en constructores</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallOverridableMethodsInConstructorsDescription">
         <source>When a constructor calls a virtual method, the constructor for the instance that invokes the method may not have executed.</source>
-        <target state="new">When a constructor calls a virtual method, the constructor for the instance that invokes the method may not have executed.</target>
+        <target state="translated">Cuando un constructor llama a un método virtual, es posible que no se haya ejecutado el constructor para la instancia que invoca el método.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallOverridableMethodsInConstructorsMessage">
         <source>Do not call overridable methods in constructors</source>
-        <target state="new">Do not call overridable methods in constructors</target>
+        <target state="translated">No llamar a métodos reemplazables en constructores</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeTitle">
         <source>Dispose Methods Should Call Base Class Dispose</source>
-        <target state="new">Dispose Methods Should Call Base Class Dispose</target>
+        <target state="translated">Los métodos Dispose deben llamar a Dispose de clase base</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeDescription">
         <source>If a type inherits from a disposable type, it must call the Dispose method of the base type from its own Dispose method.</source>
-        <target state="new">If a type inherits from a disposable type, it must call the Dispose method of the base type from its own Dispose method.</target>
+        <target state="translated">Si un tipo hereda de un tipo disponible, debe llamar al método Dispose del tipo base desde su propio método Dispose.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeMessage">
         <source>Dispose Methods Should Call Base Class Dispose</source>
-        <target state="new">Dispose Methods Should Call Base Class Dispose</target>
+        <target state="translated">Los métodos Dispose deben llamar a Dispose de clase base</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableTypesShouldDeclareFinalizerTitle">
         <source>Disposable types should declare finalizer</source>
-        <target state="new">Disposable types should declare finalizer</target>
+        <target state="translated">Los tipos a los que se puede aplicar Dispose deben declarar el finalizador</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableTypesShouldDeclareFinalizerDescription">
         <source>A type that implements System.IDisposable and has fields that suggest the use of unmanaged resources does not implement a finalizer, as described by Object.Finalize.</source>
-        <target state="new">A type that implements System.IDisposable and has fields that suggest the use of unmanaged resources does not implement a finalizer, as described by Object.Finalize.</target>
+        <target state="translated">Un tipo que implementa System.IDisposable y tiene campos que sugieren el uso de recursos no administrados no implementa un finalizador descrito por Object.Finalize.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableTypesShouldDeclareFinalizerMessage">
         <source>Disposable types should declare finalizer</source>
-        <target state="new">Disposable types should declare finalizer</target>
+        <target state="translated">Los tipos a los que se puede aplicar Dispose deben declarar el finalizador</target>
         <note />
       </trans-unit>
       <trans-unit id="FinalizersShouldCallBaseClassFinalizerTitle">
         <source>Finalizers should call base class finalizer</source>
-        <target state="new">Finalizers should call base class finalizer</target>
+        <target state="translated">Los finalizadores deben llamar al finalizador de la clase base</target>
         <note />
       </trans-unit>
       <trans-unit id="FinalizersShouldCallBaseClassFinalizerDescription">
         <source>Finalization must be propagated through the inheritance hierarchy. To guarantee this, types must call their base class Finalize method in their own Finalize method.</source>
-        <target state="new">Finalization must be propagated through the inheritance hierarchy. To guarantee this, types must call their base class Finalize method in their own Finalize method.</target>
+        <target state="translated">La finalización se debe difundir a través de la jerarquía de herencia. Para garantizar esto, los tipos deben llamar al método Finalize de su clase base desde su propio método Finalize.</target>
         <note />
       </trans-unit>
       <trans-unit id="FinalizersShouldCallBaseClassFinalizerMessage">
         <source>Finalizers should call base class finalizer</source>
-        <target state="new">Finalizers should call base class finalizer</target>
+        <target state="translated">Los finalizadores deben llamar al finalizador de la clase base</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsTitle">
         <source>Provide correct arguments to formatting methods</source>
-        <target state="new">Provide correct arguments to formatting methods</target>
+        <target state="translated">Proporcionar argumentos correctos para los métodos de formato</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsDescription">
         <source>The format argument that is passed to System.String.Format does not contain a format item that corresponds to each object argument, or vice versa.</source>
-        <target state="new">The format argument that is passed to System.String.Format does not contain a format item that corresponds to each object argument, or vice versa.</target>
+        <target state="translated">El argumento de cadena format pasado a System.String.Format no contiene un elemento de formato que corresponda a cada argumento de objeto o viceversa.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsMessage">
         <source>Provide correct arguments to formatting methods</source>
-        <target state="new">Provide correct arguments to formatting methods</target>
+        <target state="translated">Proporcionar argumentos correctos para los métodos de formato</target>
         <note />
       </trans-unit>
       <trans-unit id="TestForNaNCorrectlyTitle">
         <source>Test for NaN correctly</source>
-        <target state="new">Test for NaN correctly</target>
+        <target state="translated">Probar NaN correctamente</target>
         <note />
       </trans-unit>
       <trans-unit id="TestForNaNCorrectlyDescription">
         <source>This expression tests a value against Single.Nan or Double.Nan. Use Single.IsNan(Single) or Double.IsNan(Double) to test the value.</source>
-        <target state="new">This expression tests a value against Single.Nan or Double.Nan. Use Single.IsNan(Single) or Double.IsNan(Double) to test the value.</target>
+        <target state="translated">Esta expresión prueba un valor con Single.Nan o Double.Nan. Use Single.IsNan(Single) o Double.IsNan(Double) para probar el valor.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestForNaNCorrectlyMessage">
         <source>Test for NaN correctly</source>
-        <target state="new">Test for NaN correctly</target>
+        <target state="translated">Probar NaN correctamente</target>
         <note />
       </trans-unit>
       <trans-unit id="AttributeStringLiteralsShouldParseCorrectlyTitle">
         <source>Attribute string literals should parse correctly</source>
-        <target state="new">Attribute string literals should parse correctly</target>
+        <target state="translated">Los literales de cadena de atributo se deben analizar correctamente</target>
         <note />
       </trans-unit>
       <trans-unit id="AttributeStringLiteralsShouldParseCorrectlyDescription">
         <source>The string literal parameter of an attribute does not parse correctly for a URL, a GUID, or a version.</source>
-        <target state="new">The string literal parameter of an attribute does not parse correctly for a URL, a GUID, or a version.</target>
+        <target state="translated">El parámetro de literal de cadena de un atributo no se analiza correctamente para una dirección URL, un GUID o una versión.</target>
         <note />
       </trans-unit>
       <trans-unit id="AttributeStringLiteralsShouldParseCorrectlyMessageDefault">
         <source>In the constructor of '{0}', change the value of argument '{1}', which is currently "{2}", to something that can be correctly parsed as '{3}'.</source>
-        <target state="new">In the constructor of '{0}', change the value of argument '{1}', which is currently "{2}", to something that can be correctly parsed as '{3}'.</target>
+        <target state="translated">En el constructor de "{0}", cambie el valor del argumento "{1}", que es actualmente "{2}", a algo que se pueda analizar correctamente como "{3}".</target>
         <note />
       </trans-unit>
       <trans-unit id="AttributeStringLiteralsShouldParseCorrectlyMessageEmpty">
         <source>In the constructor of '{0}', change the value of argument '{1}', which is currently an empty string (""), to something that can be correctly parsed as '{2}'.</source>
-        <target state="new">In the constructor of '{0}', change the value of argument '{1}', which is currently an empty string (""), to something that can be correctly parsed as '{2}'.</target>
+        <target state="translated">En el constructor de "{0}", cambie el valor del argumento "{1}", que es actualmente una cadena vacía ("") a algo que se pueda analizar correctamente como "{2}".</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidZeroLengthArrayAllocationsTitle">
         <source>Avoid zero-length array allocations.</source>
-        <target state="new">Avoid zero-length array allocations.</target>
+        <target state="translated">Evite las asignaciones de matriz de longitud cero.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidZeroLengthArrayAllocationsMessage">
         <source>Avoid unnecessary zero-length array allocations.  Use {0} instead.</source>
-        <target state="new">Avoid unnecessary zero-length array allocations.  Use {0} instead.</target>
+        <target state="translated">Evite las asignaciones de matriz de longitud cero innecesarias.  Use {0} en su lugar.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyTitle">
         <source>Do not use Enumerable methods on indexable collections. Instead use the collection directly</source>
-        <target state="new">Do not use Enumerable methods on indexable collections. Instead use the collection directly</target>
+        <target state="translated">No utilice métodos Enumerable en colecciones indexables. Use la colección directamente.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyDescription">
         <source>This collection is directly indexable. Going through LINQ here causes unnecessary allocations and CPU work.</source>
-        <target state="new">This collection is directly indexable. Going through LINQ here causes unnecessary allocations and CPU work.</target>
+        <target state="translated">Esta colección es directamente indexable. Pasar por LINQ en este caso genera asignaciones y trabajo de CPU innecesarios.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyMessage">
         <source>Do not use Enumerable methods on indexable collections. Instead use the collection directly</source>
-        <target state="new">Do not use Enumerable methods on indexable collections. Instead use the collection directly</target>
+        <target state="translated">No utilice métodos Enumerable en colecciones indexables. Use la colección directamente.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyCultureInfoTitle">
         <source>Specify CultureInfo</source>
-        <target state="new">Specify CultureInfo</target>
+        <target state="translated">Especificar CultureInfo</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyCultureInfoDescription">
         <source>A method or constructor calls a member that has an overload that accepts a System.Globalization.CultureInfo parameter, and the method or constructor does not call the overload that takes the CultureInfo parameter. When a CultureInfo or System.IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales. If the result will be displayed to the user, specify 'CultureInfo.CurrentCulture' as the 'CultureInfo' parameter. Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk or to a database, specify 'CultureInfo.InvariantCulture'.</source>
-        <target state="new">A method or constructor calls a member that has an overload that accepts a System.Globalization.CultureInfo parameter, and the method or constructor does not call the overload that takes the CultureInfo parameter. When a CultureInfo or System.IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales. If the result will be displayed to the user, specify 'CultureInfo.CurrentCulture' as the 'CultureInfo' parameter. Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk or to a database, specify 'CultureInfo.InvariantCulture'.</target>
+        <target state="translated">Un método o constructor llama a un miembro que tiene una sobrecarga que acepta un parámetro System.Globalization.CultureInfo y el método o constructor no llama a la sobrecarga que toma el parámetro CultureInfo. Cuando el objeto CultureInfo o System.IFormatProvider no se suministra, el valor predeterminado que se suministra por el miembro sobrecargado puede no tener el efecto que desea en todas las configuraciones regionales. Si se mostrará el resultado al usuario, especifique "CultureInfo.CurrentCulture" como parámetro "CultureInfo". De lo contrario, si el resultado se almacenará y se accederá a él mediante software, como los casos en que se guarda en un disco o una base de datos, especifique "CultureInfo.InvariantCulture".</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyCultureInfoMessage">
         <source>The behavior of '{0}' could vary based on the current user's locale settings. Replace this call in '{1}' with a call to '{2}'.</source>
-        <target state="new">The behavior of '{0}' could vary based on the current user's locale settings. Replace this call in '{1}' with a call to '{2}'.</target>
+        <target state="translated">El comportamiento de "{0}" podría variar dependiendo de la configuración regional del usuario local. Reemplace esta llamada en "{1}" por una llamada a "{2}".</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyIFormatProviderTitle">
         <source>Specify IFormatProvider</source>
-        <target state="new">Specify IFormatProvider</target>
+        <target state="translated">Especificar IFormatProvider</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyIFormatProviderDescription">
         <source>A method or constructor calls one or more members that have overloads that accept a System.IFormatProvider parameter, and the method or constructor does not call the overload that takes the IFormatProvider parameter. When a System.Globalization.CultureInfo or IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales. If the result will be based on the input from/output displayed to the user, specify 'CultureInfo.CurrentCulture' as the 'IFormatProvider'. Otherwise, if the result will be stored and accessed by software, such as when it is loaded from disk/database and when it is persisted to disk/database, specify 'CultureInfo.InvariantCulture'</source>
-        <target state="new">A method or constructor calls one or more members that have overloads that accept a System.IFormatProvider parameter, and the method or constructor does not call the overload that takes the IFormatProvider parameter. When a System.Globalization.CultureInfo or IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales. If the result will be based on the input from/output displayed to the user, specify 'CultureInfo.CurrentCulture' as the 'IFormatProvider'. Otherwise, if the result will be stored and accessed by software, such as when it is loaded from disk/database and when it is persisted to disk/database, specify 'CultureInfo.InvariantCulture'</target>
+        <target state="translated">Un método o constructor llama a uno o más miembros que tiene sobrecargas que aceptan un parámetro System.IFormatProvider, y el método o constructor no llama a la sobrecarga que toma el parámetro IFormatProvider. Cuando el objeto System.Globalization.CultureInfo o IFormatProvide no se suministra, el valor predeterminado que se suministra por el miembro sobrecargado puede no tener el efecto que desea en todas las configuraciones regionales. Si el resultado se basará en la entrada desde/salida mostrada al usuario, especifique "CultureInfo.CurrentCulture" como "IFormatProvider". De lo contrario, si el resultado se almacenará y se accederá a él mediante software, como los casos en que se carga desde el disco o la base de datos y en que se guarda en un disco o una base de datos, especifique "CultureInfo.InvariantCulture".</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyIFormatProviderMessageIFormatProviderAlternateString">
         <source>The behavior of '{0}' could vary based on the current user's locale settings. Replace this call in '{1}' with a call to '{2}'.</source>
-        <target state="new">The behavior of '{0}' could vary based on the current user's locale settings. Replace this call in '{1}' with a call to '{2}'.</target>
+        <target state="translated">El comportamiento de "{0}" podría variar dependiendo de la configuración regional del usuario local. Reemplace esta llamada en "{1}" por una llamada a "{2}".</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyIFormatProviderMessageIFormatProviderAlternate">
         <source>The behavior of '{0}' could vary based on the current user's locale settings. Replace this call in '{1}' with a call to '{2}'.</source>
-        <target state="new">The behavior of '{0}' could vary based on the current user's locale settings. Replace this call in '{1}' with a call to '{2}'.</target>
+        <target state="translated">El comportamiento de "{0}" podría variar dependiendo de la configuración regional del usuario local. Reemplace esta llamada en "{1}" por una llamada a "{2}".</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyIFormatProviderMessageUICultureString">
         <source>'{0}' passes '{1}' as the 'IFormatProvider' parameter to '{2}'. This property returns a culture that is inappropriate for formatting methods.</source>
-        <target state="new">'{0}' passes '{1}' as the 'IFormatProvider' parameter to '{2}'. This property returns a culture that is inappropriate for formatting methods.</target>
+        <target state="translated">"{0}" pasa "{1}" como parámetro de "IFormatProvider" a "{2}". Esta propiedad devuelve una cultura que no es apropiada para los métodos de formato.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyIFormatProviderMessageUICulture">
         <source>'{0}' passes '{1}' as the 'IFormatProvider' parameter to '{2}'. This property returns a culture that is inappropriate for formatting methods.</source>
-        <target state="new">'{0}' passes '{1}' as the 'IFormatProvider' parameter to '{2}'. This property returns a culture that is inappropriate for formatting methods.</target>
+        <target state="translated">"{0}" pasa "{1}" como parámetro de "IFormatProvider" a "{2}". Esta propiedad devuelve una cultura que no es apropiada para los métodos de formato.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyStringComparisonTitle">
         <source>Specify StringComparison</source>
-        <target state="new">Specify StringComparison</target>
+        <target state="translated">Especificar StringComparison</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyStringComparisonDescription">
         <source>A string comparison operation uses a method overload that does not set a StringComparison parameter. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify 'StringComparison.CurrentCulture' or 'StringComparison.CurrentCultureIgnoreCase' as the 'StringComparison' parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify 'StringComparison.OrdinalIgnoreCase'. Otherwise, if comparing case-sensitive identifiers, specify 'StringComparison.Ordinal'.</source>
-        <target state="new">A string comparison operation uses a method overload that does not set a StringComparison parameter. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify 'StringComparison.CurrentCulture' or 'StringComparison.CurrentCultureIgnoreCase' as the 'StringComparison' parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify 'StringComparison.OrdinalIgnoreCase'. Otherwise, if comparing case-sensitive identifiers, specify 'StringComparison.Ordinal'.</target>
+        <target state="translated">Una operación de comparación de cadenas utiliza una sobrecarga de método que no establece un parámetro StringComparison. Si el resultado se mostrará al usuario, como los casos en que se ordena una lista de elementos para mostrarlos en un cuadro de lista, especifique "StringComparison.CurrentCulture" o "StringComparison.CurrentCultureIgnoreCase" como parámetro de "StringComparison". Si está comparando identificadores que no distinguen mayúsculas de minúsculas, como rutas de acceso de archivos, variables de entorno o claves y valores de Registro, especifique "StringComparison.OrdinalIgnoreCase". De lo contrario, si compara identificadores que distinguen mayúsculas de minúsculas, especifique "StringComparison.Ordinal".</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyStringComparisonMessage">
         <source>The behavior of '{0}' could vary based on the current user's locale settings. Replace this call in '{1}' with a call to '{2}'.</source>
-        <target state="new">The behavior of '{0}' could vary based on the current user's locale settings. Replace this call in '{1}' with a call to '{2}'.</target>
+        <target state="translated">El comportamiento de "{0}" podría variar dependiendo de la configuración regional del usuario local. Reemplace esta llamada en "{1}" por una llamada a "{2}".</target>
         <note />
       </trans-unit>
       <trans-unit id="NormalizeStringsToUppercaseTitle">
         <source>Normalize strings to uppercase</source>
-        <target state="new">Normalize strings to uppercase</target>
+        <target state="translated">Normalizar las cadenas en mayúsculas</target>
         <note />
       </trans-unit>
       <trans-unit id="NormalizeStringsToUppercaseDescription">
         <source>Strings should be normalized to uppercase. A small group of characters cannot make a round trip when they are converted to lowercase. To make a round trip means to convert the characters from one locale to another locale that represents character data differently, and then to accurately retrieve the original characters from the converted characters.</source>
-        <target state="new">Strings should be normalized to uppercase. A small group of characters cannot make a round trip when they are converted to lowercase. To make a round trip means to convert the characters from one locale to another locale that represents character data differently, and then to accurately retrieve the original characters from the converted characters.</target>
+        <target state="translated">Las cadenas se deberían normalizar para que se escriban en letras mayúsculas. Hay un grupo reducido de caracteres que no pueden realizar un recorrido de ida y vuelta cuando se convierten a minúsculas. Realizar un recorrido de ida y vuelta significa convertir los caracteres de una configuración regional a otra configuración regional que representa los datos de caracteres de manera diferente y, a continuación, recuperar con precisión los caracteres originales de los caracteres convertidos.</target>
         <note />
       </trans-unit>
       <trans-unit id="NormalizeStringsToUppercaseMessageToUpper">
         <source>In method '{0}', replace the call to '{1}' with '{2}'.</source>
-        <target state="new">In method '{0}', replace the call to '{1}' with '{2}'.</target>
+        <target state="translated">En el método "{0}", reemplace la llamada a "{1}" por "{2}".</target>
         <note />
       </trans-unit>
       <trans-unit id="CallGCSuppressFinalizeCorrectlyTitle">
         <source>Dispose methods should call SuppressFinalize</source>
-        <target state="new">Dispose methods should call SuppressFinalize</target>
+        <target state="translated">Los métodos Dispose deberían llamar a SuppressFinalize</target>
         <note />
       </trans-unit>
       <trans-unit id="CallGCSuppressFinalizeCorrectlyDescription">
         <source>A method that is an implementation of Dispose does not call GC.SuppressFinalize; or a method that is not an implementation of Dispose calls GC.SuppressFinalize; or a method calls GC.SuppressFinalize and passes something other than this (Me in Visual?Basic).</source>
-        <target state="new">A method that is an implementation of Dispose does not call GC.SuppressFinalize; or a method that is not an implementation of Dispose calls GC.SuppressFinalize; or a method calls GC.SuppressFinalize and passes something other than this (Me in Visual?Basic).</target>
+        <target state="translated">Un método que es una implementación de Dispose no llama a GC.SuppressFinalize, o un método que no es una implementación de Dispose llama a GC.SuppressFinalize, o un método llama a GC.SuppressFinalize y pasa algo distinto de "this" (Me en Visual Basic).</target>
         <note />
       </trans-unit>
       <trans-unit id="CallGCSuppressFinalizeCorrectlyMessageNotCalledWithFinalizer">
         <source>Change {0} to call {1}. This will prevent unnecessary finalization of the object once it has been disposed and it has fallen out of scope.</source>
-        <target state="new">Change {0} to call {1}. This will prevent unnecessary finalization of the object once it has been disposed and it has fallen out of scope.</target>
+        <target state="translated">Cambie "{0}" para llamar a {1}. Esto evita la finalización no necesaria del objeto una vez que se ha desechado y ha quedado fuera de ámbito.</target>
         <note />
       </trans-unit>
       <trans-unit id="CallGCSuppressFinalizeCorrectlyMessageNotCalled">
         <source>Change {0} to call {1}. This will prevent derived types that introduce a finalizer from needing to re-implement 'IDisposable' to call it.</source>
-        <target state="new">Change {0} to call {1}. This will prevent derived types that introduce a finalizer from needing to re-implement 'IDisposable' to call it.</target>
+        <target state="translated">Cambie "{0}" para llamar a {1}. Con esto se evitará que los tipos derivados que introducen un finalizador tengan que volver a implementar "IDisposable" para llamarlo.</target>
         <note />
       </trans-unit>
       <trans-unit id="CallGCSuppressFinalizeCorrectlyMessageNotPassedThis">
         <source>{0} calls {1} on something other than itself. Change the call site to pass 'this' ('Me' in Visual Basic) instead.</source>
-        <target state="new">{0} calls {1} on something other than itself. Change the call site to pass 'this' ('Me' in Visual Basic) instead.</target>
+        <target state="translated">{0} llama a {1} sobre algo diferente de sí mismo. Cambie el sitio de llamada para que pase "this" ("Me" en Visual Basic).</target>
         <note />
       </trans-unit>
       <trans-unit id="CallGCSuppressFinalizeCorrectlyMessageOutsideDispose">
         <source>{0} calls {1}, a method that is typically only called within an implementation of 'IDisposable.Dispose'. Refer to the IDisposable pattern for more information.</source>
-        <target state="new">{0} calls {1}, a method that is typically only called within an implementation of 'IDisposable.Dispose'. Refer to the IDisposable pattern for more information.</target>
+        <target state="translated">{0} llama a {1}, un método al que normalmente solo se llama en una implementación de "IDisposable.Dispose". Consulte el modelo de IDisposable para obtener más información.</target>
         <note />
       </trans-unit>
       <trans-unit id="InstantiateArgumentExceptionsCorrectlyTitle">
         <source>Instantiate argument exceptions correctly</source>
-        <target state="new">Instantiate argument exceptions correctly</target>
+        <target state="translated">Crear instancias de las excepciones del argumento correctamente</target>
         <note />
       </trans-unit>
       <trans-unit id="InstantiateArgumentExceptionsCorrectlyDescription">
         <source>A call is made to the default (parameterless) constructor of an exception type that is or derives from ArgumentException, or an incorrect string argument is passed to a parameterized constructor of an exception type that is or derives from ArgumentException.</source>
-        <target state="new">A call is made to the default (parameterless) constructor of an exception type that is or derives from ArgumentException, or an incorrect string argument is passed to a parameterized constructor of an exception type that is or derives from ArgumentException.</target>
+        <target state="translated">Se realiza una llamada al constructor predeterminado (sin parámetros) de un tipo de excepción que es o se deriva de ArgumentException, o se pasa un argumento de cadena incorrecto a un constructor con parámetros de un tipo de excepción que es o se deriva de ArgumentException.</target>
         <note />
       </trans-unit>
       <trans-unit id="InstantiateArgumentExceptionsCorrectlyMessageNoArguments">
         <source>Call the {0} constructor that contains a message and/or paramName parameter.</source>
-        <target state="new">Call the {0} constructor that contains a message and/or paramName parameter.</target>
+        <target state="translated">Llame al constructor {0} que contiene un mensaje o un parámetro paramName.</target>
         <note />
       </trans-unit>
       <trans-unit id="InstantiateArgumentExceptionsCorrectlyMessageIncorrectMessage">
         <source>Method {0} passes parameter name '{1}' as the {2} argument to a {3} constructor. Replace this argument with a descriptive message and pass the parameter name in the correct position.</source>
-        <target state="new">Method {0} passes parameter name '{1}' as the {2} argument to a {3} constructor. Replace this argument with a descriptive message and pass the parameter name in the correct position.</target>
+        <target state="translated">El método {0} pasa un nombre de parámetro "{1}" como argumento {2} a un constructor {3}. Reemplace este argumento por un mensaje descriptivo y pase el nombre del parámetro en la posición correcta.</target>
         <note />
       </trans-unit>
       <trans-unit id="InstantiateArgumentExceptionsCorrectlyMessageIncorrectParameterName">
         <source>Method {0} passes '{1}' as the {2} argument to a {3} constructor. Replace this argument with one of the method's parameter names. Note that the provided parameter name should have the exact casing as declared on the method.</source>
-        <target state="new">Method {0} passes '{1}' as the {2} argument to a {3} constructor. Replace this argument with one of the method's parameter names. Note that the provided parameter name should have the exact casing as declared on the method.</target>
+        <target state="translated">El método {0} pasa "{1}" como argumento {2} a un constructor {3}. Reemplace este argumento por uno de los nombres de parámetros del método. Tenga en cuenta que el nombre del parámetro debe corresponderse completamente (mayúsculas y minúsculas) con lo declarado en el método.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseArrayEmpty">
         <source>Use Array.Empty</source>
-        <target state="new">Use Array.Empty</target>
+        <target state="translated">Usar Array.Empty</target>
         <note />
       </trans-unit>
     </body>

@@ -113,6 +113,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterSymbolAction(symbolAnalysisContext =>
             {
                 var symbol = symbolAnalysisContext.Symbol;
+
+                // FxCop compat: only analyze externally visible symbols
+                if (!symbol.IsExternallyVisible())
+                {
+                    return;
+                }
+
                 switch (symbol.Kind)
                 {
                     case SymbolKind.Namespace:
@@ -136,7 +143,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                 AnalyzeParameters(symbolAnalysisContext, namedType.DelegateInvokeMethod.Parameters);
                             }
 
-                            if (!ContainsUnderScore(symbol.Name) || !symbol.IsPublic())
+                            if (!ContainsUnderScore(symbol.Name))
                             {
                                 return;
                             }
@@ -148,7 +155,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     case SymbolKind.Field:
                         {
                             var fieldSymbol = symbol as IFieldSymbol;
-                            if (ContainsUnderScore(symbol.Name) && symbol.IsPublic() && (fieldSymbol.IsConst || (fieldSymbol.IsStatic && fieldSymbol.IsReadOnly)))
+                            if (ContainsUnderScore(symbol.Name) && (fieldSymbol.IsConst || (fieldSymbol.IsStatic && fieldSymbol.IsReadOnly)))
                             {
                                 symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
                                 return;
@@ -209,7 +216,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static bool IsInvalidSymbol(ISymbol symbol)
         {
-            return (!(symbol.GetResultantVisibility() == SymbolVisibility.Public && !symbol.IsOverride)) ||
+            return (!(symbol.IsExternallyVisible() && !symbol.IsOverride)) ||
                 symbol.IsAccessorMethod() || symbol.IsImplementationOfAnyInterfaceMember();
         }
 

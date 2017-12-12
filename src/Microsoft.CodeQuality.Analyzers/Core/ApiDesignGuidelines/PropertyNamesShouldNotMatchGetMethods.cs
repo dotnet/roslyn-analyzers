@@ -20,8 +20,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private const string Get = "Get";
 
-        private static readonly ImmutableHashSet<Accessibility> ExposedAccessibilities = ImmutableHashSet.Create(Accessibility.Public, Accessibility.Protected, Accessibility.ProtectedOrInternal);
-
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
@@ -53,7 +51,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var symbol = context.Symbol;
 
             // Bail out if the method/property is not exposed (public, protected, or protected internal)
-            if (!ExposedAccessibilities.Contains(symbol.DeclaredAccessibility))
+            if (!symbol.IsExternallyVisible())
             {
                 return;
             }
@@ -79,9 +77,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 Diagnostic diagnostic = null;
 
-                var exposedMembers = type.GetMembers(identifier).Where(member => ExposedAccessibilities.Contains(member.DeclaredAccessibility));
+                var exposedMembers = type.GetMembers(identifier).Where(member => member.IsExternallyVisible());
                 foreach (var member in exposedMembers)
                 {
+                    // Ignore Object.GetType, as it's commonly seen and Type is a commonly-used property name.
+                    if (member.ContainingType.SpecialType == SpecialType.System_Object &&
+                        member.Name == nameof(GetType))
+                    {
+                        continue;
+                    }
+
                     // If the declared type is a property, was a matching method found?
                     if (symbol.Kind == SymbolKind.Property && member.Kind == SymbolKind.Method)
                     {

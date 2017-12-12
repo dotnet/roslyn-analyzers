@@ -103,6 +103,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
+            // FxCop compat: only fire on externally visible types.
+            if (!symbol.IsExternallyVisible())
+            {
+                return;
+            }
 
             ImmutableArray<IFieldSymbol> zeroValuedFields = GetZeroValuedFields(symbol).ToImmutableArray();
 

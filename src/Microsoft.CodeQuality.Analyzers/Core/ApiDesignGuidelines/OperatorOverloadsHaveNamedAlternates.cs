@@ -84,6 +84,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static void AnalyzeSymbol(SymbolAnalysisContext symbolContext)
         {
             var methodSymbol = (IMethodSymbol)symbolContext.Symbol;
+
+            // FxCop compat: only analyze externally visible symbols.
+            if (!methodSymbol.IsExternallyVisible())
+            {
+                return;
+            }
+
             if (methodSymbol.ContainingSymbol is ITypeSymbol typeSymbol && (methodSymbol.MethodKind == MethodKind.UserDefinedOperator || methodSymbol.MethodKind == MethodKind.Conversion))
             {
                 string operatorName = methodSymbol.Name;

@@ -4,22 +4,22 @@
     <body>
       <trans-unit id="MarkAssembliesWithNeutralResourcesLanguageTitle">
         <source>Mark assemblies with NeutralResourcesLanguageAttribute</source>
-        <target state="new">Mark assemblies with NeutralResourcesLanguageAttribute</target>
+        <target state="translated">Bütünleştirilmiş kodları NeutralResourcesLanguageAttribute ile işaretle</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithNeutralResourcesLanguageDescription">
         <source>The NeutralResourcesLanguage attribute informs the ResourceManager of the language that was used to display the resources of a neutral culture for an assembly. This improves lookup performance for the first resource that you load and can reduce your working set.</source>
-        <target state="new">The NeutralResourcesLanguage attribute informs the ResourceManager of the language that was used to display the resources of a neutral culture for an assembly. This improves lookup performance for the first resource that you load and can reduce your working set.</target>
+        <target state="translated">NeutralResourcesLanguage özniteliği ResourceManager’a bir derleme için nötr kültürdeki kaynakları görüntülemek için kullanılan dili bildirir. Bu, yüklediğiniz ilk kaynak için arama performansını iyileştirir ve çalışma kümenizi azaltabilir.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithNeutralResourcesLanguageMessage">
         <source>Mark assemblies with NeutralResourcesLanguageAttribute</source>
-        <target state="new">Mark assemblies with NeutralResourcesLanguageAttribute</target>
+        <target state="translated">Bütünleştirilmiş kodları NeutralResourcesLanguageAttribute ile işaretle</target>
         <note />
       </trans-unit>
       <trans-unit id="CategoryPerformance">
         <source>Performance</source>
-        <target state="new">Performance</target>
+        <target state="translated">Performans</target>
         <note />
       </trans-unit>
     </body>

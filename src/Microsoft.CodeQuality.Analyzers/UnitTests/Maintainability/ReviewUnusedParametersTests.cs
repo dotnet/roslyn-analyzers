@@ -229,6 +229,7 @@ End Class
         {
             VerifyCSharp(@"
 using System;
+using System.Runtime.InteropServices;
 
 public abstract class Derived : Base, I
 {
@@ -275,10 +276,19 @@ public interface I
     void Method1(int param);
     void Method2(int param);
 }
+
+public class ClassWithExtern
+{
+    [DllImport(""Dependency.dll"")]
+    public static extern void DllImportMethod(int param);
+
+    public static extern void ExternalMethod(int param);
+}
 ");
 
             VerifyBasic(@"
 Imports System
+Imports System.Runtime.InteropServices
 
 Public MustInherit Class Derived
     Inherits Base
@@ -320,6 +330,14 @@ Public Interface I
     Sub Method1(param As Integer)
     Sub Method2(param As Integer)
 End Interface
+
+Public Class ClassWithExtern
+    <DllImport(""Dependency.dll"")>
+    Public Shared Sub DllImportMethod(param As Integer)
+    End Sub
+
+    Public Declare Function DeclareFunction Lib ""Dependency.dll"" (param As Integer) As Integer    
+End Class
 ");
         }
 
@@ -534,6 +552,115 @@ Imports System
 Public Class C1
     <Obsolete>
     Public Sub ObsoleteMethod(o1 as Object)
+    End Sub
+End Class");
+        }
+
+        [Fact, WorkItem(1218, "https://github.com/dotnet/roslyn-analyzers/issues/1218")]
+        public void NoDiagnosticMethodJustThrowsNotImplemented()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class MyAttribute: Attribute
+{
+    public int X;
+
+    public MyAttribute(int x)
+    {
+        X = x;
+    }
+}
+public class C1
+{
+    public int Prop1
+    {
+        get
+        {
+            throw new NotImplementedException();
+        }
+        set
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public void Method1(object o1)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Method2(object o1) => throw new NotImplementedException();
+
+    [MyAttribute(0)]
+    public void Method3(object o1)
+    {
+        throw new NotImplementedException();
+    }
+}");
+
+            VerifyBasic(@"
+Imports System
+
+Public Class C1
+    Property Prop1 As Integer
+        Get
+            Throw New NotImplementedException()
+        End Get
+        Set(ByVal value As Integer)
+            Throw New NotImplementedException()
+        End Set
+    End Property
+
+    Public Sub Method1(o1 As Object)
+        Throw New NotImplementedException()
+    End Sub
+End Class");
+        }
+
+        [Fact, WorkItem(1218, "https://github.com/dotnet/roslyn-analyzers/issues/1218")]
+        public void NoDiagnosticMethodJustThrowsNotSupported()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C1
+{
+    public int Prop1
+    {
+        get
+        {
+            throw new NotSupportedException();
+        }
+        set
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    public void Method1(object o1)
+    {
+        throw new NotSupportedException();
+    }
+
+    public void Method2(object o1) => throw new NotSupportedException();
+}");
+
+            VerifyBasic(@"
+Imports System
+
+Public Class C1
+    Property Prop1 As Integer
+        Get
+            Throw New NotSupportedException()
+        End Get
+        Set(ByVal value As Integer)
+            Throw New NotSupportedException()
+        End Set
+    End Property
+
+    Public Sub Method1(o1 As Object)
+        Throw New NotSupportedException()
     End Sub
 End Class");
         }

@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class CA1052Tests : DiagnosticAnalyzerTestBase
+    public class StaticHolderTypeTests : DiagnosticAnalyzerTestBase
     {
         #region Verifiers
 
@@ -165,7 +165,6 @@ End Class
 ");
         }
 
-
         [Fact]
         public void CA1052NoDiagnosticForInternalClassWithOnlyStaticDeclaredMembersCSharp()
         {
@@ -177,6 +176,20 @@ internal class C6
 ");
         }
 
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CA1052NoDiagnosticForEffectivelyInternalClassWithOnlyStaticDeclaredMembersCSharp()
+        {
+            VerifyCSharp(@"
+internal class C6
+{
+    public class Inner
+    {
+        public static void Foo() { }
+    }
+}
+");
+        }
+
         [Fact]
         public void CA1052NoDiagnosticForFriendClassWithOnlySharedDeclaredMembersBasic()
         {
@@ -184,6 +197,19 @@ internal class C6
 Friend Class B6
     Public Shared Sub Foo()
     End Sub
+End Class
+");
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CA1052NoDiagnosticForEffectivelyFriendClassWithOnlySharedDeclaredMembersBasic()
+        {
+            VerifyBasic(@"
+Friend Class B6
+    Public Class InnerClass
+        Public Shared Sub Foo()
+        End Sub
+    End Class
 End Class
 ");
         }

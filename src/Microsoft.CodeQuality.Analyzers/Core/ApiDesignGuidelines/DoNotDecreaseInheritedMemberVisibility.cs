@@ -55,14 +55,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             // Bail out if the method is publicly accessible, sealed, or a constructor.
-            if (method.GetResultantVisibility() == SymbolVisibility.Public || method.IsSealed || method.MethodKind == MethodKind.Constructor)
+            if (method.IsExternallyVisible() || method.IsSealed || method.MethodKind == MethodKind.Constructor)
             {
                 return;
             }
 
             // Bail out if the method's containing type is not publicly accessible or is sealed.
             var type = method.ContainingType;
-            if (type.GetResultantVisibility() != SymbolVisibility.Public || type.IsSealed)
+            if (!type.IsExternallyVisible() || type.IsSealed)
             {
                 return;
             }
@@ -77,7 +77,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var ancestorTypes = method.ContainingType.GetBaseTypes() ?? Enumerable.Empty<INamedTypeSymbol>();
             var hiddenOrOverriddenMembers = ancestorTypes.SelectMany(t => t.GetMembers(method.Name));
 
-            if (hiddenOrOverriddenMembers.Any(m => m.GetResultantVisibility() == SymbolVisibility.Public))
+            if (hiddenOrOverriddenMembers.Any(m => m.IsExternallyVisible()))
             {
                 context.ReportDiagnostic(method.CreateDiagnostic(Rule));
             }

@@ -43,10 +43,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             // We cannot have multiple overlapping diagnostics of this id.
             Diagnostic diagnostic = context.Diagnostics.Single();
-
+            string title = MicrosoftApiDesignGuidelinesAnalyzersResources.OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle;
             context.RegisterCodeFix(
-                new MyCodeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle,
-                    async ct => await ImplementOperatorEquals(context.Document, declaration, typeSymbol, ct).ConfigureAwait(false)), diagnostic);
+                new MyCodeAction(title,
+                    async ct => await ImplementOperatorEquals(context.Document, declaration, typeSymbol, ct).ConfigureAwait(false),
+                    equivalenceKey: title), diagnostic);
         }
 
         private async Task<Document> ImplementOperatorEquals(Document document, SyntaxNode declaration, INamedTypeSymbol typeSymbol, CancellationToken cancellationToken)
@@ -73,10 +74,15 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
+        }
+
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
         }
     }
 }

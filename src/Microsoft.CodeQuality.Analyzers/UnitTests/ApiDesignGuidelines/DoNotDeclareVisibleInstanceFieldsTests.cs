@@ -19,97 +19,125 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public void PublicVariableCS()
+        public void CSharp_PublicVariable_PublicContainingType()
         {
             VerifyCSharp(@"
-class A
+public class A
 {
     public string field; 
 }", GetCSharpResultAt(4, 19, DoNotDeclareVisibleInstanceFieldsAnalyzer.RuleId, DoNotDeclareVisibleInstanceFieldsAnalyzer.Rule.MessageFormat.ToString()));
         }
 
         [Fact]
-        public void PublicVariableVB()
+        public void VisualBasic_PublicVariable_PublicContainingType()
         {
             VerifyBasic(@"
-Class A
+Public Class A
     Public field As System.String
 End Class", GetBasicResultAt(3, 12, DoNotDeclareVisibleInstanceFieldsAnalyzer.RuleId, DoNotDeclareVisibleInstanceFieldsAnalyzer.Rule.MessageFormat.ToString()));
         }
 
-
-        [Fact]
-        public void DefaultVisibilityCS()
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CSharp_PublicVariable_InternalContainingType()
         {
             VerifyCSharp(@"
-class A
+internal class A
+{
+    public string field; 
+
+    public class B
+    {
+        public string field; 
+    }
+}");
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void VisualBasic_PublicVariable_InternalContainingType()
+        {
+            VerifyBasic(@"
+Friend Class A
+    Public field As System.String
+
+    Public Class B
+        Public field As System.String
+    End Class
+End Class
+");
+        }
+
+        [Fact]
+        public void CSharp_DefaultVisibility()
+        {
+            VerifyCSharp(@"
+public class A
 {
     string field; 
 }");
         }
 
         [Fact]
-        public void DefaultVisibilityVB()
+        public void VisualBasic_DefaultVisibility()
         {
             VerifyBasic(@"
-Class A
+Public Class A
     Dim field As System.String
 End Class");
         }
 
         [Fact]
-        public void PublicStaticVariableCS()
+        public void CSharp_PublicStaticVariable()
         {
             VerifyCSharp(@"
-class A
+public class A
 {
     public static string field; 
 }");
         }
 
         [Fact]
-        public void PublicStaticVariableVB()
+        public void VisualBasic_PublicStaticVariable()
         {
             VerifyBasic(@"
-Class A
+Public Class A
     Public Shared field as System.String
 End Class");
         }
 
         [Fact]
-        public void PublicStaticReadonlyVariableCS()
+        public void CSharp_PublicStaticReadonlyVariable()
         {
             VerifyCSharp(@"
-class A
+public class A
 {
     public static readonly string field; 
 }");
         }
 
         [Fact]
-        public void PublicStaticReadonlyVariableVB()
+        public void VisualBasic_PublicStaticReadonlyVariable()
         {
             VerifyBasic(@"
-Class A
+Public Class A
     Public Shared ReadOnly field as System.String
 End Class");
         }
 
         [Fact]
-        public void PublicConstVariableCS()
+        public void CSharp_PublicConstVariable()
         {
             VerifyCSharp(@"
-class A
+public class A
 {
     public const string field = ""X""; 
 }");
         }
 
         [Fact]
-        public void PublicConstVariableVB()
+        public void VisualBasic_PublicConstVariable()
         {
             VerifyBasic(@"
-Class A
+Public Class A
     Public Const field as System.String = ""X""
 End Class");
         }

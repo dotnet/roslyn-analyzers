@@ -41,7 +41,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                     MicrosoftApiDesignGuidelinesAnalyzersResources.MarkEnumsWithFlagsCodeFix :
                                                     MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsCodeFix;
             context.RegisterCodeFix(new MyCodeAction(fixTitle,
-                                         async ct => await AddOrRemoveFlagsAttribute(context.Document, context.Span, diagnostic.Id, flagsAttributeType, ct).ConfigureAwait(false)),
+                                         async ct => await AddOrRemoveFlagsAttribute(context.Document, context.Span, diagnostic.Id, flagsAttributeType, ct).ConfigureAwait(false),
+                                         equivalenceKey: fixTitle),
                         diagnostic);
         }
 
@@ -78,10 +79,15 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
+        }
+
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
         }
     }
 }

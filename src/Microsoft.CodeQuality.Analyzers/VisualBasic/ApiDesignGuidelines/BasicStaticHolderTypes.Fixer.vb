@@ -44,8 +44,8 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
             Dim root = Await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(False)
             Dim classStatement = root.FindToken(span.Start).Parent?.FirstAncestorOrSelf(Of ClassStatementSyntax)
             If classStatement IsNot Nothing Then
-                Dim title As String = String.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.MakeClassStatic, classStatement.Identifier.Text)
-                Dim fix = New MyCodeAction(title, Async Function(ct) Await AddNotInheritableKeyword(document, root, classStatement).ConfigureAwait(False))
+                Dim title As String = MicrosoftApiDesignGuidelinesAnalyzersResources.MakeClassStatic
+                Dim fix = New MyCodeAction(title, Async Function(ct) Await AddNotInheritableKeyword(document, root, classStatement).ConfigureAwait(False), equivalenceKey:=title)
                 context.RegisterCodeFix(fix, context.Diagnostics)
             End If
         End Function
@@ -57,17 +57,19 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
             Return Task.FromResult(document.WithSyntaxRoot(newRoot))
         End Function
 
+        ' Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
         Private Class MyCodeAction
             Inherits DocumentChangeAction
 
+            ' Workaround for https://github.com/dotnet/roslyn-analyzers/issues/1413
             Public Overrides ReadOnly Property EquivalenceKey As String
                 Get
-                    Return NameOf(BasicStaticHolderTypesFixer)
+                    Return MyBase.EquivalenceKey
                 End Get
             End Property
 
-            Public Sub New(title As String, createChangedDocument As Func(Of CancellationToken, Task(Of Document)))
-                MyBase.New(title, createChangedDocument)
+            Public Sub New(title As String, createChangedDocument As Func(Of CancellationToken, Task(Of Document)), equivalenceKey As String)
+                MyBase.New(title, createChangedDocument, equivalenceKey)
             End Sub
         End Class
     End Class

@@ -28,7 +28,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                          helpLinkUri: "http://msdn.microsoft.com/library/ms182359.aspx",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(Rule) : ImmutableArray<DiagnosticDescriptor>.Empty;
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -38,7 +38,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterSymbolAction(context =>
             {
                 var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
-                if (namedTypeSymbol.IsValueType && namedTypeSymbol.OverridesEquals() && !namedTypeSymbol.ImplementsEqualityOperators())
+                if (namedTypeSymbol.IsValueType &&
+                    namedTypeSymbol.IsExternallyVisible() &&
+                    namedTypeSymbol.OverridesEquals() && 
+                    !namedTypeSymbol.ImplementsEqualityOperators())
                 {
                     context.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(Rule));
                 }

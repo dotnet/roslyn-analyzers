@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class CA1052FixerTests : CodeFixTestBase
+    public class StaticHolderTypeFixerTests : CodeFixTestBase
     {
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {

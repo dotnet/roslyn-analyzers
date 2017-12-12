@@ -3,6 +3,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -93,8 +94,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             INamedTypeSymbol readOnlyCollectionBase)
         {
             var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
-            var interfaces = namedTypeSymbol.Interfaces.Select(t => t.OriginalDefinition).ToImmutableArray();
 
+            // FxCop compat: only fire on externally visible types.
+            if (!namedTypeSymbol.IsExternallyVisible())
+            {
+                return;
+            }
+
+            var interfaces = namedTypeSymbol.Interfaces.Select(t => t.OriginalDefinition).ToImmutableArray();
             bool diagnosticReported = false;
             foreach (INamedTypeSymbol @interface in interfaces)
             {

@@ -106,7 +106,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 if (eventSymbol != null)
                 {
                     if (eventSymbol.Type is INamedTypeSymbol eventType &&
-                        eventSymbol.GetResultantVisibility() == SymbolVisibility.Public &&
+                        eventSymbol.IsExternallyVisible() &&
                         !eventSymbol.IsOverride &&
                         !eventSymbol.IsImplementationOfAnyInterfaceMember() &&
                         !HasComSourceInterfacesAttribute(eventSymbol.ContainingType) &&

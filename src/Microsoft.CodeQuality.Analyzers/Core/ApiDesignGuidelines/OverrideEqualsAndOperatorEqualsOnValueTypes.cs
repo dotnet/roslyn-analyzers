@@ -41,10 +41,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              s_localizableMessageOpEquality,
                                                                              s_category,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             true,
-                                                                             s_localizableDescription,
-                                                                             s_helpLinkUri,
-                                                                             WellKnownDiagnosticTags.Telemetry);
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
+                                                                             description: s_localizableDescription,
+                                                                             helpLinkUri: s_helpLinkUri,
+                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(EqualsRule, OpEqualityRule);
 
@@ -68,7 +68,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     //  3. Do not fire for value types without members.
                     if (!namedType.IsValueType ||
                         namedType.TypeKind == TypeKind.Enum ||
-                        namedType.GetResultantVisibility() != SymbolVisibility.Public ||
+                        !namedType.IsExternallyVisible() ||
                         !namedType.GetMembers().Any(m => !m.IsConstructor()))
                     {
                         return;

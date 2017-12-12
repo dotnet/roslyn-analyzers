@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class CA1008FixerTests : CodeFixTestBase
+    public class EnumsShouldHaveZeroValueFixerTests : CodeFixTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
@@ -38,7 +38,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 public class Outer
 {
     [System.Flags]
-    private enum E
+    public enum E
     {
         A = 0,
         B = 3
@@ -77,7 +77,7 @@ public enum NoZeroValuedField
 public class Outer
 {
     [System.Flags]
-    private enum E
+    public enum E
     {
         None = 0,
         B = 3
@@ -121,7 +121,7 @@ public enum NoZeroValuedField
 public class Outer
 {
     [System.Flags]
-    private enum E
+    public enum E
     {
         None = 0,
         A = 0
@@ -129,7 +129,7 @@ public class Outer
 }
 // Some comment
 [System.Flags]
-internal enum E2
+public enum E2
 {
     None = 0,
     A = None
@@ -138,14 +138,14 @@ internal enum E2
 public class Outer
 {
     [System.Flags]
-    private enum E
+    public enum E
     {
         None = 0
     }
 }
 // Some comment
 [System.Flags]
-internal enum E2
+public enum E2
 {
     None = 0
 }";
@@ -158,25 +158,25 @@ internal enum E2
             var code = @"
 public class Outer
 {
-    private enum E
+    public enum E
     {
         A = 1
     }
 
-    private enum E2
+    public enum E2
     {
         None = 1,
         A = 2
     }
 }
 
-internal enum E3
+public enum E3
 {
     None = 0,
     A = 1
 }
 
-internal enum E4
+public enum E4
 {
     None = 0,
     A = 0
@@ -186,26 +186,26 @@ internal enum E4
             var expectedFixedCode = @"
 public class Outer
 {
-    private enum E
+    public enum E
     {
         None,
         A = 1
     }
 
-    private enum E2
+    public enum E2
     {
         None,
         A = 2
     }
 }
 
-internal enum E3
+public enum E3
 {
     None = 0,
     A = 1
 }
 
-internal enum E4
+public enum E4
 {
     None = 0,
     A = 0
@@ -218,9 +218,9 @@ internal enum E4
         public void VisualBasic_EnumsShouldZeroValueFlagsRename()
         {
             var code = @"
-Class Outer
+Public Class Outer
     <System.Flags>
-    Private Enum E
+    Public Enum E
         A = 0
         B = 1
     End Enum
@@ -246,9 +246,9 @@ End Enum
 ";
 
             var expectedFixedCode = @"
-Class Outer
+Public Class Outer
     <System.Flags>
-    Private Enum E
+    Public Enum E
         None = 0
         B = 1
     End Enum
@@ -280,9 +280,9 @@ End Enum
         public void VisualBasic_EnumsShouldZeroValueFlagsRename_AttributeListHasTrivia()
         {
             var code = @"
-Class Outer
+Public Class Outer
     <System.Flags> _
-    Private Enum E
+    Public Enum E
         A = 0
         B = 1
     End Enum
@@ -308,9 +308,9 @@ End Enum
 ";
 
             var expectedFixedCode = @"
-Class Outer
+Public Class Outer
     <System.Flags> _
-    Private Enum E
+    Public Enum E
         None = 0
         B = 1
     End Enum
@@ -341,16 +341,16 @@ End Enum
         public void VisualBasic_EnumsShouldZeroValueFlagsMultipleZero()
         {
             var code = @"
-Class Outer
+Public Class Outer
     <System.Flags>
-    Private Enum E
+    Public Enum E
         None = 0
         A = 0
     End Enum
 End Class
 
 <System.Flags>
-Friend Enum E2
+Public Enum E2
     None = 0
     A = None
 End Enum
@@ -362,15 +362,15 @@ Public Enum E3
 End Enum";
 
             var expectedFixedCode = @"
-Class Outer
+Public Class Outer
     <System.Flags>
-    Private Enum E
+    Public Enum E
         None = 0
     End Enum
 End Class
 
 <System.Flags>
-Friend Enum E2
+Public Enum E2
     None = 0
 End Enum
 
@@ -386,47 +386,47 @@ End Enum";
         public void VisualBasic_EnumsShouldZeroValueNotFlagsNoZeroValue()
         {
             var code = @"
-Class C
-    Private Enum E
+Public Class C
+    Public Enum E
         A = 1
     End Enum
 
-    Private Enum E2
+    Public Enum E2
         None = 1
         A = 2
     End Enum
 End Class
 
-Friend Enum E3
+Public Enum E3
     None = 0
     A = 1
 End Enum
 
-Friend Enum E4
+Public Enum E4
     None = 0
     A = 0
 End Enum
 ";
 
             var expectedFixedCode = @"
-Class C
-    Private Enum E
+Public Class C
+    Public Enum E
         None
         A = 1
     End Enum
 
-    Private Enum E2
+    Public Enum E2
         None
         A = 2
     End Enum
 End Class
 
-Friend Enum E3
+Public Enum E3
     None = 0
     A = 1
 End Enum
 
-Friend Enum E4
+Public Enum E4
     None = 0
     A = 0
 End Enum

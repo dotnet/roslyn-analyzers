@@ -56,7 +56,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              helpLinkUri: helpLinkUri,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(PropertyGetterRule, HasAllowedExceptionsRule, NoAllowedExceptionsRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ?
+            ImmutableArray.Create(PropertyGetterRule, HasAllowedExceptionsRule, NoAllowedExceptionsRule) :
+            ImmutableArray<DiagnosticDescriptor>.Empty;
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -152,8 +154,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 // If we are supposed to analyze only public methods get the resultant visibility
                 // i.e public method inside an internal class is not considered public.
-                if (_analyzeOnlyPublicMethods &&
-                    method.GetResultantVisibility() != SymbolVisibility.Public)
+                if (_analyzeOnlyPublicMethods && !method.IsExternallyVisible())
                 {
                     return false;
                 }

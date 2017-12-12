@@ -34,8 +34,6 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        private static readonly ConcurrentDictionary<string, SyntaxGenerator> s_generators = new ConcurrentDictionary<string, SyntaxGenerator>();
-
         public override void Initialize(AnalysisContext analysisContext)
         {
             analysisContext.EnableConcurrentExecution();
@@ -63,18 +61,10 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     var values = GetConstantArgumentValues(propertyReference.Arguments);
                     if (values != null && !initializedElementIndexes.Add(values))
                     {
-                        var generator = s_generators.GetOrAdd(
-                            context.Compilation.Language,
-                            language => SyntaxGenerator.GetGenerator(new AdhocWorkspace(), language));
-                        var indexesText = string.Join(", ", values.Select(value => generator.LiteralExpression(value)));
+                        var indexesText = string.Join(", ", values.Select(value => value?.ToString() ?? "null"));
                         context.ReportDiagnostic(
                             Diagnostic.Create(Rule, propertyReference.Syntax.GetLocation(), indexesText));
                     }
-                }
-
-                if (context.CancellationToken.IsCancellationRequested)
-                {
-                    break;
                 }
             }
         }

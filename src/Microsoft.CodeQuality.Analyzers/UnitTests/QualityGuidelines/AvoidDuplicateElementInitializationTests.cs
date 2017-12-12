@@ -90,7 +90,7 @@ class C
     }
 }
 ",
-                GetCSharpResultAt(10, 13, "\"a\""));
+                GetCSharpResultAt(10, 13, "a"));
         }
 
         [Fact]
@@ -110,7 +110,7 @@ class C
     }
 }
 ",
-                GetCSharpResultAt(10, 13, "\"ab\""));
+                GetCSharpResultAt(10, 13, "ab"));
         }
 
         [Fact]
@@ -161,7 +161,7 @@ class D
     }
 }
 ",
-                GetCSharpResultAt(11, 13, "1, \"a\""));
+                GetCSharpResultAt(11, 13, "1, a"));
         }
 
         [Fact]
@@ -191,7 +191,7 @@ class D
     }
 }
 ",
-                GetCSharpResultAt(11, 13, "\"a\", \"b\""));
+                GetCSharpResultAt(11, 13, "a, b"));
         }
 
         [Fact]
@@ -221,7 +221,7 @@ class D
     }
 }
 ",
-                GetCSharpResultAt(11, 13, "\"a\", \"b\""));
+                GetCSharpResultAt(11, 13, "a, b"));
         }
 
         [Fact]
@@ -251,7 +251,7 @@ class D
     }
 }
 ",
-                GetCSharpResultAt(11, 13, "\"a\", \"b\""));
+                GetCSharpResultAt(11, 13, "a, b"));
         }
 
         [Fact]
@@ -271,7 +271,7 @@ class C
     }
 }
 ",
-                GetCSharpResultAt(10, 13, "\"a\""));
+                GetCSharpResultAt(10, 13, "a"));
         }
 
         private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)

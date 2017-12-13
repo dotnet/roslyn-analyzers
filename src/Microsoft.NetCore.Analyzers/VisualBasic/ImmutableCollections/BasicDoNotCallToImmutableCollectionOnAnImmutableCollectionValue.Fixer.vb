@@ -7,7 +7,7 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 
 Namespace Microsoft.NetCore.VisualBasic.Analyzers.ImmutableCollections
     ''' <summary>
-    ''' RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
+    ''' CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicDoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer

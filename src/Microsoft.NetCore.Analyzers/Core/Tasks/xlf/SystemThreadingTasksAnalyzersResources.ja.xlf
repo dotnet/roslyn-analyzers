@@ -17,11 +17,6 @@
         <target state="translated">TaskScheduler を渡さずにタスクを作成しない</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryReliability">
-        <source>Reliability</source>
-        <target state="translated">信頼性</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

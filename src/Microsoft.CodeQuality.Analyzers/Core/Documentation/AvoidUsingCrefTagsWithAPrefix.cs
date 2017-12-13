@@ -12,7 +12,7 @@ namespace Microsoft.CodeQuality.Analyzers.Documentation
     /// </summary>
     public abstract class AvoidUsingCrefTagsWithAPrefixAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "RS0010";
+        internal const string RuleId = "CA1200";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(XmlDocumentationCommentsAnalyzersResources.AvoidUsingCrefTagsWithAPrefixTitle), XmlDocumentationCommentsAnalyzersResources.ResourceManager, typeof(XmlDocumentationCommentsAnalyzersResources));
 

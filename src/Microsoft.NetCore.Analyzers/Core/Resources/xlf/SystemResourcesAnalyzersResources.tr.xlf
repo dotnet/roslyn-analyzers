@@ -17,11 +17,6 @@
         <target state="translated">Bütünleştirilmiş kodları NeutralResourcesLanguageAttribute ile işaretle</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryPerformance">
-        <source>Performance</source>
-        <target state="translated">Performans</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

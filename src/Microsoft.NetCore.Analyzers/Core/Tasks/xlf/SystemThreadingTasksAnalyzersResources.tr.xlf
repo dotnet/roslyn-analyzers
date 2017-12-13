@@ -17,11 +17,6 @@
         <target state="translated">Bir TaskScheduler geçirmeden bir görev oluşturmayın</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryReliability">
-        <source>Reliability</source>
-        <target state="translated">Güvenilirlik</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

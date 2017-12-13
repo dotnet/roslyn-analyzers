@@ -183,12 +183,6 @@
   <data name="AvoidUnusedPrivateFieldsMessage" xml:space="preserve">
     <value>Unused field '{0}'.</value>
   </data>
-  <data name="CategoryMaintainability" xml:space="preserve">
-    <value>Maintainability</value>
-  </data>
-  <data name="CategoryPerformance" xml:space="preserve">
-    <value>Performance</value>
-  </data>
   <data name="DoNotIgnoreMethodResultsMessagePureMethod" xml:space="preserve">
     <value>{0} calls {1} but does not use the value the method returns. Because {1} is marked as a Pure method, it cannot have side effects. Use the result in a conditional statement, assign the result to a variable, or pass it as an argument to another method.</value>
   </data>

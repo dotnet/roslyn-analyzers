@@ -55,7 +55,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         internal static DiagnosticDescriptor ObjectCreationRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageObjectCreation,
-                                                                             DiagnosticCategory.Performance,
+                                                                             DiagnosticCategory.Usage,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,

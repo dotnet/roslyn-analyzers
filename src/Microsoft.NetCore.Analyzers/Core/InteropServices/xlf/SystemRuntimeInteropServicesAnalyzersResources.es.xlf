@@ -97,31 +97,6 @@
         <target state="translated">Utilice el valor hresult devuelto por el método "{0}" y llame a Marshal.ThrowExceptionForHR.</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryGlobalization">
-        <source>Globalization</source>
-        <target state="translated">Globalización</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CategoryInteroperability">
-        <source>Interoperability</source>
-        <target state="translated">Interoperabilidad</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CategoryPortability">
-        <source>Portability</source>
-        <target state="translated">Portabilidad</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CategoryReliability">
-        <source>Reliability</source>
-        <target state="translated">Confiabilidad</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CategoryUsage">
-        <source>Usage</source>
-        <target state="translated">Uso</target>
-        <note />
-      </trans-unit>
       <trans-unit id="MarkBooleanPInvokeArgumentsWithMarshalAsTitle">
         <source>Mark boolean PInvoke arguments with MarshalAs</source>
         <target state="translated">Marcar los argumentos booleanos de PInvoke con MarshalAs</target>

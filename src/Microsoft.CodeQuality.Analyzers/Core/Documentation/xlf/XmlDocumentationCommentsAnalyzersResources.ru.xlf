@@ -17,11 +17,6 @@
         <target state="translated">Не используйте теги cref в префиксе</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryDocumentation">
-        <source>Documentation</source>
-        <target state="translated">Документация</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -17,11 +17,6 @@
         <target state="translated">Označení sestavení atributem NeutralResourcesLanguageAttribute</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryPerformance">
-        <source>Performance</source>
-        <target state="translated">Výkon</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -17,11 +17,6 @@
         <target state="translated">Não crie tarefas sem passar um TaskScheduler</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryReliability">
-        <source>Reliability</source>
-        <target state="translated">Confiabilidade</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

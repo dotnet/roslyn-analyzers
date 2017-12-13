@@ -112,16 +112,6 @@
         <target state="translated">Nepoužité pole {0}.</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryMaintainability">
-        <source>Maintainability</source>
-        <target state="translated">Udržovatelnost</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CategoryPerformance">
-        <source>Performance</source>
-        <target state="translated">Výkon</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsMessagePureMethod">
         <source>{0} calls {1} but does not use the value the method returns. Because {1} is marked as a Pure method, it cannot have side effects. Use the result in a conditional statement, assign the result to a variable, or pass it as an argument to another method.</source>
         <target state="translated">{0} volá {1}, ale nepoužívá hodnotu, kterou tato metoda vrací. Protože {1} je označená jako metoda Pure, nemůže mít vedlejší účinky. Použijte výsledek v podmíněném příkazu, přiřaďte výsledek proměnné nebo ho předejte jako argument jiné metodě.</target>

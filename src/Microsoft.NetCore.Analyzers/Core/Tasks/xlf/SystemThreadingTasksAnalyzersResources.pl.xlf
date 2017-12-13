@@ -17,11 +17,6 @@
         <target state="translated">Nie twórz zadań bez przekazania klasy TaskScheduler</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryReliability">
-        <source>Reliability</source>
-        <target state="translated">Niezawodność</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

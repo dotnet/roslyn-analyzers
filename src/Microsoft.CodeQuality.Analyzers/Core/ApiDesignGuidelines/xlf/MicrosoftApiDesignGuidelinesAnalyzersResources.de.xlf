@@ -483,8 +483,8 @@
         <note />
       </trans-unit>
       <trans-unit id="CollectionPropertiesShouldBeReadOnlyMessage">
-        <source>Collection properties should be read only</source>
-        <target state="translated">Sammlungseigenschaften müssen schreibgeschützt sein</target>
+        <source>Change '{0}' to be read-only by removing the property setter.</source>
+        <target state="needs-review-translation">Sammlungseigenschaften müssen schreibgeschützt sein</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle">

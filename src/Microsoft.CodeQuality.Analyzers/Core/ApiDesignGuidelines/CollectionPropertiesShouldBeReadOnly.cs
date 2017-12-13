@@ -96,7 +96,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
             }
 
-            context.ReportDiagnostic(property.CreateDiagnostic(Rule));
+            context.ReportDiagnostic(property.CreateDiagnostic(Rule, property.Name));
         }
 
         private static bool Inherits(ITypeSymbol symbol, ITypeSymbol baseType)

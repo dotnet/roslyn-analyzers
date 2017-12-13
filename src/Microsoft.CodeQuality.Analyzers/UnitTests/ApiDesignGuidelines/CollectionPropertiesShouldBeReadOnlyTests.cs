@@ -18,6 +18,20 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             return new CollectionPropertiesShouldBeReadOnlyAnalyzer();
         }
 
+        private DiagnosticResult GetBasicResultAt(int line, int column, string propertyName)
+        {
+            return GetBasicResultAt(line, column,
+                id: CollectionPropertiesShouldBeReadOnlyAnalyzer.RuleId,
+                message: string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionPropertiesShouldBeReadOnlyMessage, propertyName));
+        }
+
+        private DiagnosticResult GetCSharpResultAt(int line, int column, string propertyName)
+        {
+            return GetCSharpResultAt(line, column,
+                id: CollectionPropertiesShouldBeReadOnlyAnalyzer.RuleId,
+                message: string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionPropertiesShouldBeReadOnlyMessage, propertyName));
+        }
+
         [Fact]
         public void CSharp_CA2227_Test()
         {
@@ -28,7 +42,7 @@ public class A
 {
     public System.Collections.ICollection Col { get; set; }
 }
-", GetCSharpResultAt(6, 43, CollectionPropertiesShouldBeReadOnlyAnalyzer.RuleId, CollectionPropertiesShouldBeReadOnlyAnalyzer.Rule.MessageFormat.ToString()));
+", GetCSharpResultAt(6, 43, "Col"));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -71,7 +85,7 @@ Imports System
 Public Class A
     Public Property Col As System.Collections.ICollection
 End Class
-", GetBasicResultAt(5, 21, CollectionPropertiesShouldBeReadOnlyAnalyzer.RuleId, CollectionPropertiesShouldBeReadOnlyAnalyzer.Rule.MessageFormat.ToString()));
+", GetBasicResultAt(5, 21, "Col"));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -128,7 +142,7 @@ public class A<T>
 {
     public System.Collections.Generic.List<T> Col { get; set; }
 }
-", GetCSharpResultAt(6, 47, CollectionPropertiesShouldBeReadOnlyAnalyzer.RuleId, CollectionPropertiesShouldBeReadOnlyAnalyzer.Rule.MessageFormat.ToString()));
+", GetCSharpResultAt(6, 47, "Col"));
         }
 
         [Fact]

@@ -1,13 +1,14 @@
 <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project>
-  <Import Project="$(RepoToolsetDir)Imports.targets" Condition="Exists('$(RepoToolsetDir)Imports.targets')" />  
-
   <!--  
     Resx files are already included by the SDK. 
     Update them with GenerateSource property to process them by GenerateResxSource target
-    that generates source code for them.
+    that generates source code for them. Do this before the RepoToolset targets are imported
+    so that they can add additional metadata to these EmbeddedResource items.
   -->
   <ItemGroup>
     <EmbeddedResource Update="**\*.resx" GenerateSource="true" />
   </ItemGroup>
+
+  <Import Project="$(RepoToolsetDir)Imports.targets" Condition="Exists('$(RepoToolsetDir)Imports.targets')" />  
 </Project>

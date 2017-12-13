@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -23,7 +25,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
                 typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage =
+        private static readonly LocalizableString s_localizableStandardMessage =
             new LocalizableResourceString(
                 nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceMessage),
                 MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
@@ -39,7 +41,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             new DiagnosticDescriptor(
                 RuleId,
                 s_localizableTitle,
-                s_localizableMessage,
+                s_localizableStandardMessage,
                 DiagnosticCategory.Design,
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
                 isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
@@ -63,8 +65,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                    INamedTypeSymbol genericIEnumerableType = WellKnownTypes.GenericIEnumerable(context.Compilation);
                    INamedTypeSymbol iListType = WellKnownTypes.IList(context.Compilation);
                    INamedTypeSymbol genericIListType = WellKnownTypes.GenericIList(context.Compilation);
-                   INamedTypeSymbol collectionBase = WellKnownTypes.CollectionBase(context.Compilation);
-                   INamedTypeSymbol readOnlyCollectionBase = WellKnownTypes.ReadOnlyCollectionBase(context.Compilation);
 
                    if (iCollectionType == null && genericICollectionType == null &&
                        iEnumerableType == null && genericIEnumerableType == null &&
@@ -76,8 +76,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                    context.RegisterSymbolAction(c => AnalyzeSymbol(c,
                                                 iCollectionType, genericICollectionType,
                                                 iEnumerableType, genericIEnumerableType,
-                                                iListType, genericIListType,
-                                                collectionBase, readOnlyCollectionBase),
+                                                iListType, genericIListType),
                                                 SymbolKind.NamedType);
                });
         }
@@ -89,9 +88,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             INamedTypeSymbol iEnumerableType,
             INamedTypeSymbol gEnumerableType,
             INamedTypeSymbol iListType,
-            INamedTypeSymbol gListType,
-            INamedTypeSymbol collectionBase,
-            INamedTypeSymbol readOnlyCollectionBase)
+            INamedTypeSymbol gListType)
         {
             var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
 
@@ -101,32 +98,94 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            var interfaces = namedTypeSymbol.Interfaces.Select(t => t.OriginalDefinition).ToImmutableArray();
-            bool diagnosticReported = false;
-            foreach (INamedTypeSymbol @interface in interfaces)
+            var allInterfaces = namedTypeSymbol.AllInterfaces.Select(t => t.OriginalDefinition).ToImmutableArray();
+
+            var allInterfacesStatus = default(CollectionsInterfaceStatus);
+            foreach (var @interface in allInterfaces)
             {
-                if ((@interface.Equals(iCollectionType) && !interfaces.Contains(gCollectionType)) ||
-                     (@interface.Equals(iEnumerableType) && !interfaces.Contains(gEnumerableType)) ||
-                      (@interface.Equals(iListType) && !interfaces.Contains(gListType)))
+                if (@interface.Equals(iCollectionType))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Rule, namedTypeSymbol.Locations.First(), namedTypeSymbol.Name, @interface.Name));
-                    diagnosticReported = true;
-                    break;
+                    allInterfacesStatus.ICollectionPresent = true;
+                }
+                else if (@interface.Equals(iEnumerableType))
+                {
+                    allInterfacesStatus.IEnumerablePresent = true;
+                }
+                else if (@interface.Equals(iListType))
+                {
+                    allInterfacesStatus.IListPresent = true;
+                }
+                else if (@interface.Equals(gCollectionType))
+                {
+                    allInterfacesStatus.GCollectionPresent = true;
+                }
+                else if (@interface.Equals(gEnumerableType))
+                {
+                    allInterfacesStatus.GEnumerablePresent = true;
+                }
+                else if (@interface.Equals(gListType))
+                {
+                    allInterfacesStatus.GListPresent = true;
                 }
             }
 
-            if (!diagnosticReported && namedTypeSymbol.BaseType != null)
+            INamedTypeSymbol missingInterface;
+            INamedTypeSymbol implementedInterface;
+            if (allInterfacesStatus.GListPresent)
             {
-                // If the type inherits from CollectionsBase but doesn't implement a generic ienumerable, this is probably an error,
-                // as collectionbase and readonlycollectionbase are meant for strongly typed collections
-                var allInterfaces = namedTypeSymbol.AllInterfaces.Select(t => t.OriginalDefinition).ToImmutableArray();
-                var originalBaseType = namedTypeSymbol.BaseType.OriginalDefinition;
-                if (allInterfaces.Contains(iEnumerableType) && !allInterfaces.Contains(gEnumerableType) &&
-                    (originalBaseType.Equals(collectionBase) || originalBaseType.Equals(readOnlyCollectionBase)))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Rule, namedTypeSymbol.Locations.First(), namedTypeSymbol.Name, originalBaseType.Name));
-                }
+                // Implemented IList<T>, meaning has all 3 generic interfaces. Nothing can be wrong.
+                return;
             }
+            else if (allInterfacesStatus.IListPresent)
+            {
+                // Implemented IList but not IList<T>.
+                missingInterface = gListType;
+                implementedInterface = iListType;
+            }
+            else if (allInterfacesStatus.GCollectionPresent)
+            {
+                // Implemented ICollection<T>, and doesn't have an inherit of IList. Nothing can be wrong
+                return;
+            }
+            else if (allInterfacesStatus.ICollectionPresent)
+            {
+                // Implemented ICollection but not ICollection<T>
+                missingInterface = gCollectionType;
+                implementedInterface = iCollectionType;
+            }
+            else if (allInterfacesStatus.GEnumerablePresent)
+            {
+                // Implemented IEnumerable<T>, and doesn't have an inherit of ICollection. Nothing can be wrong
+                return;
+            }
+            else if (allInterfacesStatus.IEnumerablePresent)
+            {
+                // Implemented IEnumerable, but not IEnumerable<T>
+                missingInterface = gEnumerableType;
+                implementedInterface = iEnumerableType;
+            }
+            else
+            {
+                // No collections implementation, nothing can be wrong.
+                return;
+            }
+
+            Debug.Assert(missingInterface != null && implementedInterface != null);
+            context.ReportDiagnostic(Diagnostic.Create(Rule,
+                                                       namedTypeSymbol.Locations.First(),
+                                                       namedTypeSymbol.Name,
+                                                       implementedInterface.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
+                                                       missingInterface.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
+        }
+
+        private struct CollectionsInterfaceStatus
+        {
+            public bool IListPresent { get; set; }
+            public bool GListPresent { get; set; }
+            public bool ICollectionPresent { get; set; }
+            public bool GCollectionPresent { get; set; }
+            public bool IEnumerablePresent { get; set; }
+            public bool GEnumerablePresent { get; set; }
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             s_localizableMessage,
             DiagnosticCategory.Performance,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX);
+            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget);
 
         /// <summary>Gets the set of supported diagnostic descriptors from this analyzer.</summary>
         public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(UseArrayEmptyDescriptor);

@@ -81,18 +81,20 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             else
             {
                 // The target method accepts a CancellationToken. Check if default(CancellationToken) or CancellationToken.None is being passed.
-                var argument = invocation.Arguments.FirstOrDefault(a => a.Type == cancellationTokenType);
+                var argumentValue = invocation.Arguments
+                    .Select(argument => argument.Value)
+                    .FirstOrDefault(value => value.Type == cancellationTokenType);
 
-                // All valid code should result in 'argument' being non-null. Even if the CancellationToken is an optional
-                // parameter and the caller does not explicitly pass it, 'argument' will still correspond to a compiler-generated
+                // All valid code should result in 'argumentValue' being non-null. Even if the CancellationToken is an optional
+                // parameter and the caller does not explicitly pass it, 'argumentValue' will still correspond to a compiler-generated
                 // CancellationToken value. However, check for null to ensure we don't crash on invalid code.
-                if (argument == null)
+                if (argumentValue == null)
                 {
                     // The code is invalid. The compiler error will be enough warning for the developer.
                     return false;
                 }
 
-                if (!IsCancellationTokenNone(argument, cancellationTokenType))
+                if (!IsCancellationTokenNone(argumentValue, cancellationTokenType))
                 {
                     // A non-default CancellationToken is being passed.
                     return false;
@@ -108,21 +110,20 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return true;
         }
 
-        private static bool IsCancellationTokenNone(IArgumentOperation argument, INamedTypeSymbol cancellationTokenType)
+        private static bool IsCancellationTokenNone(IOperation value, INamedTypeSymbol cancellationTokenType)
         {
             // This method returns true for CancellationToken.None, explicitly-passed default(CancellationToken),
             // and compiler-generated default(CancellationToken) (e.g. as the value of an optional parameter).
             // Note that default(CancellationToken) is equivalent to CancellationToken.None.
 
-            var argumentValue = argument.Value;
-            Debug.Assert(argumentValue.Type == cancellationTokenType);
+            Debug.Assert(value.Type == cancellationTokenType);
 
-            switch (argumentValue.Kind)
+            switch (value.Kind)
             {
                 case OperationKind.DefaultValue:
                     return true;
                 case OperationKind.PropertyReference:
-                    var property = ((IPropertyReferenceOperation)argumentValue).Property;
+                    var property = ((IPropertyReferenceOperation)value).Property;
                     if (property.Name == "None" && property.ContainingType == cancellationTokenType)
                     {
                         return true;
@@ -141,15 +142,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             bool IsUsableCancellationTokenVariable(ISymbol symbol)
             {
-                switch (symbol)
+                switch (symbol.Kind)
                 {
-                    case IFieldSymbol field:
+                    case SymbolKind.Field:
+                        var field = (IFieldSymbol)symbol;
                         return field.Type == cancellationTokenType;
-                    case ILocalSymbol local:
+                    case SymbolKind.Local:
+                        var local = (ILocalSymbol)symbol;
                         return local.Type == cancellationTokenType &&
                             !local.IsInaccessibleLocal(position) &&
                             !(local.IsUninitializedVariable(invocation.Syntax, semanticModel) ?? true);
-                    case IParameterSymbol parameter:
+                    case SymbolKind.Parameter:
+                        var parameter = (IParameterSymbol)symbol;
                         return parameter.Type == cancellationTokenType &&
                             !(parameter.IsUninitializedVariable(invocation.Syntax, semanticModel) ?? true);
                     default:

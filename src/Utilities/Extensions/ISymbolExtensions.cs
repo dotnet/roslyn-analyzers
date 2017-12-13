@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
@@ -407,7 +408,8 @@ namespace Analyzer.Utilities.Extensions
         }
 
         /// <summary>
-        /// Checks if a symbol corresponds to an uninitialized local variable or parameter.
+        /// Checks if a symbol corresponds to a local variable or parameter that is uninitialized at a particular statement/expression.
+        /// Returns <see langword="null"/> if data flow analysis fails, and the result could not be determined.
         /// </summary>
         public static bool? IsUninitializedVariable(this ISymbol symbol, SyntaxNode statementOrExpression, SemanticModel semanticModel)
         {
@@ -420,7 +422,7 @@ namespace Analyzer.Utilities.Extensions
                     {
                         return null;
                     }
-                    return analysis.DataFlowsIn.Contains(symbol);
+                    return !analysis.DataFlowsIn.Contains(symbol);
                 default:
                     return false;
             }

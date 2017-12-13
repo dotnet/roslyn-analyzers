@@ -406,7 +406,7 @@
     <value>A writable collection property allows a user to replace the collection with a different collection. A read-only property stops the collection from being replaced but still allows the individual members to be set.</value>
   </data>
   <data name="CollectionPropertiesShouldBeReadOnlyMessage" xml:space="preserve">
-    <value>Collection properties should be read only</value>
+    <value>Change '{0}' to be read-only by removing the property setter.</value>
   </data>
   <data name="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle" xml:space="preserve">
     <value>Overload operator equals on overriding value type Equals</value>

@@ -22,12 +22,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
         private DiagnosticResult GetBasicResultAt(int line, int column, params object[] messageArguments)
         {
-            return GetBasicResultAt(line, column, DoNotMixBlockingAndAsyncAnalyzer.Rule, messageArguments);
+            return GetBasicResultAt(line, column,
+                rule: DoNotMixBlockingAndAsyncAnalyzer.Rule,
+                messageArguments: messageArguments);
         }
 
         private DiagnosticResult GetCSharpResultAt(int line, int column, params object[] messageArguments)
         {
-            return GetCSharpResultAt(line, column, DoNotMixBlockingAndAsyncAnalyzer.Rule, messageArguments);
+            return GetCSharpResultAt(line, column,
+                rule: DoNotMixBlockingAndAsyncAnalyzer.Rule,
+                messageArguments: messageArguments);
         }
 
         private static string GetFullSource(string body)
@@ -51,8 +55,8 @@ namespace ConsoleApplication
         }
 
         // No methods - no diagnostic should show
-        [Fact]
-        public void NoMethodNoDiagnostics()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1477")]
+        public void BlockingAndAsync_NoMethodNoDiagnostics()
         {
             var body = @"";
 
@@ -62,8 +66,8 @@ namespace ConsoleApplication
         }
 
         // Async with task.delay - no diagnostic
-        [Fact]
-        public void AsyncWithAsync()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1477")]
+        public void BlockingAndAsync_AsyncWithAsync()
         {
             var body = @"
         async Task SleepNowAsync()
@@ -75,8 +79,8 @@ namespace ConsoleApplication
         }
 
         // Async method calls a function with thread.sleep in it - out of scope, no diagnostic
-        [Fact]
-        public void HiddenSyncCode()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1477")]
+        public void BlockingAndAsync_HiddenSyncCode()
         {
             var body = @"
         async Task CallAnotherMethodAsync()
@@ -91,22 +95,22 @@ namespace ConsoleApplication
             VerifyCSharp(test);
         }
 
-        // Non async method calls thread.wait - no diagnostic
-        [Fact]
-        public void NonAsyncWait()
+        // Non async method calls task.wait - no diagnostic
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1477")]
+        public void BlockingAndAsync_NonAsyncWait()
         {
             var body = @"
-        Task Example()
+        void Example()
         {
-            Task.Wait();
+            Task.Delay(100).Wait();
         }";
             var test = GetFullSource(body);
             VerifyCSharp(test);
         }
 
         // Async method calls a different Task method - no diagnostic
-        [Fact]
-        public void AsyncWithOtherMethod()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1477")]
+        public void BlockingAndAsync_AsyncWithOtherMethod()
         {
             var body = @"
         async Task Example()
@@ -118,8 +122,8 @@ namespace ConsoleApplication
         }
 
         // Async method calls a Wait method on a Task, but not the same Wait - no diagnostic
-        [Fact]
-        public void AsyncCallsOtherWait()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1477")]
+        public void BlockingAndAsync_AsyncCallsOtherWait()
         {
             var test = @"
 using System;
@@ -149,8 +153,8 @@ namespace ConsoleApplication
         }
 
         // Async method calls a WaitAll method on a Task, but not the same WaitAll - no diagnostic
-        [Fact]
-        public void AsyncCallsOtherWaitAll()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1477")]
+        public void BlockingAndAsync_AsyncCallsOtherWaitAll()
         {
             var test = @"
 using System;
@@ -180,8 +184,8 @@ namespace ConsoleApplication
         }
 
         // Async method calls a WaitAny method on a Task, but not the same WaitAny - no diagnostic
-        [Fact]
-        public void AsyncCallsOtherWaitAny()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1477")]
+        public void BlockingAndAsync_AsyncCallsOtherWaitAny()
         {
             var test = @"
 using System;
@@ -211,8 +215,8 @@ namespace ConsoleApplication
         }
 
         // Async method calls a Sleep method on a Task, but not the same Sleep - no diagnostic
-        [Fact]
-        public void AsyncCallsOtherSleep()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1477")]
+        public void BlockingAndAsync_AsyncCallsOtherSleep()
         {
             var test = @"
 using System;
@@ -242,8 +246,8 @@ namespace ConsoleApplication
         }
 
         // Async method calls a GetResult method on a Task, but not the same GetResult - no diagnostic
-        [Fact]
-        public void AsyncCallsOtherGetResult()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1477")]
+        public void BlockingAndAsync_AsyncCallsOtherGetResult()
         {
             var test = @"
 using System;

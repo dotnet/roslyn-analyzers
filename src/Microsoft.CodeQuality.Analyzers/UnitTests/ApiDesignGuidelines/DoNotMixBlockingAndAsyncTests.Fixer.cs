@@ -33,12 +33,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
         private DiagnosticResult GetBasicResultAt(int line, int column, params object[] messageArguments)
         {
-            return GetBasicResultAt(line, column, DoNotMixBlockingAndAsyncAnalyzer.Rule, messageArguments);
+            return GetBasicResultAt(line, column,
+                rule: DoNotMixBlockingAndAsyncAnalyzer.Rule,
+                messageArguments: messageArguments);
         }
 
         private DiagnosticResult GetCSharpResultAt(int line, int column, params object[] messageArguments)
         {
-            return GetCSharpResultAt(line, column, DoNotMixBlockingAndAsyncAnalyzer.Rule, messageArguments);
+            return GetCSharpResultAt(line, column,
+                rule: DoNotMixBlockingAndAsyncAnalyzer.Rule,
+                messageArguments: messageArguments);
         }
 
         private static string GetFullSource(string body)
@@ -62,8 +66,8 @@ namespace ConsoleApplication
         }
 
         // Wait block on async code - 1 diagnostic - code fix
-        [Fact]
-        public void WaitBlockAsyncCode()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1477")]
+        public void BlockingAndAsync_WaitBlockAsyncCode()
         {
             var body = @"
         async Task<int> fooAsync(int somenumber)
@@ -98,8 +102,8 @@ namespace ConsoleApplication
         }
 
         // Result block on async code - 1 diagnostic - code fix
-        [Fact]
-        public void ResultBlockAsyncCode()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1477")]
+        public void BlockingAndAsync_ResultBlockAsyncCode()
         {
             var body = @"
         async Task foo2Async(int somenumber)
@@ -132,8 +136,8 @@ namespace ConsoleApplication
         }
 
         // Invocation expression assigned to variable - 1 diagnostic
-        [Fact]
-        public void InvocationExpressionVariable()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1477")]
+        public void BlockingAndAsync_InvocationExpressionVariable()
         {
             var body = @"
         async Task<Task<int>> SomeMethodAsync()
@@ -170,8 +174,8 @@ namespace ConsoleApplication
         }
 
         // Async method using waitall on task - 1 diagnostic - code fix
-        [Fact]
-        public void WaitAllBlockAsyncCode()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1477")]
+        public void BlockingAndAsync_WaitAllBlockAsyncCode()
         {
             var body = @"
         async Task WaitAllAsync()
@@ -260,8 +264,8 @@ namespace ConsoleApplication
         }
 
         // Async with thread.sleep - 1 diagnostic - code fix
-        [Fact]
-        public void AsyncWithThreadSleep()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1477")]
+        public void BlockingAndAsync_AsyncWithThreadSleep()
         {
             var body = @"
         async Task<string> SleepHeadAsync(string phrase)
@@ -286,8 +290,8 @@ namespace ConsoleApplication
         }
 
         // Thread.sleep within loop - 1 diagnostic - code fix
-        [Fact]
-        public void ThreadSleepInLoop()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1477")]
+        public void BlockingAndAsync_ThreadSleepInLoop()
         {
             var body = @"
         async Task SleepAsync()
@@ -316,8 +320,8 @@ namespace ConsoleApplication
         }
 
         // Thread.sleep(timespan) - 1 diagnostic - code fix
-        [Fact]
-        public void AsyncWithThreadSleepTimeSpan()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1477")]
+        public void BlockingAndAsync_AsyncWithThreadSleepTimeSpan()
         {
             var body = @"
         async Task TimeSpanAsync()
@@ -342,8 +346,8 @@ namespace ConsoleApplication
         }
 
         // Thread.sleep(TimeSpan) within loop - 1 diagnostic - code fix
-        [Fact]
-        public void ThreadSleepTimeSpanInForLoop()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1477")]
+        public void BlockingAndAsync_ThreadSleepTimeSpanInForLoop()
         {
             var body = @"
         async Task TimespaninForloopAsync()
@@ -374,8 +378,8 @@ namespace ConsoleApplication
         }
 
         // Thread.sleep(timespan) within while loop - 1 diagnostic - code fix
-        [Fact]
-        public void ThreadSleepTimeSpanInWhileLoop()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1477")]
+        public void BlockingAndAsync_ThreadSleepTimeSpanInWhileLoop()
         {
             var body = @"
         async Task TimeSpanWhileLoop()

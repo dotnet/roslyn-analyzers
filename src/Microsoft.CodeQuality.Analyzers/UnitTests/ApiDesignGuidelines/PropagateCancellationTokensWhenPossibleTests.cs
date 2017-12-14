@@ -11,7 +11,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     public class PropagateCancellationTokensWhenPossibleTests : DiagnosticAnalyzerTestBase
     {
         [Fact]
-        public void WipCSharp_CancellationTokenOverloadAvailable()
+        public void CSharp_CancellationTokenOverloadAvailable()
         {
             var source = @"
 using System.Threading;
@@ -30,7 +30,7 @@ class C
         }
 
         [Fact]
-        public void WipCSharp_OptionalCancellationTokenParameter()
+        public void CSharp_OptionalCancellationTokenParameter()
         {
             var source = @"
 using System.Threading;
@@ -47,7 +47,7 @@ class C
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1476")]
-        public void WipCSharp_UninitializedCancellationTokenOutParameter_NoDiagnostics()
+        public void CSharp_UninitializedCancellationTokenOutParameter_NoDiagnostics()
         {
             var source = @"
 using System.Threading;
@@ -69,7 +69,7 @@ class C
         }
 
         [Fact]
-        public void WipCSharp_DefaultCancellationTokenPassed()
+        public void CSharp_DefaultCancellationTokenPassed()
         {
             var source = @"
 using System.Threading;
@@ -86,7 +86,7 @@ class C
         }
 
         [Fact]
-        public void WipCSharp_CancellationTokenNonePassed()
+        public void CSharp_CancellationTokenNonePassed()
         {
             var source = @"
 using System.Threading;
@@ -103,7 +103,7 @@ class C
         }
 
         [Fact]
-        public void WipCSharp_CancellationTokenInScope_InstanceField()
+        public void CSharp_CancellationTokenInScope_InstanceField()
         {
             var source = @"
 using System.Threading;
@@ -124,7 +124,7 @@ class C
         }
 
         [Fact]
-        public void WipCSharp_CancellationTokenInScope_StaticField()
+        public void CSharp_CancellationTokenInScope_StaticField()
         {
             var source = @"
 using System.Threading;
@@ -145,7 +145,7 @@ class C
         }
 
         [Fact]
-        public void WipCSharp_CancellationTokenInScope_LocalVariable()
+        public void CSharp_CancellationTokenInScope_LocalVariable()
         {
             var source = @"
 using System.Threading;
@@ -168,7 +168,7 @@ class C
         }
 
         [Fact]
-        public void WipCSharp_CancellationTokenIsPropagated_NoDiagnostics()
+        public void CSharp_CancellationTokenIsPropagated_NoDiagnostics()
         {
             var source = @"
 using System.Threading;
@@ -187,7 +187,7 @@ class C
         }
 
         [Fact]
-        public void WipCSharp_NoCancellationTokenOverloadAvailable_NoDiagnostics()
+        public void CSharp_NoCancellationTokenOverloadAvailable_NoDiagnostics()
         {
             var source = @"
 using System.Threading;
@@ -204,7 +204,7 @@ class C
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1476")]
-        public void WipCSharp_CancellationTokenInScope_UninitializedLocalVariable_NoDiagnostics()
+        public void CSharp_CancellationTokenInScope_UninitializedLocalVariable_NoDiagnostics()
         {
             var source = @"
 using System.Threading;
@@ -226,7 +226,7 @@ class C
         }
 
         [Fact]
-        public void WipCSharp_CancellationTokenInScope_LocalVariableDeclaredAfterwards_NoDiagnostics()
+        public void CSharp_CancellationTokenInScope_LocalVariableDeclaredAfterwards_NoDiagnostics()
         {
             var source = @"
 using System.Threading;
@@ -248,7 +248,7 @@ class C
         }
 
         [Fact]
-        public void WipCSharp_RequiredCancellationTokenParameterIsNotPassed_NoCrash()
+        public void CSharp_RequiredCancellationTokenParameterIsNotPassed_NoCrash()
         {
             var source = @"
 using System.Threading;

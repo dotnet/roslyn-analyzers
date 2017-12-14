@@ -154,13 +154,13 @@
     <value>Don't Store Async Lambdas as Void Returning Delegate Types</value>
   </data>
   <data name="PropagateCancellationTokensWhenPossibleTitle" xml:space="preserve">
-    <value>Propagate CancellationTokens When Possible</value>
+    <value>Propagate CancellationToken '{0}'</value>
   </data>
   <data name="PropagateCancellationTokensWhenPossibleDescription" xml:space="preserve">
-    <value>#N/A</value>
+    <value>A CancellationToken should be passed to method invocations if the method accepts a CancellationToken and one is in scope. This ensures that CancellationTokens stay true to their name: setting a token's state to canceled should cancel any operations the token was passed to.</value>
   </data>
   <data name="PropagateCancellationTokensWhenPossibleMessage" xml:space="preserve">
-    <value>Propagate CancellationTokens When Possible</value>
+    <value>Propagate CancellationToken in method invocation. Available tokens: {0}</value>
   </data>
   <data name="DoNotMixBlockingAndAsyncTitle" xml:space="preserve">
     <value>Don't Mix Blocking and Async</value>

@@ -9,6 +9,8 @@ using System.Linq;
 using Microsoft.CodeAnalysis.Operations;
 using System;
 using System.Diagnostics;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -48,20 +50,35 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static void AnalyzeInvocation(OperationAnalysisContext context)
         {
             var invocation = (IInvocationOperation)context.Operation;
-            if (InvocationShouldPassCancellationToken(invocation, context.Compilation))
+            var candidateTokens = GetCandidateCancellationTokensToPass(invocation, context.Compilation);
+            if (candidateTokens.Any())
             {
-                context.ReportDiagnostic(invocation.Syntax.CreateDiagnostic(Rule));
+                string candidateTokensText = FormatCandidateTokens(candidateTokens);
+                context.ReportDiagnostic(invocation.Syntax.CreateDiagnostic(Rule, candidateTokensText));
             }
         }
 
-        private static bool InvocationShouldPassCancellationToken(IInvocationOperation invocation, Compilation compilation)
+        private static string FormatCandidateTokens(IEnumerable<ISymbol> candidateTokens)
+        {
+            // [ct1, ct2, ct3] => "'ct1', 'ct2', 'ct3'"
+            return string.Join(", ", candidateTokens.Select(s => $"'{s.Name}'"));
+        }
+
+        /// <summary>
+        /// Returns the candidate <see cref="CancellationToken"/>s to pass at an invocation.
+        /// Returns an empty collection when no <see cref="CancellationToken"/>s need to be propagated,
+        /// or no candidate <see cref="CancellationToken"/>s are in scope.
+        /// </summary>
+        private static IEnumerable<ISymbol> GetCandidateCancellationTokensToPass(
+            IInvocationOperation invocation,
+            Compilation compilation)
         {
             var cancellationTokenType = WellKnownTypes.CancellationToken(compilation);
 
             var targetMethod = invocation.TargetMethod;
             if (targetMethod == null)
             {
-                return false;
+                return Enumerable.Empty<ISymbol>();
             }
 
             if (!targetMethod.Parameters.Any(p => p.Type == cancellationTokenType))
@@ -75,7 +92,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 if (targetOverload == null)
                 {
                     // No suitable overload is available.
-                    return false;
+                    return Enumerable.Empty<ISymbol>();
                 }
             }
             else
@@ -91,23 +108,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 if (argumentValue == null)
                 {
                     // The code is invalid. The compiler error will be enough warning for the developer.
-                    return false;
+                    return Enumerable.Empty<ISymbol>();
                 }
 
                 if (!IsCancellationTokenNone(argumentValue, cancellationTokenType))
                 {
                     // A non-default CancellationToken is being passed.
-                    return false;
+                    return Enumerable.Empty<ISymbol>();
                 }
             }
 
-            // Check that a suitable variable of type CancellationToken is in scope.
-            if (!IsCancellationTokenVariableInScope(invocation, cancellationTokenType, compilation))
-            {
-                return false;
-            }
-
-            return true;
+            return GetCancellationTokenVariablesInScope(invocation, cancellationTokenType, compilation);
         }
 
         private static bool IsCancellationTokenNone(IOperation value, INamedTypeSymbol cancellationTokenType)
@@ -134,11 +145,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return false;
         }
 
-        private static bool IsCancellationTokenVariableInScope(IInvocationOperation invocation, INamedTypeSymbol cancellationTokenType, Compilation compilation)
+        private static IEnumerable<ISymbol> GetCancellationTokenVariablesInScope(
+            IInvocationOperation invocation,
+            INamedTypeSymbol cancellationTokenType,
+            Compilation compilation)
         {
             var semanticModel = compilation.GetSemanticModel(invocation.Syntax.SyntaxTree);
             int position = invocation.Syntax.SpanStart;
-            return semanticModel.LookupSymbols(position).Any(IsUsableCancellationTokenVariable);
+            return semanticModel.LookupSymbols(position).Where(IsUsableCancellationTokenVariable);
 
             bool IsUsableCancellationTokenVariable(ISymbol symbol)
             {

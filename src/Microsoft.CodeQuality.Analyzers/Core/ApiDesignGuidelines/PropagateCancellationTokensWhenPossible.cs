@@ -149,13 +149,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         return field.Type == cancellationTokenType;
                     case SymbolKind.Local:
                         var local = (ILocalSymbol)symbol;
-                        return local.Type == cancellationTokenType &&
-                            !local.IsInaccessibleLocal(position) &&
-                            !(local.IsUninitializedVariable(invocation.Syntax, semanticModel) ?? true);
+                        return local.Type == cancellationTokenType && !local.IsInaccessibleLocal(position);
                     case SymbolKind.Parameter:
                         var parameter = (IParameterSymbol)symbol;
-                        return parameter.Type == cancellationTokenType &&
-                            !(parameter.IsUninitializedVariable(invocation.Syntax, semanticModel) ?? true);
+                        return parameter.Type == cancellationTokenType;
                     default:
                         return false;
                 }

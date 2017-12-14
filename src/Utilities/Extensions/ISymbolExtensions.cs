@@ -406,26 +406,5 @@ namespace Analyzer.Utilities.Extensions
             var declarationSyntax = symbol.DeclaringSyntaxReferences.Select(r => r.GetSyntax()).FirstOrDefault();
             return declarationSyntax != null && position < declarationSyntax.SpanStart;
         }
-
-        /// <summary>
-        /// Checks if a symbol corresponds to a local variable or parameter that is uninitialized at a particular statement/expression.
-        /// Returns <see langword="null"/> if data flow analysis fails, and the result could not be determined.
-        /// </summary>
-        public static bool? IsUninitializedVariable(this ISymbol symbol, SyntaxNode statementOrExpression, SemanticModel semanticModel)
-        {
-            switch (symbol.Kind)
-            {
-                case SymbolKind.Local:
-                case SymbolKind.Parameter:
-                    var analysis = semanticModel.AnalyzeDataFlow(statementOrExpression);
-                    if (!analysis.Succeeded)
-                    {
-                        return null;
-                    }
-                    return !analysis.DataFlowsIn.Contains(symbol);
-                default:
-                    return false;
-            }
-        }
     }
 }

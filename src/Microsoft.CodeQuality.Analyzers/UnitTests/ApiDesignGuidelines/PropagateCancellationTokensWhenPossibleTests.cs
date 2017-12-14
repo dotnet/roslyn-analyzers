@@ -46,7 +46,7 @@ class C
             VerifyCSharp(source, GetCSharpResultAt(9, 38));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1476")]
         public void WipCSharp_UninitializedCancellationTokenOutParameter_NoDiagnostics()
         {
             var source = @"
@@ -203,7 +203,7 @@ class C
             VerifyCSharp(source);
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1476")]
         public void WipCSharp_CancellationTokenInScope_UninitializedLocalVariable_NoDiagnostics()
         {
             var source = @"

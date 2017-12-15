@@ -26,7 +26,7 @@ class C
     Task M2(CancellationToken p1) => M1();
 }
 ";
-            VerifyCSharp(source, GetCSharpResultAt(11, 38));
+            VerifyCSharp(source, GetCSharpResultAt(11, 38, "p1"));
         }
 
         [Fact]
@@ -43,7 +43,7 @@ class C
     Task M2(CancellationToken p1) => M1();
 }
 ";
-            VerifyCSharp(source, GetCSharpResultAt(9, 38));
+            VerifyCSharp(source, GetCSharpResultAt(9, 38, "p1"));
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1476")]
@@ -82,7 +82,7 @@ class C
     Task M2(CancellationToken p1) => M1(default(CancellationToken));
 }
 ";
-            VerifyCSharp(source, GetCSharpResultAt(9, 38));
+            VerifyCSharp(source, GetCSharpResultAt(9, 38, "p1"));
         }
 
         [Fact]
@@ -99,7 +99,7 @@ class C
     Task M2(CancellationToken p1) => M1(CancellationToken.None);
 }
 ";
-            VerifyCSharp(source, GetCSharpResultAt(9, 38));
+            VerifyCSharp(source, GetCSharpResultAt(9, 38, "p1"));
         }
 
         [Fact]
@@ -164,7 +164,7 @@ class C
     }
 }
 ";
-            VerifyCSharp(source, GetCSharpResultAt(14, 16));
+            VerifyCSharp(source, GetCSharpResultAt(14, 16, "l1"));
         }
 
         [Fact]
@@ -274,14 +274,14 @@ class C
             return new CSharpPropagateCancellationTokensWhenPossibleAnalyzer();
         }
 
-        private DiagnosticResult GetBasicResultAt(int line, int column)
+        private DiagnosticResult GetBasicResultAt(int line, int column, string variableName)
         {
-            return GetBasicResultAt(line, column, PropagateCancellationTokensWhenPossibleAnalyzer.Rule);
+            return GetBasicResultAt(line, column, PropagateCancellationTokensWhenPossibleAnalyzer.Rule, $"'{variableName}'");
         }
 
-        private DiagnosticResult GetCSharpResultAt(int line, int column)
+        private DiagnosticResult GetCSharpResultAt(int line, int column, string variableName)
         {
-            return GetCSharpResultAt(line, column, PropagateCancellationTokensWhenPossibleAnalyzer.Rule);
+            return GetCSharpResultAt(line, column, PropagateCancellationTokensWhenPossibleAnalyzer.Rule, $"'{variableName}'");
         }
     }
 }

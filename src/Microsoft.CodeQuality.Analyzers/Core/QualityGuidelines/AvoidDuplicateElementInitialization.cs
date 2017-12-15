@@ -49,7 +49,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 return;
             }
 
-            var initializedElementIndexes = new HashSet<object[]>(ConstantArgumentEqualityComparer.Instance);
+            var initializedElementIndexes = new HashSet<ImmutableArray<object>>(ConstantArgumentEqualityComparer.Instance);
 
             foreach (var initializer in objectInitializer.Initializer.Initializers)
             {
@@ -58,7 +58,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     propertyReference.Arguments.Length != 0)
                 {
                     var values = GetConstantArgumentValues(propertyReference.Arguments);
-                    if (values != null && !initializedElementIndexes.Add(values))
+                    if (!values.IsEmpty && !initializedElementIndexes.Add(values))
                     {
                         var indexesText = string.Join(", ", values.Select(value => value?.ToString() ?? "null"));
                         context.ReportDiagnostic(
@@ -72,7 +72,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         /// Gets the argument values in parameter order, filling in defaults if necessary, if all
         /// arguments are constants. Otherwise, returns null.
         /// </summary>
-        private static object[] GetConstantArgumentValues(ImmutableArray<IArgumentOperation> arguments)
+        private static ImmutableArray<object> GetConstantArgumentValues(ImmutableArray<IArgumentOperation> arguments)
         {
             var result = new object[arguments.Length];
             foreach(var argument in arguments)
@@ -82,15 +82,15 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     parameter.Ordinal >= result.Length ||
                     !argument.Value.ConstantValue.HasValue)
                 {
-                    return null;
+                    return ImmutableArray<object>.Empty;
                 }
 
                 result[parameter.Ordinal] = argument.Value.ConstantValue.Value;
             }
-            return result;
+            return result.ToImmutableArray();
         }
 
-        private sealed class ConstantArgumentEqualityComparer : IEqualityComparer<object[]>
+        private sealed class ConstantArgumentEqualityComparer : IEqualityComparer<ImmutableArray<object>>
         {
             public static readonly ConstantArgumentEqualityComparer Instance = new ConstantArgumentEqualityComparer();
 
@@ -98,7 +98,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             private ConstantArgumentEqualityComparer() { }
 
-            bool IEqualityComparer<object[]>.Equals(object[] x, object[] y)
+            bool IEqualityComparer<ImmutableArray<object>>.Equals(ImmutableArray<object> x, ImmutableArray<object> y)
             {
                 if (x == y)
                 {
@@ -108,7 +108,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 return x != null && y != null && x.SequenceEqual(y, _objectComparer);
             }
 
-            int IEqualityComparer<object[]>.GetHashCode(object[] obj)
+            int IEqualityComparer<ImmutableArray<object>>.GetHashCode(ImmutableArray<object> obj)
             {
                 int hash = 0;
                 foreach (var item in obj)

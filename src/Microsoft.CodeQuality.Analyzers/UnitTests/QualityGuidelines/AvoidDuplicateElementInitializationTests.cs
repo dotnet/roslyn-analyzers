@@ -274,6 +274,65 @@ class C
                 GetCSharpResultAt(10, 13, "a"));
         }
 
+        [Fact]
+        public void MatchingNonConstantArguments()
+        {
+            VerifyCSharp(@"
+class C
+{
+    void Foo()
+    {
+        var a1 = ""a"";
+        var a2 = ""a"";
+        var dictionary = new System.Collections.Generic.Dictionary<string, int>
+        {
+            [a1] = 1,
+            [a2] = 2
+        };
+    }
+}
+");
+        }
+
+        [Fact]
+        public void ConstantMatchingNonConstantArgument()
+        {
+            VerifyCSharp(@"
+class C
+{
+    void Foo()
+    {
+        var a = ""a"";
+        var dictionary = new System.Collections.Generic.Dictionary<string, int>
+        {
+            [a] = 1,
+            [""a""] = 2
+        };
+    }
+}
+");
+        }
+
+        [Fact]
+        public void AllNonConstantArguments()
+        {
+            VerifyCSharp(@"
+class C
+{
+    void Foo(string a)
+    {
+        var b = ""b"";
+        var dictionary = new System.Collections.Generic.Dictionary<string, int>
+        {
+            [a] = 1,
+            [b] = 2,
+            [typeof(C).ToString()] = 3
+        };
+    }
+}
+");
+        }
+
         private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
         {
             return GetCSharpResultAt(line, column, AvoidDuplicateElementInitialization.Rule, symbolName);

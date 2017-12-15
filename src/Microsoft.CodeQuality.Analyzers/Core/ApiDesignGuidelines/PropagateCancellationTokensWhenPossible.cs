@@ -158,9 +158,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 switch (symbol.Kind)
                 {
-                    case SymbolKind.Field:
-                        var field = (IFieldSymbol)symbol;
-                        return field.Type == cancellationTokenType;
                     case SymbolKind.Local:
                         var local = (ILocalSymbol)symbol;
                         return local.Type == cancellationTokenType && !local.IsInaccessibleLocal(position);

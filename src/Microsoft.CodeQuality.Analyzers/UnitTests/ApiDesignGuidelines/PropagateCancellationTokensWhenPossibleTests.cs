@@ -103,7 +103,7 @@ class C
         }
 
         [Fact]
-        public void CSharp_CancellationTokenInScope_InstanceField()
+        public void CSharp_CancellationTokenInScope_InstanceField_NoDiagnostics()
         {
             var source = @"
 using System.Threading;
@@ -120,11 +120,11 @@ class C
     Task M2() => M1();
 }
 ";
-            VerifyCSharp(source, GetCSharpResultAt(13, 18));
+            VerifyCSharp(source);
         }
 
         [Fact]
-        public void CSharp_CancellationTokenInScope_StaticField()
+        public void CSharp_CancellationTokenInScope_StaticField_NoDiagnostics()
         {
             var source = @"
 using System.Threading;
@@ -141,7 +141,7 @@ class C
     Task M2() => M1();
 }
 ";
-            VerifyCSharp(source, GetCSharpResultAt(13, 18));
+            VerifyCSharp(source);
         }
 
         [Fact]

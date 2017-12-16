@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Linq;
 
 namespace Analyzer.Utilities.Extensions
 {
@@ -21,6 +22,17 @@ namespace Analyzer.Utilities.Extensions
                 return false;
             }
             return true;
+        }
+
+        public static bool IsAnagramTo(this string text, string other)
+        {
+            char[] textChars = text.ToCharArray();
+            Array.Sort(textChars);
+
+            char[] otherChars = other.ToCharArray();
+            Array.Sort(otherChars);
+
+            return textChars.SequenceEqual(otherChars);
         }
 
         public static bool HasSuffix(this string str, string suffix)

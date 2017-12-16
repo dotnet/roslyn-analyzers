@@ -18,18 +18,18 @@
         <note />
       </trans-unit>
       <trans-unit id="AsyncMethodNamesShouldEndInAsyncTitle">
-        <source>Async Method Names Should End in Async</source>
-        <target state="translated">异步方法名称应以 Async 结尾</target>
+        <source>Rename '{0}' to '{1}'</source>
+        <target state="needs-review-translation">异步方法名称应以 Async 结尾</target>
         <note />
       </trans-unit>
       <trans-unit id="AsyncMethodNamesShouldEndInAsyncDescription">
-        <source>#N/A</source>
-        <target state="translated">#N/A</target>
+        <source>If a method returns an awaitable type, it should have a name ending in 'Async'. This ensures that developers are less likely to forget to await the method's result.</source>
+        <target state="needs-review-translation">#N/A</target>
         <note />
       </trans-unit>
       <trans-unit id="AsyncMethodNamesShouldEndInAsyncMessage">
-        <source>Async Method Names Should End in Async</source>
-        <target state="translated">异步方法名称应以 Async 结尾</target>
+        <source>Method '{0}' returns an awaitable type, but does not have a name ending in 'Async'</source>
+        <target state="needs-review-translation">异步方法名称应以 Async 结尾</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle">

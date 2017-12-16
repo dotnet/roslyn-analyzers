@@ -4,6 +4,9 @@ using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
+using System;
+using Analyzer.Utilities.Extensions;
+using System.Linq;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -33,6 +36,25 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
+            analysisContext.RegisterSymbolAction(AnalyzeMethod, SymbolKind.Method);
+        }
+
+        private static void AnalyzeMethod(SymbolAnalysisContext context)
+        {
+            var method = (IMethodSymbol)context.Symbol;
+            var compilation = context.Compilation;
+
+            if (method.ReturnType.IsTaskLikeType(compilation) &&
+                !method.Name.EndsWith("Async", StringComparison.Ordinal) &&
+                // If the method is marked override, renaming it will cause errors.
+                // We will only rename such a method when the virtual or abstract method it overrides is also renamed.
+                !method.IsOverride)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Rule, method.Locations.First(), method.Name));
+            }
         }
     }
 }

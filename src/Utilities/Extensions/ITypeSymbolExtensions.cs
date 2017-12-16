@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities.Extensions
@@ -31,6 +32,22 @@ namespace Analyzer.Utilities.Extensions
                 default:
                     return false;
             }
+        }
+
+        /// <summary>
+        /// <para>
+        /// C# 7 introduced "task-like" types, types other than <see cref="Task"/> and <see cref="Task{TResult}"/>
+        /// that are permitted as the return type of an async method.
+        /// </para>
+        /// <para>
+        /// For more information, refer to: https://docs.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-7
+        /// </para>
+        /// </summary>
+        public static bool IsTaskLikeType(this ITypeSymbol type, Compilation compilation)
+        {
+            return type == WellKnownTypes.Task(compilation) ||
+                type.OriginalDefinition == WellKnownTypes.GenericTask(compilation) ||
+                type.GetAttributes().Any(a => a.AttributeClass == WellKnownTypes.AsyncMethodBuilderAttribute(compilation));
         }
 
         public static bool Inherits(this ITypeSymbol type, ITypeSymbol possibleBase)

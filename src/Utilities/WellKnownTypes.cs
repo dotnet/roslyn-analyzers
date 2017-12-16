@@ -365,5 +365,20 @@ namespace Analyzer.Utilities
         {
             return compilation.GetTypeByMetadataName("System.Runtime.InteropServices.StructLayoutAttribute");
         }
+
+        public static INamedTypeSymbol Task(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Threading.Tasks.Task");
+        }
+
+        public static INamedTypeSymbol GenericTask(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Threading.Tasks.Task`1");
+        }
+
+        public static INamedTypeSymbol AsyncMethodBuilderAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName("System.Runtime.CompilerServices.AsyncMethodBuilderAttribute");
+        }
     }
 }

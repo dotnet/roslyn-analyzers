@@ -127,13 +127,13 @@
     <value>Avoid Async Void</value>
   </data>
   <data name="AsyncMethodNamesShouldEndInAsyncTitle" xml:space="preserve">
-    <value>Async Method Names Should End in Async</value>
+    <value>Rename '{0}' to '{1}'</value>
   </data>
   <data name="AsyncMethodNamesShouldEndInAsyncDescription" xml:space="preserve">
-    <value>#N/A</value>
+    <value>If a method returns an awaitable type, it should have a name ending in 'Async'. This ensures that developers are less likely to forget to await the method's result.</value>
   </data>
   <data name="AsyncMethodNamesShouldEndInAsyncMessage" xml:space="preserve">
-    <value>Async Method Names Should End in Async</value>
+    <value>Method '{0}' returns an awaitable type, but does not have a name ending in 'Async'</value>
   </data>
   <data name="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle" xml:space="preserve">
     <value>Don't Pass Async Lambdas as Void Returning Delegate Types</value>

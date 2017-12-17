@@ -45,10 +45,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         {
             return $@"
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Diagnostics;
 
 namespace ConsoleApplication
 {{
@@ -86,7 +87,7 @@ namespace ConsoleApplication
         }
 
         // Adding Async would cause conflict 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1485")]
         public void MethodNameConflict1()
         {
             var body = @"
@@ -131,7 +132,8 @@ namespace ConsoleApplication
         private int Math(int num1, int num2) 
         { 
             return (num1 - num2); 
-        } 
+        }
+
         private async Task<int> Math(int num1) 
         { 
             await Task.Delay(3000); 
@@ -146,7 +148,8 @@ namespace ConsoleApplication
         private int Math(int num1, int num2) 
         { 
             return (num1 - num2); 
-        } 
+        }
+
         private async Task<int> MathAsync(int num1) 
         { 
             await Task.Delay(3000); 
@@ -168,6 +171,7 @@ namespace ConsoleApplication
             Console.WriteLine(await AsyncTaskReturnT());
             Console.WriteLine(""End Program"");
         }
+
         private async Task<string> AsyncTaskReturnT()
         {
             await Task.Delay(65656565);
@@ -184,6 +188,7 @@ namespace ConsoleApplication
             Console.WriteLine(await AsyncTaskReturnTAsync());
             Console.WriteLine(""End Program"");
         }
+
         private async Task<string> AsyncTaskReturnTAsync()
         {
             await Task.Delay(65656565);
@@ -387,7 +392,7 @@ namespace ConsoleApplication
             VerifyCSharp(test,
                 GetCSharpResultAt(13, 28, "Wait10Asycn"),
                 GetCSharpResultAt(17, 28, "Wait50Aysnc"),
-                GetCSharpResultAt(21, 28, "Wait100Auscn"),
+                GetCSharpResultAt(21, 28, "Wait100Ayscn"),
                 GetCSharpResultAt(25, 28, "Wait200asycn"));
 
             var fixbody = @"

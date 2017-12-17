@@ -154,6 +154,7 @@ namespace ConsoleApplication
             var body = @"
 imports System
 imports System.Threading.Tasks
+
 Module Module1
     Async Function example() As Task
     End Function
@@ -162,7 +163,7 @@ End Module
 
             var test = body;
 
-            VerifyBasic(test, GetBasicResultAt(7, 20, "example"));
+            VerifyBasic(test, GetBasicResultAt(6, 20, "example"));
         }
 
         // Misspelled "Async" test for VB - 1 diagnostic
@@ -173,6 +174,7 @@ End Module
             var body = @"
 imports System
 imports System.Threading.Tasks
+
 Module Module1
     Async Function exampleasycn() As Task
     End Function
@@ -180,7 +182,7 @@ End Module
 ";
             var test = body;
 
-            VerifyBasic(test, GetBasicResultAt(7, 20, "exampleasycn"));
+            VerifyBasic(test, GetBasicResultAt(6, 20, "exampleasycn"));
         }
     }
 }

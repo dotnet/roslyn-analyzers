@@ -34,11 +34,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var diagnosticSpan = diagnostic.Location.SourceSpan;
 
             Document document = context.Document;
+            SyntaxNode root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            var method = (IMethodSymbol)semanticModel.GetEnclosingSymbol(diagnosticSpan.Start, context.CancellationToken);
 
-            string oldMethodName = method.Name;
-            string newMethodName = GetMethodNameWithAsyncSuffix(oldMethodName);
+            SyntaxNode methodSyntax = root.FindNode(diagnosticSpan);
+            var methodSymbol = (IMethodSymbol)semanticModel.GetDeclaredSymbol(methodSyntax, context.CancellationToken);
+
+            string oldMethodName = methodSymbol.Name;
+            string newMethodName = AddAsyncSuffixTo(oldMethodName);
             Debug.Assert(oldMethodName != newMethodName);
 
             string title = string.Format(
@@ -49,13 +52,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title,
-                    createChangedSolution: async ct => await RenameMethodAsync(document, method, newMethodName, semanticModel, ct).ConfigureAwait(false),
+                    createChangedSolution: async ct => await RenameMethodAsync(document, methodSymbol, newMethodName, semanticModel, ct).ConfigureAwait(false),
                     equivalenceKey: title),
                 diagnostic);
         }
 
-        private static string GetMethodNameWithAsyncSuffix(string methodName)
+        /// <summary>
+        /// Adds the suffix 'Async' to a method name without the suffix.
+        /// </summary>
+        private static string AddAsyncSuffixTo(string methodName)
         {
+            Debug.Assert(!methodName.EndsWith("Async", StringComparison.Ordinal));
+
             if (HasMisspelledAsyncSuffix(methodName))
             {
                 Debug.Assert(methodName.Length >= 5);
@@ -77,7 +85,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             var suffix = methodName.Substring(methodName.Length - 5);
-            return suffix.ToUpperInvariant().IsAnagramTo(methodName.ToUpperInvariant());
+            return suffix.ToUpperInvariant().IsAnagramTo("ASYNC");
         }
 
         private async Task<Solution> RenameMethodAsync(

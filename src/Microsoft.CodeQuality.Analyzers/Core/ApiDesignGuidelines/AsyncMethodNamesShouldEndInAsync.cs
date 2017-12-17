@@ -47,7 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var method = (IMethodSymbol)context.Symbol;
             var compilation = context.Compilation;
 
-            if (method.ReturnType.IsTaskLikeType(compilation) &&
+            if (method.ReturnType.IsAwaitableType() &&
                 !method.Name.EndsWith("Async", StringComparison.Ordinal) &&
                 // If the method is marked override, renaming it will cause errors.
                 // We will only rename such a method when the virtual or abstract method it overrides is also renamed.

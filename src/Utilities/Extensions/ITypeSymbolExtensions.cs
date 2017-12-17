@@ -34,20 +34,16 @@ namespace Analyzer.Utilities.Extensions
             }
         }
 
-        /// <summary>
-        /// <para>
-        /// C# 7 introduced "task-like" types, types other than <see cref="Task"/> and <see cref="Task{TResult}"/>
-        /// that are permitted as the return type of an async method.
-        /// </para>
-        /// <para>
-        /// For more information, refer to: https://docs.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-7
-        /// </para>
-        /// </summary>
-        public static bool IsTaskLikeType(this ITypeSymbol type, Compilation compilation)
+        public static bool IsAwaitableType(this ITypeSymbol type)
         {
-            return type == WellKnownTypes.Task(compilation) ||
-                type.OriginalDefinition == WellKnownTypes.GenericTask(compilation) ||
-                type.GetAttributes().Any(a => a.AttributeClass == WellKnownTypes.AsyncMethodBuilderAttribute(compilation));
+            var getAwaiter = type.GetMembers("GetAwaiter")
+                .OfType<IMethodSymbol>()
+                .FirstOrDefault(m => !m.Parameters.Any());
+
+            // We could do additional verification to ensure that the return type of GetAwaiter()
+            // is an awaiter type. However, that would be complicated, plus it's hard to imagine
+            // real cases where GetAwaiter() doesn't return an awaiter.
+            return getAwaiter != null;
         }
 
         public static bool Inherits(this ITypeSymbol type, ITypeSymbol possibleBase)

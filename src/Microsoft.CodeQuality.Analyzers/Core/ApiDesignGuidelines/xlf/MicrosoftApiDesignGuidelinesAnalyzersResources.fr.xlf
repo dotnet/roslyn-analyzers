@@ -663,7 +663,7 @@
         <note />
       </trans-unit>
       <trans-unit id="CollectionsShouldImplementGenericInterfaceMessage">
-        <source>Collection '{0}' inherits '{1}' without implementing '{2}'. Publicly-visible collections should implement the generic version to broaden usability.</source>
+        <source>Collection '{0}' directly or indirectly inherits '{1}' without implementing '{2}'. Publicly-visible collections should implement the generic version to broaden usability.</source>
         <target state="needs-review-translation">Les collections doivent implémenter une interface générique</target>
         <note />
       </trans-unit>

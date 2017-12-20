@@ -98,40 +98,40 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            var allInterfaces = namedTypeSymbol.AllInterfaces.Select(t => t.OriginalDefinition).ToImmutableArray();
 
             var allInterfacesStatus = default(CollectionsInterfaceStatus);
-            foreach (var @interface in allInterfaces)
+            foreach (var @interface in namedTypeSymbol.AllInterfaces)
             {
-                if (@interface.Equals(iCollectionType))
+                var originalDefinition = @interface.OriginalDefinition;
+                if (originalDefinition.Equals(iCollectionType))
                 {
                     allInterfacesStatus.ICollectionPresent = true;
                 }
-                else if (@interface.Equals(iEnumerableType))
+                else if (originalDefinition.Equals(iEnumerableType))
                 {
                     allInterfacesStatus.IEnumerablePresent = true;
                 }
-                else if (@interface.Equals(iListType))
+                else if (originalDefinition.Equals(iListType))
                 {
                     allInterfacesStatus.IListPresent = true;
                 }
-                else if (@interface.Equals(gCollectionType))
+                else if (originalDefinition.Equals(gCollectionType))
                 {
-                    allInterfacesStatus.GCollectionPresent = true;
+                    allInterfacesStatus.GenericICollectionPresent = true;
                 }
-                else if (@interface.Equals(gEnumerableType))
+                else if (originalDefinition.Equals(gEnumerableType))
                 {
-                    allInterfacesStatus.GEnumerablePresent = true;
+                    allInterfacesStatus.GenericIEnumerablePresent = true;
                 }
-                else if (@interface.Equals(gListType))
+                else if (originalDefinition.Equals(gListType))
                 {
-                    allInterfacesStatus.GListPresent = true;
+                    allInterfacesStatus.GenericIListPresent = true;
                 }
             }
 
             INamedTypeSymbol missingInterface;
             INamedTypeSymbol implementedInterface;
-            if (allInterfacesStatus.GListPresent)
+            if (allInterfacesStatus.GenericIListPresent)
             {
                 // Implemented IList<T>, meaning has all 3 generic interfaces. Nothing can be wrong.
                 return;
@@ -142,7 +142,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 missingInterface = gListType;
                 implementedInterface = iListType;
             }
-            else if (allInterfacesStatus.GCollectionPresent)
+            else if (allInterfacesStatus.GenericICollectionPresent)
             {
                 // Implemented ICollection<T>, and doesn't have an inherit of IList. Nothing can be wrong
                 return;
@@ -153,7 +153,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 missingInterface = gCollectionType;
                 implementedInterface = iCollectionType;
             }
-            else if (allInterfacesStatus.GEnumerablePresent)
+            else if (allInterfacesStatus.GenericIEnumerablePresent)
             {
                 // Implemented IEnumerable<T>, and doesn't have an inherit of ICollection. Nothing can be wrong
                 return;
@@ -181,11 +181,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private struct CollectionsInterfaceStatus
         {
             public bool IListPresent { get; set; }
-            public bool GListPresent { get; set; }
+            public bool GenericIListPresent { get; set; }
             public bool ICollectionPresent { get; set; }
-            public bool GCollectionPresent { get; set; }
+            public bool GenericICollectionPresent { get; set; }
             public bool IEnumerablePresent { get; set; }
-            public bool GEnumerablePresent { get; set; }
+            public bool GenericIEnumerablePresent { get; set; }
         }
     }
 }

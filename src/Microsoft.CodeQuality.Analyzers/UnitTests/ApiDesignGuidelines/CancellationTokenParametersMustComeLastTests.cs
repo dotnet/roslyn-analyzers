@@ -218,6 +218,28 @@ class T : I
             VerifyCSharp(test, expected);
         }
 
+        [Fact, WorkItem(1491, "https://github.com/dotnet/roslyn-analyzers/issues/1491")]
+        public void NoDiagnosticOnCancellationTokenExtensionMethod()
+        {
+            var test = @"
+using System.Threading;
+static class C1
+{
+    public static void M1(this CancellationToken p1, object p2)
+    {
+    }
+}
+
+class C2
+{
+    void M2(CancellationToken p1)
+    {
+        p1.M1(null);
+    }
+}";
+            VerifyCSharp(test);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new CancellationTokenParametersMustComeLastAnalyzer();

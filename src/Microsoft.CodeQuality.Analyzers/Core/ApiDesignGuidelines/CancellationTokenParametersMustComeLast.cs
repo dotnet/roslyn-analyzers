@@ -74,21 +74,29 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             }
                         }
 
+                        // Skip ref, out and ref readonly parameters. By convention, they come at the end of a method signature.
                         while (last >= 0 && methodSymbol.Parameters[last].RefKind != RefKind.None)
                         {
                             last--;
                         }
 
-                        for (int i = last; i >= 0; i--)
+                        for (int i = last - 1; i >= 0; i--)
                         {
                             ITypeSymbol parameterType = methodSymbol.Parameters[i].Type;
-                            if (parameterType.Equals(cancellationTokenType)
-                                && i != last)
+                            if (!parameterType.Equals(cancellationTokenType))
                             {
-                                symbolContext.ReportDiagnostic(Diagnostic.Create(
-                                    Rule, methodSymbol.Locations.First(), methodSymbol.ToDisplayString()));
-                                break;
+                                continue;
                             }
+
+                            // Bail if the CancellationToken is the first parameter of an extension method.
+                            if (i == 0 && methodSymbol.IsExtensionMethod)
+                            {
+                                continue;
+                            }
+
+                            symbolContext.ReportDiagnostic(Diagnostic.Create(
+                                Rule, methodSymbol.Locations.First(), methodSymbol.ToDisplayString()));
+                            break;
                         }
                     },
                     SymbolKind.Method);

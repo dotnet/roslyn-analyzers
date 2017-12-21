@@ -105,4 +105,3 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         }
     }
 }
- 

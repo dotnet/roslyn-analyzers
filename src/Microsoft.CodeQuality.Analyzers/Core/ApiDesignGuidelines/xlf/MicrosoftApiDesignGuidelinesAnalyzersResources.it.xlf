@@ -663,8 +663,8 @@
         <note />
       </trans-unit>
       <trans-unit id="CollectionsShouldImplementGenericInterfaceMessage">
-        <source>Collections should implement generic interface</source>
-        <target state="translated">Le raccolte devono implementare l'interfaccia generica</target>
+        <source>Collection '{0}' directly or indirectly inherits '{1}' without implementing '{2}'. Publicly-visible collections should implement the generic version to broaden usability.</source>
+        <target state="needs-review-translation">Le raccolte devono implementare l'interfaccia generica</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Title">

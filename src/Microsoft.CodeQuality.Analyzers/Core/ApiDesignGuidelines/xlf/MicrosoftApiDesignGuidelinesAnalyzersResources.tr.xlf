@@ -663,8 +663,8 @@
         <note />
       </trans-unit>
       <trans-unit id="CollectionsShouldImplementGenericInterfaceMessage">
-        <source>Collections should implement generic interface</source>
-        <target state="translated">Koleksiyonlar genel arabirim uygulamalıdır</target>
+        <source>Collection '{0}' directly or indirectly inherits '{1}' without implementing '{2}'. Publicly-visible collections should implement the generic version to broaden usability.</source>
+        <target state="needs-review-translation">Koleksiyonlar genel arabirim uygulamalıdır</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Title">

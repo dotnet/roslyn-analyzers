@@ -164,7 +164,7 @@
       </trans-unit>
       <trans-unit id="MakeDeclaringTypeSealed">
         <source>Make declaring type sealed.</source>
-        <target state="translated">宣言する型を sealed に設定します。</target>
+        <target state="translated">宣言する型をシールドに設定します。</target>
         <note />
       </trans-unit>
       <trans-unit id="MakeMemberNotOverridable">

@@ -484,7 +484,7 @@
       </trans-unit>
       <trans-unit id="CollectionPropertiesShouldBeReadOnlyMessage">
         <source>Change '{0}' to be read-only by removing the property setter.</source>
-        <target state="needs-review-translation">Właściwości kolekcji powinny być dostępne tylko do odczytu</target>
+        <target state="translated">Zmień element „{0}” w tylko do odczytu, usuwając metodę ustawiającą właściwości.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle">
@@ -1329,7 +1329,7 @@
       </trans-unit>
       <trans-unit id="OverrideEqualsOnOverloadingOperatorEqualsTitle">
         <source>Override Equals on overloading operator equals</source>
-        <target state="translated">Przesłoń metodę Equals przy przesłanianiu operatora równości</target>
+        <target state="translated">Przesłoń metodę Equals przy przeciążaniu operatora równości</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsOnOverloadingOperatorEqualsDescription">
@@ -1339,7 +1339,7 @@
       </trans-unit>
       <trans-unit id="OverrideEqualsOnOverloadingOperatorEqualsMessage">
         <source>Override Equals on overloading operator equals</source>
-        <target state="translated">Przesłoń metodę Equals przy przesłanianiu operatora równości</target>
+        <target state="translated">Przesłoń metodę Equals przy przeciążaniu operatora równości</target>
         <note />
       </trans-unit>
       <trans-unit id="Since_0_redefines_operator_1_it_should_also_redefine_operator_2">

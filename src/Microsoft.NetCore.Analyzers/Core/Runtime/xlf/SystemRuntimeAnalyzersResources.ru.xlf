@@ -39,7 +39,7 @@
       </trans-unit>
       <trans-unit id="AvoidUnsealedAttributesTitle">
         <source>Avoid unsealed attributes</source>
-        <target state="translated">Избегайте распечатанных атрибутов</target>
+        <target state="translated">Избегайте незапечатанных атрибутов</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnsealedAttributesDescription">
@@ -49,7 +49,7 @@
       </trans-unit>
       <trans-unit id="AvoidUnsealedAttributesMessage">
         <source>Avoid unsealed attributes</source>
-        <target state="translated">Избегайте распечатанных атрибутов</target>
+        <target state="translated">Избегайте незапечатанных атрибутов</target>
         <note />
       </trans-unit>
       <trans-unit id="TestForEmptyStringsUsingStringLengthTitle">

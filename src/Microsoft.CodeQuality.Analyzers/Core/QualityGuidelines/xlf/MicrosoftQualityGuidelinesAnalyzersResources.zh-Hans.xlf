@@ -39,7 +39,7 @@
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalTitle">
         <source>Prefer jagged arrays over multidimensional</source>
-        <target state="translated">与多维数组相比，首选使用交错的数组</target>
+        <target state="translated">与多维数组相比，首选使用交错数组</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalDescription">
@@ -164,7 +164,7 @@
       </trans-unit>
       <trans-unit id="MakeDeclaringTypeSealed">
         <source>Make declaring type sealed.</source>
-        <target state="translated">使声明类型为 sealed。</target>
+        <target state="translated">使声明类型为密封。</target>
         <note />
       </trans-unit>
       <trans-unit id="MakeMemberNotOverridable">

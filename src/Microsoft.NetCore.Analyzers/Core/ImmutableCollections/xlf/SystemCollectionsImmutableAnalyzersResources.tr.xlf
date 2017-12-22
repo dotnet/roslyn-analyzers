@@ -9,12 +9,12 @@
       </trans-unit>
       <trans-unit id="DoNotCallToImmutableCollectionOnAnImmutableCollectionValueTitle">
         <source>Do not call ToImmutableCollection on an ImmutableCollection value</source>
-        <target state="new">Do not call ToImmutableCollection on an ImmutableCollection value</target>
+        <target state="translated">Bir ImmutableCollection değeri üzerinde ToImmutableCollection çağırmayın</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallToImmutableCollectionOnAnImmutableCollectionValueMessage">
         <source>Do not call {0} on an {1} value</source>
-        <target state="new">Do not call {0} on an {1} value</target>
+        <target state="translated">Bir {1} değeri üzerinde {0} çağırmayın</target>
         <note />
       </trans-unit>
     </body>

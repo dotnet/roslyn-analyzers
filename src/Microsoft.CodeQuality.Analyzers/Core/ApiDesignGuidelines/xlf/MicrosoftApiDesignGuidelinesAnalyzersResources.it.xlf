@@ -134,7 +134,7 @@
       </trans-unit>
       <trans-unit id="EnumsShouldHaveZeroValueTitle">
         <source>Enums should have zero value</source>
-        <target state="translated">Le enumerazioni devono avere valore uguale a zero</target>
+        <target state="translated">Le enumerazioni devono avere valore zero</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumsShouldHaveZeroValueDescription">
@@ -159,7 +159,7 @@
       </trans-unit>
       <trans-unit id="AbstractTypesShouldNotHaveConstructorsTitle">
         <source>Abstract types should not have constructors</source>
-        <target state="translated">I tipi astratti non devono avere costruttori</target>
+        <target state="translated">I tipi astratti non devono includere costruttori</target>
         <note />
       </trans-unit>
       <trans-unit id="AbstractTypesShouldNotHaveConstructorsDescription">
@@ -304,7 +304,7 @@
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesDescription">
         <source>An unsealed externally visible type provides an explicit method implementation of a public interface and does not provide an alternative externally visible method that has the same name.</source>
-        <target state="translated">Un tipo visibile esternamente non sealed offre un'implementazione di metodo esplicita di un'interfaccia public e non fornisce un metodo visibile esternamente alternativo con lo stesso nome.</target>
+        <target state="translated">Un tipo visibile esternamente unsealed offre un'implementazione di metodo esplicita di un'interfaccia public e non fornisce un metodo visibile esternamente alternativo con lo stesso nome.</target>
         <note />
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesMessage">
@@ -484,7 +484,7 @@
       </trans-unit>
       <trans-unit id="CollectionPropertiesShouldBeReadOnlyMessage">
         <source>Change '{0}' to be read-only by removing the property setter.</source>
-        <target state="needs-review-translation">Le proprietà delle raccolte devono essere di sola lettura</target>
+        <target state="translated">Modificare '{0}' in modo che sia di sola lettura rimuovendo il setter proprietà.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle">
@@ -669,7 +669,7 @@
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Title">
         <source>Enum Storage should be Int32</source>
-        <target state="translated">L'enumerazione deve essere archiviata nel tipo di dati Int32</target>
+        <target state="translated">Le risorse di archiviazione dell'enumerazione devono essere Int32</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Description">
@@ -899,7 +899,7 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeBoolSignature">
         <source>Ensure that {0} is declared as protected, virtual, and unsealed.</source>
-        <target state="translated">Verificare che {0} sia dichiarato come protected, virtual e non sealed.</target>
+        <target state="translated">Verificare che {0} sia dichiarato come protected, virtual e unsealed.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">

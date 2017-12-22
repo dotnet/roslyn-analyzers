@@ -304,7 +304,7 @@
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesDescription">
         <source>An unsealed externally visible type provides an explicit method implementation of a public interface and does not provide an alternative externally visible method that has the same name.</source>
-        <target state="translated">外部可见的未密封类型提供公共接口的显式方法实现，不提供外部可见的同名备用方法。</target>
+        <target state="translated">外部可见的非密封类型提供公共接口的显式方法实现，不提供外部可见的同名备用方法。</target>
         <note />
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesMessage">
@@ -484,7 +484,7 @@
       </trans-unit>
       <trans-unit id="CollectionPropertiesShouldBeReadOnlyMessage">
         <source>Change '{0}' to be read-only by removing the property setter.</source>
-        <target state="needs-review-translation">集合属性应为只读</target>
+        <target state="translated">通过移除属性 setter 将“{0}”更改为只读。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle">
@@ -1384,7 +1384,7 @@
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesFix3">
         <source>Make the containing type '{0}' sealed.</source>
-        <target state="translated">使包含类型“{0}”设为 sealed。</target>
+        <target state="translated">使包含类型“{0}”为密封。</target>
         <note />
       </trans-unit>
       <trans-unit id="StaticHolderTypeIsNotStatic">

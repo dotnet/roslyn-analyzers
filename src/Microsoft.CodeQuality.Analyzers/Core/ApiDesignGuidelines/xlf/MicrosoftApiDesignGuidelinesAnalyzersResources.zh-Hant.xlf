@@ -484,7 +484,7 @@
       </trans-unit>
       <trans-unit id="CollectionPropertiesShouldBeReadOnlyMessage">
         <source>Change '{0}' to be read-only by removing the property setter.</source>
-        <target state="needs-review-translation">集合屬性應為唯讀</target>
+        <target state="translated">移除屬性 setter 將 '{0}' 變更為唯讀。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle">
@@ -744,7 +744,7 @@
       </trans-unit>
       <trans-unit id="AvoidEmptyInterfacesDescription">
         <source>Interfaces define members that provide a behavior or usage contract. The functionality that is described by the interface can be adopted by any type, regardless of where the type appears in the inheritance hierarchy. A type implements an interface by providing implementations for the members of the interface. An empty interface does not define any members; therefore, it does not define a contract that can be implemented.</source>
-        <target state="translated">介面是用以定義提供行為或使用合約的成員。不論類型出現在繼承階層架構中的何處，介面所描述的功能皆可供所有類型採用。類型會實作介面，方法是提供介面成員的實作。空的介面不會定義任何成員，因此也不會定義能夠實作的合約。</target>
+        <target state="translated">介面是用以定義提供行為或使用合約的成員。不論類型出現在繼承階層中的何處，介面所描述的功能皆可供所有類型採用。類型會實作介面，方法是提供介面成員的實作。空的介面不會定義任何成員，因此也不會定義能夠實作的合約。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidEmptyInterfacesMessage">
@@ -899,7 +899,7 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeBoolSignature">
         <source>Ensure that {0} is declared as protected, virtual, and unsealed.</source>
-        <target state="translated">請確認 {0} 已宣告為受保護、虛擬以及未密封。</target>
+        <target state="translated">請確認 {0} 已宣告為受保護、虛擬以及非密封。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">

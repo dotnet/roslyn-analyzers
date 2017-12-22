@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="DoNotCreateTasksWithoutPassingATaskSchedulerDescription">
         <source>Do not create tasks unless you are using one of the overloads that takes a TaskScheduler. The default is to schedule on TaskScheduler.Current, which would lead to deadlocks. Either use TaskScheduler.Default to schedule on the thread pool, or explicitly pass TaskScheduler.Current to make your intentions clear.</source>
-        <target state="translated">Bir TaskScheduler kabul eden yüklerden birini kullanmıyorsanız görev oluşturmayın. Varsayılan, TaskScheduler.Current üzerinde zamanlamaktır. Bu kilitlenmelere neden olur. İş parçacığı havuzunda zamanlamak için TaskScheduler.Default kullanın veya amacınızı açıklamak için açıkça TaskScheduler.Current geçirin.</target>
+        <target state="translated">Bir TaskScheduler kabul eden aşırı yüklerden birini kullanmıyorsanız görev oluşturmayın. Varsayılan, TaskScheduler.Current üzerinde zamanlamaktır. Bu kilitlenmelere neden olur. İş parçacığı havuzunda zamanlamak için TaskScheduler.Default kullanın veya amacınızı açıklamak için açıkça TaskScheduler.Current geçirin.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCreateTasksWithoutPassingATaskSchedulerMessage">

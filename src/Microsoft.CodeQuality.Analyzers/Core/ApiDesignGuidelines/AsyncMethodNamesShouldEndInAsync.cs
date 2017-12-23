@@ -45,16 +45,38 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static void AnalyzeMethod(SymbolAnalysisContext context)
         {
             var method = (IMethodSymbol)context.Symbol;
-            var compilation = context.Compilation;
-
-            if (method.ReturnType.IsAwaitableType() &&
-                !method.Name.EndsWith("Async", StringComparison.Ordinal) &&
-                // If the method is marked override, renaming it will cause errors.
-                // We will only rename such a method when the virtual or abstract method it overrides is also renamed.
-                !method.IsOverride)
+            if (NeedsAsyncSuffix(method, context.Compilation))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Rule, method.Locations.First(), method.Name));
             }
+        }
+
+        private static bool NeedsAsyncSuffix(IMethodSymbol method, Compilation compilation)
+        {
+            if (!method.ReturnType.IsAwaitableType() || method.Name.EndsWith("Async", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            // If the method is marked override, renaming it will cause errors. We will rename such a method when
+            // and only when the virtual or abstract method it overrides is also renamed.
+            if (method.IsOverride)
+            {
+                return false;
+            }
+
+            // If the method's definition is in another assembly, its name is beyond our control. Renaming references
+            // to it will not help.
+            var containingAssembly = method.OriginalDefinition.ContainingAssembly;
+            var currentAssembly = compilation.Assembly;
+            if (containingAssembly != currentAssembly)
+            {
+                return false;
+            }
+
+            // TODO: Do not fire the analyzer for unit test methods.
+            // TODO: Do not fire the analyzer when it could introduce a name conflict or overload resolution issues.
+            return true;
         }
     }
 }

@@ -42,7 +42,7 @@ namespace Analyzer.Utilities.Extensions
 
             // We could do additional verification to ensure that the return type of GetAwaiter()
             // is an awaiter type. However, that would be complicated, plus it's hard to imagine
-            // real cases where GetAwaiter() doesn't return an awaiter.
+            // real cases where GetAwaiter() wouldn't return an awaiter.
             return getAwaiter != null;
         }
 

@@ -68,12 +68,12 @@
         <note />
       </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleDescription">
-        <source>A CancellationToken should be passed to method invocations if the method accepts a CancellationToken and one is in scope. This ensures that CancellationTokens stay true to their name: setting a token's state to canceled should cancel any operations the token was passed to.</source>
+        <source>A CancellationToken should be passed to method invocations when the method accepts a CancellationToken and a local variable/parameter of that type is in scope. This ensures that setting a token's state to canceled actually cancels operations the token was passed to.</source>
         <target state="needs-review-translation">#N/A</target>
         <note />
       </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleMessage">
-        <source>Propagate CancellationToken in method invocation. Available tokens: {0}</source>
+        <source>Propagate CancellationToken to method invocation. Tokens in scope are: {0}</source>
         <target state="needs-review-translation">於可能時散佈 CancellationToken</target>
         <note />
       </trans-unit>

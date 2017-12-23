@@ -52,7 +52,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title,
-                    createChangedSolution: async ct => await RenameMethodAsync(document, methodSymbol, newMethodName, semanticModel, ct).ConfigureAwait(false),
+                    createChangedSolution: async ct => await RenameMethodAsync(document, methodSymbol, newMethodName, ct).ConfigureAwait(false),
                     equivalenceKey: title),
                 diagnostic);
         }
@@ -92,7 +92,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             Document document,
             IMethodSymbol method,
             string newMethodName,
-            SemanticModel semanticModel,
             CancellationToken cancellationToken)
         {
             var oldSolution = document.Project.Solution;

@@ -58,9 +58,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return false;
             }
 
-            // If the method is marked override, renaming it will cause errors. We will rename such a method when
-            // and only when the virtual or abstract method it overrides is also renamed.
-            if (method.IsOverride)
+            // If the method is overrides or implements a base method, renaming it will cause errors. We will rename
+            // such a method when and only when the virtual, abstract, or interface method it overrides is also renamed.
+            if (method.IsOverride || method.IsImplementationOfAnyInterfaceMember())
             {
                 return false;
             }

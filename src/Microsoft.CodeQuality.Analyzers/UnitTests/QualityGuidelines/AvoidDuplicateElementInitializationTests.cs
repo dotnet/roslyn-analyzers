@@ -11,7 +11,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new AvoidDuplicateElementInitialization();
+            return null;
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
@@ -50,7 +50,7 @@ class C
     }
 }
 ",
-                GetCSharpResultAt(10, 13, "1"));
+                GetCSharpResultAt(8, 13, "1"));
         }
 
         [Fact]
@@ -70,7 +70,7 @@ class C
     }
 }
 ",
-                GetCSharpResultAt(10, 13, "1"));
+                GetCSharpResultAt(8, 13, "1"));
         }
 
         [Fact]
@@ -90,7 +90,7 @@ class C
     }
 }
 ",
-                GetCSharpResultAt(10, 13, "a"));
+                GetCSharpResultAt(8, 13, "a"));
         }
 
         [Fact]
@@ -110,7 +110,7 @@ class C
     }
 }
 ",
-                GetCSharpResultAt(10, 13, "ab"));
+                GetCSharpResultAt(8, 13, "ab"));
         }
 
         [Fact]
@@ -131,7 +131,7 @@ class C
 }
 ",
                 // TODO: See if there's a way to use 'DateTimeKind.Local' here.
-                GetCSharpResultAt(10, 13, "2"));
+                GetCSharpResultAt(8, 13, "2"));
         }
 
         [Fact]
@@ -161,7 +161,7 @@ class D
     }
 }
 ",
-                GetCSharpResultAt(11, 13, "1, a"));
+                GetCSharpResultAt(8, 13, "1, a"));
         }
 
         [Fact]
@@ -191,7 +191,7 @@ class D
     }
 }
 ",
-                GetCSharpResultAt(11, 13, "a, b"));
+                GetCSharpResultAt(8, 13, "a, b"));
         }
 
         [Fact]
@@ -221,7 +221,7 @@ class D
     }
 }
 ",
-                GetCSharpResultAt(11, 13, "a, b"));
+                GetCSharpResultAt(8, 13, "a, b"));
         }
 
         [Fact]
@@ -237,20 +237,22 @@ class C
             [""a"", ""b""] = 1,
             [""b"", ""c""] = 2,
             [b: ""a"", a: ""b""] = 3,
-            [""a""] = 4
+            [""a""] = 4,
+            [b: ""b""] = 5
         };
     }
 }
 
 class D
 {
-    public int this[string a, string b = ""b""]
+    public int this[string a = ""a"", string b = ""b""]
     {
         get { return 0; }
         set { }
     }
 }
 ",
+                GetCSharpResultAt(8, 13, "a, b"),
                 GetCSharpResultAt(11, 13, "a, b"));
         }
 
@@ -271,7 +273,7 @@ class C
     }
 }
 ",
-                GetCSharpResultAt(10, 13, "a"));
+                GetCSharpResultAt(8, 13, "a"));
         }
 
         [Fact]

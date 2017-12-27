@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
+    // TODO: Now that this flags all but the last duplicate initializer, we can offer a code fix to remove the flagged ones.
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class AvoidDuplicateElementInitialization : DiagnosticAnalyzer
     {
@@ -44,16 +45,17 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         private static void AnalyzeOperation(OperationAnalysisContext context)
         {
             var objectInitializer = (IObjectCreationOperation)context.Operation;
-            if (objectInitializer.Initializer == null)
+            if (objectInitializer.Initializer == null ||
+                objectInitializer.Initializer.Initializers.Length <= 1)
             {
                 return;
             }
 
             var initializedElementIndexes = new HashSet<ImmutableArray<object>>(ConstantArgumentEqualityComparer.Instance);
 
-            foreach (var initializer in objectInitializer.Initializer.Initializers)
+            for (int i = objectInitializer.Initializer.Initializers.Length - 1; i >= 0; i--)
             {
-                if (initializer is ISimpleAssignmentOperation assignment &&
+                if (objectInitializer.Initializer.Initializers[i] is ISimpleAssignmentOperation assignment &&
                     assignment.Target is IPropertyReferenceOperation propertyReference &&
                     propertyReference.Arguments.Length != 0)
                 {
@@ -111,9 +113,12 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             int IEqualityComparer<ImmutableArray<object>>.GetHashCode(ImmutableArray<object> obj)
             {
                 int hash = 0;
-                foreach (var item in obj)
+                if (obj != null)
                 {
-                    hash = unchecked((hash * (int)0xA5555529) + _objectComparer.GetHashCode(item));
+                    foreach (var item in obj)
+                    {
+                        hash = unchecked((hash * (int)0xA5555529) + _objectComparer.GetHashCode(item));
+                    }
                 }
                 return hash;
             }

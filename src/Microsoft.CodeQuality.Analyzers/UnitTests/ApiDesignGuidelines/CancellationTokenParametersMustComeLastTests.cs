@@ -228,16 +228,34 @@ static class C1
     public static void M1(this CancellationToken p1, object p2)
     {
     }
-}
-
-class C2
-{
-    void M2(CancellationToken p1)
-    {
-        p1.M1(null);
-    }
 }";
             VerifyCSharp(test);
+        }
+
+        [Fact]
+        public void DiagnosticOnExtensionMethodWhenCancellationTokenIsNotFirstParameter()
+        {
+            var test = @"
+using System.Threading;
+static class C1
+{
+    public static void M1(this object p1, CancellationToken p2, object p3)
+    {
+    }
+}";
+
+            var expected = new DiagnosticResult
+            {
+                Id = CancellationTokenParametersMustComeLastAnalyzer.RuleId,
+                Message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.CancellationTokenParametersMustComeLastMessage, "C1.M1(object, System.Threading.CancellationToken, object)"),
+                Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
+                Locations = new[]
+                {
+                    new DiagnosticResultLocation("Test0.cs", 5, 24)
+                }
+            };
+
+            VerifyCSharp(test, expected);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

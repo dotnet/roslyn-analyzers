@@ -74,7 +74,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             }
                         }
 
-                        // Skip ref, out and ref readonly parameters. By convention, they come at the end of a method signature.
+                        // Ignore parameters passed by reference when they appear at the end of the parameter list.
                         while (last >= 0 && methodSymbol.Parameters[last].RefKind != RefKind.None)
                         {
                             last--;

@@ -44,7 +44,7 @@
       </trans-unit>
       <trans-unit id="AvoidUnsealedAttributesDescription">
         <source>The .NET Framework class library provides methods for retrieving custom attributes. By default, these methods search the attribute inheritance hierarchy. Sealing the attribute eliminates the search through the inheritance hierarchy and can improve performance.</source>
-        <target state="translated">Biblioteka klas programu .NET Framework udostępnia metody umożliwiające pobieranie atrybutów niestandardowych. Domyślnie te metody przeszukują hierarchię dziedziczenia atrybutów. Zapieczętowanie atrybutu eliminuje potrzebę przeszukiwania hierarchii atrybutów i może podwyższyć wydajność.</target>
+        <target state="translated">Biblioteka klas programu .NET Framework udostępnia metody umożliwiające pobieranie atrybutów niestandardowych. Domyślnie te metody przeszukują hierarchię dziedziczenia atrybutów. Zapieczętowanie atrybutu eliminuje potrzebę przeszukiwania hierarchii dziedziczenia i może podwyższyć wydajność.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnsealedAttributesMessage">
@@ -84,17 +84,17 @@
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersTitle">
         <source>Do not catch corrupted state exceptions in general handlers.</source>
-        <target state="translated">Nie przechwytuj uszkodzonych wyjątków stanu w ogólnych procedurach obsługi.</target>
+        <target state="translated">Nie przechwytuj wyjątków stanu uszkodzenia w ogólnych procedurach obsługi.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersDescription">
         <source>Do not author general catch handlers in code that receives corrupted state exceptions.</source>
-        <target state="translated">Nie twórz ogólnych procedur obsługi przechwytywania w kodzie, który odbiera uszkodzone wyjątki stanu.</target>
+        <target state="translated">Nie twórz ogólnych procedur obsługi przechwytywania w kodzie, który odbiera wyjątki stanu uszkodzenia.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersMessage">
         <source>Do not catch corrupted state exceptions in general handlers.</source>
-        <target state="translated">Nie przechwytuj uszkodzonych wyjątków stanu w ogólnych procedurach obsługi.</target>
+        <target state="translated">Nie przechwytuj wyjątków stanu uszkodzenia w ogólnych procedurach obsługi.</target>
         <note />
       </trans-unit>
       <trans-unit id="RethrowToPreserveStackDetailsTitle">

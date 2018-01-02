@@ -39,27 +39,27 @@
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalTitle">
         <source>Prefer jagged arrays over multidimensional</source>
-        <target state="translated">Çok boyutlu yerine basit dizileri tercih edin</target>
+        <target state="translated">Çok boyutlu yerine düzensiz dizileri tercih edin</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalDescription">
         <source>A jagged array is an array whose elements are arrays. The arrays that make up the elements can be of different sizes, leading to less wasted space for some sets of data.</source>
-        <target state="translated">Basit dizi, öğeleri diziler halinde olan bir dizidir. Öğeleri oluşturan diziler farklı boyutlarda olabileceğinden, bazı veri kümeleri için daha az alan israfı sağlar.</target>
+        <target state="translated">Düzensiz dizi, öğeleri diziler halinde olan bir dizidir. Öğeleri oluşturan diziler farklı boyutlarda olabileceğinden, bazı veri kümeleri için daha az alan israfı sağlar.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalMessageDefault">
         <source>{0} is a multidimensional array. Replace it with a jagged array if possible.</source>
-        <target state="translated">{0}, çok boyutlu bir dizi. Mümkünse bunu basit bir diziyle değiştirin.</target>
+        <target state="translated">{0}, çok boyutlu bir dizi. Mümkünse bunu düzensiz bir diziyle değiştirin.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalMessageReturn">
         <source>{0} returns a multidimensional array of {1}. Replace it with a jagged array if possible.</source>
-        <target state="translated">{0}, çok boyutlu {1} dizisini döndürüyor. Mümkünse bunu basit bir diziyle değiştirin.</target>
+        <target state="translated">{0}, çok boyutlu {1} dizisini döndürüyor. Mümkünse bunu düzensiz bir diziyle değiştirin.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalMessageBody">
         <source>{0} uses a multidimensional array of {1}. Replace it with a jagged array if possible.</source>
-        <target state="translated">{0}, çok boyutlu {1} dizisini kullanıyor. Mümkünse bunu basit bir diziyle değiştirin.</target>
+        <target state="translated">{0}, çok boyutlu {1} dizisini kullanıyor. Mümkünse bunu düzensiz bir diziyle değiştirin.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkMembersAsStaticTitle">

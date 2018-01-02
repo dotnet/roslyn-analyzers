@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="DoNotUseMD5Description">
         <source>This type implements MD5, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the MD5 and HMACMD5 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</source>
-        <target state="translated">Этот тип реализует криптографически небезопасную функцию хэширования MD5. С точки зрения вычислений для алгоритмов MD5 и HMACMD5 возможны конфликты хэша. Замените на хэш-алгоритм из семейства SHA-2 (SHA512, SHA384, SHA256).</target>
+        <target state="translated">Этот тип реализует криптографически небезопасную хэш-функцию MD5. С точки зрения вычислений для алгоритмов MD5 и HMACMD5 возможны хэш-конфликты. Замените на хэш-алгоритм из семейства SHA-2 (SHA512, SHA384, SHA256).</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseSHA1">
@@ -19,7 +19,7 @@
       </trans-unit>
       <trans-unit id="DoNotUseSHA1Description">
         <source>This type implements SHA1, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the SHA-1 and SHA-0 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</source>
-        <target state="translated">Этот тип реализует криптографически небезопасную функцию хэширования SHA1. С точки зрения вычислений для алгоритмов SHA-1 и SHA-0 возможны конфликты хэша. Замените на хэш-алгоритм из семейства SHA-2 (SHA512, SHA384, SHA256).</target>
+        <target state="translated">Этот тип реализует криптографически небезопасную хэш-функцию SHA1. С точки зрения вычислений для алгоритмов SHA-1 и SHA-0 возможны хэш-конфликты. Замените на хэш-алгоритм из семейства SHA-2 (SHA512, SHA384, SHA256).</target>
         <note />
       </trans-unit>
     </body>

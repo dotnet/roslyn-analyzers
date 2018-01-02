@@ -39,27 +39,27 @@
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalTitle">
         <source>Prefer jagged arrays over multidimensional</source>
-        <target state="translated">Verzweigte Arrays mehrdimensionalen Arrays vorziehen</target>
+        <target state="translated">Jagged Arrays mehrdimensionalen Arrays vorziehen</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalDescription">
         <source>A jagged array is an array whose elements are arrays. The arrays that make up the elements can be of different sizes, leading to less wasted space for some sets of data.</source>
-        <target state="translated">Ein verzweigtes Array ist ein Array, dessen Elemente ebenfalls Arrays sind. Diese Arrayelemente können verschiedene Größen aufweisen, sodass für einige Datenmengen weniger Platz vergeudet wird.</target>
+        <target state="translated">Ein Jagged Array ist ein Array, dessen Elemente ebenfalls Arrays sind. Diese Arrayelemente können verschiedene Größen aufweisen, sodass für einige Datenmengen weniger Platz vergeudet wird.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalMessageDefault">
         <source>{0} is a multidimensional array. Replace it with a jagged array if possible.</source>
-        <target state="translated">"{0}" ist ein mehrdimensionales Array. Ersetzen Sie es nach Möglichkeit durch ein verzweigtes Array.</target>
+        <target state="translated">"{0}" ist ein mehrdimensionales Array. Ersetzen Sie es nach Möglichkeit durch ein Jagged Array.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalMessageReturn">
         <source>{0} returns a multidimensional array of {1}. Replace it with a jagged array if possible.</source>
-        <target state="translated">"{0}" gibt ein mehrdimensionales Array von "{1}" zurück. Ersetzen Sie es nach Möglichkeit durch ein verzweigtes Array.</target>
+        <target state="translated">"{0}" gibt ein mehrdimensionales Array von "{1}" zurück. Ersetzen Sie es nach Möglichkeit durch ein Jagged Array.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalMessageBody">
         <source>{0} uses a multidimensional array of {1}. Replace it with a jagged array if possible.</source>
-        <target state="translated">"{0}" verwendet ein mehrdimensionales Array von "{1}". Ersetzen Sie es nach Möglichkeit durch ein verzweigtes Array.</target>
+        <target state="translated">"{0}" verwendet ein mehrdimensionales Array von "{1}". Ersetzen Sie es nach Möglichkeit durch ein Jagged Array.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkMembersAsStaticTitle">

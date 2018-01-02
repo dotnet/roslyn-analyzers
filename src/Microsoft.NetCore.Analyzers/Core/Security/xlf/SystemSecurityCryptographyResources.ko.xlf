@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="DoNotUseMD5Description">
         <source>This type implements MD5, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the MD5 and HMACMD5 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</source>
-        <target state="translated">이 형식은 안전하지 않게 암호화된 해시 기능인 MD5를 구현합니다. MD5 및 HMACMD5 알고리즘에서 계산상 해시 충돌이 발생할 수 있습니다. 이 사용법을 SHA-2 패밀리 해시 알고리즘(SHA512, SHA384, SHA256)으로 바꾸세요.</target>
+        <target state="translated">이 형식은 안전하지 않게 암호화된 해시 알고리즘인 MD5를 구현합니다. MD5 및 HMACMD5 알고리즘에서 계산상 해시 충돌이 발생할 수 있습니다. 이 사용법을 SHA-2 패밀리 해시 알고리즘(SHA512, SHA384, SHA256)으로 바꾸세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseSHA1">
@@ -19,7 +19,7 @@
       </trans-unit>
       <trans-unit id="DoNotUseSHA1Description">
         <source>This type implements SHA1, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the SHA-1 and SHA-0 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</source>
-        <target state="translated">이 형식은 안전하지 않게 암호화된 해시 기능인 SHA1을 구현합니다. SHA-1 및 SHA-0 알고리즘에서 계산상 해시 충돌이 발생할 수 있습니다. 이 사용법을 SHA-2 패밀리 해시 알고리즘(SHA512, SHA384, SHA256)으로 바꾸세요.</target>
+        <target state="translated">이 형식은 안전하지 않게 암호화된 해시 알고리즘인 SHA1을 구현합니다. SHA-1 및 SHA-0 알고리즘에서 계산상 해시 충돌이 발생할 수 있습니다. 이 사용법을 SHA-2 패밀리 해시 알고리즘(SHA512, SHA384, SHA256)으로 바꾸세요.</target>
         <note />
       </trans-unit>
     </body>

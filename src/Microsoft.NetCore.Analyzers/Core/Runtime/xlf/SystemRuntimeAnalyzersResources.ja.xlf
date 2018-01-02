@@ -39,7 +39,7 @@
       </trans-unit>
       <trans-unit id="AvoidUnsealedAttributesTitle">
         <source>Avoid unsealed attributes</source>
-        <target state="translated">シールされていない属性を使用しません</target>
+        <target state="translated">アンシールド属性を使用しません</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnsealedAttributesDescription">
@@ -49,7 +49,7 @@
       </trans-unit>
       <trans-unit id="AvoidUnsealedAttributesMessage">
         <source>Avoid unsealed attributes</source>
-        <target state="translated">シールされていない属性を使用しません</target>
+        <target state="translated">アンシールド属性を使用しません</target>
         <note />
       </trans-unit>
       <trans-unit id="TestForEmptyStringsUsingStringLengthTitle">
@@ -84,17 +84,17 @@
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersTitle">
         <source>Do not catch corrupted state exceptions in general handlers.</source>
-        <target state="translated">汎用ハンドラーの破損状態の例外をキャッチしません。</target>
+        <target state="translated">汎用ハンドラーの破損状態例外をキャッチしません。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersDescription">
         <source>Do not author general catch handlers in code that receives corrupted state exceptions.</source>
-        <target state="translated">破損状態の例外を受け取るコード内に汎用キャッチ ハンドラーを作成しないでください。</target>
+        <target state="translated">破損状態例外を受け取るコード内に汎用キャッチ ハンドラーを作成しないでください。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersMessage">
         <source>Do not catch corrupted state exceptions in general handlers.</source>
-        <target state="translated">汎用ハンドラーの破損状態の例外をキャッチしません。</target>
+        <target state="translated">汎用ハンドラーの破損状態例外をキャッチしません。</target>
         <note />
       </trans-unit>
       <trans-unit id="RethrowToPreserveStackDetailsTitle">

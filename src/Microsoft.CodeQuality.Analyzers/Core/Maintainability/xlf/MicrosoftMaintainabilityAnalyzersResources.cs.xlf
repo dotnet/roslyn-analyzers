@@ -119,17 +119,17 @@
       </trans-unit>
       <trans-unit id="UseNameOfInPlaceOfStringDescription">
         <source>Using nameof helps keep your code valid when refactoring.</source>
-        <target state="new">Using nameof helps keep your code valid when refactoring.</target>
+        <target state="translated">Použití nameof pomůže zachovat platnost vašeho kódu při refaktoringu.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseNameOfInPlaceOfStringMessage">
         <source>Use nameof in place of string literal '{0}'</source>
-        <target state="new">Use nameof in place of string literal '{0}'</target>
+        <target state="translated">Namísto řetězcového literálu {0} použijte nameof.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseNameOfInPlaceOfStringTitle">
         <source>Use nameof to express symbol names</source>
-        <target state="new">Use nameof to express symbol names</target>
+        <target state="translated">K vyjádření názvů symbolů použijte nameof</target>
         <note />
       </trans-unit>
     </body>

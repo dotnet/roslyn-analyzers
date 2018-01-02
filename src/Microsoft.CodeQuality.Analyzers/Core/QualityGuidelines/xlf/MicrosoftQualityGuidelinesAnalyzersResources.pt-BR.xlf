@@ -164,7 +164,7 @@
       </trans-unit>
       <trans-unit id="MakeDeclaringTypeSealed">
         <source>Make declaring type sealed.</source>
-        <target state="translated">Torne o tipo declarativo lacrado.</target>
+        <target state="translated">Torne o tipo declarativo selado.</target>
         <note />
       </trans-unit>
       <trans-unit id="MakeMemberNotOverridable">

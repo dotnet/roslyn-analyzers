@@ -484,7 +484,7 @@
       </trans-unit>
       <trans-unit id="CollectionPropertiesShouldBeReadOnlyMessage">
         <source>Change '{0}' to be read-only by removing the property setter.</source>
-        <target state="needs-review-translation">Las propiedades de colección deben ser de solo lectura</target>
+        <target state="translated">Cambie "{0}" para que sea de solo lectura quitando el establecedor de propiedad.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle">

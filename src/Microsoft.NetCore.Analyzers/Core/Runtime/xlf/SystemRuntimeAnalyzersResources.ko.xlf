@@ -84,17 +84,17 @@
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersTitle">
         <source>Do not catch corrupted state exceptions in general handlers.</source>
-        <target state="translated">일반 처리기에서 손상된 상태의 예외를 catch하지 마세요.</target>
+        <target state="translated">일반 처리기에서 손상된 상태 예외를 catch하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersDescription">
         <source>Do not author general catch handlers in code that receives corrupted state exceptions.</source>
-        <target state="translated">손상된 상태의 예외를 수신하는 코드에서 일반 catch 처리기를 작성하지 마세요.</target>
+        <target state="translated">손상된 상태 예외를 수신하는 코드에서 일반 catch 처리기를 작성하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersMessage">
         <source>Do not catch corrupted state exceptions in general handlers.</source>
-        <target state="translated">일반 처리기에서 손상된 상태의 예외를 catch하지 마세요.</target>
+        <target state="translated">일반 처리기에서 손상된 상태 예외를 catch하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="RethrowToPreserveStackDetailsTitle">

@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsDescription">
         <source>To fix a violation of this rule, implement the serialization constructor. For a sealed class, make the constructor private; otherwise, make it protected.</source>
-        <target state="translated">Para corrigir uma violação dessa regra, implemente o construtor de serialização. Para uma classe lacrada, torne o construtor privado; caso contrário, torne-o protegido.</target>
+        <target state="translated">Para corrigir uma violação dessa regra, implemente o construtor de serialização. Para uma classe sealed, torne o construtor privado; caso contrário, torne-o protegido.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsMessageCreateMagicConstructor">
@@ -79,12 +79,12 @@
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsMessageMakeUnsealedMagicConstructorFamily">
         <source>Declare the serialization constructor of {0}, an unsealed type, as protected.</source>
-        <target state="translated">Declare o construtor de serialização de {0}, um tipo não lacrado, como protegido.</target>
+        <target state="translated">Declare o construtor de serialização de {0}, um tipo não selado, como protegido.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate">
         <source>Declare the serialization constructor of {0}, a sealed type, as private.</source>
-        <target state="translated">Declare o construtor de serialização de {0}, um tipo lacrado, como privado.</target>
+        <target state="translated">Declare o construtor de serialização de {0}, um tipo selado, como privado.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsCodeActionTitle">
@@ -379,7 +379,7 @@
       </trans-unit>
       <trans-unit id="TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException">
         <source>Change the base type of {0} so that it no longer extends {1}. This base exception type does not provide any additional value for framework classes. Extend 'System.Exception' or an existing unsealed exception type instead. Do not create a new exception base type unless there is specific value in enabling the creation of a catch handler for an entire class of exceptions.</source>
-        <target state="translated">Altere o tipo base de {0} para que ele não estenda mais {1}. Esse tipo de exceção base não fornece nenhum valor adicional para as classes de estrutura. Estenda 'System.Exception' ou um tipo de exceção não lacrada existente. Não crie um novo tipo base de exceção a menos que haja valor específico em se habilitar a criação de um manipulador catch para uma classe inteira de exceções.</target>
+        <target state="translated">Altere o tipo base de {0} para que ele não estenda mais {1}. Esse tipo de exceção base não fornece nenhum valor adicional para as classes de estrutura. Estenda 'System.Exception' ou um tipo de exceção não selada existente. Não crie um novo tipo base de exceção a menos que haja valor específico em se habilitar a criação de um manipulador catch para uma classe inteira de exceções.</target>
         <note />
       </trans-unit>
       <trans-unit id="TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase">

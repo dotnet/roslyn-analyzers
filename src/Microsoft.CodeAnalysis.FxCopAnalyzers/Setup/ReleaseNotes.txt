@@ -1,1 +1,2 @@
-﻿December 2017: v2.6.0 Preview Release
+January 2018: v2.6.0 Official Release
+Requires Visual Studio 2017 15.5 or above.

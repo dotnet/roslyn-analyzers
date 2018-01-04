@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
@@ -21,21 +23,20 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.ReviewSQLQueriesForSecurityVulnerabilitiesDescription), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
-                                                                                          s_localizableTitle,
-                                                                                          s_localizableMessageNoNonLiterals,
-                                                                                          DiagnosticCategory.Usage,
-                                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-                                                                                          description: s_localizableDescription,
-                                                                                          helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2100-review-sql-queries-for-security-vulnerabilities",
-                                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             s_localizableTitle,
+                                                                             s_localizableMessageNoNonLiterals,
+                                                                             DiagnosticCategory.Usage,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                                                                             description: s_localizableDescription,
+                                                                             helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2100-review-sql-queries-for-security-vulnerabilities",
+                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Consider making this analyzer thread-safe.
-            //context.EnableConcurrentExecution();
+            context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
             context.RegisterOperationBlockStartAction(operationBlockStartContext =>
@@ -46,8 +47,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                 ISymbol symbol = operationBlockStartContext.OwningSymbol;
 
-                var isDbCommandConstructor = false;
-                var isDataAdapterConstructor = false;
+                var isInDbCommandConstructor = false;
+                var isInDataAdapterConstructor = false;
 
                 if (symbol.Kind != SymbolKind.Method)
                 {
@@ -58,36 +59,22 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                 if (methodSymbol.MethodKind == MethodKind.Constructor)
                 {
-                    isDbCommandConstructor = symbol.ContainingType == iDbCommandType;
-                    isDataAdapterConstructor = symbol.ContainingType == iDataAdapterType;
+                    isInDbCommandConstructor = symbol.ContainingType.AllInterfaces.Contains(iDbCommandType);
+                    isInDataAdapterConstructor = symbol.ContainingType.AllInterfaces.Contains(iDataAdapterType);
                 }
 
                 // Only report diagnostics once per set of operation blocks
-                bool diagnosticReported = false;
-
                 // Find all potentially vulnerable parameters for later analysis
                 operationBlockStartContext.RegisterOperationAction(operationContext =>
                 {
-                    if (diagnosticReported)
-                    {
-                        return;
-                    }
-
                     var creation = (IObjectCreationOperation)operationContext.Operation;
-                    if (AnalyzeMethodCall(operationContext, creation.Constructor, symbol, creation.Arguments, creation.Syntax, isDbCommandConstructor, isDataAdapterConstructor))
-                    {
-                        diagnosticReported = true;
-                    }
+                    var callingDataAdapterConstructor = creation.Constructor.ContainingType.AllInterfaces.Contains(iDataAdapterType);
+                    AnalyzeMethodCall(operationContext, creation.Constructor, symbol, creation.Arguments, creation.Syntax, isInDbCommandConstructor, isInDataAdapterConstructor, callingDataAdapterConstructor);
                 }, OperationKind.ObjectCreation);
 
                 // If an object calls a constructor in a base class or the same class, this will get called.
                 operationBlockStartContext.RegisterOperationAction(operationContext =>
                 {
-                    if (diagnosticReported)
-                    {
-                        return;
-                    }
-
                     var invocation = (IInvocationOperation)operationContext.Operation;
 
                     // We only analyze constructor invocations
@@ -103,19 +90,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                         return;
                     }
 
-                    if (AnalyzeMethodCall(operationContext, invocation.TargetMethod, symbol, invocation.Arguments, invocation.Syntax, isDbCommandConstructor, isDataAdapterConstructor))
-                    {
-                        diagnosticReported = true;
-                    }
+                    var callingDataAdapterConstructor = invocation.TargetMethod.ContainingType.AllInterfaces.Contains(iDataAdapterType);
+                    AnalyzeMethodCall(operationContext, invocation.TargetMethod, symbol, invocation.Arguments, invocation.Syntax, isInDbCommandConstructor, isInDataAdapterConstructor, callingDataAdapterConstructor);
                 }, OperationKind.Invocation);
 
                 operationBlockStartContext.RegisterOperationAction(operationContext =>
                 {
-                    if (diagnosticReported)
-                    {
-                        return;
-                    }
-
                     var propertyReference = (IPropertyReferenceOperation)operationContext.Operation;
 
                     // We're only interested in implementations of IDbCommand.CommandText
@@ -136,27 +116,25 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                         return;
                     }
 
-                    if (ReportDiagnosticIfNecessary(operationContext, assignment.Value, assignment.Syntax, propertyReference.Property, symbol))
-                    {
-                        diagnosticReported = true;
-                    }
+                    ReportDiagnosticIfNecessary(operationContext, assignment.Value, assignment.Syntax, propertyReference.Property, symbol);
                 }, OperationKind.PropertyReference);
             });
         }
 
-        private bool AnalyzeMethodCall(OperationAnalysisContext operationContext,
+        private void AnalyzeMethodCall(OperationAnalysisContext operationContext,
                                        IMethodSymbol constructorSymbol,
                                        ISymbol containingSymbol,
                                        ImmutableArray<IArgumentOperation> arguments,
                                        SyntaxNode invocationSyntax,
-                                       bool isDbCommandConstructor,
-                                       bool isDataAdapterConstructor)
+                                       bool isInDbCommandConstructor,
+                                       bool isInDataAdapterConstructor,
+                                       bool callingDataAdapterConstructor)
         {
             // All parameters the function takes that are explicit strings are potential vulnerabilities
             var potentials = arguments.WhereAsArray(arg => arg.Parameter.Type.SpecialType == SpecialType.System_String && !arg.Parameter.IsImplicitlyDeclared);
             if (potentials.IsEmpty)
             {
-                return false;
+                return;
             }
 
             var vulnerableArgumentsBuilder = ImmutableArray.CreateBuilder<IArgumentOperation>();
@@ -168,7 +146,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 // one is the command string. However, for the constructor of a IDataAdapter, a lot of times the
                 // constructor also take in the connection string, so we can't assume it's the command if there is only one
                 // string.
-                if (isDataAdapterConstructor || potentials.Length > 1)
+                if (callingDataAdapterConstructor || potentials.Length > 1)
                 {
                     if (!IsParameterSymbolVulnerable(argument.Parameter))
                     {
@@ -183,18 +161,18 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             foreach (var argument in vulnerableArguments)
             {
-                if (IsParameterSymbolVulnerable(argument.Parameter) && (isDbCommandConstructor || isDataAdapterConstructor))
+                if (IsParameterSymbolVulnerable(argument.Parameter) && (isInDbCommandConstructor || isInDataAdapterConstructor))
                 {
                     //No warnings, as Constructor parameters in derived classes are assumed to be safe since this rule will check the constructor arguments at their call sites.
-                    return false;
+                    return;
                 }
+
                 if (ReportDiagnosticIfNecessary(operationContext, argument.Value, invocationSyntax, constructorSymbol, containingSymbol))
                 {
-                    return true;
+                    // Only report one warning per invocation
+                    return;
                 }
             }
-
-            return false;
         }
 
         private bool IsParameterSymbolVulnerable(IParameterSymbol parameter)
@@ -218,8 +196,10 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                     syntax.GetLocation(),
                                                                     invokedSymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
                                                                     containingMethod.Name));
+
                 return true;
             }
+
             return false;
         }
     }

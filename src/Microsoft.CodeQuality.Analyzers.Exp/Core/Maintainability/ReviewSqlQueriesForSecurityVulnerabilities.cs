@@ -38,22 +38,12 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
         {
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            INamedTypeSymbol iDbCommandType = null;
-            INamedTypeSymbol iDataAdapterType = null;
-            IPropertySymbol commandTextProperty = null;
-
-            // Just getting the well known types once, no actual actions to take
-#pragma warning disable RS1012 // Start action has no registered actions.
             context.RegisterCompilationStartAction(compilationContext =>
-#pragma warning restore RS1012 // Start action has no registered actions.
             {
-                iDbCommandType = WellKnownTypes.IDbCommand(compilationContext.Compilation);
-                iDataAdapterType = WellKnownTypes.IDataAdapter(compilationContext.Compilation);
-                commandTextProperty = (IPropertySymbol)iDbCommandType.GetMembers("CommandText").Single();
-            });
+                INamedTypeSymbol iDbCommandType = WellKnownTypes.IDbCommand(compilationContext.Compilation);
+                INamedTypeSymbol iDataAdapterType = WellKnownTypes.IDataAdapter(compilationContext.Compilation);
+                IPropertySymbol commandTextProperty = iDbCommandType.GetProperty("CommandText");
 
-            context.RegisterOperationBlockStartAction(operationBlockStartContext =>
-            {
                 if (iDbCommandType == null ||
                     iDataAdapterType == null ||
                     commandTextProperty == null)
@@ -61,75 +51,77 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
                     return;
                 }
 
-                ISymbol symbol = operationBlockStartContext.OwningSymbol;
-
-                var isInDbCommandConstructor = false;
-                var isInDataAdapterConstructor = false;
-
-                if (symbol.Kind != SymbolKind.Method)
+                compilationContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
-                    return;
-                }
+                    ISymbol symbol = operationBlockStartContext.OwningSymbol;
 
-                var methodSymbol = (IMethodSymbol)symbol;
+                    var isInDbCommandConstructor = false;
+                    var isInDataAdapterConstructor = false;
 
-                if (methodSymbol.MethodKind == MethodKind.Constructor)
-                {
-                    CheckForDbCommandAndDataAdapterImplementation(symbol.ContainingType, iDbCommandType, iDataAdapterType, out isInDbCommandConstructor, out isInDataAdapterConstructor);
-                }
-
-                operationBlockStartContext.RegisterOperationAction(operationContext =>
-                {
-                    var creation = (IObjectCreationOperation)operationContext.Operation;
-                    var callingDataAdapterConstructor = creation.Constructor.ContainingType.AllInterfaces.Contains(iDataAdapterType);
-                    AnalyzeMethodCall(operationContext, creation.Constructor, symbol, creation.Arguments, creation.Syntax, isInDbCommandConstructor, isInDataAdapterConstructor, iDbCommandType, iDataAdapterType);
-                }, OperationKind.ObjectCreation);
-
-                // If an object calls a constructor in a base class or the same class, this will get called.
-                operationBlockStartContext.RegisterOperationAction(operationContext =>
-                {
-                    var invocation = (IInvocationOperation)operationContext.Operation;
-
-                    // We only analyze constructor invocations
-                    if (invocation.TargetMethod.MethodKind != MethodKind.Constructor)
+                    if (symbol.Kind != SymbolKind.Method)
                     {
                         return;
                     }
 
-                    // If we're calling another constructor in the same class from this constructor, assume that all parameters are safe and skip analysis. Parameter usage
-                    // will be analyzed there
-                    if (invocation.TargetMethod.ContainingType == symbol.ContainingType)
+                    var methodSymbol = (IMethodSymbol)symbol;
+
+                    if (methodSymbol.MethodKind == MethodKind.Constructor)
                     {
-                        return;
+                        CheckForDbCommandAndDataAdapterImplementation(symbol.ContainingType, iDbCommandType, iDataAdapterType, out isInDbCommandConstructor, out isInDataAdapterConstructor);
                     }
 
-                    AnalyzeMethodCall(operationContext, invocation.TargetMethod, symbol, invocation.Arguments, invocation.Syntax, isInDbCommandConstructor, isInDataAdapterConstructor, iDbCommandType, iDataAdapterType);
-                }, OperationKind.Invocation);
-
-                operationBlockStartContext.RegisterOperationAction(operationContext =>
-                {
-                    var propertyReference = (IPropertyReferenceOperation)operationContext.Operation;
-
-                    // We're only interested in implementations of IDbCommand.CommandText
-                    if (!propertyReference.Property.IsImplementationOfInterfaceMember(commandTextProperty))
+                    operationBlockStartContext.RegisterOperationAction(operationContext =>
                     {
-                        return;
-                    }
+                        var creation = (IObjectCreationOperation)operationContext.Operation;
+                        AnalyzeMethodCall(operationContext, creation.Constructor, symbol, creation.Arguments, creation.Syntax, isInDbCommandConstructor, isInDataAdapterConstructor, iDbCommandType, iDataAdapterType);
+                    }, OperationKind.ObjectCreation);
 
-                    // Make sure we're in assignment statement
-                    if (!(propertyReference.Parent is IAssignmentOperation assignment))
+                    // If an object calls a constructor in a base class or the same class, this will get called.
+                    operationBlockStartContext.RegisterOperationAction(operationContext =>
                     {
-                        return;
-                    }
+                        var invocation = (IInvocationOperation)operationContext.Operation;
 
-                    // Only if the property reference is actually the target of the assignment
-                    if (assignment.Target != propertyReference)
+                        // We only analyze constructor invocations
+                        if (invocation.TargetMethod.MethodKind != MethodKind.Constructor)
+                        {
+                            return;
+                        }
+
+                        // If we're calling another constructor in the same class from this constructor, assume that all parameters are safe and skip analysis. Parameter usage
+                        // will be analyzed there
+                        if (invocation.TargetMethod.ContainingType == symbol.ContainingType)
+                        {
+                            return;
+                        }
+
+                        AnalyzeMethodCall(operationContext, invocation.TargetMethod, symbol, invocation.Arguments, invocation.Syntax, isInDbCommandConstructor, isInDataAdapterConstructor, iDbCommandType, iDataAdapterType);
+                    }, OperationKind.Invocation);
+
+                    operationBlockStartContext.RegisterOperationAction(operationContext =>
                     {
-                        return;
-                    }
+                        var propertyReference = (IPropertyReferenceOperation)operationContext.Operation;
 
-                    ReportDiagnosticIfNecessary(operationContext, assignment.Value, assignment.Syntax, propertyReference.Property, symbol);
-                }, OperationKind.PropertyReference);
+                        // We're only interested in implementations of IDbCommand.CommandText
+                        if (!propertyReference.Property.IsImplementationOfInterfaceMember(commandTextProperty))
+                        {
+                            return;
+                        }
+
+                        // Make sure we're in assignment statement
+                        if (!(propertyReference.Parent is IAssignmentOperation assignment))
+                        {
+                            return;
+                        }
+
+                        // Only if the property reference is actually the target of the assignment
+                        if (assignment.Target != propertyReference)
+                        {
+                            return;
+                        }
+
+                        ReportDiagnosticIfNecessary(operationContext, assignment.Value, assignment.Syntax, propertyReference.Property, symbol);
+                    }, OperationKind.PropertyReference);
+                });
             });
         }
 
@@ -214,10 +206,9 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
             if (argumentValue.Type.SpecialType != SpecialType.System_String || !argumentValue.ConstantValue.HasValue)
             {
                 // Review if the symbol passed to {invocation} in {method/field/constructor/etc} has user input.
-                operationContext.ReportDiagnostic(Diagnostic.Create(Rule,
-                                                                    syntax.GetLocation(),
-                                                                    invokedSymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
-                                                                    containingMethod.Name));
+                operationContext.ReportDiagnostic(syntax.CreateDiagnostic(Rule,
+                                                                          invokedSymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
+                                                                          containingMethod.Name));
 
                 return true;
             }

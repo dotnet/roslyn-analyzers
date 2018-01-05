@@ -38,12 +38,28 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
         {
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            INamedTypeSymbol iDbCommandType = null;
+            INamedTypeSymbol iDataAdapterType = null;
+            IPropertySymbol commandTextProperty = null;
+
+            // Just getting the well known types once, no actual actions to take
+#pragma warning disable RS1012 // Start action has no registered actions.
+            context.RegisterCompilationStartAction(compilationContext =>
+#pragma warning restore RS1012 // Start action has no registered actions.
+            {
+                iDbCommandType = WellKnownTypes.IDbCommand(compilationContext.Compilation);
+                iDataAdapterType = WellKnownTypes.IDataAdapter(compilationContext.Compilation);
+                commandTextProperty = (IPropertySymbol)iDbCommandType.GetMembers("CommandText").Single();
+            });
 
             context.RegisterOperationBlockStartAction(operationBlockStartContext =>
             {
-                INamedTypeSymbol iDbCommandType = WellKnownTypes.IDbCommand(operationBlockStartContext.Compilation);
-                INamedTypeSymbol iDataAdapterType = WellKnownTypes.IDataAdapter(operationBlockStartContext.Compilation);
-                IPropertySymbol commandTextProperty = (IPropertySymbol)iDbCommandType.GetMembers("CommandText").Single();
+                if (iDbCommandType == null ||
+                    iDataAdapterType == null ||
+                    commandTextProperty == null)
+                {
+                    return;
+                }
 
                 ISymbol symbol = operationBlockStartContext.OwningSymbol;
 
@@ -59,17 +75,14 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
 
                 if (methodSymbol.MethodKind == MethodKind.Constructor)
                 {
-                    isInDbCommandConstructor = symbol.ContainingType.AllInterfaces.Contains(iDbCommandType);
-                    isInDataAdapterConstructor = symbol.ContainingType.AllInterfaces.Contains(iDataAdapterType);
+                    CheckForDbCommandAndDataAdapterImplementation(symbol.ContainingType, iDbCommandType, iDataAdapterType, out isInDbCommandConstructor, out isInDataAdapterConstructor);
                 }
 
-                // Only report diagnostics once per set of operation blocks
-                // Find all potentially vulnerable parameters for later analysis
                 operationBlockStartContext.RegisterOperationAction(operationContext =>
                 {
                     var creation = (IObjectCreationOperation)operationContext.Operation;
                     var callingDataAdapterConstructor = creation.Constructor.ContainingType.AllInterfaces.Contains(iDataAdapterType);
-                    AnalyzeMethodCall(operationContext, creation.Constructor, symbol, creation.Arguments, creation.Syntax, isInDbCommandConstructor, isInDataAdapterConstructor, callingDataAdapterConstructor);
+                    AnalyzeMethodCall(operationContext, creation.Constructor, symbol, creation.Arguments, creation.Syntax, isInDbCommandConstructor, isInDataAdapterConstructor, iDbCommandType, iDataAdapterType);
                 }, OperationKind.ObjectCreation);
 
                 // If an object calls a constructor in a base class or the same class, this will get called.
@@ -90,8 +103,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
                         return;
                     }
 
-                    var callingDataAdapterConstructor = invocation.TargetMethod.ContainingType.AllInterfaces.Contains(iDataAdapterType);
-                    AnalyzeMethodCall(operationContext, invocation.TargetMethod, symbol, invocation.Arguments, invocation.Syntax, isInDbCommandConstructor, isInDataAdapterConstructor, callingDataAdapterConstructor);
+                    AnalyzeMethodCall(operationContext, invocation.TargetMethod, symbol, invocation.Arguments, invocation.Syntax, isInDbCommandConstructor, isInDataAdapterConstructor, iDbCommandType, iDataAdapterType);
                 }, OperationKind.Invocation);
 
                 operationBlockStartContext.RegisterOperationAction(operationContext =>
@@ -121,15 +133,25 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
             });
         }
 
-        private void AnalyzeMethodCall(OperationAnalysisContext operationContext,
+        private static void AnalyzeMethodCall(OperationAnalysisContext operationContext,
                                        IMethodSymbol constructorSymbol,
                                        ISymbol containingSymbol,
                                        ImmutableArray<IArgumentOperation> arguments,
                                        SyntaxNode invocationSyntax,
                                        bool isInDbCommandConstructor,
                                        bool isInDataAdapterConstructor,
-                                       bool callingDataAdapterConstructor)
+                                       INamedTypeSymbol iDbCommandType,
+                                       INamedTypeSymbol iDataAdapterType)
         {
+            CheckForDbCommandAndDataAdapterImplementation(constructorSymbol.ContainingType, iDbCommandType, iDataAdapterType,
+                                                          out var callingDbCommandConstructor,
+                                                          out var callingDataAdapterConstructor);
+
+            if (!callingDataAdapterConstructor && !callingDbCommandConstructor)
+            {
+                return;
+            }
+
             // All parameters the function takes that are explicit strings are potential vulnerabilities
             var potentials = arguments.WhereAsArray(arg => arg.Parameter.Type.SpecialType == SpecialType.System_String && !arg.Parameter.IsImplicitlyDeclared);
             if (potentials.IsEmpty)
@@ -175,7 +197,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
             }
         }
 
-        private bool IsParameterSymbolVulnerable(IParameterSymbol parameter)
+        private static bool IsParameterSymbolVulnerable(IParameterSymbol parameter)
         {
             // Parameters might be vulnerable if "cmd" or "command" is in the name
             return parameter != null &&
@@ -183,7 +205,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
                     parameter.Name.IndexOf("command", StringComparison.OrdinalIgnoreCase) != -1);
         }
 
-        private bool ReportDiagnosticIfNecessary(OperationAnalysisContext operationContext,
+        private static bool ReportDiagnosticIfNecessary(OperationAnalysisContext operationContext,
                                                  IOperation argumentValue,
                                                  SyntaxNode syntax,
                                                  ISymbol invokedSymbol,
@@ -201,6 +223,27 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
             }
 
             return false;
+        }
+
+        private static void CheckForDbCommandAndDataAdapterImplementation(INamedTypeSymbol containingType,
+                                                                          INamedTypeSymbol iDbCommandType,
+                                                                          INamedTypeSymbol iDataAdapterType,
+                                                                          out bool implementsDbCommand,
+                                                                          out bool implementsDataCommand)
+        {
+            implementsDbCommand = false;
+            implementsDataCommand = false;
+            foreach (var @interface in containingType.AllInterfaces)
+            {
+                if (@interface.Equals(iDbCommandType))
+                {
+                    implementsDbCommand = true;
+                }
+                else if (@interface.Equals(iDataAdapterType))
+                {
+                    implementsDataCommand = true;
+                }
+            }
         }
     }
 }

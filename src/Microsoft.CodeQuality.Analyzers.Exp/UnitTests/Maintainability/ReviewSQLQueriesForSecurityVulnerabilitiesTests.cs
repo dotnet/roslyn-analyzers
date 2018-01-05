@@ -225,6 +225,22 @@ Class Adapter
 End Class";
 
         [Fact]
+        public void Unrelated_ConstructorParameter_NoDiagnostic()
+        {
+            VerifyCSharp($@"
+class Test
+{{
+    public Test(string test) {{ }}
+
+    public static void M1()
+    {{
+        var str = """";
+        var t = new Test(str);
+    }}
+}}");
+        }
+
+        [Fact]
         public void DbCommand_CommandText_StringLiteral_NoDiagnostic()
         {
             VerifyCSharp($@"

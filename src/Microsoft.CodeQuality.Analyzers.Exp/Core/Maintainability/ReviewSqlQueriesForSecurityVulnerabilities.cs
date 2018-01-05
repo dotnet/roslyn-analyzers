@@ -226,11 +226,11 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
             implementsDataCommand = false;
             foreach (var @interface in containingType.AllInterfaces)
             {
-                if (@interface.Equals(iDbCommandType))
+                if (@interface == iDbCommandType)
                 {
                     implementsDbCommand = true;
                 }
-                else if (@interface.Equals(iDataAdapterType))
+                else if (@interface == iDataAdapterType)
                 {
                     implementsDataCommand = true;
                 }

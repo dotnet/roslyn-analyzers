@@ -195,13 +195,4 @@
   <data name="UseNameOfInPlaceOfStringTitle" xml:space="preserve">
     <value>Use nameof to express symbol names</value>
   </data>
-  <data name="ReviewSQLQueriesForSecurityVulnerabilitiesDescription" xml:space="preserve">
-    <value>SQL queries that directly use user input can be vulnerable to SQL injection attacks. Review this SQL query for potential vulnerabilities, and consider using a parameterized SQL query.</value>
-  </data>
-  <data name="ReviewSQLQueriesForSecurityVulnerabilitiesMessageNoNonLiterals" xml:space="preserve">
-    <value>Review if the query string passed to '{0}' in '{1}', accepts any user input.</value>
-  </data>
-  <data name="ReviewSQLQueriesForSecurityVulnerabilitiesTitle" xml:space="preserve">
-    <value>Review SQL queries for security vulnerabilities</value>
-  </data>
 </root>

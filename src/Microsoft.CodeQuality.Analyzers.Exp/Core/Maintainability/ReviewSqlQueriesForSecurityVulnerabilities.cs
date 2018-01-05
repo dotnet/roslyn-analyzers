@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.CodeQuality.Analyzers.Maintainability
+namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class ReviewSqlQueriesForSecurityVulnerabilities : DiagnosticAnalyzer

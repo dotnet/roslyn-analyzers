@@ -3,8 +3,8 @@
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
     <Identity Id="81f388f0-1777-4c56-be8f-51f5f420037d" Version="|%CurrentProject%;GetBuildVersion|" Language="en-US" Publisher="Microsoft" />
-    <DisplayName>Microsoft.CodeQuality Analyzers</DisplayName>
-    <Description xml:space="preserve">Microsoft.CodeQuality Analyzers</Description>
+    <DisplayName>Experimental Microsoft.CodeQuality Analyzers</DisplayName>
+    <Description xml:space="preserve">Experimental Microsoft.CodeQuality Analyzers</Description>
   </Metadata>
   <Installation>
     <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0.27130.0,]" />

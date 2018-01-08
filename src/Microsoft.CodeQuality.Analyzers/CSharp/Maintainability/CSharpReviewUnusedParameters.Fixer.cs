@@ -14,19 +14,15 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpReviewUnusedParametersFixer : ReviewUnusedParametersFixer
     {
-        protected override SyntaxNode GetOperationNode(SyntaxNode node)
-        {
-            if (node.Kind() == SyntaxKind.SimpleMemberAccessExpression)
-            {
-                return node.Parent;
-            }
-
-            return node;
-        }
-
         protected override SyntaxNode GetParameterNode(SyntaxNode node)
         {
             return node;
+        }
+
+        protected override bool CanContinuouslyLeadToObjectCreationOrInvocation(SyntaxNode node)
+        {
+            var kind = node.Kind();
+            return kind == SyntaxKind.QualifiedName || kind == SyntaxKind.IdentifierName || kind == SyntaxKind.SimpleMemberAccessExpression;
         }
     }
 }

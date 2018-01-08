@@ -35,15 +35,15 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             context.RegisterCodeFix(
                 new MyCodeAction(
                     MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersMessage,
-                    async ct => await RemoveNodes(context.Document, diagnostic, ct).ConfigureAwait(false), diagnostic.Id),
+                    ct => RemoveNodes(context.Document, diagnostic, ct), nameof(MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersMessage)),
                 diagnostic);
 
             return Task.CompletedTask;
         }
 
-        protected abstract SyntaxNode GetOperationNode(SyntaxNode node);
-
         protected abstract SyntaxNode GetParameterNode(SyntaxNode node);
+
+        protected abstract bool CanContinuouslyLeadToObjectCreationOrInvocation(SyntaxNode node);
 
         private async Task<Solution> RemoveNodes(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
@@ -58,10 +58,39 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     editor.RemoveNode(value.Value);
                 }
 
-                solution = solution.WithDocumentSyntaxRoot(group.Key, editor.GetChangedRoot());
+                var newDocument = editor.GetChangedDocument();
+                var newRoot = await newDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+                solution = solution.WithDocumentSyntaxRoot(group.Key, newRoot);
             }
 
             return solution;
+        }
+
+        private ImmutableArray<IArgumentOperation>? GetOperationArguments(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            // Consider operations like A.B.C(0). We start from 'C' and need to get to '0'.
+            // To achieve this, it is necessaqry to climb up to 'A.B.C' 
+            // and check that this is IObjectCreationOperation or IInvocationOperation.
+            // After that, it is possible to check its arguments.
+            // Return null in any unexpected situation, e.g. inconsistent tree.
+            while (node != null)
+            {
+                if (!CanContinuouslyLeadToObjectCreationOrInvocation(node))
+                {
+                    return null;
+                }
+
+                node = node.Parent;
+
+                var operation = semanticModel.GetOperation(node, cancellationToken);
+                var arguments = (operation as IObjectCreationOperation)?.Arguments ?? (operation as IInvocationOperation)?.Arguments;
+                if (arguments.HasValue)
+                {
+                    return arguments.Value;
+                }
+            }
+
+            return null;
         }
 
         private async Task<ImmutableArray<KeyValuePair<DocumentId, SyntaxNode>>> GetNodesToRemoveAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
@@ -69,12 +98,19 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan);
             node = GetParameterNode(node);
-            var nodesToRemove = ImmutableArray.CreateBuilder<KeyValuePair<DocumentId, SyntaxNode>>();
-            nodesToRemove.Add(new KeyValuePair<DocumentId, SyntaxNode>(document.Id, node));
 
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             ISymbol parameterSymbol = editor.SemanticModel.GetDeclaredSymbol(node);
-            ISymbol methodDeclarationSymbol = editor.SemanticModel.GetDeclaredSymbol(node.Parent.Parent);
+            ISymbol methodDeclarationSymbol = parameterSymbol.ContainingSymbol;
+
+            if (!IsSafeMethodToRemoveParameter(methodDeclarationSymbol))
+            {
+                // See https://github.com/dotnet/roslyn-analyzers/issues/1466
+                return ImmutableArray<KeyValuePair<DocumentId, SyntaxNode>>.Empty;
+            }
+
+            var nodesToRemove = ImmutableArray.CreateBuilder<KeyValuePair<DocumentId, SyntaxNode>>();
+            nodesToRemove.Add(new KeyValuePair<DocumentId, SyntaxNode>(document.Id, node));
             var referencedSymbols = await SymbolFinder.FindReferencesAsync(methodDeclarationSymbol, document.Project.Solution, cancellationToken).ConfigureAwait(false);
 
             foreach (var referencedSymbol in referencedSymbols)
@@ -84,24 +120,19 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     foreach (var referenceLocation in referencedSymbol.Locations)
                     {
                         Location location = referenceLocation.Location;
-                        var referencedSymbolNode = location.SourceTree.GetRoot().FindNode(location.SourceSpan).Parent;
-                        referencedSymbolNode = GetOperationNode(referencedSymbolNode);
+                        var referenceRoot = location.SourceTree.GetRoot();
+                        var referencedSymbolNode = referenceRoot.FindNode(location.SourceSpan);
                         DocumentEditor localEditor = await DocumentEditor.CreateAsync(referenceLocation.Document, cancellationToken).ConfigureAwait(false);
-                        var operation = localEditor.SemanticModel.GetOperation(referencedSymbolNode, cancellationToken);
-
-                        var arguments = (operation as IObjectCreationOperation)?.Arguments;
-                        if (arguments == null)
-                        {
-                            arguments = (operation as IInvocationOperation)?.Arguments;
-                        }
+                        var arguments = GetOperationArguments(referencedSymbolNode, localEditor.SemanticModel, cancellationToken);
 
                         if (arguments != null)
                         {
                             foreach (IArgumentOperation argument in arguments)
                             {
-                                if (argument.Parameter.Equals(parameterSymbol) && (argument.ArgumentKind == ArgumentKind.Explicit))
+                                // TODO The name comparison below looks fragile. However, symbol comparison does not work for Reduced Extension Methods. Need to consider more reliable options. 
+                                if (string.Equals(argument.Parameter.Name, parameterSymbol.Name, StringComparison.Ordinal) && argument.ArgumentKind == ArgumentKind.Explicit)
                                 {
-                                    nodesToRemove.Add(new KeyValuePair<DocumentId, SyntaxNode>(referenceLocation.Document.Id, referencedSymbolNode.FindNode(argument.Syntax.GetLocation().SourceSpan)));
+                                    nodesToRemove.Add(new KeyValuePair<DocumentId, SyntaxNode>(referenceLocation.Document.Id, referenceRoot.FindNode(argument.Syntax.GetLocation().SourceSpan)));
                                 }
                             }
                         }
@@ -110,6 +141,22 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             }
 
             return nodesToRemove.ToImmutable();
+        }
+
+        private static bool IsSafeMethodToRemoveParameter(ISymbol methodDeclarationSymbol)
+        {
+            switch (methodDeclarationSymbol.Kind)
+            {
+                // Should not fix removing unused property indexer.
+                case SymbolKind.Property:
+                    return false;
+                case SymbolKind.Method:
+                    var methodSymbol = (IMethodSymbol)methodDeclarationSymbol;
+                    // Should not remove parameter for a conversion operator.
+                    return methodSymbol.MethodKind != MethodKind.Conversion;
+                default:
+                    return true;
+            }
         }
 
         private sealed class MyCodeAction : SolutionChangeAction

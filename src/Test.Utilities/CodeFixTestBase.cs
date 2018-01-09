@@ -121,18 +121,15 @@ namespace Test.Utilities
                 newSolution = runner.ApplyFixesOneByOne(document.Project.Solution, additionalFiles, allowNewCompilerDiagnostics);
             }
 
-            VerifyDocuments(newSolution, new[] { document }, new[] { additionalFileText });
+            Assert.Equal(additionalFileText, GetActualTextForNewDocument(newSolution.GetDocument(document.Id), newAdditionalFileToVerify.Name).ToString());
         }
 
         private void VerifyDocuments(Solution solution, Document[] documents, string[] newSources)
         {
-            string[] newSourceFileNames = documents.Select(d => d.Name).ToArray();
-            DocumentId[] documentIds = documents.Select(d => d.Id).ToArray();
-
-            for (int i = 0; i < documentIds.Length; i++)
+            for (int i = 0; i < documents.Length; i++)
             {
-                var document = solution.GetDocument(documentIds[i]);
-                var actualText = GetActualTextForNewDocument(document, newSourceFileNames[i]);
+                var document = solution.GetDocument(documents[i].Id);
+                var actualText = GetActualTextForNewDocument(document, documents[i].Name);
                 Assert.Equal(newSources[i], actualText.ToString());
             }
         }

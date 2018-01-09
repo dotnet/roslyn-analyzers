@@ -17,11 +17,6 @@
         <target state="translated">Не создавайте задачи без передачи TaskScheduler</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryReliability">
-        <source>Reliability</source>
-        <target state="translated">Надежность</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

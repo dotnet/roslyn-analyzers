@@ -112,16 +112,6 @@
         <target state="translated">Kullanılmayan alan '{0}'.</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryMaintainability">
-        <source>Maintainability</source>
-        <target state="translated">Sürdürülebilirlik</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CategoryPerformance">
-        <source>Performance</source>
-        <target state="translated">Performans</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsMessagePureMethod">
         <source>{0} calls {1} but does not use the value the method returns. Because {1} is marked as a Pure method, it cannot have side effects. Use the result in a conditional statement, assign the result to a variable, or pass it as an argument to another method.</source>
         <target state="translated">{0} {1} çağırıyor ancak yöntemin döndürdüğü değeri kullanmıyor. {1} Saf yöntem olarak işaretlendiğinden yan etkilere sahip olamaz. Bir koşullu ifadedeki sonucu kullanın, sonucu bir değişkene atayın veya bir bağımsız değişken olarak başka bir yönteme geçirin.</target>
@@ -129,17 +119,17 @@
       </trans-unit>
       <trans-unit id="UseNameOfInPlaceOfStringDescription">
         <source>Using nameof helps keep your code valid when refactoring.</source>
-        <target state="new">Using nameof helps keep your code valid when refactoring.</target>
+        <target state="translated">Nameof kullanmak yeniden düzenlerken kodunuzun geçerli kalmasına yardımcı olur.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseNameOfInPlaceOfStringMessage">
         <source>Use nameof in place of string literal '{0}'</source>
-        <target state="new">Use nameof in place of string literal '{0}'</target>
+        <target state="translated">Dize sabiti '{0}' yerine nameof kullanın</target>
         <note />
       </trans-unit>
       <trans-unit id="UseNameOfInPlaceOfStringTitle">
         <source>Use nameof to express symbol names</source>
-        <target state="new">Use nameof to express symbol names</target>
+        <target state="translated">Sembol adlarını ifade etmek için nameof kullanın</target>
         <note />
       </trans-unit>
     </body>

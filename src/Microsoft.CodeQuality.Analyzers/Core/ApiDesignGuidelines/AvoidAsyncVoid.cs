@@ -19,7 +19,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.AvoidAsyncVoidMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.AvoidAsyncVoidDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
+#pragma warning disable RS1018 // DiagnosticId for analyzers must be in specified format. https://github.com/dotnet/roslyn-analyzers/issues/1465
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
+#pragma warning restore RS1018 // DiagnosticId for analyzers must be in specified format.
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Usage,

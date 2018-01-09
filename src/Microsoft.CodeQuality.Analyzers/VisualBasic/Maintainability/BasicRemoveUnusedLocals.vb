@@ -10,7 +10,6 @@ Imports Microsoft.CodeAnalysis.Operations
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 Imports Microsoft.CodeQuality.Analyzers.Maintainability
-Imports DiagnosticCategory = Microsoft.CodeQuality.Analyzers.Maintainability.DiagnosticCategory
 
 Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
     ''' <summary>
@@ -31,7 +30,7 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                                                         s_localizableMessage,
                                                         DiagnosticCategory.Performance,
                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                        True,
+                                                        DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                         s_localizableDescription,
                                                         "https://msdn.microsoft.com/en-us/library/ms182278.aspx",
                                                         WellKnownDiagnosticTags.Telemetry)

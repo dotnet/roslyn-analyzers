@@ -379,7 +379,7 @@
       </trans-unit>
       <trans-unit id="TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException">
         <source>Change the base type of {0} so that it no longer extends {1}. This base exception type does not provide any additional value for framework classes. Extend 'System.Exception' or an existing unsealed exception type instead. Do not create a new exception base type unless there is specific value in enabling the creation of a catch handler for an entire class of exceptions.</source>
-        <target state="translated">更改 {0} 的基类型，使其不再扩展 {1}。此异常基类型不为框架类提供任何附加值。请扩展 "System.Exception" 或未密封的现有异常类型。不要新建异常基类型，除非在创建整个异常类的 catch 处理程序时存在特定的值。</target>
+        <target state="translated">更改 {0} 的基类型，使其不再扩展 {1}。此异常基类型不为框架类提供任何附加值。请改为扩展 "System.Exception" 或现有非密封异常类型。不要新建异常基类型，除非在创建整个异常类的 catch 处理程序时存在特定的值。</target>
         <note />
       </trans-unit>
       <trans-unit id="TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase">

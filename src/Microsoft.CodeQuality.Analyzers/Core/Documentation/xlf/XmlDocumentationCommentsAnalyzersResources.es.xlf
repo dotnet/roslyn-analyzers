@@ -17,11 +17,6 @@
         <target state="translated">Evitar el uso de etiquetas cref con un prefijo.</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryDocumentation">
-        <source>Documentation</source>
-        <target state="translated">Documentación</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

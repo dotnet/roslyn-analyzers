@@ -112,16 +112,6 @@
         <target state="translated">未使用的欄位 '{0}'。</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryMaintainability">
-        <source>Maintainability</source>
-        <target state="translated">可維護性</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CategoryPerformance">
-        <source>Performance</source>
-        <target state="translated">效能</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsMessagePureMethod">
         <source>{0} calls {1} but does not use the value the method returns. Because {1} is marked as a Pure method, it cannot have side effects. Use the result in a conditional statement, assign the result to a variable, or pass it as an argument to another method.</source>
         <target state="translated">{0} 呼叫了 {1}，但未使用方法傳回的值。因為 {1} 標記為 Pure 方法，所以不能有副作用。請使用條件陳述式中的結果、將結果指派到變數，或將其以引數方式傳遞到另一個方法。</target>
@@ -129,17 +119,17 @@
       </trans-unit>
       <trans-unit id="UseNameOfInPlaceOfStringDescription">
         <source>Using nameof helps keep your code valid when refactoring.</source>
-        <target state="new">Using nameof helps keep your code valid when refactoring.</target>
+        <target state="translated">使用 nameof 可以協助您於重構時保持程式碼的有效性。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseNameOfInPlaceOfStringMessage">
         <source>Use nameof in place of string literal '{0}'</source>
-        <target state="new">Use nameof in place of string literal '{0}'</target>
+        <target state="translated">使用 nameof 取代字串常值 '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="UseNameOfInPlaceOfStringTitle">
         <source>Use nameof to express symbol names</source>
-        <target state="new">Use nameof to express symbol names</target>
+        <target state="translated">使用 nameof 表示符號名稱</target>
         <note />
       </trans-unit>
     </body>

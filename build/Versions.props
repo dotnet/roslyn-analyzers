@@ -7,13 +7,13 @@
     <UsingToolVSSDK>true</UsingToolVSSDK>
 
     <!-- Toolset -->
-    <RoslynToolsMicrosoftRepoToolsetVersion>1.0.0-alpha58</RoslynToolsMicrosoftRepoToolsetVersion>
+    <RoslynToolsRepoToolsetVersion>1.0.0-beta-62503-02</RoslynToolsRepoToolsetVersion>
     <VSWhereVersion>2.1.4</VSWhereVersion>
     <MicrosoftVSSDKVersion>15.0.26201-alpha</MicrosoftVSSDKVersion>
 
     <!-- Roslyn -->
-    <MicrosoftCodeAnalysisVersion>2.6.0-beta3-62326-01</MicrosoftCodeAnalysisVersion>
-    <MicrosoftNetCompilersVersion>2.6.0-beta3-62326-01</MicrosoftNetCompilersVersion>
+    <MicrosoftCodeAnalysisVersion>2.6.0</MicrosoftCodeAnalysisVersion>
+    <MicrosoftNetCompilersVersion>2.6.0</MicrosoftNetCompilersVersion>
     <MicrosoftCodeAnalysisFXCopAnalyersVersion>2.6.0-beta2</MicrosoftCodeAnalysisFXCopAnalyersVersion>
     <MicrosoftCodeAnalysisAnalyersVersion>2.6.0-beta2</MicrosoftCodeAnalysisAnalyersVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>

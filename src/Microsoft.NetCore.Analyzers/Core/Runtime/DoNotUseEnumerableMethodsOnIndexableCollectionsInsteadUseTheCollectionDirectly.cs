@@ -22,7 +22,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private const string IListMetadataName = "System.Collections.Generic.IList`1";
         private const string EnumerableMetadataName = "System.Linq.Enumerable";
 
-        internal const string RuleId = "RS0014";
+        internal const string RuleId = "CA1826";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
 

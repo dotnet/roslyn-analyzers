@@ -17,11 +17,6 @@
         <target state="translated">Nevytvářejte úlohy bez předání Plánovače úloh</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryReliability">
-        <source>Reliability</source>
-        <target state="translated">Spolehlivost</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

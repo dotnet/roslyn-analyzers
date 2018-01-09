@@ -84,17 +84,17 @@
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersTitle">
         <source>Do not catch corrupted state exceptions in general handlers.</source>
-        <target state="translated">N'interceptez pas les exceptions d'état endommagé dans les gestionnaires généraux.</target>
+        <target state="translated">N'interceptez pas les exceptions état altéré dans les gestionnaires généraux.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersDescription">
         <source>Do not author general catch handlers in code that receives corrupted state exceptions.</source>
-        <target state="translated">Ne créez pas de gestionnaires d'interception généraux dans le code qui reçoit les exceptions d'état endommagé.</target>
+        <target state="translated">Ne créez pas de gestionnaires d'interception généraux dans le code qui reçoit les exceptions état altéré.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersMessage">
         <source>Do not catch corrupted state exceptions in general handlers.</source>
-        <target state="translated">N'interceptez pas les exceptions d'état endommagé dans les gestionnaires généraux.</target>
+        <target state="translated">N'interceptez pas les exceptions état altéré dans les gestionnaires généraux.</target>
         <note />
       </trans-unit>
       <trans-unit id="RethrowToPreserveStackDetailsTitle">

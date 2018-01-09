@@ -17,11 +17,6 @@
         <target state="translated">Non creare attività senza passare un elemento TaskScheduler</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryReliability">
-        <source>Reliability</source>
-        <target state="translated">Affidabilità</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

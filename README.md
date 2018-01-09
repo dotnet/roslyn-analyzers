@@ -1,6 +1,8 @@
 ﻿.NET Compiler Platform ("Roslyn") Analyzers
 ===========================================
 
+[![Join the chat at https://gitter.im/roslyn-analyzers/Lobby](https://badges.gitter.im/roslyn-analyzers/Lobby.svg)](https://gitter.im/roslyn-analyzers/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This repository contains a number of [Roslyn](https://github.com/dotnet/roslyn) diagnostic analyzers initially developed to help flesh out the design and implementation of the static analysis APIs. They have been migrated from the main [dotnet/roslyn](https://github.com/dotnet/roslyn) repository in order to continue and speed their further development.
 
 Pre-release builds are available on MyGet gallery: https://dotnet.myget.org/Gallery/roslyn-analyzers.
@@ -12,8 +14,6 @@ Pre-release builds are available on MyGet gallery: https://dotnet.myget.org/Gall
 |**master**|[![Build Status](https://ci.dot.net/job/dotnet_roslyn-analyzers/job/master/job/windows_debug/badge/icon)](https://ci.dot.net/job/dotnet_roslyn-analyzers/job/master/job/windows_debug/)|[![Build Status](https://ci.dot.net/job/dotnet_roslyn-analyzers/job/master/job/windows_release/badge/icon)](https://ci.dot.net/job/dotnet_roslyn-analyzers/job/master/job/windows_release/)|
 
 [//]: # (End current test results)
-
-[![Join the chat at https://gitter.im/dotnet/roslyn](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dotnet/roslyn?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Projects
 ========
@@ -116,5 +116,5 @@ Due to the fact that large number of our analyzers were based on the *not-yet-sh
 5.  **Visual Studio 2017 15.3**: Analyzer package **Version 2.3.0-beta1**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/2.3.0-beta1
 6.  **Visual Studio 2017 Preview5, RTW or later**: Analyzer package **Version 2.6.0-beta2**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/2.6.0-beta2
 
-On Visual Studio 2017 15.3 release, you can also install a custom **Microsoft Code Analysis VSIX** containing these analyzers as a Visual Studio extension for all your managed projects. See details here: https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.MicrosoftCodeAnalysis2017
+On Visual Studio 2017 15.5 and later releases, you can also install a custom **Microsoft Code Analysis VSIX** containing these analyzers as a Visual Studio extension for all your managed projects. See details here: https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.MicrosoftCodeAnalysis2017
 

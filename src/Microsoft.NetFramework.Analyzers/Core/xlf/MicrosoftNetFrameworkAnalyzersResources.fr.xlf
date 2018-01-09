@@ -319,17 +319,17 @@
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptions">
         <source>Do Not Catch Corrupted State Exceptions</source>
-        <target state="translated">Ne pas intercepter les exceptions d'état endommagé</target>
+        <target state="translated">Ne pas intercepter les exceptions état altéré</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsDescription">
         <source>Catching corrupted state exceptions could mask errors (such as access violations), resulting in inconsistent state of execution or making it easier for attackers to compromise system. Instead, catch and handle a more specific set of exception type(s) or re-throw the exception</source>
-        <target state="translated">L'interception des exceptions d'état endommagé peut masquer les erreurs (par exemple les violations d'accès) et entraîner un état incohérent de l'exécution ou faciliter la tâche aux pirates qui tentent compromettre un système. À la place, interceptez et prenez en charge un ensemble plus spécifique de types d'exception, ou levez à nouveau l'exception</target>
+        <target state="translated">L'interception des exceptions état altéré peut masquer les erreurs (par exemple les violations d'accès) et entraîner un état incohérent de l'exécution ou faciliter la tâche aux pirates qui tentent compromettre un système. À la place, interceptez et prenez en charge un ensemble plus spécifique de types d'exception, ou levez à nouveau l'exception</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsMessage">
         <source>{0} is catching corrupted state exception.</source>
-        <target state="translated">{0} intercepte l'exception d'état endommagé.</target>
+        <target state="translated">{0} intercepte l'exception état altéré.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithms">

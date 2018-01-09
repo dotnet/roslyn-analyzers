@@ -18,6 +18,24 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             return new CollectionsShouldImplementGenericInterfaceAnalyzer();
         }
 
+        private static readonly string CA1010Message = MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceMessage;
+
+        private DiagnosticResult GetCA1010CSharpResultAt(int line, int column, string typeName, string interfaceName)
+        {
+            return GetCSharpResultAt(line,
+                                     column,
+                                     CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId,
+                                     string.Format(CA1010Message, typeName, interfaceName, $"{interfaceName}<T>"));
+        }
+
+        private DiagnosticResult GetCA1010BasicResultAt(int line, int column, string typeName, string interfaceName)
+        {
+            return GetBasicResultAt(line,
+                                     column,
+                                     CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId,
+                                     string.Format(CA1010Message, typeName, interfaceName, $"{interfaceName}(Of T)"));
+        }
+
         [Fact]
         public void Test_WithCollectionBase()
         {
@@ -25,7 +43,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 using System.Collections;
 
 public class TestClass : CollectionBase { }",
-                GetCSharpResultAt(4, 14, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
+                GetCA1010CSharpResultAt(4, 14, "TestClass", "IList"));
 
             VerifyBasic(@"
 Imports System.Collections
@@ -34,7 +52,7 @@ Public Class TestClass
     Inherits CollectionBase
 End Class
 ",
-                GetBasicResultAt(4, 14, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
+                GetCA1010BasicResultAt(4, 14, "TestClass", "IList"));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -71,7 +89,7 @@ public class TestClass : ICollection
     public void CopyTo(Array array, int index) { throw new NotImplementedException(); }
 }
 ",
-                GetCSharpResultAt(5, 14, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
+                GetCA1010CSharpResultAt(5, 14, "TestClass", "ICollection"));
 
             VerifyBasic(@"
 Imports System
@@ -93,7 +111,7 @@ Public Class TestClass
     End Sub
 End Class
 ",
-                GetBasicResultAt(5, 14, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
+                GetCA1010BasicResultAt(5, 14, "TestClass", "ICollection"));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -148,7 +166,7 @@ public class TestClass : IEnumerable
     public IEnumerator GetEnumerator() { throw new NotImplementedException(); }
 }
 ",
-                GetCSharpResultAt(5, 14, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
+                GetCA1010CSharpResultAt(5, 14, "TestClass", "IEnumerable"));
 
             VerifyBasic(@"
 Imports System
@@ -162,7 +180,7 @@ Public Class TestClass
     End Function
 End Class
 ",
-                GetBasicResultAt(5, 14, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
+                GetCA1010BasicResultAt(5, 14, "TestClass", "IEnumerable"));
         }
 
         [Fact]
@@ -197,7 +215,7 @@ public class TestClass : IList
     public void RemoveAt(int index) { throw new NotImplementedException(); }
 }
 ",
-                GetCSharpResultAt(5, 14, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
+                GetCA1010CSharpResultAt(5, 14, "TestClass", "IList"));
 
             VerifyBasic(@"
 Imports System
@@ -258,7 +276,7 @@ Public Class TestClass
     End Sub
 End Class
 ",
-                GetBasicResultAt(5, 14, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
+                GetCA1010BasicResultAt(5, 14, "TestClass", "IList"));
         }
 
         [Fact]
@@ -658,8 +676,8 @@ public class IntCollection : BaseClass
 {
 }
 ",
-                GetCSharpResultAt(5, 14, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()),
-                GetCSharpResultAt(15, 14, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
+                GetCA1010CSharpResultAt(5, 14, "BaseClass", "ICollection"),
+                GetCA1010CSharpResultAt(15, 14, "IntCollection", "ICollection"));
 
             VerifyBasic(@"
 Imports System
@@ -685,8 +703,195 @@ Public Class IntCollection
 	Inherits BaseClass
 End Class
 ",
-                GetBasicResultAt(5, 14, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()),
-                GetBasicResultAt(21, 14, CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId, CollectionsShouldImplementGenericInterfaceAnalyzer.Rule.MessageFormat.ToString()));
+                GetCA1010BasicResultAt(5, 14, "BaseClass", "ICollection"),
+                GetCA1010BasicResultAt(21, 14, "IntCollection", "ICollection"));
         }
+
+        [Fact]
+        public void Test_InheritsCollectionBaseAndReadOnlyCollectionBase()
+        {
+            VerifyCSharp(@"
+using System.Collections;
+
+public class C : CollectionBase { }
+
+public class R : ReadOnlyCollectionBase { }
+",
+                GetCA1010CSharpResultAt(4, 14, "C", "IList"),
+                GetCA1010CSharpResultAt(6, 14, "R", "ICollection"));
+
+            VerifyBasic(@"
+Imports System.Collections
+
+Public Class C
+    Inherits CollectionBase
+End Class
+
+Public Class R
+    Inherits ReadOnlyCollectionBase
+End Class
+",
+                GetCA1010BasicResultAt(4, 14, "C", "IList"),
+                GetCA1010BasicResultAt(8, 14, "R", "ICollection"));
+        }
+
+        [Fact]
+        public void Test_InheritsCollectionBaseAndReadOnlyCollectionBase_DoesFullyImplementGenerics()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+public class C : CollectionBase, ICollection<int>
+{
+    public object SyncRoot => null;
+    public bool IsSynchronized => false;
+
+    public bool IsReadOnly => throw new NotImplementedException();
+
+    public void CopyTo(int[] array, int index) { throw new NotImplementedException(); }
+    public void CopyTo(Array array, int index) { throw new NotImplementedException(); }
+
+    public void Add(int item)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool Contains(int item)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool Remove(int item)
+    {
+        throw new NotImplementedException();
+    }
+
+    IEnumerator<int> IEnumerable<int>.GetEnumerator()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class R : ReadOnlyCollectionBase, IEnumerable<int>
+{
+    IEnumerator<int> IEnumerable<int>.GetEnumerator()
+    {
+        throw new NotImplementedException();
+    }
+}
+",
+                GetCA1010CSharpResultAt(6, 14, "C", "IList"),
+                GetCA1010CSharpResultAt(37, 14, "R", "ICollection"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.Collections
+Imports System.Collections.Generic
+
+Public Class C
+    Inherits CollectionBase
+    Implements ICollection(Of Integer)
+
+    Public ReadOnly Property IsReadOnly As Boolean Implements ICollection(Of Integer).IsReadOnly
+        Get
+            Throw New NotImplementedException()
+        End Get
+    End Property
+
+    Private ReadOnly Property ICollection_Count As Integer Implements ICollection(Of Integer).Count
+        Get
+            Throw New NotImplementedException()
+        End Get
+    End Property
+
+    Public Sub Add(item As Integer) Implements ICollection(Of Integer).Add
+        Throw New NotImplementedException()
+    End Sub
+
+    Public Sub CopyTo(array() As Integer, arrayIndex As Integer) Implements ICollection(Of Integer).CopyTo
+        Throw New NotImplementedException()
+    End Sub
+
+    Private Sub ICollection_Clear() Implements ICollection(Of Integer).Clear
+        Throw New NotImplementedException()
+    End Sub
+
+    Public Function Contains(item As Integer) As Boolean Implements ICollection(Of Integer).Contains
+        Throw New NotImplementedException()
+    End Function
+
+    Public Function Remove(item As Integer) As Boolean Implements ICollection(Of Integer).Remove
+        Throw New NotImplementedException()
+    End Function
+
+    Private Function IEnumerable_GetEnumerator() As IEnumerator(Of Integer) Implements IEnumerable(Of Integer).GetEnumerator
+        Throw New NotImplementedException()
+    End Function
+End Class
+
+Public Class R
+    Inherits ReadOnlyCollectionBase
+    Implements IEnumerable(Of Integer)
+
+    Private Function IEnumerable_GetEnumerator() As IEnumerator(Of Integer) Implements IEnumerable(Of Integer).GetEnumerator
+        Throw New NotImplementedException()
+    End Function
+End Class
+",
+                GetCA1010BasicResultAt(6, 14, "C", "IList"),
+                GetCA1010BasicResultAt(47, 14, "R", "ICollection"));
+        }
+
+
+        [Fact]
+        public void Test_InheritsCollectionBaseAndReadOnlyCollectionBaseAndGenericIEnumerable_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.Collections;
+using System.Collections.Generic;
+
+class C : CollectionBase, IEnumerable<int>
+{
+    IEnumerator<int> IEnumerable<int>.GetEnumerator()
+    {
+        throw new System.NotImplementedException();
+    }
+}
+
+class R : ReadOnlyCollectionBase, IEnumerable<int>
+{
+    IEnumerator<int> IEnumerable<int>.GetEnumerator()
+    {
+        throw new System.NotImplementedException();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System.Collections
+Imports System.Collections.Generic
+
+Class C
+    Inherits CollectionBase
+    Implements IEnumerable(Of Integer)
+
+    Private Function IEnumerable_GetEnumerator() As IEnumerator(Of Integer) Implements IEnumerable(Of Integer).GetEnumerator
+        Throw New System.NotImplementedException()
+    End Function
+End Class
+
+Class R
+    Inherits ReadOnlyCollectionBase
+    Implements IEnumerable(Of Integer)
+
+    Private Function IEnumerable_GetEnumerator() As IEnumerator(Of Integer) Implements IEnumerable(Of Integer).GetEnumerator
+        Throw New System.NotImplementedException()
+    End Function
+End Class
+");
+        }
+
     }
 }

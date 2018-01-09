@@ -304,7 +304,7 @@
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesDescription">
         <source>An unsealed externally visible type provides an explicit method implementation of a public interface and does not provide an alternative externally visible method that has the same name.</source>
-        <target state="translated">外部可见的未密封类型提供公共接口的显式方法实现，不提供外部可见的同名备用方法。</target>
+        <target state="translated">外部可见的非密封类型提供公共接口的显式方法实现，不提供外部可见的同名备用方法。</target>
         <note />
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesMessage">
@@ -483,8 +483,8 @@
         <note />
       </trans-unit>
       <trans-unit id="CollectionPropertiesShouldBeReadOnlyMessage">
-        <source>Collection properties should be read only</source>
-        <target state="translated">集合属性应为只读</target>
+        <source>Change '{0}' to be read-only by removing the property setter.</source>
+        <target state="translated">通过移除属性 setter 将“{0}”更改为只读。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle">
@@ -663,8 +663,8 @@
         <note />
       </trans-unit>
       <trans-unit id="CollectionsShouldImplementGenericInterfaceMessage">
-        <source>Collections should implement generic interface</source>
-        <target state="translated">集合应实现泛型接口</target>
+        <source>Collection '{0}' directly or indirectly inherits '{1}' without implementing '{2}'. Publicly-visible collections should implement the generic version to broaden usability.</source>
+        <target state="needs-review-translation">集合应实现泛型接口</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Title">
@@ -1384,7 +1384,7 @@
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesFix3">
         <source>Make the containing type '{0}' sealed.</source>
-        <target state="translated">使包含类型“{0}”设为 sealed。</target>
+        <target state="translated">使包含类型“{0}”为密封。</target>
         <note />
       </trans-unit>
       <trans-unit id="StaticHolderTypeIsNotStatic">

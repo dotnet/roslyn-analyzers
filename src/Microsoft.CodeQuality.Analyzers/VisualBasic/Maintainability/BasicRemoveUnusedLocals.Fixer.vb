@@ -1,6 +1,8 @@
 ' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 Imports System.Collections.Immutable
+Imports System.Collections.Generic
+Imports System.Linq
 Imports System.Composition
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
@@ -13,7 +15,7 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
     ''' <summary>
     ''' CA1804: Remove unused locals
     ''' </summary>
-    <ExportCodeFixProvider(LanguageNames.VisualBasic, Name:=BasicRemoveUnusedLocalsFixer.RuleId), [Shared]>
+    '<ExportCodeFixProvider(LanguageNames.VisualBasic, Name:=BasicRemoveUnusedLocalsFixer.RuleId), [Shared]> https://github.com/dotnet/roslyn/issues/23684
     Public NotInheritable Class BasicRemoveUnusedLocalsFixer
         Inherits RemoveUnusedLocalsFixer
 

@@ -112,16 +112,6 @@
         <target state="translated">未使用のフィールド '{0}'。</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryMaintainability">
-        <source>Maintainability</source>
-        <target state="translated">保守容易性</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CategoryPerformance">
-        <source>Performance</source>
-        <target state="translated">パフォーマンス</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsMessagePureMethod">
         <source>{0} calls {1} but does not use the value the method returns. Because {1} is marked as a Pure method, it cannot have side effects. Use the result in a conditional statement, assign the result to a variable, or pass it as an argument to another method.</source>
         <target state="translated">{0} は {1} を呼び出しますが、メソッドから返される値は使用されません。{1} は Pure メソッドとしてマークされているため、副作用は発生しません。条件ステートメントで結果を使用するか、結果を変数に割り当てるか、引数として他のメソッドに渡してください。</target>
@@ -129,17 +119,17 @@
       </trans-unit>
       <trans-unit id="UseNameOfInPlaceOfStringDescription">
         <source>Using nameof helps keep your code valid when refactoring.</source>
-        <target state="new">Using nameof helps keep your code valid when refactoring.</target>
+        <target state="translated">nameof を使用するとリファクタリング時にコードを有効な状態に保つ上で役立ちます。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseNameOfInPlaceOfStringMessage">
         <source>Use nameof in place of string literal '{0}'</source>
-        <target state="new">Use nameof in place of string literal '{0}'</target>
+        <target state="translated">文字列リテラル '{0}' の代わりに nameof を使用します</target>
         <note />
       </trans-unit>
       <trans-unit id="UseNameOfInPlaceOfStringTitle">
         <source>Use nameof to express symbol names</source>
-        <target state="new">Use nameof to express symbol names</target>
+        <target state="translated">nameof を使用してシンボル名を表現します</target>
         <note />
       </trans-unit>
     </body>

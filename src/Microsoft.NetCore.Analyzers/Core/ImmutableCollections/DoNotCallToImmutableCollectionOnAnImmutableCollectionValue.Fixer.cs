@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 namespace Microsoft.NetCore.Analyzers.ImmutableCollections
 {
     /// <summary>
-    /// RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
+    /// CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
     /// </summary>
     public abstract class DoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer : CodeFixProvider
     {

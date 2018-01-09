@@ -32,7 +32,7 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
             s_localizableMessage,
             DiagnosticCategory.Usage,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
-            True,
+            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             s_localizableDescription,
             "https://msdn.microsoft.com/en-us/library/ms182357.aspx",
             WellKnownDiagnosticTags.Telemetry)

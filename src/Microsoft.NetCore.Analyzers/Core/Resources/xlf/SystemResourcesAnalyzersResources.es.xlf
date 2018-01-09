@@ -17,11 +17,6 @@
         <target state="translated">Marcar ensamblados con NeutralResourcesLanguageAttribute</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryPerformance">
-        <source>Performance</source>
-        <target state="translated">Rendimiento</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

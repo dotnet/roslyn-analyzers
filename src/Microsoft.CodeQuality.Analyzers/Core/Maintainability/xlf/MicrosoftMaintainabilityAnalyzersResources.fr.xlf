@@ -112,16 +112,6 @@
         <target state="translated">Champ '{0}' inutilisé.</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryMaintainability">
-        <source>Maintainability</source>
-        <target state="translated">Maintenabilité</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CategoryPerformance">
-        <source>Performance</source>
-        <target state="translated">Performances</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsMessagePureMethod">
         <source>{0} calls {1} but does not use the value the method returns. Because {1} is marked as a Pure method, it cannot have side effects. Use the result in a conditional statement, assign the result to a variable, or pass it as an argument to another method.</source>
         <target state="translated">{0} appelle {1} mais n'utilise pas la valeur retournée par la méthode. Dans la mesure où {1} est marqué en tant que méthode Pure, il ne peut pas avoir d'effets secondaires. Utilisez le résultat dans une instruction conditionnelle, assignez-le à une variable ou passez-le en tant qu'argument à une autre méthode.</target>
@@ -129,17 +119,17 @@
       </trans-unit>
       <trans-unit id="UseNameOfInPlaceOfStringDescription">
         <source>Using nameof helps keep your code valid when refactoring.</source>
-        <target state="new">Using nameof helps keep your code valid when refactoring.</target>
+        <target state="translated">L'utilisation de nameof permet à votre code de rester valide lors de la refactorisation.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseNameOfInPlaceOfStringMessage">
         <source>Use nameof in place of string literal '{0}'</source>
-        <target state="new">Use nameof in place of string literal '{0}'</target>
+        <target state="translated">Utiliser nameof à la place du littéral de chaîne '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="UseNameOfInPlaceOfStringTitle">
         <source>Use nameof to express symbol names</source>
-        <target state="new">Use nameof to express symbol names</target>
+        <target state="translated">Utiliser nameof pour exprimer les noms de symboles</target>
         <note />
       </trans-unit>
     </body>

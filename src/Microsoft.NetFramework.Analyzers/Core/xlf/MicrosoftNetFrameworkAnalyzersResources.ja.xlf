@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsDescription">
         <source>To fix a violation of this rule, implement the serialization constructor. For a sealed class, make the constructor private; otherwise, make it protected.</source>
-        <target state="translated">この規則の違反を修正するには、シリアル化コンストラクターを実装します。シール クラスの場合はコンストラクターを private にし、それ以外の場合は protected にします。</target>
+        <target state="translated">この規則の違反を修正するには、シリアル化コンストラクターを実装します。シールド クラスの場合はコンストラクターを private にし、それ以外の場合は protected にします。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsMessageCreateMagicConstructor">
@@ -79,12 +79,12 @@
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsMessageMakeUnsealedMagicConstructorFamily">
         <source>Declare the serialization constructor of {0}, an unsealed type, as protected.</source>
-        <target state="translated">unsealed 型である {0} のシリアル化コンストラクターを protected として宣言します。</target>
+        <target state="translated">アンシールド型である {0} のシリアル化コンストラクターを protected として宣言します。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate">
         <source>Declare the serialization constructor of {0}, a sealed type, as private.</source>
-        <target state="translated">sealed 型である {0} のシリアル化コンストラクターを private として宣言します。</target>
+        <target state="translated">シールド型である {0} のシリアル化コンストラクターを private として宣言します。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsCodeActionTitle">
@@ -319,17 +319,17 @@
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptions">
         <source>Do Not Catch Corrupted State Exceptions</source>
-        <target state="translated">破損状態の例外をキャッチしません</target>
+        <target state="translated">破損状態例外をキャッチしません</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsDescription">
         <source>Catching corrupted state exceptions could mask errors (such as access violations), resulting in inconsistent state of execution or making it easier for attackers to compromise system. Instead, catch and handle a more specific set of exception type(s) or re-throw the exception</source>
-        <target state="translated">破損状態の例外をキャッチすると、エラー (アクセス違反など) がマスクされ、実行の状態に一貫性がなくなったり、攻撃者がシステムを侵害しやすくなったりする可能性があります。代わりに、より具体的な例外の種類をキャッチして処理するか、例外を再スローします</target>
+        <target state="translated">破損状態例外をキャッチすると、エラー (アクセス違反など) がマスクされ、実行の状態に一貫性がなくなったり、攻撃者がシステムを侵害しやすくなったりする可能性があります。代わりに、より具体的な例外の種類をキャッチして処理するか、例外を再スローします</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsMessage">
         <source>{0} is catching corrupted state exception.</source>
-        <target state="translated">{0} が破損状態の例外をキャッチしています。</target>
+        <target state="translated">{0} が破損状態例外をキャッチしています。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithms">
@@ -379,7 +379,7 @@
       </trans-unit>
       <trans-unit id="TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException">
         <source>Change the base type of {0} so that it no longer extends {1}. This base exception type does not provide any additional value for framework classes. Extend 'System.Exception' or an existing unsealed exception type instead. Do not create a new exception base type unless there is specific value in enabling the creation of a catch handler for an entire class of exceptions.</source>
-        <target state="translated">{0} が {1} をこれ以上拡張しないように、その基本型を変更します。この基本例外型は、追加の値を Framework クラスに対して指定しません。代わりに、'System.Exception' または既存のシールされていない例外型を拡張してください。キャッチ ハンドラーの作成を例外のクラス全体に対して有効にする特定の値がない場合は、新しい例外基本型を作成しないでください。</target>
+        <target state="translated">{0} が {1} をこれ以上拡張しないように、その基本型を変更します。この基本例外型は、追加の値を Framework クラスに対して指定しません。代わりに、'System.Exception' または既存のアンシールド例外型を拡張してください。キャッチ ハンドラーの作成を例外のクラス全体に対して有効にする特定の値がない場合は、新しい例外基本型を作成しないでください。</target>
         <note />
       </trans-unit>
       <trans-unit id="TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase">

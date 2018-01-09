@@ -17,11 +17,6 @@
         <target state="translated">Ön ek içeren cref etiketlerini kullanmayın</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryDocumentation">
-        <source>Documentation</source>
-        <target state="translated">Belgeler</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

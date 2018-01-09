@@ -181,10 +181,9 @@ End Class
         [MemberData(nameof(CollectionNames_Arity1))]
         public void DiagnosticCases_Arity1(string collectionName)
         {
-            VerifyCSharp($@"
+            VerifyCSharp(new[] { $@"
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using static System.Collections.Immutable.{collectionName};
 
 static class Extensions
 {{
@@ -202,13 +201,14 @@ class C
         p3.To{collectionName}();
     }}
 }}
-",
-    // Test0.cs(18,9): warning RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
-    GetCSharpResultAt(18, 9, collectionName),
-    // Test0.cs(19,9): warning RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
-    GetCSharpResultAt(19, 9, collectionName));
+", MinimalImmutableCollectionsSource.CSharp },
+                ReferenceFlags.RemoveImmutable,
+                // Test0.cs(18,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetCSharpResultAt(17, 9, collectionName),
+                // Test0.cs(19,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetCSharpResultAt(18, 9, collectionName));
 
-            VerifyBasic($@"
+            VerifyBasic(new[] { $@"
 Imports System.Collections.Generic
 Imports System.Collections.Immutable
 
@@ -225,21 +225,21 @@ Class C
 		p3.To{collectionName}()
 	End Sub
 End Class
-",
-    // Test0.vb(14,3): warning RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
-    GetBasicResultAt(14, 3, collectionName),
-    // Test0.vb(15,3): warning RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
-    GetBasicResultAt(15, 3, collectionName));
+", MinimalImmutableCollectionsSource.Basic },
+                ReferenceFlags.RemoveImmutable,
+                // Test0.vb(14,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetBasicResultAt(14, 3, collectionName),
+                // Test0.vb(15,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetBasicResultAt(15, 3, collectionName));
         }
 
         [Theory]
         [MemberData(nameof(CollectionNames_Arity2))]
         public void DiagnosticCases_Arity2(string collectionName)
         {
-            VerifyCSharp($@"
+            VerifyCSharp(new[] { $@"
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using static System.Collections.Immutable.{collectionName};
 
 static class Extensions
 {{
@@ -257,13 +257,14 @@ class C
         p3.To{collectionName}();
     }}
 }}
-",
-    // Test0.cs(18,9): warning RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
-    GetCSharpResultAt(18, 9, collectionName),
-    // Test0.cs(19,9): warning RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
-    GetCSharpResultAt(19, 9, collectionName));
+", MinimalImmutableCollectionsSource.CSharp },
+                ReferenceFlags.RemoveImmutable,
+                // Test0.cs(18,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetCSharpResultAt(17, 9, collectionName),
+                // Test0.cs(19,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetCSharpResultAt(18, 9, collectionName));
 
-            VerifyBasic($@"
+            VerifyBasic(new[] { $@"
 Imports System.Collections.Generic
 Imports System.Collections.Immutable
 
@@ -280,11 +281,12 @@ Class C
 		p3.To{collectionName}()
 	End Sub
 End Class
-",
-    // Test0.vb(14,3): warning RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
-    GetBasicResultAt(14, 3, collectionName),
-    // Test0.vb(15,3): warning RS0012: Do not call ToImmutableCollection on an ImmutableCollection value
-    GetBasicResultAt(15, 3, collectionName));
+", MinimalImmutableCollectionsSource.Basic },
+                ReferenceFlags.RemoveImmutable,
+                // Test0.vb(14, 3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetBasicResultAt(14, 3, collectionName),
+                // Test0.vb(15,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetBasicResultAt(15, 3, collectionName));
         }
 
         #endregion

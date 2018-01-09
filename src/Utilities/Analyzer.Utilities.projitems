@@ -42,6 +42,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)DiagnosticCategoryAndIdRanges.txt" />
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)DiagnosticCategoryAndIdRanges.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)xlf\AnalyzerUtilitiesResources.cs.xlf" />
     <None Include="$(MSBuildThisFileDirectory)xlf\AnalyzerUtilitiesResources.de.xlf" />
     <None Include="$(MSBuildThisFileDirectory)xlf\AnalyzerUtilitiesResources.es.xlf" />

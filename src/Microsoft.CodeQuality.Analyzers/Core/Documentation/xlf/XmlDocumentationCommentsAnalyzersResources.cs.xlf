@@ -17,11 +17,6 @@
         <target state="translated">Nepoužívejte značky cref s předponou</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryDocumentation">
-        <source>Documentation</source>
-        <target state="translated">Dokumentace</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -159,17 +159,17 @@
       </trans-unit>
       <trans-unit id="AbstractTypesShouldNotHaveConstructorsTitle">
         <source>Abstract types should not have constructors</source>
-        <target state="translated">Les types abstraits ne doivent pas avoir de constructeurs</target>
+        <target state="translated">Les types abstract ne doivent pas avoir de constructeurs</target>
         <note />
       </trans-unit>
       <trans-unit id="AbstractTypesShouldNotHaveConstructorsDescription">
         <source>Constructors on abstract types can be called only by derived types. Because public constructors create instances of a type, and you cannot create instances of an abstract type, an abstract type that has a public constructor is incorrectly designed.</source>
-        <target state="translated">Les constructeurs des types abstraits peuvent être appelés uniquement par des types dérivés. Comme les constructeurs publics créent les instances d'un type et que vous ne pouvez pas créer d'instances d'un type abstrait, un type abstrait doté d'un constructeur public ne correspond pas à un design correct.</target>
+        <target state="translated">Les constructeurs des types abstract peuvent être appelés uniquement par des types dérivés. Comme les constructeurs publics créent les instances d'un type et que vous ne pouvez pas créer d'instances d'un type abstract, un type abstract doté d'un constructeur public ne correspond pas à un design correct.</target>
         <note />
       </trans-unit>
       <trans-unit id="AbstractTypesShouldNotHaveConstructorsMessage">
         <source>Abstract type {0} should not have constructors</source>
-        <target state="translated">Le type abstrait {0} ne doit pas avoir de constructeurs</target>
+        <target state="translated">Le type abstract {0} ne doit pas avoir de constructeurs</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantTitle">
@@ -483,8 +483,8 @@
         <note />
       </trans-unit>
       <trans-unit id="CollectionPropertiesShouldBeReadOnlyMessage">
-        <source>Collection properties should be read only</source>
-        <target state="translated">Les propriétés de collection doivent être en lecture seule</target>
+        <source>Change '{0}' to be read-only by removing the property setter.</source>
+        <target state="translated">Supprimez la méthode setter de propriété pour que '{0}' soit en lecture seule.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle">
@@ -663,8 +663,8 @@
         <note />
       </trans-unit>
       <trans-unit id="CollectionsShouldImplementGenericInterfaceMessage">
-        <source>Collections should implement generic interface</source>
-        <target state="translated">Les collections doivent implémenter une interface générique</target>
+        <source>Collection '{0}' directly or indirectly inherits '{1}' without implementing '{2}'. Publicly-visible collections should implement the generic version to broaden usability.</source>
+        <target state="needs-review-translation">Les collections doivent implémenter une interface générique</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Title">

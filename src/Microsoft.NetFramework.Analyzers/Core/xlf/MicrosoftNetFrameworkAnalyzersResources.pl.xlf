@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="SpecifyMessageBoxOptionsDescription">
         <source>To correctly display a message box for cultures that use a right-to-left reading order, the RightAlign and RtlReading members of the MessageBoxOptions enumeration must be passed to the Show method.</source>
-        <target state="translated">Aby prawidłowo wyświetlać okna komunikatów w krajach, w których tekst jest czytany od prawej do lewej strony, elementy członkowskie RightAlign oraz RtlReading argumentu MessageBoxOptions muszą zostać przekazane do metody Show.</target>
+        <target state="translated">Aby prawidłowo wyświetlać okna komunikatów w krajach, w których tekst jest czytany od prawej do lewej strony, elementy członkowskie RightAlign oraz RtlReading wyliczenia MessageBoxOptions muszą zostać przekazane do metody Show.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyMessageBoxOptionsMessage">
@@ -319,17 +319,17 @@
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptions">
         <source>Do Not Catch Corrupted State Exceptions</source>
-        <target state="translated">Nie przechwytuj uszkodzonych wyjątków stanów</target>
+        <target state="translated">Nie przechwytuj wyjątków stanu uszkodzenia</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsDescription">
         <source>Catching corrupted state exceptions could mask errors (such as access violations), resulting in inconsistent state of execution or making it easier for attackers to compromise system. Instead, catch and handle a more specific set of exception type(s) or re-throw the exception</source>
-        <target state="translated">Przechwytywanie uszkodzonych wyjątków stanów może zamaskować błędy (takie jak naruszenie dostępu), czego wynikiem może być niespójny stan wykonywania lub ułatwienie atakującym narażenia systemu na niebezpieczeństwo. Zamiast tego przechwytuj i obsługuj bardziej konkretny zestaw typów wyjątków lub ponownie zgłoś wyjątek</target>
+        <target state="translated">Przechwytywanie wyjątków stanu uszkodzenia może zamaskować błędy (takie jak naruszenie dostępu), czego wynikiem może być niespójny stan wykonywania lub ułatwienie atakującym narażenia systemu na niebezpieczeństwo. Zamiast tego przechwytuj i obsługuj bardziej konkretny zestaw typów wyjątków lub ponownie zgłoś wyjątek</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchCorruptedStateExceptionsMessage">
         <source>{0} is catching corrupted state exception.</source>
-        <target state="translated">Element {0} przechwytuje uszkodzony wyjątek stanu.</target>
+        <target state="translated">Element {0} przechwytuje wyjątek stanu uszkodzenia.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithms">
@@ -339,7 +339,7 @@
       </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithmsDescription">
         <source>An attack making it computationally feasible to break this algorithm exists. This allows attackers to break the cryptographic guarantees it is designed to provide. Depending on the type and application of this cryptographic algorithm, this may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA512, SHA384, or SHA256. Replace digital signature uses with RSA with a key length greater than or equal to 2048-bits, or ECDSA with a key length greater than or equal to 256 bits.</source>
-        <target state="translated">Możliwe jest przeprowadzenie ataku umożliwiającego obliczeniowe złamanie tego algorytmu. Pozwala to atakującym na złamanie kryptograficznych gwarancji, jakie powinien zapewniać. W zależności od typu i zastosowania tego algorytmu kryptograficznego może to umożliwić atakującemu odczytanie zaszyfrowanych wiadomości, ingerowanie w zaszyfrowane wiadomości, fałszowanie podpisów cyfrowych, ingerowanie w mieszaną zawartość lub inne naruszenie systemu kryptograficznego opartego na tym algorytmie. Zastąp użycia szyfrowane algorytmem AES (akceptowane są algorytmy AES-256, AES-192 i AES-128) z kluczem o długości równej lub większej niż 128 bitów. Zastąp użycia mieszane funkcją mieszania z rodziny SHA-2, taką jak SHA512, SHA384 lub SHA256. Zastąp użycia podpisu cyfrowego certyfikatem RSA z kluczem o długości równej lub większej niż 2048 bitów lub certyfikatem ECDSA z kluczem o długości równej lub większej niż 256 bitów.</target>
+        <target state="translated">Możliwe jest przeprowadzenie ataku umożliwiającego obliczeniowe złamanie tego algorytmu. Pozwala to atakującym na złamanie kryptograficznych gwarancji, jakie powinien zapewniać. W zależności od typu i zastosowania tego algorytmu kryptograficznego może to umożliwić atakującemu odczytanie zaszyfrowanych wiadomości, ingerowanie w zaszyfrowane wiadomości, fałszowanie podpisów cyfrowych, ingerowanie w mieszaną zawartość lub inne naruszenie systemu kryptograficznego opartego na tym algorytmie. Zastąp użycia szyfrowane algorytmem AES (akceptowane są algorytmy AES-256, AES-192 i AES-128) z kluczem o długości równej lub większej niż 128 bitów. Zastąp użycia mieszane funkcją skrótu z rodziny SHA-2, taką jak SHA512, SHA384 lub SHA256. Zastąp użycia podpisu cyfrowego certyfikatem RSA z kluczem o długości równej lub większej niż 2048 bitów lub certyfikatem ECDSA z kluczem o długości równej lub większej niż 256 bitów.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithmsMessage">
@@ -354,7 +354,7 @@
       </trans-unit>
       <trans-unit id="DoNotUseWeakCryptographicAlgorithmsDescription">
         <source>Cryptographic algorithms degrade over time as attacks become for advances to attacker get access to more computation. Depending on the type and application of this cryptographic algorithm, further degradation of the cryptographic strength of it may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA-2 512, SHA-2 384, or SHA-2 256.</source>
-        <target state="translated">Algorytmy kryptograficzne pogarszają się z upływem czasu, ponieważ ataki stają się coraz bardziej zaawansowane, a atakujący zyskują dostęp do większej ilości zasobów obliczeniowych. W zależności od typu i zastosowania tego algorytmu kryptograficznego dalsze osłabianie siły kryptograficznej algorytmu może umożliwić atakującemu odczytanie zaszyfrowanych wiadomości, ingerowanie w zaszyfrowane wiadomości, fałszowanie podpisów cyfrowych, ingerowanie w mieszaną zawartość lub inne naruszenie systemu kryptograficznego opartego na tym algorytmie. Zastąp użycia szyfrowane algorytmem AES (akceptowane są algorytmy AES-256, AES-192 i AES-128) z kluczem o długości równej lub większej niż 128 bitów. Zastąp użycia mieszane funkcją mieszania z rodziny SHA-2, taką jak SHA-2 512, SHA-2 384 lub SHA-2 256.</target>
+        <target state="translated">Algorytmy kryptograficzne pogarszają się z upływem czasu, ponieważ ataki stają się coraz bardziej zaawansowane, a atakujący zyskują dostęp do większej ilości zasobów obliczeniowych. W zależności od typu i zastosowania tego algorytmu kryptograficznego dalsze osłabianie siły kryptograficznej algorytmu może umożliwić atakującemu odczytanie zaszyfrowanych wiadomości, ingerowanie w zaszyfrowane wiadomości, fałszowanie podpisów cyfrowych, ingerowanie w mieszaną zawartość lub inne naruszenie systemu kryptograficznego opartego na tym algorytmie. Zastąp użycia szyfrowane algorytmem AES (akceptowane są algorytmy AES-256, AES-192 i AES-128) z kluczem o długości równej lub większej niż 128 bitów. Zastąp użycia mieszane funkcją skrótu z rodziny SHA-2, taką jak SHA-2 512, SHA-2 384 lub SHA-2 256.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakCryptographicAlgorithmsMessage">

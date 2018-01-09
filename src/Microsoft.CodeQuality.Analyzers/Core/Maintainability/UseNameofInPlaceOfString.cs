@@ -30,7 +30,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                          s_localizableMessage,
                                                                          DiagnosticCategory.Maintainability,
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                         isEnabledByDefault: true,
+                                                                         isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                          description: s_localizableDescription,
                                                                          helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/master/src/Microsoft.CodeQuality.Analyzers/Microsoft.CodeQuality.Analyzers.md#maintainability",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);

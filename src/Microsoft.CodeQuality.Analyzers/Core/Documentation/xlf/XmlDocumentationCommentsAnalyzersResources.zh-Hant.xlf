@@ -17,11 +17,6 @@
         <target state="translated">避免使用有前置詞的 cref 標籤</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryDocumentation">
-        <source>Documentation</source>
-        <target state="translated">文件</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

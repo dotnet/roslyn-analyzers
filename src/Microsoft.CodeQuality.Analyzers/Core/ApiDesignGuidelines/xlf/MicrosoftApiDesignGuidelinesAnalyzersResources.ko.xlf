@@ -483,8 +483,8 @@
         <note />
       </trans-unit>
       <trans-unit id="CollectionPropertiesShouldBeReadOnlyMessage">
-        <source>Collection properties should be read only</source>
-        <target state="translated">컬렉션 속성은 읽기 전용이어야 합니다.</target>
+        <source>Change '{0}' to be read-only by removing the property setter.</source>
+        <target state="translated">속성 setter를 제거하여 '{0}'을(를) 읽기 전용으로 변경하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle">
@@ -663,8 +663,8 @@
         <note />
       </trans-unit>
       <trans-unit id="CollectionsShouldImplementGenericInterfaceMessage">
-        <source>Collections should implement generic interface</source>
-        <target state="translated">컬렉션은 제네릭 인터페이스를 구현해야 합니다.</target>
+        <source>Collection '{0}' directly or indirectly inherits '{1}' without implementing '{2}'. Publicly-visible collections should implement the generic version to broaden usability.</source>
+        <target state="needs-review-translation">컬렉션은 제네릭 인터페이스를 구현해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Title">

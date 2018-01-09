@@ -126,7 +126,4 @@
   <data name="DoNotCreateTasksWithoutPassingATaskSchedulerMessage" xml:space="preserve">
     <value>Do not create tasks without passing a TaskScheduler</value>
   </data>
-  <data name="CategoryReliability" xml:space="preserve">
-    <value>Reliability</value>
-  </data>
 </root>

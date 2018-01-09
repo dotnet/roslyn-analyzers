@@ -26,7 +26,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         // Properties common to the descriptors defined by this analyzer.
         private static readonly string s_category = DiagnosticCategory.Design;
         private const DiagnosticSeverity Severity = DiagnosticHelpers.DefaultDiagnosticSeverity;
-        private const bool IsEnabledByDefault = true;
         private const string HelpLinkUrl = "https://msdn.microsoft.com/en-us/library/ms182162.aspx";
         private static readonly string[] s_customTags = { WellKnownDiagnosticTags.Telemetry };
 
@@ -35,7 +34,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              s_localizableMessageDefault,
                                                                              s_category,
                                                                              Severity,
-                                                                             IsEnabledByDefault,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUrl,
                                                                              customTags: s_customTags);
@@ -44,7 +43,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              s_localizableMessageVisualBasicModule,
                                                                              s_category,
                                                                              Severity,
-                                                                             IsEnabledByDefault,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUrl,
                                                                              customTags: s_customTags);

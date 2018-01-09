@@ -249,22 +249,22 @@
       </trans-unit>
       <trans-unit id="DefineAccessorsForAttributeArgumentsDescription">
         <source>Attributes can define mandatory arguments that must be specified when you apply the attribute to a target. These are also known as positional arguments because they are supplied to attribute constructors as positional parameters. For every mandatory argument, the attribute should also provide a corresponding read-only property so that the value of the argument can be retrieved at execution time. Attributes can also define optional arguments, which are also known as named arguments. These arguments are supplied to attribute constructors by name and should have a corresponding read/write property.</source>
-        <target state="translated">Attribute können obligatorische Argumente definieren, die beim Anwenden des Attributs auf ein Ziel angegeben werden müssen. Diese werden auch als Positionsargumente bezeichnet, weil sie den Attributkonstruktoren als Positionsparameter bereitgestellt werden. Für jedes obligatorische Argument muss das Attribut auch eine entsprechende schreibgeschützte Eigenschaft angeben, damit der Wert des Arguments bei Ausführungszeit abgerufen werden kann. Attribute können zudem optionale Argumente definieren, die auch als benannte Argumente bezeichnet werden. Diese Argumente werden Attributkonstruktoren mit Namen angegeben und benötigen eine entsprechende Lese-/Schreibeigenschaft.</target>
+        <target state="translated">Attribute können obligatorische Argumente definieren, die beim Anwenden des Attributs auf ein Ziel angegeben werden müssen. Diese werden auch als positionelle Argumente bezeichnet, weil sie den Attributkonstruktoren als Positionsparameter bereitgestellt werden. Für jedes obligatorische Argument muss das Attribut auch eine entsprechende schreibgeschützte Eigenschaft angeben, damit der Wert des Arguments bei Ausführungszeit abgerufen werden kann. Attribute können zudem optionale Argumente definieren, die auch als benannte Argumente bezeichnet werden. Diese Argumente werden Attributkonstruktoren mit Namen angegeben und benötigen eine entsprechende Lese-/Schreibeigenschaft.</target>
         <note />
       </trans-unit>
       <trans-unit id="DefineAccessorsForAttributeArgumentsMessageDefault">
         <source>Add a public read-only property accessor for positional argument {0} of Attribute {1}.</source>
-        <target state="translated">Fügen Sie eine öffentliche schreibgeschützte Zugriffsmethode für das Positionsargument "{0}" des Attributs "{1}" hinzu.</target>
+        <target state="translated">Fügen Sie eine öffentliche schreibgeschützte Zugriffsmethode für das positionelle Argument "{0}" des Attributs "{1}" hinzu.</target>
         <note />
       </trans-unit>
       <trans-unit id="DefineAccessorsForAttributeArgumentsMessageRemoveSetter">
         <source>Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}.</source>
-        <target state="translated">Entfernen Sie den Eigenschaftensetter aus "{0}", oder schränken Sie seine Zugänglichkeit ein, weil er dem Positionsargument "{1}" entspricht.</target>
+        <target state="translated">Entfernen Sie den Eigenschaftensetter aus "{0}", oder schränken Sie seine Zugänglichkeit ein, weil er dem positionellen Argument "{1}" entspricht.</target>
         <note />
       </trans-unit>
       <trans-unit id="DefineAccessorsForAttributeArgumentsMessageIncreaseVisibility">
         <source>If {0} is the property accessor for positional argument {1}, make it public.</source>
-        <target state="translated">Wenn "{0}" die Eigenschaftszugriffsmethode für das Positionsargument "{1}" ist, machen Sie es öffentlich.</target>
+        <target state="translated">Wenn "{0}" die Eigenschaftszugriffsmethode für das positionelle Argument "{1}" ist, machen Sie es öffentlich.</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePropertiesWhereAppropriateTitle">
@@ -483,8 +483,8 @@
         <note />
       </trans-unit>
       <trans-unit id="CollectionPropertiesShouldBeReadOnlyMessage">
-        <source>Collection properties should be read only</source>
-        <target state="translated">Sammlungseigenschaften müssen schreibgeschützt sein</target>
+        <source>Change '{0}' to be read-only by removing the property setter.</source>
+        <target state="translated">Legen Sie "{0}" als schreibgeschützt fest, indem Sie den Setter für die Eigenschaft entfernen.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle">
@@ -663,8 +663,8 @@
         <note />
       </trans-unit>
       <trans-unit id="CollectionsShouldImplementGenericInterfaceMessage">
-        <source>Collections should implement generic interface</source>
-        <target state="translated">Sammlungen müssen eine generische Schnittstelle implementieren</target>
+        <source>Collection '{0}' directly or indirectly inherits '{1}' without implementing '{2}'. Publicly-visible collections should implement the generic version to broaden usability.</source>
+        <target state="needs-review-translation">Sammlungen müssen eine generische Schnittstelle implementieren</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Title">

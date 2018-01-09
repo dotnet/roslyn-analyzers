@@ -127,7 +127,4 @@
   <data name="AvoidUsingCrefTagsWithAPrefixMessage" xml:space="preserve">
     <value>Avoid using cref tags with a prefix</value>
   </data>
-  <data name="CategoryDocumentation" xml:space="preserve">
-    <value>Documentation</value>
-  </data>
 </root>

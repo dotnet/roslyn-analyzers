@@ -17,11 +17,6 @@
         <target state="translated">Verwendung von cref-Tags mit einem Präfix vermeiden</target>
         <note />
       </trans-unit>
-      <trans-unit id="CategoryDocumentation">
-        <source>Documentation</source>
-        <target state="translated">Dokumentation</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

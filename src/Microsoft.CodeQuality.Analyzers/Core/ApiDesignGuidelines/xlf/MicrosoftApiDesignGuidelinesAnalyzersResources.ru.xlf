@@ -304,7 +304,7 @@
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesDescription">
         <source>An unsealed externally visible type provides an explicit method implementation of a public interface and does not provide an alternative externally visible method that has the same name.</source>
-        <target state="translated">Распечатанный и видимый снаружи тип предоставляет явную реализацию метода для общедоступного интерфейса и не предоставляет альтернативный видимый снаружи метод с таким же именем.</target>
+        <target state="translated">Незапечатанный и видимый снаружи тип предоставляет явную реализацию метода для общедоступного интерфейса и не предоставляет альтернативный видимый снаружи метод с таким же именем.</target>
         <note />
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesMessage">
@@ -483,8 +483,8 @@
         <note />
       </trans-unit>
       <trans-unit id="CollectionPropertiesShouldBeReadOnlyMessage">
-        <source>Collection properties should be read only</source>
-        <target state="translated">Свойства коллекций должны быть доступны только для чтения</target>
+        <source>Change '{0}' to be read-only by removing the property setter.</source>
+        <target state="translated">Удалите метод задания свойств для "{0}", чтобы сделать его доступным только для чтения.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle">
@@ -663,8 +663,8 @@
         <note />
       </trans-unit>
       <trans-unit id="CollectionsShouldImplementGenericInterfaceMessage">
-        <source>Collections should implement generic interface</source>
-        <target state="translated">Коллекции должны реализовать универсальный интерфейс</target>
+        <source>Collection '{0}' directly or indirectly inherits '{1}' without implementing '{2}'. Publicly-visible collections should implement the generic version to broaden usability.</source>
+        <target state="needs-review-translation">Коллекции должны реализовать универсальный интерфейс</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Title">
@@ -899,7 +899,7 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeBoolSignature">
         <source>Ensure that {0} is declared as protected, virtual, and unsealed.</source>
-        <target state="translated">Убедитесь, что {0} объявлен как защищенный, виртуальный и распечатанный.</target>
+        <target state="translated">Убедитесь, что {0} объявлен как защищенный, виртуальный и незапечатанный.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">

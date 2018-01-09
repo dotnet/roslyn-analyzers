@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="DoNotUseMD5Description">
         <source>This type implements MD5, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the MD5 and HMACMD5 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</source>
-        <target state="translated">Ten typ implementuje niezabezpieczoną kryptograficznie funkcję wartości skrótu MD5. Istnieje możliwość wystąpienia konfliktów obliczeń wartości skrótu w przypadku algorytmów MD5 i HMACMD5. Zastąp to użycie algorytmem wartości skrótu z rodziny SHA-2 (SHA512, SHA384, SHA256).</target>
+        <target state="translated">Ten typ implementuje niezabezpieczoną kryptograficznie funkcję skrótu MD5. Istnieje możliwość wystąpienia kolizji skrótów w przypadku algorytmów MD5 i HMACMD5. Zastąp to użycie algorytmem wartości skrótu z rodziny SHA-2 (SHA512, SHA384, SHA256).</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseSHA1">
@@ -19,7 +19,7 @@
       </trans-unit>
       <trans-unit id="DoNotUseSHA1Description">
         <source>This type implements SHA1, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the SHA-1 and SHA-0 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</source>
-        <target state="translated">Ten typ implementuje niezabezpieczoną kryptograficznie funkcję wartości skrótu SHA1. Istnieje możliwość wystąpienia konfliktów obliczeń wartości skrótu w przypadku algorytmów SHA-1 i SHA-0. Zastąp to użycie algorytmem wartości skrótu z rodziny SHA-2 (SHA512, SHA384, SHA256).</target>
+        <target state="translated">Ten typ implementuje niezabezpieczoną kryptograficznie funkcję skrótu SHA1. Istnieje możliwość wystąpienia kolizji skrótów w przypadku algorytmów SHA-1 i SHA-0. Zastąp to użycie algorytmem wartości skrótu z rodziny SHA-2 (SHA512, SHA384, SHA256).</target>
         <note />
       </trans-unit>
     </body>

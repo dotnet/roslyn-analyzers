@@ -61,7 +61,7 @@ public class C
     public event System.EventHandler<BadArgs> E2;
 }
 ",
-                GetCA1003CSharpResultAt(13, 47));
+                GetCA1003CSharpResultAt(13, 47, "E2"));
         }
 
         [Fact]
@@ -79,7 +79,7 @@ Public Class C
     Public Event E2 As System.EventHandler(Of BadArgs)
 End Class
 ",
-                GetCA1003BasicResultAt(10, 18));
+                GetCA1003BasicResultAt(10, 18, "E2"));
         }
 
         [Fact]
@@ -154,7 +154,7 @@ public class EventsClassExplicit : ITest
     }
 }
 ",
-                GetCA1003CSharpResultAt(8, 27));
+                GetCA1003CSharpResultAt(8, 27, "TestEvent"));
         }
 
         [Fact]
@@ -173,7 +173,7 @@ public class D : C
     public override event BadHandler E;
 }
 ",
-                GetCA1003CSharpResultAt(6, 37));
+                GetCA1003CSharpResultAt(6, 37, "E"));
         }
 
         [Fact]
@@ -212,12 +212,12 @@ public class C
     public event EventHandler<int> E6;
 }
 ",
-                GetCA1003CSharpResultAt(12, 30),
-                GetCA1003CSharpResultAt(13, 30),
-                GetCA1003CSharpResultAt(14, 30),
-                GetCA1003CSharpResultAt(15, 30),
-                GetCA1003CSharpResultAt(16, 30),
-                GetCA1003CSharpResultAt(17, 36));
+                GetCA1003CSharpResultAt(12, 30, "E1"),
+                GetCA1003CSharpResultAt(13, 30, "E2"),
+                GetCA1003CSharpResultAt(14, 30, "E3"),
+                GetCA1003CSharpResultAt(15, 30, "E4"),
+                GetCA1003CSharpResultAt(16, 30, "E5"),
+                GetCA1003CSharpResultAt(17, 36, "E6"));
         }
 
         [Fact]
@@ -235,19 +235,19 @@ End Class
 Public Structure MyEventArgs
 End Structure
 ",
-                GetCA1003BasicResultAt(5, 18),
-                GetCA1003BasicResultAt(6, 18),
-                GetCA1003BasicResultAt(7, 18));
+                GetCA1003BasicResultAt(5, 18, "E1"),
+                GetCA1003BasicResultAt(6, 18, "E2"),
+                GetCA1003BasicResultAt(7, 18, "E3"));
         }
 
-        private static DiagnosticResult GetCA1003BasicResultAt(int line, int col)
+        private static DiagnosticResult GetCA1003BasicResultAt(int line, int col, string eventSymbolName)
         {
-            return GetBasicResultAt(line, col, UseGenericEventHandlerInstancesAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.UseGenericEventHandlerInstancesMessageDefault);
+            return GetBasicResultAt(line, col, UseGenericEventHandlerInstancesAnalyzer.Rule, eventSymbolName);
         }
 
-        private static DiagnosticResult GetCA1003CSharpResultAt(int line, int col)
+        private static DiagnosticResult GetCA1003CSharpResultAt(int line, int col, string eventSymbolName)
         {
-            return GetCSharpResultAt(line, col, UseGenericEventHandlerInstancesAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.UseGenericEventHandlerInstancesMessageDefault);
+            return GetCSharpResultAt(line, col, UseGenericEventHandlerInstancesAnalyzer.Rule, eventSymbolName);
         }
     }
 }

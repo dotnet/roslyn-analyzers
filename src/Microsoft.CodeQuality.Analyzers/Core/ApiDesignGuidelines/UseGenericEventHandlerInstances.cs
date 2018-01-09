@@ -112,7 +112,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         !HasComSourceInterfacesAttribute(eventSymbol.ContainingType) &&
                         IsViolatingEventHandler(eventType))
                     {
-                        context.ReportDiagnostic(eventSymbol.CreateDiagnostic(Rule));
+                        context.ReportDiagnostic(eventSymbol.CreateDiagnostic(Rule, eventSymbol.Name));
                     }
                 }
             }

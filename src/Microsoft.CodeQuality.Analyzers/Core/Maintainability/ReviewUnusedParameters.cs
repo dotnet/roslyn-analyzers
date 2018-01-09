@@ -98,14 +98,19 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                         return;
                     }
 
-                    // Ignore implicitly declared methods, extern methods, abstract methods, virtual methods, interface implementations and finalizers (FxCop compat).
+                    // Ignore implicitly declared methods, abstract methods, virtual methods, interface implementations and finalizers (FxCop compat).
                     if (method.IsImplicitlyDeclared ||
-                        method.IsExtern ||
                         method.IsAbstract ||
                         method.IsVirtual ||
                         method.IsOverride ||
                         method.IsImplementationOfAnyInterfaceMember() ||
                         method.IsFinalizer())
+                    {
+                        return;
+                    }
+
+                    // Ignore property accessors.
+                    if (method.IsPropertyAccessor())
                     {
                         return;
                     }
@@ -206,16 +211,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 // Note that VB method bodies with 1 action have 3 operations.
                 // The first is the actual operation, the second is a label statement, and the third is a return
                 // statement. The last two are implicit in these scenarios.
-
-                // Filter out operation roots with no IOperation API support (OperationKind.None)
-                var operationBlocks = context.OperationBlocks;
-                if (operationBlocks.Any(operation => operation.IsOperationNoneRoot()))
-                {
-                    operationBlocks = operationBlocks.Where(operation => !operation.IsOperationNoneRoot()).ToImmutableArray();
-                }
-
-                if (operationBlocks.Length == 1 &&
-                    operationBlocks[0] is IBlockOperation methodBlock)
+                if (context.OperationBlocks.Length == 1)
                 {
                     bool IsSingleStatementBody(IBlockOperation body)
                     {
@@ -225,6 +221,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                              body.Operations[2] is IReturnOperation returnOp && returnOp.IsImplicit);
                     }
 
+                    var methodBlock = (IBlockOperation)context.OperationBlocks[0];
                     if (IsSingleStatementBody(methodBlock))
                     {
                         var innerOperation = methodBlock.Operations.First();
@@ -248,6 +245,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             }
                         }
                     }
+                }
+
+                // Do not raise warning for unused 'this' parameter of an extension method.
+                if (_method.IsExtensionMethod)
+                {
+                    var thisParamter = _unusedParameters.Where(p => p.Ordinal == 0).FirstOrDefault();
+                    _unusedParameters.Remove(thisParamter);
                 }
 
                 _finalUnusedParameters.Add(_method, _unusedParameters);

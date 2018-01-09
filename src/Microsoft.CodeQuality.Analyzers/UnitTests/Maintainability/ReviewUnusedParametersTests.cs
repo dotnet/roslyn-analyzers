@@ -229,7 +229,6 @@ End Class
         {
             VerifyCSharp(@"
 using System;
-using System.Runtime.InteropServices;
 
 public abstract class Derived : Base, I
 {
@@ -276,19 +275,10 @@ public interface I
     void Method1(int param);
     void Method2(int param);
 }
-
-public class ClassWithExtern
-{
-    [DllImport(""Dependency.dll"")]
-    public static extern void DllImportMethod(int param);
-
-    public static extern void ExternalMethod(int param);
-}
 ");
 
             VerifyBasic(@"
 Imports System
-Imports System.Runtime.InteropServices
 
 Public MustInherit Class Derived
     Inherits Base
@@ -330,14 +320,6 @@ Public Interface I
     Sub Method1(param As Integer)
     Sub Method2(param As Integer)
 End Interface
-
-Public Class ClassWithExtern
-    <DllImport(""Dependency.dll"")>
-    Public Shared Sub DllImportMethod(param As Integer)
-    End Sub
-
-    Public Declare Function DeclareFunction Lib ""Dependency.dll"" (param As Integer) As Integer    
-End Class
 ");
         }
 
@@ -562,15 +544,6 @@ End Class");
             VerifyCSharp(@"
 using System;
 
-public class MyAttribute: Attribute
-{
-    public int X;
-
-    public MyAttribute(int x)
-    {
-        X = x;
-    }
-}
 public class C1
 {
     public int Prop1
@@ -591,12 +564,6 @@ public class C1
     }
 
     public void Method2(object o1) => throw new NotImplementedException();
-
-    [MyAttribute(0)]
-    public void Method3(object o1)
-    {
-        throw new NotImplementedException();
-    }
 }");
 
             VerifyBasic(@"
@@ -663,6 +630,30 @@ Public Class C1
         Throw New NotSupportedException()
     End Sub
 End Class");
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/23972")]
+        public void NoDiagnosticsShadows()
+        {
+            VerifyBasic(@"
+Class Base
+    Public Function P(i As Integer) As Integer
+        Return i
+    End Function
+End Class
+
+Interface MyInterface
+    Sub O(i As Integer)
+End Interface
+
+Class Derived
+    Inherits Base
+
+    Public Shadows Function P(i As Integer) As Integer
+        Return 0
+    End Function
+End Class
+");
         }
 
         #endregion
@@ -732,6 +723,24 @@ class C
         }
 
         [Fact]
+        public void CSharp_ExtensionMethodsTest()
+        {
+            VerifyCSharp(@"
+using System;
+
+static class D
+{
+    public static void ExtensionMethod(this string s) { }
+
+    public static void ExtensionMethod(this string s, int i) { }
+}
+", TestValidationMode.AllowCompileErrors,
+      // Test0.cs(43,59): warning CA1801: Parameter i of method ExtensionMethod is never used. Remove the parameter or use it in the method body.
+      GetCSharpUnusedParameterResultAt(8, 59, "i", "ExtensionMethod")
+      );
+        }
+
+        [Fact]
         [WorkItem(459, "https://github.com/dotnet/roslyn-analyzers/issues/459")]
         public void Basic_DiagnosticForSimpleCasesTest()
         {
@@ -780,6 +789,26 @@ End Class
       GetBasicUnusedParameterResultAt(21, 44, "param1", "UnusedRefParamMethod"),
       // Test0.vb(24,43): warning CA1801: Parameter param1 of method UnusedErrorTypeParamMethod is never used. Remove the parameter or use it in the method body.
       GetBasicUnusedParameterResultAt(24, 43, "param1", "UnusedErrorTypeParamMethod"));
+        }
+
+        [Fact]
+        public void Basic_ExtensionMethodsTest()
+        {
+            VerifyBasic(@"
+Imports System.Runtime.CompilerServices
+
+Module D
+    <Extension()> 
+    Public Sub ExtensionMethod(s As String)
+    End Sub
+
+    <Extension()> 
+    Public Sub ExtensionMethod(s As String, i As Integer)
+    End Sub
+End Module
+", TestValidationMode.AllowCompileErrors,
+      // Test0.vb(36,58): warning CA1801: Parameter i of method ExtensionMethod is never used. Remove the parameter or use it in the method body.
+      GetBasicUnusedParameterResultAt(10, 45, "i", "ExtensionMethod"));
         }
 
         #endregion

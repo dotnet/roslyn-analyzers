@@ -61,7 +61,8 @@ public class C
     public event System.EventHandler<BadArgs> E2;
 }
 ",
-                GetCA1003CSharpResultAt(13, 47, "E2"));
+            // Test0.cs(13,47): warning CA1003: Change the event 'E2' to replace the type 'System.EventHandler<BadArgs>' with a generic EventHandler, for e.g. EventHandler<T>, where T is a valid EventArgs
+            GetCSharpResultAt(13, 47, UseGenericEventHandlerInstancesAnalyzer.RuleForEvents, "E2", "System.EventHandler<BadArgs>"));
         }
 
         [Fact]
@@ -79,7 +80,8 @@ Public Class C
     Public Event E2 As System.EventHandler(Of BadArgs)
 End Class
 ",
-                GetCA1003BasicResultAt(10, 18, "E2"));
+            // Test0.vb(10,18): warning CA1003: Change the event 'E2' to replace the type 'System.EventHandler(Of BadArgs)' with a generic EventHandler, for e.g. EventHandler<T>, where T is a valid EventArgs
+            GetBasicResultAt(10, 18, UseGenericEventHandlerInstancesAnalyzer.RuleForEvents, "E2", "System.EventHandler(Of BadArgs)"));
         }
 
         [Fact]
@@ -92,14 +94,22 @@ Public Class C
     Public Event E3(sender As Object)
     Public Event E4(sender As Object, args As Integer)
 End Class
-");
+",
+            // Test0.vb(3,18): warning CA1003: Change the event 'E1' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).
+            GetBasicResultAt(3, 18, UseGenericEventHandlerInstancesAnalyzer.RuleForEvents2, "E1"),
+            // Test0.vb(4,18): warning CA1003: Change the event 'E2' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).
+            GetBasicResultAt(4, 18, UseGenericEventHandlerInstancesAnalyzer.RuleForEvents2, "E2"),
+            // Test0.vb(5,18): warning CA1003: Change the event 'E3' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).
+            GetBasicResultAt(5, 18, UseGenericEventHandlerInstancesAnalyzer.RuleForEvents2, "E3"),
+            // Test0.vb(6,18): warning CA1003: Change the event 'E4' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).
+            GetBasicResultAt(6, 18, UseGenericEventHandlerInstancesAnalyzer.RuleForEvents2, "E4"));
         }
 
         [Fact]
-        public void TestNonPublicEvent()
+        public void TestNonPublicEventAndNonPublicDelegate()
         {
             VerifyCSharp(@"
-public delegate void BadEventHandler(object senderId, System.EventArgs e);
+internal delegate void BadEventHandler(object senderId, System.EventArgs e);
 
 public class EventsClass
 {
@@ -109,16 +119,29 @@ public class EventsClass
         }
 
         [Fact]
-        public void TestPublicEventInNonPublicType()
+        public void TestNonPublicEventButPublicDelegate()
         {
             VerifyCSharp(@"
-using System;
+public delegate void BadEventHandler(object senderId, System.EventArgs e);
 
-public delegate void BadEventHandler(object senderId, EventArgs e);
-
-internal class EventsClass
+public class EventsClass
 {
-    public event BadEventHandler E;
+    internal event BadEventHandler E;
+}
+",
+            // Test0.cs(2,22): warning CA1003: Remove 'BadEventHandler' and replace its usage with a generic EventHandler, for e.g. EventHandler<T>, where T is a valid EventArgs
+            GetCSharpResultAt(2, 22, UseGenericEventHandlerInstancesAnalyzer.RuleForDelegates, "BadEventHandler"));
+        }
+
+        [Fact]
+        public void TestNonPublicEventAndPublicInvalidDelegate()
+        {
+            VerifyCSharp(@"
+public delegate void BadEventHandler(object senderId);
+
+public class EventsClass
+{
+    internal event BadEventHandler E;
 }
 ");
         }
@@ -154,7 +177,8 @@ public class EventsClassExplicit : ITest
     }
 }
 ",
-                GetCA1003CSharpResultAt(8, 27, "TestEvent"));
+            // Test0.cs(4,22): warning CA1003: Remove 'BadEventHandler' and replace its usage with a generic EventHandler, for e.g. EventHandler<T>, where T is a valid EventArgs
+            GetCSharpResultAt(4, 22, UseGenericEventHandlerInstancesAnalyzer.RuleForDelegates, "BadEventHandler"));
         }
 
         [Fact]
@@ -173,7 +197,8 @@ public class D : C
     public override event BadHandler E;
 }
 ",
-                GetCA1003CSharpResultAt(6, 37, "E"));
+            // Test0.cs(6,37): warning CA1003: Change the event 'E' to replace the type 'BadHandler' with a generic EventHandler, for e.g. EventHandler<T>, where T is a valid EventArgs
+            GetCSharpResultAt(6, 37, UseGenericEventHandlerInstancesAnalyzer.RuleForEvents, "E", "BadHandler"));
         }
 
         [Fact]
@@ -212,12 +237,18 @@ public class C
     public event EventHandler<int> E6;
 }
 ",
-                GetCA1003CSharpResultAt(12, 30, "E1"),
-                GetCA1003CSharpResultAt(13, 30, "E2"),
-                GetCA1003CSharpResultAt(14, 30, "E3"),
-                GetCA1003CSharpResultAt(15, 30, "E4"),
-                GetCA1003CSharpResultAt(16, 30, "E5"),
-                GetCA1003CSharpResultAt(17, 36, "E6"));
+            // Test0.cs(8,22): warning CA1003: Remove 'BadHandler5' and replace its usage with a generic EventHandler, for e.g. EventHandler<T>, where T is a valid EventArgs
+            GetCSharpResultAt(8, 22, UseGenericEventHandlerInstancesAnalyzer.RuleForDelegates, "BadHandler5"),
+            // Test0.cs(12,30): warning CA1003: Change the event 'E1' to replace the type 'BadHandler1' with a generic EventHandler, for e.g. EventHandler<T>, where T is a valid EventArgs
+            GetCSharpResultAt(12, 30, UseGenericEventHandlerInstancesAnalyzer.RuleForEvents, "E1", "BadHandler1"),
+            // Test0.cs(13,30): warning CA1003: Change the event 'E2' to replace the type 'BadHandler2' with a generic EventHandler, for e.g. EventHandler<T>, where T is a valid EventArgs
+            GetCSharpResultAt(13, 30, UseGenericEventHandlerInstancesAnalyzer.RuleForEvents, "E2", "BadHandler2"),
+            // Test0.cs(14,30): warning CA1003: Change the event 'E3' to replace the type 'BadHandler3' with a generic EventHandler, for e.g. EventHandler<T>, where T is a valid EventArgs
+            GetCSharpResultAt(14, 30, UseGenericEventHandlerInstancesAnalyzer.RuleForEvents, "E3", "BadHandler3"),
+            // Test0.cs(15,30): warning CA1003: Change the event 'E4' to replace the type 'BadHandler4' with a generic EventHandler, for e.g. EventHandler<T>, where T is a valid EventArgs
+            GetCSharpResultAt(15, 30, UseGenericEventHandlerInstancesAnalyzer.RuleForEvents, "E4", "BadHandler4"),
+            // Test0.cs(17,36): warning CA1003: Change the event 'E6' to replace the type 'System.EventHandler<int>' with a generic EventHandler, for e.g. EventHandler<T>, where T is a valid EventArgs
+            GetCSharpResultAt(17, 36, UseGenericEventHandlerInstancesAnalyzer.RuleForEvents, "E6", "System.EventHandler<int>"));
         }
 
         [Fact]
@@ -235,19 +266,12 @@ End Class
 Public Structure MyEventArgs
 End Structure
 ",
-                GetCA1003BasicResultAt(5, 18, "E1"),
-                GetCA1003BasicResultAt(6, 18, "E2"),
-                GetCA1003BasicResultAt(7, 18, "E3"));
-        }
-
-        private static DiagnosticResult GetCA1003BasicResultAt(int line, int col, string eventSymbolName)
-        {
-            return GetBasicResultAt(line, col, UseGenericEventHandlerInstancesAnalyzer.Rule, eventSymbolName);
-        }
-
-        private static DiagnosticResult GetCA1003CSharpResultAt(int line, int col, string eventSymbolName)
-        {
-            return GetCSharpResultAt(line, col, UseGenericEventHandlerInstancesAnalyzer.Rule, eventSymbolName);
+            // Test0.vb(2,21): warning CA1003: Remove 'BadHandler' and replace its usage with a generic EventHandler, for e.g. EventHandler<T>, where T is a valid EventArgs
+            GetBasicResultAt(2, 21, UseGenericEventHandlerInstancesAnalyzer.RuleForDelegates, "BadHandler"),
+            // Test0.vb(6,18): warning CA1003: Change the event 'E2' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).
+            GetBasicResultAt(6, 18, UseGenericEventHandlerInstancesAnalyzer.RuleForEvents2, "E2"),
+            // Test0.vb(7,18): warning CA1003: Change the event 'E3' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).
+            GetBasicResultAt(7, 18, UseGenericEventHandlerInstancesAnalyzer.RuleForEvents2, "E3"));
         }
     }
 }

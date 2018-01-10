@@ -3,6 +3,7 @@
 Imports System.Composition
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
+Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeQuality.Analyzers.Maintainability
 
 Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
@@ -13,5 +14,13 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
     Public NotInheritable Class BasicReviewUnusedParametersFixer
         Inherits ReviewUnusedParametersFixer
 
+        Protected Overrides Function GetParameterNode(node As SyntaxNode) As SyntaxNode
+            Return node.Parent
+        End Function
+
+        Protected Overrides Function CanContinuouslyLeadToObjectCreationOrInvocation(node As SyntaxNode) As Boolean
+            Dim kind = node.Kind()
+            Return kind = SyntaxKind.QualifiedName OrElse kind = SyntaxKind.IdentifierName OrElse kind = SyntaxKind.SimpleMemberAccessExpression
+        End Function
     End Class
 End Namespace

@@ -110,6 +110,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                         return;
                     }
 
+                    // Ignore property accessors.
+                    if (method.IsPropertyAccessor())
+                    {
+                        return;
+                    }
+
                     // Ignore event handler methods "Handler(object, MyEventArgs)"
                     if (eventsArgSymbol != null &&
                         method.Parameters.Length == 2 &&
@@ -248,6 +254,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             }
                         }
                     }
+                }
+
+                // Do not raise warning for unused 'this' parameter of an extension method.
+                if (_method.IsExtensionMethod)
+                {
+                    var thisParamter = _unusedParameters.Where(p => p.Ordinal == 0).FirstOrDefault();
+                    _unusedParameters.Remove(thisParamter);
                 }
 
                 _finalUnusedParameters.Add(_method, _unusedParameters);

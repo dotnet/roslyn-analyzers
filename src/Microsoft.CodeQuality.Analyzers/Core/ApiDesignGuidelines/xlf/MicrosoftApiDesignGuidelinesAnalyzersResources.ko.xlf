@@ -117,21 +117,6 @@
         <target state="translated">제네릭 이벤트 처리기 인스턴스를 사용하세요.</target>
         <note />
       </trans-unit>
-      <trans-unit id="UseGenericEventHandlerInstancesDescription">
-        <source>A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="translated">형식이 void를 반환하는 대리자를 포함하며 이 형식의 시그니처는 매개 변수 2개(개체 및 EventArgs에 할당할 수 있는 형식) 및 포함하는 어셈블리 대상 Microsoft .NET Framework 2.0을 포함합니다.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseGenericEventHandlerInstancesMessageVB">
-        <source>Visual Basic generates EventHandler delegates for events that use the following pattern: Event MyEvent(ByVal Sender As Object, ByVal e as MyEventArgs). Change the event that defines EventHandler {0} to use EventHandler&lt;T&gt; by defining the event type explicitly, e.g. Event MyEvent As EventHandler(Of MyEventArgs).</source>
-        <target state="translated">Visual Basic은 Event MyEvent(ByVal Sender As Object, ByVal e as MyEventArgs) 패턴을 사용하는 이벤트에 대해 EventHandler 대리자를 생성합니다. Event MyEvent As EventHandler(Of MyEventArgs)와 같이 이벤트 형식을 명시적으로 정의하여 EventHandler&lt;T&gt;를 사용하도록 EventHandler {0}을(를) 정의하는 이벤트를 변경하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseGenericEventHandlerInstancesMessageDefault">
-        <source>Remove {0} and replace its usage with EventHandler&lt;T&gt;</source>
-        <target state="translated">{0}을(를) 제거하고 EventHandler&lt;T&gt;로 바꿔 사용하세요.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="EnumsShouldHaveZeroValueTitle">
         <source>Enums should have zero value</source>
         <target state="translated">열거형에는 0 값이 있어야 합니다.</target>
@@ -1480,6 +1465,36 @@
       <trans-unit id="DoNotHideBaseClassMethodsTitle">
         <source>Do not hide base class methods</source>
         <target state="translated">기본 클래스 메서드를 숨기지 마세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
+        <source>Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
+        <target state="new">Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
+        <source>A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
+        <target state="new">A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
+        <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
+        <target state="new">Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">
+        <source>A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.</source>
+        <target state="new">A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseGenericEventHandlerInstancesForEvent2Message">
+        <source>Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</source>
+        <target state="new">Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseGenericEventHandlerInstancesForEvent2Description">
+        <source>A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
+        <target state="new">A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</target>
         <note />
       </trans-unit>
     </body>

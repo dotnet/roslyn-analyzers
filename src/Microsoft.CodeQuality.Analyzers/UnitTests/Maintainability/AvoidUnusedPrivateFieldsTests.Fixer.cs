@@ -65,7 +65,7 @@ class C
         return x + z + a + c + d + f;
     }
 }  
- ");
+ ", allowNewCompilerDiagnostics: true);
         }
 
         [Fact]

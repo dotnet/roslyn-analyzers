@@ -80,11 +80,14 @@ namespace Test.Utilities
                 var compilerDiagnostics = compilation.GetDiagnostics();
 
                 var fixAllProvider = _codeFixProvider.GetFixAllProvider();
-                var diagnosticProvider = new FixAllDiagnosticProvider(this, additionalFiles);
+                var diagnosticProvider = new FixAllDiagnosticProvider(_getFixableDiagnostics(analyzerDiagnostics.Concat(compilerDiagnostics)));
                 var fixAllContext = new FixAllContext(project, _codeFixProvider, FixAllScope.Project, string.Empty, _fixableDiagnosticIds, diagnosticProvider, CancellationToken.None);
                 var codeAction = fixAllProvider.GetFixAsync(fixAllContext).Result;
 
-                solution = DiagnosticFixerTestsExtensions.Apply(codeAction);
+                if (codeAction != null)
+                {
+                    solution = DiagnosticFixerTestsExtensions.Apply(codeAction);
+                }
 
                 compilation = project.GetCompilationAsync().Result;
                 analyzerDiagnostics = GetSortedDiagnostics(compilation, additionalFiles);
@@ -161,6 +164,7 @@ namespace Test.Utilities
         {
             foreach (var document in project.Documents)
             {
+                Assert.NotNull(diagnostic.Location.SourceTree);
                 if (diagnostic.Location.SourceTree == document.GetSyntaxTreeAsync().Result)
                 {
                     return document;
@@ -244,32 +248,28 @@ namespace Test.Utilities
 
         private class FixAllDiagnosticProvider : FixAllContext.DiagnosticProvider
         {
-            private IEnumerable<TestAdditionalDocument> _additionalFiles;
-            private readonly CodeFixRunner _runner;
+            private readonly IEnumerable<Diagnostic> _allDiagnostics;
 
-            public FixAllDiagnosticProvider(
-                CodeFixRunner runner,
-                IEnumerable<TestAdditionalDocument> additionalFiles)
+            public FixAllDiagnosticProvider(IEnumerable<Diagnostic> diagnostics)
             {
-                _additionalFiles = additionalFiles;
-                _runner = runner;
+                _allDiagnostics = diagnostics;
             }
 
             public override async Task<IEnumerable<Diagnostic>> GetDocumentDiagnosticsAsync(Document document, CancellationToken cancellationToken)
             {
-                var compilation = document.Project.GetCompilationAsync().Result;
-                var analyzerDiagnostics = _runner.GetSortedDiagnostics(compilation, _additionalFiles);
-                var semanticModel = await document.GetSemanticModelAsync().ConfigureAwait(false);
-                var compilerDiagnostics = semanticModel.GetDiagnostics();
-                var fixableDiagnostics = _runner._getFixableDiagnostics(analyzerDiagnostics.Concat(compilerDiagnostics));
-                return fixableDiagnostics;
+                var tree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+                return _allDiagnostics.Where(d => d.HasIntersectingLocation(tree));
             }
 
             public override Task<IEnumerable<Diagnostic>> GetAllDiagnosticsAsync(Project project, CancellationToken cancellationToken)
-                => throw new NotImplementedException();
+            {
+                return Task.FromResult(_allDiagnostics);
+            }
 
             public override Task<IEnumerable<Diagnostic>> GetProjectDiagnosticsAsync(Project project, CancellationToken cancellationToken)
-                => throw new NotImplementedException();
+            {
+                return Task.FromResult(_allDiagnostics.Where(d => d.Location == Location.None));
+            }
         }
 
         private sealed class DiagnosticComparer : IEqualityComparer<Diagnostic>

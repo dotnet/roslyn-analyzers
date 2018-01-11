@@ -8,6 +8,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
@@ -52,6 +53,12 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 // those.
                 var reportedAssociatedSymbols = new HashSet<ISymbol>();
 
+                // For candidate methods that are not externally visible, we only report a diagnostic if they are actually invoked via a method call in the compilation.
+                // This prevents us from incorrectly flagging methods that are only invoked via delegate invocations: https://github.com/dotnet/roslyn-analyzers/issues/1511
+                // and also reduces noise by not flagging dead code.
+                var internalCandidates = new HashSet<IMethodSymbol>();
+                var invokedInternalMethods = new HashSet<IMethodSymbol>();
+
                 compilationContext.RegisterOperationBlockStartAction(blockStartContext =>
                 {
                     var methodSymbol = blockStartContext.OwningSymbol as IMethodSymbol;
@@ -72,8 +79,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                         if (!isInstanceReferenced)
                         {
                             ISymbol reportingSymbol = methodSymbol;
+                            var isAccessor = methodSymbol.IsPropertyAccessor() || methodSymbol.IsEventAccessor();
 
-                            if (methodSymbol.IsPropertyAccessor() || methodSymbol.IsEventAccessor())
+                            if (isAccessor)
                             {
                                 // If we've already reported on this associated symbol (i.e property/event) then don't report again.
                                 if (reportedAssociatedSymbols.Contains(methodSymbol.AssociatedSymbol))
@@ -85,9 +93,36 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                 reportedAssociatedSymbols.Add(reportingSymbol);
                             }
 
-                            blockEndContext.ReportDiagnostic(reportingSymbol.CreateDiagnostic(Rule, reportingSymbol.Name));
+                            if (isAccessor || methodSymbol.IsExternallyVisible())
+                            {
+                                blockEndContext.ReportDiagnostic(reportingSymbol.CreateDiagnostic(Rule, reportingSymbol.Name));
+                            }
+                            else
+                            {
+                                internalCandidates.Add(methodSymbol);
+                            }
                         }
                     });
+                });
+
+                compilationContext.RegisterOperationAction(operationContext =>
+                {
+                    var invocation = (IInvocationOperation)operationContext.Operation;
+                    if (!invocation.TargetMethod.IsExternallyVisible())
+                    {
+                        invokedInternalMethods.Add(invocation.TargetMethod);
+                    }
+                }, OperationKind.Invocation);
+
+                compilationContext.RegisterCompilationEndAction(compilationEndContext =>
+                {
+                    foreach (var candidate in internalCandidates)
+                    {
+                        if (invokedInternalMethods.Contains(candidate))
+                        {
+                            compilationEndContext.ReportDiagnostic(candidate.CreateDiagnostic(Rule, candidate.Name));
+                        }
+                    }
                 });
             });
         }

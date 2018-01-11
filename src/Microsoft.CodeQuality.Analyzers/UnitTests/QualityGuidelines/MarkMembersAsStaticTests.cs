@@ -139,6 +139,164 @@ End Class
         }
 
         [Fact]
+        public void CSharpSimpleMembers_Internal_DiagnosticsOnlyForInvokedMethods()
+        {
+            VerifyCSharp(@"
+internal class MembersTests
+{
+    internal static int s_field;
+    public const int Zero = 0;
+
+    public int Method1(string name)
+    {
+        return name.Length;
+    }
+
+    public void Method2() { }
+
+    public void Method3()
+    {
+        s_field = 4;
+    }
+
+    public int Method4()
+    {
+        return Zero;
+    }
+    
+    public int Property
+    {
+        get { return 5; }
+    }
+
+    public int Property2
+    {
+        set { s_field = value; }
+    }
+
+    public int MyProperty
+    {
+        get { return 10; }
+        set { System.Console.WriteLine(value); }
+    }
+
+    public event System.EventHandler<System.EventArgs> CustomEvent { add {} remove {} }
+
+    public void Common(string arg)
+    {
+        // Invoked, hence must be flagged.
+        Method1(arg);
+
+        // Invoked via delegate - should not be flagged.
+        System.Action<System.Action> a = (System.Action m) => m();
+        a(Method2);
+
+        // Method3 is dead code that is never invoked - should not be flagged.
+        // Method3();
+
+        // Invoked within a lambda - must be flagged.
+        System.Func<int> b = () => Method4();
+
+        // Candidate accessors/properties/events are always flagged, regardless of them being used or not.
+        int x = Property;
+        // int y = Property2;
+        MyProperty = 10; // getter not accessed.
+    }
+}",
+                GetCSharpResultAt(7, 16, "Method1"),
+                GetCSharpResultAt(19, 16, "Method4"),
+                GetCSharpResultAt(24, 16, "Property"),
+                GetCSharpResultAt(29, 16, "Property2"),
+                GetCSharpResultAt(34, 16, "MyProperty"),
+                GetCSharpResultAt(40, 56, "CustomEvent"));
+        }
+
+        [Fact]
+        public void BasicSimpleMembers_Internal_DiagnosticsOnlyForInvokedMethods()
+        {
+            VerifyBasic(@"
+Imports System
+
+Friend Class MembersTests
+    Shared s_field As Integer
+    Public Const Zero As Integer = 0
+
+    Public Function Method1(name As String) As Integer
+        Return name.Length
+    End Function
+
+    Public Sub Method2()
+    End Sub
+
+    Public Sub Method3()
+        s_field = 4
+    End Sub
+
+    Public Function Method4() As Integer
+        Return Zero
+    End Function
+
+    Public ReadOnly Property Property1 As Integer
+        Get
+            Return 5
+        End Get
+    End Property
+
+    Public WriteOnly Property Property2 As Integer
+        Set
+            s_field = Value
+        End Set
+    End Property
+
+    Public Property MyProperty As Integer
+        Get 
+            Return 10
+        End Get
+        Set
+            System.Console.WriteLine(Value)
+        End Set
+    End Property
+
+    Public Custom Event CustomEvent As EventHandler(Of EventArgs)
+        AddHandler(value As EventHandler(Of EventArgs))
+        End AddHandler
+        RemoveHandler(value As EventHandler(Of EventArgs))
+        End RemoveHandler
+        RaiseEvent(sender As Object, e As EventArgs)
+        End RaiseEvent
+    End Event
+
+    Public Sub Common(ByVal arg As String)
+        ' Invoked, hence must be flagged.
+        Method1(arg)
+
+        ' Invoked via delegate - should not be flagged.
+        Dim a As System.Action(Of System.Action) = Sub(ByVal m As System.Action) m()
+        a(AddressOf Method2)
+
+        ' Method3 is dead code that is never invoked - should not be flagged.
+        'Method3()
+
+        ' Invoked within a lambda - must be flagged.
+        Dim b As System.Func(Of Integer) = Function() Method4()
+
+        ' Candidate accessors/properties/events are always flagged, regardless of them being used or not.
+        Dim x As Integer = Property1
+        'Dim y As Integer = Property2
+        MyProperty = 10
+End Sub
+
+End Class
+",
+                GetBasicResultAt(8, 21, "Method1"),
+                GetBasicResultAt(19, 21, "Method4"),
+                GetBasicResultAt(23, 30, "Property1"),
+                GetBasicResultAt(29, 31, "Property2"),
+                GetBasicResultAt(35, 21, "MyProperty"),
+                GetBasicResultAt(44, 25, "CustomEvent"));
+        }
+
+        [Fact]
         public void CSharpSimpleMembers_NoDiagnostic()
         {
             VerifyCSharp(@"

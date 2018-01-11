@@ -457,6 +457,48 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 End Class");
         }
 
+        [Fact, WorkItem(1510, "https://github.com/dotnet/roslyn-analyzers/issues/1510")]
+        public void CA2235WithDateTimeType()
+        {
+            VerifyCSharp(@"
+                using System;
+
+                [Serializable]
+                internal class CA2235WithDateTimeField
+                {
+                    public DateTime s1;
+                }");
+
+            VerifyBasic(@"
+                Imports System
+
+                <Serializable>
+                Friend Class CA2235WithDateTimeField
+                    Public s1 As DateTime
+                End Class");
+        }
+
+        [Fact, WorkItem(1510, "https://github.com/dotnet/roslyn-analyzers/issues/1510")]
+        public void CA2235WithNullableType()
+        {
+            VerifyCSharp(@"
+                using System;
+
+                [Serializable]
+                internal class CA2235WithNullableField
+                {
+                    public long? s1;
+                }");
+
+            VerifyBasic(@"
+                Imports System
+
+                <Serializable>
+                Friend Class CA2235WithNullableField
+                    Public s1 As Long?
+                End Class");
+        }
+
         [Fact]
         public void CA2235WithSpecialSerializableTypeFields()
         {

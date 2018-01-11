@@ -267,6 +267,7 @@ namespace Microsoft.NetFramework.Analyzers
                         return IsPrimitiveType(type) ||
                             type.SpecialType == SpecialType.System_String ||
                             type.SpecialType == SpecialType.System_Decimal ||
+                            type.SpecialType == SpecialType.System_DateTime ||
                             type.GetAttributes()
                                 .Any(a => a.AttributeClass.Equals(_serializableAttributeTypeSymbol));
                 }

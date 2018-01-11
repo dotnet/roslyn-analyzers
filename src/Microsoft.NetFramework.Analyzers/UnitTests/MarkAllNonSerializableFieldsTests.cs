@@ -457,6 +457,29 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 End Class");
         }
 
+        [Fact, WorkItem(1510, "https://github.com/dotnet/roslyn-analyzers/issues/1510")]
+        public void CA2235WithDateTimeType()
+        {
+            VerifyCSharp(@"
+                using System;
+
+                [Serializable]
+                internal class CA2235WithEnumFields
+                {
+                    public DateTime s1;
+                    internal DateTime s2;
+                }");
+
+            VerifyBasic(@"
+                Imports System
+
+                <Serializable>
+                Friend Class CA2235WithEnumFields
+                    Public s1 As DateTime
+                    Friend Property s2 As DateTime
+                End Class");
+        }
+
         [Fact]
         public void CA2235WithSpecialSerializableTypeFields()
         {

@@ -272,15 +272,10 @@ namespace Microsoft.NetFramework.Analyzers
                         }
 
                         // Workaround for https://github.com/dotnet/roslyn/issues/3898
-                        var isSerializableMetadataProperty = type.GetType().GetRuntimeProperties().FirstOrDefault(p => p.Name.Equals("IsSerializable", StringComparison.Ordinal));
-                        if (isSerializableMetadataProperty != null &&
-                            isSerializableMetadataProperty.GetValue(type) is bool isSerializable &&
-                            isSerializable)
-                        {
-                            return true;
-                        }
-
-                        return false;
+                        return type.GetType().GetRuntimeProperties().Any(
+                            p => p.Name.Equals("IsSerializable", StringComparison.Ordinal) &&
+                                p.GetValue(type) is bool isSerializable &&
+                                isSerializable);
                 }
             }
         }

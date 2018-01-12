@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
-    <VersionBase>2.6.0</VersionBase>
-    <PreReleaseVersionLabel>beta3</PreReleaseVersionLabel>
+    <VersionBase>2.6.1</VersionBase>
+    <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
 
     <!-- Opt-in RepoToolset tools -->
     <UsingToolVSSDK>true</UsingToolVSSDK>

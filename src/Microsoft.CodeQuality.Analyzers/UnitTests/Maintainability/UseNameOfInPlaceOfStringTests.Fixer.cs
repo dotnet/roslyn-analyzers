@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
-    public class UseNameOfInPlaceOfStringTests : CodeFixTestBase
+    public class UseNameOfInPlaceOfStringFixerTests : CodeFixTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
@@ -24,12 +24,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
-                return new UseNameOfInPlaceOfStringFixer();
+                return new BasicUseNameofInPlaceOfStringFixer();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-                return new UseNameOfInPlaceOfStringFixer();
+                return new CSharpUseNameofInPlaceOfStringFixer();
         }
 
         [Fact]
@@ -52,7 +52,7 @@ class C
     {
         throw new ArgumentNullException(nameof(x));
     }
-}", allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors );
+}");
         }
 
         [Fact]
@@ -75,7 +75,7 @@ class C
     {
         throw new ArgumentNullException(/*Leading*/nameof(x)/*Trailing*/);
     }
-}", allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors);
+}");
         }
 
         [Fact]
@@ -98,7 +98,7 @@ class C
     {
         throw new ArgumentException(""Somemessage"", /*Leading*/nameof(x)/*Trailing*/);
     }
-}", allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors);
+}");
         }
 
         [Fact]
@@ -119,7 +119,7 @@ Module Mod1
     Sub f(s As String)
         Throw New ArgumentNullException(NameOf(s))
     End Sub
-End Module", allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors);
+End Module");
         }
 
         [Fact]
@@ -175,7 +175,7 @@ public class Person : INotifyPropertyChanged
             handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}", allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors);
+}");
         }
     }
 }

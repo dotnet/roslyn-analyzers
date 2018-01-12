@@ -34,12 +34,12 @@
       </trans-unit>
       <trans-unit id="AvoidCallingProblematicMethodsMessageCoInitializeSecurity">
         <source>{0} is a P/Invoke declaration to an OLE32 API that cannot be reliably called after the runtime has been initialized. The workaround is to write an unmanaged shim that will call the routine and then activate and call into managed code. You can do this using an export from a mixed-mode C++ DLL, by registering a managed component for use by COM, or by using the runtime hosting API.</source>
-        <target state="translated">{0} 是對 OLE32 API 的 P/Invoke 宣告，執行階段初始化之後可能無法正常地呼叫它。因應措施是撰寫一個在呼叫常式後會將其啟用，並呼叫 Managed 程式碼的 Unmanaged 填充碼。您可使用來自混合模式 C++ DLL 的匯出、註冊 COM 使用的 Managed 元件，或是使用執行階段裝載 API 來執行這項作業。</target>
+        <target state="translated">{0} 是對 OLE32 API 的 P/Invoke 宣告，執行階段初始化之後可能無法正常地呼叫它。因應措施是撰寫一個在呼叫常式後會將其啟用，並呼叫受控程式碼的非受控填充碼。您可使用來自混合模式 C++ DLL 的匯出、註冊 COM 使用的受控元件，或是使用執行階段裝載 API 來執行這項作業。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidCallingProblematicMethodsMessageCoSetProxyBlanket">
         <source>{0} is a P/Invoke declaration to an OLE32 API that cannot be reliably called against a runtime callable wrapper (a managed object wrapping a COM object). Runtime callable wrappers dynamically fetch interface pointers so the effect of the call might be arbitrarily lost. Runtime callable wrappers for a given COM object are also shared across an application domain so the call could possibly affect other users. Replace this call with a native wrapper COM object for the interface pointer that does the appropriate CoSetProxyBlanket calls.</source>
-        <target state="translated">{0} 是對 OLE32 API 的 P/Invoke 宣告，無法正常地對執行階段可呼叫包裝函式 (包裝 COM 物件的 Managed 物件) 進行呼叫。執行階段可呼叫包裝函式會動態擷取介面指標，因此有可能有時會出現遺漏呼叫的情況。指定的 COM 物件之執行階段可呼叫包裝函式，也會跨應用程式定義域共用，所以該呼叫可能會影響其他使用者。針對進行適當 CoSetProxyBlanket 呼叫的介面指標，以原生包裝函式 COM 物件來取代此呼叫。</target>
+        <target state="translated">{0} 是對 OLE32 API 的 P/Invoke 宣告，無法正常地對執行階段可呼叫包裝函式 (包裝 COM 物件的受控物件) 進行呼叫。執行階段可呼叫包裝函式會動態擷取介面指標，因此有可能有時會出現遺漏呼叫的情況。指定的 COM 物件之執行階段可呼叫包裝函式，也會跨應用程式定義域共用，所以該呼叫可能會影響其他使用者。針對進行適當 CoSetProxyBlanket 呼叫的介面指標，以原生包裝函式 COM 物件來取代此呼叫。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidCallingProblematicMethodsMessageSystemRuntimeInteropServicesSafeHandleDangerousGetHandle">

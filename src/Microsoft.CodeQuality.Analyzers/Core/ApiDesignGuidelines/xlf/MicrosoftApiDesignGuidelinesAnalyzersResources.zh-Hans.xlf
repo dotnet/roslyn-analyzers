@@ -664,7 +664,7 @@
       </trans-unit>
       <trans-unit id="CollectionsShouldImplementGenericInterfaceMessage">
         <source>Collection '{0}' directly or indirectly inherits '{1}' without implementing '{2}'. Publicly-visible collections should implement the generic version to broaden usability.</source>
-        <target state="needs-review-translation">集合应实现泛型接口</target>
+        <target state="translated">集合“{0}”直接或间接继承“{1}”，而不实现“{2}”。公共可用的集合应实现通用版本以扩大可用性。</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Title">

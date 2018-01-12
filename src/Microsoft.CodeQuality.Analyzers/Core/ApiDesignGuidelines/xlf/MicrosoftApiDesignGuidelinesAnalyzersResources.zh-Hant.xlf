@@ -99,7 +99,7 @@
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableDescription">
         <source>A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.</source>
-        <target state="translated">類別會宣告及實作類型為 System.IDisposable 的執行個體欄位，且該類別不會實作 IDisposable。宣告 IDisposable 欄位的類別會間接擁有 Unmanaged 資源，且應實作 IDisposable 介面。</target>
+        <target state="translated">類別會宣告及實作類型為 System.IDisposable 的執行個體欄位，且該類別不會實作 IDisposable。宣告 IDisposable 欄位的類別會間接擁有非受控資源，且應實作 IDisposable 介面。</target>
         <note />
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageDependsOnFix">
@@ -209,7 +209,7 @@
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleDescription">
         <source>ComVisibleAttribute determines how COM clients access managed code. Good design dictates that assemblies explicitly indicate COM visibility. COM visibility can be set for the whole assembly and then overridden for individual types and type members. If this attribute is not present, the contents of the assembly are visible to COM clients.</source>
-        <target state="translated">ComVisibleAttribute 會判斷 COM 用戶端如何存取 Managed 程式碼。良好的設計會要求組件明確表示 COM 的可見度。可以為整個組件設定COM 的可見度，然後再對個別的類型與類型成員進行覆寫。若此屬性不存在，則 COM 用戶端可以看到組件的內容。</target>
+        <target state="translated">ComVisibleAttribute 會判斷 COM 用戶端如何存取受控程式碼。良好的設計會要求組件明確表示 COM 的可見度。可以為整個組件設定COM 的可見度，然後再對個別的類型與類型成員進行覆寫。若此屬性不存在，則 COM 用戶端可以看到組件的內容。</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleMessageNoAttribute">
@@ -339,7 +339,7 @@
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassDescription">
         <source>Platform Invocation methods, such as those that are marked by using the System.Runtime.InteropServices.DllImportAttribute attribute, or methods that are defined by using the Declare keyword in Visual Basic, access unmanaged code. These methods should be of the NativeMethods, SafeNativeMethods, or UnsafeNativeMethods class.</source>
-        <target state="translated">平台引動過程方法 (例如，使用 System.Runtime.InteropServices.DllImportAttribute 屬性標記的方法，或在 Visual Basic 中使用 Declare 關鍵字定義的方法) 都會存取 Unmanaged 程式碼。這些方法應為 NativeMethods、SafeNativeMethods 或 UnsafeNativeMethods 類別。</target>
+        <target state="translated">平台引動過程方法 (例如，使用 System.Runtime.InteropServices.DllImportAttribute 屬性標記的方法，或在 Visual Basic 中使用 Declare 關鍵字定義的方法) 都會存取非受控程式碼。這些方法應為 NativeMethods、SafeNativeMethods 或 UnsafeNativeMethods 類別。</target>
         <note />
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassMessage">
@@ -664,7 +664,7 @@
       </trans-unit>
       <trans-unit id="CollectionsShouldImplementGenericInterfaceMessage">
         <source>Collection '{0}' directly or indirectly inherits '{1}' without implementing '{2}'. Publicly-visible collections should implement the generic version to broaden usability.</source>
-        <target state="needs-review-translation">集合應實作泛型介面</target>
+        <target state="translated">集合 '{0}' 沒有實作 '{2}' 便直接或間接繼承 '{1}'。公開可見的集合應實作一般版本以擴大可用性。</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Title">
@@ -914,7 +914,7 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageProvideDisposeBool">
         <source>Provide an overridable implementation of Dispose(bool) on {0} or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</source>
-        <target state="translated">提供 {0} 上 Dispose(bool) 的可覆寫實作，或將類型標記為密封。呼叫 Dispose(false) 只會清除原生資源，呼叫 Dispose(true) 則會同時清除 Managed 和原生資源。</target>
+        <target state="translated">提供 {0} 上 Dispose(bool) 的可覆寫實作，或將類型標記為密封。呼叫 Dispose(false) 只會清除原生資源，呼叫 Dispose(true) 則會同時清除受控和原生資源。</target>
         <note />
       </trans-unit>
       <trans-unit id="ExceptionsShouldBePublicTitle">

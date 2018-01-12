@@ -664,7 +664,7 @@
       </trans-unit>
       <trans-unit id="CollectionsShouldImplementGenericInterfaceMessage">
         <source>Collection '{0}' directly or indirectly inherits '{1}' without implementing '{2}'. Publicly-visible collections should implement the generic version to broaden usability.</source>
-        <target state="needs-review-translation">Sammlungen müssen eine generische Schnittstelle implementieren</target>
+        <target state="translated">Die Sammlung "{0}" erbt "{1}" direkt oder indirekt ohne Implementierung von "{2}". Öffentlich sichtbare Sammlungen müssen die generische Version implementieren, um die Nutzbarkeit zu erweitern.</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Title">

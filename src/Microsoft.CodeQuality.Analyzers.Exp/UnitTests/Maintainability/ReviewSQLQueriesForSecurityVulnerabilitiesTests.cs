@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.Exp.UnitTests.Maintainability
 {
-    public class ReviewSQLQueriesForSecurityVulnerabilitiesTests : DiagnosticAnalyzerTestBase
+    public partial class ReviewSQLQueriesForSecurityVulnerabilitiesTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer() => new ReviewSqlQueriesForSecurityVulnerabilities();
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new ReviewSqlQueriesForSecurityVulnerabilities();
@@ -232,9 +232,9 @@ class Test
 {{
     public Test(string test) {{ }}
 
-    public static void M1()
+    public static void M1(string param)
     {{
-        var str = """";
+        var str = param;
         var t = new Test(str);
     }}
 }}");
@@ -674,9 +674,9 @@ class Command1 : Command
 }}
 class Test
 {{
-    void M1()
+    void M1(string param)
     {{
-        string str = """";
+        string str = param;
         var c = new Command1();
         c.NotCommandText = str;
     }}
@@ -694,8 +694,8 @@ End Class
 
 Module Test
     Const str As String = ""asdf""
-    Sub M1()
-        Dim str As String = """"
+    Sub M1(param As String)
+        Dim str As String = param
         Dim c As New Command1()
         c.NotCommandText = str
     End Sub
@@ -787,10 +787,10 @@ class Command1 : Command
 }}
 class Test
 {{
-    void M1()
+    void M1(string param)
     {{
         var c = new Command1();
-        string str = """";
+        string str = param;
         c.M2(str);
     }}
 }}
@@ -807,8 +807,8 @@ Class Command1
 End Class
 
 Module Test
-    Sub M1()
-        Dim str As String = ""asdf""
+    Sub M1(param As String)
+        Dim str As String = param
         Dim c As New Command1()
         c.M2(str)
     End Sub
@@ -830,10 +830,10 @@ class Adapter1 : Adapter
 }}
 class Test
 {{
-    void M1()
+    void M1(string param)
     {{
         var a = new Adapter1();
-        string str = """";
+        string str = param;
         a.M2(str);
     }}
 }}
@@ -850,8 +850,8 @@ Class Adapter1
 End Class
 
 Module Test
-    Sub M1()
-        Dim str As String = ""asdf""
+    Sub M1(param As String)
+        Dim str As String = param
         Dim a As New Adapter1()
         a.M2(str)
     End Sub
@@ -872,9 +872,9 @@ class Adapter1 : Adapter
 }}
 class Test
 {{
-    void M1()
+    void M1(string param)
     {{
-        string str = """";
+        string str = param;
         var a = new Adapter1(str);
     }}
 }}
@@ -891,8 +891,8 @@ Class Adapter1
 End Class
 
 Module Test
-    Sub M1()
-        Dim str As String = ""asdf""
+    Sub M1(param As String)
+        Dim str As String = param
         Dim a As New Adapter1()
         a.M2(str)
     End Sub
@@ -914,9 +914,9 @@ class Command1 : Command
 
 class Test
 {{
-    void M1()
+    void M1(string param)
     {{
-        string str = """";
+        string str = param;
         Command c = new Command1(str, str);
     }}
 }}
@@ -933,8 +933,8 @@ Class Command1
 End Class
 
 Module Test
-    Sub M1()
-        Dim str As String = """"
+    Sub M1(param As String)
+        Dim str As String = param
         Dim c As New Command1(str, str)
     End Sub
 End Module");
@@ -955,9 +955,9 @@ class Adapter1 : Adapter
 
 class Test
 {{
-    void M1()
+    void M1(string param)
     {{
-        string str = """";
+        string str = param;
         Adapter1 c = new Adapter1(str, str);
     }}
 }}
@@ -974,8 +974,8 @@ Class Adapter1
 End Class
 
 Module Test
-    Sub M1()
-        Dim str As String = """"
+    Sub M1(param As String)
+        Dim str As String = param
         Dim c As New Adapter1(str, str)
     End Sub
 End Module");
@@ -996,9 +996,9 @@ class Command1 : Command
 
 class Test
 {{
-    void M1()
+    void M1(string param)
     {{
-        string str = """";
+        string str = param;
         Command c = new Command1("""", str);
     }}
 }}
@@ -1015,8 +1015,8 @@ Class Command1
 End Class
 
 Module Test
-    Sub M1()
-        Dim str As String = """"
+    Sub M1(param As String)
+        Dim str As String = param
         Dim c As New Command1("""", str)
     End Sub
 End Module");
@@ -1037,9 +1037,9 @@ class Adapter1 : Adapter
 
 class Test
 {{
-    void M1()
+    void M1(string param)
     {{
-        string str = """";
+        string str = param;
         var a = new Adapter1("""", str);
     }}
 }}
@@ -1056,8 +1056,8 @@ Class Adapter1
 End Class
 
 Module Test
-    Sub M1()
-        Dim str As String = """"
+    Sub M1(param As String)
+        Dim str As String = param
         Dim a As New Adapter1("""", str)
     End Sub
 End Module");
@@ -1071,10 +1071,10 @@ End Module");
 
 class Test
 {{
-    void M1()
+    void M1(string param)
     {{
         Command c = new Command();
-        var str = """";
+        var str = param;
         c.CommandText = str;
     }}
 }}",
@@ -1084,9 +1084,9 @@ class Test
 {SetupCodeBasic}
 
 Module Test
-    Sub M1()
+    Sub M1(param As String)
         Dim c As New Command()
-        Dim str As String = """"
+        Dim str As String = param
         c.CommandText = str
     End Sub
 End Module",
@@ -1108,9 +1108,9 @@ class Command1 : Command
 
 class Test
 {{
-    void M1()
+    void M1(string param)
     {{
-        var str = """";
+        var str = param;
         Command c = new Command1(str);
     }}
 }}
@@ -1127,8 +1127,8 @@ Class Command1
 End Class
 
 Module Test
-    Sub M1()
-        Dim str As String = """"
+    Sub M1(param As String)
+        Dim str As String = param
         Dim c As New Command1(str)
     End Sub
 End Module",
@@ -1151,9 +1151,9 @@ class Adapter1 : Adapter
 
 class Test
 {{
-    void M1()
+    void M1(string param)
     {{
-        var str = """";
+        var str = param;
         var c = new Adapter1(str);
     }}
 }}
@@ -1170,8 +1170,8 @@ Class Adapter1
 End Class
 
 Module Test
-    Sub M1()
-        Dim str As String = """"
+    Sub M1(param As String)
+        Dim str As String = param
         Dim a As New Adapter1(str)
     End Sub
 End Module",
@@ -1190,9 +1190,9 @@ class Adapter1 : Adapter
 
 class Test
 {{
-    void M1()
+    void M1(string param)
     {{
-        var str = """";
+        var str = param;
         var c = new Adapter1(str);
     }}
 }}
@@ -1209,8 +1209,8 @@ Class Adapter1
 End Class
 
 Module Test
-    Sub M1()
-        Dim str As String = """"
+    Sub M1(param As String)
+        Dim str As String = param
         Dim a As New Adapter1(str)
     End Sub
 End Module",
@@ -1380,9 +1380,9 @@ class Command1 : Command
 
 class Test
 {{
-    void M1()
+    void M1(string param)
     {{
-        string str = """";
+        string str = param;
         Command c = new Command1(str, str);
     }}
 }}
@@ -1400,8 +1400,8 @@ Class Command1
 End Class
 
 Module Test
-    Sub M1()
-        Dim str As String = """"
+    Sub M1(param As String)
+        Dim str As String = param
         Dim c As New Command1(str, str)
     End Sub
 End Module",
@@ -1423,9 +1423,9 @@ class Adapter1 : Adapter
 
 class Test
 {{
-    void M1()
+    void M1(string param)
     {{
-        string str = """";
+        string str = param;
         Adapter c = new Adapter1(str, str);
     }}
 }}
@@ -1443,8 +1443,8 @@ Class Adapter1
 End Class
 
 Module Test
-    Sub M1()
-        Dim str As String = """"
+    Sub M1(param As String)
+        Dim str As String = param
         Dim c As New Adapter1(str, str)
     End Sub
 End Module",
@@ -1466,9 +1466,9 @@ class Command1 : Command
 
 class Test
 {{
-    void M1()
+    void M1(string param)
     {{
-        string str = """";
+        string str = param;
         Command c = new Command1(str, str);
     }}
 }}
@@ -1486,8 +1486,8 @@ Class Command1
 End Class
 
 Module Test
-    Sub M1()
-        Dim str As String = """"
+    Sub M1(param As String)
+        Dim str As String = param
         Dim c As New Command1(str, str)
     End Sub
 End Module",
@@ -1509,9 +1509,9 @@ class Adapter1 : Adapter
 
 class Test
 {{
-    void M1()
+    void M1(string param)
     {{
-        string str = """";
+        string str = param;
         Adapter c = new Adapter1(str, str);
     }}
 }}
@@ -1529,8 +1529,8 @@ Class Adapter1
 End Class
 
 Module Test
-    Sub M1()
-        Dim str As String = """"
+    Sub M1(param As String)
+        Dim str As String = param
         Dim c As New Adapter1(str, str)
     End Sub
 End Module",

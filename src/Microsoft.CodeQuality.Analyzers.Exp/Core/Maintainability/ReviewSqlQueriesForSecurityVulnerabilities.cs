@@ -7,6 +7,10 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
+using Microsoft.CodeAnalysis.Operations.ControlFlow;
+using Microsoft.CodeAnalysis.Operations.DataFlow;
+using Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis;
+using Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis;
 
 namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
 {
@@ -204,11 +208,25 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
         {
             if (argumentValue.Type.SpecialType != SpecialType.System_String || !argumentValue.ConstantValue.HasValue)
             {
+                // We have a candidate for diagnostic. perform more precise dataflow analysis.
+                var topmostBlock = argumentValue.GetTopmostParentBlock();
+                if (topmostBlock != null)
+                {
+                    var cfg = ControlFlowGraph.Create(topmostBlock);
+                    var nullAnalysisResult = NullAnalysis.GetOrComputeResult(cfg);
+                    var stringContentResult = StringContentAnalysis.GetOrComputeResult(cfg, nullAnalysisResult);
+                    StringContentAbstractValue value = stringContentResult[argumentValue];
+                    if (value.NonLiteralState == StringContainsState.No)
+                    {
+                        // The value is a constant literal or default/unitialized, so avoid flagging this usage.
+                        return false;
+                    }
+                }
+
                 // Review if the symbol passed to {invocation} in {method/field/constructor/etc} has user input.
                 operationContext.ReportDiagnostic(syntax.CreateDiagnostic(Rule,
                                                                           invokedSymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
                                                                           containingMethod.Name));
-
                 return true;
             }
 

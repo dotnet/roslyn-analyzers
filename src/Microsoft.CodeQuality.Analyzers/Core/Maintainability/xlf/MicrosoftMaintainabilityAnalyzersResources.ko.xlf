@@ -52,6 +52,11 @@
         <target state="translated">사용하지 않는 지역을 제거하세요.</target>
         <note />
       </trans-unit>
+      <trans-unit id="RemoveUnusedParameterMessage">
+        <source>Remove unused parameter</source>
+        <target state="new">Remove unused parameter</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsTitle">
         <source>Do not ignore method results</source>
         <target state="translated">메서드 결과를 무시하지 마세요.</target>

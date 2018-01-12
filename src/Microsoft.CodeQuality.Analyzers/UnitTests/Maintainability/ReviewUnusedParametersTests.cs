@@ -665,15 +665,82 @@ Public Class C1
 End Class");
         }
 
-        #endregion
-
-        #region Unit tests for analyzer diagnostic(s)
-
         [Fact]
-        [WorkItem(459, "https://github.com/dotnet/roslyn-analyzers/issues/459")]
-        public void CSharp_DiagnosticForSimpleCasesTest()
+        public void NoDiagnosticsForIndexer()
         {
             VerifyCSharp(@"
+class C
+{
+    public int this[int i]
+    {
+        get { return 0; }
+        set { }
+    }
+}
+");
+   
+        VerifyBasic(@"
+Class C
+    Public Property Item(i As Integer) As Integer
+        Get
+            Return 0
+        End Get
+
+        Set
+        End Set
+    End Property
+End Class
+");
+    }
+
+    [Fact]
+    public void NoDiagnosticsForPropertySetter()
+    {
+        VerifyCSharp(@"
+class C
+{
+    public int Property
+    {
+        get { return 0; }
+        set { }
+    }
+}
+");
+
+        VerifyBasic(@"
+Class C
+    Public Property Property1 As Integer
+        Get
+            Return 0
+        End Get
+
+        Set
+        End Set
+    End Property
+End Class
+");
+    }
+        [Fact]
+        public void NoDiagnosticsForFirstParameterOfExtensionMethod()
+        {
+            VerifyCSharp(@"
+static class C
+{
+    static void ExtensionMethod(this int i) { }
+    static int ExtensionMethod(this int i, int anotherParam) { return anotherParam; }
+}
+");
+    }
+
+    #endregion
+
+    #region Unit tests for analyzer diagnostic(s)
+
+    [Fact]
+    [WorkItem(459, "https://github.com/dotnet/roslyn-analyzers/issues/459")]
+    public void CSharp_DiagnosticForSimpleCasesTest()
+    {
+        VerifyCSharp(@"
 using System;
 
 class C
@@ -780,6 +847,19 @@ End Class
       GetBasicUnusedParameterResultAt(21, 44, "param1", "UnusedRefParamMethod"),
       // Test0.vb(24,43): warning CA1801: Parameter param1 of method UnusedErrorTypeParamMethod is never used. Remove the parameter or use it in the method body.
       GetBasicUnusedParameterResultAt(24, 43, "param1", "UnusedErrorTypeParamMethod"));
+    }
+
+        [Fact]
+        public void DiagnosticsForNonFirstParameterOfExtensionMethod()
+        {
+            VerifyCSharp(@"
+static class C
+{
+    static void ExtensionMethod(this int i, int anotherParam) { }
+}
+",
+    // Test0.cs(4,49): warning CA1801: Parameter anotherParam of method ExtensionMethod is never used. Remove the parameter or use it in the method body.
+    GetCSharpUnusedParameterResultAt(4, 49, "anotherParam", "ExtensionMethod"));
         }
 
         #endregion

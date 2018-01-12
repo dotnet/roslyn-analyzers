@@ -52,6 +52,11 @@
         <target state="translated">Удалите неиспользуемые локальные переменные</target>
         <note />
       </trans-unit>
+      <trans-unit id="RemoveUnusedParameterMessage">
+        <source>Remove unused parameter</source>
+        <target state="translated">Удалите неиспользуемый параметр</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsTitle">
         <source>Do not ignore method results</source>
         <target state="translated">Не игнорируйте результаты метода</target>

@@ -58,6 +58,57 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 ");
         }
 
+        [Fact, WorkItem(1495, "https://github.com/dotnet/roslyn-analyzers/issues/1495")]
+        public void CA1054NoWarningWithUrlWithOverload_IdenticalTypeParameters()
+        {
+            VerifyCSharp(@"
+    using System;
+
+    public class A
+    {
+        // Identical type parameters with no constraints
+        public static void Method1<T>(string url, T param2) { }
+        public static void Method1<V>(Uri url, V param2) { }
+
+        // Identical type parameters with differing constraints, we consider them identical for our comparison purpose.
+        public static void Method2<T>(string url, T param2) where T : class { }
+        public static void Method2<V>(Uri url, V param2) where V : struct { }
+
+        // Identical constructed types.
+        public static void Method3<T>(string url, B<T> param2) { }
+        public static void Method3<V>(Uri url, B<V> param2) { }
+    }
+
+    public class B<T> { }
+");
+        }
+
+        [Fact, WorkItem(1495, "https://github.com/dotnet/roslyn-analyzers/issues/1495")]
+        public void CA1054WarningWithUrlWithOverload_DifferingTypeParameters()
+        {
+            VerifyCSharp(@"
+    using System;
+
+    public class A
+    {
+        // Type parameters differing ordinal
+        public static void Method1<T1, T2>(string url, T1 param2) { }
+        public static void Method1<V1, V2>(Uri url, V2 param2) { }
+
+        // Different constructed types.
+        public static void Method2<T>(string url, B<T> param2) { }
+        public static void Method2<V>(Uri url, C<V> param2) { }
+    }
+
+    public class B<T> { }
+    public class C<T> { }
+",
+            // Test0.cs(7,51): warning CA1054: Change the type of parameter url of method A.Method1<T1, T2>(string, T1) from string to System.Uri, or provide an overload to A.Method1<T1, T2>(string, T1) that allows url to be passed as a System.Uri object.
+            GetCSharpResultAt(7, 51, UriParametersShouldNotBeStringsAnalyzer.Rule, "url", "A.Method1<T1, T2>(string, T1)"),
+            // Test0.cs(11,46): warning CA1054: Change the type of parameter url of method A.Method2<T>(string, B<T>) from string to System.Uri, or provide an overload to A.Method2<T>(string, B<T>) that allows url to be passed as a System.Uri object.
+            GetCSharpResultAt(11, 46, UriParametersShouldNotBeStringsAnalyzer.Rule, "url", "A.Method2<T>(string, B<T>)"));
+        }
+
         [Fact]
         public void CA1054MultipleWarningWithUrl()
         {

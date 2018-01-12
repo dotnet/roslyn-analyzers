@@ -333,38 +333,6 @@ namespace E
         }
 
         [Fact]
-        public void IndexerNoFix_CSharp()
-        {
-            var code = @"
-class C
-{
-    public int this[int i]
-    {
-        get { return 0; }
-        set { }
-    }
-}
-";
-            VerifyCSharpFix(code, code);
-        }
-
-        [Fact]
-        public void PropertyNoFix_CSharp()
-        {
-            var code = @"
-class C
-{
-    public int Property
-    {
-        get { return 0; }
-        set { }
-    }
-}
-";
-            VerifyCSharpFix(code, code);
-        }
-
-        [Fact]
         public void CalculationsInParameter_CSharp()
         {
             var code = @"
@@ -380,7 +348,6 @@ class C
     }
 }
 ";
-
             VerifyCSharpFix(code, code);
         }
 
@@ -773,44 +740,6 @@ Class C
 End Class
 ";
             VerifyBasicFix(code, fix);
-        }
-
-        [Fact]
-        public void IndexerNoFix_Basic()
-        {
-            var code = @"
-Class C
-    Public Property Item(i As Integer) As Integer
-        Get
-            Return 0
-        End Get
-
-        Set
-        End Set
-    End Property
-End Class
-";
-
-            VerifyBasicFix(code, code);
-        }
-
-        [Fact]
-        public void PropertyNoFix_Basic()
-        {
-            var code = @"
-Class C
-    Public Property Property1 As Integer
-        Get
-            Return 0
-        End Get
-
-        Set
-        End Set
-    End Property
-End Class
-";
-
-            VerifyBasicFix(code, code);
         }
 
         [Fact]

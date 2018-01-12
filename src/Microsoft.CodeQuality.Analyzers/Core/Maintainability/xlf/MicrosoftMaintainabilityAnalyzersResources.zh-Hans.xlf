@@ -52,6 +52,11 @@
         <target state="translated">删除未使用的局部变量</target>
         <note />
       </trans-unit>
+      <trans-unit id="RemoveUnusedParameterMessage">
+        <source>Remove unused parameter</source>
+        <target state="new">Remove unused parameter</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsTitle">
         <source>Do not ignore method results</source>
         <target state="translated">不要忽略方法结果</target>

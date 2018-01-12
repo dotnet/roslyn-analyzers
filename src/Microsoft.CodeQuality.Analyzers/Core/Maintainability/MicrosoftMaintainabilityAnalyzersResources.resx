@@ -147,6 +147,9 @@
   <data name="RemoveUnusedLocalsMessage" xml:space="preserve">
     <value>Remove unused locals</value>
   </data>
+  <data name="RemoveUnusedParameterMessage" xml:space="preserve">
+    <value>Remove unused parameter</value>
+  </data>
   <data name="DoNotIgnoreMethodResultsTitle" xml:space="preserve">
     <value>Do not ignore method results</value>
   </data>

@@ -14,7 +14,7 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
     Public NotInheritable Class BasicReviewUnusedParametersFixer
         Inherits ReviewUnusedParametersFixer
 
-        Protected Overrides Function GetParameterNode(node As SyntaxNode) As SyntaxNode
+        Protected Overrides Function GetParameterDeclarationNode(node As SyntaxNode) As SyntaxNode
             Return node.Parent
         End Function
 

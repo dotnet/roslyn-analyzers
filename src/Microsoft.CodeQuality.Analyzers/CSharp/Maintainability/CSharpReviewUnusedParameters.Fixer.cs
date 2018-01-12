@@ -14,7 +14,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpReviewUnusedParametersFixer : ReviewUnusedParametersFixer
     {
-        protected override SyntaxNode GetParameterNode(SyntaxNode node)
+        protected override SyntaxNode GetParameterDeclarationNode(SyntaxNode node)
         {
             return node;
         }

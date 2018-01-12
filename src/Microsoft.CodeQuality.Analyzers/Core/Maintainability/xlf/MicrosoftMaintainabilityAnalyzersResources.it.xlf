@@ -52,6 +52,11 @@
         <target state="translated">Rimuovere le variabili locali inutilizzate</target>
         <note />
       </trans-unit>
+      <trans-unit id="RemoveUnusedParameterMessage">
+        <source>Remove unused parameter</source>
+        <target state="new">Remove unused parameter</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsTitle">
         <source>Do not ignore method results</source>
         <target state="translated">Non ignorare i risultati del metodo</target>

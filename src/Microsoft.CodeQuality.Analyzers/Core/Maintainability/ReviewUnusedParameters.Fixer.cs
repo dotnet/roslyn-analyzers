@@ -35,15 +35,27 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             context.RegisterCodeFix(
                 new MyCodeAction(
-                    MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersMessage,
-                    async ct => await RemoveNodes(context.Document, diagnostic, ct).ConfigureAwait(false), diagnostic.Id),
+                    MicrosoftMaintainabilityAnalyzersResources.RemoveUnusedParameterMessage,
+                    async ct => await RemoveNodes(context.Document, diagnostic, ct).ConfigureAwait(false), 
+                    equivalenceKey: MicrosoftMaintainabilityAnalyzersResources.RemoveUnusedParameterMessage),
                 diagnostic);
 
             return Task.CompletedTask;
         }
 
-        protected abstract SyntaxNode GetParameterNode(SyntaxNode node);
+        /// <summary>
+        /// Gets parameter declaration node for a given diagnostic node.
+        /// Requires language specific implementation because 
+        /// diagnositcs are reported on different syntax nodes for across languages.
+        /// </summary>
+        /// <param name="node">the diagnostic node</param>
+        /// <returns>the parameter declaration node</returns>
+        protected abstract SyntaxNode GetParameterDeclarationNode(SyntaxNode node);
 
+        /// <summary>
+        /// Checks if the node has a proper kind for a subnode for a object creation or an invocation node.
+        /// Requires language specific implementation because node kinds checked are language specific.
+        /// </summary>
         protected abstract bool CanContinuouslyLeadToObjectCreationOrInvocation(SyntaxNode node);
 
         private async Task<Solution> RemoveNodes(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
@@ -64,22 +76,30 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             return solution;
         }
-
+        
         private ImmutableArray<IArgumentOperation>? GetOperationArguments(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
+            // For a given reference symbol node, find an object creration parent or an invocation parent. Then, return arguments of the parent found.
+            // For 'c(param1, param2)', the input node is 'c'. Then, we climb up to 'c(param1, param2)', and return [param1, param2].
+            // For 'new A.B(param1, param2)', the input node is 'B'. Then, we climb up to 'new A.B(param1, param2)', and return [param1, param2].
+            // For 'A.B.C(param1, param2)', the input node is 'C'. Then, we climb up to 'A.B.C(param1, param2)', and return [param1, param2].
+
+            // Consider operations like A.B.C(0). We start from 'C' and need to get to '0'.
+            // To achieve this, it is necessary to climb up to 'A.B.C' 
+            // and check that this is IObjectCreationOperation or IInvocationOperation.
+            // Intermediate calls of GetOperation on 'B.C' and 'A.B.C.' return null. 
+            // GetOperation on 'A.B.C(0)' returns a non-null operation.
+            // After that, it is possible to check its arguments.
+            // Return null in any unexpected situation, e.g. inconsistent tree.
             while (node != null)
             {
-                // All nodes in the path should continuously lead to IObjectCreationOperation or IInvocationOperation.
                 if (!CanContinuouslyLeadToObjectCreationOrInvocation(node))
                 {
                     return null;
                 }
 
                 node = node.Parent;
-
-                // For calls like A.B.C(0), it gets nulls for operations for first iterations. 
                 var operation = semanticModel.GetOperation(node, cancellationToken);
-
                 var arguments = (operation as IObjectCreationOperation)?.Arguments ?? (operation as IInvocationOperation)?.Arguments;
 
                 if (arguments.HasValue)
@@ -88,19 +108,17 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 }
             }
 
-            // Achieved the root and still could not find the node with parameters.
-            // Need to cancel the action.
             return null;
         }
 
         private async Task<ImmutableArray<KeyValuePair<DocumentId, SyntaxNode>>> GetNodesToRemoveAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan);
-            node = GetParameterNode(node);
+            SyntaxNode diagnosticNode = root.FindNode(diagnostic.Location.SourceSpan);
+            SyntaxNode declarationNode = GetParameterDeclarationNode(diagnosticNode);
 
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            ISymbol parameterSymbol = editor.SemanticModel.GetDeclaredSymbol(node);
+            ISymbol parameterSymbol = editor.SemanticModel.GetDeclaredSymbol(declarationNode);
             ISymbol methodDeclarationSymbol = parameterSymbol.ContainingSymbol;
 
             if (!IsSafeMethodToRemoveParameter(methodDeclarationSymbol))
@@ -110,7 +128,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             }
 
             var nodesToRemove = ImmutableArray.CreateBuilder<KeyValuePair<DocumentId, SyntaxNode>>();
-            nodesToRemove.Add(new KeyValuePair<DocumentId, SyntaxNode>(document.Id, node));
+            nodesToRemove.Add(new KeyValuePair<DocumentId, SyntaxNode>(document.Id, declarationNode));
             var referencedSymbols = await SymbolFinder.FindReferencesAsync(methodDeclarationSymbol, document.Project.Solution, cancellationToken).ConfigureAwait(false);
 
             foreach (var referencedSymbol in referencedSymbols)
@@ -162,12 +180,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         private sealed class MyCodeAction : SolutionChangeAction
         {
             public MyCodeAction(string title, Func<CancellationToken, Task<Solution>> createChangedSolution, string equivalenceKey)
-                : base(title, createChangedSolution, equivalenceKey) { }
-        }
-
-        private sealed class RemoveParameterAction : SolutionChangeAction
-        {
-            public RemoveParameterAction(string title, Func<CancellationToken, Task<Solution>> createChangedSolution, string equivalenceKey)
                 : base(title, createChangedSolution, equivalenceKey) { }
         }
     }

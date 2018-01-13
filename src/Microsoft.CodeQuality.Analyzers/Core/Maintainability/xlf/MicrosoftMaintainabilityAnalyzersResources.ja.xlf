@@ -37,21 +37,6 @@
         <target state="translated">{1} のパラメーター {0} は使用されていません。パラメーターを削除するか、メソッド本体で使用してください。</target>
         <note />
       </trans-unit>
-      <trans-unit id="RemoveUnusedLocalsTitle">
-        <source>Remove unused locals</source>
-        <target state="translated">使用されていないローカルを削除します</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="RemoveUnusedLocalsDescription">
-        <source>Unused local variables and unnecessary assignments increase the size of an assembly and decrease performance.</source>
-        <target state="translated">使用されていないローカル変数や不要な引数があると、アセンブリのサイズが大きくなり、パフォーマンスが低下します。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="RemoveUnusedLocalsMessage">
-        <source>Remove unused locals</source>
-        <target state="translated">使用されていないローカルを削除します</target>
-        <note />
-      </trans-unit>
       <trans-unit id="RemoveUnusedParameterMessage">
         <source>Remove unused parameter</source>
         <target state="new">Remove unused parameter</target>

@@ -37,21 +37,6 @@
         <target state="translated">方法 {1} 的參數 {0} 從未使用過。請移除此參數，或將其用於方法主體中。</target>
         <note />
       </trans-unit>
-      <trans-unit id="RemoveUnusedLocalsTitle">
-        <source>Remove unused locals</source>
-        <target state="translated">移除未使用的區域變數</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="RemoveUnusedLocalsDescription">
-        <source>Unused local variables and unnecessary assignments increase the size of an assembly and decrease performance.</source>
-        <target state="translated">未使用的區域變數與不必要的指派，會增加組件的大小並降低效能。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="RemoveUnusedLocalsMessage">
-        <source>Remove unused locals</source>
-        <target state="translated">移除未使用的區域變數</target>
-        <note />
-      </trans-unit>
       <trans-unit id="RemoveUnusedParameterMessage">
         <source>Remove unused parameter</source>
         <target state="new">Remove unused parameter</target>

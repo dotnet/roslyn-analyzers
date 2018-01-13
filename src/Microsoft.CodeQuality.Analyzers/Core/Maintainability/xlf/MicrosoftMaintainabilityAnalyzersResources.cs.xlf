@@ -37,21 +37,6 @@
         <target state="translated">Parametr {0} metody {1} se vůbec nepoužívá. Odeberte tento parametr nebo ho použijte v těle metody.</target>
         <note />
       </trans-unit>
-      <trans-unit id="RemoveUnusedLocalsTitle">
-        <source>Remove unused locals</source>
-        <target state="translated">Odeberte nepoužité lokální proměnné.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="RemoveUnusedLocalsDescription">
-        <source>Unused local variables and unnecessary assignments increase the size of an assembly and decrease performance.</source>
-        <target state="translated">Nepoužité lokální proměnné a zbytečná přiřazení zvyšují velikost sestavení a snižují výkon.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="RemoveUnusedLocalsMessage">
-        <source>Remove unused locals</source>
-        <target state="translated">Odeberte nepoužité lokální proměnné.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="RemoveUnusedParameterMessage">
         <source>Remove unused parameter</source>
         <target state="new">Remove unused parameter</target>

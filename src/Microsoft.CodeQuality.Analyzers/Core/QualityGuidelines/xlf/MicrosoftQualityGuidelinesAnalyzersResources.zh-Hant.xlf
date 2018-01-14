@@ -194,17 +194,17 @@
       </trans-unit>
       <trans-unit id="AvoidDuplicateElementInitializationDescription">
         <source>Indexed elements in objects initializers must initialize unique elements. A duplicate index might overwrite a previous element initialization.</source>
-        <target state="new">Indexed elements in objects initializers must initialize unique elements. A duplicate index might overwrite a previous element initialization.</target>
+        <target state="translated">物件初始設定式中的索引元素必須將唯一元素初始化。重複的索引可能會覆寫先前的元素初始化。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDuplicateElementInitializationMessage">
         <source>The element at index [{0}] has already been initialized. Previous initializations of this element may be overwritten.</source>
-        <target state="new">The element at index [{0}] has already been initialized. Previous initializations of this element may be overwritten.</target>
+        <target state="translated">已將位於索引 [{0}] 的元素初始化。可能會覆寫此元素先前的初始化。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDuplicateElementInitializationTitle">
         <source>Do not duplicate indexed element initializations</source>
-        <target state="new">Do not duplicate indexed element initializations</target>
+        <target state="translated">請勿複製索引元素初始化</target>
         <note />
       </trans-unit>
     </body>

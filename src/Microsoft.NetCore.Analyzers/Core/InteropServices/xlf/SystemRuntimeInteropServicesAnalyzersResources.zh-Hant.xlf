@@ -24,7 +24,7 @@
       </trans-unit>
       <trans-unit id="PInvokeDeclarationsShouldBePortableDescription">
         <source>This rule evaluates the size of each parameter and the return value of a P/Invoke, and verifies that the size of the parameter is correct when marshaled to unmanaged code on 32-bit and 64-bit operating systems.</source>
-        <target state="translated">此規則會評估 P/Invoke 每個參數的大小以及傳回值，並會在參數於 32 位元和 64 位元作業系統上封送處理成 Unmanaged 程式碼時，驗證其大小是否正確。</target>
+        <target state="translated">此規則會評估 P/Invoke 每個參數的大小以及傳回值，並會在參數於 32 位元和 64 位元作業系統上封送處理成非受控程式碼時，驗證其大小是否正確。</target>
         <note />
       </trans-unit>
       <trans-unit id="PInvokeDeclarationsShouldBePortableMessageParameter">
@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="UseManagedEquivalentsOfWin32ApiTitle">
         <source>Use managed equivalents of win32 api</source>
-        <target state="translated">使用 Win32 API 的 Managed 對等項</target>
+        <target state="translated">使用 Win32 API 的受控對等項</target>
         <note />
       </trans-unit>
       <trans-unit id="UseManagedEquivalentsOfWin32ApiDescription">
@@ -79,7 +79,7 @@
       </trans-unit>
       <trans-unit id="UseManagedEquivalentsOfWin32ApiMessage">
         <source>Use managed equivalents of win32 api</source>
-        <target state="translated">使用 Win32 API 的 Managed 對等項</target>
+        <target state="translated">使用 Win32 API 的受控對等項</target>
         <note />
       </trans-unit>
       <trans-unit id="AlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeTitle">
@@ -104,17 +104,17 @@
       </trans-unit>
       <trans-unit id="MarkBooleanPInvokeArgumentsWithMarshalAsDescription">
         <source>The Boolean data type has multiple representations in unmanaged code.</source>
-        <target state="translated">布林值資料類型在 Unmanaged 的程式碼中有多種表示法。</target>
+        <target state="translated">布林值資料類型在非受控的程式碼中有多種表示法。</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkBooleanPInvokeArgumentsWithMarshalAsMessageDefault">
         <source>Add the MarshalAsAttribute to parameter {0} of P/Invoke {1}. If the corresponding unmanaged parameter is a 4-byte Win32 'BOOL', use [MarshalAs(UnmanagedType.Bool)]. For a 1-byte C++ 'bool', use MarshalAs(UnmanagedType.U1).</source>
-        <target state="translated">將 MarshalAsAttribute 新增至 P/Invoke {1} 的參數 {0}。若相對應的 Unmanaged 參數為 4 位元組的 Win32 'BOOL'，請使用 [MarshalAs(UnmanagedType.Bool)]。若為 1 位元組的 C++ 'bool'，請使用 MarshalAs(UnmanagedType.U1)。</target>
+        <target state="translated">將 MarshalAsAttribute 新增至 P/Invoke {1} 的參數 {0}。若相對應的非受控參數為 4 位元組的 Win32 'BOOL'，請使用 [MarshalAs(UnmanagedType.Bool)]。若為 1 位元組的 C++ 'bool'，請使用 MarshalAs(UnmanagedType.U1)。</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkBooleanPInvokeArgumentsWithMarshalAsMessageReturn">
         <source>Add the MarshalAsAttribute to the return type of P/Invoke {0}. If the corresponding unmanaged return type is a 4-byte Win32 'BOOL', use MarshalAs(UnmanagedType.Bool). For a 1-byte C++ 'bool', use MarshalAs(UnmanagedType.U1).</source>
-        <target state="translated">將 MarshalAsAttribute 新增至 P/Invoke {0} 的傳回型別。若相對應的 Unmanaged 傳回型別為 4 位元組的 Win32 'BOOL'，請使用 MarshalAs(UnmanagedType.Bool)。若為 1 位元組的 C++ 'bool'，請使用 MarshalAs(UnmanagedType.U1)。</target>
+        <target state="translated">將 MarshalAsAttribute 新增至 P/Invoke {0} 的傳回型別。若相對應的非受控傳回型別為 4 位元組的 Win32 'BOOL'，請使用 MarshalAs(UnmanagedType.Bool)。若為 1 位元組的 C++ 'bool'，請使用 MarshalAs(UnmanagedType.U1)。</target>
         <note />
       </trans-unit>
     </body>

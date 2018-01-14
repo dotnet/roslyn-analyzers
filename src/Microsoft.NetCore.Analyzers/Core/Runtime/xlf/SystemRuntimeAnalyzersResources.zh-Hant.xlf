@@ -209,7 +209,7 @@
       </trans-unit>
       <trans-unit id="DisposableTypesShouldDeclareFinalizerDescription">
         <source>A type that implements System.IDisposable and has fields that suggest the use of unmanaged resources does not implement a finalizer, as described by Object.Finalize.</source>
-        <target state="translated">實作 System.IDisposable 且有欄位會建議使用 Unmanaged 資源的類型，不會實作完成項 (如 Object.Finalize 所述)。</target>
+        <target state="translated">實作 System.IDisposable 且有欄位會建議使用非受控資源的類型，不會實作完成項 (如 Object.Finalize 所述)。</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableTypesShouldDeclareFinalizerMessage">

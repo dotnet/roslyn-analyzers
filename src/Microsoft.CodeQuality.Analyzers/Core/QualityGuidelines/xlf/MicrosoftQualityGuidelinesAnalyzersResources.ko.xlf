@@ -194,17 +194,17 @@
       </trans-unit>
       <trans-unit id="AvoidDuplicateElementInitializationDescription">
         <source>Indexed elements in objects initializers must initialize unique elements. A duplicate index might overwrite a previous element initialization.</source>
-        <target state="new">Indexed elements in objects initializers must initialize unique elements. A duplicate index might overwrite a previous element initialization.</target>
+        <target state="translated">개체 이니셜라이저의 인덱싱된 요소는 고유한 요소를 초기화해야 합니다. 중복된 인덱스는 이전 요소의 초기화를 덮어쓸 수 있습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDuplicateElementInitializationMessage">
         <source>The element at index [{0}] has already been initialized. Previous initializations of this element may be overwritten.</source>
-        <target state="new">The element at index [{0}] has already been initialized. Previous initializations of this element may be overwritten.</target>
+        <target state="translated">인덱스 [{0}]의 요소가 이미 초기화되었습니다. 이 요소의 이전 초기화는 덮어쓰일 수 있습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDuplicateElementInitializationTitle">
         <source>Do not duplicate indexed element initializations</source>
-        <target state="new">Do not duplicate indexed element initializations</target>
+        <target state="translated">인덱싱된 요소의 초기화는 복제하면 안 됩니다.</target>
         <note />
       </trans-unit>
     </body>

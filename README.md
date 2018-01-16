@@ -30,7 +30,7 @@ For instructions on using this tutorial, see [Instructions](src/MetaCompilation.
 Microsoft.CodeAnalysis.Analyzers
 --------------------------------
 
-*Latest stable version:* [1.1.0](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers/)
+*Latest stable version:* [2.6.0](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers/)
 
 Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
 
@@ -39,7 +39,7 @@ Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
 Microsoft.CodeQuality.Analyzers
 --------------------------------
 
-*NuGet link (no stable version yet)*: <https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers/>
+*Latest stable version:* [2.6.0](https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers/)
 
 Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
 
@@ -48,7 +48,7 @@ Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
 Microsoft.NetCore.Analyzers
 -----------------
 
-*NuGet link (no stable version yet)*: <https://www.nuget.org/packages/Microsoft.NetCore.Analyzers/>
+*Latest stable version:* [2.6.0](https://www.nuget.org/packages/Microsoft.NetCore.Analyzers/)
 
 Analyzers for APIs specific to .NET Core.
 
@@ -57,7 +57,7 @@ Analyzers for APIs specific to .NET Core.
 Microsoft.NetFramework.Analyzers
 -----------------
 
-*NuGet link (no stable version yet)*: <https://www.nuget.org/packages/Microsoft.NetFramework.Analyzers/>
+*Latest stable version:* [2.6.0](https://www.nuget.org/packages/Microsoft.NetFramework.Analyzers/)
 
 Analyzers for APIs specific to the desktop .NET Framework.
 
@@ -66,7 +66,7 @@ Analyzers for APIs specific to the desktop .NET Framework.
 Roslyn.Diagnostics.Analyzers
 -------------------------------
 
-*NuGet link (no stable version yet)*: <https://www.nuget.org/packages/Roslyn.Diagnostics.Analyzers/>
+*Latest stable version:* [2.6.0](https://www.nuget.org/packages/Roslyn.Diagnostics.Analyzers/)
 
 Contains analyzers specific to the .NET Compiler Platform ("Roslyn") project.
 
@@ -75,7 +75,7 @@ Contains analyzers specific to the .NET Compiler Platform ("Roslyn") project.
 Text.Analyzers
 -------------------------------
 
-*NuGet link (no stable version yet)*: <https://www.nuget.org/packages/Text.Analyzers/>
+*Latest stable version:* [2.6.0](https://www.nuget.org/packages/Text.Analyzers/)
 
 Contains analyzers for text included in code, such as comments.
 

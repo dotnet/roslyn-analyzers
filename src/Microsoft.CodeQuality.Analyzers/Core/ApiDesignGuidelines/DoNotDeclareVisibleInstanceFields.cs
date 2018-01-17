@@ -42,11 +42,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 var field = (IFieldSymbol)obj.Symbol;
 
-                // Only report diagnostic on non-static, non-const, public fields
+                // Only report diagnostic on non-static, non-const, public or protected or protected internal/friend fields.
                 // Additionally, only report on members within externally visible types for FxCop compat.
                 if (!field.IsStatic &&
                     !field.IsConst &&
-                    field.IsPublic() &&
+                    (field.IsPublic() || field.IsProtected() || field.DeclaredAccessibility == Accessibility.ProtectedOrInternal || field.DeclaredAccessibility == Accessibility.ProtectedOrFriend) &&
                     field.ContainingType.IsExternallyVisible())
                 {
                     obj.ReportDiagnostic(field.CreateDiagnostic(Rule));

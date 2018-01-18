@@ -83,18 +83,13 @@ Getting Started
 ===============
 
 1. Clone the repository
-2. Install NuGet packages: `msbuild /t:restore RoslynAnalyzers.sln`
-3. Build: `msbuild RoslynAnalyzers.sln`
-
-Execute `cibuild.cmd` to clean, restore, build and runs tests
+2. Restore and build: `build.cmd`
+3. Execute tests: `test.cmd`
 
 Submitting Pull Requests
 ========================
 
-Prior to submitting a pull request, ensure the build and all tests pass using BuildAndTest.proj:
-```
-msbuild BuildAndTest.proj
-```
+Prior to submitting a pull request, ensure the build and all tests pass using using steps 2 and 3 above.
 
 Versioning Scheme for Analyzer Packages
 =======================================

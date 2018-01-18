@@ -14,10 +14,9 @@ using Microsoft.CodeAnalysis.Editing;
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
     /// <summary>
-    /// CA1507 Use nameof to express symbol names
+    /// CA1507: Use nameof to express symbol names
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.VisualBasic, LanguageNames.CSharp), Shared]
-    public class UseNameOfInPlaceOfStringFixer : CodeFixProvider
+    public abstract class UseNameOfInPlaceOfStringFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(UseNameofInPlaceOfStringAnalyzer.RuleId);
 
@@ -26,6 +25,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers'
             return WellKnownFixAllProviders.BatchFixer;
         }
+
+        protected virtual SyntaxNode GetNameOfExpression(SyntaxGenerator generator, string identifierNameArgument) =>
+            generator.NameOfExpression(generator.IdentifierName(identifierNameArgument));
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
@@ -52,7 +54,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             var trailingTrivia = nodeToReplace.GetTrailingTrivia();
             var leadingTrivia = nodeToReplace.GetLeadingTrivia();
-            var nameOfExpression = generator.NameOfExpression(generator.IdentifierName(stringText))
+            SyntaxNode nameOfExpression = GetNameOfExpression(generator, stringText)
                 .WithTrailingTrivia(trailingTrivia)
                 .WithLeadingTrivia(leadingTrivia);
 

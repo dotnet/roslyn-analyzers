@@ -83,8 +83,9 @@ Getting Started
 ===============
 
 1. Clone the repository
-2. Restore and build: `build.cmd`
-3. Execute tests: `test.cmd`
+2. Restore: `restore.cmd`
+3. Build: `build.cmd`
+4. Execute tests: `test.cmd`
 
 Submitting Pull Requests
 ========================

@@ -43,6 +43,20 @@ class NonPublic
         }
 
         [Fact]
+        public void CSharpPropertyWithDerivedExceptionNoDiagnostics()
+        {
+            var code = @"
+using System;
+
+public class C
+{
+    public int this[int x] { get { throw new ArgumentOutOfRangeException(); } set { throw new ArgumentOutOfRangeException(); } }
+}
+";
+            VerifyCSharp(code);
+        }
+
+        [Fact]
         public void BasicPropertyNoDiagnostics()
         {
             var code = @"

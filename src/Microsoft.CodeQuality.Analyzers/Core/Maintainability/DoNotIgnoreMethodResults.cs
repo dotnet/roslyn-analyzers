@@ -110,66 +110,191 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterOperationBlockStartAction(osContext =>
+            analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                var method = osContext.OwningSymbol as IMethodSymbol;
-                if (method == null)
+                INamedTypeSymbol expectedExceptionType = WellKnownTypes.ExpectedException(compilationContext.Compilation);
+
+                compilationContext.RegisterOperationBlockStartAction(osContext =>
                 {
-                    return;
+                    var method = osContext.OwningSymbol as IMethodSymbol;
+                    if (method == null)
+                    {
+                        return;
+                    }
+
+                    osContext.RegisterOperationAction(opContext =>
+                    {
+                        if (ShouldSkipAnalyzing(opContext, expectedExceptionType))
+                        {
+                            return;
+                        }
+
+                        IOperation expression = ((IExpressionStatementOperation)opContext.Operation).Operation;
+                        DiagnosticDescriptor rule = null;
+                        string targetMethodName = null;
+                        switch (expression.Kind)
+                        {
+                            case OperationKind.ObjectCreation:
+                                IMethodSymbol ctor = ((IObjectCreationOperation)expression).Constructor;
+                                if (ctor != null)
+                                {
+                                    rule = ObjectCreationRule;
+                                    targetMethodName = ctor.ContainingType.Name;
+                                }
+                                break;
+
+                            case OperationKind.Invocation:
+                                IInvocationOperation invocationExpression = ((IInvocationOperation)expression);
+                                IMethodSymbol targetMethod = invocationExpression.TargetMethod;
+                                if (targetMethod == null)
+                                {
+                                    break;
+                                }
+
+                                if (IsStringCreatingMethod(targetMethod))
+                                {
+                                    rule = StringCreationRule;
+                                }
+                                else if (IsTryParseMethod(targetMethod))
+                                {
+                                    rule = TryParseRule;
+                                }
+                                else if (IsHResultOrErrorCodeReturningMethod(targetMethod))
+                                {
+                                    rule = HResultOrErrorCodeRule;
+                                }
+                                else if (IsPureMethod(targetMethod, opContext.Compilation))
+                                {
+                                    rule = PureMethodRule;
+                                }
+
+                                targetMethodName = targetMethod.Name;
+                                break;
+                        }
+
+                        if (rule != null)
+                        {
+                            Diagnostic diagnostic = Diagnostic.Create(rule, expression.Syntax.GetLocation(), method.Name, targetMethodName);
+                            opContext.ReportDiagnostic(diagnostic);
+                        }
+                    }, OperationKind.ExpressionStatement);
+                });
+            });
+        }
+
+        private static bool ShouldSkipAnalyzing(OperationAnalysisContext operationContext, INamedTypeSymbol expectedExceptionType)
+        {
+            bool IsThrowsArgument(IParameterSymbol parameterSymbol, string argumentName, ImmutableHashSet<string> methodNames, string containingSymbol)
+            {
+                return parameterSymbol.Name == argumentName &&
+                       parameterSymbol.ContainingSymbol is IMethodSymbol methodSymbol &&
+                       methodNames.Contains(methodSymbol.Name) &&
+                       methodSymbol.ContainingSymbol.ToDisplayString() == containingSymbol;
+            }
+
+            bool IsNUnitThrowsArgument(IParameterSymbol parameterSymbol)
+            {
+                var methodNames = ImmutableHashSet.Create(new[]
+                {
+                    "Throws",
+                    "Catch",
+                    "DoesNotThrow",
+                    "ThrowsAsync",
+                    "CatchAsync",
+                    "DoesNotThrowAsync"
+                });
+
+                return IsThrowsArgument(parameterSymbol, "code", methodNames, "NUnit.Framework.Assert");
+            }
+
+            bool IsXunitThrowsArgument(IParameterSymbol parameterSymbol)
+            {
+                var methodNames = ImmutableHashSet.Create(new[]
+                {
+                    "Throws",
+                    "ThrowsAsync",
+                    "ThrowsAny",
+                    "ThrowsAnyAsync",
+                });
+
+                return IsThrowsArgument(parameterSymbol, "testCode", methodNames, "Xunit.Assert");
+            }
+
+            // We skip analysis for the last statement in a lambda passed to Assert.Throws/ThrowsAsync (xUnit and NUnit), or the last
+            // statement in a method annotated with [ExpectedException] (MSTest)
+
+            // Note: We do not attempt to account for a synchronously-running ThrowsAsync with something like return Task.CompletedTask;
+            // as the last line.
+
+            // We only skip analysis if we're in a method
+            if (operationContext.ContainingSymbol.Kind != SymbolKind.Method)
+            {
+                return false;
+            }
+
+            // Get the enclosing block. If that block's parent isn't null (MSTest case) or an IAnonymousFunctionOperation (xUnit/NUnit), then
+            // we bail immediately
+            if (!(operationContext.Operation.Parent is IBlockOperation enclosingBlock))
+            {
+                return false;
+            }
+
+            if (enclosingBlock.Parent != null && enclosingBlock.Parent.Kind != OperationKind.AnonymousFunction)
+            {
+                return false;
+            }
+
+            // Only analyze the last non-implicit statement in the function
+            bool foundBlock = false;
+            foreach (var statement in enclosingBlock.Operations)
+            {
+                if (statement == operationContext.Operation)
+                {
+                    foundBlock = true;
+                    continue;
+                }
+                else if (foundBlock)
+                {
+                    if (!statement.IsImplicit)
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            // If the parent is Null, we're in the MSTest case. Otherwise, we're in the xUnit/NUnit case.
+            if (enclosingBlock.Parent == null)
+            {
+                if (expectedExceptionType == null)
+                {
+                    return false;
                 }
 
-                osContext.RegisterOperationAction(opContext =>
+                IMethodSymbol methodSymbol = (IMethodSymbol)operationContext.ContainingSymbol;
+
+                return methodSymbol.GetAttributes().Any(attr => attr.AttributeClass == expectedExceptionType);
+            }
+            else
+            {
+                // Look for an enclosing IArgumentOperation
+                IOperation parentArgument = enclosingBlock;
+                do
                 {
-                    IOperation expression = ((IExpressionStatementOperation)opContext.Operation).Operation;
-                    DiagnosticDescriptor rule = null;
-                    string targetMethodName = null;
-                    switch (expression.Kind)
-                    {
-                        case OperationKind.ObjectCreation:
-                            IMethodSymbol ctor = ((IObjectCreationOperation)expression).Constructor;
-                            if (ctor != null)
-                            {
-                                rule = ObjectCreationRule;
-                                targetMethodName = ctor.ContainingType.Name;
-                            }
-                            break;
+                    parentArgument = parentArgument.Parent;
+                } while (parentArgument != null && parentArgument.Kind != OperationKind.Argument);
 
-                        case OperationKind.Invocation:
-                            IInvocationOperation invocationExpression = ((IInvocationOperation)expression);
-                            IMethodSymbol targetMethod = invocationExpression.TargetMethod;
-                            if (targetMethod == null)
-                            {
-                                break;
-                            }
+                if (parentArgument == null)
+                {
+                    return false;
+                }
 
-                            if (IsStringCreatingMethod(targetMethod))
-                            {
-                                rule = StringCreationRule;
-                            }
-                            else if (IsTryParseMethod(targetMethod))
-                            {
-                                rule = TryParseRule;
-                            }
-                            else if (IsHResultOrErrorCodeReturningMethod(targetMethod))
-                            {
-                                rule = HResultOrErrorCodeRule;
-                            }
-                            else if (IsPureMethod(targetMethod, opContext.Compilation))
-                            {
-                                rule = PureMethodRule;
-                            }
-
-                            targetMethodName = targetMethod.Name;
-                            break;
-                    }
-
-                    if (rule != null)
-                    {
-                        Diagnostic diagnostic = Diagnostic.Create(rule, expression.Syntax.GetLocation(), method.Name, targetMethodName);
-                        opContext.ReportDiagnostic(diagnostic);
-                    }
-                }, OperationKind.ExpressionStatement);
-            });
+                IArgumentOperation argumentOperation = (IArgumentOperation)parentArgument;
+                return IsNUnitThrowsArgument(argumentOperation.Parameter) || IsXunitThrowsArgument(argumentOperation.Parameter);
+            }
         }
 
         private static bool IsStringCreatingMethod(IMethodSymbol method)

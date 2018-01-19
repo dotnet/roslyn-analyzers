@@ -293,8 +293,8 @@
         <note />
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesMessage">
-        <source>Interface methods should be callable by child types</source>
-        <target state="translated">Metody rozhraní mají být volatelné podřízenými typy.</target>
+        <source>Make '{0}' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of '{1}' and is visible to derived classes.</source>
+        <target state="needs-review-translation">Metody rozhraní mají být volatelné podřízenými typy.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesTitle">

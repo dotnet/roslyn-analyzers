@@ -34,7 +34,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                          DiagnosticCategory.Reliability,
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182290.aspx",
+                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2002-do-not-lock-on-objects-with-weak-identity",
                                                                          description: s_localizableDescription,
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
 

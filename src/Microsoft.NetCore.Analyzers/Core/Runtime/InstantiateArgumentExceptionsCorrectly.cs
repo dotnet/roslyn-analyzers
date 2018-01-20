@@ -16,7 +16,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     public sealed class InstantiateArgumentExceptionsCorrectlyAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2208";
-        private const string HelpUri = "https://msdn.microsoft.com/en-us/library/ms182347.aspx";
+        private const string HelpUri = "https://docs.microsoft.com/visualstudio/code-quality/ca2208-instantiate-argument-exceptions-correctly";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.InstantiateArgumentExceptionsCorrectlyTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
 

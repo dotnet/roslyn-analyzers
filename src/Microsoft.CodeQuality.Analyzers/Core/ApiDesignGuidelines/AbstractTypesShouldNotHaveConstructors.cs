@@ -26,7 +26,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                          DiagnosticCategory.Design,
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultOnlyIfBuildingVSIX,
-                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182126.aspx",
+                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1012-abstract-types-should-not-have-constructors",
                                                                          description: s_localizableDescription,
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
 

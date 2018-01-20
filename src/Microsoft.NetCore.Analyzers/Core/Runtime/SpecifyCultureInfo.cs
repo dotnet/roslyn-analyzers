@@ -18,7 +18,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     public sealed class SpecifyCultureInfoAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1304";
-        private const string Uri = @"https://msdn.microsoft.com/en-us/library/ms182189.aspx";
+        private const string Uri = "https://docs.microsoft.com/visualstudio/code-quality/ca1304-specify-cultureinfo";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.SpecifyCultureInfoTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.SpecifyCultureInfoMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));

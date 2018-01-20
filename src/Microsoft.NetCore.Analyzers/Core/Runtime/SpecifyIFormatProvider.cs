@@ -18,7 +18,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     public sealed class SpecifyIFormatProviderAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1305";
-        internal const string Uri = @"https://msdn.microsoft.com/en-us/library/ms182190.aspx";
+        internal const string Uri = "https://docs.microsoft.com/visualstudio/code-quality/ca1305-specify-iformatprovider";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.SpecifyIFormatProviderTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
 

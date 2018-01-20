@@ -24,7 +24,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "http://msdn.microsoft.com/library/bb385972.aspx",
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1309-use-ordinal-stringcomparison",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         internal const string CompareMethodName = "Compare";

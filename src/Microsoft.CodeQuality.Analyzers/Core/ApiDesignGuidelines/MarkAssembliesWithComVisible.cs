@@ -25,7 +25,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                        DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                        isEnabledByDefault: false,
                                                                                        description: s_localizableDescription,
-                                                                                       helpLinkUri: "http://msdn.microsoft.com/library/ms182157.aspx",
+                                                                                       helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1017-mark-assemblies-with-comvisibleattribute",
                                                                                        customTags: WellKnownDiagnosticTags.Telemetry);
 
         internal static readonly DiagnosticDescriptor RuleB = new DiagnosticDescriptor(RuleId,
@@ -35,7 +35,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                        DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                        isEnabledByDefault: false,
                                                                                        description: s_localizableDescription,
-                                                                                       helpLinkUri: "http://msdn.microsoft.com/library/ms182157.aspx",
+                                                                                       helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1017-mark-assemblies-with-comvisibleattribute",
                                                                                        customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleA, RuleB);

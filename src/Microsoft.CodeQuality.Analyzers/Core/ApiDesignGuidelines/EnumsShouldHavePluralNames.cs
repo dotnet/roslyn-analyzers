@@ -46,7 +46,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
                 isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_localizableDescription_CA1714,
-                helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb264486.aspx",
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1714-flags-enums-should-have-plural-names",
                 customTags: WellKnownDiagnosticTags.Telemetry);
 
         #endregion
@@ -81,7 +81,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
                 isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_localizableDescription_CA1717,
-                helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb264487.aspx",
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1717-only-flagsattribute-enums-should-have-plural-names",
                 customTags: WellKnownDiagnosticTags.Telemetry);
 
         #endregion

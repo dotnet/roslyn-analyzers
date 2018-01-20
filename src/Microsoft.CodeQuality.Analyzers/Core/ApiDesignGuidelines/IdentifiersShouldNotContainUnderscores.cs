@@ -16,7 +16,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     public sealed class IdentifiersShouldNotContainUnderscoresAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1707";
-        private const string Uri = "https://msdn.microsoft.com/en-us/library/ms182245.aspx";
+        private const string Uri = "https://docs.microsoft.com/visualstudio/code-quality/ca1707-identifiers-should-not-contain-underscores";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 

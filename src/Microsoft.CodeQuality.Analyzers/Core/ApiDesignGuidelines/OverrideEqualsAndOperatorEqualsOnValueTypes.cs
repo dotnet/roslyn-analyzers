@@ -24,7 +24,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
         private static readonly string s_category = DiagnosticCategory.Performance;
-        private const string s_helpLinkUri = "https://msdn.microsoft.com/en-us/library/ms182276.aspx";
+        private const string s_helpLinkUri = "https://docs.microsoft.com/visualstudio/code-quality/ca1815-override-equals-and-operator-equals-on-value-types";
 
         internal static DiagnosticDescriptor EqualsRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,

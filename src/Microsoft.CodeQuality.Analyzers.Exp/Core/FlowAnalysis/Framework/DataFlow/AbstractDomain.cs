@@ -16,16 +16,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         public abstract T Bottom { get; }
 
         /// <summary>
-        /// Returns a copy of <paramref name="value"/>.
-        /// </summary>
-        /// <param name="value">The value to be copied</param>
-        /// <returns>A new copy of <paramref name="value"/></returns>
-        public virtual T Copy(T value)
-        {
-            return value;
-        }
-
-        /// <summary>
         /// Returns a value that is greater than <paramref name="value1"/> and <paramref name="value2"/>.
         /// </summary>
         /// <param name="value1">A value to be merged</param>
@@ -45,7 +35,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 case 0:
                     return Bottom;
                 case 1:
-                    return Copy(values.Single());
+                    return values.Single();
                 default:
                     return values.Aggregate(Merge);
             }

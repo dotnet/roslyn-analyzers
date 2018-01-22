@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
@@ -13,49 +14,47 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
         /// <summary>
         /// Operation visitor to flow the string content values across a given statement in a basic block.
         /// </summary>
-        private sealed class StringContentDataFlowOperationWalker : DataFlowOperationWalker<StringContentAnalysisData, StringContentAbstractValue>
+        private sealed class StringContentDataFlowOperationVisitor : DataFlowOperationVisitor<StringContentAnalysisData, StringContentAbstractValue>
         {
-            public StringContentDataFlowOperationWalker(AbstractDomain<StringContentAbstractValue> valueDomain, DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt)
+            public StringContentDataFlowOperationVisitor(AbstractDomain<StringContentAbstractValue> valueDomain, DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt)
                 : base(valueDomain, nullAnalysisResultOpt)
             {
             }
 
-            protected override StringContentAbstractValue UninitializedValue => StringContentAbstractValue.DefaultNo;
-            protected override StringContentAbstractValue DefaultValue => StringContentAbstractValue.DefaultMaybe;
+            protected override StringContentAbstractValue UnknownOrMayBeValue => StringContentAbstractValue.MayBeContainsNonLiteralState;
             protected override void SetAbstractValue(ISymbol symbol, StringContentAbstractValue value)
                 => CurrentAnalysisData[symbol] = value;
 
             protected override StringContentAbstractValue GetAbstractValue(ISymbol symbol) =>
-                CurrentAnalysisData.TryGetValue(symbol, out var value) ? value : DefaultValue;
-
-            protected override void ResetCurrentAnalysisData(StringContentAnalysisData newAnalysisDataOpt = null) =>
-                CurrentAnalysisData.Reset(newAnalysisDataOpt);
+                CurrentAnalysisData.TryGetValue(symbol, out var value) ? value : UnknownOrMayBeValue;
 
             protected override StringContentAbstractValue GetAbstractDefaultValue(ITypeSymbol type) =>
-                StringContentAbstractValue.DefaultNo;
+                StringContentAbstractValue.DoesNotContainNonLiteralState;
+
+            protected override void ResetCurrentAnalysisData(StringContentAnalysisData newAnalysisDataOpt = null) => ResetAnalysisData(CurrentAnalysisData, newAnalysisDataOpt);
 
             #region Visitor methods
             public override StringContentAbstractValue DefaultVisit(IOperation operation, object argument)
             {
-                var unused = base.DefaultVisit(operation, argument);
+                var _ = base.DefaultVisit(operation, argument);
                 if (operation.Type == null)
                 {
-                    return StringContentAbstractValue.DefaultNo;
+                    return StringContentAbstractValue.DoesNotContainNonLiteralState;
                 }
 
                 if (operation.Type.SpecialType == SpecialType.System_String)
                 {
                     if (operation.ConstantValue.HasValue && operation.ConstantValue.Value is string value)
                     {
-                        return new StringContentAbstractValue(literal: value);
+                        return StringContentAbstractValue.Create(value);
                     }
                     else
                     {
-                        return new StringContentAbstractValue(nonLiteral: operation);
+                        return StringContentAbstractValue.ContainsNonLiteralState;
                     }
                 }
 
-                return DefaultValue;
+                return UnknownOrMayBeValue;
             }
 
             public override StringContentAbstractValue VisitBinaryOperator(IBinaryOperation operation, object argument)
@@ -66,7 +65,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
                     case BinaryOperatorKind.Concatenate:
                         var leftValue = Visit(operation.LeftOperand, argument);
                         var rightValue = Visit(operation.RightOperand, argument);
-                        return leftValue.MergeBinaryAdd(rightValue, operation);
+                        return leftValue.MergeBinaryAdd(rightValue);
 
                     default:
                         return base.VisitBinaryOperator(operation, argument);
@@ -82,7 +81,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
                     case BinaryOperatorKind.Concatenate:
                         var leftValue = Visit(operation.Target, argument);
                         var rightValue = Visit(operation.Value, argument);
-                        value = leftValue.MergeBinaryAdd(rightValue, operation);
+                        value = leftValue.MergeBinaryAdd(rightValue);
                         break;
 
                     default:
@@ -99,7 +98,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
                 var nameofValue = base.VisitNameOf(operation, argument);
                 if (operation.ConstantValue.HasValue && operation.ConstantValue.Value is string value)
                 {
-                    return new StringContentAbstractValue(literal: value);
+                    return StringContentAbstractValue.Create(value);
                 }
 
                 return nameofValue;
@@ -108,6 +107,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
             public override StringContentAbstractValue VisitObjectCreation(IObjectCreationOperation operation, object argument)
             {
                 // TODO: Analyze string constructor
+                // https://github.com/dotnet/roslyn-analyzers/issues/1547
                 return base.VisitObjectCreation(operation, argument);
             }
 
@@ -119,7 +119,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
                 if (operation.Field.Name.Equals("Empty", StringComparison.Ordinal) &&
                     operation.Field.ContainingType.SpecialType == SpecialType.System_String)
                 {
-                    return new StringContentAbstractValue(literal: string.Empty);
+                    return StringContentAbstractValue.Create(string.Empty);
                 }
 
                 return value;
@@ -127,7 +127,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
 
             public override StringContentAbstractValue VisitInvocation_NonLambdaOrDelegateOrLocalFunction(IInvocationOperation operation, object argument)
             {
-                // TODO: Handle invocations of string methods (Format, SubString, Replace, etc.)
+                // TODO: Handle invocations of string methods (Format, SubString, Replace, Concat, etc.)
+                // https://github.com/dotnet/roslyn-analyzers/issues/1547
                 return base.VisitInvocation_NonLambdaOrDelegateOrLocalFunction(operation, argument);
             }
 
@@ -135,14 +136,14 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
             {
                 if (operation.Parts.IsEmpty)
                 {
-                    return new StringContentAbstractValue(literal: string.Empty);
+                    return StringContentAbstractValue.Create(string.Empty);
                 }
 
                 StringContentAbstractValue mergedValue = Visit(operation.Parts[0], argument);
                 for (int i = 1; i < operation.Parts.Length; i++)
                 {
                     var newValue = Visit(operation.Parts[i], argument);
-                    mergedValue = mergedValue.MergeBinaryAdd(newValue, operation);
+                    mergedValue = mergedValue.MergeBinaryAdd(newValue);
                 }
 
                 return mergedValue;

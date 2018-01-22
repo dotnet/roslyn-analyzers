@@ -43,6 +43,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
                 }
                 else if (value1 != value2)
                 {
+                    // One of the values must be 'Null' and other value must be 'NotNull'.
                     result = NullAbstractValue.MaybeNull;
                 }
                 else

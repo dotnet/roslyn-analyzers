@@ -17,7 +17,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
 
             private StringContentAbstractValueDomain() { }
 
-            public override StringContentAbstractValue Bottom => StringContentAbstractValue.DefaultMaybe;
+            public override StringContentAbstractValue Bottom => StringContentAbstractValue.UndefinedState;
 
             public override int Compare(StringContentAbstractValue oldValue, StringContentAbstractValue newValue)
             {

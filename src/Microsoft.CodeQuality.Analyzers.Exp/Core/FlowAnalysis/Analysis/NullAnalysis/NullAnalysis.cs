@@ -13,19 +13,19 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
     /// </summary>
     internal partial class NullAnalysis : ForwardDataFlowAnalysis<NullAnalysisData, NullBlockAnalysisResult, NullAbstractValue>
     {
-        private NullAnalysis(NullAnalysisDomain analysisDomain, NullDataFlowOperationWalker dataflowOperationWalker)
-            : base(analysisDomain, dataflowOperationWalker, nullAnalysisResultOpt: null)
+        private NullAnalysis(NullAnalysisDomain analysisDomain, NullDataFlowOperationVisitor operationVisitor)
+            : base(analysisDomain, operationVisitor, nullAnalysisResultOpt: null)
         {
         }
 
         public static DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> GetOrComputeResult(ControlFlowGraph cfg)
         {
             var analysisDomain = new NullAnalysisDomain(NullAbstractValueDomain.Default);
-            var dataflowOperationWalker = new NullDataFlowOperationWalker(NullAbstractValueDomain.Default);
-            var nullAnalysis = new NullAnalysis(analysisDomain, dataflowOperationWalker);
+            var operationVisitor = new NullDataFlowOperationVisitor(NullAbstractValueDomain.Default);
+            var nullAnalysis = new NullAnalysis(analysisDomain, operationVisitor);
             return nullAnalysis.GetOrComputeResultCore(cfg);
         }
 
-        internal override NullBlockAnalysisResult ToResult(BasicBlock basicBlock, DataFlowAnalysisInfo<NullAnalysisData> blockAnalysisData) => new NullBlockAnalysisResult(basicBlock, blockAnalysisData);
+        internal override NullBlockAnalysisResult ToResult(BasicBlock basicBlock, DataFlowAnalysisInfo<IDictionary<ISymbol, NullAbstractValue>> blockAnalysisData) => new NullBlockAnalysisResult(basicBlock, blockAnalysisData);
     }
 }

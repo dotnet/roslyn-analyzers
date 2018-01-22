@@ -28,20 +28,8 @@ namespace Microsoft.CodeAnalysis.Operations.ControlFlow
         public ImmutableArray<IOperation> Statements => _statements.ToImmutable();
         public ImmutableHashSet<BasicBlock> Successors => _successors.ToImmutable();
         public ImmutableHashSet<BasicBlock> Predecessors => _predecessors.ToImmutable();
-
-        internal void AddStatement(IOperation statement)
-        {
-            _statements.Add(statement);
-        }
-
-        internal void AddSuccessor(BasicBlock block)
-        {
-            _successors.Add(block);
-        }
-
-        internal void AddPredecessor(BasicBlock block)
-        {
-            _predecessors.Add(block);
-        }
+        internal void AddStatement(IOperation statement) => _statements.Add(statement);
+        internal void AddSuccessor(BasicBlock block) => _successors.Add(block);
+        internal void AddPredecessor(BasicBlock block) => _predecessors.Add(block);
     }
 }

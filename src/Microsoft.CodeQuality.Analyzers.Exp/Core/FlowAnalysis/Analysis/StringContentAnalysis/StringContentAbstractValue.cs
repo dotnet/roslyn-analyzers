@@ -2,8 +2,8 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using Analyzer.Utilities;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
@@ -13,59 +13,59 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
     /// </summary>
     internal partial class StringContentAbstractValue : IEquatable<StringContentAbstractValue>
     {
-        public static readonly StringContentAbstractValue DefaultMaybe = new StringContentAbstractValue();
-        public static readonly StringContentAbstractValue DefaultNo = new StringContentAbstractValue(literalState: StringContainsState.No, nonLiteralState: StringContainsState.No);
+        public static readonly StringContentAbstractValue UndefinedState = new StringContentAbstractValue(ImmutableHashSet<string>.Empty, StringContainsNonLiteralState.Undefined);
+        public static readonly StringContentAbstractValue MayBeContainsNonLiteralState = new StringContentAbstractValue(ImmutableHashSet<string>.Empty, StringContainsNonLiteralState.Maybe);
+        public static readonly StringContentAbstractValue DoesNotContainNonLiteralState = new StringContentAbstractValue(ImmutableHashSet<string>.Empty, StringContainsNonLiteralState.No);
+        public static readonly StringContentAbstractValue ContainsNonLiteralState = new StringContentAbstractValue(ImmutableHashSet<string>.Empty, StringContainsNonLiteralState.Yes);
+        private static readonly StringContentAbstractValue ContainsEmpyStringLiteralState = new StringContentAbstractValue(ImmutableHashSet.Create(string.Empty), StringContainsNonLiteralState.No);
 
-        public StringContentAbstractValue(string literal)
+        public static StringContentAbstractValue Create(string literal)
         {
-            LiteralState = StringContainsState.Yes;
-            NonLiteralState = StringContainsState.No;
-            LiteralValues = ImmutableHashSet.Create(literal);
-            NonLiteralValues = ImmutableHashSet<IOperation>.Empty;
+            if (literal.Length > 0)
+            {
+                return new StringContentAbstractValue(ImmutableHashSet.Create(literal), StringContainsNonLiteralState.No);
+            }
+            else
+            {
+                return ContainsEmpyStringLiteralState;
+            }
         }
 
-        public StringContentAbstractValue(IOperation nonLiteral)
+        private StringContentAbstractValue(ImmutableHashSet<string> literalValues, StringContainsNonLiteralState nonLiteralState)
         {
-            LiteralState = StringContainsState.No;
-            NonLiteralState = StringContainsState.Yes;
-            LiteralValues = ImmutableHashSet<string>.Empty;
-            NonLiteralValues = ImmutableHashSet.Create(nonLiteral);
-        }
-
-        private StringContentAbstractValue(StringContainsState literalState = StringContainsState.Maybe, StringContainsState nonLiteralState = StringContainsState.Maybe)
-            : this(literalState, nonLiteralState, ImmutableHashSet<string>.Empty, ImmutableHashSet<IOperation>.Empty)
-        {
-            Debug.Assert(literalState == StringContainsState.No || literalState == StringContainsState.Maybe);
-            Debug.Assert(nonLiteralState == StringContainsState.No || nonLiteralState == StringContainsState.Maybe);
-        }
-
-        private StringContentAbstractValue(StringContainsState literalState, StringContainsState nonLiteralState, ImmutableHashSet<string> literalValues, ImmutableHashSet<IOperation> nonLiteralValues)
-        {
-            LiteralState = literalState;
-            NonLiteralState = nonLiteralState;
             LiteralValues = literalValues;
-            NonLiteralValues = nonLiteralValues;
+            NonLiteralState = nonLiteralState;
         }
 
-        /// <summary>
-        /// Indicates if this string variable contains string literals or not.
-        /// </summary>
-        public StringContainsState LiteralState { get; }
+        private static StringContentAbstractValue Create(ImmutableHashSet<string> literalValues, StringContainsNonLiteralState nonLiteralState)
+        {
+            if (literalValues.IsEmpty)
+            {
+                switch (nonLiteralState)
+                {
+                    case StringContainsNonLiteralState.Undefined:
+                        return UndefinedState;
+                    case StringContainsNonLiteralState.Yes:
+                        return ContainsNonLiteralState;
+                    case StringContainsNonLiteralState.No:
+                        return DoesNotContainNonLiteralState;
+                    default:
+                        return MayBeContainsNonLiteralState;
+                }
+            }
+
+            return new StringContentAbstractValue(literalValues, nonLiteralState);
+        }
 
         /// <summary>
         /// Indicates if this string variable contains non literal string operands or not.
         /// </summary>
-        public StringContainsState NonLiteralState { get; }
+        public StringContainsNonLiteralState NonLiteralState { get; }
 
         /// <summary>
         /// Gets a collection of the string literals that could possibly make up the contents of this string <see cref="Operand"/>.
         /// </summary>
         public ImmutableHashSet<string> LiteralValues { get; }
-
-        /// <summary>
-        /// Gets a collection of the non literal string operations that could possibly make up the contents of this string <see cref="Operand"/>.
-        /// </summary>
-        public ImmutableHashSet<IOperation> NonLiteralValues { get; }
         
         public override bool Equals(object obj)
         {
@@ -75,170 +75,98 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
         public bool Equals(StringContentAbstractValue other)
         {
             return other != null &&
-                LiteralState == other.LiteralState &&
                 NonLiteralState == other.NonLiteralState &&
-                LiteralValues.Equals(other.LiteralValues) &&
-                NonLiteralValues.Equals(other.NonLiteralValues);
+                LiteralValues.SetEquals(other.LiteralValues);
         }
 
         public override int GetHashCode()
         {
-            return
-                HashUtilities.Combine(LiteralValues.GetHashCode(),
-                HashUtilities.Combine(NonLiteralValues.GetHashCode(),
-                HashUtilities.Combine(LiteralState.GetHashCode(), NonLiteralState.GetHashCode())));
+            var hashCode = NonLiteralState.GetHashCode();
+            foreach (var literal in LiteralValues.OrderBy(s => s))
+            {
+                hashCode = HashUtilities.Combine(hashCode, literal.GetHashCode());
+            }
+
+            return hashCode;
         }
 
         /// <summary>
-        /// Performs the union with this state and the other state 
+        /// Performs the union of this state and the other state 
         /// and returns a new <see cref="StringContentAbstractValue"/> with the result.
         /// </summary>
         public StringContentAbstractValue Merge(StringContentAbstractValue otherState)
         {
-            // + Y M N
-            // Y Y Y Y
-            // M Y M M
-            // N Y M N
             if (otherState == null)
             {
                 throw new ArgumentNullException(nameof(otherState));
             }
 
-            // Merge Literals
-            StringContainsState mergedLiteralState;
-            ImmutableHashSet<string> mergedLiteralValues;
-            if (LiteralState == StringContainsState.Yes)
+            ImmutableHashSet<string> mergedLiteralValues = LiteralValues.Union(otherState.LiteralValues);
+            StringContainsNonLiteralState mergedNonLiteralState = Merge(NonLiteralState, otherState.NonLiteralState);
+            return Create(mergedLiteralValues, mergedNonLiteralState);
+        }
+
+        private static StringContainsNonLiteralState Merge(StringContainsNonLiteralState value1, StringContainsNonLiteralState value2)
+        {
+            // + U Y M N
+            // U U Y M N
+            // Y Y Y M M
+            // M M M M M
+            // N N N M N
+            if (value1 == StringContainsNonLiteralState.Maybe || value2 == StringContainsNonLiteralState.Maybe)
             {
-                mergedLiteralState = StringContainsState.Yes;
-                if (otherState.LiteralState == StringContainsState.Yes)
-                {
-                    // FxCop compat: Only merge literalValues if both states are Yes
-                    mergedLiteralValues = LiteralValues.Union(otherState.LiteralValues);
-                }
-                else
-                {
-                    mergedLiteralValues = LiteralValues;
-                }
+                return StringContainsNonLiteralState.Maybe;
             }
-            else if (otherState.LiteralState == StringContainsState.Yes)
+            else if (value1 == StringContainsNonLiteralState.Undefined)
             {
-                mergedLiteralState = StringContainsState.Yes;
-                mergedLiteralValues = otherState.LiteralValues;
+                return value2;
             }
-            else if (LiteralState == StringContainsState.Maybe ||
-                    otherState.LiteralState == StringContainsState.Maybe)
+            else if (value2 == StringContainsNonLiteralState.Undefined)
             {
-                mergedLiteralState = StringContainsState.Maybe;
-                mergedLiteralValues = ImmutableHashSet<string>.Empty;
+                return value1;
+            }
+            else if (value1 != value2)
+            {
+                // One of the values must be 'Yes' and other value must be 'No'.
+                return StringContainsNonLiteralState.Maybe;
             }
             else
             {
-                mergedLiteralState = StringContainsState.No;
-                mergedLiteralValues = ImmutableHashSet<string>.Empty;
+                return value1;
             }
-
-            // Merge NonLiterals state
-            StringContainsState mergedNonLiteralState;
-            ImmutableHashSet<IOperation> mergedNonLiteralValues;
-            if (this.NonLiteralState == StringContainsState.Yes ||
-                otherState.NonLiteralState == StringContainsState.Yes)
-            {
-                mergedNonLiteralState = StringContainsState.Yes;
-                mergedNonLiteralValues = this.NonLiteralValues.Union(otherState.NonLiteralValues);
-            }
-            else if (this.NonLiteralState == StringContainsState.Maybe ||
-                otherState.NonLiteralState == StringContainsState.Maybe)
-            {
-                mergedNonLiteralState = StringContainsState.Maybe;
-                mergedNonLiteralValues = this.NonLiteralValues.Union(otherState.NonLiteralValues);
-            }
-            else
-            {
-                mergedNonLiteralState = StringContainsState.No;
-                mergedNonLiteralValues = ImmutableHashSet<IOperation>.Empty;
-            }
-
-            return new StringContentAbstractValue(mergedLiteralState, mergedNonLiteralState, mergedLiteralValues, mergedNonLiteralValues);
         }
 
         /// <summary>
-        /// Performs the union with this state and the other state 
+        /// Performs the union of this state and the other state for a Binary add operation
         /// and returns a new <see cref="StringContentAbstractValue"/> with the result.
         /// </summary>
-        public StringContentAbstractValue MergeBinaryAdd(StringContentAbstractValue otherState, IOperation binaryOperation)
+        public StringContentAbstractValue MergeBinaryAdd(StringContentAbstractValue otherState)
         {
-            // + Y M N
-            // Y Y Y Y
-            // M Y M M
-            // N Y M N
             if (otherState == null)
             {
                 throw new ArgumentNullException(nameof(otherState));
             }
 
             // Merge Literals
-            StringContainsState mergedLiteralState;
-            ImmutableHashSet<string> mergedLiteralValues;
-            if (LiteralState == StringContainsState.Yes &&
-                otherState.LiteralState == StringContainsState.Yes)
+            var builder = ImmutableHashSet.CreateBuilder<string>();
+            foreach (var leftLiteral in LiteralValues)
             {
-                mergedLiteralState = StringContainsState.Yes;
-
-                var builder = ImmutableHashSet.CreateBuilder<string>();
-                foreach (var leftLiteral in LiteralValues)
+                foreach (var rightLiteral in otherState.LiteralValues)
                 {
-                    foreach (var rightLiteral in otherState.LiteralValues)
-                    {
-                        builder.Add(leftLiteral + rightLiteral);
-                    }
+                    builder.Add(leftLiteral + rightLiteral);
                 }
-
-                mergedLiteralValues = builder.ToImmutable();
-            }
-            else if (LiteralState != StringContainsState.No ||
-                    otherState.LiteralState != StringContainsState.No)
-            {
-                mergedLiteralState = StringContainsState.Maybe;
-                mergedLiteralValues = ImmutableHashSet<string>.Empty;
-            }
-            else
-            {
-                mergedLiteralState = StringContainsState.No;
-                mergedLiteralValues = ImmutableHashSet<string>.Empty;
             }
 
-            // Merge NonLiterals state
-            StringContainsState mergedNonLiteralState;
-            ImmutableHashSet<IOperation> mergedNonLiteralValues;
-            if (this.NonLiteralState == StringContainsState.Yes ||
-                this.NonLiteralState == StringContainsState.Yes)
-            {
-                mergedNonLiteralState = StringContainsState.Yes;
-                mergedNonLiteralValues = ImmutableHashSet.Create(binaryOperation);
-            }
-            else if (this.NonLiteralState == StringContainsState.Maybe ||
-                otherState.NonLiteralState == StringContainsState.Maybe)
-            {
-                mergedNonLiteralState = StringContainsState.Maybe;
-                mergedNonLiteralValues = ImmutableHashSet.Create(binaryOperation);
-            }
-            else
-            {
-                mergedNonLiteralState = StringContainsState.No;
-                mergedNonLiteralValues = ImmutableHashSet<IOperation>.Empty;
-            }
+            ImmutableHashSet<string> mergedLiteralValues = builder.ToImmutable();
+            StringContainsNonLiteralState mergedNonLiteralState = Merge(NonLiteralState, otherState.NonLiteralState);
 
-            return new StringContentAbstractValue(mergedLiteralState, mergedNonLiteralState, mergedLiteralValues, mergedNonLiteralValues);
+            return new StringContentAbstractValue(mergedLiteralValues, mergedNonLiteralState);
         }
 
         /// <summary>
         /// Returns a string representation of <see cref="StringContentsState"/>.
         /// </summary>
-        public override string ToString()
-        {
-            return string.Format(CultureInfo.InvariantCulture, "L:{0}({1}) NL:{2}({3})",
-                LiteralState.ToString()[0], LiteralValues.Count,
-                NonLiteralState.ToString()[0], NonLiteralValues.Count);
-        }
+        public override string ToString() =>
+            string.Format(CultureInfo.InvariantCulture, "L({0}) NL:{1}", LiteralValues.Count, NonLiteralState.ToString()[0]);
     }
 }

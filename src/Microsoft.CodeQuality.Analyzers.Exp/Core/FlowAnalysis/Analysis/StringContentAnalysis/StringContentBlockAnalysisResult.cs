@@ -10,7 +10,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
 
     /// <summary>
     /// Result from execution of <see cref="StringContentAnalysis"/> on a basic block.
-    /// It store string content values for symbols at the start and end of the basic block.
+    /// It stores string content values for symbols at the start and end of the basic block.
     /// </summary>
     internal class StringContentBlockAnalysisResult : AbstractBlockAnalysisResult<StringContentAnalysisData, StringContentAbstractValue>
     {

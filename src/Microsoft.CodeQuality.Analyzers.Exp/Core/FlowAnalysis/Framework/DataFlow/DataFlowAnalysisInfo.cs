@@ -7,7 +7,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     /// Results of a dataflow analysis are exposed with <see cref="DataFlowAnalysisResult{TAnalysisResult, TAbstractAnalysisValue}"/>.
     /// </summary>
     internal class DataFlowAnalysisInfo<T>
-        where T: class
     {
         public DataFlowAnalysisInfo(T input, T output)
         {
@@ -18,7 +17,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         public T Input { get; }
         public T Output { get; }
 
-        public DataFlowAnalysisInfo<T> WithInput(T input) => input == Input ? this : new DataFlowAnalysisInfo<T>(input, Output);
-        public DataFlowAnalysisInfo<T> WithOutput(T output) => output == Output ? this : new DataFlowAnalysisInfo<T>(Input, output);
+        public DataFlowAnalysisInfo<T> WithInput(T input) => ReferenceEquals(input, Input) ? this : new DataFlowAnalysisInfo<T>(input, Output);
+        public DataFlowAnalysisInfo<T> WithOutput(T output) => ReferenceEquals(output, Input) ? this : new DataFlowAnalysisInfo<T>(Input, output);
     }
 }

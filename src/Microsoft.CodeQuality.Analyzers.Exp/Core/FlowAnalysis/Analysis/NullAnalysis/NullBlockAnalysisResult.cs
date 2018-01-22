@@ -12,7 +12,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
     /// Result from execution of <see cref="NullAnalysis"/> on a basic block.
     /// It store null values for symbols at the start and end of the basic block.
     /// </summary>
-    internal class NullBlockAnalysisResult: AbstractBlockAnalysisResult<NullAnalysisData, NullAbstractValue>
+    internal class NullBlockAnalysisResult : AbstractBlockAnalysisResult<NullAnalysisData, NullAbstractValue>
     {
         public NullBlockAnalysisResult(BasicBlock basicBlock, DataFlowAnalysisInfo<NullAnalysisData> blockAnalysisData)
             : base (basicBlock)

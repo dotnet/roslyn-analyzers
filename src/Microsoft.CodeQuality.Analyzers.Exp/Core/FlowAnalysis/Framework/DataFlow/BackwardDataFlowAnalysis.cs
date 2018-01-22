@@ -13,10 +13,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     /// </summary>
     internal abstract class BackwardDataFlowAnalysis<TAnalysisData, TAnalysisResult, TAbstractAnalysisValue> : DataFlowAnalysis<TAnalysisData, TAnalysisResult, TAbstractAnalysisValue>
         where TAnalysisData : class
-        where TAnalysisResult: class
+        where TAnalysisResult : AbstractBlockAnalysisResult<TAnalysisData, TAbstractAnalysisValue>
     {
-        protected BackwardDataFlowAnalysis(AbstractDomain<TAnalysisData> analysisDomain, DataFlowOperationWalker<TAnalysisData, TAbstractAnalysisValue> dataflowOperationWalker, DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt)
-            : base (analysisDomain, dataflowOperationWalker, nullAnalysisResultOpt)
+        protected BackwardDataFlowAnalysis(AbstractDomain<TAnalysisData> analysisDomain, DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> operationVisitor, DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt)
+            : base (analysisDomain, operationVisitor, nullAnalysisResultOpt)
         {
         }
 

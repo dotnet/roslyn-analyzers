@@ -13,7 +13,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     /// <summary>
     /// Operation visitor to flow the abstract dataflow analysis values across a given statement in a basic block.
     /// </summary>
-    internal abstract class DataFlowOperationWalker<TAnalysisData, TAbstractAnalysisValue> : OperationVisitor<object, TAbstractAnalysisValue>
+    internal abstract class DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> : OperationVisitor<object, TAbstractAnalysisValue>
     {
         private readonly DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> _nullAnalysisResultOpt;
         private readonly ImmutableDictionary<IOperation, TAbstractAnalysisValue>.Builder _valueCacheBuilder;
@@ -21,9 +21,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         private int _recursionDepth;
 
         protected AbstractDomain<TAbstractAnalysisValue> ValueDomain { get; }
-        protected abstract TAbstractAnalysisValue UninitializedValue { get; }
-        protected abstract TAbstractAnalysisValue DefaultValue { get; }
-        
+        protected abstract TAbstractAnalysisValue UnknownOrMayBeValue { get; }
+
         protected abstract void SetAbstractValue(ISymbol symbol, TAbstractAnalysisValue value);
         protected abstract TAbstractAnalysisValue GetAbstractValue(ISymbol symbol);
         protected abstract TAbstractAnalysisValue GetAbstractDefaultValue(ITypeSymbol type);
@@ -32,7 +31,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         protected BasicBlock CurrentBasicBlock { get; private set; }
         protected IOperation CurrentStatement { get; private set; }
 
-        protected DataFlowOperationWalker(AbstractDomain<TAbstractAnalysisValue> valueDomain, DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> nullAnalysisResultOpt)
+        protected DataFlowOperationVisitor(AbstractDomain<TAbstractAnalysisValue> valueDomain, DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> nullAnalysisResultOpt)
         {
             ValueDomain = valueDomain;
             _nullAnalysisResultOpt = nullAnalysisResultOpt;
@@ -51,7 +50,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             TAbstractAnalysisValue state;
             if (!_valueCacheBuilder.TryGetValue(operation, out state))
             {
-                state = DefaultValue;
+                throw new InvalidOperationException();
             }
 
             return state;
@@ -75,6 +74,16 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             CurrentBasicBlock = block;
             CurrentAnalysisData = input;
             Visit(statement, null);
+
+#if DEBUG
+            // Ensure that we visited and cached values for all operation descendants.
+            foreach (var operation in statement.DescendantsAndSelf())
+            {
+                // GetState will throw an InvalidOperationException if the visitor did not visit the operation or cache it's abstract value.
+                var _ = GetState(operation);
+            }
+#endif
+
             return CurrentAnalysisData;
         }
 
@@ -104,7 +113,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 return value;
             }
 
-            return UninitializedValue;
+            return UnknownOrMayBeValue;
         }
 
         private TAbstractAnalysisValue VisitCore(IOperation operation, object argument)
@@ -143,7 +152,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         protected virtual TAbstractAnalysisValue VisitAssignmentOperation(IAssignmentOperation operation, object argument)
         {
-            TAbstractAnalysisValue unused = Visit(operation.Target, argument);
+            TAbstractAnalysisValue _ = Visit(operation.Target, argument);
             TAbstractAnalysisValue value = Visit(operation.Value, argument);
             SetAbstractValueForAssignment(operation.Target, value);
 
@@ -164,12 +173,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         public override TAbstractAnalysisValue VisitLocalReference(ILocalReferenceOperation operation, object argument)
         {
-            if (operation.IsDeclaration)
-            {
-                SetAbstractValue(operation.Local, UninitializedValue);
-                return UninitializedValue;
-            }
-
             return GetAbstractValue(operation.Local);
         }
 
@@ -222,7 +225,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         public override TAbstractAnalysisValue VisitConditional(IConditionalOperation operation, object argument)
         {
-            var unused = Visit(operation.Condition, argument);
+            var _ = Visit(operation.Condition, argument);
             var whenTrue = Visit(operation.WhenTrue, argument);
             var whenFalse = Visit(operation.WhenFalse, argument);
 
@@ -256,7 +259,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             if (operation.Parameter.RefKind != RefKind.None)
             {
                 ISymbol symbol;
-                switch(operation.Value)
+                switch (operation.Value)
                 {
                     case ILocalReferenceOperation localReference:
                         symbol = localReference.Local;
@@ -277,10 +280,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
                 if (symbol != null)
                 {
-                    SetAbstractValue(symbol, DefaultValue);
+                    SetAbstractValue(symbol, UnknownOrMayBeValue);
                 }
 
-                return DefaultValue;
+                return UnknownOrMayBeValue;
             }
 
             return value;
@@ -304,9 +307,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         public override TAbstractAnalysisValue VisitConversion(IConversionOperation operation, object argument)
         {
             var operandValue = Visit(operation.Operand, argument);
-            
+
             // Conservative for user defined operator.
-            return operation.OperatorMethod == null ? operandValue : DefaultValue;
+            return operation.OperatorMethod == null ? operandValue : UnknownOrMayBeValue;
         }
 
         protected virtual TAbstractAnalysisValue VisitSymbolInitializer(ISymbolInitializerOperation operation, ISymbol initializedSymbol, object argument)
@@ -323,6 +326,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             {
                 SetAbstractValue(initializedSymbol, value);
             }
+
             return value;
         }
 
@@ -330,11 +334,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         {
             var value = base.VisitVariableDeclarator(operation, argument);
 
-            // Handle variabl declarations without initializer (IVariableInitializerOperation). 
+            // Handle variable declarations without initializer (IVariableInitializerOperation). 
             var initializer = operation.GetVariableInitializer();
             if (initializer == null)
             {
-                value = UninitializedValue;
+                value = ValueDomain.Bottom;
                 SetAbstractValue(operation.Symbol, value);
             }
 
@@ -395,11 +399,37 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         {
             var value = base.VisitInvocation(operation, argument);
 
-            // Current, we are not performing flow analysis for invocations of lambda or delegate or local function.
+            // Currently, we are not performing flow analysis for invocations of lambda or delegate or local function.
             // Pessimistically assume that all the current state could change and reset all our current analysis data.
             // TODO: Analyze lambda and local functions and flow the values from it's exit block to CurrentAnalysisData.
+            // https://github.com/dotnet/roslyn-analyzers/issues/1547
             ResetCurrentAnalysisData();
             return value;
+        }
+
+        protected void ResetAnalysisData(IDictionary<ISymbol, TAbstractAnalysisValue> currentAnalysisData, IDictionary<ISymbol, TAbstractAnalysisValue> newAnalysisDataOpt)
+        {
+            // Reset the current analysis data, while ensuring that we don't violate the monotonicity, i.e. we cannot remove any existing key from currentAnalysisData.
+            if (newAnalysisDataOpt == null)
+            {
+                // Just set the values for existing keys to UnknownOrMayBeValue.
+                foreach (var key in currentAnalysisData.Keys.ToArray())
+                {
+                    SetAbstractValue(key, UnknownOrMayBeValue);
+                }
+            }
+            else
+            {
+                // Merge the values from current and new analysis data.
+                var keys = currentAnalysisData.Keys.Concat(newAnalysisDataOpt.Keys).ToArray();
+                foreach (var key in keys)
+                {
+                    var value1 = currentAnalysisData.TryGetValue(key, out var currentValue) ? currentValue : ValueDomain.Bottom;
+                    var value2 = newAnalysisDataOpt.TryGetValue(key, out var newValue) ? newValue : ValueDomain.Bottom;
+                    var mergedValue = ValueDomain.Merge(value1, value2);
+                    SetAbstractValue(key, mergedValue);
+                }
+            }
         }
     }
 }

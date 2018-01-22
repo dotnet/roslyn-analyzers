@@ -14,20 +14,20 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     /// </summary>
     internal abstract class DataFlowAnalysis<TAnalysisData, TAnalysisResult, TAbstractAnalysisValue>
         where TAnalysisData : class
-        where TAnalysisResult : class
+        where TAnalysisResult : AbstractBlockAnalysisResult<TAnalysisData, TAbstractAnalysisValue>
     {
         private static readonly ConditionalWeakTable<ControlFlowGraph, DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue>> s_resultCache =
             new ConditionalWeakTable<ControlFlowGraph, DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue>>();
 
-        protected DataFlowAnalysis(AbstractDomain<TAnalysisData> analysisDomain, DataFlowOperationWalker<TAnalysisData, TAbstractAnalysisValue> dataflowOperationWalker, DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt)
+        protected DataFlowAnalysis(AbstractDomain<TAnalysisData> analysisDomain, DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> operationVisitor, DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt)
         {
             AnalysisDomain = analysisDomain;
-            DataFlowOperationWalker = dataflowOperationWalker;
+            OperationVisitor = operationVisitor;
             NullAnalysisResultOpt = nullAnalysisResultOpt;
         }
 
         protected AbstractDomain<TAnalysisData> AnalysisDomain { get; }
-        protected DataFlowOperationWalker<TAnalysisData, TAbstractAnalysisValue> DataFlowOperationWalker { get; }
+        protected DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> OperationVisitor { get; }
         private DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> NullAnalysisResultOpt { get; }
 
         protected DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue> GetOrComputeResultCore(ControlFlowGraph cfg)
@@ -101,14 +101,14 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 }
             }
 
-            return resultBuilder.ToResult(ToResult, DataFlowOperationWalker.GetStateMap());
+            return resultBuilder.ToResult(ToResult, OperationVisitor.GetStateMap());
         }
 
         private TAnalysisData Flow(BasicBlock block, TAnalysisData data)
         {
             foreach (var statement in block.Statements)
             {
-                data = DataFlowOperationWalker.Flow(statement, block, data);
+                data = OperationVisitor.Flow(statement, block, data);
             }
 
             return data;

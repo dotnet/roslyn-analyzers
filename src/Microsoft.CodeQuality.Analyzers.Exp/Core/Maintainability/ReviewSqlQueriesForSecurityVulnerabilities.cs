@@ -216,7 +216,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
                     var nullAnalysisResult = NullAnalysis.GetOrComputeResult(cfg);
                     var stringContentResult = StringContentAnalysis.GetOrComputeResult(cfg, nullAnalysisResult);
                     StringContentAbstractValue value = stringContentResult[argumentValue];
-                    if (value.NonLiteralState == StringContainsState.No)
+                    if (value.NonLiteralState == StringContainsNonLiteralState.No)
                     {
                         // The value is a constant literal or default/unitialized, so avoid flagging this usage.
                         return false;

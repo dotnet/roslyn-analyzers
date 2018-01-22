@@ -13,16 +13,16 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
     /// </summary>
     internal partial class StringContentAnalysis : ForwardDataFlowAnalysis<StringContentAnalysisData, StringContentBlockAnalysisResult, StringContentAbstractValue>
     {
-        private StringContentAnalysis(StringContentAnalysisDomain analysisDomain, StringContentDataFlowOperationWalker dataflowOperationWalker, DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt = null)
-            : base(analysisDomain, dataflowOperationWalker, nullAnalysisResultOpt)
+        private StringContentAnalysis(StringContentAnalysisDomain analysisDomain, StringContentDataFlowOperationVisitor operationVisitor, DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt = null)
+            : base(analysisDomain, operationVisitor, nullAnalysisResultOpt)
         {
         }
 
         public static DataFlowAnalysisResult<StringContentBlockAnalysisResult, StringContentAbstractValue> GetOrComputeResult(ControlFlowGraph cfg, DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt = null)
         {
             var analysisDomain = new StringContentAnalysisDomain(StringContentAbstractValueDomain.Default);
-            var dataflowOperationWalker = new StringContentDataFlowOperationWalker(StringContentAbstractValueDomain.Default, nullAnalysisResultOpt);
-            var nullAnalysis = new StringContentAnalysis(analysisDomain, dataflowOperationWalker, nullAnalysisResultOpt);
+            var operationVisitor = new StringContentDataFlowOperationVisitor(StringContentAbstractValueDomain.Default, nullAnalysisResultOpt);
+            var nullAnalysis = new StringContentAnalysis(analysisDomain, operationVisitor, nullAnalysisResultOpt);
             return nullAnalysis.GetOrComputeResultCore(cfg);
         }
 

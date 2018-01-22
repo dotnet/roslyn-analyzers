@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 namespace Microsoft.CodeAnalysis.Operations.DataFlow
 {
     /// <summary>
-    /// Stack guard for <see cref="DataFlowOperationWalker{TAnalysisData, TAbstractAnalysisValue}"/> to ensure sufficient stack while recursively visiting the operation tree.
+    /// Stack guard for <see cref="DataFlowOperationVisitor{TAnalysisData, TAbstractAnalysisValue}"/> to ensure sufficient stack while recursively visiting the operation tree.
     /// </summary>
     internal static class StackGuard
     {

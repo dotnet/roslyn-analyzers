@@ -10,8 +10,5 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
     Public Class BasicDefineAccessorsForAttributeArgumentsAnalyzer
         Inherits DefineAccessorsForAttributeArgumentsAnalyzer
 
-        Protected Overrides Function IsAssignableTo(fromSymbol As ITypeSymbol, toSymbol As ITypeSymbol, compilation As Compilation) As Boolean
-            Return fromSymbol IsNot Nothing AndAlso toSymbol IsNot Nothing AndAlso DirectCast(compilation, VisualBasicCompilation).ClassifyConversion(fromSymbol, toSymbol).IsWidening
-        End Function
     End Class
 End Namespace

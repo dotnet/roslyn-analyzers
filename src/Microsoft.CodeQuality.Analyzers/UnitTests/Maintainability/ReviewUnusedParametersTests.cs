@@ -108,7 +108,7 @@ End Class
 ");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8884")]
+        [Fact]
         [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
         public void NoDiagnosticDelegateTest2_CSharp()
         {
@@ -125,7 +125,7 @@ public class NeatCode
             a();
         });
     }
-");
+}");
         }
 
         [Fact]
@@ -146,7 +146,7 @@ End Class
 ");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8884")]
+        [Fact]
         [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
         public void NoDiagnosticUsingTest_CSharp()
         {
@@ -166,7 +166,7 @@ class C
 ");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8884")]
+        [Fact]
         [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
         public void NoDiagnosticUsingTest_VB()
         {
@@ -183,7 +183,7 @@ End Class
 ");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8884")]
+        [Fact]
         [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
         public void NoDiagnosticLinqTest_CSharp()
         {
@@ -205,7 +205,7 @@ class C
         }
 
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8884")]
+        [Fact]
         [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
         public void NoDiagnosticLinqTest_VB()
         {
@@ -490,7 +490,7 @@ public class C3
 }");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/19917"), WorkItem(1218, "https://github.com/dotnet/roslyn-analyzers/issues/1218")]
+        [Fact, WorkItem(1218, "https://github.com/dotnet/roslyn-analyzers/issues/1218")]
         public void NoDiagnosticForMethodsUsedAsDelegatesBasic()
         {
             VerifyBasic(@"

@@ -732,6 +732,30 @@ static class C
 ");
     }
 
+        [Fact]
+        public void NoDiagnosticsForSingleStatementMethodsWithDefaultParameters()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public void Foo(string bar, string baz = null)
+    {
+        throw new NotImplementedException();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+Public Class C
+    Public Sub Test(bar As String, Optional baz As String = Nothing)
+        Throw New NotImplementedException()
+    End Sub
+End Class");
+        }
+
     #endregion
 
     #region Unit tests for analyzer diagnostic(s)

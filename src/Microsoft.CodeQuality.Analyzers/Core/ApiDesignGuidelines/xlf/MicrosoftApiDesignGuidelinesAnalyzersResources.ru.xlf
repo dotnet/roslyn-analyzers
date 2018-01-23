@@ -293,8 +293,8 @@
         <note />
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesMessage">
-        <source>Interface methods should be callable by child types</source>
-        <target state="translated">Методы интерфейса должны быть доступны для вызова дочерним типам</target>
+        <source>Make '{0}' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of '{1}' and is visible to derived classes.</source>
+        <target state="needs-review-translation">Методы интерфейса должны быть доступны для вызова дочерним типам</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesTitle">

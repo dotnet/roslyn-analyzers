@@ -310,7 +310,7 @@
     <value>An unsealed externally visible type provides an explicit method implementation of a public interface and does not provide an alternative externally visible method that has the same name.</value>
   </data>
   <data name="InterfaceMethodsShouldBeCallableByChildTypesMessage" xml:space="preserve">
-    <value>Interface methods should be callable by child types</value>
+    <value>Make '{0}' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of '{1}' and is visible to derived classes.</value>
   </data>
   <data name="OverrideMethodsOnComparableTypesTitle" xml:space="preserve">
     <value>Override methods on comparable types</value>

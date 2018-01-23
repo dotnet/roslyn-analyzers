@@ -14,6 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DiagnosticCategory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DiagnosticHelpers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DocumentChangeAction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EnumHelpers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\DiagnosticExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\IDictionaryExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\IEnumerableExtensions.cs" />
@@ -37,7 +38,7 @@
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)AnalyzerUtilitiesResources.resx">
       <GenerateSource>true</GenerateSource>
-	  <ManifestResourceName>Analyzer.Utilities.AnalyzerUtilitiesResources</ManifestResourceName>
+      <ManifestResourceName>Analyzer.Utilities.AnalyzerUtilitiesResources</ManifestResourceName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

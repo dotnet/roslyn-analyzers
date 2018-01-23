@@ -28,6 +28,15 @@ namespace Analyzer.Utilities.Extensions
             return node.GetLocation().CreateDiagnostic(rule, args);
         }
 
+        public static Diagnostic CreateDiagnostic(
+            this SyntaxNode node,
+            DiagnosticDescriptor rule,
+            ImmutableDictionary<string, string> properties,
+            params object[] args)
+        {
+            return node.GetLocation().CreateDiagnostic(rule, properties, args);
+        }
+
         public static IEnumerable<Diagnostic> CreateDiagnostics(
             this IEnumerable<SyntaxToken> tokens,
             DiagnosticDescriptor rule,
@@ -92,10 +101,24 @@ namespace Analyzer.Utilities.Extensions
         {
             if (!location.IsInSource)
             {
-                return Diagnostic.Create(rule, null, args);
+                location = null;
             }
 
             return Diagnostic.Create(rule, location, args);
+        }
+
+        public static Diagnostic CreateDiagnostic(
+            this Location location,
+            DiagnosticDescriptor rule,
+            ImmutableDictionary<string, string> properties,
+            params object[] args)
+        {
+            if (!location.IsInSource)
+            {
+                location = null;
+            }
+
+            return Diagnostic.Create(rule, location, properties, args);
         }
 
         public static IEnumerable<Diagnostic> CreateDiagnostics(
@@ -126,7 +149,7 @@ namespace Analyzer.Utilities.Extensions
             IEnumerable<Location> inSource = locations.Where(l => l.IsInSource);
             if (!inSource.Any())
             {
-                return Diagnostic.Create(rule, null, args);
+                return Diagnostic.Create(rule, null, properties, args);
             }
 
             return Diagnostic.Create(rule,

@@ -3,6 +3,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -220,8 +221,28 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     operationBlocks = operationBlocks.Where(operation => !operation.IsOperationNoneRoot()).ToImmutableArray();
                 }
 
-                if (operationBlocks.Length == 1 &&
-                    operationBlocks[0] is IBlockOperation methodBlock)
+                // In the presence of parameter initializers, there will be multiple operation blocks. We assume that there
+                // is only one IBlockOperation, and that the rest are something else
+                Debug.Assert(!(operationBlocks.Where(op => op.Kind == OperationKind.Block).Count() > 1));
+
+                IBlockOperation methodBlock = null;
+                if (operationBlocks.Length == 1 && operationBlocks[0].Kind == OperationKind.Block)
+                {
+                    methodBlock = (IBlockOperation)operationBlocks[0];
+                }
+                else if (operationBlocks.Length > 1)
+                {
+                    foreach (var block in operationBlocks)
+                    {
+                        if (block.Kind == OperationKind.Block)
+                        {
+                            methodBlock = (IBlockOperation)block;
+                            break;
+                        }
+                    }
+                }
+
+                if (methodBlock != null)
                 {
                     bool IsSingleStatementBody(IBlockOperation body)
                     {

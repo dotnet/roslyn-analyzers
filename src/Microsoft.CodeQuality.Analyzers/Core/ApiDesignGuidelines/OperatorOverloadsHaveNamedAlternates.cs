@@ -24,7 +24,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         internal const string IsTrueText = "IsTrue";
         private const string OpTrueText = "op_True";
         private const string OpFalseText = "op_False";
-        private const string MsdnUrl = "https://msdn.microsoft.com/en-us/library/ms182355.aspx";
+        private const string MsdnUrl = "https://docs.microsoft.com/visualstudio/code-quality/ca2225-operator-overloads-have-named-alternates";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OperatorOverloadsHaveNamedAlternatesTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 

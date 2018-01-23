@@ -23,7 +23,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                          description: s_localizableDescription,
-                                                                         helpLinkUri: "http://msdn.microsoft.com/library/bb264476.aspx",
+                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1821-remove-empty-finalizers",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);

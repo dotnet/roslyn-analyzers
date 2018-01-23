@@ -32,7 +32,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                          description: s_localizableDescription,
-                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182331.aspx",
+                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2214-do-not-call-overridable-methods-in-constructors",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(Rule) : ImmutableArray<DiagnosticDescriptor>.Empty;

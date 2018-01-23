@@ -35,7 +35,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: @"https://msdn.microsoft.com/en-us/library/bb386042.aspx",
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1308-normalize-strings-to-uppercase",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ToUpperRule);

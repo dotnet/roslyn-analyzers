@@ -28,7 +28,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/0fss9skc.aspx",
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1819-properties-should-not-return-arrays",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);

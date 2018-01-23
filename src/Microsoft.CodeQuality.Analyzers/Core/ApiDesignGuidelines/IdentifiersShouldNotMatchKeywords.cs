@@ -30,7 +30,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         // Properties common to all DiagnosticDescriptors for this rule:
         private static readonly string s_category = DiagnosticCategory.Naming;
         private const DiagnosticSeverity Severity = DiagnosticHelpers.DefaultDiagnosticSeverity;
-        private const string HelpLinkUri = "https://msdn.microsoft.com/en-us/library/ms182248.aspx";
+        private const string HelpLinkUri = "https://docs.microsoft.com/visualstudio/code-quality/ca1716-identifiers-should-not-match-keywords";
         private static readonly string[] s_customTags = new[] { WellKnownDiagnosticTags.Telemetry };
 
         internal static DiagnosticDescriptor MemberParameterRule = new DiagnosticDescriptor(RuleId,

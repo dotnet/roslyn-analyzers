@@ -17,7 +17,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
     public sealed class UseLiteralsWhereAppropriateAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1802";
-        internal const string Uri = @"https://msdn.microsoft.com/en-us/library/ms182280.aspx";
+        internal const string Uri = "https://docs.microsoft.com/visualstudio/code-quality/ca1802-use-literals-where-appropriate";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.UseLiteralsWhereAppropriateTitle), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
 

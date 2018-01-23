@@ -41,7 +41,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182151.aspx",
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1032-implement-standard-exception-constructors",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
 

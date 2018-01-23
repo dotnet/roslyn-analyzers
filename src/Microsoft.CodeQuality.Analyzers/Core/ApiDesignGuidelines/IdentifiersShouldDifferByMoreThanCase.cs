@@ -27,7 +27,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                       DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                       isEnabledByDefault: false,
                                                                                       description: new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldDifferByMoreThanCaseDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources)),
-                                                                                      helpLinkUri: "http://msdn.microsoft.com/library/ms182242.aspx",
+                                                                                      helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1708-identifiers-should-differ-by-more-than-case",
                                                                                       customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);

@@ -32,7 +32,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_CA1810_LocalizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182275.aspx",
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1810-initialize-reference-type-static-fields-inline",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         internal static DiagnosticDescriptor CA2207Rule = new DiagnosticDescriptor(CA2207RuleId,
@@ -42,7 +42,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_CA2207_LocalizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182346.aspx",
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2207-initialize-value-type-static-fields-inline",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(CA1810Rule, CA2207Rule);

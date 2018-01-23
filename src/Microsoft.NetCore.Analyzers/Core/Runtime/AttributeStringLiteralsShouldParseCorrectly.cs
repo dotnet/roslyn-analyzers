@@ -34,7 +34,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb264490.aspx",
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2243-attribute-string-literals-should-parse-correctly",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor EmptyRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -43,7 +43,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb264490.aspx",
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2243-attribute-string-literals-should-parse-correctly",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, EmptyRule);

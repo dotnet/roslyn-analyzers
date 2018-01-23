@@ -29,7 +29,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                                       DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                       isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                                       description: s_localizableDescription,
-                                                                                      helpLinkUri: "http://msdn.microsoft.com/library/ms245042.aspx",
+                                                                                      helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1823-avoid-unused-private-fields",
                                                                                       customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);

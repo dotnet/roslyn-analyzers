@@ -33,7 +33,7 @@ namespace Microsoft.NetFramework.Analyzers
                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                         isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                         description: s_localizableDescriptionCA2229,
-                                                                        helpLinkUri: "http://msdn.microsoft.com/library/ms182343.aspx",
+                                                                        helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2229-implement-serialization-constructors",
                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
 
         // Mark ISerializable types with SerializableAttribute
@@ -59,7 +59,7 @@ namespace Microsoft.NetFramework.Analyzers
                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                         isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                         description: s_localizableDescriptionCA2237,
-                                                                        helpLinkUri: "http://msdn.microsoft.com/library/ms182350.aspx",
+                                                                        helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2237-mark-iserializable-types-with-serializableattribute",
                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
 
         // Mark all non-serializable fields
@@ -85,7 +85,7 @@ namespace Microsoft.NetFramework.Analyzers
                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                         isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                         description: s_localizableDescriptionCA2235,
-                                                                        helpLinkUri: "http://msdn.microsoft.com/library/ms182349.aspx",
+                                                                        helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2235-mark-all-non-serializable-fields",
                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleCA2229, RuleCA2235, RuleCA2237);

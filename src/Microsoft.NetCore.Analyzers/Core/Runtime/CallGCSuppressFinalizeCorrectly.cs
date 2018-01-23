@@ -33,7 +33,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-US/library/ms182269.aspx",
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1816-call-gc-suppressfinalize-correctly",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor NotCalledRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -42,7 +42,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-US/library/ms182269.aspx",
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1816-call-gc-suppressfinalize-correctly",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor NotPassedThisRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -51,7 +51,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-US/library/ms182269.aspx",
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1816-call-gc-suppressfinalize-correctly",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor OutsideDisposeRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -60,7 +60,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-US/library/ms182269.aspx",
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1816-call-gc-suppressfinalize-correctly",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(NotCalledWithFinalizerRule, NotCalledRule, NotPassedThisRule, OutsideDisposeRule);

@@ -26,7 +26,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                     DiagnosticCategory.Design,
                                                                     DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                     isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-                                                                    helpLinkUri: "http://msdn.microsoft.com/library/ms182158.aspx",
+                                                                    helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1018-mark-attributes-with-attributeusageattribute",
                                                                     customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);

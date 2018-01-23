@@ -253,14 +253,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return false;
             }
 
-            // Only analyze the last non-implicit statement in the function
+            // Only skip analyzing the last non-implicit statement in the function
             bool foundBlock = false;
             foreach (var statement in enclosingBlock.Operations)
             {
                 if (statement == operationContext.Operation)
                 {
                     foundBlock = true;
-                    continue;
                 }
                 else if (foundBlock)
                 {
@@ -268,10 +267,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     {
                         return false;
                     }
-                }
-                else
-                {
-                    continue;
                 }
             }
 

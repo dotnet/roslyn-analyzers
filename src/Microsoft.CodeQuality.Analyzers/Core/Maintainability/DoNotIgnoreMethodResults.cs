@@ -62,7 +62,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 "ThrowsAnyAsync",
             });
 
-
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
 
         private static readonly LocalizableString s_localizableMessageObjectCreation = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessageObjectCreation), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
@@ -285,6 +284,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             else
             {
                 IArgumentOperation argumentOperation = enclosingBlock.GetAncestor<IArgumentOperation>(OperationKind.Argument);
+
+                if (argumentOperation == null)
+                {
+                    return false;
+                }
+
                 return IsNUnitThrowsArgument(argumentOperation.Parameter) || IsXunitThrowsArgument(argumentOperation.Parameter);
             }
         }

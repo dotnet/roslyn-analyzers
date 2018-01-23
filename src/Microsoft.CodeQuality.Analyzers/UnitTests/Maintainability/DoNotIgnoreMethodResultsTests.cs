@@ -513,11 +513,9 @@ End Class", MSTestExpectedExceptionAttribute.VisualBasic },
                 GetBasicStringCreationResultAt(11, 9, "ThrowsException", "ToLower"));
         }
 
-
         #endregion
 
         #region Helpers
-
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {

@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -42,6 +43,25 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 "PadRight",
                 "Substring",
             });
+
+        private static readonly ImmutableHashSet<string> s_nUnitMethodNames = ImmutableHashSet.CreateRange(
+            new[] {
+                "Throws",
+                "Catch",
+                "DoesNotThrow",
+                "ThrowsAsync",
+                "CatchAsync",
+                "DoesNotThrowAsync"
+            });
+
+        private static readonly ImmutableHashSet<string> s_xUnitMethodNames = ImmutableHashSet.Create(
+            new[] {
+                "Throws",
+                "ThrowsAsync",
+                "ThrowsAny",
+                "ThrowsAnyAsync",
+            });
+
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
 
@@ -113,6 +133,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
                 INamedTypeSymbol expectedExceptionType = WellKnownTypes.ExpectedException(compilationContext.Compilation);
+                INamedTypeSymbol nunitAssertType = WellKnownTypes.NunitAssert(compilationContext.Compilation);
+                INamedTypeSymbol xunitAssertType = WellKnownTypes.XunitAssert(compilationContext.Compilation);
 
                 compilationContext.RegisterOperationBlockStartAction(osContext =>
                 {
@@ -124,11 +146,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                     osContext.RegisterOperationAction(opContext =>
                     {
-                        if (ShouldSkipAnalyzing(opContext, expectedExceptionType))
-                        {
-                            return;
-                        }
-
                         IOperation expression = ((IExpressionStatementOperation)opContext.Operation).Operation;
                         DiagnosticDescriptor rule = null;
                         string targetMethodName = null;
@@ -174,6 +191,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                         if (rule != null)
                         {
+                            if (ShouldSkipAnalyzing(opContext, expectedExceptionType, xunitAssertType, nunitAssertType))
+                            {
+                                return;
+                            }
+
                             Diagnostic diagnostic = Diagnostic.Create(rule, expression.Syntax.GetLocation(), method.Name, targetMethodName);
                             opContext.ReportDiagnostic(diagnostic);
                         }
@@ -182,46 +204,33 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             });
         }
 
-        private static bool ShouldSkipAnalyzing(OperationAnalysisContext operationContext, INamedTypeSymbol expectedExceptionType)
+        private static bool ShouldSkipAnalyzing(OperationAnalysisContext operationContext, INamedTypeSymbol expectedExceptionType, INamedTypeSymbol xunitAssertType, INamedTypeSymbol nunitAssertType)
         {
-            bool IsThrowsArgument(IParameterSymbol parameterSymbol, string argumentName, ImmutableHashSet<string> methodNames, string containingSymbol)
+            bool IsThrowsArgument(IParameterSymbol parameterSymbol, string argumentName, ImmutableHashSet<string> methodNames, INamedTypeSymbol assertSymbol)
             {
                 return parameterSymbol.Name == argumentName &&
                        parameterSymbol.ContainingSymbol is IMethodSymbol methodSymbol &&
                        methodNames.Contains(methodSymbol.Name) &&
-                       methodSymbol.ContainingSymbol.ToDisplayString() == containingSymbol;
+                       methodSymbol.ContainingSymbol == assertSymbol;
             }
 
             bool IsNUnitThrowsArgument(IParameterSymbol parameterSymbol)
             {
-                var methodNames = ImmutableHashSet.Create(new[]
-                {
-                    "Throws",
-                    "Catch",
-                    "DoesNotThrow",
-                    "ThrowsAsync",
-                    "CatchAsync",
-                    "DoesNotThrowAsync"
-                });
-
-                return IsThrowsArgument(parameterSymbol, "code", methodNames, "NUnit.Framework.Assert");
+                return IsThrowsArgument(parameterSymbol, "code", s_nUnitMethodNames, nunitAssertType);
             }
 
             bool IsXunitThrowsArgument(IParameterSymbol parameterSymbol)
             {
-                var methodNames = ImmutableHashSet.Create(new[]
-                {
-                    "Throws",
-                    "ThrowsAsync",
-                    "ThrowsAny",
-                    "ThrowsAnyAsync",
-                });
-
-                return IsThrowsArgument(parameterSymbol, "testCode", methodNames, "Xunit.Assert");
+                return IsThrowsArgument(parameterSymbol, "testCode", s_xUnitMethodNames, xunitAssertType);
             }
 
             // We skip analysis for the last statement in a lambda passed to Assert.Throws/ThrowsAsync (xUnit and NUnit), or the last
             // statement in a method annotated with [ExpectedException] (MSTest)
+
+            if (expectedExceptionType == null && xunitAssertType == null && nunitAssertType == null)
+            {
+                return false;
+            }
 
             // Note: We do not attempt to account for a synchronously-running ThrowsAsync with something like return Task.CompletedTask;
             // as the last line.
@@ -280,19 +289,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             }
             else
             {
-                // Look for an enclosing IArgumentOperation
-                IOperation parentArgument = enclosingBlock;
-                do
-                {
-                    parentArgument = parentArgument.Parent;
-                } while (parentArgument != null && parentArgument.Kind != OperationKind.Argument);
-
-                if (parentArgument == null)
-                {
-                    return false;
-                }
-
-                IArgumentOperation argumentOperation = (IArgumentOperation)parentArgument;
+                IArgumentOperation argumentOperation = enclosingBlock.GetAncestor<IArgumentOperation>(OperationKind.Argument);
                 return IsNUnitThrowsArgument(argumentOperation.Parameter) || IsXunitThrowsArgument(argumentOperation.Parameter);
             }
         }

@@ -138,14 +138,8 @@
   <data name="ReviewUnusedParametersMessage" xml:space="preserve">
     <value>Parameter {0} of method {1} is never used. Remove the parameter or use it in the method body.</value>
   </data>
-  <data name="RemoveUnusedLocalsTitle" xml:space="preserve">
-    <value>Remove unused locals</value>
-  </data>
-  <data name="RemoveUnusedLocalsDescription" xml:space="preserve">
-    <value>Unused local variables and unnecessary assignments increase the size of an assembly and decrease performance.</value>
-  </data>
-  <data name="RemoveUnusedLocalsMessage" xml:space="preserve">
-    <value>Remove unused locals</value>
+  <data name="RemoveUnusedParameterMessage" xml:space="preserve">
+    <value>Remove unused parameter</value>
   </data>
   <data name="DoNotIgnoreMethodResultsTitle" xml:space="preserve">
     <value>Do not ignore method results</value>

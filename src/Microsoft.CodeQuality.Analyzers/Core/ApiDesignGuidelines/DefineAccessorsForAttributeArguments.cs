@@ -35,7 +35,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                     DiagnosticCategory.Design,
                                                                                     DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                     isEnabledByDefault: false,
-                                                                                    helpLinkUri: "http://msdn.microsoft.com/library/ms182136.aspx",
+                                                                                    helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1019-define-accessors-for-attribute-arguments",
                                                                                     customTags: WellKnownDiagnosticTags.Telemetry);
 
         internal static DiagnosticDescriptor IncreaseVisibilityRule = new DiagnosticDescriptor(RuleId,
@@ -44,7 +44,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                                DiagnosticCategory.Design,
                                                                                                DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                                isEnabledByDefault: false,
-                                                                                               helpLinkUri: "http://msdn.microsoft.com/library/ms182136.aspx",
+                                                                                               helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1019-define-accessors-for-attribute-arguments",
                                                                                                customTags: WellKnownDiagnosticTags.Telemetry);
 
         internal static DiagnosticDescriptor RemoveSetterRule = new DiagnosticDescriptor(RuleId,
@@ -53,7 +53,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                          DiagnosticCategory.Design,
                                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                          isEnabledByDefault: false,
-                                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182136.aspx",
+                                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1019-define-accessors-for-attribute-arguments",
                                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, IncreaseVisibilityRule, RemoveSetterRule);

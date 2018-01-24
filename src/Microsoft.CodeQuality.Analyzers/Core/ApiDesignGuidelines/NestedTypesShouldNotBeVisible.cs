@@ -26,7 +26,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         // Properties common to the descriptors defined by this analyzer.
         private static readonly string s_category = DiagnosticCategory.Design;
         private const DiagnosticSeverity Severity = DiagnosticHelpers.DefaultDiagnosticSeverity;
-        private const string HelpLinkUrl = "https://msdn.microsoft.com/en-us/library/ms182162.aspx";
+        private const string HelpLinkUrl = "https://docs.microsoft.com/visualstudio/code-quality/ca1034-nested-types-should-not-be-visible";
         private static readonly string[] s_customTags = { WellKnownDiagnosticTags.Telemetry };
 
         internal static DiagnosticDescriptor DefaultRule = new DiagnosticDescriptor(RuleId,

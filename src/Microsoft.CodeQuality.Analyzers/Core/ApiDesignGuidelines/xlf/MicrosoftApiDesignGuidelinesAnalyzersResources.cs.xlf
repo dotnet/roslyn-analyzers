@@ -293,8 +293,8 @@
         <note />
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesMessage">
-        <source>Interface methods should be callable by child types</source>
-        <target state="translated">Metody rozhraní mají být volatelné podřízenými typy.</target>
+        <source>Make '{0}' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of '{1}' and is visible to derived classes.</source>
+        <target state="needs-review-translation">Metody rozhraní mají být volatelné podřízenými typy.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesTitle">
@@ -649,7 +649,7 @@
       </trans-unit>
       <trans-unit id="CollectionsShouldImplementGenericInterfaceMessage">
         <source>Collection '{0}' directly or indirectly inherits '{1}' without implementing '{2}'. Publicly-visible collections should implement the generic version to broaden usability.</source>
-        <target state="needs-review-translation">Kolekce mají implementovat obecné rozhraní.</target>
+        <target state="translated">Kolekce {0} přímo nebo nepřímo dědí {1} bez implementace {2}. Veřejně viditelné kolekce by kvůli větší využitelnosti měly implementovat obecnou verzi.</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Title">

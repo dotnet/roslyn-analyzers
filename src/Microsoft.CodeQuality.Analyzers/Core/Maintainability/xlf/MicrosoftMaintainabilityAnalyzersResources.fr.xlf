@@ -37,19 +37,9 @@
         <target state="translated">Le paramètre {0} de la méthode {1} n'est jamais utilisé. Supprimez le paramètre ou utilisez-le dans le corps de la méthode.</target>
         <note />
       </trans-unit>
-      <trans-unit id="RemoveUnusedLocalsTitle">
-        <source>Remove unused locals</source>
-        <target state="translated">Supprimer les variables locales inutilisées</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="RemoveUnusedLocalsDescription">
-        <source>Unused local variables and unnecessary assignments increase the size of an assembly and decrease performance.</source>
-        <target state="translated">Les variables locales inutilisées et les assignations inutiles augmentent la taille d'un assembly et diminuent les performances.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="RemoveUnusedLocalsMessage">
-        <source>Remove unused locals</source>
-        <target state="translated">Supprimer les variables locales inutilisées</target>
+      <trans-unit id="RemoveUnusedParameterMessage">
+        <source>Remove unused parameter</source>
+        <target state="new">Remove unused parameter</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsTitle">

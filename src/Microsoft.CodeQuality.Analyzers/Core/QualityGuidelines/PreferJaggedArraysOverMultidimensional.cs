@@ -24,7 +24,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         private static readonly LocalizableString s_localizableMessageBody = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.PreferJaggedArraysOverMultidimensionalMessageBody), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.PreferJaggedArraysOverMultidimensionalDescription), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
 
-        private const string helpLink = "https://msdn.microsoft.com/en-us/library/ms182277.aspx";
+        private const string helpLink = "https://docs.microsoft.com/visualstudio/code-quality/ca1814-prefer-jagged-arrays-over-multidimensional";
 
         internal static DiagnosticDescriptor DefaultRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,

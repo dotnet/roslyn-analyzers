@@ -26,7 +26,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                          description: s_localizableDescriptionCA1401,
-                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182209.aspx",
+                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1401-p-invokes-should-not-be-visible",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
 
         private static readonly LocalizableString s_localizableMessageAndTitleCA2101 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
@@ -39,7 +39,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                          description: s_localizableDescriptionCA2101,
-                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182319.aspx",
+                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2101-specify-marshaling-for-p-invoke-string-arguments",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleCA1401, RuleCA2101);

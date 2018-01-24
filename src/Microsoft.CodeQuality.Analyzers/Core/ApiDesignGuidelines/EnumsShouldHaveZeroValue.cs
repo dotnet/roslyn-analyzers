@@ -51,7 +51,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                        DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                        isEnabledByDefault: false,
                                                                        description: s_localizableDescription,
-                                                                       helpLinkUri: "http://msdn.microsoft.com/library/ms182149.aspx",
+                                                                       helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1008-enums-should-have-zero-value",
                                                                        customTags: new[] { WellKnownDiagnosticTags.Telemetry, RuleRenameCustomTag });
 
         private static readonly LocalizableString s_localizableMessageRuleMultipleZero = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
@@ -62,7 +62,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                isEnabledByDefault: false,
                                                                description: s_localizableDescription,
-                                                               helpLinkUri: "http://msdn.microsoft.com/library/ms182149.aspx",
+                                                               helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1008-enums-should-have-zero-value",
                                                                customTags: new[] { WellKnownDiagnosticTags.Telemetry, RuleMultipleZeroCustomTag });
 
         private static readonly LocalizableString s_localizableMessageRuleNoZero = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
@@ -73,7 +73,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                isEnabledByDefault: false,
                                                                description: s_localizableDescription,
-                                                               helpLinkUri: "http://msdn.microsoft.com/library/ms182149.aspx",
+                                                               helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1008-enums-should-have-zero-value",
                                                                customTags: new[] { WellKnownDiagnosticTags.Telemetry, RuleNoZeroCustomTag });
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleRename, RuleMultipleZero, RuleNoZero);

@@ -293,8 +293,8 @@
         <note />
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesMessage">
-        <source>Interface methods should be callable by child types</source>
-        <target state="translated">Los tipos secundarios deben poder llamar a los métodos de interfaz</target>
+        <source>Make '{0}' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of '{1}' and is visible to derived classes.</source>
+        <target state="needs-review-translation">Los tipos secundarios deben poder llamar a los métodos de interfaz</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesTitle">
@@ -649,7 +649,7 @@
       </trans-unit>
       <trans-unit id="CollectionsShouldImplementGenericInterfaceMessage">
         <source>Collection '{0}' directly or indirectly inherits '{1}' without implementing '{2}'. Publicly-visible collections should implement the generic version to broaden usability.</source>
-        <target state="needs-review-translation">Las colecciones deben implementar la interfaz genérica</target>
+        <target state="translated">La colección "{0}" hereda de manera directa o indirecta "{1}" sin implementar "{2}". Las colecciones visibles públicamente deben implementar la versión genérica para ampliar la facilidad de uso.</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Title">

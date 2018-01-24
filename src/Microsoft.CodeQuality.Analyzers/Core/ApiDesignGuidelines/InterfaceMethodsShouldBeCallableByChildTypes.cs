@@ -38,7 +38,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                           DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                           isEnabledByDefault: false,
                                                                           description: s_localizableDescription,
-                                                                          helpLinkUri: "https://msdn.microsoft.com/library/ms182153.aspx",
+                                                                          helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1033-interface-methods-should-be-callable-by-child-types",
                                                                           customTags: WellKnownDiagnosticTags.Telemetry);
 
         public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(Rule) : ImmutableArray<DiagnosticDescriptor>.Empty;

@@ -37,19 +37,9 @@
         <target state="translated">{1} 메서드의 {0} 매개 변수가 사용되지 않았습니다. 매개 변수를 제거하거나 메서드 본문에 사용하세요.</target>
         <note />
       </trans-unit>
-      <trans-unit id="RemoveUnusedLocalsTitle">
-        <source>Remove unused locals</source>
-        <target state="translated">사용하지 않는 지역을 제거하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="RemoveUnusedLocalsDescription">
-        <source>Unused local variables and unnecessary assignments increase the size of an assembly and decrease performance.</source>
-        <target state="translated">사용하지 않는 지역 변수와 불필요한 할당으로 인해 어셈블리의 크기가 늘어나고 성능이 저하됩니다.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="RemoveUnusedLocalsMessage">
-        <source>Remove unused locals</source>
-        <target state="translated">사용하지 않는 지역을 제거하세요.</target>
+      <trans-unit id="RemoveUnusedParameterMessage">
+        <source>Remove unused parameter</source>
+        <target state="new">Remove unused parameter</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsTitle">

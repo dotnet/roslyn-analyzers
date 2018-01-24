@@ -194,17 +194,17 @@
       </trans-unit>
       <trans-unit id="AvoidDuplicateElementInitializationDescription">
         <source>Indexed elements in objects initializers must initialize unique elements. A duplicate index might overwrite a previous element initialization.</source>
-        <target state="new">Indexed elements in objects initializers must initialize unique elements. A duplicate index might overwrite a previous element initialization.</target>
+        <target state="translated">При индексации элементов в инициализаторах объектов необходимо инициализировать уникальные элементы. Повторяющийся индекс может перезаписать предыдущую инициализацию элемента.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDuplicateElementInitializationMessage">
         <source>The element at index [{0}] has already been initialized. Previous initializations of this element may be overwritten.</source>
-        <target state="new">The element at index [{0}] has already been initialized. Previous initializations of this element may be overwritten.</target>
+        <target state="translated">Элемент с индексом [{0}] уже был инициализирован. Предыдущие инициализации этого элемента могут быть перезаписаны.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDuplicateElementInitializationTitle">
         <source>Do not duplicate indexed element initializations</source>
-        <target state="new">Do not duplicate indexed element initializations</target>
+        <target state="translated">Не повторяйте инициализацию индексируемых элементов</target>
         <note />
       </trans-unit>
     </body>

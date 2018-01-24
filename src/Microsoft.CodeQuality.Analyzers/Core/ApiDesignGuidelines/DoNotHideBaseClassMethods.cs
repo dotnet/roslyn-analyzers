@@ -30,7 +30,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
             description: s_localizableDescription,
-            helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182143.aspx",
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1061-do-not-hide-base-class-methods",
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);

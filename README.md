@@ -30,7 +30,7 @@ For instructions on using this tutorial, see [Instructions](src/MetaCompilation.
 Microsoft.CodeAnalysis.Analyzers
 --------------------------------
 
-*Latest stable version:* [1.1.0](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers/)
+*Latest stable version:* [2.6.0](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers/)
 
 Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
 
@@ -39,7 +39,7 @@ Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
 Microsoft.CodeQuality.Analyzers
 --------------------------------
 
-*NuGet link (no stable version yet)*: <https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers/>
+*Latest stable version:* [2.6.0](https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers/)
 
 Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
 
@@ -48,7 +48,7 @@ Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
 Microsoft.NetCore.Analyzers
 -----------------
 
-*NuGet link (no stable version yet)*: <https://www.nuget.org/packages/Microsoft.NetCore.Analyzers/>
+*Latest stable version:* [2.6.0](https://www.nuget.org/packages/Microsoft.NetCore.Analyzers/)
 
 Analyzers for APIs specific to .NET Core.
 
@@ -57,7 +57,7 @@ Analyzers for APIs specific to .NET Core.
 Microsoft.NetFramework.Analyzers
 -----------------
 
-*NuGet link (no stable version yet)*: <https://www.nuget.org/packages/Microsoft.NetFramework.Analyzers/>
+*Latest stable version:* [2.6.0](https://www.nuget.org/packages/Microsoft.NetFramework.Analyzers/)
 
 Analyzers for APIs specific to the desktop .NET Framework.
 
@@ -66,7 +66,7 @@ Analyzers for APIs specific to the desktop .NET Framework.
 Roslyn.Diagnostics.Analyzers
 -------------------------------
 
-*NuGet link (no stable version yet)*: <https://www.nuget.org/packages/Roslyn.Diagnostics.Analyzers/>
+*Latest stable version:* [2.6.0](https://www.nuget.org/packages/Roslyn.Diagnostics.Analyzers/)
 
 Contains analyzers specific to the .NET Compiler Platform ("Roslyn") project.
 
@@ -75,7 +75,7 @@ Contains analyzers specific to the .NET Compiler Platform ("Roslyn") project.
 Text.Analyzers
 -------------------------------
 
-*NuGet link (no stable version yet)*: <https://www.nuget.org/packages/Text.Analyzers/>
+*Latest stable version:* [2.6.0](https://www.nuget.org/packages/Text.Analyzers/)
 
 Contains analyzers for text included in code, such as comments.
 
@@ -83,18 +83,13 @@ Getting Started
 ===============
 
 1. Clone the repository
-2. Install NuGet packages: `msbuild /t:restore RoslynAnalyzers.sln`
-3. Build: `msbuild RoslynAnalyzers.sln`
-
-Execute `cibuild.cmd` to clean, restore, build and runs tests
+2. Restore and build: `build.cmd`
+3. Execute tests: `test.cmd`
 
 Submitting Pull Requests
 ========================
 
-Prior to submitting a pull request, ensure the build and all tests pass using BuildAndTest.proj:
-```
-msbuild BuildAndTest.proj
-```
+Prior to submitting a pull request, ensure the build and all tests pass using using steps 2 and 3 above.
 
 Versioning Scheme for Analyzer Packages
 =======================================
@@ -105,16 +100,17 @@ Recommended version of Analyzer Packages
 =======================================
 
 Recommended Visual Studio Version: **Visual Studio 2017 15.5 Preview5, RTW or later**
-Recommended Analyzer Package Version: **Version 2.6.0-beta2**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/2.6.0-beta2
 
-Due to the fact that large number of our analyzers were based on the *not-yet-shipped IOperation APIs* in Roslyn, they were in beta stage and tied to a specific compiler/Visual Studio version. IOperation API shipped in **Visual Studio 2017 15.5 Preview5**, and we will soon release fully supported analyzer release packages that should work on all future compiler/Visual Studio versions. Please use the following guidelines when choosing the version of analyzer packages to use on a specific version of Visual Studio/compiler toolset:
+Recommended Analyzer Package Version: **Version 2.6.0**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/2.6.0
+
+Due to the fact that large number of our analyzers were based on the *not-yet-shipped IOperation APIs* in Roslyn, they were in beta stage and tied to a specific compiler/Visual Studio version. IOperation API shipped in **Visual Studio 2017 15.5 Preview5**, and we have released fully supported **version 2.6.0** analyzer packages that should work on all future compiler/Visual Studio versions. Please use the following guidelines when choosing the version of analyzer packages to use on a specific version of Visual Studio/compiler toolset:
 
 1. **Visual Studio 2015 RTW**: Analyzer package **Version 1.0.1**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/1.0.1
 2. **Visual Studio 2015 Update 1**: Analyzer package **Version 1.1.0**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/1.1.0
 3. **Visual Studio 2015 Update 2 and 3**: Analyzer package **Version 1.2.0-beta2**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/1.2.0-beta2
 4. **Visual Studio 2017 RTW (15.0), 15.1 and 15.2**: Analyzer package **Version 2.0.0-beta2**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/2.0.0-beta2
 5.  **Visual Studio 2017 15.3**: Analyzer package **Version 2.3.0-beta1**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/2.3.0-beta1
-6.  **Visual Studio 2017 Preview5, RTW or later**: Analyzer package **Version 2.6.0-beta2**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/2.6.0-beta2
+6.  **Visual Studio 2017 15.5 Preview5, RTW or later**: Analyzer package **Version 2.6.0**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/2.6.0
 
 On Visual Studio 2017 15.5 and later releases, you can also install a custom **Microsoft Code Analysis VSIX** containing these analyzers as a Visual Studio extension for all your managed projects. See details here: https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.MicrosoftCodeAnalysis2017
 

@@ -18,7 +18,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     {
         internal const string RuleId = "CA1063";
 
-        private const string HelpLinkUri = "https://msdn.microsoft.com/library/ms244737.aspx";
+        private const string HelpLinkUri = "https://docs.microsoft.com/visualstudio/code-quality/ca1063-implement-idisposable-correctly";
         private const string DisposeMethodName = "Dispose";
         private const string GarbageCollectorTypeName = "System.GC";
         private const string SuppressFinalizeMethodName = "SuppressFinalize";

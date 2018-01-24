@@ -19,11 +19,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         private static readonly ConditionalWeakTable<ControlFlowGraph, DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue>> s_resultCache =
             new ConditionalWeakTable<ControlFlowGraph, DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue>>();
 
-        protected DataFlowAnalysis(AbstractDomain<TAnalysisData> analysisDomain, DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> operationVisitor, DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt)
+        protected DataFlowAnalysis(AbstractDomain<TAnalysisData> analysisDomain, DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> operationVisitor)
         {
             AnalysisDomain = analysisDomain;
             OperationVisitor = operationVisitor;
-            NullAnalysisResultOpt = nullAnalysisResultOpt;
         }
 
         protected AbstractDomain<TAnalysisData> AnalysisDomain { get; }

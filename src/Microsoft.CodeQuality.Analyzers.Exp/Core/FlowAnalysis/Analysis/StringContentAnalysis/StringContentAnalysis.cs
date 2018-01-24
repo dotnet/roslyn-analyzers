@@ -13,8 +13,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
     /// </summary>
     internal partial class StringContentAnalysis : ForwardDataFlowAnalysis<StringContentAnalysisData, StringContentBlockAnalysisResult, StringContentAbstractValue>
     {
-        private StringContentAnalysis(StringContentAnalysisDomain analysisDomain, StringContentDataFlowOperationVisitor operationVisitor, DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt = null)
-            : base(analysisDomain, operationVisitor, nullAnalysisResultOpt)
+        private StringContentAnalysis(StringContentAnalysisDomain analysisDomain, StringContentDataFlowOperationVisitor operationVisitor)
+            : base(analysisDomain, operationVisitor)
         {
         }
 
@@ -22,7 +22,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
         {
             var analysisDomain = new StringContentAnalysisDomain(StringContentAbstractValueDomain.Default);
             var operationVisitor = new StringContentDataFlowOperationVisitor(StringContentAbstractValueDomain.Default, nullAnalysisResultOpt);
-            var nullAnalysis = new StringContentAnalysis(analysisDomain, operationVisitor, nullAnalysisResultOpt);
+            var nullAnalysis = new StringContentAnalysis(analysisDomain, operationVisitor);
             return nullAnalysis.GetOrComputeResultCore(cfg);
         }
 

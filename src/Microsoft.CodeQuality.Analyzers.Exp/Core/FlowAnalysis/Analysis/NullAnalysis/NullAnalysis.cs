@@ -14,7 +14,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
     internal partial class NullAnalysis : ForwardDataFlowAnalysis<NullAnalysisData, NullBlockAnalysisResult, NullAbstractValue>
     {
         private NullAnalysis(NullAnalysisDomain analysisDomain, NullDataFlowOperationVisitor operationVisitor)
-            : base(analysisDomain, operationVisitor, nullAnalysisResultOpt: null)
+            : base(analysisDomain, operationVisitor)
         {
         }
 

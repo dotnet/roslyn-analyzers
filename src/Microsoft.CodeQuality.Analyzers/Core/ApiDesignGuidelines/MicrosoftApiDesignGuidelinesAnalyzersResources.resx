@@ -322,7 +322,8 @@
     <value>{0} should override Equals since it implements IComparable.</value>
   </data>
   <data name="OverrideMethodsOnComparableTypesMessageOperator" xml:space="preserve">
-    <value>{0} should define operator '{1}' since it implements IComparable.</value>
+    <value>{0} should define operator(s) '{1}' since it implements IComparable.</value>
+    <comment>1 is a comma-separated list</comment>
   </data>
   <data name="MovePInvokesToNativeMethodsClassTitle" xml:space="preserve">
     <value>Move pinvokes to native methods class</value>
@@ -1013,5 +1014,9 @@
   </data>
   <data name="DoNotHideBaseClassMethodsTitle" xml:space="preserve">
     <value>Do not hide base class methods</value>
+  </data>
+  <data name="OverrideMethodsOnComparableTypesMessageBoth" xml:space="preserve">
+    <value>{0} should define operator(s) '{1}' and Equals since it implements IComparable.</value>
+    <comment>1 is a comma-separated list</comment>
   </data>
 </root>

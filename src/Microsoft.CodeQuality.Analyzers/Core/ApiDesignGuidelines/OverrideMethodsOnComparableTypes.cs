@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -22,12 +23,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     {
         internal const string RuleId = "CA1036";
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageEquals = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageOperators = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageOperator), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageBoth = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageBoth), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
-        internal static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
+        internal static readonly DiagnosticDescriptor RuleEquals = new DiagnosticDescriptor(RuleId,
                                                                                   s_localizableTitle,
-                                                                                  s_localizableMessage,
+                                                                                  s_localizableMessageEquals,
                                                                                   DiagnosticCategory.Design,
                                                                                   DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                   isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
@@ -35,7 +38,29 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                   helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1036-override-methods-on-comparable-types",
                                                                                   customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        internal static readonly DiagnosticDescriptor RuleOperator = new DiagnosticDescriptor(RuleId,
+                                                                                  s_localizableTitle,
+                                                                                  s_localizableMessageOperators,
+                                                                                  DiagnosticCategory.Design,
+                                                                                  DiagnosticHelpers.DefaultDiagnosticSeverity,
+                                                                                  isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
+                                                                                  description: s_localizableDescription,
+                                                                                  helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1036-override-methods-on-comparable-types",
+                                                                                  customTags: WellKnownDiagnosticTags.Telemetry);
+
+
+        internal static readonly DiagnosticDescriptor RuleBoth = new DiagnosticDescriptor(RuleId,
+                                                                                  s_localizableTitle,
+                                                                                  s_localizableMessageBoth,
+                                                                                  DiagnosticCategory.Design,
+                                                                                  DiagnosticHelpers.DefaultDiagnosticSeverity,
+                                                                                  isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
+                                                                                  description: s_localizableDescription,
+                                                                                  helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1036-override-methods-on-comparable-types",
+                                                                                  customTags: WellKnownDiagnosticTags.Telemetry);
+
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleBoth, RuleEquals, RuleOperator);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -73,12 +98,70 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             if (namedTypeSymbol.AllInterfaces.Any(t => t.Equals(comparableType) ||
                                                       (t.ConstructedFrom?.Equals(genericComparableType) ?? false)))
             {
-                if (!(namedTypeSymbol.OverridesEquals() && namedTypeSymbol.ImplementsComparisonOperators()))
+                var overridesEquals = namedTypeSymbol.OverridesEquals();
+                string comparisonOperatorsString = GetNeededComparisonOperators(namedTypeSymbol);
+
+                if (!overridesEquals && comparisonOperatorsString.Length != 0)
                 {
-                    // CA1036: {0} should override Equals since it implements IComparable.
-                    addDiagnostic(namedTypeSymbol.CreateDiagnostic(Rule, namedTypeSymbol.Name));
+                    addDiagnostic(namedTypeSymbol.CreateDiagnostic(RuleBoth, namedTypeSymbol.Name, comparisonOperatorsString));
+                }
+                else if (!overridesEquals)
+                {
+                    addDiagnostic(namedTypeSymbol.CreateDiagnostic(RuleEquals, namedTypeSymbol.Name));
+                }
+                else if (comparisonOperatorsString.Length != 0)
+                {
+                    addDiagnostic(namedTypeSymbol.CreateDiagnostic(RuleOperator, namedTypeSymbol.Name, comparisonOperatorsString));
                 }
             }
+        }
+
+        private static string GetNeededComparisonOperators(INamedTypeSymbol symbol)
+        {
+            bool first = true;
+            StringBuilder sb = new StringBuilder();
+            void Append(string @operator)
+            {
+                if (!first)
+                {
+                    sb.Append(", ");
+                }
+
+                sb.Append(@operator);
+                first = false;
+            }
+
+            if (!symbol.ImplementsOperator(WellKnownMemberNames.EqualityOperatorName))
+            {
+                Append(symbol.Language == LanguageNames.CSharp ? "==" : "=");
+            }
+
+            if (!symbol.ImplementsOperator(WellKnownMemberNames.InequalityOperatorName))
+            {
+                Append(symbol.Language == LanguageNames.CSharp ? "!=" : "<>");
+            }
+
+            if (!symbol.ImplementsOperator(WellKnownMemberNames.LessThanOperatorName))
+            {
+                Append("<");
+            }
+
+            if (!symbol.ImplementsOperator(WellKnownMemberNames.LessThanOrEqualOperatorName))
+            {
+                Append("<=");
+            }
+
+            if (!symbol.ImplementsOperator(WellKnownMemberNames.GreaterThanOperatorName))
+            {
+                Append(">");
+            }
+
+            if (!symbol.ImplementsOperator(WellKnownMemberNames.GreaterThanOrEqualOperatorName))
+            {
+                Append(">=");
+            }
+
+            return sb.ToString();
         }
     }
 }

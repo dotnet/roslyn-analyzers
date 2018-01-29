@@ -397,21 +397,6 @@
         <target state="translated">FlagsAttribute로 열거형을 표시하지 마세요.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityTitle">
-        <source>Do not decrease inherited member visibility</source>
-        <target state="translated">상속된 멤버 표시 유형을 줄이지 마세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityDescription">
-        <source>You should not change the access modifier for inherited members. Changing an inherited member to private does not prevent callers from accessing the base class implementation of the method.</source>
-        <target state="translated">상속된 멤버의 액세스 한정자를 변경하지 않아야 합니다. 상속된 멤버를 private으로 변경해도 호출자는 메서드의 기본 클래스 구현에 액세스할 수 있습니다.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityMessage">
-        <source>Do not decrease inherited member visibility</source>
-        <target state="translated">상속된 멤버 표시 유형을 줄이지 마세요.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesTitle">
         <source>Operator overloads have named alternates</source>
         <target state="translated">연산자 오버로드에는 명명된 대체 항목이 있습니다.</target>
@@ -1430,11 +1415,6 @@
       <trans-unit id="AppendConfigureAwaitFalse">
         <source>Append .ConfigureAwait(false)</source>
         <target state="translated">.ConfigureAwait(false)를 추가하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityCodeFix">
-        <source>Increase visibility for '{0}'</source>
-        <target state="translated">'{0}'의 표시 수준을 높이세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">

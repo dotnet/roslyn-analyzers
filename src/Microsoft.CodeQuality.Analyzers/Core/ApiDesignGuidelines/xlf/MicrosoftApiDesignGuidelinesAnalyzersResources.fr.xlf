@@ -397,21 +397,6 @@
         <target state="translated">Ne pas marquer les enums avec l'attribut FlagsAttribute</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityTitle">
-        <source>Do not decrease inherited member visibility</source>
-        <target state="translated">Ne pas réduire la visibilité des membres hérités</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityDescription">
-        <source>You should not change the access modifier for inherited members. Changing an inherited member to private does not prevent callers from accessing the base class implementation of the method.</source>
-        <target state="translated">Vous ne devez pas changer le modificateur d'accès des membres hérités. Si vous changez un membre hérité en membre privé, cela n'empêche pas les appelants d'accéder à l'implémentation de classe de base de la méthode.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityMessage">
-        <source>Do not decrease inherited member visibility</source>
-        <target state="translated">Ne pas réduire la visibilité des membres hérités</target>
-        <note />
-      </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesTitle">
         <source>Operator overloads have named alternates</source>
         <target state="translated">Les surcharges d'opérateur offrent d'autres méthodes nommées</target>
@@ -1430,11 +1415,6 @@
       <trans-unit id="AppendConfigureAwaitFalse">
         <source>Append .ConfigureAwait(false)</source>
         <target state="translated">Ajouter .ConfigureAwait(false)</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityCodeFix">
-        <source>Increase visibility for '{0}'</source>
-        <target state="translated">Augmenter la visibilité pour '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">

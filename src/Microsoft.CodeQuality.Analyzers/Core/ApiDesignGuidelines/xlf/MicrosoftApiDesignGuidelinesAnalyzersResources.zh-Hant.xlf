@@ -397,21 +397,6 @@
         <target state="translated">請勿將列舉標記為 FlagsAttribute</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityTitle">
-        <source>Do not decrease inherited member visibility</source>
-        <target state="translated">請勿降低繼承成員的可見度</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityDescription">
-        <source>You should not change the access modifier for inherited members. Changing an inherited member to private does not prevent callers from accessing the base class implementation of the method.</source>
-        <target state="translated">您不應變更繼承成員的存取修飾詞。將繼承成員變更為私用，並不會讓呼叫者無法存取方法的基底類別實作。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityMessage">
-        <source>Do not decrease inherited member visibility</source>
-        <target state="translated">請勿降低繼承成員的可見度</target>
-        <note />
-      </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesTitle">
         <source>Operator overloads have named alternates</source>
         <target state="translated">運算子多載有具名的替代項</target>
@@ -1430,11 +1415,6 @@
       <trans-unit id="AppendConfigureAwaitFalse">
         <source>Append .ConfigureAwait(false)</source>
         <target state="translated">附加 .ConfigureAwait(false)</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityCodeFix">
-        <source>Increase visibility for '{0}'</source>
-        <target state="translated">增加 '{0}' 的可見度</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">

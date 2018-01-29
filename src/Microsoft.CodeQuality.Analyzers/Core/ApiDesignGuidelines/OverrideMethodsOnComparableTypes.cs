@@ -48,7 +48,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                   helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1036-override-methods-on-comparable-types",
                                                                                   customTags: WellKnownDiagnosticTags.Telemetry);
 
-
         internal static readonly DiagnosticDescriptor RuleBoth = new DiagnosticDescriptor(RuleId,
                                                                                   s_localizableTitle,
                                                                                   s_localizableMessageBoth,
@@ -58,7 +57,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                   description: s_localizableDescription,
                                                                                   helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1036-override-methods-on-comparable-types",
                                                                                   customTags: WellKnownDiagnosticTags.Telemetry);
-
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleBoth, RuleEquals, RuleOperator);
 

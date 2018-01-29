@@ -119,16 +119,20 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static string GetNeededComparisonOperators(INamedTypeSymbol symbol)
         {
             bool first = true;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = null;
             void Append(string @operator)
             {
-                if (!first)
+                if (first)
+                {
+                    sb = new StringBuilder();
+                    first = false;
+                }
+                else
                 {
                     sb.Append(", ");
                 }
 
                 sb.Append(@operator);
-                first = false;
             }
 
             if (!symbol.ImplementsOperator(WellKnownMemberNames.EqualityOperatorName))
@@ -161,7 +165,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 Append(">=");
             }
 
-            return sb.ToString();
+            return sb?.ToString() ?? string.Empty;
         }
     }
 }

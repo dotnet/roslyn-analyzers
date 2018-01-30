@@ -397,21 +397,6 @@
         <target state="translated">Neoznačujte výčty atributem FlagsAttribute.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityTitle">
-        <source>Do not decrease inherited member visibility</source>
-        <target state="translated">Nesnižujte viditelnost zděděného člena.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityDescription">
-        <source>You should not change the access modifier for inherited members. Changing an inherited member to private does not prevent callers from accessing the base class implementation of the method.</source>
-        <target state="translated">Modifikátor přístupu zděděných členů byste neměli měnit. Změnou zděděného člena na privátní nezabráníte volajícím v přístupu k implementaci základní třídy této metody.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityMessage">
-        <source>Do not decrease inherited member visibility</source>
-        <target state="translated">Nesnižujte viditelnost zděděného člena.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesTitle">
         <source>Operator overloads have named alternates</source>
         <target state="translated">Přetížení operátorů mají pojmenované alternativy.</target>
@@ -1430,11 +1415,6 @@
       <trans-unit id="AppendConfigureAwaitFalse">
         <source>Append .ConfigureAwait(false)</source>
         <target state="translated">Připojte .ConfigureAwait(false).</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityCodeFix">
-        <source>Increase visibility for '{0}'</source>
-        <target state="translated">Zvyšte viditelnost {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">

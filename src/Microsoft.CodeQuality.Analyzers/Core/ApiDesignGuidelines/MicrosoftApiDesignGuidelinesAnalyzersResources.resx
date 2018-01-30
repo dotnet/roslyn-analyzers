@@ -372,15 +372,6 @@
   <data name="DoNotMarkEnumsWithFlagsMessage" xml:space="preserve">
     <value>Do not mark enums with FlagsAttribute</value>
   </data>
-  <data name="DoNotDecreaseInheritedMemberVisibilityTitle" xml:space="preserve">
-    <value>Do not decrease inherited member visibility</value>
-  </data>
-  <data name="DoNotDecreaseInheritedMemberVisibilityDescription" xml:space="preserve">
-    <value>You should not change the access modifier for inherited members. Changing an inherited member to private does not prevent callers from accessing the base class implementation of the method.</value>
-  </data>
-  <data name="DoNotDecreaseInheritedMemberVisibilityMessage" xml:space="preserve">
-    <value>Do not decrease inherited member visibility</value>
-  </data>
   <data name="OperatorOverloadsHaveNamedAlternatesTitle" xml:space="preserve">
     <value>Operator overloads have named alternates</value>
   </data>
@@ -992,9 +983,6 @@
   </data>
   <data name="AppendConfigureAwaitFalse" xml:space="preserve">
     <value>Append .ConfigureAwait(false)</value>
-  </data>
-  <data name="DoNotDecreaseInheritedMemberVisibilityCodeFix" xml:space="preserve">
-    <value>Increase visibility for '{0}'</value>
   </data>
   <data name="ImplementIEquatableWhenOverridingObjectEqualsDescription" xml:space="preserve">
     <value>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</value>

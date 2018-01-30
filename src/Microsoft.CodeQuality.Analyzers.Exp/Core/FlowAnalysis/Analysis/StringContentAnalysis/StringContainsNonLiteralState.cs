@@ -3,7 +3,7 @@
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
 {
     /// <summary>
-    /// String state for presence of non-literal values for symbol/operation tracked by <see cref="StringContentAnalysis"/>.
+    /// String state for presence of non-literal values for <see cref="AnalysisEntity"/>/<see cref="IOperation"/> tracked by <see cref="StringContentAnalysis"/>.
     /// </summary>
     internal enum StringContainsNonLiteralState
     {

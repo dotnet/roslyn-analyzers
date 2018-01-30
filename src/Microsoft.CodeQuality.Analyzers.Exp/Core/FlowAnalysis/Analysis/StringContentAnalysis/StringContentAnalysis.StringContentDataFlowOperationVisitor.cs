@@ -7,7 +7,7 @@ using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
 {
-    using StringContentAnalysisData = IDictionary<ISymbol, StringContentAbstractValue>;
+    using StringContentAnalysisData = IDictionary<AnalysisEntity, StringContentAbstractValue>;
 
     internal partial class StringContentAnalysis : ForwardDataFlowAnalysis<StringContentAnalysisData, StringContentBlockAnalysisResult, StringContentAbstractValue>
     {
@@ -16,17 +16,24 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
         /// </summary>
         private sealed class StringContentDataFlowOperationVisitor : DataFlowOperationVisitor<StringContentAnalysisData, StringContentAbstractValue>
         {
-            public StringContentDataFlowOperationVisitor(AbstractDomain<StringContentAbstractValue> valueDomain, DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt)
-                : base(valueDomain, nullAnalysisResultOpt)
+            public StringContentDataFlowOperationVisitor(
+                AbstractDomain<StringContentAbstractValue> valueDomain,
+                INamedTypeSymbol containingTypeSymbol,
+                DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt,
+                DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResultOpt)
+                : base(valueDomain, containingTypeSymbol, nullAnalysisResultOpt, pointsToAnalysisResultOpt)
             {
             }
 
             protected override StringContentAbstractValue UnknownOrMayBeValue => StringContentAbstractValue.MayBeContainsNonLiteralState;
-            protected override void SetAbstractValue(ISymbol symbol, StringContentAbstractValue value)
-                => CurrentAnalysisData[symbol] = value;
+            protected override void SetAbstractValue(AnalysisEntity analysisEntity, StringContentAbstractValue value)
+                => CurrentAnalysisData[analysisEntity] = value;
 
-            protected override StringContentAbstractValue GetAbstractValue(ISymbol symbol) =>
-                CurrentAnalysisData.TryGetValue(symbol, out var value) ? value : UnknownOrMayBeValue;
+            protected override bool HasAbstractValue(AnalysisEntity analysisEntity) =>
+                CurrentAnalysisData.ContainsKey(analysisEntity);
+
+            protected override StringContentAbstractValue GetAbstractValue(AnalysisEntity analysisEntity) =>
+                CurrentAnalysisData.TryGetValue(analysisEntity, out var value) ? value : UnknownOrMayBeValue;
 
             protected override StringContentAbstractValue GetAbstractDefaultValue(ITypeSymbol type) =>
                 StringContentAbstractValue.DoesNotContainNonLiteralState;
@@ -89,7 +96,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
                         break;
                 }
 
-                SetAbstractValueForAssignment(operation.Target, value);
+                SetAbstractValueForAssignment(operation.Target, operation.Value, value);
                 return value;
             }
 

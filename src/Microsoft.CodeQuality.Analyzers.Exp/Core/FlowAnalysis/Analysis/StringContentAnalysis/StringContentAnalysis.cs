@@ -5,24 +5,29 @@ using Microsoft.CodeAnalysis.Operations.ControlFlow;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
 {
-    using StringContentAnalysisData = IDictionary<ISymbol, StringContentAbstractValue>;
-    using StringContentAnalysisDomain = MapAbstractDomain<ISymbol, StringContentAbstractValue>;
+    using StringContentAnalysisData = IDictionary<AnalysisEntity, StringContentAbstractValue>;
+    using StringContentAnalysisDomain = MapAbstractDomain<AnalysisEntity, StringContentAbstractValue>;
 
     /// <summary>
-    /// Dataflow analysis to track string content of symbols and operations.
+    /// Dataflow analysis to track string content of <see cref="AnalysisEntity"/>/<see cref="IOperation"/>.
     /// </summary>
     internal partial class StringContentAnalysis : ForwardDataFlowAnalysis<StringContentAnalysisData, StringContentBlockAnalysisResult, StringContentAbstractValue>
     {
+        private static readonly StringContentAnalysisDomain s_StringContentAnalysisDomain = new StringContentAnalysisDomain(StringContentAbstractValueDomain.Default);
+
         private StringContentAnalysis(StringContentAnalysisDomain analysisDomain, StringContentDataFlowOperationVisitor operationVisitor)
             : base(analysisDomain, operationVisitor)
         {
         }
 
-        public static DataFlowAnalysisResult<StringContentBlockAnalysisResult, StringContentAbstractValue> GetOrComputeResult(ControlFlowGraph cfg, DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt = null)
+        public static DataFlowAnalysisResult<StringContentBlockAnalysisResult, StringContentAbstractValue> GetOrComputeResult(
+            ControlFlowGraph cfg,
+            INamedTypeSymbol containingTypeSymbol,
+            DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt = null,
+            DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResultOpt = null)
         {
-            var analysisDomain = new StringContentAnalysisDomain(StringContentAbstractValueDomain.Default);
-            var operationVisitor = new StringContentDataFlowOperationVisitor(StringContentAbstractValueDomain.Default, nullAnalysisResultOpt);
-            var nullAnalysis = new StringContentAnalysis(analysisDomain, operationVisitor);
+            var operationVisitor = new StringContentDataFlowOperationVisitor(StringContentAbstractValueDomain.Default, containingTypeSymbol, nullAnalysisResultOpt, pointsToAnalysisResultOpt);
+            var nullAnalysis = new StringContentAnalysis(s_StringContentAnalysisDomain, operationVisitor);
             return nullAnalysis.GetOrComputeResultCore(cfg);
         }
 

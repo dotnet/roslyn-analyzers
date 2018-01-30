@@ -6,22 +6,22 @@ using Microsoft.CodeAnalysis.Operations.ControlFlow;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
 {
-    using NullAnalysisData = IDictionary<ISymbol, NullAbstractValue>;
+    using NullAnalysisData = IDictionary<AnalysisEntity, NullAbstractValue>;
 
     /// <summary>
     /// Result from execution of <see cref="NullAnalysis"/> on a basic block.
-    /// It store null values for symbols at the start and end of the basic block.
+    /// It store null values for each <see cref="AnalysisEntity"/> at the start and end of the basic block.
     /// </summary>
     internal class NullBlockAnalysisResult : AbstractBlockAnalysisResult<NullAnalysisData, NullAbstractValue>
     {
         public NullBlockAnalysisResult(BasicBlock basicBlock, DataFlowAnalysisInfo<NullAnalysisData> blockAnalysisData)
             : base (basicBlock)
         {
-            InputData = blockAnalysisData.Input?.ToImmutableDictionary() ?? ImmutableDictionary<ISymbol, NullAbstractValue>.Empty;
-            OutputData = blockAnalysisData.Output?.ToImmutableDictionary() ?? ImmutableDictionary<ISymbol, NullAbstractValue>.Empty;
+            InputData = blockAnalysisData.Input?.ToImmutableDictionary() ?? ImmutableDictionary<AnalysisEntity, NullAbstractValue>.Empty;
+            OutputData = blockAnalysisData.Output?.ToImmutableDictionary() ?? ImmutableDictionary<AnalysisEntity, NullAbstractValue>.Empty;
         }
 
-        public ImmutableDictionary<ISymbol, NullAbstractValue> InputData { get; }
-        public ImmutableDictionary<ISymbol, NullAbstractValue> OutputData { get; }
+        public ImmutableDictionary<AnalysisEntity, NullAbstractValue> InputData { get; }
+        public ImmutableDictionary<AnalysisEntity, NullAbstractValue> OutputData { get; }
     }
 }

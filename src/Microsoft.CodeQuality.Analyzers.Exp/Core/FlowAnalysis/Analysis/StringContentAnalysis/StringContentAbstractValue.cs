@@ -9,7 +9,7 @@ using Analyzer.Utilities;
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
 {
     /// <summary>
-    /// Abstract string content data value for symbol/operation tracked by <see cref="StringContentAnalysis"/>.
+    /// Abstract string content data value for <see cref="AnalysisEntity"/>/<see cref="IOperation"/> tracked by <see cref="StringContentAnalysis"/>.
     /// </summary>
     internal partial class StringContentAbstractValue : IEquatable<StringContentAbstractValue>
     {
@@ -70,6 +70,21 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
         public override bool Equals(object obj)
         {
             return Equals(obj as StringContentAbstractValue);
+        }
+
+        public static bool operator ==(StringContentAbstractValue value1, StringContentAbstractValue value2)
+        {
+            if ((object)value1 == null)
+            {
+                return (object)value2 == null;
+            }
+
+            return value1.Equals(value2);
+        }
+
+        public static bool operator !=(StringContentAbstractValue value1, StringContentAbstractValue value2)
+        {
+            return !(value1 == value2);
         }
 
         public bool Equals(StringContentAbstractValue other)

@@ -1,11 +1,10 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
 {
-    using NullAnalysisData = IDictionary<ISymbol, NullAbstractValue>;
+    using NullAnalysisData = IDictionary<AnalysisEntity, NullAbstractValue>;
 
     internal partial class NullAnalysis : ForwardDataFlowAnalysis<NullAnalysisData, NullBlockAnalysisResult, NullAbstractValue>
     {
@@ -14,17 +13,24 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
         /// </summary>
         private sealed class NullDataFlowOperationVisitor : DataFlowOperationVisitor<NullAnalysisData, NullAbstractValue>
         {
-            public NullDataFlowOperationVisitor(AbstractDomain<NullAbstractValue> valueDomain) : base(valueDomain, nullAnalysisResultOpt: null)
+            public NullDataFlowOperationVisitor(
+                AbstractDomain<NullAbstractValue> valueDomain,
+                INamedTypeSymbol containingTypeSymbol,
+                DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResultOpt)
+                : base(valueDomain, containingTypeSymbol, nullAnalysisResultOpt: null, pointsToAnalysisResultOpt: pointsToAnalysisResultOpt)
             {
             }
 
             protected override NullAbstractValue UnknownOrMayBeValue => NullAbstractValue.MaybeNull;
 
-            protected override void SetAbstractValue(ISymbol symbol, NullAbstractValue value) =>
-                CurrentAnalysisData[symbol] = value;
+            protected override void SetAbstractValue(AnalysisEntity analysisEntity, NullAbstractValue value) =>
+                CurrentAnalysisData[analysisEntity] = value;
 
-            protected override NullAbstractValue GetAbstractValue(ISymbol symbol) =>
-                CurrentAnalysisData.TryGetValue(symbol, out var value) ? value : UnknownOrMayBeValue;
+            protected override bool HasAbstractValue(AnalysisEntity analysisEntity) =>
+                CurrentAnalysisData.ContainsKey(analysisEntity);
+
+            protected override NullAbstractValue GetAbstractValue(AnalysisEntity analysisEntity) =>
+                CurrentAnalysisData.TryGetValue(analysisEntity, out var value) ? value : UnknownOrMayBeValue;
 
             protected override NullAbstractValue GetAbstractDefaultValue(ITypeSymbol type)
             {
@@ -247,7 +253,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
 
             private NullAbstractValue GetValueBasedOnInstanceOrReferenceValue(IOperation referenceOrInstance)
             {
-                NullAbstractValue referenceOrInstanceValue = referenceOrInstance != null ? GetState(referenceOrInstance) : NullAbstractValue.NotNull;
+                NullAbstractValue referenceOrInstanceValue = referenceOrInstance != null ? GetCachedAbstractValue(referenceOrInstance) : NullAbstractValue.NotNull;
                 return referenceOrInstanceValue == NullAbstractValue.Null ? NullAbstractValue.Null : NullAbstractValue.MaybeNull;
             }
 

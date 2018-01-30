@@ -1,23 +1,31 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow
 {
-    internal class SetAbstractDomain<T> : AbstractDomain<ISet<T>>
+    internal class SetAbstractDomain<T> : AbstractDomain<ImmutableHashSet<T>>
     {
         public static SetAbstractDomain<T> Default = new SetAbstractDomain<T>();
 
-        public override ISet<T> Bottom => new HashSet<T>();
+        public override ImmutableHashSet<T> Bottom => ImmutableHashSet<T>.Empty;
 
-        public override int Compare(ISet<T> oldValue, ISet<T> newValue)
+        public override int Compare(ImmutableHashSet<T> oldValue, ImmutableHashSet<T> newValue)
         {
-            if ((oldValue == null && newValue != null) ||
-                (oldValue != null && newValue == null))
-                return -1;
+            if (oldValue == null)
+            {
+                return newValue == null ? 0 : -1;
+            }
+            else if (newValue == null)
+            {
+                return 1;
+            }
 
-            if (oldValue == null && newValue == null) return 0;
-            if (ReferenceEquals(oldValue, newValue)) return 0;
+            if (ReferenceEquals(oldValue, newValue))
+            {
+                return 0;
+            }
 
             int result;
             var isSubset = oldValue.IsSubsetOf(newValue);
@@ -42,18 +50,29 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return result;
         }
 
-        public override ISet<T> Merge(ISet<T> value1, ISet<T> value2)
+        public override ImmutableHashSet<T> Merge(ImmutableHashSet<T> value1, ImmutableHashSet<T> value2)
         {
-            if (value1 == null && value2 != null) return value2;
-            if (value1 != null && value2 == null) return value1;
-            if (value1 == null && value2 == null) return null;
+            if (value1 == null)
+            {
+                return value2;
+            }
+            else if (value2 == null)
+            {
+                return value1;
+            }
+            else if (value1.IsEmpty)
+            {
+                return value2;
+            }
+            else if (value2.IsEmpty || ReferenceEquals(value1, value2))
+            {
+                return value1;
+            }
 
-            var result = new HashSet<T>();
-
-            result.UnionWith(value1);
-            result.UnionWith(value2);
-
-            return result;
+            var builder = ImmutableHashSet.CreateBuilder<T>();
+            builder.UnionWith(value1);
+            builder.UnionWith(value2);
+            return builder.ToImmutable();
         }
     }
 }

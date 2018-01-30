@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.VisualBasic;
 using Microsoft.CodeQuality.CSharp.Analyzers.Maintainability;
 using Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability;
 using Test.Utilities;
@@ -221,6 +223,64 @@ public class C
         }
     }
 }");
+        }
+
+        [WorkItem(1524, "https://github.com/dotnet/roslyn-analyzers/issues/1524")]
+        [Fact]
+        public void NoDiagnostic_CSharp5()
+        {
+            VerifyCSharp(@"
+using System;
+class C
+{
+    void M(int x)
+    {
+        throw new ArgumentNullException(""x"");
+    }
+}", parseOptions: CSharpParseOptions.Default.WithLanguageVersion(CodeAnalysis.CSharp.LanguageVersion.CSharp5));
+        }
+
+        [WorkItem(1524, "https://github.com/dotnet/roslyn-analyzers/issues/1524")]
+        [Fact]
+        public void Diagnostic_CSharp6()
+        {
+            VerifyCSharp(@"
+using System;
+class C
+{
+    void M(int x)
+    {
+        throw new ArgumentNullException(""x"");
+    }
+}", parseOptions: CSharpParseOptions.Default.WithLanguageVersion(CodeAnalysis.CSharp.LanguageVersion.CSharp6), expected: GetCSharpNameofResultAt(7, 41, "x"));
+        }
+
+        [WorkItem(1524, "https://github.com/dotnet/roslyn-analyzers/issues/1524")]
+        [Fact]
+        public void NoDiagnostic_VB12()
+        {
+            VerifyBasic(@"
+Imports System
+
+Module Mod1
+    Sub f(s As String)
+        Throw New ArgumentNullException(""s"")
+    End Sub
+End Module", parseOptions: VisualBasicParseOptions.Default.WithLanguageVersion(CodeAnalysis.VisualBasic.LanguageVersion.VisualBasic12));
+        }
+
+        [WorkItem(1524, "https://github.com/dotnet/roslyn-analyzers/issues/1524")]
+        [Fact]
+        public void Diagnostic_VB14()
+        {
+            VerifyBasic(@"
+Imports System
+
+Module Mod1
+    Sub f(s As String)
+        Throw New ArgumentNullException(""s"")
+    End Sub
+End Module", parseOptions: VisualBasicParseOptions.Default.WithLanguageVersion(CodeAnalysis.VisualBasic.LanguageVersion.VisualBasic14), expected: GetBasicNameofResultAt(6, 41, "s"));
         }
 
         #endregion

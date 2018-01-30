@@ -869,7 +869,7 @@ End Class
         private void Verify(string source, string language, DiagnosticAnalyzer analyzer, string testProjectName, DiagnosticResult[] expected)
         {
             var sources = new[] { source };
-            var diagnostics = GetSortedDiagnostics(sources.ToFileAndSource(), language, analyzer, compilationOptions: null, referenceFlags: ReferenceFlags.None, projectName: testProjectName);
+            var diagnostics = GetSortedDiagnostics(sources.ToFileAndSource(), language, analyzer, compilationOptions: null, parseOptions: null, referenceFlags: ReferenceFlags.None, projectName: testProjectName);
             diagnostics.Verify(analyzer, expected);
         }
 

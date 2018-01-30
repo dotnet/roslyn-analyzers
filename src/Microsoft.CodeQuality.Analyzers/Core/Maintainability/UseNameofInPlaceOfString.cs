@@ -13,8 +13,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
     /// <summary>
     /// CA1507 Use nameof to express symbol names
     /// </summary>
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class UseNameofInPlaceOfStringAnalyzer : DiagnosticAnalyzer
+    public abstract class UseNameofInPlaceOfStringAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1507";
         private const string ParamName = "paramName";
@@ -37,6 +36,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleWithSuggestion);
 
+        protected abstract bool IsApplicableToLanguageVersion(ParseOptions options);
+
         public override void Initialize(AnalysisContext analysisContext)
         {
             analysisContext.EnableConcurrentExecution();
@@ -47,6 +48,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         private void AnalyzeArgument(OperationAnalysisContext context)
         {
+            if (!IsApplicableToLanguageVersion(context.Operation.Syntax.SyntaxTree.Options))
+            {
+                return;
+            }
+
             var argument = (IArgumentOperation)context.Operation;
             if ((argument.Value.Kind != OperationKind.Literal 
                 || argument.ArgumentKind != ArgumentKind.Explicit

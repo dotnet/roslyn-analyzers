@@ -13,9 +13,9 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class CSharpUseNameofInPlaceOfStringAnalyzer : UseNameofInPlaceOfStringAnalyzer
     {
-        internal override bool ApplicableLanguageVersion(ParseOptions options)
+        protected override bool IsApplicableToLanguageVersion(ParseOptions options)
         {
-            return (((CSharpParseOptions)options).LanguageVersion > LanguageVersion.CSharp5);
+            return (((CSharpParseOptions)options).LanguageVersion >= LanguageVersion.CSharp6);
         }
     }
 }

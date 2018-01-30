@@ -14,9 +14,8 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
     Public NotInheritable Class BasicUseNameofInPlaceOfStringAnalyzer
         Inherits UseNameofInPlaceOfStringAnalyzer
 
-        Friend Overrides Function ApplicableLanguageVersion(options As ParseOptions) As Boolean
-            Dim langVersion = CType(options, VisualBasicParseOptions).LanguageVersion
-            Return (langVersion > LanguageVersion.VisualBasic12)
+        Protected Overrides Function IsApplicableToLanguageVersion(options As ParseOptions) As Boolean
+            Return CType(options, VisualBasicParseOptions).LanguageVersion >= LanguageVersion.VisualBasic14
         End Function
     End Class
 End Namespace

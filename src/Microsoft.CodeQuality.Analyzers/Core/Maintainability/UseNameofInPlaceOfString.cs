@@ -36,7 +36,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleWithSuggestion);
 
-        internal abstract bool ApplicableLanguageVersion(ParseOptions options);
+        protected abstract bool IsApplicableToLanguageVersion(ParseOptions options);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -48,7 +48,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         private void AnalyzeArgument(OperationAnalysisContext context)
         {
-            if (!ApplicableLanguageVersion(context.Operation.Syntax.SyntaxTree.Options))
+            if (!IsApplicableToLanguageVersion(context.Operation.Syntax.SyntaxTree.Options))
             {
                 return;
             }

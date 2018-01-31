@@ -2,6 +2,7 @@
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
+using Test.Utilities.MinimalImplementations;
 using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
@@ -449,37 +450,24 @@ End Class
         }
 
         [Fact]
-        public void CSharpNoDiagnostic_Attributes()
+        public void CSharpNoDiagnostic_NonTestAttributes()
         {
             VerifyCSharp(@"
 using System;
-using System.Runtime.InteropServices; 
+using System.Runtime.InteropServices;
 
 namespace System.Web.Services
 {
     public class WebMethodAttribute : Attribute { }
 }
 
-public class TestInitializeAttribute : Attribute { }
-public class TestMethodAttribute : Attribute { }
-public class TestCleanupAttribute : Attribute { }
-
 public class Test
 {
     [System.Web.Services.WebMethod]
     public void Method1() { }
 
-    [TestInitialize]
-    public void Method2() { }
-
-    [TestMethod]
-    public void Method3() { }
-
-    [TestCleanup]
-    public void Method4() { }
-
     [ComVisible(true)]
-    public void Method5() { }
+    public void Method2() { }
 }
 
 [ComVisible(true)]
@@ -491,7 +479,7 @@ public class ComVisibleClass
         }
 
         [Fact]
-        public void BasicNoDiagnostic_Attributes()
+        public void BasicNoDiagnostic_NonTestAttributes()
         {
             VerifyBasic(@"
 Imports System
@@ -503,35 +491,13 @@ Namespace System.Web.Services
     End Class
 End Namespace
 
-Public Class TestInitializeAttribute
-    Inherits Attribute
-End Class
-Public Class TestMethodAttribute
-    Inherits Attribute
-End Class
-Public Class TestCleanupAttribute
-    Inherits Attribute
-End Class
-
 Public Class Test
     <System.Web.Services.WebMethod>
     Public Sub Method1()
     End Sub
 
-    <TestInitialize>
-    Public Sub Method2()
-    End Sub
-
-    <TestMethod>
-    Public Sub Method3()
-    End Sub
-
-    <TestCleanup>
-    Public Sub Method4()
-    End Sub
-
     <ComVisible(True)>
-    Public Sub Method5()
+    Public Sub Method2()
     End Sub
 End Class
 
@@ -541,6 +507,45 @@ Public Class ComVisibleClass
     End Sub
 End Class
 ");
+        }
+
+        [Theory]
+        [InlineData("Microsoft.VisualStudio.TestTools.UnitTesting.TestInitialize", MSTestAttributes.CSharp, MSTestAttributes.VisualBasic)]
+        [InlineData("Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod", MSTestAttributes.CSharp, MSTestAttributes.VisualBasic)]
+        [InlineData("Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanup", MSTestAttributes.CSharp, MSTestAttributes.VisualBasic)]
+        [InlineData("Xunit.Fact", XunitApis.CSharp, XunitApis.VisualBasic)]
+        [InlineData("Xunit.Theory", XunitApis.CSharp, XunitApis.VisualBasic)]
+        [InlineData("NUnit.Framework.OneTimeSetUp", NUnitApis.CSharp, NUnitApis.VisualBasic)]
+        [InlineData("NUnit.Framework.OneTimeTearDown", NUnitApis.CSharp, NUnitApis.VisualBasic)]
+        [InlineData("NUnit.Framework.SetUp", NUnitApis.CSharp, NUnitApis.VisualBasic)]
+        [InlineData("NUnit.Framework.TearDown", NUnitApis.CSharp, NUnitApis.VisualBasic)]
+        [InlineData("NUnit.Framework.Test", NUnitApis.CSharp, NUnitApis.VisualBasic)]
+        [InlineData("NUnit.Framework.TestCase(\"asdf\")", NUnitApis.CSharp, NUnitApis.VisualBasic)]
+        [InlineData("NUnit.Framework.TestCaseSource(\"asdf\")", NUnitApis.CSharp, NUnitApis.VisualBasic)]
+        [InlineData("NUnit.Framework.Theory", NUnitApis.CSharp, NUnitApis.VisualBasic)]
+        public void NoDiagnostic_TestAttributes(string testAttributeData, string csharpTestApiDefinitions, string vbTestApiDefinitions)
+        {
+            VerifyCSharp(new string[]
+            {
+                $@"
+using System;
+
+public class Test
+{{
+    [{testAttributeData}]
+    public void Method1() {{}}
+}}
+", csharpTestApiDefinitions });
+
+            VerifyBasic(new[] { $@"
+Imports System
+
+Public Class Test
+    <{testAttributeData}>
+    Public Sub Method1()
+    End Sub
+End Class
+", vbTestApiDefinitions });
         }
 
         private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)

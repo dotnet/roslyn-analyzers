@@ -59,10 +59,13 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 var internalCandidates = new HashSet<IMethodSymbol>();
                 var invokedInternalMethods = new HashSet<IMethodSymbol>();
 
+                // Get all the possible attributes for a test method
+                ImmutableArray<INamedTypeSymbol> skippedAttributes = GetSkippedAttributes(compilationContext.Compilation);
+
                 compilationContext.RegisterOperationBlockStartAction(blockStartContext =>
                 {
                     var methodSymbol = blockStartContext.OwningSymbol as IMethodSymbol;
-                    if (methodSymbol == null || !ShouldAnalyze(methodSymbol, blockStartContext.Compilation))
+                    if (methodSymbol == null || !ShouldAnalyze(methodSymbol, blockStartContext.Compilation, skippedAttributes))
                     {
                         return;
                     }
@@ -127,7 +130,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             });
         }
 
-        private static bool ShouldAnalyze(IMethodSymbol methodSymbol, Compilation compilation)
+        private static bool ShouldAnalyze(IMethodSymbol methodSymbol, Compilation compilation, ImmutableArray<INamedTypeSymbol> skippedAttributes)
         {
             // Modifiers that we don't care about
             if (methodSymbol.IsStatic || methodSymbol.IsOverride || methodSymbol.IsVirtual ||
@@ -148,15 +151,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             }
 
             // FxCop doesn't check for the fully qualified name for these attributes - so we'll do the same.
-            var skipAttributes = new[]
-            {
-                "WebMethodAttribute",
-                "TestInitializeAttribute",
-                "TestMethodAttribute",
-                "TestCleanupAttribute",
-            };
-
-            if (methodSymbol.GetAttributes().Any(attribute => skipAttributes.Contains(attribute.AttributeClass.Name)))
+            if (methodSymbol.GetAttributes().Any(attribute => skippedAttributes.Contains(attribute.AttributeClass)))
             {
                 return false;
             }
@@ -212,6 +207,43 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             }
 
             return false;
+        }
+
+        private static ImmutableArray<INamedTypeSymbol> GetSkippedAttributes(Compilation compilation)
+        {
+            ImmutableArray<INamedTypeSymbol>.Builder builder = null;
+
+            void Add(INamedTypeSymbol symbol)
+            {
+                if (symbol != null)
+                {
+                    builder = builder ?? ImmutableArray.CreateBuilder<INamedTypeSymbol>();
+                    builder.Add(symbol);
+                }
+            }
+
+            Add(WellKnownTypes.WebMethodAttribute(compilation));
+
+            // MSTest attributes
+            Add(WellKnownTypes.TestInitializeAttribute(compilation));
+            Add(WellKnownTypes.TestMethodAttribute(compilation));
+            Add(WellKnownTypes.TestCleanupAttribute(compilation));
+
+            // XUnit attributes
+            Add(WellKnownTypes.XunitFact(compilation));
+            Add(WellKnownTypes.XunitTheory(compilation));
+
+            // NUnit Attributes
+            Add(WellKnownTypes.NunitSetUp(compilation));
+            Add(WellKnownTypes.NunitOneTimeSetUp(compilation));
+            Add(WellKnownTypes.NunitOneTimeTearDown(compilation));
+            Add(WellKnownTypes.NunitTest(compilation));
+            Add(WellKnownTypes.NunitTestCase(compilation));
+            Add(WellKnownTypes.NunitTestCaseSource(compilation));
+            Add(WellKnownTypes.NunitTheory(compilation));
+            Add(WellKnownTypes.NunitTearDown(compilation));
+
+            return builder?.ToImmutable() ?? ImmutableArray<INamedTypeSymbol>.Empty;
         }
     }
 }

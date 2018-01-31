@@ -83,7 +83,7 @@ public class Test
     {
         new Test();
     }
-}", MSTestExpectedExceptionAttribute.CSharp });
+}", MSTestAttributes.CSharp });
 
             VerifyBasic(new[] { @"
 Imports System
@@ -97,7 +97,7 @@ Class C
         Dim sample As String = ""Sample""
         sample.ToLower(CultureInfo.InvariantCulture)
     End Sub
-End Class", MSTestExpectedExceptionAttribute.VisualBasic });
+End Class", MSTestAttributes.VisualBasic });
         }
 
         [WorkItem(1369, "https://github.com/dotnet/roslyn-analyzers/issues/1369")]
@@ -119,7 +119,7 @@ public class Test
     {{
         Assert.{method}{(generic.Length == 0 ? string.Empty : $"<{generic}>")}(() => {{ new Test(); }});
     }}
-}}", useXunit ? XunitAssert.CSharp : NUnitAssert.CSharp });
+}}", useXunit ? XunitApis.CSharp : NUnitApis.CSharp });
 
             VerifyBasic(new[] { $@"
 Imports System
@@ -133,7 +133,7 @@ Class C
                                         sample.ToLower(CultureInfo.InvariantCulture)
                                     End Sub)
     End Sub
-End Class", useXunit ? XunitAssert.VisualBasic : NUnitAssert.VisualBasic });
+End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic });
         }
 
         [WorkItem(1369, "https://github.com/dotnet/roslyn-analyzers/issues/1369")]
@@ -156,7 +156,7 @@ public class Test
     {{
         Assert.{method}{(generic.Length == 0 ? string.Empty : $"<{generic}>")}(async () => {{ new Test(); }});
     }}
-}}", useXunit ? XunitAssert.CSharp : NUnitAssert.CSharp });
+}}", useXunit ? XunitApis.CSharp : NUnitApis.CSharp });
 
             VerifyBasic(new[] { $@"
 Imports System
@@ -170,7 +170,7 @@ Class C
                                         sample.ToLower(CultureInfo.InvariantCulture)
                                     End Function)
     End Sub
-End Class", useXunit ? XunitAssert.VisualBasic : NUnitAssert.VisualBasic });
+End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic });
         }
 
         #endregion
@@ -416,7 +416,7 @@ public class Test
             return;
         }});
     }}
-}}", useXunit ? XunitAssert.CSharp : NUnitAssert.CSharp },
+}}", useXunit ? XunitApis.CSharp : NUnitApis.CSharp },
                 GetCSharpObjectCreationResultAt(10, 13, "ThrowsException", "Test"));
 
             VerifyBasic(new[] { $@"
@@ -432,7 +432,7 @@ Class C
                                         Return
                                     End Sub)
     End Sub
-End Class", useXunit ? XunitAssert.VisualBasic : NUnitAssert.VisualBasic },
+End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic },
                 GetBasicStringCreationResultAt(10, 41, "ThrowsException", "ToLower"));
         }
 
@@ -458,7 +458,7 @@ public class Test
             return;
         }});
     }}
-}}", useXunit ? XunitAssert.CSharp : NUnitAssert.CSharp },
+}}", useXunit ? XunitApis.CSharp : NUnitApis.CSharp },
                 GetCSharpObjectCreationResultAt(10, 13, "ThrowsException", "Test"));
 
             VerifyBasic(new[] { $@"
@@ -474,7 +474,7 @@ Class C
                                         Return
                                     End Function)
     End Sub
-End Class", useXunit ? XunitAssert.VisualBasic : NUnitAssert.VisualBasic },
+End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic },
                 GetBasicStringCreationResultAt(10, 41, "ThrowsException", "ToLower"));
         }
 
@@ -493,7 +493,7 @@ public class Test
         new Test();
         return;
     }
-}", MSTestExpectedExceptionAttribute.CSharp },
+}", MSTestAttributes.CSharp },
                 GetCSharpObjectCreationResultAt(9, 9, "ThrowsException", "Test"));
 
             VerifyBasic(new[] { @"
@@ -509,7 +509,7 @@ Class C
         sample.ToLower(CultureInfo.InvariantCulture)
         Return
     End Sub
-End Class", MSTestExpectedExceptionAttribute.VisualBasic },
+End Class", MSTestAttributes.VisualBasic },
                 GetBasicStringCreationResultAt(11, 9, "ThrowsException", "ToLower"));
         }
 

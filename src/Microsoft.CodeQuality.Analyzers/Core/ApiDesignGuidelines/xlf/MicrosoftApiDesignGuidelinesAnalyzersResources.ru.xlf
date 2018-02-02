@@ -294,7 +294,7 @@
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesMessage">
         <source>Make '{0}' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of '{1}' and is visible to derived classes.</source>
-        <target state="needs-review-translation">Методы интерфейса должны быть доступны для вызова дочерним типам</target>
+        <target state="translated">Сделайте "{0}" запечатанным (критическое изменение, если этот класс уже был поставлен), реализуйте метод неявно или реализуйте новый метод, который предоставляет доступ к функциям "{1}" и видим производным классам.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesTitle">
@@ -1469,32 +1469,32 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
         <source>Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="new">Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</target>
+        <target state="translated">Удалите "{0}" и замените его использование универсальным обработчиком событий, например: EventHandler&lt;T&gt;, где T — допустимые аргументы события (EventArgs).</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
         <source>A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="new">A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</target>
+        <target state="translated">Тип содержит делегат, возвращающий значение void, сигнатура которого содержит два параметра (первый является объектом, а второй — типом, назначаемым для EventArgs), а содержащая сборка ориентирована на платформу Microsoft .NET Framework 2.0.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
         <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="new">Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</target>
+        <target state="translated">Измените событие "{0}", заменив тип "{1}" универсальным обработчиком событий, например: EventHandler&lt;T&gt;, где T — допустимые аргументы события (EventArgs).</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">
         <source>A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.</source>
-        <target state="new">A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.</target>
+        <target state="translated">Делегат, который обрабатывает общедоступное или защищенное событие, имеет неверную сигнатуру, тип возвращаемого значения или имена параметров.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Message">
         <source>Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</source>
-        <target state="new">Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</target>
+        <target state="translated">Измените событие "{0}" так, чтобы использовать универсальный обработчик событий, явно определив тип события. Например: Event &lt;Событие&gt; As EventHandler(Of &lt;Аргументы_события&gt;).</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Description">
         <source>A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="new">A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</target>
+        <target state="translated">Тип содержит событие, которое объявляет делегат EventHandler. Этот делегат возвращает значение void, а его сигнатура содержит два параметра (первый является объектом, а второй — типом, назначаемым для EventArgs). Используемая сборка нацелена на платформу Microsoft .NET Framework 2.0.</target>
         <note />
       </trans-unit>
     </body>

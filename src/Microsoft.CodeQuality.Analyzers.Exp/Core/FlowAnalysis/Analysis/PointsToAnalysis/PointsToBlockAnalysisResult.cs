@@ -10,7 +10,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
     /// <summary>
     /// Result from execution of <see cref="PointsToAnalysis"/> on a basic block.
-    /// It store points to values for each <see cref="AnalysisEntity"/> at the start and end of the basic block.
+    /// It stores the PointsTo value for each <see cref="AnalysisEntity"/> at the start and end of the basic block.
     /// </summary>
     internal class PointsToBlockAnalysisResult : AbstractBlockAnalysisResult<PointsToAnalysisData, PointsToAbstractValue>
     {

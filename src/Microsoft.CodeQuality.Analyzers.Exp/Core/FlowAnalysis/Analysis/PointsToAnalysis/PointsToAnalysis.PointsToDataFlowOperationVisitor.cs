@@ -14,7 +14,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
     internal partial class PointsToAnalysis : ForwardDataFlowAnalysis<PointsToAnalysisData, PointsToBlockAnalysisResult, PointsToAbstractValue>
     {
         /// <summary>
-        /// Operation visitor to flow the points to values across a given statement in a basic block.
+        /// Operation visitor to flow the PointsTo values across a given statement in a basic block.
         /// </summary>
         private sealed class PointsToDataFlowOperationVisitor : DataFlowOperationVisitor<PointsToAnalysisData, PointsToAbstractValue>
         {
@@ -36,7 +36,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             {
                 if (input != null)
                 {
-                    // Always set the points to value for the "this" or "Me" instance.
+                    // Always set the PointsTo value for the "this" or "Me" instance.
                     input[AnalysisEntityFactory.ThisOrMeInstance] = ThisOrMePointsToAbstractValue;
                 }
 
@@ -218,7 +218,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             {
                 var _ = base.VisitObjectOrCollectionInitializer(operation, argument);
 
-                // We should have created and created a new points to value for the associated creation operation.
+                // We should have created a new PointsTo value for the associated creation operation.
                 return GetCachedAbstractValue(operation.Parent);
             }
 
@@ -226,7 +226,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             {
                 var _ = base.VisitArrayInitializer(operation, argument);
 
-                // We should have created and created a new points to value for the associated array creation operation.
+                // We should have created a new PointsTo value for the associated array creation operation.
                 return GetCachedAbstractValue((IArrayCreationOperation)operation.Parent);
             }
 
@@ -243,7 +243,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
             public override PointsToAbstractValue VisitParameterReference(IParameterReferenceOperation operation, object argument)
             {
-                // Create a dummy points to value for each reference type parameter.
+                // Create a dummy PointsTo value for each reference type parameter.
                 if (!operation.Type.HasValueCopySemantics())
                 {
                     var result = AnalysisEntityFactory.TryCreateForSymbolDeclaration(operation.Parameter, out AnalysisEntity analysisEntity);
@@ -266,12 +266,14 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             public override PointsToAbstractValue VisitIsPattern(IIsPatternOperation operation, object argument)
             {
                 // TODO: Handle patterns
+                // https://github.com/dotnet/roslyn-analyzers/issues/1571
                 return base.VisitIsPattern(operation, argument);
             }
 
             public override PointsToAbstractValue VisitDeclarationPattern(IDeclarationPatternOperation operation, object argument)
             {
                 // TODO: Handle patterns
+                // https://github.com/dotnet/roslyn-analyzers/issues/1571
                 return base.VisitDeclarationPattern(operation, argument);
             }
 
@@ -308,13 +310,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             public override PointsToAbstractValue VisitTuple(ITupleOperation operation, object argument)
             {
                 // TODO: Handle tuples.
+                // https://github.com/dotnet/roslyn-analyzers/issues/1571
                 return base.VisitTuple(operation, argument);
-            }
-
-            public override PointsToAbstractValue VisitReturn(IReturnOperation operation, object argument)
-            {
-                var _ = base.VisitReturn(operation, argument);
-                return PointsToAbstractValue.NoLocation;
             }
 
             #endregion

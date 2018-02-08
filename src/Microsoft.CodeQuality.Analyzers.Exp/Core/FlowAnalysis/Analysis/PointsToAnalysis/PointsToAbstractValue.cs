@@ -8,7 +8,7 @@ using System.Diagnostics;
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 {
     /// <summary>
-    /// Abstract points to value for an <see cref="AnalysisEntity"/>/<see cref="IOperation"/> tracked by <see cref="PointsToAnalysis"/>.
+    /// Abstract PointsTo value for an <see cref="AnalysisEntity"/>/<see cref="IOperation"/> tracked by <see cref="PointsToAnalysis"/>.
     /// It contains the set of possible <see cref="AbstractLocation"/>s that the entity or the operation can point to and the <see cref="Kind"/> of the location(s).
     /// </summary>
     internal class PointsToAbstractValue: IEquatable<PointsToAbstractValue>

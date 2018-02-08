@@ -217,12 +217,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         }
 
         private bool TryCreate(ISymbol symbolOpt, ImmutableArray<AbstractIndex> indices,
-            ITypeSymbol type, IOperation instanceOpt, out AnalysisEntity symbolWithLocationinfo)
+            ITypeSymbol type, IOperation instanceOpt, out AnalysisEntity analysisEntity)
         {
             Debug.Assert(symbolOpt != null || !indices.IsEmpty);
             Debug.Assert(type != null);
 
-            symbolWithLocationinfo = null;
+            analysisEntity = null;
 
             // Only analyze member symbols if we have points to analysis result.
             if (_getPointsToAbstractValueOpt == null &&
@@ -258,7 +258,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 }
             }
 
-            symbolWithLocationinfo = Create(symbolOpt, indices, type, instanceLocationOpt, parentOpt);
+            analysisEntity = Create(symbolOpt, indices, type, instanceLocationOpt, parentOpt);
             return true;
         }
 

@@ -262,7 +262,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return true;
         }
 
-        private PointsToAbstractValue EnsureLocation(PointsToAbstractValue instanceLocationOpt, ISymbol symbolOpt, AnalysisEntity parentOpt, ITypeSymbol type)
+        private PointsToAbstractValue EnsureLocation(PointsToAbstractValue instanceLocationOpt, ISymbol symbolOpt, AnalysisEntity parentOpt)
         {
             if (instanceLocationOpt == null && symbolOpt != null)
             {
@@ -289,7 +289,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         private AnalysisEntity Create(ISymbol symbolOpt, ImmutableArray<AbstractIndex> indices, ITypeSymbol type, PointsToAbstractValue instanceLocationOpt, AnalysisEntity parentOpt)
         {
-            instanceLocationOpt = EnsureLocation(instanceLocationOpt, symbolOpt, parentOpt, type);
+            instanceLocationOpt = EnsureLocation(instanceLocationOpt, symbolOpt, parentOpt);
             Debug.Assert(instanceLocationOpt != null);
             var analysisEntity = AnalysisEntity.Create(symbolOpt, indices, type, instanceLocationOpt, parentOpt);
             AddToMap(instanceLocationOpt, analysisEntity);

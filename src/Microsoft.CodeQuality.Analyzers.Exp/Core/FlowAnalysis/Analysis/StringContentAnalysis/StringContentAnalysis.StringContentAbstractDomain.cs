@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
 {
-    using StringContentAnalysisData = IDictionary<ISymbol, StringContentAbstractValue>;
+    using StringContentAnalysisData = IDictionary<AnalysisEntity, StringContentAbstractValue>;
 
     internal partial class StringContentAnalysis : ForwardDataFlowAnalysis<StringContentAnalysisData, StringContentBlockAnalysisResult, StringContentAbstractValue>
     {

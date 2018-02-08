@@ -3,7 +3,7 @@
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
 {
     /// <summary>
-    /// Abstract null value for symbol/operation tracked by <see cref="NullAnalysis"/>.
+    /// Abstract null value for <see cref="AnalysisEntity"/>/<see cref="IOperation"/> tracked by <see cref="NullAnalysis"/>.
     /// </summary>
     internal enum NullAbstractValue
     {

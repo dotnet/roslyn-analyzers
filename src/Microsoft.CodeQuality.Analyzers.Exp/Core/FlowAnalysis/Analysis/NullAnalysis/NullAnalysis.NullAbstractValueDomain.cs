@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
 {
-    using NullAnalysisData = IDictionary<ISymbol, NullAbstractValue>;
+    using NullAnalysisData = IDictionary<AnalysisEntity, NullAbstractValue>;
 
     internal partial class NullAnalysis : ForwardDataFlowAnalysis<NullAnalysisData, NullBlockAnalysisResult, NullAbstractValue>
     {

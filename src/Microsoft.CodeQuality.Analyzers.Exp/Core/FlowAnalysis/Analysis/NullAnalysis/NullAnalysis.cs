@@ -5,11 +5,11 @@ using Microsoft.CodeAnalysis.Operations.ControlFlow;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
 {
-    using NullAnalysisData = IDictionary<ISymbol, NullAbstractValue>;
-    using NullAnalysisDomain = MapAbstractDomain<ISymbol, NullAbstractValue>;
+    using NullAnalysisData = IDictionary<AnalysisEntity, NullAbstractValue>;
+    using NullAnalysisDomain = MapAbstractDomain<AnalysisEntity, NullAbstractValue>;
 
     /// <summary>
-    /// Dataflow analysis to track null-ness of symbols and operations.
+    /// Dataflow analysis to track null-ness of <see cref="AnalysisEntity"/>/<see cref="IOperation"/> instances.
     /// </summary>
     internal partial class NullAnalysis : ForwardDataFlowAnalysis<NullAnalysisData, NullBlockAnalysisResult, NullAbstractValue>
     {
@@ -18,14 +18,17 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
         {
         }
 
-        public static DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> GetOrComputeResult(ControlFlowGraph cfg)
+        public static DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> GetOrComputeResult(
+            ControlFlowGraph cfg,
+            INamedTypeSymbol containingTypeSymbol,
+            DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResultOpt = null)
         {
             var analysisDomain = new NullAnalysisDomain(NullAbstractValueDomain.Default);
-            var operationVisitor = new NullDataFlowOperationVisitor(NullAbstractValueDomain.Default);
+            var operationVisitor = new NullDataFlowOperationVisitor(NullAbstractValueDomain.Default, containingTypeSymbol, pointsToAnalysisResultOpt);
             var nullAnalysis = new NullAnalysis(analysisDomain, operationVisitor);
             return nullAnalysis.GetOrComputeResultCore(cfg);
         }
 
-        internal override NullBlockAnalysisResult ToResult(BasicBlock basicBlock, DataFlowAnalysisInfo<IDictionary<ISymbol, NullAbstractValue>> blockAnalysisData) => new NullBlockAnalysisResult(basicBlock, blockAnalysisData);
+        internal override NullBlockAnalysisResult ToResult(BasicBlock basicBlock, DataFlowAnalysisInfo<IDictionary<AnalysisEntity, NullAbstractValue>> blockAnalysisData) => new NullBlockAnalysisResult(basicBlock, blockAnalysisData);
     }
 }

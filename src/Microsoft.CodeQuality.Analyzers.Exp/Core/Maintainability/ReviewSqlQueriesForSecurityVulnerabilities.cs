@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Operations.ControlFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis;
+using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis;
 
 namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
@@ -213,8 +214,9 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
                 if (topmostBlock != null)
                 {
                     var cfg = ControlFlowGraph.Create(topmostBlock);
-                    var nullAnalysisResult = NullAnalysis.GetOrComputeResult(cfg);
-                    var stringContentResult = StringContentAnalysis.GetOrComputeResult(cfg, nullAnalysisResult);
+                    var nullAnalysisResult = NullAnalysis.GetOrComputeResult(cfg, containingMethod.ContainingType);
+                    var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod.ContainingType, nullAnalysisResult);
+                    var stringContentResult = StringContentAnalysis.GetOrComputeResult(cfg, containingMethod.ContainingType, nullAnalysisResult, pointsToAnalysisResult);
                     StringContentAbstractValue value = stringContentResult[argumentValue];
                     if (value.NonLiteralState == StringContainsNonLiteralState.No)
                     {

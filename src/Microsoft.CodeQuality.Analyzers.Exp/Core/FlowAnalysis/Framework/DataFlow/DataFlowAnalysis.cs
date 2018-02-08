@@ -10,7 +10,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 {
     /// <summary>
     /// Subtype for all dataflow analyses on a control flow graph.
-    /// It performs a worklist based approach to flow abstract data values for symbols/operations across the basic blocks until a fix point is reached.
+    /// It performs a worklist based approach to flow abstract data values for <see cref="AnalysisEntity"/>/<see cref="IOperation"/> across the basic blocks until a fix point is reached.
     /// </summary>
     internal abstract class DataFlowAnalysis<TAnalysisData, TAnalysisResult, TAbstractAnalysisValue>
         where TAnalysisData : class

@@ -17,7 +17,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
         private sealed class StringContentDataFlowOperationVisitor : DataFlowOperationVisitor<StringContentAnalysisData, StringContentAbstractValue>
         {
             public StringContentDataFlowOperationVisitor(
-                AbstractDomain<StringContentAbstractValue> valueDomain,
+                StringContentAbstractValueDomain valueDomain,
                 INamedTypeSymbol containingTypeSymbol,
                 DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt,
                 DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResultOpt)
@@ -25,20 +25,28 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
             {
             }
 
-            protected override StringContentAbstractValue UnknownOrMayBeValue => StringContentAbstractValue.MayBeContainsNonLiteralState;
-            protected override void SetAbstractValue(AnalysisEntity analysisEntity, StringContentAbstractValue value)
-                => CurrentAnalysisData[analysisEntity] = value;
+            protected override IEnumerable<AnalysisEntity> TrackedEntities => CurrentAnalysisData.Keys;
 
-            protected override bool HasAbstractValue(AnalysisEntity analysisEntity) =>
-                CurrentAnalysisData.ContainsKey(analysisEntity);
+            protected override void SetAbstractValue(AnalysisEntity analysisEntity, StringContentAbstractValue value) => CurrentAnalysisData[analysisEntity] = value;
 
-            protected override StringContentAbstractValue GetAbstractValue(AnalysisEntity analysisEntity) =>
-                CurrentAnalysisData.TryGetValue(analysisEntity, out var value) ? value : UnknownOrMayBeValue;
+            protected override bool HasAbstractValue(AnalysisEntity analysisEntity) => CurrentAnalysisData.ContainsKey(analysisEntity);
 
-            protected override StringContentAbstractValue GetAbstractDefaultValue(ITypeSymbol type) =>
-                StringContentAbstractValue.DoesNotContainNonLiteralState;
+            protected override StringContentAbstractValue GetAbstractValue(AnalysisEntity analysisEntity) => CurrentAnalysisData.TryGetValue(analysisEntity, out var value) ? value : ValueDomain.UnknownOrMayBeValue;
+
+            protected override StringContentAbstractValue GetAbstractDefaultValue(ITypeSymbol type) => StringContentAbstractValue.DoesNotContainNonLiteralState;
 
             protected override void ResetCurrentAnalysisData(StringContentAnalysisData newAnalysisDataOpt = null) => ResetAnalysisData(CurrentAnalysisData, newAnalysisDataOpt);
+
+            // TODO: Remove these temporary methods once we move to compiler's CFG
+            // https://github.com/dotnet/roslyn-analyzers/issues/1567
+            #region Temporary methods to workaround lack of *real* CFG
+            protected override StringContentAnalysisData MergeAnalysisData(StringContentAnalysisData value1, StringContentAnalysisData value2)
+                => StringContentAnalysisDomainInstance.Merge(value1, value2);
+            protected override StringContentAnalysisData GetClonedAnalysisData()
+                => GetClonedAnalysisData(CurrentAnalysisData);
+            protected override bool Equals(StringContentAnalysisData value1, StringContentAnalysisData value2)
+                => EqualsHelper(value1, value2);
+            #endregion
 
             #region Visitor methods
             public override StringContentAbstractValue DefaultVisit(IOperation operation, object argument)
@@ -61,7 +69,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
                     }
                 }
 
-                return UnknownOrMayBeValue;
+                return ValueDomain.UnknownOrMayBeValue;
             }
 
             public override StringContentAbstractValue VisitBinaryOperator(IBinaryOperation operation, object argument)

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow
 {
@@ -9,13 +10,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     /// </summary>
     internal class MapAbstractDomain<TKey, TValue> : AbstractDomain<IDictionary<TKey, TValue>>
     {
-        private AbstractDomain<TValue> _valueDomain;
-
-        public MapAbstractDomain(AbstractDomain<TValue> valueDomain)
+        public MapAbstractDomain(AbstractValueDomain<TValue> valueDomain)
         {
-            _valueDomain = valueDomain;
+            ValueDomain = valueDomain;
         }
 
+        protected AbstractValueDomain<TValue> ValueDomain { get; }
         public override IDictionary<TKey, TValue> Bottom => new Dictionary<TKey, TValue>();
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         ///    the value of each such key in <paramref name="oldValue"/> is lesser than or equals the value in <paramref name="newValue"/>.
         /// 3) 1, otherwise.
         /// </returns>
-        public override int Compare(IDictionary<TKey, TValue> oldValue, IDictionary<TKey, TValue> newValue)
+        public sealed override int Compare(IDictionary<TKey, TValue> oldValue, IDictionary<TKey, TValue> newValue)
         {
             if (oldValue == null && newValue != null)
             {
@@ -56,7 +56,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     return 1;
                 }
 
-                var result = _valueDomain.Compare(value, otherValue);
+                var result = ValueDomain.Compare(value, otherValue);
 
                 if (result > 0)
                 {
@@ -71,7 +71,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return newValueIsBigger ? -1 : 0;
         }
 
-        public override IDictionary<TKey, TValue> Merge(IDictionary<TKey, TValue> value1, IDictionary<TKey, TValue> value2)
+        public sealed override IDictionary<TKey, TValue> Merge(IDictionary<TKey, TValue> value1, IDictionary<TKey, TValue> value2)
         {
             if (value1 == null && value2 != null)
             {
@@ -88,12 +88,20 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 return null;
             }
 
+            return MergeCore(value1, value2);
+        }
+
+        protected virtual IDictionary<TKey, TValue> MergeCore(IDictionary<TKey, TValue> value1, IDictionary<TKey, TValue> value2)
+        {
+            Debug.Assert(value1 != null);
+            Debug.Assert(value2 != null);
+
             var result = new Dictionary<TKey, TValue>(value1);
             foreach (var entry in value2)
             {
                 if (result.TryGetValue(entry.Key, out TValue value))
                 {
-                    value = _valueDomain.Merge(value, entry.Value);
+                    value = ValueDomain.Merge(value, entry.Value);
 
                     if (value != null)
                     {
@@ -106,7 +114,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 }
                 else
                 {
-                    result.Add(entry.Key, entry.Value);
+                    result.Add(entry.Key, ValueDomain.UnknownOrMayBeValue);
                 }
             }
 

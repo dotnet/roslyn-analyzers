@@ -6,13 +6,16 @@ using Microsoft.CodeAnalysis.Operations.ControlFlow;
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 {
     using PointsToAnalysisData = IDictionary<AnalysisEntity, PointsToAbstractValue>;
-    using PointsToAnalysisDomain = MapAbstractDomain<AnalysisEntity, PointsToAbstractValue>;
+    using PointsToAnalysisDomain = AnalysisEntityMapAbstractDomain<PointsToAbstractValue>;
 
     /// <summary>
     /// Dataflow analysis to track locations pointed to by <see cref="AnalysisEntity"/> and <see cref="IOperation"/> instances.
     /// </summary>
     internal partial class PointsToAnalysis : ForwardDataFlowAnalysis<PointsToAnalysisData, PointsToBlockAnalysisResult, PointsToAbstractValue>
     {
+        public static readonly PointsToAnalysisDomain PointsToAnalysisDomainInstance = new PointsToAnalysisDomain(PointsToAbstractValueDomain.Default);
+        public static readonly AbstractValueDomain<PointsToAbstractValue> PointsToAbstractValueDomainInstance = PointsToAbstractValueDomain.Default;
+
         private PointsToAnalysis(PointsToAnalysisDomain analysisDomain, PointsToDataFlowOperationVisitor operationVisitor)
             : base(analysisDomain, operationVisitor)
         {
@@ -23,9 +26,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             INamedTypeSymbol containingTypeSymbol,
             DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt = null)
         {
-            var analysisDomain = new PointsToAnalysisDomain(PointsToAbstractValueDomain.Default);
             var operationVisitor = new PointsToDataFlowOperationVisitor(PointsToAbstractValueDomain.Default, containingTypeSymbol, nullAnalysisResultOpt);
-            var pointsToAnalysis = new PointsToAnalysis(analysisDomain, operationVisitor);
+            var pointsToAnalysis = new PointsToAnalysis(PointsToAnalysisDomainInstance, operationVisitor);
             return pointsToAnalysis.GetOrComputeResultCore(cfg);
         }
 

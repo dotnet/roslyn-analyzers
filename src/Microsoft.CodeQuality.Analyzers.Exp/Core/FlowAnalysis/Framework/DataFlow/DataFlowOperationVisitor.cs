@@ -24,7 +24,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         private int _recursionDepth;
 
-        protected abstract TAbstractAnalysisValue UnknownOrMayBeValue { get; }
+        protected abstract IEnumerable<AnalysisEntity> TrackedEntities { get; }
         protected abstract void SetAbstractValue(AnalysisEntity analysisEntity, TAbstractAnalysisValue value);
         protected abstract TAbstractAnalysisValue GetAbstractValue(AnalysisEntity analysisEntity);
         protected abstract bool HasAbstractValue(AnalysisEntity analysisEntity);
@@ -32,15 +32,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         protected abstract void ResetCurrentAnalysisData(TAnalysisData newAnalysisDataOpt = default(TAnalysisData));
         protected virtual bool HasPointsToAnalysisResult => _pointsToAnalysisResultOpt != null;
 
-        protected AbstractDomain<TAbstractAnalysisValue> ValueDomain { get; }
+        protected AbstractValueDomain<TAbstractAnalysisValue> ValueDomain { get; }
         protected TAnalysisData CurrentAnalysisData { get; private set; }
         protected BasicBlock CurrentBasicBlock { get; private set; }
         protected IOperation CurrentStatement { get; private set; }
         protected PointsToAbstractValue ThisOrMePointsToAbstractValue { get; }
         protected AnalysisEntityFactory AnalysisEntityFactory { get; }
-        
+
         protected DataFlowOperationVisitor(
-            AbstractDomain<TAbstractAnalysisValue> valueDomain,
+            AbstractValueDomain<TAbstractAnalysisValue> valueDomain,
             INamedTypeSymbol containingTypeSymbol,
             DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> nullAnalysisResultOpt,
             DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResultOpt)
@@ -166,9 +166,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         /// <summary>
         /// Helper method to reset analysis data for analysis entities.
-        /// If <paramref name="newAnalysisDataOpt"/> is null, all the analysis values in <paramref name="currentAnalysisDataOpt"/> are set to <see cref="UnknownOrMayBeValue"/>.
+        /// If <paramref name="newAnalysisDataOpt"/> is null, all the analysis values in <paramref name="currentAnalysisDataOpt"/> are set to <see cref="ValueDomain.UnknownOrMayBeValue"/>.
         /// Otherwise, all the key-value paris in <paramref name="newAnalysisDataOpt"/> are transfered to <paramref name="currentAnalysisDataOpt"/> and keys in <paramref name="currentAnalysisDataOpt"/> which
-        /// are not present in <paramref name="newAnalysisDataOpt"/> are set to <see cref="UnknownOrMayBeValue"/>.
+        /// are not present in <paramref name="newAnalysisDataOpt"/> are set to <see cref="ValueDomain.UnknownOrMayBeValue"/>.
         /// </summary>
         /// <param name="currentAnalysisDataOpt"></param>
         /// <param name="newAnalysisDataOpt"></param>
@@ -177,10 +177,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             // Reset the current analysis data, while ensuring that we don't violate the monotonicity, i.e. we cannot remove any existing key from currentAnalysisData.
             if (newAnalysisDataOpt == null)
             {
-                // Just set the values for existing keys to UnknownOrMayBeValue.
+                // Just set the values for existing keys to ValueDomain.UnknownOrMayBeValue.
                 foreach (var key in currentAnalysisDataOpt?.Keys.ToArray())
                 {
-                    SetAbstractValue(key, UnknownOrMayBeValue);
+                    SetAbstractValue(key, ValueDomain.UnknownOrMayBeValue);
                 }
             }
             else
@@ -312,7 +312,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             foreach (var dependentAnalysisEntity in dependantAnalysisEntities)
             {
                 // Reset value.
-                SetAbstractValue(dependentAnalysisEntity, UnknownOrMayBeValue);
+                SetAbstractValue(dependentAnalysisEntity, ValueDomain.UnknownOrMayBeValue);
             }
         }
 
@@ -332,7 +332,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             // Handle ref/out arguments as escapes.
             if (operation.Parameter.RefKind != RefKind.None)
             {
-                SetAbstractValueForAssignment(operation.Value, operation.Value, UnknownOrMayBeValue);
+                SetAbstractValueForAssignment(operation.Value, operation.Value, ValueDomain.UnknownOrMayBeValue);
             }
         }
 
@@ -386,9 +386,181 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         private IEnumerable<AnalysisEntity> GetChildAnalysisEntities(PointsToAbstractValue instanceLocationOpt)
         {
             // We are interested only in dependent child/member infos, not the root info.
-            return instanceLocationOpt != null ?
-                AnalysisEntityFactory.GetAnalysisEntitiesCreatedFromInstance(instanceLocationOpt).Where(info => info.IsChildOrInstanceMember) :
-                ImmutableHashSet<AnalysisEntity>.Empty;
+            if (instanceLocationOpt != null)
+            {
+                IEnumerable<AnalysisEntity> trackedEntities = TrackedEntities;
+                if (trackedEntities != null)
+                {
+                    return trackedEntities.Where(entity => entity.InstanceLocation.Equals(instanceLocationOpt) && entity.IsChildOrInstanceMember)
+                        .ToImmutableHashSet();
+                }
+            }
+
+            return ImmutableHashSet<AnalysisEntity>.Empty;
+        }
+
+        #endregion
+
+        // TODO: Remove these temporary methods once we move to compiler's CFG
+        // https://github.com/dotnet/roslyn-analyzers/issues/1567
+        #region Temporary methods to workaround lack of *real* CFG
+        protected abstract TAnalysisData MergeAnalysisData(TAnalysisData value1, TAnalysisData value2);
+        protected abstract TAnalysisData GetClonedAnalysisData();
+        protected IDictionary<AnalysisEntity, TAbstractAnalysisValue> GetClonedAnalysisData(IDictionary<AnalysisEntity, TAbstractAnalysisValue> analysisData)
+            => new Dictionary<AnalysisEntity, TAbstractAnalysisValue>(analysisData);
+        protected abstract bool Equals(TAnalysisData value1, TAnalysisData value2);
+        protected static bool EqualsHelper<TKey, TValue>(IDictionary<TKey, TValue> dict1, IDictionary<TKey, TValue> dict2)
+            => dict1.Count == dict2.Count &&
+               dict1.Keys.All(key => dict2.TryGetValue(key, out TValue value2) && EqualityComparer<TValue>.Default.Equals(dict1[key], value2));
+
+        public override TAbstractAnalysisValue VisitCoalesce(ICoalesceOperation operation, object argument)
+        {
+            var leftValue = Visit(operation.Value, argument);
+            var rightValue = Visit(operation.WhenNull, argument);
+            var leftNullValue = GetNullAbstractValue(operation.Value);
+            switch (leftNullValue)
+            {
+                case NullAbstractValue.Null:
+                    return rightValue;
+
+                case NullAbstractValue.NotNull:
+                    return leftValue;
+
+                default:
+                    return ValueDomain.Merge(leftValue, rightValue);
+            }
+        }
+
+        public override TAbstractAnalysisValue VisitConditionalAccess(IConditionalAccessOperation operation, object argument)
+        {
+            var leftValue = Visit(operation.Operation, argument);
+            var whenNullValue = Visit(operation.WhenNotNull, argument);
+            var leftNullValue = GetNullAbstractValue(operation.Operation);
+            switch (leftNullValue)
+            {
+                case NullAbstractValue.Null:
+                    return GetAbstractDefaultValue(operation.WhenNotNull.Type);
+
+                case NullAbstractValue.NotNull:
+                    return whenNullValue;
+
+                default:
+                    var value1 = GetAbstractDefaultValue(operation.WhenNotNull.Type);
+                    return ValueDomain.Merge(value1, whenNullValue);
+            }
+        }
+
+        public override TAbstractAnalysisValue VisitConditionalAccessInstance(IConditionalAccessInstanceOperation operation, object argument)
+        {
+            IConditionalAccessOperation conditionalAccess = operation.GetConditionalAccess();
+            return GetCachedAbstractValue(conditionalAccess.Operation);
+        }
+
+        public override TAbstractAnalysisValue VisitConditional(IConditionalOperation operation, object argument)
+        {
+            var unusedConditionValue = Visit(operation.Condition, argument);
+            var whenFalseBranchAnalysisData = GetClonedAnalysisData();
+            var whenTrue = Visit(operation.WhenTrue, argument);
+            var whenTrueBranchAnalysisData = CurrentAnalysisData;
+            CurrentAnalysisData = whenFalseBranchAnalysisData;
+            var whenFalse = Visit(operation.WhenFalse, argument);
+
+            if (operation.Condition.ConstantValue.HasValue &&
+                operation.Condition.ConstantValue.Value is bool condition)
+            {
+                CurrentAnalysisData = condition ? whenTrueBranchAnalysisData : whenFalseBranchAnalysisData;
+                return condition ? whenTrue : whenFalse;
+            }
+
+            CurrentAnalysisData = MergeAnalysisData(whenTrueBranchAnalysisData, whenFalseBranchAnalysisData);
+            return ValueDomain.Merge(whenTrue, whenFalse);
+        }
+
+        public override TAbstractAnalysisValue VisitWhileLoop(IWhileLoopOperation operation, object argument)
+        {
+            var previousAnalysisData = GetClonedAnalysisData();
+            do
+            {
+                if (operation.ConditionIsTop)
+                {
+                    var _ = Visit(operation.Condition, argument);
+                }
+
+                var unusedBodyValue = Visit(operation.Body, argument);
+                if (!operation.ConditionIsTop)
+                {
+                    var _ = Visit(operation.Condition, argument);
+                }
+
+                var mergedAnalysisData = MergeAnalysisData(previousAnalysisData, CurrentAnalysisData);
+                previousAnalysisData = CurrentAnalysisData;
+                CurrentAnalysisData = mergedAnalysisData;
+            }
+            while (!Equals(previousAnalysisData, CurrentAnalysisData));
+
+            var unusedIgnoredCondition = Visit(operation.IgnoredCondition, argument);
+            return ValueDomain.Bottom;
+        }
+
+        public override TAbstractAnalysisValue VisitForLoop(IForLoopOperation operation, object argument)
+        {
+            var unusedBeforeValue = VisitArray(operation.Before, argument);
+            var previousAnalysisData = GetClonedAnalysisData();
+            do
+            {
+                var unusedConditionValue = Visit(operation.Condition, argument);
+                var unusedBodyValue = Visit(operation.Body, argument);
+                var unusedLoopBottomValue = VisitArray(operation.AtLoopBottom, argument);
+
+                var mergedAnalysisData = MergeAnalysisData(previousAnalysisData, CurrentAnalysisData);
+                previousAnalysisData = CurrentAnalysisData;
+                CurrentAnalysisData = mergedAnalysisData;
+            }
+            while (!Equals(previousAnalysisData, CurrentAnalysisData));
+
+            return ValueDomain.Bottom;
+        }
+
+        public override TAbstractAnalysisValue VisitForEachLoop(IForEachLoopOperation operation, object argument)
+        {
+            var unusedLoopControlVariableValue = Visit(operation.LoopControlVariable, argument);
+            var unusedCollectionValue = Visit(operation.Collection, argument);
+
+            var previousAnalysisData = GetClonedAnalysisData();
+            do
+            {
+                var unusedBodyValue = Visit(operation.Body, argument);
+
+                var mergedAnalysisData = MergeAnalysisData(previousAnalysisData, CurrentAnalysisData);
+                previousAnalysisData = CurrentAnalysisData;
+                CurrentAnalysisData = mergedAnalysisData;
+            }
+            while (!Equals(previousAnalysisData, CurrentAnalysisData));
+
+            return ValueDomain.Bottom;
+        }
+
+        public override TAbstractAnalysisValue VisitForToLoop(IForToLoopOperation operation, object argument)
+        {
+            var loopControlVariableValue = Visit(operation.LoopControlVariable, argument);
+            var initialValue = Visit(operation.InitialValue, argument);
+            SetAbstractValueForAssignment(operation.LoopControlVariable, operation.InitialValue, initialValue);
+
+            var previousAnalysisData = GetClonedAnalysisData();
+            do
+            {
+                var unusedLimitValue = Visit(operation.LimitValue, argument);
+                var unusedBodyValue = Visit(operation.Body, argument);
+                var unusedStepValue = Visit(operation.StepValue, argument);
+                var unusedNextVariablesValue = VisitArray(operation.NextVariables, argument);
+
+                var mergedAnalysisData = MergeAnalysisData(previousAnalysisData, CurrentAnalysisData);
+                previousAnalysisData = CurrentAnalysisData;
+                CurrentAnalysisData = mergedAnalysisData;
+            }
+            while (!Equals(previousAnalysisData, CurrentAnalysisData));
+
+            return ValueDomain.Bottom;
         }
 
         #endregion
@@ -432,7 +604,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 return value;
             }
 
-            return UnknownOrMayBeValue;
+            return ValueDomain.UnknownOrMayBeValue;
         }
 
         private TAbstractAnalysisValue VisitCore(IOperation operation, object argument)
@@ -503,7 +675,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 }
             }
 
-            return UnknownOrMayBeValue;
+            return ValueDomain.UnknownOrMayBeValue;
         }
 
         public override TAbstractAnalysisValue VisitCollectionElementInitializer(ICollectionElementInitializerOperation operation, object argument)
@@ -526,7 +698,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 var _ = base.VisitCollectionElementInitializer(operation, argument: null);
             }
 
-            return UnknownOrMayBeValue;
+            return ValueDomain.UnknownOrMayBeValue;
         }
 
         public override TAbstractAnalysisValue VisitArrayInitializer(IArrayInitializerOperation operation, object argument)
@@ -541,7 +713,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 SetAbstractValueForElementInitializer(arrayCreation, ImmutableArray.Create(abstractIndex), elementType, elementInitializer, initializerValue);
             }
 
-            return UnknownOrMayBeValue;
+            return ValueDomain.UnknownOrMayBeValue;
         }
 
         public override TAbstractAnalysisValue VisitLocalReference(ILocalReferenceOperation operation, object argument)
@@ -597,64 +769,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return GetAbstractDefaultValue(operation.Type);
         }
 
-        public override TAbstractAnalysisValue VisitCoalesce(ICoalesceOperation operation, object argument)
-        {
-            var leftValue = Visit(operation.Value, argument);
-            var rightValue = Visit(operation.WhenNull, argument);
-            var leftNullValue = GetNullAbstractValue(operation.Value);
-            switch (leftNullValue)
-            {
-                case NullAbstractValue.Null:
-                    return rightValue;
-
-                case NullAbstractValue.NotNull:
-                    return leftValue;
-
-                default:
-                    return ValueDomain.Merge(leftValue, rightValue);
-            }
-        }
-
-        public override TAbstractAnalysisValue VisitConditionalAccess(IConditionalAccessOperation operation, object argument)
-        {
-            var leftValue = Visit(operation.Operation, argument);
-            var whenNullValue = Visit(operation.WhenNotNull, argument);
-            var leftNullValue = GetNullAbstractValue(operation.Operation);
-            switch (leftNullValue)
-            {
-                case NullAbstractValue.Null:
-                    return GetAbstractDefaultValue(operation.WhenNotNull.Type);
-
-                case NullAbstractValue.NotNull:
-                    return whenNullValue;
-
-                default:
-                    var value1 = GetAbstractDefaultValue(operation.WhenNotNull.Type);
-                    return ValueDomain.Merge(value1, whenNullValue);
-            }
-        }
-
-        public override TAbstractAnalysisValue VisitConditionalAccessInstance(IConditionalAccessInstanceOperation operation, object argument)
-        {
-            IConditionalAccessOperation conditionalAccess = operation.GetConditionalAccess();
-            return GetCachedAbstractValue(conditionalAccess.Operation);
-        }
-
-        public override TAbstractAnalysisValue VisitConditional(IConditionalOperation operation, object argument)
-        {
-            var _ = Visit(operation.Condition, argument);
-            var whenTrue = Visit(operation.WhenTrue, argument);
-            var whenFalse = Visit(operation.WhenFalse, argument);
-            
-            if (operation.Condition.ConstantValue.HasValue &&
-                operation.Condition.ConstantValue.Value is bool condition)
-            {
-                return condition ? whenTrue : whenFalse;
-            }
-
-            return ValueDomain.Merge(whenTrue, whenFalse);
-        }
-
         public override TAbstractAnalysisValue VisitInterpolation(IInterpolationOperation operation, object argument)
         {
             var expressionValue = Visit(operation.Expression, argument);
@@ -695,7 +809,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             var operandValue = Visit(operation.Operand, argument);
 
             // Conservative for user defined operator.
-            return operation.OperatorMethod == null ? operandValue : UnknownOrMayBeValue;
+            return operation.OperatorMethod == null ? operandValue : ValueDomain.UnknownOrMayBeValue;
         }
 
         protected virtual TAbstractAnalysisValue VisitSymbolInitializer(ISymbolInitializerOperation operation, ISymbol initializedSymbol, object argument)
@@ -805,6 +919,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return value;
         }
 
-#endregion
+        #endregion
     }
 }

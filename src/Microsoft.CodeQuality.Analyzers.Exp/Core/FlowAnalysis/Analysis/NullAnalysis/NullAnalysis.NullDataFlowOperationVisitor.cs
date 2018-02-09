@@ -11,7 +11,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
         /// <summary>
         /// Operation visitor to flow the null values across a given statement in a basic block.
         /// </summary>
-        private sealed class NullDataFlowOperationVisitor : DataFlowOperationVisitor<NullAnalysisData, NullAbstractValue>
+        private sealed class NullDataFlowOperationVisitor : AnalysisEntityDataFlowOperationVisitor<NullAnalysisData, NullAbstractValue>
         {
             public NullDataFlowOperationVisitor(
                 NullAbstractValueDomain valueDomain,

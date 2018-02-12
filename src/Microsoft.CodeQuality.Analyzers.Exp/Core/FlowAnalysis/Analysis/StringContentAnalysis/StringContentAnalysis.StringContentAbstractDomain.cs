@@ -11,13 +11,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
         /// <summary>
         /// Abstract value domain for <see cref="StringContentAnalysis"/> to merge and compare <see cref="StringContentAbstractValue"/> values.
         /// </summary>
-        private sealed class StringContentAbstractValueDomain : AbstractDomain<StringContentAbstractValue>
+        private sealed class StringContentAbstractValueDomain : AbstractValueDomain<StringContentAbstractValue>
         {
             public static StringContentAbstractValueDomain Default = new StringContentAbstractValueDomain();
 
             private StringContentAbstractValueDomain() { }
 
             public override StringContentAbstractValue Bottom => StringContentAbstractValue.UndefinedState;
+
+            public override StringContentAbstractValue UnknownOrMayBeValue => StringContentAbstractValue.MayBeContainsNonLiteralState;
 
             public override int Compare(StringContentAbstractValue oldValue, StringContentAbstractValue newValue)
             {

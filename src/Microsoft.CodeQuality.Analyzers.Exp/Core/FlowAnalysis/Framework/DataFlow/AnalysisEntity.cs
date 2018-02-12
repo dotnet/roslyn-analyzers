@@ -30,41 +30,45 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     /// </summary>
     internal sealed class AnalysisEntity : IEquatable<AnalysisEntity>
     {
-        private AnalysisEntity(ISymbol symbolOpt, ImmutableArray<AbstractIndex> indices, PointsToAbstractValue location, ITypeSymbol type, AnalysisEntity parentOpt)
+        private AnalysisEntity(
+            ISymbol symbolOpt,
+            ImmutableArray<AbstractIndex> indices,
+            SyntaxNode instanceReferenceOperationSyntaxOpt,
+            PointsToAbstractValue location,
+            ITypeSymbol type,
+            AnalysisEntity parentOpt)
         {
             Debug.Assert(!indices.IsDefault);
-            Debug.Assert(symbolOpt != null || !indices.IsEmpty);
+            Debug.Assert(symbolOpt != null || !indices.IsEmpty || instanceReferenceOperationSyntaxOpt != null);
             Debug.Assert(location != null);
             Debug.Assert(type != null);
             Debug.Assert(parentOpt == null || parentOpt.Type.HasValueCopySemantics());
 
             SymbolOpt = symbolOpt;
             Indices = indices;
+            InstanceReferenceOperationSyntaxOpt = instanceReferenceOperationSyntaxOpt;
             InstanceLocation = location;
             Type = type;
             ParentOpt = parentOpt;
         }
 
-        private AnalysisEntity(IInstanceReferenceOperation instanceReferenceOperation, PointsToAbstractValue location)
+        private AnalysisEntity(ISymbol symbolOpt, ImmutableArray<AbstractIndex> indices, PointsToAbstractValue location, ITypeSymbol type, AnalysisEntity parentOpt)
+            : this(symbolOpt, indices, instanceReferenceOperationSyntaxOpt: null, location: location, type: type, parentOpt: parentOpt)
         {
-            Debug.Assert(instanceReferenceOperation != null);
-            Debug.Assert(location != null);
-
-            InstanceReferenceOperationSyntaxOpt = instanceReferenceOperation.Syntax;
-            InstanceLocation = location;
-            Type = instanceReferenceOperation.Type;
-            Indices = ImmutableArray<AbstractIndex>.Empty;
+            Debug.Assert(symbolOpt != null || !indices.IsEmpty);
         }
 
-        private AnalysisEntity(INamedTypeSymbol typeSymbol, PointsToAbstractValue location)
+        private AnalysisEntity(IInstanceReferenceOperation instanceReferenceOperation, PointsToAbstractValue location)
+            : this(symbolOpt: null, indices: ImmutableArray<AbstractIndex>.Empty, instanceReferenceOperationSyntaxOpt: instanceReferenceOperation.Syntax,
+                  location: location, type: instanceReferenceOperation.Type, parentOpt: null)
         {
-            Debug.Assert(typeSymbol != null);
-            Debug.Assert(location != null);
+            Debug.Assert(instanceReferenceOperation != null);
+        }
 
-            SymbolOpt = typeSymbol;
-            InstanceLocation = location;
-            Type = typeSymbol;
-            Indices = ImmutableArray<AbstractIndex>.Empty;
+        private AnalysisEntity(INamedTypeSymbol namedType, PointsToAbstractValue location)
+            : this(symbolOpt: namedType, indices: ImmutableArray<AbstractIndex>.Empty, instanceReferenceOperationSyntaxOpt: null,
+                  location: location, type: namedType, parentOpt: null)
+        {
         }
 
         public static AnalysisEntity Create(ISymbol symbolOpt, ImmutableArray<AbstractIndex> indices,
@@ -95,6 +99,16 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             Debug.Assert(instanceLocation.Locations.Single().SymbolOpt == typeSymbol);
 
             return new AnalysisEntity(typeSymbol, instanceLocation);
+        }
+
+        public AnalysisEntity WithMergedInstanceLocation(AnalysisEntity analysisEntityToMerge)
+        {
+            Debug.Assert(analysisEntityToMerge != null);
+            Debug.Assert(EqualsIgnoringInstanceLocation(analysisEntityToMerge));
+            Debug.Assert(!InstanceLocation.Equals(analysisEntityToMerge.InstanceLocation));
+
+            var mergedInstanceLocation = PointsToAnalysis.PointsToAnalysis.PointsToAbstractValueDomainInstance.Merge(InstanceLocation, analysisEntityToMerge.InstanceLocation);
+            return new AnalysisEntity(SymbolOpt, Indices, InstanceReferenceOperationSyntaxOpt, mergedInstanceLocation, Type, ParentOpt);
         }
 
         public bool IsChildOrInstanceMember
@@ -151,11 +165,16 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         public bool Equals(AnalysisEntity other)
         {
+            return EqualsIgnoringInstanceLocation(other) &&
+                InstanceLocation == other.InstanceLocation;
+        }
+
+        public bool EqualsIgnoringInstanceLocation(AnalysisEntity other)
+        {
             return other != null &&
                 SymbolOpt == other.SymbolOpt &&
                 InstanceReferenceOperationSyntaxOpt == other.InstanceReferenceOperationSyntaxOpt &&
                 Indices.SequenceEqual(other.Indices) &&
-                InstanceLocation == other.InstanceLocation &&
                 Type.Equals(other.Type) &&
                 ParentOpt == other.ParentOpt;
         }

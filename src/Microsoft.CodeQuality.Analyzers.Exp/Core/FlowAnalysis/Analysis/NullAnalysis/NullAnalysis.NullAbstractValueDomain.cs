@@ -11,13 +11,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
         /// <summary>
         /// Abstract value domain for <see cref="NullAnalysis"/> to merge and compare <see cref="NullAbstractValue"/> values.
         /// </summary>
-        private class NullAbstractValueDomain : AbstractDomain<NullAbstractValue>
+        private class NullAbstractValueDomain : AbstractValueDomain<NullAbstractValue>
         {
             public static NullAbstractValueDomain Default = new NullAbstractValueDomain();
 
             private NullAbstractValueDomain() { }
 
             public override NullAbstractValue Bottom => NullAbstractValue.Undefined;
+
+            public override NullAbstractValue UnknownOrMayBeValue => NullAbstractValue.MaybeNull;
 
             public override int Compare(NullAbstractValue oldValue, NullAbstractValue newValue)
             {

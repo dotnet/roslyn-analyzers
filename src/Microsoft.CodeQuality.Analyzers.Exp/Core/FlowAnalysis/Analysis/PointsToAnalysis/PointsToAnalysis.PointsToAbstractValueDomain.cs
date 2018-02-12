@@ -13,7 +13,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
         /// <summary>
         /// Abstract value domain for <see cref="PointsToAnalysis"/> to merge and compare <see cref="PointsToAbstractValue"/> values.
         /// </summary>
-        private class PointsToAbstractValueDomain : AbstractDomain<PointsToAbstractValue>
+        private class PointsToAbstractValueDomain : AbstractValueDomain<PointsToAbstractValue>
         {
             public static PointsToAbstractValueDomain Default = new PointsToAbstractValueDomain();
             private readonly SetAbstractDomain<AbstractLocation> _locationsDomain = new SetAbstractDomain<AbstractLocation>();
@@ -21,6 +21,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             private PointsToAbstractValueDomain() { }
 
             public override PointsToAbstractValue Bottom => PointsToAbstractValue.Undefined;
+
+            public override PointsToAbstractValue UnknownOrMayBeValue => PointsToAbstractValue.Unknown;
 
             public override int Compare(PointsToAbstractValue oldValue, PointsToAbstractValue newValue)
             {

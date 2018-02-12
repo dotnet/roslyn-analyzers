@@ -19,18 +19,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
         private sealed class PointsToDataFlowOperationVisitor : DataFlowOperationVisitor<PointsToAnalysisData, PointsToAbstractValue>
         {
             public PointsToDataFlowOperationVisitor(
-                AbstractDomain<PointsToAbstractValue> valueDomain,
+                PointsToAbstractValueDomain valueDomain,
                 INamedTypeSymbol containingTypeSymbol,
                 DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt)
                 : base(valueDomain, containingTypeSymbol, nullAnalysisResultOpt: nullAnalysisResultOpt, pointsToAnalysisResultOpt: null)
             {
             }
-
-            protected override PointsToAbstractValue UnknownOrMayBeValue => PointsToAbstractValue.Unknown;
-            protected override bool HasPointsToAnalysisResult => true;
-
-            protected override bool HasAbstractValue(AnalysisEntity analysisEntity) =>
-                CurrentAnalysisData.ContainsKey(analysisEntity);
 
             public override PointsToAnalysisData Flow(IOperation statement, BasicBlock block, PointsToAnalysisData input)
             {
@@ -43,6 +37,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 return base.Flow(statement, block, input);
             }
 
+            protected override IEnumerable<AnalysisEntity> TrackedEntities => CurrentAnalysisData.Keys;
+
+            protected override bool HasPointsToAnalysisResult => true;
+
+            protected override bool HasAbstractValue(AnalysisEntity analysisEntity) => CurrentAnalysisData.ContainsKey(analysisEntity);
+
             protected override PointsToAbstractValue GetAbstractValue(AnalysisEntity analysisEntity)
             {
                 if (analysisEntity.Type.HasValueCopySemantics())
@@ -53,20 +53,16 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 if (!CurrentAnalysisData.TryGetValue(analysisEntity, out var value))
                 {
                     value = analysisEntity.SymbolOpt?.Kind == SymbolKind.Local ?
-                        PointsToAbstractValue.Undefined :
-                        UnknownOrMayBeValue;
+                        ValueDomain.Bottom :
+                        ValueDomain.UnknownOrMayBeValue;
                 }
 
                 return value;
             }
 
-            protected override PointsToAbstractValue GetPointsToAbstractValue(IOperation operation)
-            {
-                return base.GetCachedAbstractValue(operation);
-            }
-
-            protected override PointsToAbstractValue GetAbstractDefaultValue(ITypeSymbol type)
-                => PointsToAbstractValue.NoLocation;
+            protected override PointsToAbstractValue GetPointsToAbstractValue(IOperation operation) => base.GetCachedAbstractValue(operation);
+            
+            protected override PointsToAbstractValue GetAbstractDefaultValue(ITypeSymbol type) => PointsToAbstractValue.NoLocation;
 
             protected override void SetAbstractValue(AnalysisEntity analysisEntity, PointsToAbstractValue value)
             {
@@ -99,6 +95,17 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 }
             }
 
+            // TODO: Remove these temporary methods once we move to compiler's CFG
+            // https://github.com/dotnet/roslyn-analyzers/issues/1567
+            #region Temporary methods to workaround lack of *real* CFG
+            protected override PointsToAnalysisData MergeAnalysisData(PointsToAnalysisData value1, PointsToAnalysisData value2)
+                => PointsToAnalysisDomainInstance.Merge(value1, value2);
+            protected override PointsToAnalysisData GetClonedAnalysisData()
+                => GetClonedAnalysisData(CurrentAnalysisData);
+            protected override bool Equals(PointsToAnalysisData value1, PointsToAnalysisData value2)
+                => EqualsHelper(value1, value2);
+            #endregion
+
             #region Visitor methods
 
             public override PointsToAbstractValue DefaultVisit(IOperation operation, object argument)
@@ -114,7 +121,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                     return PointsToAbstractValue.NoLocation;
                 }
 
-                return UnknownOrMayBeValue;
+                return ValueDomain.UnknownOrMayBeValue;
             }
 
             public override PointsToAbstractValue VisitAwait(IAwaitOperation operation, object argument)

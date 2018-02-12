@@ -6,13 +6,14 @@ using Microsoft.CodeAnalysis.Operations.ControlFlow;
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
 {
     using NullAnalysisData = IDictionary<AnalysisEntity, NullAbstractValue>;
-    using NullAnalysisDomain = MapAbstractDomain<AnalysisEntity, NullAbstractValue>;
+    using NullAnalysisDomain = AnalysisEntityMapAbstractDomain<NullAbstractValue>;
 
     /// <summary>
     /// Dataflow analysis to track null-ness of <see cref="AnalysisEntity"/>/<see cref="IOperation"/> instances.
     /// </summary>
     internal partial class NullAnalysis : ForwardDataFlowAnalysis<NullAnalysisData, NullBlockAnalysisResult, NullAbstractValue>
     {
+        public static readonly NullAnalysisDomain NullAnalysisDomainInstance = new NullAnalysisDomain(NullAbstractValueDomain.Default);
         private NullAnalysis(NullAnalysisDomain analysisDomain, NullDataFlowOperationVisitor operationVisitor)
             : base(analysisDomain, operationVisitor)
         {
@@ -23,9 +24,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
             INamedTypeSymbol containingTypeSymbol,
             DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResultOpt = null)
         {
-            var analysisDomain = new NullAnalysisDomain(NullAbstractValueDomain.Default);
             var operationVisitor = new NullDataFlowOperationVisitor(NullAbstractValueDomain.Default, containingTypeSymbol, pointsToAnalysisResultOpt);
-            var nullAnalysis = new NullAnalysis(analysisDomain, operationVisitor);
+            var nullAnalysis = new NullAnalysis(NullAnalysisDomainInstance, operationVisitor);
             return nullAnalysis.GetOrComputeResultCore(cfg);
         }
 

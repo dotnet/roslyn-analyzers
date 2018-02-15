@@ -4176,6 +4176,22 @@ class Test
         }
     }
 
+    void M4(bool flag)
+    {
+        var a = new A();
+        try
+        {
+            ThrowException();
+        }
+        catch (System.IO.IOException)
+        {
+            if (flag)
+            {
+                a.Dispose();
+            }
+        }
+    }
+
     void ThrowException()
     {
         throw new NotImplementedException();
@@ -4186,7 +4202,9 @@ class Test
             // Test0.cs(29,17): warning CA2000: In method 'void Test.M2()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
             GetCSharpResultAt(29, 17, "void Test.M2()", "new A()"),
             // Test0.cs(42,17): warning CA2000: In method 'void Test.M3()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(42, 17, "void Test.M3()", "new A()"));
+            GetCSharpResultAt(42, 17, "void Test.M3()", "new A()"),
+            // Test0.cs(59,17): warning CA2000: In method 'void Test.M4(bool flag)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(59, 17, "void Test.M4(bool flag)", "new A()"));
 
             VerifyBasic(@"
 Imports System
@@ -4230,6 +4248,17 @@ Class Test
         End Try
     End Sub
 
+    Private Sub M4(flag As Boolean)
+        Dim a = New A()
+        Try
+            ThrowException()
+        Catch ex As System.IO.IOException
+            If flag Then
+                a.Dispose()
+            End If
+        End Try
+    End Sub
+
     Private Sub ThrowException()
         Throw New NotImplementedException()
     End Sub
@@ -4240,7 +4269,9 @@ End Class
             // Test0.vb(24,17): warning CA2000: In method 'Sub Test.M2()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
             GetBasicResultAt(24, 17, "Sub Test.M2()", "New A()"),
             // Test0.vb(33,17): warning CA2000: In method 'Sub Test.M3()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(33, 17, "Sub Test.M3()", "New A()"));
+            GetBasicResultAt(33, 17, "Sub Test.M3()", "New A()"),
+            // Test0.vb(44,17): warning CA2000: In method 'Sub Test.M4(flag As Boolean)', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(44, 17, "Sub Test.M4(flag As Boolean)", "New A()"));
         }
 
         [Fact]

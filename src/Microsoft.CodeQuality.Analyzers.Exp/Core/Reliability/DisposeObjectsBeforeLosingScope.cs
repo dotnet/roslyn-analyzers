@@ -100,7 +100,9 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Reliability
                                     AbstractLocation location = kvp.Key;
                                     DisposeAbstractValue disposeValue = kvp.Value;
                                     if (disposeValue.Kind == DisposeAbstractValueKind.NotDisposed ||
-                                        (disposeValue.Kind == DisposeAbstractValueKind.Disposed &&
+                                        ((disposeValue.Kind == DisposeAbstractValueKind.Disposed ||
+                                          disposeValue.Kind == DisposeAbstractValueKind.MaybeDisposed) &&
+                                         disposeValue.DisposingOperations.Count > 0 &&
                                          disposeValue.DisposingOperations.All(d => d.IsInsideCatchClause())))
                                     {
                                         Debug.Assert(location.CreationOpt != null);

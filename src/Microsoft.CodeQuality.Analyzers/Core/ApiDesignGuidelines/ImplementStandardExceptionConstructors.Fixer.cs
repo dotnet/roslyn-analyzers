@@ -50,7 +50,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             context.RegisterCodeFix(CodeAction.Create(title, c => AddConstructorsAsync(context.Document, context.Diagnostics, root, c), equivalenceKey: title), context.Diagnostics.First());
         }
 
-        private async Task<Document> AddConstructorsAsync(Document document, IEnumerable<Diagnostic> diagnostics, SyntaxNode root, CancellationToken cancellationToken)
+        private static async Task<Document> AddConstructorsAsync(Document document, IEnumerable<Diagnostic> diagnostics, SyntaxNode root, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             SyntaxGenerator generator = editor.Generator;

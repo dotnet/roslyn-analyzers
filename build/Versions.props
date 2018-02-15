@@ -14,8 +14,8 @@
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>2.6.0</MicrosoftCodeAnalysisVersion>
     <MicrosoftNetCompilersVersion>2.6.0</MicrosoftNetCompilersVersion>
-    <MicrosoftCodeAnalysisFXCopAnalyersVersion>2.6.0-beta2</MicrosoftCodeAnalysisFXCopAnalyersVersion>
-    <MicrosoftCodeAnalysisAnalyersVersion>2.6.0-beta2</MicrosoftCodeAnalysisAnalyersVersion>
+    <MicrosoftCodeAnalysisFXCopAnalyersVersion>2.6.1-beta1-62512-01</MicrosoftCodeAnalysisFXCopAnalyersVersion>
+    <MicrosoftCodeAnalysisAnalyersVersion>2.6.1-beta1-62512-01</MicrosoftCodeAnalysisAnalyersVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
 
     <!-- CoreFX -->

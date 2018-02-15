@@ -75,7 +75,7 @@ namespace Microsoft.NetFramework.Analyzers
             });
         }
 
-        private bool ContainsHandleProcessCorruptedStateExceptionsAttribute(IMethodSymbol method, CompilationSecurityTypes compilationTypes)
+        private static bool ContainsHandleProcessCorruptedStateExceptionsAttribute(IMethodSymbol method, CompilationSecurityTypes compilationTypes)
         {
             ImmutableArray<AttributeData> attributes = method.GetAttributes();
             return attributes.Any(

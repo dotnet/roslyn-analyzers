@@ -33,7 +33,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Resources
             }, SyntaxKind.Attribute);
         }
 
-        private bool CheckAttribute(SyntaxNode node)
+        private static bool CheckAttribute(SyntaxNode node)
         {
             var attribute = node as AttributeSyntax;
             return attribute?.Name?.GetLastToken().Text?.Equals(GeneratedCodeAttribute, StringComparison.Ordinal) == true &&

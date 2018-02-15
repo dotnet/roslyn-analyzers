@@ -41,7 +41,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return Task.FromResult(true);
         }
 
-        private async Task<Document> CreateChangedDocument(
+        private static async Task<Document> CreateChangedDocument(
             CodeFixContext context, CancellationToken cancellationToken)
         {
             var document = context.Document;
@@ -69,13 +69,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return editor.GetChangedDocument();
         }
 
-        private IEnumerable<SyntaxNode> GetInvertedStatements(
+        private static IEnumerable<SyntaxNode> GetInvertedStatements(
             SyntaxGenerator generator, IMethodSymbol containingOperator, Compilation compilation)
         {
             yield return GetInvertedStatement(generator, containingOperator, compilation);
         }
 
-        private SyntaxNode GetInvertedStatement(
+        private static SyntaxNode GetInvertedStatement(
             SyntaxGenerator generator, IMethodSymbol containingOperator, Compilation compilation)
         {
             if (containingOperator.Name == WellKnownMemberNames.EqualityOperatorName)
@@ -104,7 +104,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
         }
 
-        private OperatorKind GetInvertedOperatorKind(IMethodSymbol containingOperator)
+        private static OperatorKind GetInvertedOperatorKind(IMethodSymbol containingOperator)
         {
             switch (containingOperator.Name)
             {

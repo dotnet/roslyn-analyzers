@@ -77,21 +77,6 @@
         <target state="translated">Il membro {0} non accede ai dati di istanza e può essere contrassegnato come static (Shared in VisualBasic)</target>
         <note />
       </trans-unit>
-      <trans-unit id="DisposeObjectsBeforeLosingScopeTitle">
-        <source>Dispose Objects Before Losing Scope</source>
-        <target state="translated">Eliminare gli oggetti prima che siano esterni all'ambito</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DisposeObjectsBeforeLosingScopeDescription">
-        <source>Because an exceptional event might occur that will prevent the finalizer of an object from running, the object should be explicitly disposed before all references to it are out of scope.</source>
-        <target state="translated">Dal momento che potrebbe verificarsi un evento eccezionale che impedisca l'esecuzione del finalizzatore di un oggetto, è opportuno eliminare in modo esplicito l'oggetto prima che tutti i riferimenti a tale oggetto siano esterni all'ambito.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DisposeObjectsBeforeLosingScopeMessage">
-        <source>Dispose Objects Before Losing Scope</source>
-        <target state="translated">Eliminare gli oggetti prima che siano esterni all'ambito</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ReviewVisibleEventHandlersTitle">
         <source>Review visible event handlers</source>
         <target state="translated">Esaminare i gestori eventi visibili</target>

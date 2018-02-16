@@ -29,7 +29,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageNoNonLiterals,
-                                                                             DiagnosticCategory.Usage,
+                                                                             DiagnosticCategory.Security,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,

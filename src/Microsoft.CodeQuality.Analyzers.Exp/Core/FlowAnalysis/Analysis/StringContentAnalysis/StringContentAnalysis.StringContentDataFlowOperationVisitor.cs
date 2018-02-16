@@ -2,8 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
 {
@@ -14,7 +12,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
         /// <summary>
         /// Operation visitor to flow the string content values across a given statement in a basic block.
         /// </summary>
-        private sealed class StringContentDataFlowOperationVisitor : DataFlowOperationVisitor<StringContentAnalysisData, StringContentAbstractValue>
+        private sealed class StringContentDataFlowOperationVisitor : AnalysisEntityDataFlowOperationVisitor<StringContentAnalysisData, StringContentAbstractValue>
         {
             public StringContentDataFlowOperationVisitor(
                 StringContentAbstractValueDomain valueDomain,

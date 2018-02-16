@@ -321,7 +321,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 return base.VisitTuple(operation, argument);
             }
 
-            private PointsToAbstractValue VisitInvocationCommon(IOperation operation)
+            private static PointsToAbstractValue VisitInvocationCommon(IOperation operation)
             {
                 if (!operation.Type.HasValueCopySemantics())
                 {

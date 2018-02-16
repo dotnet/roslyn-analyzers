@@ -294,7 +294,7 @@
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesMessage">
         <source>Make '{0}' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of '{1}' and is visible to derived classes.</source>
-        <target state="needs-review-translation">인터페이스 메서드는 자식 형식에서 호출할 수 있어야 합니다.</target>
+        <target state="translated">{0}을(를) sealed로 설정(이 클래스가 이전에 함께 제공된 경우 새롭게 변경)하거나, 메서드를 비명시적으로 구현하거나, '{1}'의 기능을 노출하여 파생 클래스에 표시하는 새 메서드를 구현하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesTitle">
@@ -1449,32 +1449,32 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
         <source>Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="new">Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</target>
+        <target state="translated">'{0}'을(를) 제거하고 제네릭 EventHandler로 바꿔 사용하세요(예: EventHandler&lt;T&gt;, 여기서 T는 유효한 EventArgs임).</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
         <source>A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="new">A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</target>
+        <target state="translated">형식이 void를 반환하는 대리자를 포함하며 이 형식의 시그니처는 매개 변수 2개(개체 및 EventArgs에 할당할 수 있는 형식) 및 포함하는 어셈블리 대상 Microsoft .NET Framework 2.0을 포함합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
         <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="new">Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</target>
+        <target state="translated">이벤트 '{0}'을(를) 제네릭 EventHandler를 사용하여 형식 '{1}'(으)로 바꾸세요(예: EventHandler&lt;T&gt;, 여기서 T는 유효한 EventArgs임).</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">
         <source>A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.</source>
-        <target state="new">A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.</target>
+        <target state="translated">public 또는 protected 이벤트를 처리하는 대리자에 올바른 시그니처, 반환 형식 또는 매개 변수 이름이 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Message">
         <source>Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</source>
-        <target state="new">Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</target>
+        <target state="translated">Event MyEvent As EventHandler(Of MyEventArgs)와 같이 이벤트 형식을 명시적으로 정의하여 제네릭 EventHandler를 사용하도록 이벤트 '{0}'을(를) 변경하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Description">
         <source>A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="new">A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</target>
+        <target state="translated">형식이 void를 반환하는 EventHandler 대리자를 선언하는 이벤트를 포함하며 이 형식의 시그니처는 매개 변수 2개(개체 및 EventArgs에 할당할 수 있는 형식) 및 포함하는 어셈블리 대상 Microsoft .NET Framework 2.0을 포함합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageBoth">

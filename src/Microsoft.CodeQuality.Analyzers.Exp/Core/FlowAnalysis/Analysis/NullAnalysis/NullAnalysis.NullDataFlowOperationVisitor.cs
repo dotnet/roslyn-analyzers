@@ -11,26 +11,23 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
         /// <summary>
         /// Operation visitor to flow the null values across a given statement in a basic block.
         /// </summary>
-        private sealed class NullDataFlowOperationVisitor : DataFlowOperationVisitor<NullAnalysisData, NullAbstractValue>
+        private sealed class NullDataFlowOperationVisitor : AnalysisEntityDataFlowOperationVisitor<NullAnalysisData, NullAbstractValue>
         {
             public NullDataFlowOperationVisitor(
-                AbstractDomain<NullAbstractValue> valueDomain,
+                NullAbstractValueDomain valueDomain,
                 INamedTypeSymbol containingTypeSymbol,
                 DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResultOpt)
                 : base(valueDomain, containingTypeSymbol, nullAnalysisResultOpt: null, pointsToAnalysisResultOpt: pointsToAnalysisResultOpt)
             {
             }
 
-            protected override NullAbstractValue UnknownOrMayBeValue => NullAbstractValue.MaybeNull;
+            protected override IEnumerable<AnalysisEntity> TrackedEntities => CurrentAnalysisData.Keys;
 
-            protected override void SetAbstractValue(AnalysisEntity analysisEntity, NullAbstractValue value) =>
-                CurrentAnalysisData[analysisEntity] = value;
+            protected override void SetAbstractValue(AnalysisEntity analysisEntity, NullAbstractValue value) => CurrentAnalysisData[analysisEntity] = value;
 
-            protected override bool HasAbstractValue(AnalysisEntity analysisEntity) =>
-                CurrentAnalysisData.ContainsKey(analysisEntity);
+            protected override bool HasAbstractValue(AnalysisEntity analysisEntity) => CurrentAnalysisData.ContainsKey(analysisEntity);
 
-            protected override NullAbstractValue GetAbstractValue(AnalysisEntity analysisEntity) =>
-                CurrentAnalysisData.TryGetValue(analysisEntity, out var value) ? value : UnknownOrMayBeValue;
+            protected override NullAbstractValue GetAbstractValue(AnalysisEntity analysisEntity) => CurrentAnalysisData.TryGetValue(analysisEntity, out var value) ? value : ValueDomain.UnknownOrMayBeValue;
 
             protected override NullAbstractValue GetAbstractDefaultValue(ITypeSymbol type)
             {
@@ -43,6 +40,17 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
             }
 
             protected override void ResetCurrentAnalysisData(NullAnalysisData newAnalysisDataOpt = null) => ResetAnalysisData(CurrentAnalysisData, newAnalysisDataOpt);
+
+            // TODO: Remove these temporary methods once we move to compiler's CFG
+            // https://github.com/dotnet/roslyn-analyzers/issues/1567
+            #region Temporary methods to workaround lack of *real* CFG
+            protected override NullAnalysisData MergeAnalysisData(NullAnalysisData value1, NullAnalysisData value2)
+                => NullAnalysisDomainInstance.Merge(value1, value2);
+            protected override NullAnalysisData GetClonedAnalysisData()
+                => GetClonedAnalysisData(CurrentAnalysisData);
+            protected override bool Equals(NullAnalysisData value1, NullAnalysisData value2)
+                => EqualsHelper(value1, value2);
+            #endregion
 
             #region Visitor methods
             public override NullAbstractValue DefaultVisit(IOperation operation, object argument)

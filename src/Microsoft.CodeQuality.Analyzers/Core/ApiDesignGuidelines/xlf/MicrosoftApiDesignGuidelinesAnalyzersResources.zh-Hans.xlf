@@ -294,7 +294,7 @@
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesMessage">
         <source>Make '{0}' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of '{1}' and is visible to derived classes.</source>
-        <target state="needs-review-translation">接口方法应可由子类型调用</target>
+        <target state="translated">将“{0}”设置为密封(如果以前提供过此类，则属于重大更改)，非显式实现该方法，或实现一个公开“{1}”的功能且对派生类可见的新方法。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesTitle">
@@ -1449,32 +1449,32 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
         <source>Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="new">Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</target>
+        <target state="translated">删除“{0}”，并将其用法替换为泛型 EventHandler，例如 EventHandler&lt;T&gt;，其中 T 为有效的 EventArgs</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
         <source>A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="new">A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</target>
+        <target state="translated">类型包含返回 void 的委托，其签名包含两个参数(第一个参数为对象，第二个参数为分配给 EventArgs 的类型)，且包含程序集的目标为 Microsoft .NET Framework 2.0。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
         <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="new">Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</target>
+        <target state="translated">更改事件“{0}”，将类型“{1}”替换为泛型 EventHandler，例如 EventHandler&lt;T&gt;，其中 T 为有效的 EventArgs</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">
         <source>A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.</source>
-        <target state="new">A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.</target>
+        <target state="translated">处理公开或受保护事件的委托不具有正确的签名、返回类型或参数名称。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Message">
         <source>Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</source>
-        <target state="new">Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</target>
+        <target state="translated">通过显式定义事件类型，将事件“{0}”更改为使用泛型 EventHandler，例如 Event MyEvent As EventHandler(Of MyEventArgs)。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Description">
         <source>A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="new">A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</target>
+        <target state="translated">类型包含一个声明 EventHandler 委托返回 void 的事件，其签名包含两个参数(第一个参数为对象，第二个参数为分配给 EventArgs 的类型)，且包含程序集的目标为 Microsoft .NET Framework 2.0。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageBoth">

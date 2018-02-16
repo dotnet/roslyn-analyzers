@@ -1174,7 +1174,7 @@ End Module",
             GetBasicResultAt(150, 13, "Sub Adapter1.New(cmd As String, parameter2 As String)", "M1"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1567")]
+        [Fact]
         public void FlowAnalysis_WhileLoop_NonConstant_Diagnostic()
         {
             VerifyCSharp($@"
@@ -1224,7 +1224,7 @@ End Module",
             GetBasicResultAt(135, 22, "Sub Adapter1.New(cmd As String, parameter2 As String)", "M1"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1567")]
+        [Fact]
         public void FlowAnalysis_ForLoop_NonConstant_Diagnostic()
         {
             VerifyCSharp($@"
@@ -1274,7 +1274,7 @@ End Module",
             GetBasicResultAt(135, 22, "Sub Adapter1.New(cmd As String, parameter2 As String)", "M1"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1567")]
+        [Fact]
         public void FlowAnalysis_ForEachLoop_NonConstant_Diagnostic()
         {
             VerifyCSharp($@"
@@ -3063,7 +3063,7 @@ Class Test
 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1567")]
+        [Fact]
         public void FlowAnalysis_PointsTo_ReferenceType_BaseDerived_IfStatement_Diagnostic()
         {
             VerifyCSharp($@"
@@ -3155,7 +3155,7 @@ End Class",
             GetBasicResultAt(156, 28, "Sub Command1.New(cmd As String, parameter2 As String)", "M1"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1567")]
+        [Fact]
         public void FlowAnalysis_PointsTo_ReferenceType_BaseDerived_IfStatement_02_Diagnostic()
         {
             VerifyCSharp($@"
@@ -4356,6 +4356,98 @@ Module Test
 End Module",
             // Test0.vb(135,18): warning CA2100: Review if the query string passed to 'Sub Adapter1.New(cmd As String, parameter2 As String)' in 'M1', accepts any user input.
             GetBasicResultAt(135, 18, "Sub Adapter1.New(cmd As String, parameter2 As String)", "M1"));
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1577")]
+        public void FlowAnalysis_PointsTo_ConstantArrayElement_NonConstantIndex_NoDiagnostic()
+        {
+            VerifyCSharp($@"
+{SetupCodeCSharp}
+
+class Adapter1 : Adapter
+{{
+    public Adapter1(string cmd, string parameter2)
+    {{
+    }}
+}}
+
+class Test
+{{
+    void M1(string[] strArray, int i)
+    {{
+        strArray[i] = """";
+        string str = strArray[i];
+        Adapter c = new Adapter1(str, str);
+    }}
+}}
+");
+
+            VerifyBasic($@"
+{SetupCodeBasic}
+
+Class Adapter1
+    Inherits Adapter
+
+    Sub New(cmd As String, parameter2 As String)
+    End Sub
+End Class
+
+Module Test
+    Sub M1(strArray As String(), i As Integer)
+        strArray(i) = """"
+        Dim str As String = strArray(i)
+        Dim c As New Adapter1(str, str)
+    End Sub
+End Module");
+        }
+
+        [Fact]
+        public void FlowAnalysis_PointsTo_NonConstantArrayElement_NonConstantIndex_Diagnostic()
+        {
+            VerifyCSharp($@"
+{SetupCodeCSharp}
+
+class Adapter1 : Adapter
+{{
+    public Adapter1(string cmd, string parameter2)
+    {{
+    }}
+}}
+
+class Test
+{{
+    void M1(string[] strArray, int i, int j)
+    {{
+        strArray[i] = """";
+        i = j;                          // We don't know value of 'i' now
+        string str = strArray[i];       // Unknown value
+        Adapter c = new Adapter1(str, str);
+    }}
+}}
+",
+            // Test0.cs(100,21): warning CA2100: Review if the query string passed to 'Adapter1.Adapter1(string cmd, string parameter2)' in 'M1', accepts any user input.
+            GetCSharpResultAt(100, 21, "Adapter1.Adapter1(string cmd, string parameter2)", "M1"));
+
+            VerifyBasic($@"
+{SetupCodeBasic}
+
+Class Adapter1
+    Inherits Adapter
+
+    Sub New(cmd As String, parameter2 As String)
+    End Sub
+End Class
+
+Module Test
+    Sub M1(strArray As String(), i As Integer, j As Integer)
+        strArray(i) = """"
+        i = j
+        Dim str As String = strArray(i)
+        Dim c As New Adapter1(str, str)
+    End Sub
+End Module",
+            // Test0.vb(136,18): warning CA2100: Review if the query string passed to 'Sub Adapter1.New(cmd As String, parameter2 As String)' in 'M1', accepts any user input.
+            GetBasicResultAt(136, 18, "Sub Adapter1.New(cmd As String, parameter2 As String)", "M1"));
         }
 
         [Fact]

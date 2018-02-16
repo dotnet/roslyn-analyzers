@@ -15,8 +15,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         where TAnalysisData : class
         where TAnalysisResult : AbstractBlockAnalysisResult<TAnalysisData, TAbstractAnalysisValue>
     {
-        protected BackwardDataFlowAnalysis(AbstractDomain<TAnalysisData> analysisDomain, DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> operationVisitor)
-            : base (analysisDomain, operationVisitor)
+        protected BackwardDataFlowAnalysis(AbstractAnalysisDomain<TAnalysisData> analysisDomain, DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> operationVisitor)
+            : base(analysisDomain, operationVisitor)
         {
         }
 

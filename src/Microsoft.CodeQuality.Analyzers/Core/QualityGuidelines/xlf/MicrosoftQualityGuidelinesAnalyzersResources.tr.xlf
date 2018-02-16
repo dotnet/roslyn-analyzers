@@ -77,21 +77,6 @@
         <target state="translated">{0} üyesi örnek verilerine erişmiyor ve statik (Visual Basic’te Shared) olarak işaretlenebilir</target>
         <note />
       </trans-unit>
-      <trans-unit id="DisposeObjectsBeforeLosingScopeTitle">
-        <source>Dispose Objects Before Losing Scope</source>
-        <target state="translated">Kapsamı Kaybetmeden Önce Nesneleri Atın</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DisposeObjectsBeforeLosingScopeDescription">
-        <source>Because an exceptional event might occur that will prevent the finalizer of an object from running, the object should be explicitly disposed before all references to it are out of scope.</source>
-        <target state="translated">Bir nesnenin sonlandırıcısının çalışmasını engelleyen olağanüstü bir durum oluşabileceğinden, nesneye yönelik tüm başvurular kapsam dışı kalmadan nesnenin açıkça atılması gerekir.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DisposeObjectsBeforeLosingScopeMessage">
-        <source>Dispose Objects Before Losing Scope</source>
-        <target state="translated">Kapsamı Kaybetmeden Önce Nesneleri Atın</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ReviewVisibleEventHandlersTitle">
         <source>Review visible event handlers</source>
         <target state="translated">Görünür olay işleyicilerini gözden geçirin</target>

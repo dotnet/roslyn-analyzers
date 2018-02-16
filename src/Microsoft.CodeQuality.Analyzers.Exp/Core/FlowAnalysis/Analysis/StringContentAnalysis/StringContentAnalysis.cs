@@ -6,14 +6,14 @@ using Microsoft.CodeAnalysis.Operations.ControlFlow;
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
 {
     using StringContentAnalysisData = IDictionary<AnalysisEntity, StringContentAbstractValue>;
-    using StringContentAnalysisDomain = MapAbstractDomain<AnalysisEntity, StringContentAbstractValue>;
+    using StringContentAnalysisDomain = AnalysisEntityMapAbstractDomain<StringContentAbstractValue>;
 
     /// <summary>
     /// Dataflow analysis to track string content of <see cref="AnalysisEntity"/>/<see cref="IOperation"/>.
     /// </summary>
     internal partial class StringContentAnalysis : ForwardDataFlowAnalysis<StringContentAnalysisData, StringContentBlockAnalysisResult, StringContentAbstractValue>
     {
-        private static readonly StringContentAnalysisDomain s_StringContentAnalysisDomain = new StringContentAnalysisDomain(StringContentAbstractValueDomain.Default);
+        public static readonly StringContentAnalysisDomain StringContentAnalysisDomainInstance = new StringContentAnalysisDomain(StringContentAbstractValueDomain.Default);
 
         private StringContentAnalysis(StringContentAnalysisDomain analysisDomain, StringContentDataFlowOperationVisitor operationVisitor)
             : base(analysisDomain, operationVisitor)
@@ -27,7 +27,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
             DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResultOpt = null)
         {
             var operationVisitor = new StringContentDataFlowOperationVisitor(StringContentAbstractValueDomain.Default, containingTypeSymbol, nullAnalysisResultOpt, pointsToAnalysisResultOpt);
-            var nullAnalysis = new StringContentAnalysis(s_StringContentAnalysisDomain, operationVisitor);
+            var nullAnalysis = new StringContentAnalysis(StringContentAnalysisDomainInstance, operationVisitor);
             return nullAnalysis.GetOrComputeResultCore(cfg);
         }
 

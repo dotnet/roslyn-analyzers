@@ -158,21 +158,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 });
         }
 
-        private static bool IsDisposeBoolMethod(IMethodSymbol method)
-        {
-            if (method.Name == DisposeMethodName && method.MethodKind == MethodKind.Ordinary &&
-                method.ReturnsVoid && method.Parameters.Length == 1)
-            {
-                IParameterSymbol parameter = method.Parameters[0];
-                if (parameter.Type != null && parameter.Type.SpecialType == SpecialType.System_Boolean && parameter.RefKind == RefKind.None)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         /// <summary>
         /// Analyzes single instance of compilation.
         /// </summary>
@@ -434,7 +419,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             /// </summary>
             private static IMethodSymbol FindDisposeBoolMethod(INamedTypeSymbol type)
             {
-                return type.GetMembers(DisposeMethodName).OfType<IMethodSymbol>().FirstOrDefault(IsDisposeBoolMethod);
+                return type.GetMembers(DisposeMethodName).OfType<IMethodSymbol>().FirstOrDefault(m => m.HasDisposeBoolMethodSignature());
             }
 
             /// <summary>
@@ -458,7 +443,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             if (invocationExpression.TargetMethod == null ||
                 invocationExpression.TargetMethod.ContainingType != type ||
-                !IsDisposeBoolMethod(invocationExpression.TargetMethod))
+                !invocationExpression.TargetMethod.HasDisposeBoolMethodSignature())
             {
                 return false;
             }

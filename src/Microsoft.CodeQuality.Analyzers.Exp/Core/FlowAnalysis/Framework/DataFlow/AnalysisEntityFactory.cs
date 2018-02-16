@@ -16,7 +16,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     /// </summary>
     internal sealed class AnalysisEntityFactory
     {
-        private readonly ImmutableDictionary<PointsToAbstractValue, ImmutableHashSet<AnalysisEntity>.Builder>.Builder _analysisEntitiesPerInstance;
         private readonly Dictionary<IOperation, AnalysisEntity> _analysisEntityMap;
         private readonly Dictionary<ISymbol, PointsToAbstractValue> _instanceLocationsForSymbols;
         private readonly Func<IOperation, PointsToAbstractValue> _getPointsToAbstractValueOpt;
@@ -25,14 +24,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             Func<IOperation, PointsToAbstractValue> getPointsToAbstractValueOpt, INamedTypeSymbol containingTypeSymbol)
         {
             _getPointsToAbstractValueOpt = getPointsToAbstractValueOpt;
-            _analysisEntitiesPerInstance = ImmutableDictionary.CreateBuilder<PointsToAbstractValue, ImmutableHashSet<AnalysisEntity>.Builder>();
             _analysisEntityMap = new Dictionary<IOperation, AnalysisEntity>();
             _instanceLocationsForSymbols = new Dictionary<ISymbol, PointsToAbstractValue>();
 
             var thisOrMeInstanceLocation = AbstractLocation.CreateThisOrMeLocation(containingTypeSymbol);
             var instanceLocation = new PointsToAbstractValue(thisOrMeInstanceLocation);
             ThisOrMeInstance = AnalysisEntity.CreateThisOrMeInstance(containingTypeSymbol, instanceLocation);
-            AddToMap(instanceLocation, ThisOrMeInstance);
         }
 
         public AnalysisEntity ThisOrMeInstance { get; }
@@ -60,14 +57,14 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             {
                 return AbstractIndex.Create((uint)index);
             }
-            else if (TryCreate(operation, out AnalysisEntity analysisEntity))
-            {
-                return AbstractIndex.Create(analysisEntity);
-            }
-            else
-            {
-                return AbstractIndex.Create(operation);
-            }
+            // TODO: We need to find the abstract value for the entity to use it for indexing.
+            // https://github.com/dotnet/roslyn-analyzers/issues/1577
+            //else if (TryCreate(operation, out AnalysisEntity analysisEntity))
+            //{
+            //    return AbstractIndex.Create(analysisEntity);
+            //}
+
+            return AbstractIndex.Create(operation);
         }
 
         public bool TryCreate(IOperation operation, out AnalysisEntity analysisEntity)
@@ -135,7 +132,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     {
                         var instanceLocation = _getPointsToAbstractValueOpt(instanceReference);
                         analysisEntity = AnalysisEntity.Create(instanceReference, instanceLocation);
-                        AddToMap(instanceLocation, analysisEntity);
                     }
                     break;
 
@@ -292,20 +288,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             instanceLocationOpt = EnsureLocation(instanceLocationOpt, symbolOpt, parentOpt);
             Debug.Assert(instanceLocationOpt != null);
             var analysisEntity = AnalysisEntity.Create(symbolOpt, indices, type, instanceLocationOpt, parentOpt);
-            AddToMap(instanceLocationOpt, analysisEntity);
             return analysisEntity;
-        }
-
-        private void AddToMap(PointsToAbstractValue instanceLocation, AnalysisEntity analysisEntity)
-        {
-            Debug.Assert(instanceLocation != null);
-            if (!_analysisEntitiesPerInstance.TryGetValue(instanceLocation, out var builder))
-            {
-                builder = ImmutableHashSet.CreateBuilder<AnalysisEntity>();
-            }
-
-            builder.Add(analysisEntity);
-            _analysisEntitiesPerInstance[instanceLocation] = builder;
         }
 
         public AnalysisEntity CreateWithNewInstanceRoot(AnalysisEntity analysisEntity, AnalysisEntity newRootInstance)
@@ -323,10 +306,5 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             AnalysisEntity parentOpt = CreateWithNewInstanceRoot(analysisEntity.ParentOpt, newRootInstance);
             return Create(analysisEntity.SymbolOpt, analysisEntity.Indices, analysisEntity.Type, newRootInstance.InstanceLocation, parentOpt);
         }
-
-        public ImmutableHashSet<AnalysisEntity> GetAnalysisEntitiesCreatedFromInstance(PointsToAbstractValue instance)
-            => _analysisEntitiesPerInstance.TryGetValue(instance, out ImmutableHashSet<AnalysisEntity>.Builder builder) && builder != null ?
-                builder.ToImmutable() :
-                ImmutableHashSet<AnalysisEntity>.Empty;
     }
 }

@@ -77,21 +77,6 @@
         <target state="translated">O membro {0} não acessa dados de instância e pode ser marcado como estático (Shared no VisualBasic)</target>
         <note />
       </trans-unit>
-      <trans-unit id="DisposeObjectsBeforeLosingScopeTitle">
-        <source>Dispose Objects Before Losing Scope</source>
-        <target state="translated">Descartar objetos antes de perder o escopo</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DisposeObjectsBeforeLosingScopeDescription">
-        <source>Because an exceptional event might occur that will prevent the finalizer of an object from running, the object should be explicitly disposed before all references to it are out of scope.</source>
-        <target state="translated">Já que poderá ocorrer um evento excepcional que impedirá a execução do finalizador de um objeto, o objeto deverá ser explicitamente descartado antes que todas as referências a ele fiquem fora de escopo.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DisposeObjectsBeforeLosingScopeMessage">
-        <source>Dispose Objects Before Losing Scope</source>
-        <target state="translated">Descartar objetos antes de perder o escopo</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ReviewVisibleEventHandlersTitle">
         <source>Review visible event handlers</source>
         <target state="translated">Examinar manipuladores de eventos visíveis</target>

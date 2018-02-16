@@ -68,7 +68,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             AnalyzeOperation(context, IsAttributeSyntax);
         }
 
-        private void AnalyzeOperation(OperationAnalysisContext context, Func<SyntaxNode, bool> isAttributeSytnax)
+        private static void AnalyzeOperation(OperationAnalysisContext context, Func<SyntaxNode, bool> isAttributeSytnax)
         {
             IArrayCreationOperation arrayCreationExpression = (IArrayCreationOperation)context.Operation;
 

@@ -117,7 +117,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return null;
         }
 
-        private async Task<Document> MakeProtected(Document document, ISymbol symbolToChange, bool checkSetter, CancellationToken cancellationToken)
+        private static async Task<Document> MakeProtected(Document document, ISymbol symbolToChange, bool checkSetter, CancellationToken cancellationToken)
         {
             SymbolEditor editor = SymbolEditor.Create(document);
 
@@ -154,7 +154,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return editor.GetChangedDocuments().First();
         }
 
-        private async Task<Document> ChangeToPublicInterfaceImplementation(Document document, ISymbol symbolToChange, CancellationToken cancellationToken)
+        private static async Task<Document> ChangeToPublicInterfaceImplementation(Document document, ISymbol symbolToChange, CancellationToken cancellationToken)
         {
             SymbolEditor editor = SymbolEditor.Create(document);
 
@@ -202,7 +202,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
         }
 
-        private async Task<Document> MakeContainingTypeSealed(Document document, IMethodSymbol methodSymbol, CancellationToken cancellationToken)
+        private static async Task<Document> MakeContainingTypeSealed(Document document, IMethodSymbol methodSymbol, CancellationToken cancellationToken)
         {
             SymbolEditor editor = SymbolEditor.Create(document);
 

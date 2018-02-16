@@ -197,7 +197,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             });
         }
 
-        private bool AssemblyExposesInternals(
+        private static bool AssemblyExposesInternals(
             Compilation compilation,
             INamedTypeSymbol internalsVisibleToAttributeSymbol)
         {
@@ -229,7 +229,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             return false;
         }
 
-        public bool IsOkToBeUnused(
+        public static bool IsOkToBeUnused(
             INamedTypeSymbol type,
             Compilation compilation,
             INamedTypeSymbol systemAttributeSymbol,

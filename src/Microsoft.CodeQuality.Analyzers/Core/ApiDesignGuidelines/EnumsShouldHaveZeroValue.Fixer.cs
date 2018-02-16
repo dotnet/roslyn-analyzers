@@ -77,7 +77,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return null;
         }
 
-        private SyntaxNode GetExplicitlyAssignedField(IFieldSymbol originalField, SyntaxNode declaration, SyntaxGenerator generator)
+        private static SyntaxNode GetExplicitlyAssignedField(IFieldSymbol originalField, SyntaxNode declaration, SyntaxGenerator generator)
         {
             SyntaxNode originalInitializer = generator.GetExpression(declaration);
             if (originalInitializer != null || !originalField.HasConstantValue)
@@ -88,13 +88,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return generator.WithExpression(declaration, generator.LiteralExpression(originalField.ConstantValue));
         }
 
-        private async Task<Document> GetUpdatedDocumentForRuleNameRenameAsync(Document document, IFieldSymbol field, CancellationToken cancellationToken)
+        private static async Task<Document> GetUpdatedDocumentForRuleNameRenameAsync(Document document, IFieldSymbol field, CancellationToken cancellationToken)
         {
             Solution newSolution = await CodeAnalysis.Rename.Renamer.RenameSymbolAsync(document.Project.Solution, field, "None", null, cancellationToken).ConfigureAwait(false);
             return newSolution.GetDocument(document.Id);
         }
 
-        private async Task<Document> ApplyRuleNameMultipleZeroAsync(Document document, INamedTypeSymbol enumType, CancellationToken cancellationToken)
+        private static async Task<Document> ApplyRuleNameMultipleZeroAsync(Document document, INamedTypeSymbol enumType, CancellationToken cancellationToken)
         {
             // Diagnostic: Remove all members that have the value zero from '{0}' except for one member that is named 'None'.
             // Fix: Remove all members that have the value zero except for one member that is named 'None'.
@@ -137,7 +137,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return editor.GetChangedDocuments().First();
         }
 
-        private async Task<Document> ApplyRuleNameNoZeroValueAsync(Document document, INamedTypeSymbol enumType, CancellationToken cancellationToken)
+        private static async Task<Document> ApplyRuleNameNoZeroValueAsync(Document document, INamedTypeSymbol enumType, CancellationToken cancellationToken)
         {
             SymbolEditor editor = SymbolEditor.Create(document);
 

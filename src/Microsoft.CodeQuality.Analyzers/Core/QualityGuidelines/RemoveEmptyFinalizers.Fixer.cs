@@ -41,7 +41,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             return;
         }
 
-        private async Task<Document> RemoveFinalizer(Document document, SyntaxNode node, CancellationToken cancellationToken)
+        private static async Task<Document> RemoveFinalizer(Document document, SyntaxNode node, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
 

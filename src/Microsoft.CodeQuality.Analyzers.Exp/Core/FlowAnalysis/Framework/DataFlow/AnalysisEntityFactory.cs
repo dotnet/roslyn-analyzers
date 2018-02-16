@@ -51,7 +51,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return ImmutableArray<AbstractIndex>.Empty;
         }
 
-        private AbstractIndex CreateAbstractIndex(IOperation operation)
+        private static AbstractIndex CreateAbstractIndex(IOperation operation)
         {
             if (operation.ConstantValue.HasValue && operation.ConstantValue.Value is int index)
             {

@@ -41,7 +41,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
 
                 if (oldValue.Kind == newValue.Kind)
                 {
-                    return _disposingOperationsDomain.Compare(oldValue.DisposingOperations, newValue.DisposingOperations);
+                    return _disposingOperationsDomain.Compare(oldValue.DisposingOrEscapingOperations, newValue.DisposingOrEscapingOperations);
                 }
                 else if (oldValue.Kind < newValue.Kind)
                 {
@@ -76,7 +76,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                     DisposeAbstractValueKind.Disposed :
                     DisposeAbstractValueKind.MaybeDisposed;
 
-                var mergedDisposingOperations = _disposingOperationsDomain.Merge(value1.DisposingOperations, value2.DisposingOperations);
+                var mergedDisposingOperations = _disposingOperationsDomain.Merge(value1.DisposingOrEscapingOperations, value2.DisposingOrEscapingOperations);
                 if (mergedDisposingOperations.IsEmpty)
                 {
                     Debug.Assert(kind == DisposeAbstractValueKind.MaybeDisposed);

@@ -24,15 +24,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
             Debug.Assert(kind != DisposeAbstractValueKind.Disposed);
         }
 
-        private DisposeAbstractValue(IOperation disposingOperation, DisposeAbstractValueKind kind)
-            : this(ImmutableHashSet.Create(disposingOperation), kind)
+        private DisposeAbstractValue(IOperation disposingOrEscapingOperation, DisposeAbstractValueKind kind)
+            : this(ImmutableHashSet.Create(disposingOrEscapingOperation), kind)
         {
         }
 
-        public DisposeAbstractValue(ImmutableHashSet<IOperation> disposingOperations, DisposeAbstractValueKind kind)
+        public DisposeAbstractValue(ImmutableHashSet<IOperation> disposingOrEscapingOperations, DisposeAbstractValueKind kind)
         {
-            VerifyArguments(disposingOperations, kind);
-            DisposingOperations = disposingOperations;
+            VerifyArguments(disposingOrEscapingOperations, kind);
+            DisposingOrEscapingOperations = disposingOrEscapingOperations;
             Kind = kind;
         }
 
@@ -40,35 +40,35 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
         {
             Debug.Assert(Kind != DisposeAbstractValueKind.NotDisposable);
 
-            return new DisposeAbstractValue(DisposingOperations.Add(disposingOperation), DisposeAbstractValueKind.Disposed);
+            return new DisposeAbstractValue(DisposingOrEscapingOperations.Add(disposingOperation), DisposeAbstractValueKind.Disposed);
         }
 
         public DisposeAbstractValue WithNewEscapingOperation(IOperation escapingOperation)
         {
             Debug.Assert(Kind != DisposeAbstractValueKind.NotDisposable);
 
-            return new DisposeAbstractValue(DisposingOperations.Add(escapingOperation), DisposeAbstractValueKind.MaybeDisposed);
+            return new DisposeAbstractValue(DisposingOrEscapingOperations.Add(escapingOperation), DisposeAbstractValueKind.MaybeDisposed);
         }
 
         [Conditional("DEBUG")]
-        private static void VerifyArguments(ImmutableHashSet<IOperation> disposingOperations, DisposeAbstractValueKind kind)
+        private static void VerifyArguments(ImmutableHashSet<IOperation> disposingOrEscapingOperations, DisposeAbstractValueKind kind)
         {
-            Debug.Assert(disposingOperations != null);
+            Debug.Assert(disposingOrEscapingOperations != null);
 
             switch (kind)
             {
                 case DisposeAbstractValueKind.NotDisposable:
                 case DisposeAbstractValueKind.NotDisposed:
-                    Debug.Assert(disposingOperations.Count == 0);
+                    Debug.Assert(disposingOrEscapingOperations.Count == 0);
                     break;
 
                 case DisposeAbstractValueKind.Disposed:
-                    Debug.Assert(disposingOperations.Count > 0);
+                    Debug.Assert(disposingOrEscapingOperations.Count > 0);
                     break;
             }
         }
 
-        public ImmutableHashSet<IOperation> DisposingOperations { get; }
+        public ImmutableHashSet<IOperation> DisposingOrEscapingOperations { get; }
         public DisposeAbstractValueKind Kind { get; }
 
         public static bool operator ==(DisposeAbstractValue value1, DisposeAbstractValue value2)
@@ -90,7 +90,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
         {
             return other != null &&
                 Kind == other.Kind &&
-                DisposingOperations.SetEquals(other.DisposingOperations);
+                DisposingOrEscapingOperations.SetEquals(other.DisposingOrEscapingOperations);
         }
 
         public override bool Equals(object obj)
@@ -100,8 +100,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
 
         public override int GetHashCode()
         {
-            int hashCode = HashUtilities.Combine(Kind.GetHashCode(), DisposingOperations.Count.GetHashCode());
-            foreach (var operation in DisposingOperations)
+            int hashCode = HashUtilities.Combine(Kind.GetHashCode(), DisposingOrEscapingOperations.Count.GetHashCode());
+            foreach (var operation in DisposingOrEscapingOperations)
             {
                 hashCode = HashUtilities.Combine(operation.GetHashCode(), hashCode);
             }

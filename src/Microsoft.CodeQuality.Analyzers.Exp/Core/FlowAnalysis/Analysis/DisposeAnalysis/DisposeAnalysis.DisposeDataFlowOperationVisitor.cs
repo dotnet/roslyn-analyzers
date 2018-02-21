@@ -25,6 +25,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
             private readonly INamedTypeSymbol _iCollection;
             private readonly INamedTypeSymbol _genericICollection;
             private readonly ImmutableHashSet<INamedTypeSymbol> _disposeOwnershipTransferLikelyTypes;
+            private readonly Dictionary<IFieldSymbol, PointsToAbstractValue> _trackedInstanceFieldLocationsOpt;
 
             public DisposeDataFlowOperationVisitor(
                 INamedTypeSymbol iDisposable,
@@ -33,6 +34,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 ImmutableHashSet<INamedTypeSymbol> disposeOwnershipTransferLikelyTypes,
                 DisposeAbstractValueDomain valueDomain,
                 INamedTypeSymbol containingTypeSymbol,
+                bool trackInstanceFields,
                 DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResult,
                 DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> nullAnalysisResultOpt)
                 : base(valueDomain, containingTypeSymbol, nullAnalysisResultOpt: nullAnalysisResultOpt, pointsToAnalysisResultOpt: pointsToAnalysisResult)
@@ -45,6 +47,23 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 _iCollection = iCollection;
                 _genericICollection = genericICollection;
                 _disposeOwnershipTransferLikelyTypes = disposeOwnershipTransferLikelyTypes;
+                if (trackInstanceFields)
+                {
+                    _trackedInstanceFieldLocationsOpt = new Dictionary<IFieldSymbol, PointsToAbstractValue>();
+                }
+            }
+
+            public ImmutableDictionary<IFieldSymbol, PointsToAbstractValue> TrackedInstanceFieldPointsToMap
+            {
+                get
+                {
+                    if (_trackedInstanceFieldLocationsOpt == null)
+                    {
+                        throw new InvalidOperationException();
+                    }
+
+                    return _trackedInstanceFieldLocationsOpt.ToImmutableDictionary();
+                }
             }
 
             protected override DisposeAbstractValue GetAbstractDefaultValue(ITypeSymbol type) => DisposeAbstractValue.NotDisposable;
@@ -81,7 +100,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 else
                 {
                     // Merge the values from current and new analysis data.
-                    var keys = CurrentAnalysisData.Keys.Concat(newAnalysisDataOpt.Keys).ToImmutableArray();
+                    var keys = CurrentAnalysisData.Keys.Concat(newAnalysisDataOpt.Keys).ToImmutableHashSet();
                     foreach (var key in keys)
                     {
                         var value1 = CurrentAnalysisData.TryGetValue(key, out var currentValue) ? currentValue : ValueDomain.Bottom;
@@ -197,7 +216,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
 
                     case DisposeMethodKind.Close:
                         // FxCop compat: Calling "this.Close" shouldn't count as disposing the object within the implementation of Dispose.
-                        if (!(operation.Instance is IInstanceReferenceOperation))
+                        if (operation.Instance?.Kind != OperationKind.InstanceReference)
                         {
                             goto case DisposeMethodKind.Dispose;
                         }
@@ -269,9 +288,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 var value = base.VisitUsing(operation, argument);
                 if (operation.Resources is IVariableDeclarationGroupOperation varDeclGroup)
                 {
-                    var variableDeclarationInitializers = varDeclGroup.Declarations.Select(declaration => declaration.Initializer?.Value).WhereNotNull();
-                    var variableDeclaratorInitializers = varDeclGroup.Declarations.SelectMany(declaration => declaration.Declarators).Select(declarator => declarator.Initializer?.Value).WhereNotNull();
-                    foreach (var disposedInstance in variableDeclarationInitializers.Concat(variableDeclaratorInitializers))
+                    var variablerInitializers = varDeclGroup.Declarations.SelectMany(declaration => declaration.Declarators).Select(declarator => declarator.GetVariableInitializer()?.Value).WhereNotNull();
+                    foreach (var disposedInstance in variablerInitializers)
                     {
                         HandleDisposingOperation(operation, disposedInstance);
                     }
@@ -291,6 +309,24 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 {
                     // Conservatively handle user defined conversions.
                     HandlePossibleEscapingOperation(operation, operation.Operand);
+                }
+
+                return value;
+            }
+
+            public override DisposeAbstractValue VisitFieldReference(IFieldReferenceOperation operation, object argument)
+            {
+                var value = base.VisitFieldReference(operation, argument);
+                if (_trackedInstanceFieldLocationsOpt != null &&
+                    !operation.Field.IsStatic &&
+                    operation.Instance?.Kind == OperationKind.InstanceReference)
+                {
+                    if (!_trackedInstanceFieldLocationsOpt.TryGetValue(operation.Field, out PointsToAbstractValue pointsToAbstractValue))
+                    {
+                        pointsToAbstractValue = GetPointsToAbstractValue(operation);
+                        HandleInstanceCreation(operation, pointsToAbstractValue, DisposeAbstractValue.NotDisposed);
+                        _trackedInstanceFieldLocationsOpt.Add(operation.Field, pointsToAbstractValue);
+                    }
                 }
 
                 return value;

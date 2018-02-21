@@ -44,12 +44,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
             ImmutableHashSet<INamedTypeSymbol> disposeOwnershipTransferLikelyTypes,
             INamedTypeSymbol containingTypeSymbol,
             DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResult,
+            bool trackInstanceFields,
             out ImmutableDictionary<IFieldSymbol, PointsToAnalysis.PointsToAbstractValue> trackedInstanceFieldPointsToMap,
             DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt = null)
         {
             return GetOrComputeResultCore(cfg, iDisposable, iCollection, genericICollection,
                 disposeOwnershipTransferLikelyTypes, containingTypeSymbol, pointsToAnalysisResult,
-                nullAnalysisResultOpt, trackInstanceFields: true, trackedInstanceFieldPointsToMap: out trackedInstanceFieldPointsToMap);
+                nullAnalysisResultOpt, trackInstanceFields, out trackedInstanceFieldPointsToMap);
         }
 
         private static DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> GetOrComputeResultCore(

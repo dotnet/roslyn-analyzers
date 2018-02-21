@@ -288,7 +288,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 var value = base.VisitUsing(operation, argument);
                 if (operation.Resources is IVariableDeclarationGroupOperation varDeclGroup)
                 {
-                    var variablerInitializers = varDeclGroup.Declarations.SelectMany(declaration => declaration.Declarators).Select(declarator => declarator.GetVariableInitializer()).WhereNotNull();
+                    var variablerInitializers = varDeclGroup.Declarations.SelectMany(declaration => declaration.Declarators).Select(declarator => declarator.GetVariableInitializer()?.Value).WhereNotNull();
                     foreach (var disposedInstance in variablerInitializers)
                     {
                         HandleDisposingOperation(operation, disposedInstance);

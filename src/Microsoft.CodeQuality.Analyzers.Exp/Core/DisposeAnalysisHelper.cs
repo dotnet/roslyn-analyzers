@@ -110,12 +110,14 @@ namespace Microsoft.CodeQuality.Analyzers.Exp
             out DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> disposeAnalysisResult,
             out DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResult)
         {
-            return TryGetOrComputeResult(operationBlocks, containingMethod, out cfg, out disposeAnalysisResult, out pointsToAnalysisResult, out var _);
+            return TryGetOrComputeResult(operationBlocks, containingMethod, trackInstanceFields: false,
+                cfg: out cfg, disposeAnalysisResult: out disposeAnalysisResult, pointsToAnalysisResult: out pointsToAnalysisResult, trackedInstanceFieldPointsToMap: out var _);
         }
 
         public bool TryGetOrComputeResult(
             ImmutableArray<IOperation> operationBlocks,
             IMethodSymbol containingMethod,
+            bool trackInstanceFields,
             out ControlFlowGraph cfg,
             out DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> disposeAnalysisResult,
             out DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResult,
@@ -131,7 +133,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp
                     pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod.ContainingType, nullAnalysisResult);
                     disposeAnalysisResult = DisposeAnalysis.GetOrComputeResult(cfg, IDisposable, _iCollection,
                         _genericICollection, _disposeOwnershipTransferLikelyTypes, containingMethod.ContainingType, pointsToAnalysisResult,
-                        out trackedInstanceFieldPointsToMap, nullAnalysisResult);
+                        trackInstanceFields, out trackedInstanceFieldPointsToMap, nullAnalysisResult);
                     return true;
                 }
             }

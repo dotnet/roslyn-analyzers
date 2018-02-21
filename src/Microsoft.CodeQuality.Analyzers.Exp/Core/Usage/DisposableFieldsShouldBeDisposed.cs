@@ -142,7 +142,8 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Usage
                             DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> disposeAnalysisResult;
                             DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResult;
                             ImmutableDictionary<IFieldSymbol, PointsToAbstractValue> trackedInstanceFieldPointsToMap;
-                            if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockStartContext.OperationBlocks, containingMethod, out cfg, out disposeAnalysisResult, out pointsToAnalysisResult, out trackedInstanceFieldPointsToMap))
+                            if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockStartContext.OperationBlocks, containingMethod, trackInstanceFields: true,
+                                cfg: out cfg, disposeAnalysisResult: out disposeAnalysisResult, pointsToAnalysisResult: out pointsToAnalysisResult, trackedInstanceFieldPointsToMap: out trackedInstanceFieldPointsToMap))
                             {
                                 foreach (var fieldWithPointsToValue in trackedInstanceFieldPointsToMap)
                                 {
@@ -174,43 +175,6 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Usage
                                         }
                                     }
                                 }
-
-                            //    operationBlockStartContext.RegisterOperationAction(operationContext =>
-                            //    {
-                            //        var invocation = (IInvocationOperation)operationContext.Operation;
-                            //        if (invocation.TargetMethod.GetDisposeMethodKind(operationContext.Compilation) != DisposeMethodKind.None)
-                            //        {
-                            //            if (invocation.Instance != null)
-                            //            {
-                            //                IFieldReferenceOperation fieldReference = null;
-                            //                switch (invocation.Instance.Kind)
-                            //                {
-                            //                    case OperationKind.FieldReference:
-                            //                        fieldReference = (IFieldReferenceOperation)invocation.Instance;
-                            //                        break;
-
-                            //                    case OperationKind.ConditionalAccessInstance:
-                            //                        var conditionalAccessInstance = (IConditionalAccessInstanceOperation)invocation.Instance;
-                            //                        IConditionalAccessOperation conditionalAccess = conditionalAccessInstance.GetConditionalAccess();
-                            //                        if (conditionalAccess.Operation.Kind == OperationKind.FieldReference)
-                            //                        {
-                            //                            fieldReference = (IFieldReferenceOperation)conditionalAccess.Operation;
-                            //                        }
-                            //                        break;
-                            //                }
-
-                            //                IFieldSymbol field = fieldReference?.Field;
-                            //                if (field != null &&
-                            //                    disposableFields.Contains(field) &&
-                            //                    !field.IsStatic &&
-                            //                    fieldReference.Instance?.Kind == OperationKind.InstanceReference)
-                            //                {
-                            //                    addOrUpdateFieldDisposedValue(field, /*disposed*/true);
-                            //                }
-                            //            }
-                            //        }
-                            //    },
-                            //OperationKind.Invocation);
                             }
                         }
                     }

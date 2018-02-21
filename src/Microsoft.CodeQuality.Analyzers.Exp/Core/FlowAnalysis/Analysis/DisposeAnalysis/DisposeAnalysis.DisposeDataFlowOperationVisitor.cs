@@ -100,7 +100,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 else
                 {
                     // Merge the values from current and new analysis data.
-                    var keys = CurrentAnalysisData.Keys.Concat(newAnalysisDataOpt.Keys).ToImmutableArray();
+                    var keys = CurrentAnalysisData.Keys.Concat(newAnalysisDataOpt.Keys).ToImmutableHashSet();
                     foreach (var key in keys)
                     {
                         var value1 = CurrentAnalysisData.TryGetValue(key, out var currentValue) ? currentValue : ValueDomain.Bottom;
@@ -216,7 +216,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
 
                     case DisposeMethodKind.Close:
                         // FxCop compat: Calling "this.Close" shouldn't count as disposing the object within the implementation of Dispose.
-                        if (!(operation.Instance is IInstanceReferenceOperation))
+                        if (operation.Instance?.Kind != OperationKind.InstanceReference)
                         {
                             goto case DisposeMethodKind.Dispose;
                         }
@@ -288,9 +288,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 var value = base.VisitUsing(operation, argument);
                 if (operation.Resources is IVariableDeclarationGroupOperation varDeclGroup)
                 {
-                    var variableDeclarationInitializers = varDeclGroup.Declarations.Select(declaration => declaration.Initializer?.Value).WhereNotNull();
-                    var variableDeclaratorInitializers = varDeclGroup.Declarations.SelectMany(declaration => declaration.Declarators).Select(declarator => declarator.Initializer?.Value).WhereNotNull();
-                    foreach (var disposedInstance in variableDeclarationInitializers.Concat(variableDeclaratorInitializers))
+                    var variablerInitializers = varDeclGroup.Declarations.SelectMany(declaration => declaration.Declarators).Select(declarator => declarator.GetVariableInitializer()).WhereNotNull();
+                    foreach (var disposedInstance in variablerInitializers)
                     {
                         HandleDisposingOperation(operation, disposedInstance);
                     }

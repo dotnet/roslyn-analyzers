@@ -77,7 +77,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             else
             {
                 // Merge the values from current and new analysis data.
-                var keys = currentAnalysisDataOpt?.Keys.Concat(newAnalysisDataOpt.Keys).ToImmutableArray();
+                var keys = currentAnalysisDataOpt?.Keys.Concat(newAnalysisDataOpt.Keys).ToImmutableHashSet();
                 foreach (var key in keys)
                 {
                     var value1 = currentAnalysisDataOpt != null && currentAnalysisDataOpt.TryGetValue(key, out var currentValue) ? currentValue : ValueDomain.Bottom;

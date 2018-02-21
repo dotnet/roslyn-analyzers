@@ -1,11 +1,11 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeQuality.Analyzers.Exp.Maintainability;
+using Microsoft.CodeQuality.Analyzers.Exp.Security;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.CodeQuality.Analyzers.Exp.UnitTests.Maintainability
+namespace Microsoft.CodeQuality.Analyzers.Exp.UnitTests.Security
 {
     public partial class ReviewSQLQueriesForSecurityVulnerabilitiesTests : DiagnosticAnalyzerTestBase
     {

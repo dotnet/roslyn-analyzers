@@ -8,23 +8,22 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Operations.ControlFlow;
-using Microsoft.CodeAnalysis.Operations.DataFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis;
 
-namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
+namespace Microsoft.CodeQuality.Analyzers.Exp.Security
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class ReviewSqlQueriesForSecurityVulnerabilities : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2100";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.ReviewSQLQueriesForSecurityVulnerabilitiesTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftSecurityAnalyzersResources.ReviewSQLQueriesForSecurityVulnerabilitiesTitle), MicrosoftSecurityAnalyzersResources.ResourceManager, typeof(MicrosoftSecurityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessageNoNonLiterals = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.ReviewSQLQueriesForSecurityVulnerabilitiesMessageNoNonLiterals), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageNoNonLiterals = new LocalizableResourceString(nameof(MicrosoftSecurityAnalyzersResources.ReviewSQLQueriesForSecurityVulnerabilitiesMessageNoNonLiterals), MicrosoftSecurityAnalyzersResources.ResourceManager, typeof(MicrosoftSecurityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.ReviewSQLQueriesForSecurityVulnerabilitiesDescription), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftSecurityAnalyzersResources.ReviewSQLQueriesForSecurityVulnerabilitiesDescription), MicrosoftSecurityAnalyzersResources.ResourceManager, typeof(MicrosoftSecurityAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,

@@ -3,7 +3,7 @@
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.CodeQuality.Analyzers.Exp.UnitTests.Maintainability
+namespace Microsoft.CodeQuality.Analyzers.Exp.UnitTests.Security
 {
     public partial class ReviewSQLQueriesForSecurityVulnerabilitiesTests : DiagnosticAnalyzerTestBase
     {

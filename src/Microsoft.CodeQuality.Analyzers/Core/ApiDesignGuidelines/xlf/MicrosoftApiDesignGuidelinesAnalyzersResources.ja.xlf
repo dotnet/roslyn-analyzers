@@ -102,14 +102,9 @@
         <target state="translated">クラスが System.IDisposable 型であるインスタンス フィールドを宣言および実装していますが、IDisposable を実装していません。IDisposable フィールドを宣言するクラスは間接的にアンマネージ リソースを所有しているため、IDisposable インターフェイスを実装する必要があります。</target>
         <note />
       </trans-unit>
-      <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageDependsOnFix">
-        <source>Implement IDisposable on {0} because it creates members of the following IDisposable types: {1}. If {0} has previously shipped, adding new members that implement IDisposable to this type is considered a breaking change to existing consumers.</source>
-        <target state="translated">次の IDisposable 型のメンバーを作成するため、IDisposable を {0} で実装します: {1}。{0} が以前に出荷されている場合、IDisposable を実装する新しいメンバーを追加することは、既存のコンシューマーにとって重大な変更になります。</target>
-        <note />
-      </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
-        <source>Type '{0}' owns disposable fields but is not disposable</source>
-        <target state="translated">型 '{0}' は破棄可能なフィールドを所有しますが、破棄可能ではありません</target>
+        <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
+        <target state="needs-review-translation">型 '{0}' は破棄可能なフィールドを所有しますが、破棄可能ではありません</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">

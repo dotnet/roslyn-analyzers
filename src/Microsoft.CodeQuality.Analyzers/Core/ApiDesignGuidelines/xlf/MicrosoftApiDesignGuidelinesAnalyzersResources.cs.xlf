@@ -102,14 +102,9 @@
         <target state="translated">Třída deklaruje a implementuje pole instance, které je typu System.IDisposable, přičemž tato třída neimplementuje IDisposable. Třída, která deklaruje pole IDisposable nepřímo, vlastní nespravovaný prostředek a měla by implementovat rozhraní IDisposable.</target>
         <note />
       </trans-unit>
-      <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageDependsOnFix">
-        <source>Implement IDisposable on {0} because it creates members of the following IDisposable types: {1}. If {0} has previously shipped, adding new members that implement IDisposable to this type is considered a breaking change to existing consumers.</source>
-        <target state="translated">Implementujte IDisposable pro {0}, protože vytváří členy následujících typů IDisposable: {1}. Pokud byl typ {0} dříve součástí dodávky, považuje se přidání nových členů, které pro tento typ implementují IDisposable, za kritickou změnu pro existující konzumenty.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
-        <source>Type '{0}' owns disposable fields but is not disposable</source>
-        <target state="translated">Typ {0} vlastní jednoúčelová pole, ale není jednoúčelový.</target>
+        <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
+        <target state="needs-review-translation">Typ {0} vlastní jednoúčelová pole, ale není jednoúčelový.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">

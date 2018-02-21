@@ -102,14 +102,9 @@
         <target state="translated">Eine Klasse deklariert und implementiert ein Instanzenfeld vom Typ "System.IDisposable", und IDisposable wird von der Klasse nicht implementiert. Eine Klasse, die ein IDisposable-Feld indirekt deklariert, besitzt eine nicht verwaltete Ressource und muss die IDisposable-Schnittstelle implementieren.</target>
         <note />
       </trans-unit>
-      <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageDependsOnFix">
-        <source>Implement IDisposable on {0} because it creates members of the following IDisposable types: {1}. If {0} has previously shipped, adding new members that implement IDisposable to this type is considered a breaking change to existing consumers.</source>
-        <target state="translated">Implementieren Sie IDisposable für "{0}", weil dadurch Member der folgenden IDisposable-Typen erstellt werden: {1}. Wenn "{0}" zuvor geliefert wurde, wird das Hinzufügen neuer Member, die IDisposable auf diesen Typ anwenden, als fehlerhafte Änderung für vorhandene Endverbraucher betrachtet.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
-        <source>Type '{0}' owns disposable fields but is not disposable</source>
-        <target state="translated">Der Typ "{0}" besitzt verwerfbare Felder, ist jedoch nicht verwerfbar.</target>
+        <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
+        <target state="needs-review-translation">Der Typ "{0}" besitzt verwerfbare Felder, ist jedoch nicht verwerfbar.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">

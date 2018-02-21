@@ -69,7 +69,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     IEnumerable<IFieldSymbol> disposableFields = from member in namedType.GetMembers()
                                                                  where member.Kind == SymbolKind.Field && !member.IsStatic
                                                                  let field = member as IFieldSymbol
-                                                                 where field.Type != null && field.Type.AllInterfaces.Contains(_disposableTypeSymbol)
+                                                                 where field.Type != null && field.Type.IsDisposable(_disposableTypeSymbol)
                                                                  select field;
 
                     if (disposableFields.Any())
@@ -86,7 +86,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                     symbolContext.CancellationToken));
                             if (syntaxNodes.Any())
                             {
-                                symbolContext.ReportDiagnostic(namedType.CreateDiagnostic(Rule, namedType.Name));
+                                // Type '{0}' owns disposable field(s) '{1}' but is not disposable
+                                var arg1 = namedType.Name;
+                                var arg2 = string.Join(", ", disposableFieldsHashSet.Select(f => f.Name).Order());
+                                symbolContext.ReportDiagnostic(namedType.CreateDiagnostic(Rule, arg1, arg2));
                                 return;
                             }
                         }

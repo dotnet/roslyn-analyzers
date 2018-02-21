@@ -50,7 +50,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Usage
                 }
 
                 var fieldDisposeValueMap = new ConcurrentDictionary<IFieldSymbol, /*disposed*/bool>();
-                Action<IFieldSymbol, bool> addOrUpdateFieldDisposedValue = (field, disposed) =>
+                void addOrUpdateFieldDisposedValue(IFieldSymbol field, bool disposed)
                 {
                     Debug.Assert(!field.IsStatic);
                     Debug.Assert(field.Type.IsDisposable(disposeAnalysisHelper.IDisposable));
@@ -69,7 +69,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Usage
                         if (!field.IsStatic &&
                             disposeAnalysisHelper.GetDisposableFields(field.ContainingType).Contains(field))
                         {
-                            addOrUpdateFieldDisposedValue(field, /*disposed*/false);
+                            addOrUpdateFieldDisposedValue(field, disposed: false);
                         }
                     }
                 },
@@ -122,7 +122,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Usage
                                     {
                                         if (disposeAnalysisHelper.IsDisposableCreationOrDisposeOwnershipTransfer(location, containingMethod))
                                         {
-                                            addOrUpdateFieldDisposedValue(field, /*disposed*/false);
+                                            addOrUpdateFieldDisposedValue(field, disposed: false);
                                             break;
                                         }
                                     }

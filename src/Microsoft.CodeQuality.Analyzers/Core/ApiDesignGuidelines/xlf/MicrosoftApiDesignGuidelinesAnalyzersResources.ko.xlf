@@ -102,14 +102,9 @@
         <target state="translated">클래스는 System.IDisposable 형식인 인스턴스 필드를 선언하고 구현하지만, IDisposable을 구현하지 않습니다. IDisposable 필드를 선언하는 클래스는 관리되지 않는 리소스를 간접적으로 소유하며, IDisposable 인터페이스를 구현해야 합니다.</target>
         <note />
       </trans-unit>
-      <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageDependsOnFix">
-        <source>Implement IDisposable on {0} because it creates members of the following IDisposable types: {1}. If {0} has previously shipped, adding new members that implement IDisposable to this type is considered a breaking change to existing consumers.</source>
-        <target state="translated">IDisposable 형식 {1}의 멤버가 만들어지므로 {0}에 IDisposable을 구현하세요. {0}이(가) 이전에 제공된 경우 이 형식에 IDisposable을 구현하는 새 멤버를 추가하면 기존 소비자는 이를 새로운 변경 사항으로 인식합니다.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
-        <source>Type '{0}' owns disposable fields but is not disposable</source>
-        <target state="translated">삭제 가능한 필드가 있는 '{0}' 형식을 삭제할 수 없습니다.</target>
+        <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
+        <target state="needs-review-translation">삭제 가능한 필드가 있는 '{0}' 형식을 삭제할 수 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">

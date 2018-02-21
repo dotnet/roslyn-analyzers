@@ -102,14 +102,9 @@
         <target state="translated">Bir sınıf, System.IDisposable türü olan bir örnek alanını bildirip uygular ve sınıf tarafından IDisposable uygulanmaz. IDisposable alanı bildiren bir sınıf dolaylı olarak yönetilmeyen bir kaynağa sahip olur ve IDisposable arabirimini uygulamalıdır.</target>
         <note />
       </trans-unit>
-      <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageDependsOnFix">
-        <source>Implement IDisposable on {0} because it creates members of the following IDisposable types: {1}. If {0} has previously shipped, adding new members that implement IDisposable to this type is considered a breaking change to existing consumers.</source>
-        <target state="translated">{0} tarafından aşağıdaki IDisposable türlerinin üyeleri oluşturulduğundan bunun üzerinde IDisposable uygulayın: {1}. {0} daha önce gönderilmişse, bu türe IDisposable uygulayan yeni üyelerin eklenmesi, mevcut kullanıcılar için bozucu bir değişiklik olarak değerlendirilir.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
-        <source>Type '{0}' owns disposable fields but is not disposable</source>
-        <target state="translated">'{0}' türü atılabilir alanlar içeriyor ancak atılabilir değil</target>
+        <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
+        <target state="needs-review-translation">'{0}' türü atılabilir alanlar içeriyor ancak atılabilir değil</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">

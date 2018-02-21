@@ -4398,5 +4398,32 @@ Class Test
 End Class
 ");
         }
+
+        [Fact, WorkItem(1597, "https://github.com/dotnet/roslyn-analyzers/issues/1597")]
+        public void DisposableObjectInErrorCode_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class B : IDisposable
+{
+    public void Dispose()
+    {
+        A x = new A();
+        = x
+    }
+}
+", TestValidationMode.AllowCompileErrors,
+            // Test0.cs(16,15): warning CA2000: In method 'void B.Dispose()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(16, 15, "void B.Dispose()", "new A()"));
+        }
     }
 }

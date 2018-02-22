@@ -4478,5 +4478,49 @@ Class Test
     End Function
 End Class");
         }
+
+        [Fact, WorkItem(1602, "https://github.com/dotnet/roslyn-analyzers/issues/1602")]
+        public void MemberReferenceInQueryFromClause_Disposed_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Immutable;
+using System.Linq;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class B: IDisposable
+{
+    public C C { get; }
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class C
+{
+    public ImmutableArray<A> ArrayOfA { get; }
+}
+
+class Test
+{
+    void M1(ImmutableArray<B> arrayOfB)
+    {
+        var x = from b in arrayOfB
+            from a in b.C.ArrayOfA
+            select a;
+        var y = new A();
+        y.Dispose();
+    }
+}
+");
+        }
     }
 }

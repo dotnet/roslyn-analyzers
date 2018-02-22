@@ -228,6 +228,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 return false;
             }
 
+            // Workaround for https://github.com/dotnet/roslyn-analyzers/issues/1602
+            if (instanceOpt != null && instanceOpt.Type == null)
+            {
+                return false;
+            }
+
             PointsToAbstractValue instanceLocationOpt = null;
             AnalysisEntity parentOpt = null;
             if (instanceOpt?.Type != null)

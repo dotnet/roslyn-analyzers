@@ -45,7 +45,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Security
             {
                 INamedTypeSymbol iDbCommandType = WellKnownTypes.IDbCommand(compilationContext.Compilation);
                 INamedTypeSymbol iDataAdapterType = WellKnownTypes.IDataAdapter(compilationContext.Compilation);
-                IPropertySymbol commandTextProperty = iDbCommandType.GetProperty("CommandText");
+                IPropertySymbol commandTextProperty = iDbCommandType?.GetProperty("CommandText");
 
                 if (iDbCommandType == null ||
                     iDataAdapterType == null ||

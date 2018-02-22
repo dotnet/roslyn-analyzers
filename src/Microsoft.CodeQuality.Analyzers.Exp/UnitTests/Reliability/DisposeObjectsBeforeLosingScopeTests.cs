@@ -4425,5 +4425,102 @@ class B : IDisposable
             // Test0.cs(16,15): warning CA2000: In method 'void B.Dispose()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
             GetCSharpResultAt(16, 15, "void B.Dispose()", "new A()"));
         }
+
+        [Fact]
+        public void DelegateCreation_Disposed_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        Func<A> createA = M2;
+        A a = createA();
+        a.Dispose();
+    }
+
+    A M2()
+    {
+        return new A();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Throw New NotImplementedException()
+    End Sub
+End Class
+
+Class Test
+    Sub M1()
+        Dim createA As Func(Of A) = AddressOf M2
+        Dim a As A = createA()
+        a.Dispose()
+    End Sub
+
+    Function M2() As A
+        Return New A()
+    End Function
+End Class");
+        }
+
+        [Fact, WorkItem(1602, "https://github.com/dotnet/roslyn-analyzers/issues/1602")]
+        public void MemberReferenceInQueryFromClause_Disposed_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Immutable;
+using System.Linq;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class B: IDisposable
+{
+    public C C { get; }
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class C
+{
+    public ImmutableArray<A> ArrayOfA { get; }
+}
+
+class Test
+{
+    void M1(ImmutableArray<B> arrayOfB)
+    {
+        var x = from b in arrayOfB
+            from a in b.C.ArrayOfA
+            select a;
+        var y = new A();
+        y.Dispose();
+    }
+}
+");
+        }
     }
 }

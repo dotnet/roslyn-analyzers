@@ -185,6 +185,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             // For reference types passed as arguments, 
             // reset all analysis data for the instance members as the content might change for them.
             if (HasPointsToAnalysisResult &&
+                operation.Value.Type != null &&
                 !operation.Value.Type.HasValueCopySemantics())
             {
                 ResetReferenceTypeInstanceAnalysisData(operation.Value);

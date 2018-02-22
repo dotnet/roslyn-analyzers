@@ -1,20 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
-  <file datatype="xml" source-language="en" target-language="ru" original="../MicrosoftMaintainabilityAnalyzersResources.resx">
+  <file datatype="xml" source-language="en" target-language="fr" original="../MicrosoftSecurityAnalyzersResources.resx">
     <body>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesDescription">
         <source>SQL queries that directly use user input can be vulnerable to SQL injection attacks. Review this SQL query for potential vulnerabilities, and consider using a parameterized SQL query.</source>
-        <target state="translated">Запросы SQL, непосредственно работающие с вводимыми пользователем данными, могут быть уязвимы для атак путем внедрения кода SQL. Проверьте этот запрос SQL на наличие уязвимостей и попробуйте использовать параметризованный запрос.</target>
+        <target state="new">SQL queries that directly use user input can be vulnerable to SQL injection attacks. Review this SQL query for potential vulnerabilities, and consider using a parameterized SQL query.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesMessageNoNonLiterals">
         <source>Review if the query string passed to '{0}' in '{1}', accepts any user input.</source>
-        <target state="translated">Проверьте, принимает ли строка запроса, переданная для "{0}" в "{1}", вводимые пользователем данные.</target>
+        <target state="new">Review if the query string passed to '{0}' in '{1}', accepts any user input.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesTitle">
         <source>Review SQL queries for security vulnerabilities</source>
-        <target state="translated">Проверьте запросы SQL на наличие уязвимостей системы безопасности</target>
+        <target state="new">Review SQL queries for security vulnerabilities</target>
         <note />
       </trans-unit>
     </body>

@@ -76,7 +76,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
             protected override PointsToAbstractValue ComputeAnalysisValueForReferenceOperation(IOperation operation, PointsToAbstractValue defaultValue)
             {
-                if (!operation.Type.HasValueCopySemantics() &&
+                if (operation.Type != null &&
+                    !operation.Type.HasValueCopySemantics() &&
                     AnalysisEntityFactory.TryCreate(operation, out AnalysisEntity analysisEntity))
                 {
                     if (!HasAbstractValue(analysisEntity))
@@ -90,7 +91,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 }
                 else
                 {
-                    Debug.Assert(!operation.Type.HasValueCopySemantics() || defaultValue == PointsToAbstractValue.NoLocation);
+                    Debug.Assert(operation.Type == null || !operation.Type.HasValueCopySemantics() || defaultValue == PointsToAbstractValue.NoLocation);
                     return defaultValue;
                 }
             }

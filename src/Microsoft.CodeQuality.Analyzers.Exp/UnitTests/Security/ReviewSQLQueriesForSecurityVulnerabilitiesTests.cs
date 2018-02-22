@@ -1536,5 +1536,16 @@ Module Test
 End Module",
             GetBasicResultAt(134, 18, "Sub Adapter1.New(cmd As String, command As String)", "M1"));
         }
+
+        [Fact]
+        public void MissingWellKnownTypes_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+class C { }", ReferenceFlags.RemoveSystemData);
+
+            VerifyBasic(@"
+Class C
+End Class", ReferenceFlags.RemoveSystemData);
+        }
     }
 }

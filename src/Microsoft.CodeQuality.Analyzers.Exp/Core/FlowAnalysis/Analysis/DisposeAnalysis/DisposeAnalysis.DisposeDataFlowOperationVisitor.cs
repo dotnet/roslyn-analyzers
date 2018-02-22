@@ -229,7 +229,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                              operation.TargetMethod.Name.StartsWith("open", StringComparison.OrdinalIgnoreCase)))
                         {
                             var instanceLocation = GetPointsToAbstractValue(operation);
-                            Debug.Assert(instanceLocation.Kind == PointsToAbstractValueKind.Known);
                             return HandleInstanceCreation(operation, instanceLocation, value);
                         }
                         else if (operation.Arguments.Length > 0 &&
@@ -324,8 +323,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                     if (!_trackedInstanceFieldLocationsOpt.TryGetValue(operation.Field, out PointsToAbstractValue pointsToAbstractValue))
                     {
                         pointsToAbstractValue = GetPointsToAbstractValue(operation);
-                        HandleInstanceCreation(operation, pointsToAbstractValue, DisposeAbstractValue.NotDisposed);
-                        _trackedInstanceFieldLocationsOpt.Add(operation.Field, pointsToAbstractValue);
+                        if (HandleInstanceCreation(operation, pointsToAbstractValue, DisposeAbstractValue.NotDisposable) != DisposeAbstractValue.NotDisposable)
+                        {
+                            _trackedInstanceFieldLocationsOpt.Add(operation.Field, pointsToAbstractValue);
+                        }
                     }
                 }
 

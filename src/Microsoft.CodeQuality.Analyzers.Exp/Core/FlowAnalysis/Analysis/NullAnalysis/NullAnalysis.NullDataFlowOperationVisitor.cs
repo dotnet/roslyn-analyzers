@@ -74,7 +74,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
             {
                 var value = base.VisitAssignmentOperation(operation, argument);
 
-                if (operation.Target.Type.IsValueType)
+                if (operation.Target.Type?.IsValueType == true)
                 {
                     return NullAbstractValue.NotNull;
                 }

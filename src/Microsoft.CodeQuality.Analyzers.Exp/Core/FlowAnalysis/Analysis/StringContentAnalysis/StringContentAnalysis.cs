@@ -22,11 +22,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
 
         public static DataFlowAnalysisResult<StringContentBlockAnalysisResult, StringContentAbstractValue> GetOrComputeResult(
             ControlFlowGraph cfg,
-            INamedTypeSymbol containingTypeSymbol,
+            ISymbol owningSymbol,
             DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt = null,
-            DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResultOpt = null)
+            DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResultOpt = null,
+            bool pessimisticAnalsysis = true)
         {
-            var operationVisitor = new StringContentDataFlowOperationVisitor(StringContentAbstractValueDomain.Default, containingTypeSymbol, nullAnalysisResultOpt, pointsToAnalysisResultOpt);
+            var operationVisitor = new StringContentDataFlowOperationVisitor(StringContentAbstractValueDomain.Default, owningSymbol, pessimisticAnalsysis, nullAnalysisResultOpt, pointsToAnalysisResultOpt);
             var nullAnalysis = new StringContentAnalysis(StringContentAnalysisDomainInstance, operationVisitor);
             return nullAnalysis.GetOrComputeResultCore(cfg);
         }

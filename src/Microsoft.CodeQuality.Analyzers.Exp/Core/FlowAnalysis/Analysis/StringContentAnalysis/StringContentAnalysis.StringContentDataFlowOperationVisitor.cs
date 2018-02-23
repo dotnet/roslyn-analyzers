@@ -16,10 +16,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
         {
             public StringContentDataFlowOperationVisitor(
                 StringContentAbstractValueDomain valueDomain,
-                INamedTypeSymbol containingTypeSymbol,
+                ISymbol owningSymbol,
+                bool pessimisticAnalysis,
                 DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt,
                 DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResultOpt)
-                : base(valueDomain, containingTypeSymbol, nullAnalysisResultOpt, pointsToAnalysisResultOpt)
+                : base(valueDomain, owningSymbol, pessimisticAnalysis, nullAnalysisResultOpt, pointsToAnalysisResultOpt)
             {
             }
 

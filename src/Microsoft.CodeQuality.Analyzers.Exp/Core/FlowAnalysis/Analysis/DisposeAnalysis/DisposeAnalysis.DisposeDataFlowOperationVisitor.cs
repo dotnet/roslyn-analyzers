@@ -22,30 +22,38 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
         private sealed class DisposeDataFlowOperationVisitor : AbstractLocationDataFlowOperationVisitor<DisposeAnalysisData, DisposeAbstractValue>
         {
             private readonly INamedTypeSymbol _iDisposable;
-            private readonly INamedTypeSymbol _iCollection;
-            private readonly INamedTypeSymbol _genericICollection;
+            private readonly INamedTypeSymbol _taskType;
+            private readonly ImmutableHashSet<INamedTypeSymbol> _collectionTypes;
             private readonly ImmutableHashSet<INamedTypeSymbol> _disposeOwnershipTransferLikelyTypes;
             private readonly Dictionary<IFieldSymbol, PointsToAbstractValue> _trackedInstanceFieldLocationsOpt;
 
+            // Invoking an instance method may likely invalidate all the instance field analysis state, i.e.
+            // reference type fields might be re-assigned to point to different objects in the called method.
+            // An optimistic points to analysis assumes that the points to values of instance fields don't change on invoking an instance method.
+            // A pessimistic points to analysis resets all the instance state and assumes the instance field might point to any object, hence has unknown state.
+            // For dispose analysis, we want to perform an optimistic points to analysis as we assume a disposable field is not likely to be re-assigned to a separate object in helper method invocations in Dispose.
+            private const bool pessimisticAnalysis = false;
+
             public DisposeDataFlowOperationVisitor(
                 INamedTypeSymbol iDisposable,
-                INamedTypeSymbol iCollection,
-                INamedTypeSymbol genericICollection,
+                INamedTypeSymbol taskType,
+                ImmutableHashSet<INamedTypeSymbol> collectionTypes,
                 ImmutableHashSet<INamedTypeSymbol> disposeOwnershipTransferLikelyTypes,
                 DisposeAbstractValueDomain valueDomain,
-                INamedTypeSymbol containingTypeSymbol,
+                ISymbol owningSymbol,
                 bool trackInstanceFields,
                 DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResult,
                 DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> nullAnalysisResultOpt)
-                : base(valueDomain, containingTypeSymbol, nullAnalysisResultOpt: nullAnalysisResultOpt, pointsToAnalysisResultOpt: pointsToAnalysisResult)
+                : base(valueDomain, owningSymbol, pessimisticAnalysis, nullAnalysisResultOpt: nullAnalysisResultOpt, pointsToAnalysisResultOpt: pointsToAnalysisResult)
             {
                 Debug.Assert(iDisposable != null);
+                Debug.Assert(collectionTypes.All(ct => ct.TypeKind == TypeKind.Interface));
                 Debug.Assert(disposeOwnershipTransferLikelyTypes != null);
                 Debug.Assert(pointsToAnalysisResult != null);
 
                 _iDisposable = iDisposable;
-                _iCollection = iCollection;
-                _genericICollection = genericICollection;
+                _taskType = taskType;
+                _collectionTypes = collectionTypes;
                 _disposeOwnershipTransferLikelyTypes = disposeOwnershipTransferLikelyTypes;
                 if (trackInstanceFields)
                 {
@@ -111,9 +119,17 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 }
             }
 
-            protected override DisposeAbstractValue HandleInstanceCreation(IOperation operation, PointsToAbstractValue instanceLocation, DisposeAbstractValue defaultValue)
+            protected override DisposeAbstractValue HandleInstanceCreation(ITypeSymbol instanceType, PointsToAbstractValue instanceLocation, DisposeAbstractValue defaultValue)
             {
-                if (!operation.Type.IsDisposable(_iDisposable))
+                defaultValue = DisposeAbstractValue.NotDisposable;
+
+                if (!instanceType.IsDisposable(_iDisposable))
+                {
+                    return defaultValue;
+                }
+
+                // Special case: Do not track System.Threading.Tasks.Task as you are not required to dispose them.
+                if (_taskType != null && instanceType.DerivesFrom(_taskType, baseTypesOnly: true))
                 {
                     return defaultValue;
                 }
@@ -142,14 +158,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
 
             private void HandlePossibleEscapingOperation(IOperation escapingOperation, IOperation escapedInstance)
             {
-                if (escapedInstance?.Type == null ||
-                    !escapedInstance.Type.IsDisposable(_iDisposable))
-                {
-                    return;
-                }
-
-                PointsToAbstractValue instanceLocation = GetPointsToAbstractValue(escapedInstance);
-                foreach (AbstractLocation location in instanceLocation.Locations)
+                PointsToAbstractValue pointsToValue = GetPointsToAbstractValue(escapedInstance);
+                foreach (AbstractLocation location in pointsToValue.Locations)
                 {
                     if (CurrentAnalysisData.TryGetValue(location, out DisposeAbstractValue currentDisposeValue))
                     {
@@ -164,8 +174,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 // FxCop compat: The object assigned to a field or a property or an array element is considered escaped.
                 // TODO: Perform better analysis for array element assignments as we already track element locations.
                 // https://github.com/dotnet/roslyn-analyzers/issues/1577
+                // Also consider arguments passed ByRef as escaped.
                 if (target is IMemberReferenceOperation ||
-                    target.Kind == OperationKind.ArrayElementReference)
+                    target.Kind == OperationKind.ArrayElementReference ||
+                    (value is IArgumentOperation argument && argument.Parameter.RefKind == RefKind.Ref))
                 {
                     HandlePossibleEscapingOperation(operation, value);
                 }
@@ -185,6 +197,26 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 HandlePossibleEscapingForAssignment(target, assignedValueOperation, assignedValueOperation);
             }
 
+            protected override void SetValueForParameterOnEntry(IParameterSymbol parameter, AnalysisEntity analysisEntity)
+            {
+                if (_disposeOwnershipTransferLikelyTypes.Contains(parameter.Type))
+                {
+                    if (TryGetPointsToAbstractValueAtCurrentBlockExit(analysisEntity, out PointsToAbstractValue pointsToAbstractValue))
+                    {
+                        SetAbstractValue(pointsToAbstractValue, DisposeAbstractValue.NotDisposed);
+                    }
+                }
+            }
+
+            protected override void SetValueForParameterPointsToLocationOnExit(IParameterSymbol parameter, PointsToAbstractValue pointsToAbstractValue)
+            {
+                if (pointsToAbstractValue.Kind == PointsToAbstractValueKind.Known &&
+                    parameter.Type.IsDisposable(_iDisposable))
+                {
+                    SetAbstractValue(pointsToAbstractValue, ValueDomain.UnknownOrMayBeValue);
+                }
+            }
+
             // TODO: Remove these temporary methods once we move to compiler's CFG
             // https://github.com/dotnet/roslyn-analyzers/issues/1567
             #region Temporary methods to workaround lack of *real* CFG
@@ -202,6 +234,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 var value = base.DefaultVisit(operation, argument);
                 return DisposeAbstractValue.NotDisposable;
             }
+
+            // FxCop compat: Catches things like static calls to File.Open() and Create()
+            private static bool IsDisposableCreationSpecialCase(IInvocationOperation operation)
+                => operation.TargetMethod.IsStatic &&
+                   (operation.TargetMethod.Name.StartsWith("create", StringComparison.OrdinalIgnoreCase) ||
+                    operation.TargetMethod.Name.StartsWith("open", StringComparison.OrdinalIgnoreCase));
 
             public override DisposeAbstractValue VisitInvocation_NonLambdaOrDelegateOrLocalFunction(IInvocationOperation operation, object argument)
             {
@@ -224,16 +262,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
 
                     default:
                         // FxCop compat: Catches things like static calls to File.Open() and Create()
-                        if (operation.TargetMethod.IsStatic &&
-                            (operation.TargetMethod.Name.StartsWith("create", StringComparison.OrdinalIgnoreCase) ||
-                             operation.TargetMethod.Name.StartsWith("open", StringComparison.OrdinalIgnoreCase)))
+                        if (IsDisposableCreationSpecialCase(operation))
                         {
                             var instanceLocation = GetPointsToAbstractValue(operation);
-                            return HandleInstanceCreation(operation, instanceLocation, value);
+                            return HandleInstanceCreation(operation.Type, instanceLocation, value);
                         }
                         else if (operation.Arguments.Length > 0 &&
-                            (operation.TargetMethod.IsCollectionAddMethod(_iCollection) ||
-                             operation.TargetMethod.IsCollectionAddMethod(_genericICollection)))
+                            operation.TargetMethod.IsCollectionAddMethod(_collectionTypes))
                         {
                             // FxCop compat: The object added to a collection is considered escaped.
                             var lastArgument = operation.Arguments[operation.Arguments.Length - 1];
@@ -256,19 +291,27 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
             public override DisposeAbstractValue VisitArgument(IArgumentOperation operation, object argument)
             {
                 var value = base.VisitArgument(operation, argument);
+                var possibleEscape = false;
 
-                // Discover if a disposable object is being passed into the creation method for this new disposable object
-                // and if the new dispoable object assumes ownership of that passed in disposable object.
-                if (operation.Parent is IObjectCreationOperation objectCreation &&
-                    objectCreation.Arguments.Length == 1 &&
-                    objectCreation.Constructor.Parameters.Length == 1 &&
-                    _disposeOwnershipTransferLikelyTypes.Contains(objectCreation.Constructor.Parameters[0].Type))
+                if (operation.Parameter.Type.IsDisposable(_iDisposable))
                 {
-                    HandlePossibleEscapingOperation(operation, operation.Value);
+                    // Discover if a disposable object is being passed into the creation method for this new disposable object
+                    // and if the new disposable object assumes ownership of that passed in disposable object.
+                    if ((operation.Parent is IObjectCreationOperation objectCreation ||
+                         operation.Parent is IInvocationOperation invocation && IsDisposableCreationSpecialCase(invocation)) &&
+                        _disposeOwnershipTransferLikelyTypes.Contains(operation.Parameter.Type))
+                    {
+                        possibleEscape = true;
+                    }
+                    else if (operation.Parameter.RefKind == RefKind.Ref)
+                    {
+                        // Argument passed by ref is considered escaped.
+                        possibleEscape = true;
+                    }
                 }
-                else if (operation.Parameter.RefKind != RefKind.None)
+
+                if (possibleEscape)
                 {
-                    // Argument passed by ref/out is considered escaped.
                     HandlePossibleEscapingOperation(operation, operation.Value);
                 }
 
@@ -278,7 +321,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
             public override DisposeAbstractValue VisitReturn(IReturnOperation operation, object argument)
             {
                 var value = base.VisitReturn(operation, argument);
-                HandlePossibleEscapingOperation(operation, operation.ReturnedValue);
+                if (operation.ReturnedValue != null)
+                {
+                    HandlePossibleEscapingOperation(operation, operation.ReturnedValue);
+                }
+
                 return value;
             }
 
@@ -323,7 +370,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                     if (!_trackedInstanceFieldLocationsOpt.TryGetValue(operation.Field, out PointsToAbstractValue pointsToAbstractValue))
                     {
                         pointsToAbstractValue = GetPointsToAbstractValue(operation);
-                        if (HandleInstanceCreation(operation, pointsToAbstractValue, DisposeAbstractValue.NotDisposable) != DisposeAbstractValue.NotDisposable)
+                        if (HandleInstanceCreation(operation.Type, pointsToAbstractValue, DisposeAbstractValue.NotDisposable) != DisposeAbstractValue.NotDisposable)
                         {
                             _trackedInstanceFieldLocationsOpt.Add(operation.Field, pointsToAbstractValue);
                         }

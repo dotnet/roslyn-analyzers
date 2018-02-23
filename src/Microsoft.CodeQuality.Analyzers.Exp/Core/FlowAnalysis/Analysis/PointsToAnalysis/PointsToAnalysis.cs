@@ -23,10 +23,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
         public static DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> GetOrComputeResult(
             ControlFlowGraph cfg,
-            INamedTypeSymbol containingTypeSymbol,
-            DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt = null)
+            ISymbol owningSymbol,
+            DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt = null,
+            bool pessimisticAnalysis = true)
         {
-            var operationVisitor = new PointsToDataFlowOperationVisitor(PointsToAbstractValueDomain.Default, containingTypeSymbol, nullAnalysisResultOpt);
+            var operationVisitor = new PointsToDataFlowOperationVisitor(PointsToAbstractValueDomain.Default, owningSymbol, pessimisticAnalysis, nullAnalysisResultOpt);
             var pointsToAnalysis = new PointsToAnalysis(PointsToAnalysisDomainInstance, operationVisitor);
             return pointsToAnalysis.GetOrComputeResultCore(cfg);
         }

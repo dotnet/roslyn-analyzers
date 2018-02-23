@@ -1,7 +1,10 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
+using Microsoft.CodeAnalysis.Operations.ControlFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow
@@ -13,11 +16,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     {
         protected AbstractLocationDataFlowOperationVisitor(
             AbstractValueDomain<TAbstractAnalysisValue> valueDomain,
-            INamedTypeSymbol containingTypeSymbol,
+            ISymbol owningSymbol,
+            bool pessimisticAnalysis,
             DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt,
             DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResultOpt)
-            : base(valueDomain, containingTypeSymbol, nullAnalysisResultOpt, pointsToAnalysisResultOpt)
+            : base(valueDomain, owningSymbol, pessimisticAnalysis, nullAnalysisResultOpt, pointsToAnalysisResultOpt)
         {
+            Debug.Assert(pointsToAnalysisResultOpt != null);
         }
 
         protected abstract TAbstractAnalysisValue GetAbstractValue(AbstractLocation location);
@@ -57,10 +62,45 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             }
         }
 
-        protected virtual TAbstractAnalysisValue HandleInstanceCreation(IOperation operation, PointsToAbstractValue instanceLocation, TAbstractAnalysisValue defaultValue)
+        protected virtual TAbstractAnalysisValue HandleInstanceCreation(ITypeSymbol instanceType, PointsToAbstractValue instanceLocation, TAbstractAnalysisValue defaultValue)
         {
             SetAbstractValue(instanceLocation, defaultValue);
             return defaultValue;
+        }
+
+        protected override TAbstractAnalysisValue ComputeAnalysisValueForOutArgument(IArgumentOperation operation, TAbstractAnalysisValue defaultValue)
+        {
+            if (operation.Value.Type != null)
+            {
+                PointsToAbstractValue instanceLocation = GetPointsToAbstractValue(operation);
+                return HandleInstanceCreation(operation.Value.Type, instanceLocation, defaultValue);
+            }
+
+            return defaultValue;
+        }
+
+        protected override void SetValueForParameterOnEntry(IParameterSymbol parameter, AnalysisEntity analysisEntity)
+        {
+        }
+
+        protected override void SetValueForParameterOnExit(IParameterSymbol parameter, AnalysisEntity analysisEntity)
+        {
+            Debug.Assert(analysisEntity.SymbolOpt == parameter);
+            if (parameter.RefKind != RefKind.None)
+            {
+                if (TryGetPointsToAbstractValueAtCurrentBlockEntry(analysisEntity, out PointsToAbstractValue pointsToAbstractValue))
+                {
+                    SetValueForParameterPointsToLocationOnExit(parameter, pointsToAbstractValue);
+                }
+            }
+        }
+
+        protected virtual void SetValueForParameterPointsToLocationOnExit(IParameterSymbol parameter, PointsToAbstractValue pointsToAbstractValue)
+        {
+            foreach (var location in pointsToAbstractValue.Locations)
+            {
+                SetAbstractValue(pointsToAbstractValue, ValueDomain.UnknownOrMayBeValue);
+            }            
         }
 
         #region Visitor methods
@@ -69,42 +109,42 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         {
             var value = base.VisitObjectCreation(operation, argument);
             PointsToAbstractValue instanceLocation = GetPointsToAbstractValue(operation);
-            return HandleInstanceCreation(operation, instanceLocation, value);
+            return HandleInstanceCreation(operation.Type, instanceLocation, value);
         }
 
         public override TAbstractAnalysisValue VisitTypeParameterObjectCreation(ITypeParameterObjectCreationOperation operation, object argument)
         {
             var value = base.VisitTypeParameterObjectCreation(operation, argument);
             PointsToAbstractValue instanceLocation = GetPointsToAbstractValue(operation);
-            return HandleInstanceCreation(operation, instanceLocation, value);
+            return HandleInstanceCreation(operation.Type, instanceLocation, value);
         }
 
         public override TAbstractAnalysisValue VisitDynamicObjectCreation(IDynamicObjectCreationOperation operation, object argument)
         {
             var value = base.VisitDynamicObjectCreation(operation, argument);
             PointsToAbstractValue instanceLocation = GetPointsToAbstractValue(operation);
-            return HandleInstanceCreation(operation, instanceLocation, value);
+            return HandleInstanceCreation(operation.Type, instanceLocation, value);
         }
 
         public override TAbstractAnalysisValue VisitAnonymousObjectCreation(IAnonymousObjectCreationOperation operation, object argument)
         {
             var value = base.VisitAnonymousObjectCreation(operation, argument);
             PointsToAbstractValue instanceLocation = GetPointsToAbstractValue(operation);
-            return HandleInstanceCreation(operation, instanceLocation, value);
+            return HandleInstanceCreation(operation.Type, instanceLocation, value);
         }
 
         public override TAbstractAnalysisValue VisitArrayCreation(IArrayCreationOperation operation, object argument)
         {
             var value = base.VisitArrayCreation(operation, argument);
             PointsToAbstractValue instanceLocation = GetPointsToAbstractValue(operation);
-            return HandleInstanceCreation(operation, instanceLocation, value);
+            return HandleInstanceCreation(operation.Type, instanceLocation, value);
         }
 
         public override TAbstractAnalysisValue VisitDelegateCreation(IDelegateCreationOperation operation, object argument)
         {
             var value = base.VisitDelegateCreation(operation, argument);
             PointsToAbstractValue instanceLocation = GetPointsToAbstractValue(operation);
-            return HandleInstanceCreation(operation, instanceLocation, value);
+            return HandleInstanceCreation(operation.Type, instanceLocation, value);
         }
 
         #endregion

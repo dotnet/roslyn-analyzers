@@ -15,9 +15,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
         {
             public NullDataFlowOperationVisitor(
                 NullAbstractValueDomain valueDomain,
-                INamedTypeSymbol containingTypeSymbol,
+                ISymbol owningSymbol,
+                bool pessimisticAnalysis,
                 DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResultOpt)
-                : base(valueDomain, containingTypeSymbol, nullAnalysisResultOpt: null, pointsToAnalysisResultOpt: pointsToAnalysisResultOpt)
+                : base(valueDomain, owningSymbol, pessimisticAnalysis, nullAnalysisResultOpt: null, pointsToAnalysisResultOpt: pointsToAnalysisResultOpt)
             {
             }
 

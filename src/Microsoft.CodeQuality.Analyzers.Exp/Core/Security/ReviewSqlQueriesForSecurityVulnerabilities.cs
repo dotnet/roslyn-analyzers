@@ -213,9 +213,9 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Security
                 if (topmostBlock != null)
                 {
                     var cfg = ControlFlowGraph.Create(topmostBlock);
-                    var nullAnalysisResult = NullAnalysis.GetOrComputeResult(cfg, containingMethod.ContainingType);
-                    var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod.ContainingType, nullAnalysisResult);
-                    var stringContentResult = StringContentAnalysis.GetOrComputeResult(cfg, containingMethod.ContainingType, nullAnalysisResult, pointsToAnalysisResult);
+                    var nullAnalysisResult = NullAnalysis.GetOrComputeResult(cfg, containingMethod);
+                    var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, nullAnalysisResult);
+                    var stringContentResult = StringContentAnalysis.GetOrComputeResult(cfg, containingMethod, nullAnalysisResult, pointsToAnalysisResult);
                     StringContentAbstractValue value = stringContentResult[argumentValue];
                     if (value.NonLiteralState == StringContainsNonLiteralState.No)
                     {

@@ -24,42 +24,42 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
         public static DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> GetOrComputeResult(
             ControlFlowGraph cfg,
             INamedTypeSymbol iDisposable,
-            INamedTypeSymbol iCollection,
-            INamedTypeSymbol genericICollection,
+            INamedTypeSymbol taskType,
+            ImmutableHashSet<INamedTypeSymbol> collectionTypes,
             ImmutableHashSet<INamedTypeSymbol> disposeOwnershipTransferLikelyTypes,
-            INamedTypeSymbol containingTypeSymbol,
+            ISymbol owningSymbol,
             DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResult,
             DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt = null)
         {
-            return GetOrComputeResultCore(cfg, iDisposable, iCollection, genericICollection,
-                disposeOwnershipTransferLikelyTypes, containingTypeSymbol, pointsToAnalysisResult,
+            return GetOrComputeResultCore(cfg, iDisposable, taskType, collectionTypes,
+                disposeOwnershipTransferLikelyTypes, owningSymbol, pointsToAnalysisResult,
                 nullAnalysisResultOpt, trackInstanceFields: false, trackedInstanceFieldPointsToMap: out var _);
         }
 
         public static DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> GetOrComputeResult(
             ControlFlowGraph cfg,
             INamedTypeSymbol iDisposable,
-            INamedTypeSymbol iCollection,
-            INamedTypeSymbol genericICollection,
+            INamedTypeSymbol taskType,
+            ImmutableHashSet<INamedTypeSymbol> collectionTypes,
             ImmutableHashSet<INamedTypeSymbol> disposeOwnershipTransferLikelyTypes,
-            INamedTypeSymbol containingTypeSymbol,
+            ISymbol owningSymbol,
             DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResult,
             bool trackInstanceFields,
             out ImmutableDictionary<IFieldSymbol, PointsToAnalysis.PointsToAbstractValue> trackedInstanceFieldPointsToMap,
             DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt = null)
         {
-            return GetOrComputeResultCore(cfg, iDisposable, iCollection, genericICollection,
-                disposeOwnershipTransferLikelyTypes, containingTypeSymbol, pointsToAnalysisResult,
+            return GetOrComputeResultCore(cfg, iDisposable, taskType, collectionTypes,
+                disposeOwnershipTransferLikelyTypes, owningSymbol, pointsToAnalysisResult,
                 nullAnalysisResultOpt, trackInstanceFields, out trackedInstanceFieldPointsToMap);
         }
 
         private static DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> GetOrComputeResultCore(
             ControlFlowGraph cfg,
             INamedTypeSymbol iDisposable,
-            INamedTypeSymbol iCollection,
-            INamedTypeSymbol genericICollection,
+            INamedTypeSymbol taskType,
+            ImmutableHashSet<INamedTypeSymbol> collectionTypes,
             ImmutableHashSet<INamedTypeSymbol> disposeOwnershipTransferLikelyTypes,
-            INamedTypeSymbol containingTypeSymbol,
+            ISymbol owningSymbol,
             DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResult,
             DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt,
             bool trackInstanceFields,
@@ -67,11 +67,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
         {
             Debug.Assert(cfg != null);
             Debug.Assert(iDisposable != null);
-            Debug.Assert(containingTypeSymbol != null);
+            Debug.Assert(owningSymbol != null);
             Debug.Assert(pointsToAnalysisResult != null);
 
-            var operationVisitor = new DisposeDataFlowOperationVisitor(iDisposable, iCollection, genericICollection,
-                disposeOwnershipTransferLikelyTypes, DisposeAbstractValueDomain.Default, containingTypeSymbol, trackInstanceFields, pointsToAnalysisResult, nullAnalysisResultOpt);
+            var operationVisitor = new DisposeDataFlowOperationVisitor(iDisposable, taskType, collectionTypes,
+                disposeOwnershipTransferLikelyTypes, DisposeAbstractValueDomain.Default, owningSymbol, trackInstanceFields, pointsToAnalysisResult, nullAnalysisResultOpt);
             var disposeAnalysis = new DisposeAnalysis(DisposeAnalysisDomainInstance, operationVisitor);
             var result = disposeAnalysis.GetOrComputeResultCore(cfg);
             trackedInstanceFieldPointsToMap = trackInstanceFields ? operationVisitor.TrackedInstanceFieldPointsToMap : null;

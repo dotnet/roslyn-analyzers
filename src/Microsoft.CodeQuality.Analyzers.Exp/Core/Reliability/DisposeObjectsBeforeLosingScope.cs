@@ -58,12 +58,13 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Reliability
                     DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> disposeAnalysisResult;
                     if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockContext.OperationBlocks, containingMethod, out cfg, out disposeAnalysisResult))
                     {
-                        ImmutableDictionary<AbstractLocation, DisposeAbstractValue> disposeDataAtExit = disposeAnalysisResult[cfg.Exit].InputData;
+                        ImmutableDictionary<AbstractLocation, DisposeAbstractValue> disposeDataAtExit = disposeAnalysisResult[cfg.Exit].OutputData;
                         foreach (var kvp in disposeDataAtExit)
                         {
                             AbstractLocation location = kvp.Key;
                             DisposeAbstractValue disposeValue = kvp.Value;
-                            if (disposeValue.Kind == DisposeAbstractValueKind.NotDisposable)
+                            if (disposeValue.Kind == DisposeAbstractValueKind.NotDisposable ||
+                                location.CreationOpt == null)
                             {
                                 continue;
                             }
@@ -72,8 +73,6 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Reliability
                                 (disposeValue.DisposingOrEscapingOperations.Count > 0 &&
                                  disposeValue.DisposingOrEscapingOperations.All(d => d.IsInsideCatchClause())))
                             {
-                                Debug.Assert(location.CreationOpt != null);
-
                                 // CA2000: In method '{0}', call System.IDisposable.Dispose on object created by '{1}' before all references to it are out of scope.
                                 var arg1 = containingMethod.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
                                 var arg2 = location.CreationOpt.Syntax.ToString();

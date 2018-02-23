@@ -6,6 +6,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
+using Microsoft.CodeAnalysis.Operations.ControlFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
 
@@ -21,20 +22,14 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         protected abstract TAbstractAnalysisValue GetAbstractValue(AnalysisEntity analysisEntity);
         protected abstract bool HasAbstractValue(AnalysisEntity analysisEntity);
         
-        protected AnalysisEntityFactory AnalysisEntityFactory { get; }
-
         protected AnalysisEntityDataFlowOperationVisitor(
             AbstractValueDomain<TAbstractAnalysisValue> valueDomain,
-            INamedTypeSymbol containingTypeSymbol,
+            ISymbol owningSymbol,
+            bool pessimisticAnalysis,
             DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> nullAnalysisResultOpt,
             DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResultOpt)
-            : base (valueDomain, containingTypeSymbol, nullAnalysisResultOpt, pointsToAnalysisResultOpt)
+            : base (valueDomain, owningSymbol, pessimisticAnalysis, nullAnalysisResultOpt, pointsToAnalysisResultOpt)
         {
-            AnalysisEntityFactory = new AnalysisEntityFactory(
-                (pointsToAnalysisResultOpt != null || IsPointsToAnalysis) ?
-                    GetPointsToAbstractValue :
-                    (Func<IOperation, PointsToAbstractValue>)null,
-                containingTypeSymbol);
         }
 
         protected override TAbstractAnalysisValue ComputeAnalysisValueForReferenceOperation(IOperation operation, TAbstractAnalysisValue defaultValue)
@@ -52,6 +47,25 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             {
                 return defaultValue;
             }
+        }
+
+        protected sealed override TAbstractAnalysisValue ComputeAnalysisValueForOutArgument(IArgumentOperation operation, TAbstractAnalysisValue defaultValue)
+        {
+            if (AnalysisEntityFactory.TryCreate(operation, out AnalysisEntity analysisEntity))
+            {
+                var value = ComputeAnalysisValueForOutArgument(analysisEntity, operation, defaultValue);
+                SetAbstractValue(analysisEntity, value);
+                return GetAbstractValue(analysisEntity);
+            }
+            else
+            {
+                return defaultValue;
+            }
+        }
+
+        protected virtual TAbstractAnalysisValue ComputeAnalysisValueForOutArgument(AnalysisEntity analysisEntity, IArgumentOperation operation, TAbstractAnalysisValue defaultValue)
+        {
+            return defaultValue;
         }
 
         /// <summary>
@@ -133,6 +147,21 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             }
 
             SetAbstractValue(targetAnalysisEntity, assignedValue);
+        }
+
+        protected override void SetValueForParameterOnEntry(IParameterSymbol parameter, AnalysisEntity analysisEntity)
+        {
+            Debug.Assert(analysisEntity.SymbolOpt == parameter);
+            SetAbstractValue(analysisEntity, ValueDomain.UnknownOrMayBeValue);
+        }
+
+        protected override void SetValueForParameterOnExit(IParameterSymbol parameter, AnalysisEntity analysisEntity)
+        {
+            Debug.Assert(analysisEntity.SymbolOpt == parameter);
+            if (parameter.RefKind != RefKind.None)
+            {
+                SetAbstractValue(analysisEntity, ValueDomain.UnknownOrMayBeValue);
+            }
         }
 
         #endregion

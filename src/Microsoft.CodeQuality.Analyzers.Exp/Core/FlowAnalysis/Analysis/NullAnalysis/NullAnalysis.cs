@@ -21,10 +21,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
 
         public static DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> GetOrComputeResult(
             ControlFlowGraph cfg,
-            INamedTypeSymbol containingTypeSymbol,
+            ISymbol owningSymbol,
+            bool pessimisticAnalysis = true,
             DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResultOpt = null)
         {
-            var operationVisitor = new NullDataFlowOperationVisitor(NullAbstractValueDomain.Default, containingTypeSymbol, pointsToAnalysisResultOpt);
+            var operationVisitor = new NullDataFlowOperationVisitor(NullAbstractValueDomain.Default, owningSymbol, pessimisticAnalysis, pointsToAnalysisResultOpt);
             var nullAnalysis = new NullAnalysis(NullAnalysisDomainInstance, operationVisitor);
             return nullAnalysis.GetOrComputeResultCore(cfg);
         }

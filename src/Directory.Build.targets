@@ -14,5 +14,19 @@
     <EmbeddedResource Update="**\*.resx" GenerateSource="true" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Workaround for https://github.com/dotnet/project-system/issues/2374 -->
+    <UpToDateCheckInput Include="$(CodeAnalysisRuleSet)" Condition="'$(CodeAnalysisRuleSet)' != ''" />
+
+    <!-- Include the shipping rules explicitly when they are imported by the non-shipping rules -->
+    <!-- Additional workaround for https://github.com/dotnet/project-system/issues/2374 -->
+    <UpToDateCheckInput Include="$(MSBuildThisFileDirectory)..\build\Analyzers_ShippingRules.ruleset" Condition="'$(IsTestProject)' == 'true' OR '$(NonShipping)' == 'true'" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Workaround for https://github.com/dotnet/roslyn/issues/25041 -->
+    <MSBuildAllProjects Condition="'$(IsTestProject)' == 'true' OR '$(NonShipping)' == 'true'">$(MSBuildAllProjects);$(MSBuildThisFileDirectory)..\build\Analyzers_ShippingRules.ruleset</MSBuildAllProjects>
+  </PropertyGroup>
+
   <Import Project="$(RepoToolsetDir)Imports.targets" Condition="Exists('$(RepoToolsetDir)Imports.targets')" />  
 </Project>

@@ -3,8 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
 
-    <IsPackable>true</IsPackable>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
     <NuspecPackageId>Microsoft.CodeAnalysis.FxCopAnalyzers</NuspecPackageId>
     <Description>Microsoft FxCop rules implemented as analyzers using the .NET Compiler Platform ("Roslyn").</Description>
     <Summary>Microsoft FxCop Analyzers</Summary>

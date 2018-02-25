@@ -3,8 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
 
-    <IsPackable>true</IsPackable>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
     <NuspecPackageId>Microsoft.Net.RoslynDiagnostics</NuspecPackageId>
     <Description>Analyzers built using the .NET Compiler Platform ("Roslyn") for Roslyn.sln.</Description>
     <Summary>Diagnostic Analyzers consumed by Roslyn.sln (https://github.com/dotnet/roslyn)</Summary>

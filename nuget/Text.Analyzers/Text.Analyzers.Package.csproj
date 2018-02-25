@@ -2,8 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
-    <IsPackable>true</IsPackable>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
+
     <NuspecPackageId>Text.Analyzers</NuspecPackageId>
     <Description>Text Analyzers</Description>
     <Summary>Text Analyzers</Summary>

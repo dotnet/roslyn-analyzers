@@ -2,8 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
-    <IsPackable>true</IsPackable>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
+
     <NuspecPackageId>Microsoft.CodeAnalysis.Analyzers</NuspecPackageId>
     <Description>Guidelines for using .NET Compiler Platform ("Roslyn") APIs.</Description>
     <Summary>Analyzers for .NET Compiler Platform ("Roslyn")</Summary>

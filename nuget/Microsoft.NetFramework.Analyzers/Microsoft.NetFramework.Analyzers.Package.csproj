@@ -3,8 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
 
-    <IsPackable>true</IsPackable>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
     <NuspecPackageId>Microsoft.NetFramework.Analyzers</NuspecPackageId>
     <Description>Analyzers for APIs specific to the full .NetFramework which are not present in .NetCore.</Description>
     <Summary>Microsoft.NetFramework.Analyzers</Summary>

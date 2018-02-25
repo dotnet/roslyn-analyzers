@@ -1,5 +1,9 @@
 <Project>
   <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <VersionBase>2.6.1</VersionBase>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
 

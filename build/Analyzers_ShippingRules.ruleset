@@ -4,7 +4,7 @@
          ToolsVersion="14.0">
 
   <Rules AnalyzerId="Microsoft.ApiDesignGuidelines.Analyzers" RuleNamespace="Microsoft.ApiDesignGuidelines.Analyzers">
-    <!-- DoNotDecreaseInheritedMemberVisibility - blocked by https://github.com/dotnet/roslyn-analyzers/issues/940 -->
+    <!-- DoNotDecreaseInheritedMemberVisibility - blocked by https://github.com/dotnet/roslyn-analyzers/issues/1378 -->
     <Rule Id="CA2222" Action="None" />
     <!-- MarkAssembliesWithAssemblyVersion - suppressed because assembly versions for our analyzers are stored in https://github.com/dotnet/roslyn-analyzers/blob/master/build/Targets/Analyzers.Versions.targets -->
     <Rule Id="CA1016" Action="None" />

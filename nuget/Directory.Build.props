@@ -5,6 +5,8 @@
 
   <PropertyGroup>
     <IsPackable>true</IsPackable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <SkipCopyBuildProduct>true</SkipCopyBuildProduct>
     <IncludeBuildOutput>false</IncludeBuildOutput>
   </PropertyGroup>
 </Project>

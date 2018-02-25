@@ -217,7 +217,8 @@ public class C2
         }
 
         [Fact]
-        public void TestTypeParameterNamesCSharp_NoDiagnosticCases()
+        [WorkItem(1604, "https://github.com/dotnet/roslyn-analyzers/issues/1604")]
+        public void TestTypeParameterNamesCSharp_SingleLetterCases()
         {
             VerifyCSharp(@"
 using System;
@@ -243,7 +244,12 @@ public class Class4<T>
 public class Class6<TTypeParameter>
 {
 }
-");
+",
+                GetCA1715CSharpResultAt(4, 25, CA1715TypeParameterMessage, "V"),
+                GetCA1715CSharpResultAt(8, 31, CA1715TypeParameterMessage, "V"),
+                GetCA1715CSharpResultAt(10, 24, CA1715TypeParameterMessage, "V"),
+                GetCA1715CSharpResultAt(16, 24, CA1715TypeParameterMessage, "K"),
+                GetCA1715CSharpResultAt(16, 27, CA1715TypeParameterMessage, "V"));
         }
 
         [Fact]
@@ -413,7 +419,8 @@ End Class
         }
 
         [Fact]
-        public void TestTypeParameterNamesBasic_NoDiagnosticCases()
+        [WorkItem(1604, "https://github.com/dotnet/roslyn-analyzers/issues/1604")]
+        public void TestTypeParameterNamesBasic_SingleLetterCases()
         {
             VerifyBasic(@"
 Imports System
@@ -434,7 +441,12 @@ End Class
 
 Public Class Class6(Of TTypeParameter)
 End Class
-");
+",
+                GetCA1715BasicResultAt(4, 28, CA1715TypeParameterMessage, "V"),
+                GetCA1715BasicResultAt(7, 33, CA1715TypeParameterMessage, "V"),
+                GetCA1715BasicResultAt(9, 27, CA1715TypeParameterMessage, "V"),
+                GetCA1715BasicResultAt(13, 26, CA1715TypeParameterMessage, "K"),
+                GetCA1715BasicResultAt(13, 29, CA1715TypeParameterMessage, "V"));
         }
 
         internal static readonly string CA1715InterfaceMessage = MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectPrefixMessageInterface;

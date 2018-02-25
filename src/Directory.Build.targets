@@ -28,5 +28,10 @@
     <MSBuildAllProjects Condition="'$(IsTestProject)' == 'true' OR '$(NonShipping)' == 'true'">$(MSBuildAllProjects);$(MSBuildThisFileDirectory)..\build\Analyzers_ShippingRules.ruleset</MSBuildAllProjects>
   </PropertyGroup>
 
+  <ItemGroup>
+    <!-- Workaround for https://github.com/xunit/xunit/issues/1651 -->
+    <None Remove="$(NuGetPackageRoot)xunit.runner.visualstudio\$(XUnitRunnerVisualStudioVersion)\build\net20\..\_common\xunit.abstractions.dll" />
+  </ItemGroup>
+
   <Import Project="$(RepoToolsetDir)Imports.targets" Condition="Exists('$(RepoToolsetDir)Imports.targets')" />  
 </Project>

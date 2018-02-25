@@ -20,12 +20,12 @@
 
     <!-- Include the shipping rules explicitly when they are imported by the non-shipping rules -->
     <!-- Additional workaround for https://github.com/dotnet/project-system/issues/2374 -->
-    <UpToDateCheckInput Include="$(MSBuildThisFileDirectory)..\build\Analyzers_ShippingRules.ruleset" Condition="'$(IsTestProject)' == 'true' OR '$(NonShipping)' == 'true'" />
+    <UpToDateCheckInput Include="$(MSBuildThisFileDirectory)..\build\Analyzers_ShippingRules.ruleset" Condition="'$(CodeAnalysisRuleSet)' == '$(MSBuildThisFileDirectory)..\build\Analyzers_NonShippingRules.ruleset'" />
   </ItemGroup>
 
   <PropertyGroup>
     <!-- Workaround for https://github.com/dotnet/roslyn/issues/25041 -->
-    <MSBuildAllProjects Condition="'$(IsTestProject)' == 'true' OR '$(NonShipping)' == 'true'">$(MSBuildAllProjects);$(MSBuildThisFileDirectory)..\build\Analyzers_ShippingRules.ruleset</MSBuildAllProjects>
+    <MSBuildAllProjects Condition="'$(CodeAnalysisRuleSet)' == '$(MSBuildThisFileDirectory)..\build\Analyzers_NonShippingRules.ruleset'">$(MSBuildAllProjects);$(MSBuildThisFileDirectory)..\build\Analyzers_ShippingRules.ruleset</MSBuildAllProjects>
   </PropertyGroup>
 
   <ItemGroup>

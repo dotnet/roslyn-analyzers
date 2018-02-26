@@ -6,10 +6,6 @@
   <Rules AnalyzerId="Microsoft.ApiDesignGuidelines.Analyzers" RuleNamespace="Microsoft.ApiDesignGuidelines.Analyzers">
     <!-- DoNotDecreaseInheritedMemberVisibility - blocked by https://github.com/dotnet/roslyn-analyzers/issues/940 -->
     <Rule Id="CA2222" Action="None" />
-    <!-- MarkAssembliesWithAssemblyVersion - suppressed because assembly versions for our analyzers are stored in https://github.com/dotnet/roslyn-analyzers/blob/master/build/Targets/Analyzers.Versions.targets -->
-    <Rule Id="CA1016" Action="None" />
-    <!-- IdentifiersShouldNotContainTypeNames - not valuable as we don't plan to ship or support our public API surface. -->
-    <Rule Id="CA1720" Action="None" />
   </Rules>
 
   <!-- TODO: Remove the below suppression once https://github.com/dotnet/roslyn-analyzers/issues/965 has been fixed. -->

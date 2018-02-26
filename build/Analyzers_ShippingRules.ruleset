@@ -4,7 +4,7 @@
          ToolsVersion="14.0">
 
   <Rules AnalyzerId="Microsoft.ApiDesignGuidelines.Analyzers" RuleNamespace="Microsoft.ApiDesignGuidelines.Analyzers">
-    <!-- DoNotDecreaseInheritedMemberVisibility - blocked by https://github.com/dotnet/roslyn-analyzers/issues/940 -->
+    <!-- DoNotDecreaseInheritedMemberVisibility - blocked by https://github.com/dotnet/roslyn-analyzers/issues/1378 -->
     <Rule Id="CA2222" Action="None" />
   </Rules>
 

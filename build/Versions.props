@@ -14,6 +14,9 @@
     <RoslynToolsRepoToolsetVersion>1.0.0-beta-62615-02</RoslynToolsRepoToolsetVersion>
     <VSWhereVersion>2.1.4</VSWhereVersion>
     <MicrosoftVSSDKVersion>15.0.26201-alpha</MicrosoftVSSDKVersion>
+    <MicrosoftDiaSymReaderPdb2PdbVersion>1.1.0-beta1-62624-01</MicrosoftDiaSymReaderPdb2PdbVersion>
+    <OpenCoverVersion>4.6.519</OpenCoverVersion>
+    <CodecovVersion>1.0.1</CodecovVersion>
 
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>2.6.0</MicrosoftCodeAnalysisVersion>

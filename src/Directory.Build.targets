@@ -33,5 +33,91 @@
     <None Remove="$(NuGetPackageRoot)xunit.runner.visualstudio\$(XUnitRunnerVisualStudioVersion)\build\net20\..\_common\xunit.abstractions.dll" />
   </ItemGroup>
 
-  <Import Project="$(RepoToolsetDir)Imports.targets" Condition="Exists('$(RepoToolsetDir)Imports.targets')" />  
+  <Import Project="$(RepoToolsetDir)Imports.targets" Condition="Exists('$(RepoToolsetDir)Imports.targets')" />
+
+  <!-- Using Inputs/Outputs just to loop over test architectures -->
+  <Target Name="InnerTest" Inputs="*%(_TestArchitectureItems.Identity)" Outputs="*%(_TestArchitectureItems.Identity)" Returns="@(_FailedTestRuns)">
+
+    <PropertyGroup>
+      <_TestArchitecture>%(_TestArchitectureItems.Identity)</_TestArchitecture>
+      <_TestEnvironment>$(TargetFramework)|$(_TestArchitecture)</_TestEnvironment>
+      <_TestOutPathNoExt>$(ArtifactsTestResultsDir)$(MSBuildProjectName)_$(TargetFramework)_$(_TestArchitecture)</_TestOutPathNoExt>
+      <_TestStdOutPath>$(_TestOutPathNoExt).log</_TestStdOutPath>
+      <_TestResultsXmlPath>$(_TestOutPathNoExt).xml</_TestResultsXmlPath>
+      <_TestResultsHtmlPath>$(_TestOutPathNoExt).html</_TestResultsHtmlPath>
+      <_TestResultsOpenCoverPath>$(_TestOutPathNoExt).coverage</_TestResultsOpenCoverPath>
+      <_RunOnCore>false</_RunOnCore>
+      <_RunOnCore Condition="$(TargetFramework.StartsWith('netcoreapp'))">true</_RunOnCore>
+    </PropertyGroup>
+
+    <Error Text="Architecture specified in TestArchitectures is not supported: '$(_TestArchitecture)'" File="XUnit"
+           Condition="'$(_TestArchitecture)' != 'x64' and ('$(_TestArchitecture)' != 'x86' or $(_RunOnCore))"/>
+
+    <PropertyGroup Condition="'$(_RunOnCore)' == 'true'">
+      <_TargetFileNameNoExt>$([System.IO.Path]::GetFileNameWithoutExtension('$(TargetFileName)'))</_TargetFileNameNoExt>
+      <_CoreRuntimeConfigPath>$(TargetDir)$(_TargetFileNameNoExt).runtimeconfig.json</_CoreRuntimeConfigPath>
+      <_CoreDepsPath>$(TargetDir)$(_TargetFileNameNoExt).deps.json</_CoreDepsPath>
+
+      <!-- TODO: xUnit doesn't support -html on CoreCLR currently (see https://github.com/xunit/xunit/issues/977) -->
+      <_TestRunnerCommand>"$(DotNetTool)" exec --depsfile "$(_CoreDepsPath)" --runtimeconfig "$(_CoreRuntimeConfigPath)" "$(NuGetPackageRoot)xunit.runner.console/$(XUnitVersion)/tools/netcoreapp1.0/xunit.console.dll" "$(TargetPath)" -noautoreporters -xml "$(_TestResultsXmlPath)" $(XUnitRunnerAdditionalArguments)</_TestRunnerCommand>
+      <_TestResultsDisplayPath>$(_TestStdOutPath)</_TestResultsDisplayPath>
+    </PropertyGroup>
+
+    <!-- Extract PDBs from binaries -->
+    <ItemGroup Condition="'$(_RunOnCore)' != 'true'">
+      <_BinariesInTestDirectory Include="$(TargetDir)*.dll;$(TargetDir)*.exe" />
+      <_BinariesInTestDirectory Update="@(_BinariesInTestDirectory)" IntermediatePdb="%(RootDir)%(Directory)%(Filename).ppdb" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_Pdb2PdbCommand>$(NuGetPackageRoot)microsoft.diasymreader.pdb2pdb\$(MicrosoftDiaSymReaderPdb2PdbVersion)\tools\Pdb2Pdb.exe</_Pdb2PdbCommand>
+    </PropertyGroup>
+
+    <Exec Command="&quot;$(_Pdb2PdbCommand)&quot; &quot;%(_BinariesInTestDirectory.Identity)&quot; /out &quot;%(_BinariesInTestDirectory.IntermediatePdb)&quot; /extract" IgnoreExitCode="true" />
+
+    <!-- Convert portable PDBs to Windows PDBs for OpenCover -->
+    <ItemGroup>
+      <_PortablePdb Include="$(TargetDir)*.ppdb" />
+      <_PortablePdb Update="@(_PortablePdb)" Binary="%(RootDir)%(Directory)%(Filename).dll" OutputPdb="%(RootDir)%(Directory)%(Filename).pdb" />
+    </ItemGroup>
+
+    <Exec Command="&quot;$(_Pdb2PdbCommand)&quot; &quot;%(_PortablePdb.Binary)&quot; /pdb &quot;%(_PortablePdb.Identity)&quot; /out &quot;%(_PortablePdb.OutputPdb)&quot;" />
+
+    <PropertyGroup Condition="'$(_RunOnCore)' != 'true'">
+      <_XUnitConsoleExe>xunit.console.exe</_XUnitConsoleExe>
+      <_OpenCoverConsoleExe>OpenCover.Console.exe</_OpenCoverConsoleExe>
+      <_OpenCoverCommand>$(NuGetPackageRoot)opencover\$(OpenCoverVersion)\tools\$(_OpenCoverConsoleExe)</_OpenCoverCommand>
+      <_OpenCoverCommandArgs>-register:user -returntargetcode -hideskipped:All -filter:"+[*]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -excludebyfile:*\*Designer.cs -output:"$(_TestResultsOpenCoverPath)"</_OpenCoverCommandArgs>
+      <_XUnitConsoleExe Condition="'$(_TestArchitecture)' == 'x86'">xunit.console.x86.exe</_XUnitConsoleExe>
+      <_XUnitRunnerCommand>$(NuGetPackageRoot)xunit.runner.console\$(XUnitVersion)\tools\net452\$(_XUnitConsoleExe)</_XUnitRunnerCommand>
+      <_XUnitRunnerCommandArgs>"$(TargetPath)" -noshadow -xml "$(_TestResultsXmlPath)" -html "$(_TestResultsHtmlPath)" $(XUnitRunnerAdditionalArguments)</_XUnitRunnerCommandArgs>
+      <_TestRunnerCommand>"$(_OpenCoverCommand)" $(_OpenCoverCommandArgs) -target:"$(_XUnitRunnerCommand)" -targetargs:"$(_XUnitRunnerCommandArgs.Replace(`"`, `\"`))"</_TestRunnerCommand>
+      <_TestResultsDisplayPath>$(_TestResultsHtmlPath)</_TestResultsDisplayPath>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(ArtifactsTestResultsDir)"/>
+    <Delete Files="$(_TestOutPathNoExt).*" />
+
+    <Message Text="Running tests: $(TargetPath) [$(_TestEnvironment)]" Importance="high"/>
+    <Message Text="Command line: $(_TestRunnerCommand)" Importance="high" />
+
+    <!-- Note that xUnit outputs failure info to both STDOUT (stack trace, message) and STDERR (failed test name) -->
+    <Exec Command='$(_TestRunnerCommand) > "$(_TestStdOutPath)" 2>&amp;1'
+          LogStandardErrorAsError="false"
+          WorkingDirectory="$(OutDir)"
+          IgnoreExitCode="true">
+
+      <Output TaskParameter="ExitCode" PropertyName="_TestErrorCode" />
+    </Exec>
+
+    <WriteLinesToFile File="$(_TestStdOutPath)" Overwrite="false" Lines=";=== COMMAND LINE ===;$(_TestRunnerCommand)" />
+
+    <ItemGroup>
+      <_FailedTestRuns Include="$(_TestEnvironment)" Condition="'$(_TestErrorCode)' != '0'" />
+    </ItemGroup>
+
+    <Message Text="Tests succeeded: $(TargetPath) [$(_TestEnvironment)]" Condition="'$(_TestErrorCode)' == '0'" Importance="high" />
+    <Warning Text="$(_TestResultsDisplayPath) [$(_TestEnvironment)]" Condition="'$(_TestErrorCode)' != '0' and '$(TargetFrameworks)' != ''" File="XUnit" />
+    <Error Text="$(_TestResultsDisplayPath) [$(_TestEnvironment)]" Condition="'$(_TestErrorCode)' != '0' and '$(TargetFrameworks)' == ''" File="XUnit" />
+  </Target>
 </Project>

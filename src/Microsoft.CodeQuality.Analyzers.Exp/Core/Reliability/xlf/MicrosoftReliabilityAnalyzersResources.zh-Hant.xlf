@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="DisposeObjectsBeforeLosingScopeDescription">
         <source>If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</source>
-        <target state="new">If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</target>
+        <target state="translated">若可處置的物件未在此物件所有的參考超出範圍之前明確處置，將會在記憶體回收行程執行此物件之完成項時的某個不確定時間點處置此物件。因為可能會發生例外事件，造成此物件的完成項無法執行，所以應先明確處置此物件。</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeMessage">
         <source>In method '{0}', call System.IDisposable.Dispose on object created by '{1}' before all references to it are out of scope.</source>
-        <target state="new">In method '{0}', call System.IDisposable.Dispose on object created by '{1}' before all references to it are out of scope.</target>
+        <target state="translated">在方法 '{0}' 中，於 '{1}' 所建立之物件的所有參考超出範圍之前，對該物件呼叫 System.IDisposable.Dispose。</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeTitle">
         <source>Dispose objects before losing scope</source>
-        <target state="new">Dispose objects before losing scope</target>
+        <target state="translated">在超出範圍前處置物件</target>
         <note />
       </trans-unit>
     </body>

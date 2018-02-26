@@ -16,7 +16,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
         /// <summary>
         /// Operation visitor to flow the PointsTo values across a given statement in a basic block.
         /// </summary>
-        private sealed class PointsToDataFlowOperationVisitor : DataFlowOperationVisitor<PointsToAnalysisData, PointsToAbstractValue>
+        private sealed class PointsToDataFlowOperationVisitor : AnalysisEntityDataFlowOperationVisitor<PointsToAnalysisData, PointsToAbstractValue>
         {
             public PointsToDataFlowOperationVisitor(
                 PointsToAbstractValueDomain valueDomain,
@@ -39,7 +39,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
             protected override IEnumerable<AnalysisEntity> TrackedEntities => CurrentAnalysisData.Keys;
 
-            protected override bool HasPointsToAnalysisResult => true;
+            protected override bool IsPointsToAnalysis => true;
 
             protected override bool HasAbstractValue(AnalysisEntity analysisEntity) => CurrentAnalysisData.ContainsKey(analysisEntity);
 
@@ -76,7 +76,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
             protected override PointsToAbstractValue ComputeAnalysisValueForReferenceOperation(IOperation operation, PointsToAbstractValue defaultValue)
             {
-                if (!operation.Type.HasValueCopySemantics() &&
+                if (operation.Type != null &&
+                    !operation.Type.HasValueCopySemantics() &&
                     AnalysisEntityFactory.TryCreate(operation, out AnalysisEntity analysisEntity))
                 {
                     if (!HasAbstractValue(analysisEntity))
@@ -90,7 +91,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 }
                 else
                 {
-                    Debug.Assert(!operation.Type.HasValueCopySemantics() || defaultValue == PointsToAbstractValue.NoLocation);
+                    Debug.Assert(operation.Type == null || !operation.Type.HasValueCopySemantics() || defaultValue == PointsToAbstractValue.NoLocation);
                     return defaultValue;
                 }
             }
@@ -319,6 +320,37 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 // TODO: Handle tuples.
                 // https://github.com/dotnet/roslyn-analyzers/issues/1571
                 return base.VisitTuple(operation, argument);
+            }
+
+            private static PointsToAbstractValue VisitInvocationCommon(IOperation operation)
+            {
+                if (!operation.Type.HasValueCopySemantics())
+                {
+                    AbstractLocation location = AbstractLocation.CreateAllocationLocation(operation, operation.Type);
+                    return new PointsToAbstractValue(location);
+                }
+                else
+                {
+                    return PointsToAbstractValue.NoLocation;
+                }
+            }
+
+            public override PointsToAbstractValue VisitInvocation_LambdaOrDelegateOrLocalFunction(IInvocationOperation operation, object argument)
+            {
+                var _ = base.VisitInvocation_LambdaOrDelegateOrLocalFunction(operation, argument);
+                return VisitInvocationCommon(operation);
+            }
+
+            public override PointsToAbstractValue VisitInvocation_NonLambdaOrDelegateOrLocalFunction(IInvocationOperation operation, object argument)
+            {
+                var _ = base.VisitInvocation_NonLambdaOrDelegateOrLocalFunction(operation, argument);
+                return VisitInvocationCommon(operation);
+            }
+
+            public override PointsToAbstractValue VisitDynamicInvocation(IDynamicInvocationOperation operation, object argument)
+            {
+                var _ = base.VisitDynamicInvocation(operation, argument);
+                return VisitInvocationCommon(operation);
             }
 
             #endregion

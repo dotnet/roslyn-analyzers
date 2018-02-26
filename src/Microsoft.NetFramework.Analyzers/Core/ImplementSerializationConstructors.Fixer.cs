@@ -62,7 +62,7 @@ namespace Microsoft.NetFramework.Analyzers
             }
         }
 
-        private async Task<Document> GenerateConstructor(Document document, SyntaxNode node, ISymbol symbol, INamedTypeSymbol notImplementedExceptionType, CancellationToken cancellationToken)
+        private static async Task<Document> GenerateConstructor(Document document, SyntaxNode node, ISymbol symbol, INamedTypeSymbol notImplementedExceptionType, CancellationToken cancellationToken)
         {
             SymbolEditor editor = SymbolEditor.Create(document);
             var typeSymbol = symbol as INamedTypeSymbol;
@@ -87,7 +87,7 @@ namespace Microsoft.NetFramework.Analyzers
             return editor.GetChangedDocuments().First();
         }
 
-        private async Task<Document> SetAccessibility(Document document, ISymbol symbol, CancellationToken cancellationToken)
+        private static async Task<Document> SetAccessibility(Document document, ISymbol symbol, CancellationToken cancellationToken)
         {
             SymbolEditor editor = SymbolEditor.Create(document);
             var methodSymbol = symbol as IMethodSymbol;

@@ -57,7 +57,7 @@ using System.IO;
         FileStream newFile1, newFile2 = new FileStream(""data.txt"", FileMode.Append);
     }
 ",
-            GetCA1001CSharpResultAt(4, 18, "NoDisposeClass"));
+            GetCA1001CSharpResultAt(4, 18, "NoDisposeClass", "newFile1, newFile2"));
         }
 
         [Fact]
@@ -77,7 +77,7 @@ using System.IO;
         }
     }
 ",
-            GetCA1001CSharpResultAt(5, 18, "NoDisposeClass"));
+            GetCA1001CSharpResultAt(5, 18, "NoDisposeClass", "newFile"));
         }
 
         [Fact]
@@ -132,7 +132,7 @@ using System.IO;
         }
     }|]
 ",
-            GetCA1001CSharpResultAt(5, 18, "NoDisposeClass"));
+            GetCA1001CSharpResultAt(5, 18, "NoDisposeClass", "newFile"));
         }
 
         [Fact]
@@ -196,6 +196,24 @@ public class HasDisposeMethod : IDisposable
 ");
         }
 
+        [Fact, WorkItem(1562, "https://github.com/dotnet/roslyn-analyzers/issues/1562")]
+        public void CA1001CSharpTestWithIDisposableField()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+
+namespace ClassLibrary1
+{
+    public class Class1
+    {
+        private readonly IDisposable _disp1 = new MemoryStream();
+    }
+}
+",
+            GetCA1001CSharpResultAt(7, 18, "Class1", "_disp1"));
+        }
+
         [Fact]
         public void CA1001BasicTestWithNoDisposableType()
         {
@@ -233,7 +251,7 @@ Imports System.IO
         Dim newFile As FileStream = New FileStream(""data.txt"", FileMode.Append)
     End Class
 ",
-            GetCA1001BasicResultAt(5, 18, "NoDisposeClass"));
+            GetCA1001BasicResultAt(5, 18, "NoDisposeClass", "newFile"));
 
             VerifyBasic(@"
 Imports System.IO
@@ -243,7 +261,7 @@ Imports System.IO
         Dim newFile1 As FileStream, newFile2 As FileStream = New FileStream(""data.txt"", FileMode.Append)
     End Class
 ",
-            GetCA1001BasicResultAt(5, 18, "NoDisposeClass"));
+            GetCA1001BasicResultAt(5, 18, "NoDisposeClass", "newFile1, newFile2"));
 
             VerifyBasic(@"
 Imports System.IO
@@ -254,7 +272,7 @@ Imports System.IO
         Dim newFile2 As FileStream = New FileStream(""data.txt"", FileMode.Append)
     End Class
 ",
-            GetCA1001BasicResultAt(5, 18, "NoDisposeClass"));
+            GetCA1001BasicResultAt(5, 18, "NoDisposeClass", "newFile1, newFile2"));
         }
 
         [Fact]
@@ -275,7 +293,7 @@ Imports System.IO
 
    End Class
 ",
-            GetCA1001BasicResultAt(6, 17, "NoDisposeMethod"));
+            GetCA1001BasicResultAt(6, 17, "NoDisposeMethod", "newFile"));
         }
 
         [Fact]
@@ -325,7 +343,7 @@ Imports System.IO
 
    End Class|]
 ",
-            GetCA1001BasicResultAt(5, 17, "NoDisposeMethod"));
+            GetCA1001BasicResultAt(5, 17, "NoDisposeMethod", "newFile"));
         }
 
         [Fact]
@@ -392,16 +410,32 @@ Imports System.IO
 ");
         }
 
-        private static DiagnosticResult GetCA1001CSharpResultAt(int line, int column, string objectName)
+        [Fact, WorkItem(1562, "https://github.com/dotnet/roslyn-analyzers/issues/1562")]
+        public void CA1001BasicTestWithIDisposableField()
         {
-            return GetCSharpResultAt(line, column, CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer.RuleId,
-                string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking, objectName));
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+
+Namespace ClassLibrary1
+    Class Class1
+        Private Readonly _disp1 As IDisposable = new MemoryStream()
+    End Class
+End Namespace
+",
+            GetCA1001BasicResultAt(6, 11, "Class1", "_disp1"));
         }
 
-        private static DiagnosticResult GetCA1001BasicResultAt(int line, int column, string objectName)
+        private static DiagnosticResult GetCA1001CSharpResultAt(int line, int column, string objectName, string disposableFields)
+        {
+            return GetCSharpResultAt(line, column, CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer.RuleId,
+                string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking, objectName, disposableFields));
+        }
+
+        private static DiagnosticResult GetCA1001BasicResultAt(int line, int column, string objectName, string disposableFields)
         {
             return GetBasicResultAt(line, column, BasicTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer.RuleId,
-                string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking, objectName));
+                string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking, objectName, disposableFields));
         }
     }
 }

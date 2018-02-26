@@ -77,21 +77,6 @@
         <target state="translated">Член {0} не обращается к данным экземпляров, поэтому его можно пометить как статический (Shared в Visual Basic).</target>
         <note />
       </trans-unit>
-      <trans-unit id="DisposeObjectsBeforeLosingScopeTitle">
-        <source>Dispose Objects Before Losing Scope</source>
-        <target state="translated">Ликвидировать объекты перед потерей области</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DisposeObjectsBeforeLosingScopeDescription">
-        <source>Because an exceptional event might occur that will prevent the finalizer of an object from running, the object should be explicitly disposed before all references to it are out of scope.</source>
-        <target state="translated">Так как может возникнуть событие исключения, препятствующее выполнению метода завершения объекта, объект следует ликвидировать в явной форме, прежде чем все ссылки на него выйдут за пределы области действия.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DisposeObjectsBeforeLosingScopeMessage">
-        <source>Dispose Objects Before Losing Scope</source>
-        <target state="translated">Ликвидировать объекты перед потерей области</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ReviewVisibleEventHandlersTitle">
         <source>Review visible event handlers</source>
         <target state="translated">Проверьте видимые обработчики событий</target>

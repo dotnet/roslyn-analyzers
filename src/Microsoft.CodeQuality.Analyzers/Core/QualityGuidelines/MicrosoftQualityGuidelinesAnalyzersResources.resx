@@ -162,15 +162,6 @@
   <data name="MarkMembersAsStaticMessage" xml:space="preserve">
     <value>Member {0} does not access instance data and can be marked as static (Shared in VisualBasic)</value>
   </data>
-  <data name="DisposeObjectsBeforeLosingScopeTitle" xml:space="preserve">
-    <value>Dispose Objects Before Losing Scope</value>
-  </data>
-  <data name="DisposeObjectsBeforeLosingScopeDescription" xml:space="preserve">
-    <value>Because an exceptional event might occur that will prevent the finalizer of an object from running, the object should be explicitly disposed before all references to it are out of scope.</value>
-  </data>
-  <data name="DisposeObjectsBeforeLosingScopeMessage" xml:space="preserve">
-    <value>Dispose Objects Before Losing Scope</value>
-  </data>
   <data name="ReviewVisibleEventHandlersTitle" xml:space="preserve">
     <value>Review visible event handlers</value>
   </data>

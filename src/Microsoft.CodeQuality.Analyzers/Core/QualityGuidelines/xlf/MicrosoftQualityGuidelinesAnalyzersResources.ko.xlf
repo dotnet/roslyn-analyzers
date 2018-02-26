@@ -77,21 +77,6 @@
         <target state="translated">{0} 멤버가 인스턴스 데이터에 액세스하지 않으며 static(Visual Basic의 경우 Shared)으로 표시될 수 있습니다.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DisposeObjectsBeforeLosingScopeTitle">
-        <source>Dispose Objects Before Losing Scope</source>
-        <target state="translated">범위를 벗어나기 전에 개체를 삭제하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DisposeObjectsBeforeLosingScopeDescription">
-        <source>Because an exceptional event might occur that will prevent the finalizer of an object from running, the object should be explicitly disposed before all references to it are out of scope.</source>
-        <target state="translated">개체 종료자가 실행되지 않는 문제를 일으키는 예외적인 이벤트가 발생할 수 있으므로 개체에 대한 모든 참조가 범위를 벗어나기 전에 개체를 명시적으로 삭제해야 합니다.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DisposeObjectsBeforeLosingScopeMessage">
-        <source>Dispose Objects Before Losing Scope</source>
-        <target state="translated">범위를 벗어나기 전에 개체를 삭제하세요.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ReviewVisibleEventHandlersTitle">
         <source>Review visible event handlers</source>
         <target state="translated">표시되는 이벤트 처리기를 검토하세요.</target>

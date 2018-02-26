@@ -50,7 +50,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             return;
         }
 
-        private async Task<Document> RemoveField(Document document, SyntaxNode node, CancellationToken cancellationToken)
+        private static async Task<Document> RemoveField(Document document, SyntaxNode node, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             node = editor.Generator.GetDeclaration(node);

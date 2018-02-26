@@ -8,7 +8,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     /// <summary>
     /// An abstract domain implementation for analyses that store dictionary typed data.
     /// </summary>
-    internal class MapAbstractDomain<TKey, TValue> : AbstractDomain<IDictionary<TKey, TValue>>
+    internal class MapAbstractDomain<TKey, TValue> : AbstractAnalysisDomain<IDictionary<TKey, TValue>>
     {
         public MapAbstractDomain(AbstractValueDomain<TValue> valueDomain)
         {
@@ -17,6 +17,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         protected AbstractValueDomain<TValue> ValueDomain { get; }
         public override IDictionary<TKey, TValue> Bottom => new Dictionary<TKey, TValue>();
+        public override IDictionary<TKey, TValue> Clone(IDictionary<TKey, TValue> value) => new Dictionary<TKey, TValue>(value);
 
         /// <summary>
         /// Compares if the abstract dataflow values in <paramref name="oldValue"/> against the values in <paramref name="newValue"/> to ensure
@@ -114,7 +115,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 }
                 else
                 {
-                    result.Add(entry.Key, ValueDomain.UnknownOrMayBeValue);
+                    result.Add(entry.Key, entry.Value);
                 }
             }
 

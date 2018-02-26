@@ -51,20 +51,20 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return ImmutableArray<AbstractIndex>.Empty;
         }
 
-        private AbstractIndex CreateAbstractIndex(IOperation operation)
+        private static AbstractIndex CreateAbstractIndex(IOperation operation)
         {
             if (operation.ConstantValue.HasValue && operation.ConstantValue.Value is int index)
             {
                 return AbstractIndex.Create((uint)index);
             }
-            else if (TryCreate(operation, out AnalysisEntity analysisEntity))
-            {
-                return AbstractIndex.Create(analysisEntity);
-            }
-            else
-            {
-                return AbstractIndex.Create(operation);
-            }
+            // TODO: We need to find the abstract value for the entity to use it for indexing.
+            // https://github.com/dotnet/roslyn-analyzers/issues/1577
+            //else if (TryCreate(operation, out AnalysisEntity analysisEntity))
+            //{
+            //    return AbstractIndex.Create(analysisEntity);
+            //}
+
+            return AbstractIndex.Create(operation);
         }
 
         public bool TryCreate(IOperation operation, out AnalysisEntity analysisEntity)
@@ -224,6 +224,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             if (_getPointsToAbstractValueOpt == null &&
                 symbolOpt?.Kind != SymbolKind.Local &&
                 symbolOpt?.Kind != SymbolKind.Parameter)
+            {
+                return false;
+            }
+
+            // Workaround for https://github.com/dotnet/roslyn-analyzers/issues/1602
+            if (instanceOpt != null && instanceOpt.Type == null)
             {
                 return false;
             }

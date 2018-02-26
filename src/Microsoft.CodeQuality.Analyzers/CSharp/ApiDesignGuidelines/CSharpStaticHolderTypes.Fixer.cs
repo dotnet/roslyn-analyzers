@@ -44,7 +44,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines
             }
         }
 
-        private async Task<Document> MakeClassStatic(Document document, ClassDeclarationSyntax classDeclaration, CancellationToken ct)
+        private static async Task<Document> MakeClassStatic(Document document, ClassDeclarationSyntax classDeclaration, CancellationToken ct)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, ct).ConfigureAwait(false);
             DeclarationModifiers modifiers = editor.Generator.GetModifiers(classDeclaration);

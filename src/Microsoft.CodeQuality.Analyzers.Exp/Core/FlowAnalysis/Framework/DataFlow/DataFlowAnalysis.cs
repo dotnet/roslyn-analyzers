@@ -19,13 +19,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         private static readonly ConditionalWeakTable<ControlFlowGraph, DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue>> s_resultCache =
             new ConditionalWeakTable<ControlFlowGraph, DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue>>();
 
-        protected DataFlowAnalysis(AbstractDomain<TAnalysisData> analysisDomain, DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> operationVisitor)
+        protected DataFlowAnalysis(AbstractAnalysisDomain<TAnalysisData> analysisDomain, DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> operationVisitor)
         {
             AnalysisDomain = analysisDomain;
             OperationVisitor = operationVisitor;
         }
 
-        protected AbstractDomain<TAnalysisData> AnalysisDomain { get; }
+        protected AbstractAnalysisDomain<TAnalysisData> AnalysisDomain { get; }
         protected DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> OperationVisitor { get; }
         private DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> NullAnalysisResultOpt { get; }
 
@@ -74,29 +74,45 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 // Merge all the outputs to get the new input of the current block.
                 var input = AnalysisDomain.Merge(inputs);
 
-                // Flow the new input through the block to get a new output.
-                var output = Flow(block, input);
-
-                // Compare the previous output with the new output.
-                var compare = AnalysisDomain.Compare(GetOutput(resultBuilder[block]), output);
+                // Compare the previous input with the new input.
+                var compare = AnalysisDomain.Compare(GetInput(resultBuilder[block]), input);
 
                 // The newly computed abstract values for each basic block
                 // must be always greater or equal than the previous value
                 // to ensure termination. 
                 Debug.Assert(compare <= 0, "The newly computed abstract value must be greater or equal than the previous one.");
 
-                // Is old value < new value ?
+                // Is old input value < new input value ?
                 if (compare < 0)
                 {
                     // The newly computed value is greater than the previous value,
                     // so we need to update the current block result's
-                    // input and output values with the new ones.
-                    UpdateInput(resultBuilder, block, input);
-                    UpdateOutput(resultBuilder, block, output);
+                    // input values with the new ones.
+                    UpdateInput(resultBuilder, block, AnalysisDomain.Clone(input));
+                    
+                    // Flow the new input through the block to get a new output.
+                    var output = Flow(block, input);
 
-                    // Since the new output value is different than the previous one, 
-                    // we need to propagate it to all the successor blocks of the current block.
-                    EnqueueRange(worklist, GetSuccessors(block));
+                    // Compare the previous output with the new output.
+                    compare = AnalysisDomain.Compare(GetOutput(resultBuilder[block]), output);
+
+                    // The newly computed abstract values for each basic block
+                    // must be always greater or equal than the previous value
+                    // to ensure termination. 
+                    Debug.Assert(compare <= 0, "The newly computed abstract value must be greater or equal than the previous one.");
+
+                    // Is old output value < new output value ?
+                    if (compare < 0)
+                    {
+                        // The newly computed value is greater than the previous value,
+                        // so we need to update the current block result's
+                        // output values with the new ones.
+                        UpdateOutput(resultBuilder, block, output);
+
+                        // Since the new output value is different than the previous one, 
+                        // we need to propagate it to all the successor blocks of the current block.
+                        EnqueueRange(worklist, GetSuccessors(block));
+                    }
                 }
             }
 

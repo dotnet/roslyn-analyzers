@@ -80,7 +80,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
         }
 
-        private bool TypeImplementsEquatable(INamedTypeSymbol type, INamedTypeSymbol equatableType)
+        private static bool TypeImplementsEquatable(INamedTypeSymbol type, INamedTypeSymbol equatableType)
         {
             INamedTypeSymbol constructedEquatable = equatableType.Construct(type);
             INamedTypeSymbol implementation = type
@@ -89,7 +89,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return implementation != null;
         }
 
-        private async Task<Document> ImplementEquatableInStructAsync(Document document, SyntaxNode declaration,
+        private static async Task<Document> ImplementEquatableInStructAsync(Document document, SyntaxNode declaration,
             INamedTypeSymbol typeSymbol, Compilation compilation, INamedTypeSymbol equatableType,
             CancellationToken cancellationToken)
         {
@@ -114,7 +114,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return editor.GetChangedDocument();
         }
 
-        private async Task<Document> OverrideObjectEqualsAsync(Document document, SyntaxNode declaration,
+        private static async Task<Document> OverrideObjectEqualsAsync(Document document, SyntaxNode declaration,
             INamedTypeSymbol typeSymbol, INamedTypeSymbol equatableType, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
@@ -154,7 +154,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return editor.GetChangedDocument();
         }
 
-        private bool HasExplicitEqualsImplementation(INamedTypeSymbol typeSymbol, INamedTypeSymbol equatableType)
+        private static bool HasExplicitEqualsImplementation(INamedTypeSymbol typeSymbol, INamedTypeSymbol equatableType)
         {
             INamedTypeSymbol constructedType = equatableType.Construct(typeSymbol);
             IMethodSymbol constructedEqualsMethod = constructedType.GetMembers().OfType<IMethodSymbol>().Single();

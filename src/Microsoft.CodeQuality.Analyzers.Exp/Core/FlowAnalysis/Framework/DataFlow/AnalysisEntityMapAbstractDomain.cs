@@ -30,7 +30,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 var equivalentKeys2 = map2.Keys.Where(key => key.EqualsIgnoringInstanceLocation(key1));
                 if (!equivalentKeys2.Any())
                 {
-                    resultMap.Add(key1, ValueDomain.UnknownOrMayBeValue);
+                    // Absence of entity from one branch indicates we don't know its values.
+                    TValue mergedValue = ValueDomain.Merge(value1, ValueDomain.UnknownOrMayBeValue);
+                    resultMap.Add(key1, mergedValue);
                     continue;
                 }
 
@@ -55,11 +57,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 }
             }
 
-            foreach (var key2 in map2.Keys)
+            foreach (var kvp in map2)
             {
+                var key2 = kvp.Key;
+                var value2 = kvp.Value;
                 if (!resultMap.ContainsKey(key2))
                 {
-                    resultMap.Add(key2, ValueDomain.UnknownOrMayBeValue);
+                    // Absence of entity from one branch indicates we don't know its values.
+                    TValue mergedValue = ValueDomain.Merge(value2, ValueDomain.UnknownOrMayBeValue);
+                    resultMap.Add(key2, mergedValue);
                 }
             }
 

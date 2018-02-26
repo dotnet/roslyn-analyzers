@@ -102,14 +102,9 @@
         <target state="translated">Una classe dichiara e implementa un campo di istanza che è un tipo System.IDisposable, ma non implementa IDisposable. Una classe che dichiara un campo IDisposable è indirettamente proprietaria di una risorsa non gestita e deve implementare l'interfaccia IDisposable.</target>
         <note />
       </trans-unit>
-      <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageDependsOnFix">
-        <source>Implement IDisposable on {0} because it creates members of the following IDisposable types: {1}. If {0} has previously shipped, adding new members that implement IDisposable to this type is considered a breaking change to existing consumers.</source>
-        <target state="translated">Implementare IDisposable su {0} perché crea membri dei tipi IDisposable seguenti: {1}. Se {0} è stato distribuito in precedenza, l'aggiunta di nuovi membri che implementano IDisposable in questo tipo è considerata una modifica che determina un'interruzione per i consumer esistenti.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
-        <source>Type '{0}' owns disposable fields but is not disposable</source>
-        <target state="translated">Il tipo '{0}' è proprietario di campi Disposable ma non è Disposable</target>
+        <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
+        <target state="needs-review-translation">Il tipo '{0}' è proprietario di campi Disposable ma non è Disposable</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">

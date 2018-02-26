@@ -102,14 +102,9 @@
         <target state="translated">Klasa deklaruje i implementuje pole wystąpienia typu System.IDisposable oraz nie implementuje interfejsu IDisposable. Klasa deklarująca pole IDisposable jest pośrednio właścicielem zasobu niezarządzanego i powinna implementować interfejs IDisposable.</target>
         <note />
       </trans-unit>
-      <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageDependsOnFix">
-        <source>Implement IDisposable on {0} because it creates members of the following IDisposable types: {1}. If {0} has previously shipped, adding new members that implement IDisposable to this type is considered a breaking change to existing consumers.</source>
-        <target state="translated">Zaimplementuj interfejs IDisposable dla klasy {0}, ponieważ tworzy ona elementy członkowskie następujących typów IDisposable: {1}. Jeśli klasa {0} została już dostarczona użytkownikom, dodanie nowych elementów członkowskich implementujących interfejs IDisposable do tego typu jest uznawane za zmianę, która może powodować błędy u obecnych użytkowników.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
-        <source>Type '{0}' owns disposable fields but is not disposable</source>
-        <target state="translated">Typ „{0}” zawiera pola możliwe do likwidacji, lecz sam nie jest możliwy do likwidacji</target>
+        <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
+        <target state="needs-review-translation">Typ „{0}” zawiera pola możliwe do likwidacji, lecz sam nie jest możliwy do likwidacji</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">

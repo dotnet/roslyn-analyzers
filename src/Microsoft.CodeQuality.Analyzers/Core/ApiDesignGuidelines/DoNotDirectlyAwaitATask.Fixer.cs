@@ -36,7 +36,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
         }
 
-        private async Task<Document> GetFix(Document document, SyntaxNode expression, CancellationToken cancellationToken)
+        private static async Task<Document> GetFix(Document document, SyntaxNode expression, CancellationToken cancellationToken)
         {
             // Rewrite the expression to include a .ConfigureAwait() after it. We reattach trailing trivia to the end.
             // This is especially important for VB, as the end-of-line may be in the trivia

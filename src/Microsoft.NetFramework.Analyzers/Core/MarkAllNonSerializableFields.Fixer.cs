@@ -53,7 +53,7 @@ namespace Microsoft.NetFramework.Analyzers
             }
         }
 
-        private async Task<Document> AddNonSerializedAttribute(Document document, SyntaxNode fieldNode, CancellationToken cancellationToken)
+        private static async Task<Document> AddNonSerializedAttribute(Document document, SyntaxNode fieldNode, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             SyntaxNode attr = editor.Generator.Attribute(editor.Generator.TypeExpression(WellKnownTypes.NonSerializedAttribute(editor.SemanticModel.Compilation)));

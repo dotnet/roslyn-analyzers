@@ -82,7 +82,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return null;
         }
 
-        private ITypeSymbol TryGetSystemTypeForNanConstantExpression(SyntaxNode expressionSyntax, SemanticModel model, INamedTypeSymbol systemSingleType, INamedTypeSymbol systemDoubleType)
+        private static ITypeSymbol TryGetSystemTypeForNanConstantExpression(SyntaxNode expressionSyntax, SemanticModel model, INamedTypeSymbol systemSingleType, INamedTypeSymbol systemDoubleType)
         {
             if (model.GetSymbolInfo(expressionSyntax).Symbol is IFieldSymbol fieldSymbol)
             {
@@ -98,7 +98,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return null;
         }
 
-        private async Task<Document> ConvertToMethodInvocation(CodeFixContext context, FixResolution fixResolution)
+        private static async Task<Document> ConvertToMethodInvocation(CodeFixContext context, FixResolution fixResolution)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(context.Document, context.CancellationToken).ConfigureAwait(false);
 

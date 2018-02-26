@@ -93,7 +93,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             }
         }
 
-        private IEnumerable<string> GetPropertiesInScope(OperationAnalysisContext context)
+        private static IEnumerable<string> GetPropertiesInScope(OperationAnalysisContext context)
         {
             var containingType = context.ContainingSymbol.ContainingType;
             // look for all of the properties in the containing type and return the property names
@@ -106,7 +106,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             }
         }
 
-        internal IEnumerable<string> GetParametersInScope(OperationAnalysisContext context)
+        internal static IEnumerable<string> GetParametersInScope(OperationAnalysisContext context)
         {
             // get the parameters for the containing method
             foreach (var parameter in context.ContainingSymbol.GetParameters())

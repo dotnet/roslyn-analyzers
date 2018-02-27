@@ -197,14 +197,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 HandlePossibleEscapingForAssignment(target, assignedValueOperation, assignedValueOperation);
             }
 
-            protected override void SetValueForParameterOnEntry(IParameterSymbol parameter, AnalysisEntity analysisEntity)
+            protected override void SetValueForParameterPointsToLocationOnEntry(IParameterSymbol parameter, PointsToAbstractValue pointsToAbstractValue)
             {
                 if (_disposeOwnershipTransferLikelyTypes.Contains(parameter.Type))
                 {
-                    if (TryGetPointsToAbstractValueAtCurrentBlockExit(analysisEntity, out PointsToAbstractValue pointsToAbstractValue))
-                    {
-                        SetAbstractValue(pointsToAbstractValue, DisposeAbstractValue.NotDisposed);
-                    }
+                    SetAbstractValue(pointsToAbstractValue, DisposeAbstractValue.NotDisposed);
                 }
             }
 

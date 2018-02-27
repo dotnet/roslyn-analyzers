@@ -79,8 +79,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return defaultValue;
         }
 
+        protected abstract void SetValueForParameterPointsToLocationOnEntry(IParameterSymbol parameter, PointsToAbstractValue pointsToAbstractValue);
+        protected abstract void SetValueForParameterPointsToLocationOnExit(IParameterSymbol parameter, PointsToAbstractValue pointsToAbstractValue);
+
         protected override void SetValueForParameterOnEntry(IParameterSymbol parameter, AnalysisEntity analysisEntity)
         {
+            if (TryGetPointsToAbstractValueAtCurrentBlockExit(analysisEntity, out PointsToAbstractValue pointsToAbstractValue))
+            {
+                SetValueForParameterPointsToLocationOnEntry(parameter, pointsToAbstractValue);
+            }
         }
 
         protected override void SetValueForParameterOnExit(IParameterSymbol parameter, AnalysisEntity analysisEntity)
@@ -93,14 +100,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     SetValueForParameterPointsToLocationOnExit(parameter, pointsToAbstractValue);
                 }
             }
-        }
-
-        protected virtual void SetValueForParameterPointsToLocationOnExit(IParameterSymbol parameter, PointsToAbstractValue pointsToAbstractValue)
-        {
-            foreach (var location in pointsToAbstractValue.Locations)
-            {
-                SetAbstractValue(pointsToAbstractValue, ValueDomain.UnknownOrMayBeValue);
-            }            
         }
 
         #region Visitor methods

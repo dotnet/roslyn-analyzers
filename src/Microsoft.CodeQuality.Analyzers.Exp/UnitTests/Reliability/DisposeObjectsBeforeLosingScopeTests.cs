@@ -400,10 +400,10 @@ class A : IDisposable
 
 class Test
 {
-    //void M1(out A param)
-    //{
-    //    param = new A();
-    //}
+    void M1(out A param)
+    {
+        param = new A();
+    }
 
     void M2(out A param2)
     {
@@ -415,23 +415,23 @@ class Test
         param3 = new A();
     }
 
-    //void Method()
-    //{
-    //    A a;
-    //    M1(out a);
-    //    A local = a;
-    //    M1(out a);
+    void Method()
+    {
+        A a;
+        M1(out a);
+        A local = a;
+        M1(out a);
 
-    //    M1(out var a2);
+        M1(out var a2);
 
-    //    A a3;
-    //    M2(out a3);
+        A a3;
+        M2(out a3);
 
-    //    local.Dispose();
-    //    a.Dispose();
-    //    a2.Dispose();
-    //    a3.Dispose();
-    //}
+        local.Dispose();
+        a.Dispose();
+        a2.Dispose();
+        a3.Dispose();
+    }
 }
 ");
         }

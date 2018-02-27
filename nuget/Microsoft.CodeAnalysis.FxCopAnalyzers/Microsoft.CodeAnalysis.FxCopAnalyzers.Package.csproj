@@ -3,8 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
 
-    <IsPackable>true</IsPackable>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
     <NuspecPackageId>Microsoft.CodeAnalysis.FxCopAnalyzers</NuspecPackageId>
     <Description>Microsoft FxCop rules implemented as analyzers using the .NET Compiler Platform ("Roslyn").</Description>
     <Summary>Microsoft FxCop Analyzers</Summary>
@@ -20,9 +18,9 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.Analyzers.Package.csproj" />
-    <ProjectReference Include="..\Microsoft.NetFramework.Analyzers\Microsoft.NetFramework.Analyzers.Package.csproj" />
-    <ProjectReference Include="..\Microsoft.NetCore.Analyzers\Microsoft.NetCore.Analyzers.Package.csproj" />
-    <ProjectReference Include="..\Text.Analyzers\Text.Analyzers.Package.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.Analyzers.Package.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Microsoft.NetFramework.Analyzers\Microsoft.NetFramework.Analyzers.Package.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Microsoft.NetCore.Analyzers\Microsoft.NetCore.Analyzers.Package.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Text.Analyzers\Text.Analyzers.Package.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
 </Project>

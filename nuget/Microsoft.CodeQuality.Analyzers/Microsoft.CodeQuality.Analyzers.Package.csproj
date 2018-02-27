@@ -3,8 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
 
-    <IsPackable>true</IsPackable>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
     <NuspecPackageId>Microsoft.CodeQuality.Analyzers</NuspecPackageId>
     <Description>CodeQuality Analyzers</Description>
     <Summary>Microsoft.CodeQuality Analyzers</Summary>

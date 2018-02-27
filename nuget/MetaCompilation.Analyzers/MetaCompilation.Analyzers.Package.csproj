@@ -3,8 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
 
-    <IsPackable>true</IsPackable>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
     <NuspecPackageId>MetaCompilation.Analyzers</NuspecPackageId>
     <Description>MetaCompilation Analyzers</Description>
     <Summary>MetaCompilation Analyzers</Summary>

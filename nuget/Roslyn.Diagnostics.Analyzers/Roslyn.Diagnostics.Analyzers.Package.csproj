@@ -3,8 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
 
-    <IsPackable>true</IsPackable>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
     <NuspecPackageId>Roslyn.Diagnostics.Analyzers</NuspecPackageId>
     <Description>Roslyn.Diagnostics Analyzers</Description>
     <Summary>Roslyn.Diagnostics Analyzers</Summary>

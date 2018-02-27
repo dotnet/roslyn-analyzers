@@ -3,8 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
 
-    <IsPackable>true</IsPackable>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
     <NuspecPackageId>Microsoft.Net.RoslynDiagnostics</NuspecPackageId>
     <Description>Analyzers built using the .NET Compiler Platform ("Roslyn") for Roslyn.sln.</Description>
     <Summary>Diagnostic Analyzers consumed by Roslyn.sln (https://github.com/dotnet/roslyn)</Summary>
@@ -23,9 +21,9 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.Analyzers.Package.csproj" />
-    <ProjectReference Include="..\Microsoft.CodeAnalysis.Analyzers\Microsoft.CodeAnalysis.Analyzers.Package.csproj" />
-    <ProjectReference Include="..\Microsoft.NetCore.Analyzers\Microsoft.NetCore.Analyzers.Package.csproj" />
-    <ProjectReference Include="..\Roslyn.Diagnostics.Analyzers\Roslyn.Diagnostics.Analyzers.Package.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.Analyzers.Package.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.Analyzers\Microsoft.CodeAnalysis.Analyzers.Package.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Microsoft.NetCore.Analyzers\Microsoft.NetCore.Analyzers.Package.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Roslyn.Diagnostics.Analyzers\Roslyn.Diagnostics.Analyzers.Package.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
 </Project>

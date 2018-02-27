@@ -2,4 +2,11 @@
 <Project>
   <Import Project="..\Directory.Build.props"/>
   <Import Project="$(RepoToolsetDir)Settings.props" Condition="Exists('$(RepoToolsetDir)Settings.props')" />
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <SkipCopyBuildProduct>true</SkipCopyBuildProduct>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+  </PropertyGroup>
 </Project>

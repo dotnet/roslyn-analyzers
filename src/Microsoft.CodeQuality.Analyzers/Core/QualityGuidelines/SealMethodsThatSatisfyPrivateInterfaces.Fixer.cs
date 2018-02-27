@@ -10,9 +10,6 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 
-// disable equivalence key warning because it cannot tell that equivalence key is overridden in the base class
-#pragma warning disable RS1011
-
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     /// <summary>

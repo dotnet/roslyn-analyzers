@@ -309,7 +309,7 @@
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageOperator">
         <source>{0} should define operator(s) '{1}' since it implements IComparable.</source>
-        <target state="needs-review-translation">Typ {0} powinien definiować operator „{1}”, ponieważ implementuje interfejs IComparable.</target>
+        <target state="translated">Typ {0} powinien definiować operatory „{1}”, ponieważ implementuje interfejs IComparable.</target>
         <note>1 is a comma-separated list</note>
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassTitle">
@@ -1474,7 +1474,7 @@
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageBoth">
         <source>{0} should define operator(s) '{1}' and Equals since it implements IComparable.</source>
-        <target state="new">{0} should define operator(s) '{1}' and Equals since it implements IComparable.</target>
+        <target state="translated">Typ {0} powinien definiować operatory „{1}” i metodę Equals, ponieważ implementuje interfejs IComparable.</target>
         <note>1 is a comma-separated list</note>
       </trans-unit>
     </body>

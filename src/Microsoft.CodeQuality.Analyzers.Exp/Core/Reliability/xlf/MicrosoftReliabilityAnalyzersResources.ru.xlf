@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="DisposeObjectsBeforeLosingScopeDescription">
         <source>If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</source>
-        <target state="new">If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</target>
+        <target state="translated">Если не высвободить объект в явном виде до того, как все ссылки на него окажутся вне области, высвобождение произойдет в некий неопределенный момент, когда сборщик мусора запустит метод завершения объекта. Так как может возникнуть событие исключения, из-за которого метод завершения вообще не запустится, обязательно высвобождайте объект в явном виде.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeMessage">
         <source>In method '{0}', call System.IDisposable.Dispose on object created by '{1}' before all references to it are out of scope.</source>
-        <target state="new">In method '{0}', call System.IDisposable.Dispose on object created by '{1}' before all references to it are out of scope.</target>
+        <target state="translated">В методе "{0}" выполните операцию System.IDisposable.Dispose над объектом, созданным "{1}", прежде чем все ссылки на этот объект окажутся вне области.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeTitle">
         <source>Dispose objects before losing scope</source>
-        <target state="new">Dispose objects before losing scope</target>
+        <target state="translated">Высвобождайте объекты до выхода из области</target>
         <note />
       </trans-unit>
     </body>

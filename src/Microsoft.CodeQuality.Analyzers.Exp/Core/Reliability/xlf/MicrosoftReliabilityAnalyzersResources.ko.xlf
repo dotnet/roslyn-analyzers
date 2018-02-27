@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="DisposeObjectsBeforeLosingScopeDescription">
         <source>If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</source>
-        <target state="new">If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</target>
+        <target state="translated">삭제 가능한 개체에 대한 모든 참조가 범위를 벗어나기 전에 해당 개체가 명시적으로 삭제되지 않으면 가비지 수집기가 개체의 종료자를 실행할 때 비활성화 시점에서 개체가 삭제됩니다. 개체 종료자의 실행을 방지하는 예외적인 이벤트가 발생할 수 있으므로 대신 개체를 명시적으로 삭제해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeMessage">
         <source>In method '{0}', call System.IDisposable.Dispose on object created by '{1}' before all references to it are out of scope.</source>
-        <target state="new">In method '{0}', call System.IDisposable.Dispose on object created by '{1}' before all references to it are out of scope.</target>
+        <target state="translated">'{0}' 메서드에서 '{1}'에 의해 생성된 개체에 대한 모든 참조가 범위를 벗어나기 전에 해당 개체에서 System.IDisposable.Dispose를 호출하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeTitle">
         <source>Dispose objects before losing scope</source>
-        <target state="new">Dispose objects before losing scope</target>
+        <target state="translated">범위를 벗어나기 전에 개체를 삭제하세요.</target>
         <note />
       </trans-unit>
     </body>

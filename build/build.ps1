@@ -111,15 +111,14 @@ function Build {
   }
 
   $nodeReuse = !$ci
+  $useCodecov = $ci -and $env:CODECOV_TOKEN
+  $useOpenCover = $useCodecov
 
-  & $MsbuildExe $ToolsetBuildProj /m /nologo /clp:Summary /nodeReuse:$nodeReuse /warnaserror /v:$verbosity $logCmd /p:Configuration=$configuration /p:SolutionPath=$solution /p:Restore=$restore /p:DeployDeps=$deployDeps /p:Build=$build /p:Rebuild=$rebuild /p:Deploy=$deploy /p:Test=$test /p:IntegrationTest=$integrationTest /p:Sign=$sign /p:Pack=$pack /p:CIBuild=$ci /p:NuGetPackageRoot=$NuGetPackageRoot $properties
+  & $MsbuildExe $ToolsetBuildProj /m /nologo /clp:Summary /nodeReuse:$nodeReuse /warnaserror /v:$verbosity $logCmd /p:Configuration=$configuration /p:SolutionPath=$solution /p:Restore=$restore /p:DeployDeps=$deployDeps /p:Build=$build /p:Rebuild=$rebuild /p:Deploy=$deploy /p:Test=$test /p:IntegrationTest=$integrationTest /p:Sign=$sign /p:Pack=$pack /p:UseCodecov=$useCodecov /p:UseOpenCover=$useOpenCover /p:CIBuild=$ci /p:NuGetPackageRoot=$NuGetPackageRoot $properties
 
-  if ($ci) {
-    $CodecovVersion = GetVersion("CodecovVersion")
-    $codecov = Join-Path $NuGetPackageRoot "codecov\$CodecovVersion\tools\Codecov.exe"
-    $CoverageDir = Join-Path (Join-Path $ArtifactsDir $configuration) "TestResults"
-    $coverageFiles = ls "$CoverageDir\*.coverage" | % FullName
-    &$codecov -f $coverageFiles -r $env:QualifiedRepoName --pr $env:ghprbPullId --branch $env:ghprbTargetBranch -c $env:ghprbActualCommit -n $env:JOB_NAME --flag $configuration
+  if ($useCodecov) {
+    $CodecovProj = Join-Path $PSScriptRoot 'Codecov.proj'
+    & $MsbuildExe $CodecovProj /m /nologo /clp:Summary /nodeReuse:$nodeReuse /warnaserror /v:diag /t:Codecov /p:Configuration=$configuration /p:UseCodecov=$useCodecov /p:NuGetPackageRoot=$NuGetPackageRoot $properties
   }
 }
 

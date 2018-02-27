@@ -217,6 +217,20 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 }
             }
 
+            protected override DisposeAbstractValue ComputeAnalysisValueForOutArgument(IArgumentOperation operation, DisposeAbstractValue defaultValue)
+            {
+                // Special case: don't flag "out" arguments for "bool TryGetXXX(..., out value)" invocations.
+                if (operation.Parent is IInvocationOperation invocation &&
+                    invocation.TargetMethod.ReturnType.SpecialType == SpecialType.System_Boolean &&
+                    invocation.TargetMethod.Name.StartsWith("TryGet", StringComparison.Ordinal) &&
+                    invocation.Arguments[invocation.Arguments.Length - 1] == operation)
+                {
+                    return DisposeAbstractValue.NotDisposable;
+                }
+
+                return base.ComputeAnalysisValueForOutArgument(operation, defaultValue);
+            }
+
             // TODO: Remove these temporary methods once we move to compiler's CFG
             // https://github.com/dotnet/roslyn-analyzers/issues/1567
             #region Temporary methods to workaround lack of *real* CFG

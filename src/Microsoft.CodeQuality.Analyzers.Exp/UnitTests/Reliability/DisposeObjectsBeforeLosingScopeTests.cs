@@ -437,6 +437,37 @@ class Test
         }
 
         [Fact]
+        public void TryGetSpecialCase_OutDisposableArgument_NoDisposeCall_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class MyCollection
+{
+    private readonly Dictionary<int, A> _map;
+    public MyCollection(Dictionary<int, A> map)
+    {
+        _map = map;
+    }
+
+    public bool ValueExists(int i)
+    {
+        return _map.TryGetValue(i, out var value);
+    }
+}
+");
+        }
+
+        [Fact]
         public void LocalWithMultipleDisposableAssignment_DisposeCallOnSome_Diagnostic()
         {
             VerifyCSharp(@"

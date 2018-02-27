@@ -21,32 +21,65 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         private readonly DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> _pointsToAnalysisResultOpt;
         private readonly ImmutableDictionary<IOperation, TAbstractAnalysisValue>.Builder _valueCacheBuilder;
         private readonly List<IArgumentOperation> _pendingArgumentsToReset;
+        private ImmutableDictionary<IParameterSymbol, AnalysisEntity> _lazyParameterEntities;
 
         private int _recursionDepth;
 
         protected abstract TAbstractAnalysisValue GetAbstractDefaultValue(ITypeSymbol type);
+        protected abstract void SetValueForParameterOnEntry(IParameterSymbol parameter, AnalysisEntity analysisEntity);
+        protected abstract void SetValueForParameterOnExit(IParameterSymbol parameter, AnalysisEntity analysisEntity);
         protected abstract void ResetCurrentAnalysisData(TAnalysisData newAnalysisDataOpt = default(TAnalysisData));
         protected bool HasPointsToAnalysisResult => _pointsToAnalysisResultOpt != null || IsPointsToAnalysis;
         protected virtual bool IsPointsToAnalysis => false;
 
         protected AbstractValueDomain<TAbstractAnalysisValue> ValueDomain { get; }
+        protected ISymbol OwningSymbol { get; }
         protected TAnalysisData CurrentAnalysisData { get; private set; }
         protected BasicBlock CurrentBasicBlock { get; private set; }
         protected IOperation CurrentStatement { get; private set; }
         protected PointsToAbstractValue ThisOrMePointsToAbstractValue { get; }
+        protected AnalysisEntityFactory AnalysisEntityFactory { get; }
+
+        /// <summary>
+        /// This boolean field determines if the caller requires an optimistic OR a pessimistic analysis for such cases.
+        /// For example, invoking an instance method may likely invalidate all the instance field analysis state, i.e.
+        /// reference type fields might be re-assigned to point to different objects in the called method.
+        /// An optimistic points to analysis assumes that the points to values of instance fields don't change on invoking an instance method.
+        /// A pessimistic points to analysis resets all the instance state and assumes the instance field might point to any object, hence has unknown state.
+        /// </summary>
+        /// <remarks>
+        /// For dispose analysis, we want to perform an optimistic points to analysis as we assume a disposable field is not likely to be re-assigned to a separate object in helper method invocations in Dispose.
+        /// For string content analysis, we want to perform a pessimistic points to analysis to be conservative and avoid missing out true violations.
+        /// </remarks>
+        protected bool PessimisticAnalysis { get; }
 
         protected DataFlowOperationVisitor(
             AbstractValueDomain<TAbstractAnalysisValue> valueDomain,
-            INamedTypeSymbol containingTypeSymbol,
+            ISymbol owningSymbol,
+            bool pessimisticAnalysis,
             DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> nullAnalysisResultOpt,
             DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResultOpt)
         {
+            Debug.Assert(owningSymbol != null);
+            Debug.Assert(owningSymbol.Kind == SymbolKind.Method ||
+                owningSymbol.Kind == SymbolKind.Field ||
+                owningSymbol.Kind == SymbolKind.Property ||
+                owningSymbol.Kind == SymbolKind.Event);
+
             ValueDomain = valueDomain;
+            OwningSymbol = owningSymbol;
+            PessimisticAnalysis = pessimisticAnalysis;
             _nullAnalysisResultOpt = nullAnalysisResultOpt;
             _pointsToAnalysisResultOpt = pointsToAnalysisResultOpt;
             _valueCacheBuilder = ImmutableDictionary.CreateBuilder<IOperation, TAbstractAnalysisValue>();
             _pendingArgumentsToReset = new List<IArgumentOperation>();
-            ThisOrMePointsToAbstractValue = GetThisOrMeInstancePointsToValue(containingTypeSymbol);
+            ThisOrMePointsToAbstractValue = GetThisOrMeInstancePointsToValue(owningSymbol.ContainingType);
+
+            AnalysisEntityFactory = new AnalysisEntityFactory(
+                (pointsToAnalysisResultOpt != null || IsPointsToAnalysis) ?
+                    GetPointsToAbstractValue :
+                    (Func<IOperation, PointsToAbstractValue>)null,
+                owningSymbol.ContainingType);
         }
 
         private static PointsToAbstractValue GetThisOrMeInstancePointsToValue(INamedTypeSymbol containingTypeSymbol)
@@ -82,6 +115,43 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 #endif
 
             return CurrentAnalysisData;
+        }
+
+        public void OnEntry(BasicBlock entryBlock, TAnalysisData input)
+        {
+            CurrentBasicBlock = entryBlock;
+            CurrentAnalysisData = input;
+
+            if (_lazyParameterEntities == null &&
+                OwningSymbol is IMethodSymbol method &&
+                method.Parameters.Length > 0)
+            {
+                var builder = ImmutableDictionary.CreateBuilder<IParameterSymbol, AnalysisEntity>();
+                foreach (var parameter in method.Parameters)
+                {
+                    var result = AnalysisEntityFactory.TryCreateForSymbolDeclaration(parameter, out AnalysisEntity analysisEntity);
+                    Debug.Assert(result);
+                    builder.Add(parameter, analysisEntity);
+                    SetValueForParameterOnEntry(parameter, analysisEntity);
+                }
+
+                _lazyParameterEntities = builder.ToImmutable();
+            }
+        }
+
+        public void OnExit(BasicBlock exitBlock, TAnalysisData input)
+        {
+            CurrentBasicBlock = exitBlock;
+            CurrentAnalysisData = input;
+            if (_lazyParameterEntities != null)
+            {
+                foreach (var kvp in _lazyParameterEntities)
+                {
+                    IParameterSymbol parameter = kvp.Key;
+                    AnalysisEntity analysisEntity = kvp.Value;
+                    SetValueForParameterOnExit(parameter, analysisEntity);
+                }
+            }
         }
 
         #region Helper methods to get or cache analysis data for visited operations.
@@ -138,9 +208,28 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             }
         }
 
+        protected bool TryGetPointsToAbstractValueAtCurrentBlockEntry(AnalysisEntity analysisEntity, out PointsToAbstractValue pointsToAbstractValue)
+        {
+            Debug.Assert(_pointsToAnalysisResultOpt != null);
+            var inputData = _pointsToAnalysisResultOpt[CurrentBasicBlock].InputData;
+            return inputData.TryGetValue(analysisEntity, out pointsToAbstractValue);
+        }
+
+        protected bool TryGetPointsToAbstractValueAtCurrentBlockExit(AnalysisEntity analysisEntity, out PointsToAbstractValue pointsToAbstractValue)
+        {
+            Debug.Assert(_pointsToAnalysisResultOpt != null);
+            var outputData = _pointsToAnalysisResultOpt[CurrentBasicBlock].OutputData;
+            return outputData.TryGetValue(analysisEntity, out pointsToAbstractValue);
+        }
+
         #endregion region
 
         protected virtual TAbstractAnalysisValue ComputeAnalysisValueForReferenceOperation(IOperation operation, TAbstractAnalysisValue defaultValue)
+        {
+            return defaultValue;
+        }
+
+        protected virtual TAbstractAnalysisValue ComputeAnalysisValueForOutArgument(IArgumentOperation operation, TAbstractAnalysisValue defaultValue)
         {
             return defaultValue;
         }
@@ -157,12 +246,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         protected abstract void ResetReferenceTypeInstanceAnalysisData(IOperation operation);
 
         /// <summary>
-        /// Reset all the instance analysis data if <see cref="HasPointsToAnalysisResult"/> is true.
+        /// Reset all the instance analysis data if <see cref="HasPointsToAnalysisResult"/> is true and <see cref="PessimisticAnalysis"/> is also true.
         /// If we are using or performing points to analysis, certain operations can invalidate all the analysis data off the containing instance.
         /// </summary>
         private void ResetInstanceAnalysisData(IOperation operation)
         {
-            if (operation == null || !HasPointsToAnalysisResult)
+            if (operation == null || !HasPointsToAnalysisResult || !PessimisticAnalysis)
             {
                 return;
             }
@@ -185,6 +274,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             // For reference types passed as arguments, 
             // reset all analysis data for the instance members as the content might change for them.
             if (HasPointsToAnalysisResult &&
+                PessimisticAnalysis &&
                 operation.Value.Type != null &&
                 !operation.Value.Type.HasValueCopySemantics())
             {
@@ -194,7 +284,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             // Handle ref/out arguments as escapes.
             if (operation.Parameter.RefKind != RefKind.None)
             {
-                SetAbstractValueForAssignment(operation.Value, operation.Value, ValueDomain.UnknownOrMayBeValue);
+                var value = GetCachedAbstractValue(operation);
+                if (operation.Parameter.RefKind != RefKind.Out)
+                {
+                    value = ValueDomain.Merge(value, GetCachedAbstractValue(operation.Value));
+                }
+
+                SetAbstractValueForAssignment(operation.Value, operation, value);
             }
         }
 
@@ -591,6 +687,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         public override TAbstractAnalysisValue VisitArgument(IArgumentOperation operation, object argument)
         {
             var value = Visit(operation.Value, argument);
+            if (operation.Parameter.RefKind != RefKind.None)
+            {
+                value = ComputeAnalysisValueForOutArgument(operation, defaultValue: ValueDomain.UnknownOrMayBeValue);
+            }
+
             _pendingArgumentsToReset.Add(operation);
             return value;
         }

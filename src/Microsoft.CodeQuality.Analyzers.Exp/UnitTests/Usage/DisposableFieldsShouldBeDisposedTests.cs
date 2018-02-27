@@ -1727,6 +1727,138 @@ End Class");
         }
 
         [Fact]
+        public void DisposableAllocation_OptimisticPointsToAnalysis_NoDiagnostic()
+        {
+            // Invoking an instance method may likely invalidate all the instance field analysis state, i.e.
+            // reference type fields might be re-assigned to point to different objects in the called method.
+            // An optimistic points to analysis assumes that the points to values of instance fields don't change on invoking an instance method.
+            // A pessimistic points to analysis resets all the instance state and assumes the instance field might point to any object, hence has unknown state.
+            // For dispose analysis, we want to perform an optimistic points to analysis as we assume a disposable field is not likely to be re-assigned to a separate object in helper method invocations in Dispose.
+
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+    public void PerformSomeCleanup()
+    {
+    }
+}
+
+class B : IDisposable
+{
+    private A a = new A();
+    
+    public void Dispose()
+    {
+        a.PerformSomeCleanup();
+        ClearMyState();
+        a.Dispose();
+    }
+
+    private void ClearMyState()
+    {
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Throw New NotImplementedException()
+    End Sub
+
+    Public Sub PerformSomeCleanup()
+    End Sub
+End Class
+
+Class B
+    Implements IDisposable
+
+    Private a As A = New A()
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        a.PerformSomeCleanup()
+        ClearMyState()
+        a.Dispose()
+    End Sub
+
+    Private Sub ClearMyState()
+    End Sub
+End Class");
+        }
+
+        [Fact]
+        public void DisposableAllocation_DisposedinDisposeOverride_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+abstract class Base : IDisposable
+{
+    public virtual void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Derived : Base
+{
+    private readonly A a = new A();
+    public override void Dispose()
+    {
+        base.Dispose();
+        a.Dispose();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Throw New NotImplementedException()
+    End Sub
+End Class
+
+MustInherit Class Base
+    Implements IDisposable
+    Public Overridable Sub Dispose() Implements IDisposable.Dispose
+        Throw New NotImplementedException()
+    End Sub
+End Class
+
+Class Derived
+    Inherits Base
+
+    Private ReadOnly a As A = New A()
+
+    Public Overrides Sub Dispose()
+        MyBase.Dispose()
+        a.Dispose()
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
         public void DisposableAllocation_DisposedWithDisposeBoolInvocation_NoDiagnostic()
         {
             VerifyCSharp(@"
@@ -2049,7 +2181,42 @@ Class B
 End Class");
         }
 
+        [Fact]
+        public void SystemThreadingTask_SpecialCase_NotDisposed_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Threading.Tasks;
 
+public class A: IDisposable
+{
+    private readonly Task t;
+    public A()
+    {
+        t = new Task(null);
+    }
+    public void Dispose()
+    {
+    }
+}
+");
 
+            VerifyBasic(@"
+Imports System
+Imports System.Threading.Tasks
+
+Public Class A
+    Implements IDisposable
+
+    Private ReadOnly t As Task
+
+    Public Sub New()
+        t = New Task(Nothing)
+    End Sub
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class");
+        }
     }
 }

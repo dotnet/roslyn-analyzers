@@ -51,6 +51,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                         {
                             mergedValue = ValueDomain.Merge(mergedValue, existingValue);
                         }
+                        else if (ReferenceEquals(mergedValue, ValueDomain.UnknownOrMayBeValue))
+                        {
+                            // Do no add a new key-value pair to the resultMap if the value is UnknownOrMayBeValue.
+                            continue;
+                        }
 
                         resultMap[mergedKey] = mergedValue;
                     }

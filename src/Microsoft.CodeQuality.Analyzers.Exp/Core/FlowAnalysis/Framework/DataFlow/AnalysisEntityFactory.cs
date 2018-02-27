@@ -146,6 +146,23 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 case IParenthesizedOperation parenthesized:
                     return TryCreate(parenthesized.Operand, out analysisEntity);
 
+                case IArgumentOperation argument:
+                    return TryCreate(argument.Value, out analysisEntity);
+
+                case IDeclarationExpressionOperation declarationExpression:
+                    switch (declarationExpression.Expression)
+                    {
+                        case ILocalReferenceOperation localReference:
+                            return TryCreateForSymbolDeclaration(localReference.Local, out analysisEntity);
+
+                        case ITupleOperation tupleOperation:
+                            // TODO handle tuple operations
+                            // https://github.com/dotnet/roslyn-analyzers/issues/1571
+                            break;
+                    }
+
+                    break;
+
                 default:
                     break;
             }

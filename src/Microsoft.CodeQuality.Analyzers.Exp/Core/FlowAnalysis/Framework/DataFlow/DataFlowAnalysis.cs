@@ -54,13 +54,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             var worklist = new Queue<BasicBlock>();
             var entry = GetEntry(cfg);
 
-            // Initialize the output of the initial block
+            // Initialize the input of the initial block
             // with the default abstract value of the domain.
-            UpdateOutput(resultBuilder, entry, AnalysisDomain.Bottom);
+            UpdateInput(resultBuilder, entry, AnalysisDomain.Bottom);
 
-            // Add all successor blocks of the initial
-            // block to be processed.
-            EnqueueRange(worklist, GetSuccessors(entry));
+            // Add the entry block to the worklist.
+            worklist.Enqueue(entry);
 
             while (worklist.Count > 0)
             {
@@ -83,7 +82,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 Debug.Assert(compare <= 0, "The newly computed abstract value must be greater or equal than the previous one.");
 
                 // Is old input value < new input value ?
-                if (compare < 0)
+                if (compare < 0 || block.Kind == BasicBlockKind.Entry)
                 {
                     // The newly computed value is greater than the previous value,
                     // so we need to update the current block result's
@@ -102,7 +101,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     Debug.Assert(compare <= 0, "The newly computed abstract value must be greater or equal than the previous one.");
 
                     // Is old output value < new output value ?
-                    if (compare < 0)
+                    if (compare < 0 || block.Kind == BasicBlockKind.Entry)
                     {
                         // The newly computed value is greater than the previous value,
                         // so we need to update the current block result's
@@ -121,6 +120,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         private TAnalysisData Flow(BasicBlock block, TAnalysisData data)
         {
+            if (block.Kind == BasicBlockKind.Entry)
+            {
+                OperationVisitor.OnEntry(block, data);
+            }
+            else if (block.Kind == BasicBlockKind.Exit)
+            {
+                OperationVisitor.OnExit(block, data);
+            }
+
             foreach (var statement in block.Statements)
             {
                 data = OperationVisitor.Flow(statement, block, data);

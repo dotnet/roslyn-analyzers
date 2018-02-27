@@ -133,7 +133,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Usage
                     }
 
                     // Mark fields disposed in Dispose method(s).
-                    if (containingMethod.GetDisposeMethodKind(operationBlockStartContext.Compilation) != DisposeMethodKind.None)
+                    if (containingMethod.GetDisposeMethodKind(disposeAnalysisHelper.IDisposable) != DisposeMethodKind.None)
                     {
                         var disposableFields = disposeAnalysisHelper.GetDisposableFields(containingMethod.ContainingType);
                         if (!disposableFields.IsEmpty)
@@ -151,7 +151,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Usage
                                     PointsToAbstractValue pointsToValue = fieldWithPointsToValue.Value;
 
                                     Debug.Assert(field.Type.IsDisposable(disposeAnalysisHelper.IDisposable));
-                                    ImmutableDictionary<AbstractLocation, DisposeAbstractValue> disposeDataAtExit = disposeAnalysisResult[cfg.Exit].InputData;
+                                    ImmutableDictionary<AbstractLocation, DisposeAbstractValue> disposeDataAtExit = disposeAnalysisResult[cfg.Exit].OutputData;
                                     var disposed = false;
                                     foreach (var location in pointsToValue.Locations)
                                     {

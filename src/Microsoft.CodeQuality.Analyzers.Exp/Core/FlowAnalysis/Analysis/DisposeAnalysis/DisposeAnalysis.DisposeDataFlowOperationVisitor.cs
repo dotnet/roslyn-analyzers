@@ -140,7 +140,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
 
             private void HandleDisposingOperation(IOperation disposingOperation, IOperation disposedInstance)
             {
-                if (!disposedInstance.Type.IsDisposable(_iDisposable))
+                if (disposedInstance.Type?.IsDisposable(_iDisposable) == false)
                 {
                     return;
                 }

@@ -4782,6 +4782,41 @@ class B : IDisposable
             GetCSharpResultAt(16, 15, "void B.Dispose()", "new A()"));
         }
 
+        [Fact, WorkItem(1597, "https://github.com/dotnet/roslyn-analyzers/issues/1597")]
+        public void DisposableObjectInErrorCode_02_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Text;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        var builder = new StringBuilder();
+        using ()        // This erroneous code used to cause a null reference exception in the analysis.
+        this.WriteTo(new StringWriter(builder));
+        return;
+    }
+
+    void WriteTo(StringWriter x)
+    {
+    }
+}
+", TestValidationMode.AllowCompileErrors,
+            // Test0.cs(20,22): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new StringWriter(builder)' before all references to it are out of scope.
+            GetCSharpResultAt(20, 22, "void Test.M1()", "new StringWriter(builder)"));
+        }
+
         [Fact]
         public void DelegateCreation_Disposed_NoDiagnostic()
         {

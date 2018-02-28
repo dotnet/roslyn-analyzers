@@ -254,9 +254,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
                 return NullAbstractValue.NotNull;
             }
 
-            public override NullAbstractValue VisitReturn(IReturnOperation operation, object argument)
+            protected override NullAbstractValue VisitReturnCore(IReturnOperation operation, object argument)
             {
-                var _ = base.VisitReturn(operation, argument);
+                var _ = base.VisitReturnCore(operation, argument);
                 return NullAbstractValue.NotNull;
             }
 

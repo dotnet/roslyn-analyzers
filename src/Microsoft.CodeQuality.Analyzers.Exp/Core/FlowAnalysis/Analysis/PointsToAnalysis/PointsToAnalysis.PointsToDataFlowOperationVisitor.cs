@@ -320,13 +320,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 return PointsToAbstractValue.NoLocation;
             }
 
-            public override PointsToAbstractValue VisitTuple(ITupleOperation operation, object argument)
-            {
-                // TODO: Handle tuples.
-                // https://github.com/dotnet/roslyn-analyzers/issues/1571
-                return base.VisitTuple(operation, argument);
-            }
-
             private static PointsToAbstractValue VisitInvocationCommon(IOperation operation)
             {
                 if (!operation.Type.HasValueCopySemantics())

@@ -194,6 +194,14 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
 
             protected override void SetAbstractValueForAssignment(IOperation target, IOperation assignedValueOperation, DisposeAbstractValue assignedValue)
             {
+                // Temporary workaround for missing dataflow support for tuples
+                // https://github.com/dotnet/roslyn-analyzers/issues/1571
+                if (assignedValueOperation?.Kind == OperationKind.Tuple)
+                {
+                    HandlePossibleEscapingOperation(escapingOperation: assignedValueOperation, escapedInstance: target);
+                    return;
+                }
+
                 HandlePossibleEscapingForAssignment(target, assignedValueOperation, assignedValueOperation);
             }
 
@@ -329,9 +337,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 return value;
             }
 
-            public override DisposeAbstractValue VisitReturn(IReturnOperation operation, object argument)
+            protected override DisposeAbstractValue VisitReturnCore(IReturnOperation operation, object argument)
             {
-                var value = base.VisitReturn(operation, argument);
+                var value = base.VisitReturnCore(operation, argument);
                 if (operation.ReturnedValue != null)
                 {
                     HandlePossibleEscapingOperation(operation, operation.ReturnedValue);

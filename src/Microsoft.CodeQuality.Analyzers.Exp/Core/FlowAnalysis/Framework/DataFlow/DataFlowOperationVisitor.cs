@@ -349,6 +349,29 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return GetCachedAbstractValue(conditionalAccess.Operation);
         }
 
+        // Temporary workaround to track analysis state at CFG exit - remove once we move to the compiler CFG.
+        public TAnalysisData MergedAnalysisDataAtReturnStatements { get; private set; }
+
+        public sealed override TAbstractAnalysisValue VisitReturn(IReturnOperation operation, object argument)
+        {
+            var value = VisitReturnCore(operation, argument);
+
+            MergedAnalysisDataAtReturnStatements = MergedAnalysisDataAtReturnStatements == null ?
+                    GetClonedAnalysisData() :
+                    MergeAnalysisData(MergedAnalysisDataAtReturnStatements, CurrentAnalysisData);
+
+            return value;
+        }
+
+        protected virtual TAbstractAnalysisValue VisitReturnCore(IReturnOperation operation, object argument)
+        {
+            return base.VisitReturn(operation, argument);
+        }
+
+        private static bool IsBlockOperationWithReturn(IOperation operation) =>
+            operation is IBlockOperation blockOperation &&
+            blockOperation.Operations.Any(o => o is IReturnOperation);
+
         public override TAbstractAnalysisValue VisitConditional(IConditionalOperation operation, object argument)
         {
             var unusedConditionValue = Visit(operation.Condition, argument);
@@ -358,6 +381,18 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             CurrentAnalysisData = whenFalseBranchAnalysisData;
             var whenFalse = Visit(operation.WhenFalse, argument);
             whenFalseBranchAnalysisData = CurrentAnalysisData;
+            
+            if (MergedAnalysisDataAtReturnStatements != null)
+            {
+                if (IsBlockOperationWithReturn(operation.WhenTrue))
+                {
+                    whenTrueBranchAnalysisData = whenFalseBranchAnalysisData;
+                }
+                else if (IsBlockOperationWithReturn(operation.WhenFalse))
+                {
+                    whenFalseBranchAnalysisData = whenTrueBranchAnalysisData;
+                }
+            }
 
             if (operation.Condition.ConstantValue.HasValue &&
                 operation.Condition.ConstantValue.Value is bool condition)
@@ -820,6 +855,19 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             // TODO: Analyze lambda and local functions and flow the values from it's exit block to CurrentAnalysisData.
             // https://github.com/dotnet/roslyn-analyzers/issues/1547
             ResetCurrentAnalysisData();
+            return value;
+        }
+
+        public override TAbstractAnalysisValue VisitTuple(ITupleOperation operation, object argument)
+        {
+            // TODO: Handle tuples.
+            // https://github.com/dotnet/roslyn-analyzers/issues/1571
+            // Until the above is implemented, we pessimistically reset the current state of tuple elements.
+            var value = base.VisitTuple(operation, argument);
+            foreach (var element in operation.Elements)
+            {
+                SetAbstractValueForAssignment(element, operation, ValueDomain.UnknownOrMayBeValue);
+            }
             return value;
         }
 

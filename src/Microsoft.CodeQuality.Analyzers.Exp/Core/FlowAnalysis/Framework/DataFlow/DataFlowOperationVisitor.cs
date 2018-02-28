@@ -864,6 +864,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             // https://github.com/dotnet/roslyn-analyzers/issues/1571
             // Until the above is implemented, we pessimistically reset the current state of tuple elements.
             var value = base.VisitTuple(operation, argument);
+            CacheAbstractValue(operation, value);
             foreach (var element in operation.Elements)
             {
                 SetAbstractValueForAssignment(element, operation, ValueDomain.UnknownOrMayBeValue);

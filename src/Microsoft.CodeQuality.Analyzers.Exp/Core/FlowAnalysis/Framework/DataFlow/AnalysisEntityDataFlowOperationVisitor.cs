@@ -199,7 +199,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             Debug.Assert(!operation.Type.HasValueCopySemantics());
 
             var pointsToValue = GetPointsToAbstractValue(operation);
-            if (pointsToValue.Kind != PointsToAbstractValueKind.Known)
+            if (pointsToValue.Locations.IsEmpty)
             {
                 return;
             }

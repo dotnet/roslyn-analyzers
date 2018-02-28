@@ -1876,6 +1876,61 @@ End Class");
         }
 
         [Fact]
+        public void DisposableAllocation_IfStatementInDispose_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class Test : IDisposable
+{
+    private readonly A a = new A();
+    private bool cancelled;
+
+    public void Dispose()
+    {
+        if (cancelled)
+        {
+            a.GetType();
+        }
+
+        a.Dispose();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Throw New NotImplementedException()
+    End Sub
+End Class
+
+Public Class Test
+    Implements IDisposable
+    Private ReadOnly a As A = New A()
+    Private cancelled As Boolean
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        If cancelled Then
+            a.GetType()
+        End If
+        a.Dispose()
+    End Sub
+End Class");
+        }
+
+        [Fact]
         public void DisposableAllocation_DisposedinDisposeOverride_NoDiagnostic()
         {
             VerifyCSharp(@"

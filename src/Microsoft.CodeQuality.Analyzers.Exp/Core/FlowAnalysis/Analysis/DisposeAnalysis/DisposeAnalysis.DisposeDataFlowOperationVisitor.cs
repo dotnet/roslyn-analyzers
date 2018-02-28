@@ -215,7 +215,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
 
             protected override void SetValueForParameterPointsToLocationOnExit(IParameterSymbol parameter, PointsToAbstractValue pointsToAbstractValue)
             {
-                if (pointsToAbstractValue.Kind == PointsToAbstractValueKind.Known &&
+                if (!pointsToAbstractValue.Locations.IsEmpty &&
                     parameter.Type.IsDisposable(_iDisposable))
                 {
                     SetAbstractValue(pointsToAbstractValue, ValueDomain.UnknownOrMayBeValue);

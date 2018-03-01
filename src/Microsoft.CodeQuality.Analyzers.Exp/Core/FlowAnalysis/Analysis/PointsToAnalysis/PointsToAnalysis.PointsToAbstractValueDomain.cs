@@ -72,19 +72,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 {
                     return value1;
                 }
-
-                var kind = value1.Kind == PointsToAbstractValueKind.Known && value2.Kind == PointsToAbstractValueKind.Known ?
-                    PointsToAbstractValueKind.Known :
-                    PointsToAbstractValueKind.Unknown;
-
-                var mergedLocations = _locationsDomain.Merge(value1.Locations, value2.Locations);
-                if (mergedLocations.IsEmpty)
+                else if (value1.Kind == PointsToAbstractValueKind.Unknown || value2.Kind == PointsToAbstractValueKind.Unknown)
                 {
-                    Debug.Assert(kind == PointsToAbstractValueKind.Unknown);
                     return PointsToAbstractValue.Unknown;
                 }
 
-                return new PointsToAbstractValue(mergedLocations, kind);
+                return new PointsToAbstractValue(_locationsDomain.Merge(value1.Locations, value2.Locations));
             }
         }
     }

@@ -17,11 +17,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
         public static PointsToAbstractValue NoLocation = new PointsToAbstractValue(PointsToAbstractValueKind.NoLocation);
         public static PointsToAbstractValue Unknown = new PointsToAbstractValue(PointsToAbstractValueKind.Unknown);
         
-        public PointsToAbstractValue(ImmutableHashSet<AbstractLocation> locations, PointsToAbstractValueKind kind)
+        private PointsToAbstractValue(ImmutableHashSet<AbstractLocation> locations, PointsToAbstractValueKind kind)
         {
-            Debug.Assert(kind != PointsToAbstractValueKind.Known || !locations.IsEmpty);
-            Debug.Assert(kind != PointsToAbstractValueKind.NoLocation || locations.IsEmpty);
-            Debug.Assert(kind != PointsToAbstractValueKind.Undefined || locations.IsEmpty);
+            Debug.Assert(locations.IsEmpty == (kind != PointsToAbstractValueKind.Known));
 
             Locations = locations;
             Kind = kind;
@@ -36,6 +34,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
         public PointsToAbstractValue(AbstractLocation location)
             : this(ImmutableHashSet.Create(location), PointsToAbstractValueKind.Known)
         {
+        }
+
+        public PointsToAbstractValue(ImmutableHashSet<AbstractLocation> locations)
+            : this (locations, PointsToAbstractValueKind.Known)
+        {
+            Debug.Assert(!locations.IsEmpty);
         }
 
         public ImmutableHashSet<AbstractLocation> Locations { get; }

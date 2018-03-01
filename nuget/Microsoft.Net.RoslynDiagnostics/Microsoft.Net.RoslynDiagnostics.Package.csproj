@@ -15,6 +15,7 @@
   <ItemGroup>
     <!-- NOTE: Please add analyzer entries to Microsoft.Net.RoslynDiagnostics.props file whenever a new dependency is added here. -->
     <AnalyzerNupkgDependency Include="Microsoft.CodeQuality.Analyzers" />
+    <AnalyzerNupkgDependency Include="Microsoft.CodeQuality.Analyzers.Exp" />
     <AnalyzerNupkgDependency Include="Microsoft.CodeAnalysis.Analyzers" />
     <AnalyzerNupkgDependency Include="Microsoft.NetCore.Analyzers" />
     <AnalyzerNupkgDependency Include="Roslyn.Diagnostics.Analyzers" />
@@ -24,6 +25,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.Analyzers.Package.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeQuality.Analyzers.Exp\Microsoft.CodeQuality.Analyzers.Exp.Package.csproj" />
     <ProjectReference Include="..\Microsoft.CodeAnalysis.Analyzers\Microsoft.CodeAnalysis.Analyzers.Package.csproj" />
     <ProjectReference Include="..\Microsoft.NetCore.Analyzers\Microsoft.NetCore.Analyzers.Package.csproj" />
     <ProjectReference Include="..\Roslyn.Diagnostics.Analyzers\Roslyn.Diagnostics.Analyzers.Package.csproj" />

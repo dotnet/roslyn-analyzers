@@ -1,12 +1,10 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeAnalysis.Operations.ControlFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
 
@@ -201,7 +199,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             Debug.Assert(!operation.Type.HasValueCopySemantics());
 
             var pointsToValue = GetPointsToAbstractValue(operation);
-            if (pointsToValue.Kind != PointsToAbstractValueKind.Known)
+            if (pointsToValue.Locations.IsEmpty)
             {
                 return;
             }

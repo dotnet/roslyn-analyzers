@@ -73,6 +73,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 // Merge all the outputs to get the new input of the current block.
                 var input = AnalysisDomain.Merge(inputs);
 
+                // Temporary workaround due to lack of *real* CFG
+                // TODO: Remove the below if statement once we move to compiler's CFG
+                // https://github.com/dotnet/roslyn-analyzers/issues/1567
+                if (block.Kind == BasicBlockKind.Exit &&
+                    OperationVisitor.MergedAnalysisDataAtReturnStatements != null)
+                {
+                    input = AnalysisDomain.Merge(input, OperationVisitor.MergedAnalysisDataAtReturnStatements);
+                }
+                
                 // Compare the previous input with the new input.
                 var compare = AnalysisDomain.Compare(GetInput(resultBuilder[block]), input);
 

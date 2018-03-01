@@ -53,7 +53,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                         }
                         else if (ReferenceEquals(mergedValue, ValueDomain.UnknownOrMayBeValue))
                         {
-                            // Do no add a new key-value pair to the resultMap if the value is UnknownOrMayBeValue.
+                            // PERF: Do not add a new key-value pair to the resultMap if the value is UnknownOrMayBeValue.
                             continue;
                         }
 

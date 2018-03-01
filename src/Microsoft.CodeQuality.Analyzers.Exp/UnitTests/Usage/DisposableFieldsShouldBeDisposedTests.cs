@@ -1796,6 +1796,141 @@ End Class");
         }
 
         [Fact]
+        public void DisposableAllocation_OptimisticPointsToAnalysis_WithReturn_NoDiagnostic()
+        {
+            // Invoking an instance method may likely invalidate all the instance field analysis state, i.e.
+            // reference type fields might be re-assigned to point to different objects in the called method.
+            // An optimistic points to analysis assumes that the points to values of instance fields don't change on invoking an instance method.
+            // A pessimistic points to analysis resets all the instance state and assumes the instance field might point to any object, hence has unknown state.
+            // For dispose analysis, we want to perform an optimistic points to analysis as we assume a disposable field is not likely to be re-assigned to a separate object in helper method invocations in Dispose.
+
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+    public void PerformSomeCleanup()
+    {
+    }
+}
+
+class B : IDisposable
+{
+    private A a = new A();
+    public bool Disposed;
+    
+    public void Dispose()
+    {
+        if (Disposed)
+        {
+            return;
+        }
+
+        a.PerformSomeCleanup();
+        ClearMyState();
+        a.Dispose();
+    }
+
+    private void ClearMyState()
+    {
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Throw New NotImplementedException()
+    End Sub
+
+    Public Sub PerformSomeCleanup()
+    End Sub
+End Class
+
+Class B
+    Implements IDisposable
+
+    Private a As A = New A()
+    Public Disposed As Boolean
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        If Disposed Then
+            Return
+        End If
+
+        a.PerformSomeCleanup()
+        ClearMyState()
+        a.Dispose()
+    End Sub
+
+    Private Sub ClearMyState()
+    End Sub
+End Class");
+        }
+
+        [Fact]
+        public void DisposableAllocation_IfStatementInDispose_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class Test : IDisposable
+{
+    private readonly A a = new A();
+    private bool cancelled;
+
+    public void Dispose()
+    {
+        if (cancelled)
+        {
+            a.GetType();
+        }
+
+        a.Dispose();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Throw New NotImplementedException()
+    End Sub
+End Class
+
+Public Class Test
+    Implements IDisposable
+    Private ReadOnly a As A = New A()
+    Private cancelled As Boolean
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        If cancelled Then
+            a.GetType()
+        End If
+        a.Dispose()
+    End Sub
+End Class");
+        }
+
+        [Fact]
         public void DisposableAllocation_DisposedinDisposeOverride_NoDiagnostic()
         {
             VerifyCSharp(@"

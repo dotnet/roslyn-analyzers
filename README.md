@@ -41,9 +41,18 @@ Microsoft.CodeQuality.Analyzers
 
 *Latest stable version:* [2.6.0](https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers/)
 
-Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
+Provides common code quality guidelines.
 
 [More info](src/Microsoft.CodeQuality.Analyzers/Microsoft.CodeQuality.Analyzers.md)
+
+Microsoft.CodeQuality.Analyzers.Exp
+--------------------------------
+
+*Latest version:* Not Yet Available
+
+Experimental package based on Dataflow Analysis to provide code quality guidelines in executable code.
+
+[More info](src/Microsoft.CodeQuality.AnalyzersExp./Microsoft.CodeQuality.Analyzers.Exp.md)
 
 Microsoft.NetCore.Analyzers
 -----------------

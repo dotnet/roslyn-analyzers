@@ -12,9 +12,14 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
     /// </summary>
     internal sealed class DefaultPointsToValueGenerator
     {
-        private readonly ImmutableDictionary<AnalysisEntity, PointsToAbstractValue>.Builder _defaultPointsToValueMapBuilder
-            = ImmutableDictionary.CreateBuilder<AnalysisEntity, PointsToAbstractValue>();
+        private readonly ImmutableDictionary<AnalysisEntity, PointsToAbstractValue>.Builder _defaultPointsToValueMapBuilder;
         private ImmutableDictionary<AnalysisEntity, PointsToAbstractValue> _lazyDefaultPointsToValueMap;
+
+        public DefaultPointsToValueGenerator()
+        {
+            _defaultPointsToValueMapBuilder = ImmutableDictionary.CreateBuilder<AnalysisEntity, PointsToAbstractValue>();
+        }
+
         public PointsToAbstractValue GetOrCreateDefaultValue(AnalysisEntity analysisEntity)
         {
             Debug.Assert(!analysisEntity.Type.HasValueCopySemantics());

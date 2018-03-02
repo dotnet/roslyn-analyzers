@@ -16,8 +16,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         {
         }
 
-        protected virtual TValue GetDefaultValue(AnalysisEntity analysisEntity)
-            => ValueDomain.UnknownOrMayBeValue;
+        protected virtual TValue GetDefaultValue(AnalysisEntity analysisEntity) => ValueDomain.UnknownOrMayBeValue;
 
         protected override IDictionary<AnalysisEntity, TValue> MergeCore(IDictionary<AnalysisEntity, TValue> map1, IDictionary<AnalysisEntity, TValue> map2)
         {

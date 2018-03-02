@@ -3,7 +3,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Linq;
 using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
@@ -18,13 +17,20 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
         /// </summary>
         private sealed class PointsToDataFlowOperationVisitor : AnalysisEntityDataFlowOperationVisitor<PointsToAnalysisData, PointsToAbstractValue>
         {
+            private readonly DefaultPointsToValueGenerator _defaultPointsToValueGenerator;
+            private readonly PointsToAnalysisDomain _pointsToAnalysisDomain;
+
             public PointsToDataFlowOperationVisitor(
+                DefaultPointsToValueGenerator defaultPointsToValueGenerator,
+                PointsToAnalysisDomain pointsToAnalysisDomain,
                 PointsToAbstractValueDomain valueDomain,
                 ISymbol owningSymbol,
                 bool pessimisticAnalysis,
                 DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt)
                 : base(valueDomain, owningSymbol, pessimisticAnalysis, nullAnalysisResultOpt: nullAnalysisResultOpt, pointsToAnalysisResultOpt: null)
             {
+                _defaultPointsToValueGenerator = defaultPointsToValueGenerator;
+                _pointsToAnalysisDomain = pointsToAnalysisDomain;
             }
 
             public override PointsToAnalysisData Flow(IOperation statement, BasicBlock block, PointsToAnalysisData input)
@@ -53,9 +59,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
                 if (!CurrentAnalysisData.TryGetValue(analysisEntity, out var value))
                 {
-                    value = analysisEntity.SymbolOpt?.Kind == SymbolKind.Local ?
-                        ValueDomain.Bottom :
-                        ValueDomain.UnknownOrMayBeValue;
+                    value = _defaultPointsToValueGenerator.GetOrCreateDefaultValue(analysisEntity);
+                    CurrentAnalysisData.Add(analysisEntity, value);
                 }
 
                 return value;
@@ -96,13 +101,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                     !operation.Type.HasValueCopySemantics() &&
                     AnalysisEntityFactory.TryCreate(operation, out AnalysisEntity analysisEntity))
                 {
-                    if (!HasAbstractValue(analysisEntity))
-                    {
-                        var value = new PointsToAbstractValue(AbstractLocation.CreateAllocationLocation(operation, operation.Type));
-                        SetAbstractValue(analysisEntity, value);
-                        return value;
-                    }
-
                     return GetAbstractValue(analysisEntity);
                 }
                 else
@@ -127,7 +125,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             // https://github.com/dotnet/roslyn-analyzers/issues/1567
             #region Temporary methods to workaround lack of *real* CFG
             protected override PointsToAnalysisData MergeAnalysisData(PointsToAnalysisData value1, PointsToAnalysisData value2)
-                => PointsToAnalysisDomainInstance.Merge(value1, value2);
+                => _pointsToAnalysisDomain.Merge(value1, value2);
             protected override PointsToAnalysisData GetClonedAnalysisData()
                 => GetClonedAnalysisData(CurrentAnalysisData);
             protected override bool Equals(PointsToAnalysisData value1, PointsToAnalysisData value2)

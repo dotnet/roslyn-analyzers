@@ -14,11 +14,36 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
     /// </summary>
     internal class PointsToBlockAnalysisResult : AbstractBlockAnalysisResult<PointsToAnalysisData, PointsToAbstractValue>
     {
-        public PointsToBlockAnalysisResult(BasicBlock basicBlock, DataFlowAnalysisInfo<PointsToAnalysisData> blockAnalysisData)
+        public PointsToBlockAnalysisResult(
+            BasicBlock basicBlock,
+            DataFlowAnalysisInfo<PointsToAnalysisData> blockAnalysisData,
+            ImmutableDictionary<AnalysisEntity, PointsToAbstractValue> defaultPointsToValues)
             : base (basicBlock)
         {
-            InputData = blockAnalysisData.Input?.ToImmutableDictionary() ?? ImmutableDictionary<AnalysisEntity, PointsToAbstractValue>.Empty;
-            OutputData = blockAnalysisData.Output?.ToImmutableDictionary() ?? ImmutableDictionary<AnalysisEntity, PointsToAbstractValue>.Empty;
+            InputData = GetResult(blockAnalysisData.Input, defaultPointsToValues);
+            OutputData = GetResult(blockAnalysisData.Output, defaultPointsToValues);
+        }
+
+        private static ImmutableDictionary<AnalysisEntity, PointsToAbstractValue> GetResult(PointsToAnalysisData analysisData, ImmutableDictionary<AnalysisEntity, PointsToAbstractValue> defaultPointsToValues)
+        {
+            if (analysisData == null || analysisData.Count == 0)
+            {
+                return defaultPointsToValues;
+            }
+
+            var builder = ImmutableDictionary.CreateBuilder<AnalysisEntity, PointsToAbstractValue>();
+            builder.AddRange(analysisData);
+            foreach (var kvp in defaultPointsToValues)
+            {
+                AnalysisEntity entity = kvp.Key;
+                if (!builder.ContainsKey(entity))
+                {
+                    PointsToAbstractValue pointsToAbstractValue = kvp.Value;
+                    builder.Add(entity, pointsToAbstractValue);
+                }
+            }
+
+            return builder.ToImmutable();
         }
 
         public ImmutableDictionary<AnalysisEntity, PointsToAbstractValue> InputData { get; }

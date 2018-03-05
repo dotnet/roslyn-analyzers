@@ -22,12 +22,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
         public static DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> GetOrComputeResult(
             ControlFlowGraph cfg,
             ISymbol owningSymbol,
+            WellKnownTypeProvider wellKnownTypeProvider,
+            DataFlowAnalysisResult<CopyAnalysis.CopyBlockAnalysisResult, CopyAnalysis.CopyAbstractValue> copyAnalysisResultOpt = null,
             bool pessimisticAnalysis = true,
             DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResultOpt = null)
         {
-            var operationVisitor = new NullDataFlowOperationVisitor(NullAbstractValueDomain.Default, owningSymbol, pessimisticAnalysis, pointsToAnalysisResultOpt);
+            var operationVisitor = new NullDataFlowOperationVisitor(NullAbstractValueDomain.Default, owningSymbol,
+                wellKnownTypeProvider, pessimisticAnalysis, copyAnalysisResultOpt, pointsToAnalysisResultOpt);
             var nullAnalysis = new NullAnalysis(NullAnalysisDomainInstance, operationVisitor);
-            return nullAnalysis.GetOrComputeResultCore(cfg);
+            return nullAnalysis.GetOrComputeResultCore(cfg, cacheResult: true);
         }
 
         internal override NullBlockAnalysisResult ToResult(BasicBlock basicBlock, DataFlowAnalysisInfo<IDictionary<AnalysisEntity, NullAbstractValue>> blockAnalysisData) => new NullBlockAnalysisResult(basicBlock, blockAnalysisData);

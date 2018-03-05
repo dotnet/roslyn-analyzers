@@ -1,10 +1,12 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
+using Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
 
@@ -23,10 +25,14 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         protected AnalysisEntityDataFlowOperationVisitor(
             AbstractValueDomain<TAbstractAnalysisValue> valueDomain,
             ISymbol owningSymbol,
+            WellKnownTypeProvider wellKnownTypeProvider,
             bool pessimisticAnalysis,
+            bool predicateAnalysis,
             DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> nullAnalysisResultOpt,
+            DataFlowAnalysisResult<CopyBlockAnalysisResult, CopyAbstractValue> copyAnalysisResultOpt,
             DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResultOpt)
-            : base (valueDomain, owningSymbol, pessimisticAnalysis, nullAnalysisResultOpt, pointsToAnalysisResultOpt)
+            : base (valueDomain, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, predicateAnalysis,
+                  nullAnalysisResultOpt, copyAnalysisResultOpt, pointsToAnalysisResultOpt)
         {
         }
 
@@ -150,7 +156,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         protected override void SetValueForParameterOnEntry(IParameterSymbol parameter, AnalysisEntity analysisEntity)
         {
             Debug.Assert(analysisEntity.SymbolOpt == parameter);
-            SetAbstractValue(analysisEntity, ValueDomain.UnknownOrMayBeValue);
+            SetAbstractValue(analysisEntity, GetDefaultValueForParameterOnEntry(analysisEntity.Type));
         }
 
         protected override void SetValueForParameterOnExit(IParameterSymbol parameter, AnalysisEntity analysisEntity)
@@ -158,9 +164,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             Debug.Assert(analysisEntity.SymbolOpt == parameter);
             if (parameter.RefKind != RefKind.None)
             {
-                SetAbstractValue(analysisEntity, ValueDomain.UnknownOrMayBeValue);
+                SetAbstractValue(analysisEntity, GetDefaultValueForParameterOnExit(analysisEntity.Type));
             }
         }
+
+        protected virtual TAbstractAnalysisValue GetDefaultValueForParameterOnEntry(ITypeSymbol parameterType) => ValueDomain.UnknownOrMayBeValue;
+        protected virtual TAbstractAnalysisValue GetDefaultValueForParameterOnExit(ITypeSymbol parameterType) => ValueDomain.UnknownOrMayBeValue;
 
         #endregion
 
@@ -289,8 +298,21 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         // TODO: Remove these temporary methods once we move to compiler's CFG
         // https://github.com/dotnet/roslyn-analyzers/issues/1567
         #region Temporary methods to workaround lack of *real* CFG
-        protected IDictionary<AnalysisEntity, TAbstractAnalysisValue> GetClonedAnalysisData(IDictionary<AnalysisEntity, TAbstractAnalysisValue> analysisData)
+        protected IDictionary<AnalysisEntity, TAbstractAnalysisValue> GetClonedAnalysisDataHelper(IDictionary<AnalysisEntity, TAbstractAnalysisValue> analysisData)
             => new Dictionary<AnalysisEntity, TAbstractAnalysisValue>(analysisData);
+        #endregion
+
+        #region Visitor methods
+        protected override TAbstractAnalysisValue VisitAssignmentOperation(IAssignmentOperation operation, object argument)
+        {
+            var value = base.VisitAssignmentOperation(operation, argument);
+            if (AnalysisEntityFactory.TryCreate(operation.Target, out AnalysisEntity targetEntity))
+            {
+                value = GetAbstractValue(targetEntity);
+            }
+
+            return value;
+        }
         #endregion
     }
 }

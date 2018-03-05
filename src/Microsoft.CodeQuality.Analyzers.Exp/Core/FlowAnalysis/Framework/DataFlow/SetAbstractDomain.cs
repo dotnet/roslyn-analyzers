@@ -50,7 +50,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return result;
         }
 
-        public override ImmutableHashSet<T> Merge(ImmutableHashSet<T> value1, ImmutableHashSet<T> value2)
+        public override ImmutableHashSet<T> Merge(ImmutableHashSet<T> value1, ImmutableHashSet<T> value2) => MergeOrIntersect(value1, value2, merge: true);
+
+        public ImmutableHashSet<T> Intersect(ImmutableHashSet<T> value1, ImmutableHashSet<T> value2) => MergeOrIntersect(value1, value2, merge: false);
+
+        private static ImmutableHashSet<T> MergeOrIntersect(ImmutableHashSet<T> value1, ImmutableHashSet<T> value2, bool merge)
         {
             if (value1 == null)
             {
@@ -69,7 +73,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 return value1;
             }
 
-            return ImmutableHashSet.CreateRange(value1.Concat(value2));
+            var values = merge ? value1.Concat(value2) : value1.Intersect(value2);
+            return ImmutableHashSet.CreateRange(values);
         }
+
     }
 }

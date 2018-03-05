@@ -255,7 +255,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             AnalysisEntity parentOpt = null;
             if (instanceOpt?.Type != null)
             {
-                if (instanceOpt.Type.HasValueCopySemantics())
+                if (instanceOpt.Type.IsValueType)
                 {
                     if (TryCreate(instanceOpt, out parentOpt))
                     {

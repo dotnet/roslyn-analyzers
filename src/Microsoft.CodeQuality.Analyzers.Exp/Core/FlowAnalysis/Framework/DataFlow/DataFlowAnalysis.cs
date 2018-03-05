@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -16,8 +17,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         where TAnalysisData : class
         where TAnalysisResult : AbstractBlockAnalysisResult<TAnalysisData, TAbstractAnalysisValue>
     {
-        private static readonly ConditionalWeakTable<ControlFlowGraph, DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue>> s_resultCache =
-            new ConditionalWeakTable<ControlFlowGraph, DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue>>();
+        private static readonly ConditionalWeakTable<IOperation, ConcurrentDictionary<DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue>, DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue>>> s_resultCache =
+            new ConditionalWeakTable<IOperation, ConcurrentDictionary<DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue>, DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue>>>();
 
         protected DataFlowAnalysis(AbstractAnalysisDomain<TAnalysisData> analysisDomain, DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> operationVisitor)
         {
@@ -29,16 +30,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         protected DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> OperationVisitor { get; }
         private DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> NullAnalysisResultOpt { get; }
 
-        protected DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue> GetOrComputeResultCore(ControlFlowGraph cfg)
+        protected DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue> GetOrComputeResultCore(ControlFlowGraph cfg, bool cacheResult)
         {
-            DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue> result;
-            if (!s_resultCache.TryGetValue(cfg, out result))
+            if (!cacheResult)
             {
-                result = Run(cfg);
-                s_resultCache.Add(cfg, result);
+                return Run(cfg);
             }
-            
-            return result;
+
+            var analysisResultsMap = s_resultCache.GetOrCreateValue(cfg.RootOperation);
+            return analysisResultsMap.GetOrAdd(OperationVisitor, _ => Run(cfg));
         }
 
         private DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue> Run(ControlFlowGraph cfg)
@@ -73,6 +73,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 // Merge all the outputs to get the new input of the current block.
                 var input = AnalysisDomain.Merge(inputs);
 
+                // Merge might return one of the original input values if only one of them is a valid non-null value.
+                if (inputs.Any(i => ReferenceEquals(input, i)))
+                {
+                    input = AnalysisDomain.Clone(input);
+                }
+
                 // Temporary workaround due to lack of *real* CFG
                 // TODO: Remove the below if statement once we move to compiler's CFG
                 // https://github.com/dotnet/roslyn-analyzers/issues/1567
@@ -81,7 +87,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 {
                     input = AnalysisDomain.Merge(input, OperationVisitor.MergedAnalysisDataAtReturnStatements);
                 }
-                
+
                 // Compare the previous input with the new input.
                 var compare = AnalysisDomain.Compare(GetInput(resultBuilder[block]), input);
 
@@ -97,7 +103,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     // so we need to update the current block result's
                     // input values with the new ones.
                     UpdateInput(resultBuilder, block, AnalysisDomain.Clone(input));
-                    
+
                     // Flow the new input through the block to get a new output.
                     var output = Flow(block, input);
 
@@ -124,23 +130,28 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 }
             }
 
-            return resultBuilder.ToResult(ToResult, OperationVisitor.GetStateMap());
+            return resultBuilder.ToResult(ToResult, OperationVisitor.GetStateMap(), OperationVisitor.GetMergedDataForUnhandledThrowOperations(), cfg);
         }
 
         private TAnalysisData Flow(BasicBlock block, TAnalysisData data)
         {
+            return Flow(OperationVisitor, block, data);
+        }
+
+        public static TAnalysisData Flow(DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> operationVisitor, BasicBlock block, TAnalysisData data)
+        {
             if (block.Kind == BasicBlockKind.Entry)
             {
-                OperationVisitor.OnEntry(block, data);
+                operationVisitor.OnEntry(block, data);
             }
             else if (block.Kind == BasicBlockKind.Exit)
             {
-                OperationVisitor.OnExit(block, data);
+                operationVisitor.OnExit(block, data);
             }
 
             foreach (var statement in block.Statements)
             {
-                data = OperationVisitor.Flow(statement, block, data);
+                data = operationVisitor.Flow(statement, block, data);
             }
 
             return data;

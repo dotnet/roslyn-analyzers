@@ -5,8 +5,10 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Operations.ControlFlow;
+using Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
 
@@ -18,10 +20,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     internal abstract class DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> : OperationVisitor<object, TAbstractAnalysisValue>
     {
         private readonly DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> _nullAnalysisResultOpt;
+        private readonly DataFlowAnalysisResult<CopyBlockAnalysisResult, CopyAbstractValue> _copyAnalysisResultOpt;
         private readonly DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> _pointsToAnalysisResultOpt;
         private readonly ImmutableDictionary<IOperation, TAbstractAnalysisValue>.Builder _valueCacheBuilder;
         private readonly List<IArgumentOperation> _pendingArgumentsToReset;
         private ImmutableDictionary<IParameterSymbol, AnalysisEntity> _lazyParameterEntities;
+        private ImmutableHashSet<IMethodSymbol> _lazyContractCheckMethodsForPredicateAnalysis;
 
         private int _recursionDepth;
 
@@ -39,6 +43,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         protected IOperation CurrentStatement { get; private set; }
         protected PointsToAbstractValue ThisOrMePointsToAbstractValue { get; }
         protected AnalysisEntityFactory AnalysisEntityFactory { get; }
+        protected WellKnownTypeProvider WellKnownTypeProvider { get; }
 
         /// <summary>
         /// This boolean field determines if the caller requires an optimistic OR a pessimistic analysis for such cases.
@@ -53,11 +58,19 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         /// </remarks>
         protected bool PessimisticAnalysis { get; }
 
+        /// <summary>
+        /// Indicates if we are analyzing predicates of conditions.
+        /// </summary>
+        protected bool PredicateAnalysis { get; }
+
         protected DataFlowOperationVisitor(
             AbstractValueDomain<TAbstractAnalysisValue> valueDomain,
             ISymbol owningSymbol,
+            WellKnownTypeProvider wellKnownTypeProvider,
             bool pessimisticAnalysis,
+            bool predicateAnalysis,
             DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> nullAnalysisResultOpt,
+            DataFlowAnalysisResult<CopyBlockAnalysisResult, CopyAbstractValue> copyAnalysisResultOpt,
             DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResultOpt)
         {
             Debug.Assert(owningSymbol != null);
@@ -65,11 +78,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 owningSymbol.Kind == SymbolKind.Field ||
                 owningSymbol.Kind == SymbolKind.Property ||
                 owningSymbol.Kind == SymbolKind.Event);
+            Debug.Assert(wellKnownTypeProvider != null);
 
             ValueDomain = valueDomain;
             OwningSymbol = owningSymbol;
+            WellKnownTypeProvider = wellKnownTypeProvider;
             PessimisticAnalysis = pessimisticAnalysis;
+            PredicateAnalysis = predicateAnalysis;
             _nullAnalysisResultOpt = nullAnalysisResultOpt;
+            _copyAnalysisResultOpt = copyAnalysisResultOpt;
             _pointsToAnalysisResultOpt = pointsToAnalysisResultOpt;
             _valueCacheBuilder = ImmutableDictionary.CreateBuilder<IOperation, TAbstractAnalysisValue>();
             _pendingArgumentsToReset = new List<IArgumentOperation>();
@@ -80,6 +97,20 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     GetPointsToAbstractValue :
                     (Func<IOperation, PointsToAbstractValue>)null,
                 owningSymbol.ContainingType);
+            NegatedCurrentAnalysisDataStack = new Stack<TAnalysisData>();
+        }
+
+        public override int GetHashCode()
+        {
+            return HashUtilities.Combine(GetType().GetHashCode(),
+                HashUtilities.Combine(ValueDomain.GetHashCode(),
+                HashUtilities.Combine(OwningSymbol.GetHashCode(),
+                HashUtilities.Combine(WellKnownTypeProvider.Compilation.GetHashCode(),
+                HashUtilities.Combine(PessimisticAnalysis.GetHashCode(),
+                HashUtilities.Combine(PredicateAnalysis.GetHashCode(),
+                HashUtilities.Combine(_nullAnalysisResultOpt?.GetHashCode() ?? 0,
+                HashUtilities.Combine(_copyAnalysisResultOpt?.GetHashCode() ?? 0,
+                    _pointsToAnalysisResultOpt?.GetHashCode() ?? 0))))))));
         }
 
         private static PointsToAbstractValue GetThisOrMeInstancePointsToValue(INamedTypeSymbol containingTypeSymbol)
@@ -154,9 +185,51 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             }
         }
 
+        private bool IsContractCheckArgument(IArgumentOperation operation)
+        {
+            Debug.Assert(PredicateAnalysis);
+
+            if (WellKnownTypeProvider.Contract != null &&
+                operation.Parent is IInvocationOperation invocation &&
+                invocation.TargetMethod.ContainingType == WellKnownTypeProvider.Contract &&
+                invocation.TargetMethod.IsStatic &&
+                invocation.Arguments[0] == operation)
+            {
+                if (_lazyContractCheckMethodsForPredicateAnalysis == null)
+                {
+                    // Contract.Requires check.
+                    var requiresMethods = WellKnownTypeProvider.Contract.GetMembers("Requires");
+                    var assumeMethods = WellKnownTypeProvider.Contract.GetMembers("Assume");
+                    var assertMethods = WellKnownTypeProvider.Contract.GetMembers("Assert");
+                    var validationMethods = requiresMethods.Concat(assumeMethods).Concat(assertMethods).OfType<IMethodSymbol>().Where(m => m.IsStatic && m.ReturnsVoid && m.Parameters.Length >= 1 && (m.Parameters[0].Type.SpecialType == SpecialType.System_Boolean));
+                    _lazyContractCheckMethodsForPredicateAnalysis = ImmutableHashSet.CreateRange(validationMethods);
+                }
+
+                return _lazyContractCheckMethodsForPredicateAnalysis.Contains(invocation.TargetMethod);
+            }
+
+            return false;
+        }
+
         #region Helper methods to get or cache analysis data for visited operations.
 
         public ImmutableDictionary<IOperation, TAbstractAnalysisValue> GetStateMap() => _valueCacheBuilder.ToImmutable();
+
+        public TAnalysisData GetMergedDataForUnhandledThrowOperations()
+        {
+            if (AnalysisDataForUnhandledThrowOperations == null)
+            {
+                return default(TAnalysisData);
+            }
+
+            TAnalysisData mergedData = default(TAnalysisData);
+            foreach (TAnalysisData data in AnalysisDataForUnhandledThrowOperations.Values)
+            {
+                mergedData = MergeAnalysisData(mergedData, data);
+            }
+
+            return mergedData;
+        }
 
         public TAbstractAnalysisValue GetCachedAbstractValue(IOperation operation)
         {
@@ -196,6 +269,18 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             }
         }
 
+        protected virtual CopyAbstractValue GetCopyAbstractValue(IOperation operation)
+        {
+            if (_copyAnalysisResultOpt == null)
+            {
+                return CopyAbstractValue.Unknown;
+            }
+            else
+            {
+                return _copyAnalysisResultOpt[operation];
+            }
+        }
+
         protected virtual PointsToAbstractValue GetPointsToAbstractValue(IOperation operation)
         {
             if (_pointsToAnalysisResultOpt == null)
@@ -222,7 +307,25 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return outputData.TryGetValue(analysisEntity, out pointsToAbstractValue);
         }
 
-        #endregion region
+        protected bool TryGetNullAbstractValueAtCurrentBlockEntry(AnalysisEntity analysisEntity, out NullAbstractValue nullAbstractValue)
+        {
+            Debug.Assert(_nullAnalysisResultOpt != null);
+            var inputData = _nullAnalysisResultOpt[CurrentBasicBlock].InputData;
+            return inputData.TryGetValue(analysisEntity, out nullAbstractValue);
+        }
+
+        protected bool TryGetMergedNullAbstractValueAtUnhandledThrowOperationsInGraph(AnalysisEntity analysisEntity, out NullAbstractValue nullAbstractValue)
+        {
+            Debug.Assert(_nullAnalysisResultOpt != null);
+            var inputData = _nullAnalysisResultOpt.MergedStateForUnhandledThrowOperationsOpt?.InputData;
+            if (inputData == null)
+            {
+                nullAbstractValue = NullAbstractValue.MaybeNull;
+                return false;
+            }
+
+            return inputData.TryGetValue(analysisEntity, out nullAbstractValue);
+        }
 
         protected virtual TAbstractAnalysisValue ComputeAnalysisValueForReferenceOperation(IOperation operation, TAbstractAnalysisValue defaultValue)
         {
@@ -233,6 +336,43 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         {
             return defaultValue;
         }
+
+        protected virtual void SetValueForComparisonOperator(IBinaryOperation operation, TAnalysisData negatedCurrentAnalysisData)
+        {
+            Debug.Assert(PredicateAnalysis);
+            Debug.Assert(operation.IsComparisonOperator());
+
+            switch (operation.OperatorKind)
+            {
+                case BinaryOperatorKind.Equals:
+                case BinaryOperatorKind.ObjectValueEquals:
+                    SetValueForEqualsOrNotEqualsComparisonOperator(operation, negatedCurrentAnalysisData, equals: true);
+                    return;
+
+                case BinaryOperatorKind.NotEquals:
+                case BinaryOperatorKind.ObjectValueNotEquals:
+                    SetValueForEqualsOrNotEqualsComparisonOperator(operation, negatedCurrentAnalysisData, equals: false);
+                    return;
+            }
+        }
+
+        protected virtual void SetValueForEqualsOrNotEqualsComparisonOperator(IBinaryOperation operation, TAnalysisData negatedCurrentAnalysisData, bool equals)
+        {
+            Debug.Assert(PredicateAnalysis);
+            Debug.Assert(operation.IsComparisonOperator());
+            throw new NotImplementedException();
+        }
+
+        [Conditional("DEBUG")]
+        protected void AssertValidPredicateAnalysisValue(TAbstractAnalysisValue value)
+        {
+            Debug.Assert(PredicateAnalysis);
+            Debug.Assert(NegatedCurrentAnalysisDataStack.Count > 0);
+            Debug.Assert(!ReferenceEquals(value, ValueDomain.Bottom));
+            Debug.Assert(!ReferenceEquals(value, ValueDomain.UnknownOrMayBeValue));
+        }
+
+        #endregion region
 
         #region Helper methods to handle initialization/assignment operations
         protected abstract void SetAbstractValueForSymbolDeclaration(ISymbol symbol, IOperation initializer, TAbstractAnalysisValue initializerValue);
@@ -299,8 +439,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         // TODO: Remove these temporary methods once we move to compiler's CFG
         // https://github.com/dotnet/roslyn-analyzers/issues/1567
         #region Temporary methods to workaround lack of *real* CFG
+        /// <summary>
+        /// Analysis data for the negated condition when executing a ConditionalOr ('||') or ConditionalAnd ('&&') expression.
+        /// This is needed because we are on a stub CFG in which these operations have not have been lowered.
+        /// </summary>
+        private Stack<TAnalysisData> NegatedCurrentAnalysisDataStack { get; }
+
         protected abstract TAnalysisData MergeAnalysisData(TAnalysisData value1, TAnalysisData value2);
-        protected abstract TAnalysisData GetClonedAnalysisData();
+        protected abstract TAnalysisData GetClonedAnalysisData(TAnalysisData analysisData);
+        protected TAnalysisData GetClonedCurrentAnalysisData() => GetClonedAnalysisData(CurrentAnalysisData);
         protected abstract bool Equals(TAnalysisData value1, TAnalysisData value2);
         protected static bool EqualsHelper<TKey, TValue>(IDictionary<TKey, TValue> dict1, IDictionary<TKey, TValue> dict2)
             => dict1.Count == dict2.Count &&
@@ -310,6 +457,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         {
             var leftValue = Visit(operation.Value, argument);
             var rightValue = Visit(operation.WhenNull, argument);
+            if (operation.WhenNull is IThrowOperation)
+            {
+                return leftValue;
+            }
+
             var leftNullValue = GetNullAbstractValue(operation.Value);
             switch (leftNullValue)
             {
@@ -357,7 +509,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             var value = VisitReturnCore(operation, argument);
 
             MergedAnalysisDataAtReturnStatements = MergedAnalysisDataAtReturnStatements == null ?
-                    GetClonedAnalysisData() :
+                    GetClonedCurrentAnalysisData() :
                     MergeAnalysisData(MergedAnalysisDataAtReturnStatements, CurrentAnalysisData);
 
             return value;
@@ -368,27 +520,41 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return base.VisitReturn(operation, argument);
         }
 
-        private static bool IsBlockOperationWithReturn(IOperation operation) =>
-            operation is IBlockOperation blockOperation &&
-            blockOperation.Operations.Any(o => o is IReturnOperation);
+        // Temporary workaround to track exception analysis state - remove once we move to the compiler CFG.
+        public Dictionary<IThrowOperation, TAnalysisData> AnalysisDataForUnhandledThrowOperations { get; private set; }
 
-        public override TAbstractAnalysisValue VisitConditional(IConditionalOperation operation, object argument)
+        protected static bool IsBlockOperationWithReturnOrThrow(IOperation operation) =>
+            operation is IBlockOperation blockOperation &&
+            HasReturnOrThrow(blockOperation.Operations);
+
+        protected static bool HasReturnOrThrow(ImmutableArray<IOperation> operations) =>
+            operations.Any(o => o is IReturnOperation || o is IThrowOperation || IsBlockOperationWithReturnOrThrow(o));
+
+        public sealed override TAbstractAnalysisValue VisitConditional(IConditionalOperation operation, object argument)
         {
+            var whenFalseBranchAnalysisData = GetClonedCurrentAnalysisData();
+            if (PredicateAnalysis)
+            {
+                NegatedCurrentAnalysisDataStack.Push(whenFalseBranchAnalysisData);
+            }
             var unusedConditionValue = Visit(operation.Condition, argument);
-            var whenFalseBranchAnalysisData = GetClonedAnalysisData();
             var whenTrue = Visit(operation.WhenTrue, argument);
             var whenTrueBranchAnalysisData = CurrentAnalysisData;
+            if (PredicateAnalysis)
+            {
+                whenFalseBranchAnalysisData = NegatedCurrentAnalysisDataStack.Pop();
+            }
             CurrentAnalysisData = whenFalseBranchAnalysisData;
             var whenFalse = Visit(operation.WhenFalse, argument);
             whenFalseBranchAnalysisData = CurrentAnalysisData;
-            
-            if (MergedAnalysisDataAtReturnStatements != null)
+
+            if (MergedAnalysisDataAtReturnStatements != null || AnalysisDataForUnhandledThrowOperations?.Count > 0)
             {
-                if (IsBlockOperationWithReturn(operation.WhenTrue))
+                if (IsBlockOperationWithReturnOrThrow(operation.WhenTrue))
                 {
                     whenTrueBranchAnalysisData = whenFalseBranchAnalysisData;
                 }
-                else if (IsBlockOperationWithReturn(operation.WhenFalse))
+                else if (IsBlockOperationWithReturnOrThrow(operation.WhenFalse))
                 {
                     whenFalseBranchAnalysisData = whenTrueBranchAnalysisData;
                 }
@@ -405,21 +571,44 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return ValueDomain.Merge(whenTrue, whenFalse);
         }
 
-        public override TAbstractAnalysisValue VisitWhileLoop(IWhileLoopOperation operation, object argument)
+        public sealed override TAbstractAnalysisValue VisitWhileLoop(IWhileLoopOperation operation, object argument)
         {
-            var previousAnalysisData = GetClonedAnalysisData();
+            var previousAnalysisData = GetClonedCurrentAnalysisData();
             var fixedPointReached = false;
+            TAnalysisData negatedCurrentAnalysisData = default(TAnalysisData);
+            void VisitCondition()
+            {
+                if (PredicateAnalysis)
+                {
+                    NegatedCurrentAnalysisDataStack.Push(GetClonedCurrentAnalysisData());
+                }
+
+                var _ = Visit(operation.Condition, argument);
+
+                if (PredicateAnalysis)
+                {
+                    negatedCurrentAnalysisData = NegatedCurrentAnalysisDataStack.Pop();
+                    if (operation.ConditionIsUntil)
+                    {
+                        var savedNegatedCurrentAnalysisData = negatedCurrentAnalysisData;
+                        negatedCurrentAnalysisData = GetClonedCurrentAnalysisData();
+                        CurrentAnalysisData = GetClonedAnalysisData(savedNegatedCurrentAnalysisData);
+                    }
+                }
+            };
+
             do
             {
                 if (operation.ConditionIsTop)
                 {
-                    var _ = Visit(operation.Condition, argument);
+                    VisitCondition();
                 }
 
                 var unusedBodyValue = Visit(operation.Body, argument);
+
                 if (!operation.ConditionIsTop)
                 {
-                    var _ = Visit(operation.Condition, argument);
+                    VisitCondition();
                 }
 
                 var mergedAnalysisData = MergeAnalysisData(previousAnalysisData, CurrentAnalysisData);
@@ -429,18 +618,34 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             }
             while (!fixedPointReached);
 
+            if (PredicateAnalysis)
+            {
+                CurrentAnalysisData = negatedCurrentAnalysisData;
+            }
+
             var unusedIgnoredCondition = Visit(operation.IgnoredCondition, argument);
             return ValueDomain.Bottom;
         }
 
-        public override TAbstractAnalysisValue VisitForLoop(IForLoopOperation operation, object argument)
+        public sealed override TAbstractAnalysisValue VisitForLoop(IForLoopOperation operation, object argument)
         {
             var unusedBeforeValue = VisitArray(operation.Before, argument);
-            var previousAnalysisData = GetClonedAnalysisData();
+            var previousAnalysisData = GetClonedCurrentAnalysisData();
+            TAnalysisData negatedCurrentAnalysisData = default(TAnalysisData);
             var fixedPointReached = false;
             do
             {
+                if (PredicateAnalysis)
+                {
+                    NegatedCurrentAnalysisDataStack.Push(GetClonedCurrentAnalysisData());
+                }
+
                 var unusedConditionValue = Visit(operation.Condition, argument);
+                if (PredicateAnalysis)
+                {
+                    negatedCurrentAnalysisData = NegatedCurrentAnalysisDataStack.Pop();
+                }
+
                 var unusedBodyValue = Visit(operation.Body, argument);
                 var unusedLoopBottomValue = VisitArray(operation.AtLoopBottom, argument);
 
@@ -451,15 +656,20 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             }
             while (!fixedPointReached);
 
+            if (PredicateAnalysis)
+            {
+                CurrentAnalysisData = negatedCurrentAnalysisData;
+            }
+
             return ValueDomain.Bottom;
         }
 
-        public override TAbstractAnalysisValue VisitForEachLoop(IForEachLoopOperation operation, object argument)
+        public sealed override TAbstractAnalysisValue VisitForEachLoop(IForEachLoopOperation operation, object argument)
         {
             var unusedLoopControlVariableValue = Visit(operation.LoopControlVariable, argument);
             var unusedCollectionValue = Visit(operation.Collection, argument);
 
-            var previousAnalysisData = GetClonedAnalysisData();
+            var previousAnalysisData = GetClonedCurrentAnalysisData();
             var fixedPointReached = false;
             do
             {
@@ -475,13 +685,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return ValueDomain.Bottom;
         }
 
-        public override TAbstractAnalysisValue VisitForToLoop(IForToLoopOperation operation, object argument)
+        public sealed override TAbstractAnalysisValue VisitForToLoop(IForToLoopOperation operation, object argument)
         {
             var loopControlVariableValue = Visit(operation.LoopControlVariable, argument);
             var initialValue = Visit(operation.InitialValue, argument);
             SetAbstractValueForAssignment(operation.LoopControlVariable, operation.InitialValue, initialValue);
 
-            var previousAnalysisData = GetClonedAnalysisData();
+            var previousAnalysisData = GetClonedCurrentAnalysisData();
             var fixedPointReached = false;
             do
             {
@@ -500,6 +710,36 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return ValueDomain.Bottom;
         }
 
+        public sealed override TAbstractAnalysisValue VisitSwitch(ISwitchOperation operation, object argument)
+        {
+            var value = Visit(operation.Value, argument);
+            var perSwitchCaseAnalysisData = new Dictionary<ISwitchCaseOperation, TAnalysisData>();
+            TAnalysisData mergedAnalysisData = CurrentAnalysisData;
+            foreach (var switchCase in operation.Cases)
+            {
+                var switchCaseAnalysisData = GetClonedCurrentAnalysisData();
+                perSwitchCaseAnalysisData.Add(switchCase, switchCaseAnalysisData);
+
+                // Switch with Default clause.
+                if (switchCase.Clauses.Any(clause => clause.CaseKind == CaseKind.Default))
+                {
+                    mergedAnalysisData = default(TAnalysisData);
+                }
+            }
+
+            foreach (var switchCase in operation.Cases)
+            {
+                CurrentAnalysisData = perSwitchCaseAnalysisData[switchCase];
+                var _ = Visit(switchCase, argument);
+                if (!HasReturnOrThrow(switchCase.Body))
+                {
+                    mergedAnalysisData = MergeAnalysisData(mergedAnalysisData, CurrentAnalysisData);
+                }
+            }
+
+            CurrentAnalysisData = mergedAnalysisData;
+            return ValueDomain.Bottom;
+        }
         #endregion
 
         #region Visitor methods
@@ -719,12 +959,29 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return Visit(operation.Text, argument);
         }
 
-        public override TAbstractAnalysisValue VisitArgument(IArgumentOperation operation, object argument)
+        public virtual TAbstractAnalysisValue VisitArgumentCore(IArgumentOperation operation, object argument)
         {
-            var value = Visit(operation.Value, argument);
+            return Visit(operation.Value, argument);
+        }
+
+        public sealed override TAbstractAnalysisValue VisitArgument(IArgumentOperation operation, object argument)
+        {
+            // Is first argument of a Contract check invocation?
+            var isContractCheckArgument = PredicateAnalysis && IsContractCheckArgument(operation);
+            if (isContractCheckArgument)
+            {
+                NegatedCurrentAnalysisDataStack.Push(GetClonedCurrentAnalysisData());
+            }
+
+            var value = VisitArgumentCore(operation, argument);
             if (operation.Parameter.RefKind != RefKind.None)
             {
                 value = ComputeAnalysisValueForOutArgument(operation, defaultValue: ValueDomain.UnknownOrMayBeValue);
+            }
+
+            if (isContractCheckArgument)
+            {
+                NegatedCurrentAnalysisDataStack.Pop();
             }
 
             _pendingArgumentsToReset.Add(operation);
@@ -869,6 +1126,211 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             {
                 SetAbstractValueForAssignment(element, operation, ValueDomain.UnknownOrMayBeValue);
             }
+            return value;
+        }
+
+        public virtual TAbstractAnalysisValue VisitUnaryOperatorCore(IUnaryOperation operation, object argument)
+        {
+            return base.VisitUnaryOperator(operation, argument);
+        }
+
+        public sealed override TAbstractAnalysisValue VisitUnaryOperator(IUnaryOperation operation, object argument)
+        {
+            var value = VisitUnaryOperatorCore(operation, argument);
+
+            if (NegatedCurrentAnalysisDataStack.Count > 0 &&
+                operation.OperatorKind == UnaryOperatorKind.Not)
+            {
+                Debug.Assert(PredicateAnalysis);
+                var negatedConditionData = NegatedCurrentAnalysisDataStack.Pop();
+                NegatedCurrentAnalysisDataStack.Push(GetClonedCurrentAnalysisData());
+                CurrentAnalysisData = negatedConditionData;
+            }
+
+            return value;
+        }
+
+        public virtual TAbstractAnalysisValue VisitBinaryOperatorCore(IBinaryOperation operation, object argument)
+        {
+            return base.VisitBinaryOperator(operation, argument);
+        }
+
+        public sealed override TAbstractAnalysisValue VisitBinaryOperator(IBinaryOperation operation, object argument)
+        {
+            if (operation.IsConditionalOpertator())
+            {
+                TAnalysisData MergeConditional(TAnalysisData leftData, TAnalysisData rightData, bool negatedSense = false)
+                {
+                    Debug.Assert(operation.IsConditionalOrOpertator() || operation.IsConditionalAndOpertator());
+
+                    // Conditional OR - merge the left and right conditional data for true evaluation, i.e. when negatedSense = false.
+                    // Conditional AND - merge the left and right conditional data for false evaluation, i.e. when negatedSense = true.
+                    var needsMerge = operation.IsConditionalOrOpertator() && !negatedSense ||
+                        operation.IsConditionalAndOpertator() && negatedSense;
+                    return needsMerge ?
+                        MergeAnalysisData(leftData, rightData) :
+                        rightData;
+                };
+
+                TAnalysisData savedPreviousAnalysisData = GetClonedCurrentAnalysisData();
+
+                var isTopmostOperationNeedingPredicateAnalysis = PredicateAnalysis && NegatedCurrentAnalysisDataStack.Count == 0;
+                if (isTopmostOperationNeedingPredicateAnalysis)
+                {
+                    // Topmost conditional operator not inside a conditional expression.
+                    NegatedCurrentAnalysisDataStack.Push(GetClonedCurrentAnalysisData());
+                }
+
+                TAbstractAnalysisValue leftValue = Visit(operation.LeftOperand, argument);
+
+                TAnalysisData leftConditionalData = GetClonedCurrentAnalysisData();
+                TAnalysisData leftNegatedCurrentAnalysisData = default(TAnalysisData);
+                if (PredicateAnalysis)
+                {
+                    leftNegatedCurrentAnalysisData = GetClonedAnalysisData(NegatedCurrentAnalysisDataStack.Peek());
+
+                    // For conditional or ('||'), we execute the right operand only if left operand condition is false.
+                    // So we use the current NegatedCurrentAnalysisData as both the CurrentAnalysisData and the current NegatedCurrentAnalysisData.
+                    if (operation.IsConditionalOrOpertator())
+                    {
+                        CurrentAnalysisData = GetClonedAnalysisData(NegatedCurrentAnalysisDataStack.Peek());
+                    }
+                }
+
+                TAbstractAnalysisValue rightValue = Visit(operation.RightOperand, argument);
+                var rightConditionalData = CurrentAnalysisData;
+
+                CurrentAnalysisData = MergeConditional(leftConditionalData, rightConditionalData);
+
+                if (PredicateAnalysis)
+                {
+                    TAnalysisData rightNegatedCurrentAnalysisData = NegatedCurrentAnalysisDataStack.Pop();
+                    if (!isTopmostOperationNeedingPredicateAnalysis)
+                    {
+                        // Update the latest NegatedCurrentAnalysisData for parent operations. 
+                        var mergedNegatedCurrentAnalysisData = MergeConditional(leftNegatedCurrentAnalysisData, rightNegatedCurrentAnalysisData, negatedSense: true);
+                        NegatedCurrentAnalysisDataStack.Push(mergedNegatedCurrentAnalysisData);
+                    }
+                    else
+                    {
+                        // Merge the CurrentAnalysisData with savedPreviousAnalysisData. 
+                        CurrentAnalysisData = MergeAnalysisData(savedPreviousAnalysisData, CurrentAnalysisData);
+                    }
+                }
+
+                return ValueDomain.UnknownOrMayBeValue;
+            }
+
+            var value = VisitBinaryOperatorCore(operation, argument);
+            if (NegatedCurrentAnalysisDataStack.Count > 0 &&
+                operation.IsComparisonOperator())
+            {
+                Debug.Assert(PredicateAnalysis);
+                SetValueForComparisonOperator(operation, NegatedCurrentAnalysisDataStack.Peek());
+            }
+
+            return value;
+        }
+
+        public virtual TAbstractAnalysisValue VisitThrowCore(IThrowOperation operation, object argument)
+        {
+            return base.VisitThrow(operation, argument);
+        }
+
+        public sealed override TAbstractAnalysisValue VisitThrow(IThrowOperation operation, object argument)
+        {
+            var value = VisitThrowCore(operation, argument);
+            if (operation.Exception.Type is INamedTypeSymbol type &&
+                type.DerivesFrom(WellKnownTypeProvider.Exception, baseTypesOnly: true))
+            {
+                AnalysisDataForUnhandledThrowOperations = AnalysisDataForUnhandledThrowOperations ?? new Dictionary<IThrowOperation, TAnalysisData>();
+                AnalysisDataForUnhandledThrowOperations.Add(operation, GetClonedCurrentAnalysisData());
+            }
+
+            return value;
+        }
+
+        public sealed override TAbstractAnalysisValue VisitTry(ITryOperation operation, object argument)
+        {
+            var bodyValue = Visit(operation.Body, argument);
+
+            if (operation.Catches.Length > 0)
+            {
+                TAnalysisData previousAnalysisData = GetClonedCurrentAnalysisData();
+                TAnalysisData mergedCatchClauseAnalysisData = GetClonedCurrentAnalysisData();
+                foreach (ICatchClauseOperation catchClause in operation.Catches)
+                {
+                    // Execute from explicit throw statements within try.
+                    if (AnalysisDataForUnhandledThrowOperations?.Count > 0)
+                    {
+                        foreach (IThrowOperation pendingThrowOperation in AnalysisDataForUnhandledThrowOperations.Keys.ToArray())
+                        {
+                            var pendingException = pendingThrowOperation.Exception.Type;
+                            Debug.Assert(pendingException.DerivesFrom(WellKnownTypeProvider.Exception, baseTypesOnly: true));
+
+                            if (pendingException.DerivesFrom(catchClause.ExceptionType, baseTypesOnly: true))
+                            {
+                                CurrentAnalysisData = AnalysisDataForUnhandledThrowOperations[pendingThrowOperation];
+                                AnalysisDataForUnhandledThrowOperations.Remove(pendingThrowOperation);
+                                var unusedValue = Visit(catchClause, argument);
+                                mergedCatchClauseAnalysisData = MergeAnalysisData(CurrentAnalysisData, mergedCatchClauseAnalysisData);
+                            }
+                        }
+                    }
+
+                    // Execute from end of try.
+                    CurrentAnalysisData = GetClonedAnalysisData(previousAnalysisData);
+                    var unusedCatchValue = Visit(catchClause, argument);
+                    mergedCatchClauseAnalysisData = MergeAnalysisData(CurrentAnalysisData, mergedCatchClauseAnalysisData);
+                }
+
+                CurrentAnalysisData = mergedCatchClauseAnalysisData;
+            }
+
+            var _ = Visit(operation.Finally, argument);
+            return ValueDomain.UnknownOrMayBeValue;
+        }
+
+        public sealed override TAbstractAnalysisValue VisitCatchClause(ICatchClauseOperation operation, object argument)
+        {
+            var _ = Visit(operation.ExceptionDeclarationOrExpression, argument);
+
+            if (operation.Filter != null)
+            {
+                if (PredicateAnalysis)
+                {
+                    NegatedCurrentAnalysisDataStack.Push(GetClonedCurrentAnalysisData());
+                }
+
+                _ = Visit(operation.Filter, argument);
+
+                if (PredicateAnalysis)
+                {
+                    NegatedCurrentAnalysisDataStack.Pop();
+                }
+            }
+
+            _ = Visit(operation.Handler, argument);
+            return ValueDomain.UnknownOrMayBeValue;
+        }
+
+        public override TAbstractAnalysisValue VisitLocalFunction(ILocalFunctionOperation operation, object argument)
+        {
+            var savedCurrentAnalysisData = GetClonedCurrentAnalysisData();
+            ResetCurrentAnalysisData();
+            var value = base.VisitLocalFunction(operation, argument);
+            ResetCurrentAnalysisData();
+            CurrentAnalysisData = savedCurrentAnalysisData;
+            return value;
+        }
+
+        public override TAbstractAnalysisValue VisitAnonymousFunction(IAnonymousFunctionOperation operation, object argument)
+        {
+            var savedCurrentAnalysisData = GetClonedCurrentAnalysisData();
+            ResetCurrentAnalysisData();
+            var value = base.VisitAnonymousFunction(operation, argument);
+            ResetCurrentAnalysisData();
+            CurrentAnalysisData = savedCurrentAnalysisData;
             return value;
         }
 

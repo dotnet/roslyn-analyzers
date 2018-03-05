@@ -22,7 +22,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
         public PointsToAbstractValue GetOrCreateDefaultValue(AnalysisEntity analysisEntity)
         {
-            Debug.Assert(!analysisEntity.Type.HasValueCopySemantics());
+            Debug.Assert(analysisEntity.Type.IsReferenceType);
             Debug.Assert(_lazyDefaultPointsToValueMap == null);
 
             if (!_defaultPointsToValueMapBuilder.TryGetValue(analysisEntity, out PointsToAbstractValue value))

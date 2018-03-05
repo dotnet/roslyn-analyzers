@@ -103,9 +103,9 @@ namespace Microsoft.CodeAnalysis.Operations.ControlFlow
 
         public ControlFlowGraph Generate(IOperation body)
         {
-            _graph = new ControlFlowGraph();
+            _graph = new ControlFlowGraph(body);
 
-            CreateBlocks(body);
+            CreateBlocks();
             ConnectBlocks();
 
             var result = _graph;
@@ -117,10 +117,10 @@ namespace Microsoft.CodeAnalysis.Operations.ControlFlow
             return result;
         }
 
-        private void CreateBlocks(IOperation body)
+        private void CreateBlocks()
         {
             var collector = new StatementCollector();
-            collector.Visit(body);
+            collector.Visit(_graph.RootOperation);
 
             foreach (var statement in collector.Statements)
             {

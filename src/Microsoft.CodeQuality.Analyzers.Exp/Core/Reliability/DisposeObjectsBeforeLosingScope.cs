@@ -54,11 +54,11 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Reliability
                         return;
                     }
 
-                    ControlFlowGraph cfg;
                     DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> disposeAnalysisResult;
-                    if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockContext.OperationBlocks, containingMethod, out cfg, out disposeAnalysisResult))
+                    if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockContext.OperationBlocks, containingMethod, out disposeAnalysisResult))
                     {
-                        ImmutableDictionary<AbstractLocation, DisposeAbstractValue> disposeDataAtExit = disposeAnalysisResult[cfg.Exit].OutputData;
+                        BasicBlock exitBlock = disposeAnalysisResult.ControlFlowGraph.Exit;
+                        ImmutableDictionary<AbstractLocation, DisposeAbstractValue> disposeDataAtExit = disposeAnalysisResult[exitBlock].OutputData;
                         foreach (var kvp in disposeDataAtExit)
                         {
                             AbstractLocation location = kvp.Key;

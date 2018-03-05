@@ -21,9 +21,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
         /// </summary>
         private sealed class DisposeDataFlowOperationVisitor : AbstractLocationDataFlowOperationVisitor<DisposeAnalysisData, DisposeAbstractValue>
         {
-            private readonly INamedTypeSymbol _iDisposable;
-            private readonly INamedTypeSymbol _taskType;
-            private readonly ImmutableHashSet<INamedTypeSymbol> _collectionTypes;
             private readonly ImmutableHashSet<INamedTypeSymbol> _disposeOwnershipTransferLikelyTypes;
             private readonly Dictionary<IFieldSymbol, PointsToAbstractValue> _trackedInstanceFieldLocationsOpt;
 
@@ -35,30 +32,30 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
             private const bool pessimisticAnalysis = false;
 
             public DisposeDataFlowOperationVisitor(
-                INamedTypeSymbol iDisposable,
-                INamedTypeSymbol taskType,
-                ImmutableHashSet<INamedTypeSymbol> collectionTypes,
-                ImmutableHashSet<INamedTypeSymbol> disposeOwnershipTransferLikelyTypes,
                 DisposeAbstractValueDomain valueDomain,
                 ISymbol owningSymbol,
+                WellKnownTypeProvider wellKnownTypeProvider,
+                ImmutableHashSet<INamedTypeSymbol> disposeOwnershipTransferLikelyTypes,
                 bool trackInstanceFields,
                 DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResult,
                 DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> nullAnalysisResultOpt)
-                : base(valueDomain, owningSymbol, pessimisticAnalysis, nullAnalysisResultOpt: nullAnalysisResultOpt, pointsToAnalysisResultOpt: pointsToAnalysisResult)
+                : base(valueDomain, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, predicateAnalysis: false, nullAnalysisResultOpt: nullAnalysisResultOpt, copyAnalysisResultOpt: null, pointsToAnalysisResultOpt: pointsToAnalysisResult)
             {
-                Debug.Assert(iDisposable != null);
-                Debug.Assert(collectionTypes.All(ct => ct.TypeKind == TypeKind.Interface));
+                Debug.Assert(wellKnownTypeProvider.IDisposable != null);
+                Debug.Assert(wellKnownTypeProvider.CollectionTypes.All(ct => ct.TypeKind == TypeKind.Interface));
                 Debug.Assert(disposeOwnershipTransferLikelyTypes != null);
                 Debug.Assert(pointsToAnalysisResult != null);
 
-                _iDisposable = iDisposable;
-                _taskType = taskType;
-                _collectionTypes = collectionTypes;
                 _disposeOwnershipTransferLikelyTypes = disposeOwnershipTransferLikelyTypes;
                 if (trackInstanceFields)
                 {
                     _trackedInstanceFieldLocationsOpt = new Dictionary<IFieldSymbol, PointsToAbstractValue>();
                 }
+            }
+
+            public override int GetHashCode()
+            {
+                return HashUtilities.Combine(_trackedInstanceFieldLocationsOpt?.GetHashCode() ?? 0, base.GetHashCode());
             }
 
             public ImmutableDictionary<IFieldSymbol, PointsToAbstractValue> TrackedInstanceFieldPointsToMap
@@ -80,56 +77,24 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
 
             protected override void SetAbstractValue(AbstractLocation location, DisposeAbstractValue value)
             {
-                Debug.Assert(location.LocationType.IsDisposable(_iDisposable));
+                Debug.Assert(location.LocationTypeOpt.IsDisposable(WellKnownTypeProvider.IDisposable));
 
                 CurrentAnalysisData[location] = value;
             }
 
-            protected override void SetAbstractValue(PointsToAbstractValue instanceLocation, DisposeAbstractValue value)
-            {
-                foreach (var location in instanceLocation.Locations)
-                {
-                    SetAbstractValue(location, value);
-                }
-            }
-
-            protected override void ResetCurrentAnalysisData(DisposeAnalysisData newAnalysisDataOpt = null)
-            {
-                // Reset the current analysis data, while ensuring that we don't violate the monotonicity, i.e. we cannot remove any existing key from currentAnalysisData.
-                if (newAnalysisDataOpt == null)
-                {
-                    // Just set the values for existing keys to ValueDomain.UnknownOrMayBeValue.
-                    var keys = CurrentAnalysisData.Keys.ToImmutableArray();
-                    foreach (var key in keys)
-                    {
-                        SetAbstractValue(key, ValueDomain.UnknownOrMayBeValue);
-                    }
-                }
-                else
-                {
-                    // Merge the values from current and new analysis data.
-                    var keys = CurrentAnalysisData.Keys.Concat(newAnalysisDataOpt.Keys).ToImmutableHashSet();
-                    foreach (var key in keys)
-                    {
-                        var value1 = CurrentAnalysisData.TryGetValue(key, out var currentValue) ? currentValue : ValueDomain.Bottom;
-                        var value2 = newAnalysisDataOpt.TryGetValue(key, out var newValue) ? newValue : ValueDomain.Bottom;
-                        var mergedValue = ValueDomain.Merge(value1, value2);
-                        SetAbstractValue(key, mergedValue);
-                    }
-                }
-            }
+            protected override void ResetCurrentAnalysisData(DisposeAnalysisData newAnalysisDataOpt = null) => ResetAnalysisData(CurrentAnalysisData, newAnalysisDataOpt);
 
             protected override DisposeAbstractValue HandleInstanceCreation(ITypeSymbol instanceType, PointsToAbstractValue instanceLocation, DisposeAbstractValue defaultValue)
             {
                 defaultValue = DisposeAbstractValue.NotDisposable;
 
-                if (!instanceType.IsDisposable(_iDisposable))
+                if (!instanceType.IsDisposable(WellKnownTypeProvider.IDisposable))
                 {
                     return defaultValue;
                 }
 
                 // Special case: Do not track System.Threading.Tasks.Task as you are not required to dispose them.
-                if (_taskType != null && instanceType.DerivesFrom(_taskType, baseTypesOnly: true))
+                if (WellKnownTypeProvider.Task != null && instanceType.DerivesFrom(WellKnownTypeProvider.Task, baseTypesOnly: true))
                 {
                     return defaultValue;
                 }
@@ -140,7 +105,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
 
             private void HandleDisposingOperation(IOperation disposingOperation, IOperation disposedInstance)
             {
-                if (disposedInstance.Type?.IsDisposable(_iDisposable) == false)
+                if (disposedInstance.Type?.IsDisposable(WellKnownTypeProvider.IDisposable) == false)
                 {
                     return;
                 }
@@ -213,10 +178,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 }
             }
 
-            protected override void SetValueForParameterPointsToLocationOnExit(IParameterSymbol parameter, PointsToAbstractValue pointsToAbstractValue)
+            protected override void SetValueForParameterPointsToLocationOnExit(IParameterSymbol parameter, AnalysisEntity analysisEntity, PointsToAbstractValue pointsToAbstractValue)
             {
-                if (!pointsToAbstractValue.Locations.IsEmpty &&
-                    parameter.Type.IsDisposable(_iDisposable))
+                if (parameter.RefKind != RefKind.None &&
+                    !pointsToAbstractValue.Locations.IsEmpty &&
+                    parameter.Type.IsDisposable(WellKnownTypeProvider.IDisposable))
                 {
                     SetAbstractValue(pointsToAbstractValue, ValueDomain.UnknownOrMayBeValue);
                 }
@@ -241,8 +207,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
             #region Temporary methods to workaround lack of *real* CFG
             protected override DisposeAnalysisData MergeAnalysisData(DisposeAnalysisData value1, DisposeAnalysisData value2)
                 => DisposeAnalysisDomainInstance.Merge(value1, value2);
-            protected override DisposeAnalysisData GetClonedAnalysisData()
-                => new Dictionary<AbstractLocation, DisposeAbstractValue>(CurrentAnalysisData);
+            protected override DisposeAnalysisData GetClonedAnalysisData(DisposeAnalysisData analysisData)
+                => GetClonedAnalysisDataHelper(CurrentAnalysisData);
             protected override bool Equals(DisposeAnalysisData value1, DisposeAnalysisData value2)
                 => EqualsHelper(value1, value2);
             #endregion
@@ -263,7 +229,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
             public override DisposeAbstractValue VisitInvocation_NonLambdaOrDelegateOrLocalFunction(IInvocationOperation operation, object argument)
             {
                 var value = base.VisitInvocation_NonLambdaOrDelegateOrLocalFunction(operation, argument);
-                var disposeMethodKind = operation.TargetMethod.GetDisposeMethodKind(_iDisposable);
+                var disposeMethodKind = operation.TargetMethod.GetDisposeMethodKind(WellKnownTypeProvider.IDisposable);
                 switch (disposeMethodKind)
                 {
                     case DisposeMethodKind.Dispose:
@@ -287,7 +253,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                             return HandleInstanceCreation(operation.Type, instanceLocation, value);
                         }
                         else if (operation.Arguments.Length > 0 &&
-                            operation.TargetMethod.IsCollectionAddMethod(_collectionTypes))
+                            operation.TargetMethod.IsCollectionAddMethod(WellKnownTypeProvider.CollectionTypes))
                         {
                             // FxCop compat: The object added to a collection is considered escaped.
                             var lastArgument = operation.Arguments[operation.Arguments.Length - 1];
@@ -307,12 +273,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 return value;
             }
 
-            public override DisposeAbstractValue VisitArgument(IArgumentOperation operation, object argument)
+            public override DisposeAbstractValue VisitArgumentCore(IArgumentOperation operation, object argument)
             {
-                var value = base.VisitArgument(operation, argument);
+                var value = base.VisitArgumentCore(operation, argument);
                 var possibleEscape = false;
 
-                if (operation.Parameter.Type.IsDisposable(_iDisposable))
+                if (operation.Parameter.Type.IsDisposable(WellKnownTypeProvider.IDisposable))
                 {
                     // Discover if a disposable object is being passed into the creation method for this new disposable object
                     // and if the new disposable object assumes ownership of that passed in disposable object.

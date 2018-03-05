@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Runtime.CompilerServices;
+
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 {
     /// <summary>
@@ -7,14 +9,14 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
     /// </summary>
     internal class PointsToAnalysisDomain: AnalysisEntityMapAbstractDomain<PointsToAbstractValue>
     {
-        private readonly DefaultPointsToValueGenerator _defaultPointsToValueGenerator;
-
         public PointsToAnalysisDomain(DefaultPointsToValueGenerator defaultPointsToValueGenerator, AbstractValueDomain<PointsToAbstractValue> valueDomain)
             : base(valueDomain)
         {
-            _defaultPointsToValueGenerator = defaultPointsToValueGenerator;
+            DefaultPointsToValueGenerator = defaultPointsToValueGenerator;
         }
 
-        protected override PointsToAbstractValue GetDefaultValue(AnalysisEntity analysisEntity) => _defaultPointsToValueGenerator.GetOrCreateDefaultValue(analysisEntity);
+        public DefaultPointsToValueGenerator DefaultPointsToValueGenerator { get; }
+
+        protected override PointsToAbstractValue GetDefaultValue(AnalysisEntity analysisEntity) => DefaultPointsToValueGenerator.GetOrCreateDefaultValue(analysisEntity);
     }
 }

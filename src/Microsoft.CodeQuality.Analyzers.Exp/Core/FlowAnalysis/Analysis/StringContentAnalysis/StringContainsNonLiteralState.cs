@@ -11,10 +11,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
         Undefined = 0,
         /// <summary>The variable does not contain any instances of non-literal string.</summary>
         No,
-        /// <summary>The variable contains at least one instance of a non-literal string.</summary>
-        Yes,
         /// <summary>The variable may or may not contain instances of a non-literal string.</summary>
         Maybe,
-
+        /// <summary>The variable state is invalid due to predicate analysis.</summary>
+        Invalid,
     }
 }

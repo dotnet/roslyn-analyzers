@@ -1,6 +1,10 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using Analyzer.Utilities.Extensions;
+using Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
 {
@@ -16,15 +20,25 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
             public NullDataFlowOperationVisitor(
                 NullAbstractValueDomain valueDomain,
                 ISymbol owningSymbol,
+                WellKnownTypeProvider wellKnownTypeProvider,
                 bool pessimisticAnalysis,
+                DataFlowAnalysisResult<CopyBlockAnalysisResult, CopyAbstractValue> copyAnalysisResultOpt,
                 DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResultOpt)
-                : base(valueDomain, owningSymbol, pessimisticAnalysis, nullAnalysisResultOpt: null, pointsToAnalysisResultOpt: pointsToAnalysisResultOpt)
+                : base(valueDomain, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, predicateAnalysis: true, nullAnalysisResultOpt: null, copyAnalysisResultOpt: copyAnalysisResultOpt, pointsToAnalysisResultOpt: pointsToAnalysisResultOpt)
             {
             }
 
             protected override IEnumerable<AnalysisEntity> TrackedEntities => CurrentAnalysisData.Keys;
 
-            protected override void SetAbstractValue(AnalysisEntity analysisEntity, NullAbstractValue value) => CurrentAnalysisData[analysisEntity] = value;
+            protected override void SetAbstractValue(AnalysisEntity analysisEntity, NullAbstractValue value) => SetAbstractValue(CurrentAnalysisData, analysisEntity, value);
+
+            private static void SetAbstractValue(NullAnalysisData analysisData, AnalysisEntity analysisEntity, NullAbstractValue value)
+            {
+                if (analysisEntity.Type.IsReferenceType)
+                {
+                    analysisData[analysisEntity] = value;
+                }
+            }
 
             protected override bool HasAbstractValue(AnalysisEntity analysisEntity) => CurrentAnalysisData.ContainsKey(analysisEntity);
 
@@ -40,17 +54,130 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
                 return NullAbstractValue.Null;
             }
 
+            protected override NullAbstractValue GetNullAbstractValue(IOperation operation) => GetCachedAbstractValue(operation);
+
             protected override void ResetCurrentAnalysisData(NullAnalysisData newAnalysisDataOpt = null) => ResetAnalysisData(CurrentAnalysisData, newAnalysisDataOpt);
+
+            protected override NullAbstractValue GetDefaultValueForParameterOnEntry(ITypeSymbol parameterType)
+                => parameterType.IsValueType ? NullAbstractValue.NotNull : NullAbstractValue.MaybeNull;
+
+            protected override NullAbstractValue GetDefaultValueForParameterOnExit(ITypeSymbol parameterType)
+                => parameterType.IsValueType ? NullAbstractValue.NotNull : NullAbstractValue.MaybeNull;
+
+            #region Predicate analysis
+            private static bool IsValidValueForPredicateAnalysis(NullAbstractValue value)
+            {
+                switch (value)
+                {
+                    case NullAbstractValue.Null:
+                    case NullAbstractValue.NotNull:
+                        return true;
+
+                    default:
+                        return false;
+                }
+            }
+
+            protected override void SetValueForEqualsOrNotEqualsComparisonOperator(IBinaryOperation operation, NullAnalysisData negatedCurrentAnalysisData, bool equals)
+            {
+                Debug.Assert(operation.IsComparisonOperator());
+
+                // Handle "a == null" and "a != null"
+                if (SetValueForComparisonOperator(operation.LeftOperand, operation.RightOperand, negatedCurrentAnalysisData, equals))
+                {
+                    return;
+                }
+
+                // Otherwise, handle "null == a" and "null != a"
+                SetValueForComparisonOperator(operation.RightOperand, operation.LeftOperand, negatedCurrentAnalysisData, equals);
+            }
+
+            private bool SetValueForComparisonOperator(IOperation target, IOperation assignedValue, NullAnalysisData negatedCurrentAnalysisData, bool equals)
+            {
+                NullAbstractValue nullValue = GetNullAbstractValue(assignedValue);
+                if (IsValidValueForPredicateAnalysis(nullValue) &&
+                    AnalysisEntityFactory.TryCreate(target, out AnalysisEntity targetEntity))
+                {
+                    if (!equals)
+                    {
+                        nullValue = NegatePredicateValue(nullValue);
+                    }
+
+                    CopyAbstractValue copyValue = GetCopyAbstractValue(target);
+                    if (copyValue.Kind == CopyAbstractValueKind.Known)
+                    {
+                        Debug.Assert(copyValue.AnalysisEntities.Contains(targetEntity));
+                        foreach (var analysisEntity in copyValue.AnalysisEntities)
+                        {
+                            SetValueFromPredicate(analysisEntity, nullValue, negatedCurrentAnalysisData);
+                        }
+                    }
+                    else
+                    {
+                        SetValueFromPredicate(targetEntity, nullValue, negatedCurrentAnalysisData);
+                    }
+
+                    return true;
+                }
+
+                return false;
+            }
+
+            private void SetValueFromPredicate(AnalysisEntity key, NullAbstractValue value, NullAnalysisData negatedCurrentAnalysisData)
+            {
+                var negatedValue = NegatePredicateValue(value);
+                if (CurrentAnalysisData.TryGetValue(key, out NullAbstractValue existingValue) &&
+                    IsValidValueForPredicateAnalysis(existingValue))
+                {
+                    if (negatedValue == existingValue)
+                    {
+                        value = NullAbstractValue.Invalid;
+                        negatedValue = NullAbstractValue.MaybeNull;
+                    }
+                    else
+                    {
+                        Debug.Assert(value == existingValue);
+                        negatedValue = NullAbstractValue.Invalid;
+                        value = NullAbstractValue.MaybeNull;
+                    }
+                }
+
+                // Set value for the CurrentAnalysisData.
+                SetAbstractValue(CurrentAnalysisData, key, value);
+
+                // Set negated value for the NegatedCurrentAnalysisData.
+                SetAbstractValue(negatedCurrentAnalysisData, key, negatedValue);
+            }
+
+            private static NullAbstractValue NegatePredicateValue(NullAbstractValue value)
+            {
+                Debug.Assert(IsValidValueForPredicateAnalysis(value));
+
+                switch (value)
+                {
+                    case NullAbstractValue.Null:
+                        return NullAbstractValue.NotNull;
+
+                    case NullAbstractValue.NotNull:
+                        return NullAbstractValue.Null;
+
+                    default:
+                        throw new InvalidProgramException();
+                }
+            }
+            #endregion
 
             // TODO: Remove these temporary methods once we move to compiler's CFG
             // https://github.com/dotnet/roslyn-analyzers/issues/1567
             #region Temporary methods to workaround lack of *real* CFG
             protected override NullAnalysisData MergeAnalysisData(NullAnalysisData value1, NullAnalysisData value2)
                 => NullAnalysisDomainInstance.Merge(value1, value2);
-            protected override NullAnalysisData GetClonedAnalysisData()
-                => GetClonedAnalysisData(CurrentAnalysisData);
+            protected override NullAnalysisData GetClonedAnalysisData(NullAnalysisData analysisData)
+                => GetClonedAnalysisDataHelper(analysisData);
             protected override bool Equals(NullAnalysisData value1, NullAnalysisData value2)
                 => EqualsHelper(value1, value2);
+
+
             #endregion
 
             #region Visitor methods
@@ -87,6 +214,17 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
             {
                 var leftValue = Visit(operation.Value, argument);
                 var rightValue = Visit(operation.WhenNull, argument);
+
+                if (operation.Type.IsValueType)
+                {
+                    return NullAbstractValue.NotNull;
+                }
+
+                if (rightValue == NullAbstractValue.NotNull)
+                {
+                    return NullAbstractValue.NotNull;
+                }
+
                 switch (leftValue)
                 {
                     case NullAbstractValue.NotNull:
@@ -104,6 +242,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
             {
                 var leftValue = Visit(operation.Operation, argument);
                 var rightValue = Visit(operation.WhenNotNull, argument);
+
+                if (operation.Type.IsValueType)
+                {
+                    return NullAbstractValue.NotNull;
+                }
+
                 switch (leftValue)
                 {
                     case NullAbstractValue.Null:
@@ -242,9 +386,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
                 return NullAbstractValue.NotNull;
             }
 
-            public override NullAbstractValue VisitThrow(IThrowOperation operation, object argument)
+            public override NullAbstractValue VisitThrowCore(IThrowOperation operation, object argument)
             {
-                var _ = base.VisitThrow(operation, argument);
+                var _ = base.VisitThrowCore(operation, argument);
                 return NullAbstractValue.NotNull;
             }
 
@@ -260,64 +404,69 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
                 return NullAbstractValue.NotNull;
             }
 
-            private NullAbstractValue GetValueBasedOnInstanceOrReferenceValue(IOperation referenceOrInstance)
+            private NullAbstractValue GetValueBasedOnInstanceOrReferenceValue(IOperation referenceOrInstance, ITypeSymbol operationType, NullAbstractValue defaultValue)
             {
+                if (operationType != null && operationType.IsValueType)
+                {
+                    return NullAbstractValue.NotNull;
+                }
+
                 NullAbstractValue referenceOrInstanceValue = referenceOrInstance != null ? GetCachedAbstractValue(referenceOrInstance) : NullAbstractValue.NotNull;
-                return referenceOrInstanceValue == NullAbstractValue.Null ? NullAbstractValue.Null : NullAbstractValue.MaybeNull;
+                return referenceOrInstanceValue == NullAbstractValue.Null ? NullAbstractValue.Null : defaultValue;
             }
 
             public override NullAbstractValue VisitInvocation_NonLambdaOrDelegateOrLocalFunction(IInvocationOperation operation, object argument)
             {
-                var _ = base.VisitInvocation_NonLambdaOrDelegateOrLocalFunction(operation, argument);
-                return GetValueBasedOnInstanceOrReferenceValue(operation.Instance);
+                var value = base.VisitInvocation_NonLambdaOrDelegateOrLocalFunction(operation, argument);
+                return GetValueBasedOnInstanceOrReferenceValue(operation.Instance, operation.Type, value);
             }
 
             public override NullAbstractValue VisitFieldReference(IFieldReferenceOperation operation, object argument)
             {
-                var _ = base.VisitFieldReference(operation, argument);
-                return GetValueBasedOnInstanceOrReferenceValue(operation.Instance);
+                var value = base.VisitFieldReference(operation, argument);
+                return GetValueBasedOnInstanceOrReferenceValue(operation.Instance, operation.Type, value);
             }
 
             public override NullAbstractValue VisitPropertyReference(IPropertyReferenceOperation operation, object argument)
             {
-                var _ = base.VisitPropertyReference(operation, argument);
-                return GetValueBasedOnInstanceOrReferenceValue(operation.Instance);
+                var value = base.VisitPropertyReference(operation, argument);
+                return GetValueBasedOnInstanceOrReferenceValue(operation.Instance, operation.Type, value);
             }
 
             public override NullAbstractValue VisitDynamicMemberReference(IDynamicMemberReferenceOperation operation, object argument)
             {
-                var _ = base.VisitDynamicMemberReference(operation, argument);
-                return GetValueBasedOnInstanceOrReferenceValue(operation.Instance);
+                var value = base.VisitDynamicMemberReference(operation, argument);
+                return GetValueBasedOnInstanceOrReferenceValue(operation.Instance, operation.Type, value);
             }
 
             public override NullAbstractValue VisitMethodReference(IMethodReferenceOperation operation, object argument)
             {
-                var _ = base.VisitMethodReference(operation, argument);
-                return GetValueBasedOnInstanceOrReferenceValue(operation.Instance);
+                var value = base.VisitMethodReference(operation, argument);
+                return GetValueBasedOnInstanceOrReferenceValue(operation.Instance, operation.Type, value);
             }
 
             public override NullAbstractValue VisitEventReference(IEventReferenceOperation operation, object argument)
             {
-                var _ = base.VisitEventReference(operation, argument);
-                return GetValueBasedOnInstanceOrReferenceValue(operation.Instance);
+                var value = base.VisitEventReference(operation, argument);
+                return GetValueBasedOnInstanceOrReferenceValue(operation.Instance, operation.Type, value);
             }
 
             public override NullAbstractValue VisitArrayElementReference(IArrayElementReferenceOperation operation, object argument)
             {
-                var _ = base.VisitArrayElementReference(operation, argument);
-                return GetValueBasedOnInstanceOrReferenceValue(operation.ArrayReference);
+                var value = base.VisitArrayElementReference(operation, argument);
+                return GetValueBasedOnInstanceOrReferenceValue(operation.ArrayReference, operation.Type, value);
             }
 
             public override NullAbstractValue VisitDynamicInvocation(IDynamicInvocationOperation operation, object argument)
             {
-                var _ = base.VisitDynamicInvocation(operation, argument);
-                return GetValueBasedOnInstanceOrReferenceValue(operation.Operation);
+                var value = base.VisitDynamicInvocation(operation, argument);
+                return GetValueBasedOnInstanceOrReferenceValue(operation.Operation, operation.Type, value);
             }
 
             public override NullAbstractValue VisitDynamicIndexerAccess(IDynamicIndexerAccessOperation operation, object argument)
             {
-                var _ = base.VisitDynamicIndexerAccess(operation, argument);
-                return GetValueBasedOnInstanceOrReferenceValue(operation.Operation);
+                var value = base.VisitDynamicIndexerAccess(operation, argument);
+                return GetValueBasedOnInstanceOrReferenceValue(operation.Operation, operation.Type, value);
             }
 
             #endregion

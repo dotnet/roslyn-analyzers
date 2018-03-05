@@ -105,7 +105,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Security
                         var propertyReference = (IPropertyReferenceOperation)operationContext.Operation;
 
                         // We're only interested in implementations of IDbCommand.CommandText
-                        if (!propertyReference.Property.IsImplementationOfInterfaceMember(commandTextProperty))
+                        if (!propertyReference.Property.IsOverrideOrImplementationOfInterfaceMember(commandTextProperty))
                         {
                             return;
                         }

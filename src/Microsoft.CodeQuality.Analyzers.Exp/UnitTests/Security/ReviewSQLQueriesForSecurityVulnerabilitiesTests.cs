@@ -23,7 +23,7 @@ using System.Data;
 
 class Command : IDbCommand
 {
-    public string CommandText { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+    public virtual string CommandText { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
     public int CommandTimeout { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
     public CommandType CommandType { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
     public IDbConnection Connection { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
@@ -108,7 +108,7 @@ Imports System.Data
 
 Class Command
     Implements IDbCommand
-    Public Property CommandText As String Implements IDbCommand.CommandText
+    Public Overridable Property CommandText As String Implements IDbCommand.CommandText
         Get
             Throw New NotImplementedException()
         End Get
@@ -1244,6 +1244,47 @@ Module Test
 End Module",
             GetBasicResultAt(127, 9, "Property Command.CommandText As String", "M1"));
 
+        }
+
+        [Fact, WorkItem(1625, "https://github.com/dotnet/roslyn-analyzers/issues/1625")]
+        public void DbCommand_CommandText_PropertyOverride_Diagnostic()
+        {
+            VerifyCSharp($@"
+{SetupCodeCSharp}
+
+class Command1 : Command
+{{
+    public override string CommandText {{ get; set; }}
+}}
+
+class Test
+{{
+    void M1(string str)
+    {{
+        Command1 c = new Command1();
+        c.CommandText = str;
+    }}
+}}",
+            // Test0.cs(96,9): warning CA2100: Review if the query string passed to 'string Command1.CommandText' in 'M1', accepts any user input.
+            GetCSharpResultAt(96, 9, "string Command1.CommandText", "M1"));
+
+            VerifyBasic($@"
+{SetupCodeBasic}
+
+Class Command1
+    Inherits Command
+
+    Public Overrides Property CommandText As String
+End Class
+
+Module Test
+    Sub M1(str As String)
+        Dim c As New Command1()
+        c.CommandText = str
+    End Sub
+End Module",
+            // Test0.vb(133,9): warning CA2100: Review if the query string passed to 'Property Command1.CommandText As String' in 'M1', accepts any user input.
+            GetBasicResultAt(133, 9, "Property Command1.CommandText As String", "M1"));
         }
 
         [Fact]

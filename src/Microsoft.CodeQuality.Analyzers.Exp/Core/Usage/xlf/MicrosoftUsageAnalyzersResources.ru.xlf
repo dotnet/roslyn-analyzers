@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="DisposableFieldsShouldBeDisposedDescription">
         <source>A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type. To fix a violation of this rule, call Dispose on fields that are of types that implement IDisposable if you are responsible for allocating and releasing the unmanaged resources held by the field.</source>
-        <target state="new">A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type. To fix a violation of this rule, call Dispose on fields that are of types that implement IDisposable if you are responsible for allocating and releasing the unmanaged resources held by the field.</target>
+        <target state="translated">Тип, реализующий System.IDisposable, объявляет поля, которые относятся к типам, также реализующим IDisposable. Метод Dispose поля не вызывается методом Dispose объявляющего типа. Чтобы это правило не нарушалось, вызовите Dispose в полях, типы которых реализуют IDisposable, если вы отвечаете за выделение и освобождение неуправляемых ресурсов поля.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedTitle">
         <source>Disposable fields should be disposed</source>
-        <target state="new">Disposable fields should be disposed</target>
+        <target state="translated">Следует высвобождать высвобождаемые поля</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedMessage">
         <source>'{0}' contains field '{1}' that is of IDisposable type '{2}', but it is never disposed. Change the Dispose method on '{0}' to call Close or Dispose on this field.</source>
-        <target state="new">'{0}' contains field '{1}' that is of IDisposable type '{2}', but it is never disposed. Change the Dispose method on '{0}' to call Close or Dispose on this field.</target>
+        <target state="translated">"{0}" содержит поле "{1}" с типом IDisposable "{2}", но оно никогда не высвобождается. Измените метод Dispose в "{0}", чтобы вызвать Close или Dispose в этом поле.</target>
         <note />
       </trans-unit>
     </body>

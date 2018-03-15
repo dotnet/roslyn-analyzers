@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="DisposableFieldsShouldBeDisposedDescription">
         <source>A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type. To fix a violation of this rule, call Dispose on fields that are of types that implement IDisposable if you are responsible for allocating and releasing the unmanaged resources held by the field.</source>
-        <target state="new">A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type. To fix a violation of this rule, call Dispose on fields that are of types that implement IDisposable if you are responsible for allocating and releasing the unmanaged resources held by the field.</target>
+        <target state="translated">實作 System.IDisposable 之類型所宣告的欄位，其類型也會實作 IDisposable。此欄位的 Dispose 方法並不是由宣告類型的 Dispose 方法呼叫。若您負責配置及發行欄位所保留之未受控的資源，可以對實作 IDisposable 之類型的欄位，呼叫 Dispose 來修正此規則的衝突。</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedTitle">
         <source>Disposable fields should be disposed</source>
-        <target state="new">Disposable fields should be disposed</target>
+        <target state="translated">可處置的欄位應受到處置</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedMessage">
         <source>'{0}' contains field '{1}' that is of IDisposable type '{2}', but it is never disposed. Change the Dispose method on '{0}' to call Close or Dispose on this field.</source>
-        <target state="new">'{0}' contains field '{1}' that is of IDisposable type '{2}', but it is never disposed. Change the Dispose method on '{0}' to call Close or Dispose on this field.</target>
+        <target state="translated">'{0}' 包含 IDisposable 類型為 '{2}' 的欄位 '{1}'，但其從未處置。變更 '{0}' 的處置方法可關閉或處置此欄位。</target>
         <note />
       </trans-unit>
     </body>

@@ -11,7 +11,7 @@ Pre-release builds are available on MyGet gallery: https://dotnet.myget.org/Gall
 
 |          |Windows Debug|Windows Release|
 |:--------:|:-----------:|:-------------:|
-|**master**|[![Build Status](https://ci.dot.net/job/dotnet_roslyn-analyzers/job/master/job/windows_debug/badge/icon)](https://ci.dot.net/job/dotnet_roslyn-analyzers/job/master/job/windows_debug/)|[![Build Status](https://ci.dot.net/job/dotnet_roslyn-analyzers/job/master/job/windows_release/badge/icon)](https://ci.dot.net/job/dotnet_roslyn-analyzers/job/master/job/windows_release/)|
+|**master**|[![Build Status](https://ci.dot.net/job/dotnet_roslyn-analyzers/job/master/job/windows_debug/badge/icon)](https://ci.dot.net/job/dotnet_roslyn-analyzers/job/master/job/windows_debug/) [![codecov](https://codecov.io/gh/dotnet/roslyn-analyzers/branch/master/graph/badge.svg)](https://codecov.io/gh/dotnet/roslyn-analyzers)|[![Build Status](https://ci.dot.net/job/dotnet_roslyn-analyzers/job/master/job/windows_release/badge/icon)](https://ci.dot.net/job/dotnet_roslyn-analyzers/job/master/job/windows_release/)|
 
 [//]: # (End current test results)
 

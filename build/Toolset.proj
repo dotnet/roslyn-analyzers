@@ -2,9 +2,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net462</TargetFramework>
-    <RestoreSources>https://dotnet.myget.org/F/roslyn-tools/api/v3/index.json</RestoreSources>
+    <RestoreSources>https://api.nuget.org/v3/index.json;https://dotnet.myget.org/F/roslyn-tools/api/v3/index.json;https://dotnet.myget.org/F/symreader-converter/api/v3/index.json</RestoreSources>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="RoslynTools.RepoToolset" Version="$(RoslynToolsRepoToolsetVersion)" />
+    <PackageReference Include="Codecov" Version="$(CodecovVersion)" />
+    <PackageReference Include="OpenCover" Version="$(OpenCoverVersion)" />
+    <PackageReference Include="Microsoft.DiaSymReader.Pdb2Pdb" Version="$(MicrosoftDiaSymReaderPdb2PdbVersion)" />
   </ItemGroup>
 </Project>

@@ -3,6 +3,10 @@
 
   <!-- This file is imported by all projects at the end of the project files -->
 
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+
   <!-- Compute assembly, file, and NuGet versions -->
   <PropertyGroup>
     <AssemblyVersion>$(SemanticVersion).0</AssemblyVersion>

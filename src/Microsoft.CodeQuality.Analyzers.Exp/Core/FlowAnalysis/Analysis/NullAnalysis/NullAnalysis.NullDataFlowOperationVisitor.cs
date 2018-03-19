@@ -78,29 +78,43 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
                 }
             }
 
-            protected override void SetValueForEqualsOrNotEqualsComparisonOperator(IBinaryOperation operation, NullAnalysisData negatedCurrentAnalysisData, bool equals)
+            protected override PredicateValueKind SetValueForEqualsOrNotEqualsComparisonOperator(IBinaryOperation operation, NullAnalysisData negatedCurrentAnalysisData, bool equals)
             {
                 Debug.Assert(operation.IsComparisonOperator());
+                var predicateValueKind = PredicateValueKind.Unknown;
 
                 // Handle "a == null" and "a != null"
-                if (SetValueForComparisonOperator(operation.LeftOperand, operation.RightOperand, negatedCurrentAnalysisData, equals))
+                if (SetValueForComparisonOperator(operation.LeftOperand, operation.RightOperand, negatedCurrentAnalysisData, equals, ref predicateValueKind))
                 {
-                    return;
+                    return predicateValueKind;
                 }
 
                 // Otherwise, handle "null == a" and "null != a"
-                SetValueForComparisonOperator(operation.RightOperand, operation.LeftOperand, negatedCurrentAnalysisData, equals);
+                SetValueForComparisonOperator(operation.RightOperand, operation.LeftOperand, negatedCurrentAnalysisData, equals, ref predicateValueKind);
+                return predicateValueKind;
             }
 
-            private bool SetValueForComparisonOperator(IOperation target, IOperation assignedValue, NullAnalysisData negatedCurrentAnalysisData, bool equals)
+            private bool SetValueForComparisonOperator(IOperation target, IOperation assignedValue, NullAnalysisData negatedCurrentAnalysisData, bool equals, ref PredicateValueKind predicateValueKind)
             {
                 NullAbstractValue nullValue = GetNullAbstractValue(assignedValue);
                 if (IsValidValueForPredicateAnalysis(nullValue) &&
                     AnalysisEntityFactory.TryCreate(target, out AnalysisEntity targetEntity))
                 {
-                    if (!equals)
+                    bool inferInCurrentAnalysisData = true;
+                    bool inferInNegatedCurrentAnalysisData = true;
+                    if (nullValue == NullAbstractValue.NotNull)
                     {
-                        nullValue = NegatePredicateValue(nullValue);
+                        // Comparison with a non-null value guarantees that we can infer result in only one of the branches.
+                        // For example, predicate "a == c", where we know 'c' is non-null, guarantees 'a' is non-null in CurrentAnalysisData,
+                        // but we cannot infer anything about nullness of 'a' in NegatedCurrentAnalysisData.
+                        if (equals)
+                        {
+                            inferInNegatedCurrentAnalysisData = false;
+                        }
+                        else
+                        {
+                            inferInCurrentAnalysisData = false;
+                        }
                     }
 
                     CopyAbstractValue copyValue = GetCopyAbstractValue(target);
@@ -109,12 +123,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
                         Debug.Assert(copyValue.AnalysisEntities.Contains(targetEntity));
                         foreach (var analysisEntity in copyValue.AnalysisEntities)
                         {
-                            SetValueFromPredicate(analysisEntity, nullValue, negatedCurrentAnalysisData);
+                            SetValueFromPredicate(analysisEntity, nullValue, negatedCurrentAnalysisData, equals, inferInCurrentAnalysisData, inferInNegatedCurrentAnalysisData, ref predicateValueKind);
                         }
                     }
                     else
                     {
-                        SetValueFromPredicate(targetEntity, nullValue, negatedCurrentAnalysisData);
+                        SetValueFromPredicate(targetEntity, nullValue, negatedCurrentAnalysisData, equals, inferInCurrentAnalysisData, inferInNegatedCurrentAnalysisData, ref predicateValueKind);
                     }
 
                     return true;
@@ -123,30 +137,58 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
                 return false;
             }
 
-            private void SetValueFromPredicate(AnalysisEntity key, NullAbstractValue value, NullAnalysisData negatedCurrentAnalysisData)
+            private void SetValueFromPredicate(
+                AnalysisEntity key,
+                NullAbstractValue value,
+                NullAnalysisData negatedCurrentAnalysisData,
+                bool equals,
+                bool inferInCurrentAnalysisData,
+                bool inferInNegatedCurrentAnalysisData,
+                ref PredicateValueKind predicateValueKind)
             {
                 var negatedValue = NegatePredicateValue(value);
                 if (CurrentAnalysisData.TryGetValue(key, out NullAbstractValue existingValue) &&
-                    IsValidValueForPredicateAnalysis(existingValue))
+                    IsValidValueForPredicateAnalysis(existingValue) &&
+                    (existingValue == NullAbstractValue.Null || value == NullAbstractValue.Null))
                 {
-                    if (negatedValue == existingValue)
+                    if (value == existingValue && equals ||
+                        negatedValue == existingValue && !equals)
                     {
-                        value = NullAbstractValue.Invalid;
-                        negatedValue = NullAbstractValue.MaybeNull;
-                    }
-                    else
-                    {
-                        Debug.Assert(value == existingValue);
+                        predicateValueKind = PredicateValueKind.AlwaysTrue;
                         negatedValue = NullAbstractValue.Invalid;
-                        value = NullAbstractValue.MaybeNull;
+                        inferInCurrentAnalysisData = false;
+                    }
+
+                    if (negatedValue == existingValue && equals ||
+                        value == existingValue && !equals)
+                    {
+                        predicateValueKind = PredicateValueKind.AlwaysFalse;
+                        value = NullAbstractValue.Invalid;
+                        inferInNegatedCurrentAnalysisData = false;
                     }
                 }
 
-                // Set value for the CurrentAnalysisData.
-                SetAbstractValue(CurrentAnalysisData, key, value);
+                if (!equals)
+                {
+                    if (value != NullAbstractValue.Invalid && negatedValue != NullAbstractValue.Invalid)
+                    {
+                        var temp = value;
+                        value = negatedValue;
+                        negatedValue = temp;
+                    }
+                }
 
-                // Set negated value for the NegatedCurrentAnalysisData.
-                SetAbstractValue(negatedCurrentAnalysisData, key, negatedValue);
+                if (inferInCurrentAnalysisData)
+                {
+                    // Set value for the CurrentAnalysisData.
+                    SetAbstractValue(CurrentAnalysisData, key, value);
+                }
+
+                if (inferInNegatedCurrentAnalysisData)
+                {
+                    // Set negated value for the NegatedCurrentAnalysisData.
+                    SetAbstractValue(negatedCurrentAnalysisData, key, negatedValue);
+                }
             }
 
             private static NullAbstractValue NegatePredicateValue(NullAbstractValue value)

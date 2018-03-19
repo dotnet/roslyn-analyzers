@@ -130,7 +130,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 }
             }
 
-            return resultBuilder.ToResult(ToResult, OperationVisitor.GetStateMap(), OperationVisitor.GetMergedDataForUnhandledThrowOperations(), cfg);
+            return resultBuilder.ToResult(ToResult, OperationVisitor.GetStateMap(),
+                OperationVisitor.GetPredicateValueKindMap(), OperationVisitor.GetMergedDataForUnhandledThrowOperations(), cfg);
         }
 
         private TAnalysisData Flow(BasicBlock block, TAnalysisData data)

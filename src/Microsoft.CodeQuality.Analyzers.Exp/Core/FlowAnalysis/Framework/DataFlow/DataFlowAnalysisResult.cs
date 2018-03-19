@@ -17,20 +17,25 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     {
         private readonly ImmutableDictionary<BasicBlock, TAnalysisResult> _basicBlockStateMap;
         private readonly ImmutableDictionary<IOperation, TAbstractAnalysisValue> _operationStateMap;
+        private readonly ImmutableDictionary<IBinaryOperation, PredicateValueKind> _predicateValueKindMap;
+
         public DataFlowAnalysisResult(
             ImmutableDictionary<BasicBlock, TAnalysisResult> basicBlockStateMap,
             ImmutableDictionary<IOperation, TAbstractAnalysisValue> operationStateMap,
+            ImmutableDictionary<IBinaryOperation, PredicateValueKind> predicateValueKindMap,
             TAnalysisResult mergedStateForUnhandledThrowOperationsOpt,
             ControlFlowGraph cfg)
         {
             _basicBlockStateMap = basicBlockStateMap;
             _operationStateMap = operationStateMap;
+            _predicateValueKindMap = predicateValueKindMap;
             MergedStateForUnhandledThrowOperationsOpt = mergedStateForUnhandledThrowOperationsOpt;
             ControlFlowGraph = cfg;
         }
 
         public TAnalysisResult this[BasicBlock block] => _basicBlockStateMap[block];
         public TAbstractAnalysisValue this[IOperation operation] => _operationStateMap[operation];
+        public PredicateValueKind GetPredicateKind(IBinaryOperation operation) => _predicateValueKindMap.TryGetValue(operation, out var valueKind) ? valueKind : PredicateValueKind.Unknown;
         public TAnalysisResult MergedStateForUnhandledThrowOperationsOpt;
         public ControlFlowGraph ControlFlowGraph { get; }
     }

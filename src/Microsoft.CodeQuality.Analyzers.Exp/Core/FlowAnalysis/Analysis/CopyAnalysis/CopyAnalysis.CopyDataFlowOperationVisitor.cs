@@ -123,41 +123,53 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
             }
 
             #region Predicate analysis
-            protected override void SetValueForEqualsOrNotEqualsComparisonOperator(IBinaryOperation operation, CopyAnalysisData negatedCurrentAnalysisData, bool equals)
+            protected override PredicateValueKind SetValueForEqualsOrNotEqualsComparisonOperator(IBinaryOperation operation, CopyAnalysisData negatedCurrentAnalysisData, bool equals)
             {
                 Debug.Assert(operation.IsComparisonOperator());
 
                 if (AnalysisEntityFactory.TryCreate(operation.LeftOperand, out AnalysisEntity leftEntity) &&
                     AnalysisEntityFactory.TryCreate(operation.RightOperand, out AnalysisEntity rightEntity))
                 {
-                    var analysisData = equals ? CurrentAnalysisData : negatedCurrentAnalysisData;
-                    var otherAnalysisData = equals ? negatedCurrentAnalysisData : CurrentAnalysisData;
-                    if (!analysisData.TryGetValue(rightEntity, out CopyAbstractValue rightValue))
+                    var predicateKind = PredicateValueKind.Unknown;
+                    if (!CurrentAnalysisData.TryGetValue(rightEntity, out CopyAbstractValue rightValue))
                     {
                         rightValue = new CopyAbstractValue(rightEntity);
                     }
                     else if (rightValue.AnalysisEntities.Contains(leftEntity))
                     {
-                        // We have "a == b && a == b" or "a != b && a != b"
-                        // For both cases, condition on right is always true and redundant.
-                        return;
+                        // We have "a == b && a == b" or "a == b && a != b"
+                        // For both cases, condition on right is always true or always false and redundant.
+                        predicateKind = equals ? PredicateValueKind.AlwaysTrue : PredicateValueKind.AlwaysFalse;
                     }
-                    else if (otherAnalysisData.TryGetValue(rightEntity, out rightValue) &&
+                    else if (negatedCurrentAnalysisData.TryGetValue(rightEntity, out rightValue) &&
                         rightValue.AnalysisEntities.Contains(leftEntity))
                     {
-                        // We have "a == b && a != b" or "a != b && a == b"
-                        // For both cases, condition on right is always false and hence CurrentAnalysisData is infeasible and values in negated are unknown
-                        foreach (var entity in rightValue.AnalysisEntities)
-                        {
-                            SetAbstractValue(CurrentAnalysisData, entity, CopyAbstractValue.Invalid, fromPredicate: true);
-                            SetAbstractValue(negatedCurrentAnalysisData, entity, CopyAbstractValue.Unknown, fromPredicate: true);
-                        }
-
-                        return;
+                        // We have "a == b || a == b" or "a == b || a != b"
+                        // For both cases, condition on right is always true or always false and redundant.
+                        predicateKind = equals ? PredicateValueKind.AlwaysFalse : PredicateValueKind.AlwaysTrue;                        
                     }
 
+                    if (predicateKind != PredicateValueKind.Unknown)
+                    {
+                        if (!equals)
+                        {
+                            // "a == b && a != b" or "a == b || a != b"
+                            // CurrentAnalysisData and negatedCurrentAnalysisData are both unknown values.
+                            foreach (var entity in rightValue.AnalysisEntities)
+                            {
+                                SetAbstractValue(CurrentAnalysisData, entity, CopyAbstractValue.Invalid, fromPredicate: true);
+                                SetAbstractValue(negatedCurrentAnalysisData, entity, CopyAbstractValue.Invalid, fromPredicate: true);
+                            }
+                        }
+
+                        return predicateKind;
+                    }
+
+                    var analysisData = equals ? CurrentAnalysisData : negatedCurrentAnalysisData;
                     SetAbstractValue(analysisData, leftEntity, rightValue, fromPredicate: true);
                 }
+
+                return PredicateValueKind.Unknown;
             }
 
             #endregion

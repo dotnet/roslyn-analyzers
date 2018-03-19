@@ -36,6 +36,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         public DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue> ToResult<TAnalysisResult, TAbstractAnalysisValue>(
             Func<BasicBlock, DataFlowAnalysisInfo<TAnalysisData>, TAnalysisResult> getResult,
             ImmutableDictionary<IOperation, TAbstractAnalysisValue> stateMap,
+            ImmutableDictionary<IBinaryOperation, PredicateValueKind> predicateValueKindMap,
             TAnalysisData mergedDataForUnhandledThrowOperations,
             ControlFlowGraph cfg)
             where TAnalysisResult: class
@@ -56,7 +57,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 mergedStateForUnhandledThrowOperations = getResult(cfg.Exit, info);
             }
 
-            return new DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue>(resultBuilder.ToImmutable(), stateMap, mergedStateForUnhandledThrowOperations, cfg);
+            return new DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue>(resultBuilder.ToImmutable(), stateMap, predicateValueKindMap, mergedStateForUnhandledThrowOperations, cfg);
         }
     }
 }

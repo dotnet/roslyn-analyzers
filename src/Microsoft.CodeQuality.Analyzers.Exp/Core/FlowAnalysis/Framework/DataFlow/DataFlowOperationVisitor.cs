@@ -23,6 +23,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         private readonly DataFlowAnalysisResult<CopyBlockAnalysisResult, CopyAbstractValue> _copyAnalysisResultOpt;
         private readonly DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> _pointsToAnalysisResultOpt;
         private readonly ImmutableDictionary<IOperation, TAbstractAnalysisValue>.Builder _valueCacheBuilder;
+        private readonly ImmutableDictionary<IBinaryOperation, PredicateValueKind>.Builder _predicateValueKindCacheBuilder;
         private readonly List<IArgumentOperation> _pendingArgumentsToReset;
         private ImmutableDictionary<IParameterSymbol, AnalysisEntity> _lazyParameterEntities;
         private ImmutableHashSet<IMethodSymbol> _lazyContractCheckMethodsForPredicateAnalysis;
@@ -89,6 +90,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             _copyAnalysisResultOpt = copyAnalysisResultOpt;
             _pointsToAnalysisResultOpt = pointsToAnalysisResultOpt;
             _valueCacheBuilder = ImmutableDictionary.CreateBuilder<IOperation, TAbstractAnalysisValue>();
+            _predicateValueKindCacheBuilder = ImmutableDictionary.CreateBuilder<IBinaryOperation, PredicateValueKind>();
             _pendingArgumentsToReset = new List<IArgumentOperation>();
             ThisOrMePointsToAbstractValue = GetThisOrMeInstancePointsToValue(owningSymbol.ContainingType);
 
@@ -215,6 +217,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         public ImmutableDictionary<IOperation, TAbstractAnalysisValue> GetStateMap() => _valueCacheBuilder.ToImmutable();
 
+        public ImmutableDictionary<IBinaryOperation, PredicateValueKind> GetPredicateValueKindMap() => _predicateValueKindCacheBuilder.ToImmutable();
+
         public TAnalysisData GetMergedDataForUnhandledThrowOperations()
         {
             if (AnalysisDataForUnhandledThrowOperations == null)
@@ -337,7 +341,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return defaultValue;
         }
 
-        protected virtual void SetValueForComparisonOperator(IBinaryOperation operation, TAnalysisData negatedCurrentAnalysisData)
+        protected virtual PredicateValueKind SetValueForComparisonOperator(IBinaryOperation operation, TAnalysisData negatedCurrentAnalysisData)
         {
             Debug.Assert(PredicateAnalysis);
             Debug.Assert(operation.IsComparisonOperator());
@@ -346,17 +350,18 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             {
                 case BinaryOperatorKind.Equals:
                 case BinaryOperatorKind.ObjectValueEquals:
-                    SetValueForEqualsOrNotEqualsComparisonOperator(operation, negatedCurrentAnalysisData, equals: true);
-                    return;
+                    return SetValueForEqualsOrNotEqualsComparisonOperator(operation, negatedCurrentAnalysisData, equals: true);
 
                 case BinaryOperatorKind.NotEquals:
                 case BinaryOperatorKind.ObjectValueNotEquals:
-                    SetValueForEqualsOrNotEqualsComparisonOperator(operation, negatedCurrentAnalysisData, equals: false);
-                    return;
+                    return SetValueForEqualsOrNotEqualsComparisonOperator(operation, negatedCurrentAnalysisData, equals: false);
+
+                default:
+                    return PredicateValueKind.Unknown;
             }
         }
 
-        protected virtual void SetValueForEqualsOrNotEqualsComparisonOperator(IBinaryOperation operation, TAnalysisData negatedCurrentAnalysisData, bool equals)
+        protected virtual PredicateValueKind SetValueForEqualsOrNotEqualsComparisonOperator(IBinaryOperation operation, TAnalysisData negatedCurrentAnalysisData, bool equals)
         {
             Debug.Assert(PredicateAnalysis);
             Debug.Assert(operation.IsComparisonOperator());
@@ -1148,6 +1153,32 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         public sealed override TAbstractAnalysisValue VisitBinaryOperator(IBinaryOperation operation, object argument)
         {
+            var isTopmostOperationNeedingPredicateAnalysis = PredicateAnalysis && NegatedCurrentAnalysisDataStack.Count == 0;
+            TAnalysisData savedPreviousAnalysisData = default(TAnalysisData);
+
+            void OnStartPredicateOperatorAnalysis()
+            {
+                if (isTopmostOperationNeedingPredicateAnalysis)
+                {
+                    savedPreviousAnalysisData = GetClonedCurrentAnalysisData();
+                    
+                    // Topmost predicate operator not inside a conditional expression.
+                    NegatedCurrentAnalysisDataStack.Push(GetClonedCurrentAnalysisData());
+                }
+            };
+
+            void OnEndPredicateOperatorAnalysis()
+            {
+                if (isTopmostOperationNeedingPredicateAnalysis)
+                {
+                    Debug.Assert(!ReferenceEquals(savedPreviousAnalysisData, default(TAnalysisData)));
+
+                    // Merge the CurrentAnalysisData with savedPreviousAnalysisData. 
+                    CurrentAnalysisData = MergeAnalysisData(savedPreviousAnalysisData, CurrentAnalysisData);
+                    NegatedCurrentAnalysisDataStack.Pop();
+                }
+            };
+
             if (operation.IsConditionalOpertator())
             {
                 TAnalysisData MergeConditional(TAnalysisData leftData, TAnalysisData rightData, bool negatedSense = false)
@@ -1163,14 +1194,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                         rightData;
                 };
 
-                TAnalysisData savedPreviousAnalysisData = GetClonedCurrentAnalysisData();
-
-                var isTopmostOperationNeedingPredicateAnalysis = PredicateAnalysis && NegatedCurrentAnalysisDataStack.Count == 0;
-                if (isTopmostOperationNeedingPredicateAnalysis)
-                {
-                    // Topmost conditional operator not inside a conditional expression.
-                    NegatedCurrentAnalysisDataStack.Push(GetClonedCurrentAnalysisData());
-                }
+                OnStartPredicateOperatorAnalysis();
 
                 TAbstractAnalysisValue leftValue = Visit(operation.LeftOperand, argument);
 
@@ -1187,6 +1211,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     if (operation.IsConditionalOrOpertator())
                     {
                         CurrentAnalysisData = GetClonedAnalysisData(NegatedCurrentAnalysisDataStack.Peek());
+                        leftNegatedCurrentAnalysisData = GetClonedAnalysisData(NegatedCurrentAnalysisDataStack.Peek());
                     }
                     else if (operation.IsConditionalAndOpertator())
                     {
@@ -1200,34 +1225,37 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
                 CurrentAnalysisData = MergeConditional(leftConditionalData, rightConditionalData);
 
-                if (PredicateAnalysis)
+                if (PredicateAnalysis && !isTopmostOperationNeedingPredicateAnalysis)
                 {
+                    // Update the latest NegatedCurrentAnalysisData for parent operations. 
                     TAnalysisData rightNegatedCurrentAnalysisData = NegatedCurrentAnalysisDataStack.Pop();
-                    if (!isTopmostOperationNeedingPredicateAnalysis)
-                    {
-                        // Update the latest NegatedCurrentAnalysisData for parent operations. 
-                        var mergedNegatedCurrentAnalysisData = MergeConditional(leftNegatedCurrentAnalysisData, rightNegatedCurrentAnalysisData, negatedSense: true);
-                        NegatedCurrentAnalysisDataStack.Push(mergedNegatedCurrentAnalysisData);
-                    }
-                    else
-                    {
-                        // Merge the CurrentAnalysisData with savedPreviousAnalysisData. 
-                        CurrentAnalysisData = MergeAnalysisData(savedPreviousAnalysisData, CurrentAnalysisData);
-                    }
+                    var mergedNegatedCurrentAnalysisData = MergeConditional(leftNegatedCurrentAnalysisData, rightNegatedCurrentAnalysisData, negatedSense: true);
+                    NegatedCurrentAnalysisDataStack.Push(mergedNegatedCurrentAnalysisData);
+                }
+                else
+                {
+                    OnEndPredicateOperatorAnalysis();
                 }
 
                 return ValueDomain.UnknownOrMayBeValue;
             }
 
-            var value = VisitBinaryOperatorCore(operation, argument);
-            if (NegatedCurrentAnalysisDataStack.Count > 0 &&
-                operation.IsComparisonOperator())
+            if (PredicateAnalysis && operation.IsComparisonOperator())
             {
-                Debug.Assert(PredicateAnalysis);
-                SetValueForComparisonOperator(operation, NegatedCurrentAnalysisDataStack.Peek());
+                OnStartPredicateOperatorAnalysis();
+
+                var value = VisitBinaryOperatorCore(operation, argument);
+                PredicateValueKind predicateKind = SetValueForComparisonOperator(operation, NegatedCurrentAnalysisDataStack.Peek());
+                if (predicateKind != PredicateValueKind.Unknown)
+                {
+                    _predicateValueKindCacheBuilder[operation] = predicateKind;
+                }
+
+                OnEndPredicateOperatorAnalysis();
+                return value;
             }
 
-            return value;
+            return VisitBinaryOperatorCore(operation, argument);
         }
 
         public virtual TAbstractAnalysisValue VisitThrowCore(IThrowOperation operation, object argument)

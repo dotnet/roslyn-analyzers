@@ -7460,7 +7460,7 @@ class Test
             Command c = new Command1(param, param);
         }}
 
-        //// 3. Creation in else: non-const in left, non-const in right.
+        // 3. Creation in else: non-const in left, non-const in right.
         if (param != str && param != str2)
         {{
         }}

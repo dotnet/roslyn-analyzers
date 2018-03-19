@@ -363,15 +363,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             throw new NotImplementedException();
         }
 
-        [Conditional("DEBUG")]
-        protected void AssertValidPredicateAnalysisValue(TAbstractAnalysisValue value)
-        {
-            Debug.Assert(PredicateAnalysis);
-            Debug.Assert(NegatedCurrentAnalysisDataStack.Count > 0);
-            Debug.Assert(!ReferenceEquals(value, ValueDomain.Bottom));
-            Debug.Assert(!ReferenceEquals(value, ValueDomain.UnknownOrMayBeValue));
-        }
-
         #endregion region
 
         #region Helper methods to handle initialization/assignment operations
@@ -1189,11 +1180,18 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 {
                     leftNegatedCurrentAnalysisData = GetClonedAnalysisData(NegatedCurrentAnalysisDataStack.Peek());
 
-                    // For conditional or ('||'), we execute the right operand only if left operand condition is false.
-                    // So we use the current NegatedCurrentAnalysisData as both the CurrentAnalysisData and the current NegatedCurrentAnalysisData.
+                    // 1. For conditional or ('||'), we execute the right operand only if left operand condition is false.
+                    //    So we use the current NegatedCurrentAnalysisData as both the CurrentAnalysisData and the current NegatedCurrentAnalysisData.
+                    // 2. For conditional and ('&&'), we execute the right operand only if left operand condition is true.
+                    //    So we use the CurrentAnalysisData as both the CurrentAnalysisData and the current NegatedCurrentAnalysisData.
                     if (operation.IsConditionalOrOpertator())
                     {
                         CurrentAnalysisData = GetClonedAnalysisData(NegatedCurrentAnalysisDataStack.Peek());
+                    }
+                    else if (operation.IsConditionalAndOpertator())
+                    {
+                        NegatedCurrentAnalysisDataStack.Pop();
+                        NegatedCurrentAnalysisDataStack.Push(GetClonedCurrentAnalysisData());
                     }
                 }
 

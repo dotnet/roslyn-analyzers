@@ -7460,26 +7460,8 @@ class Test
             Command c = new Command1(param, param);
         }}
 
-        // 3. Creation in else: non-const in left, non-const in right.
+        //// 3. Creation in else: non-const in left, non-const in right.
         if (param != str && param != str2)
-        {{
-        }}
-        else
-        {{
-            Command c = new Command1(param, param);
-        }}
-
-        // 4. Creation in else: non-const in left, non-const different variable in right.
-        if (param != str && param2 != str2)
-        {{
-        }}
-        else
-        {{
-            Command c = new Command1(param, param);
-        }}
-
-        // 5. Creation in else: negation of non-const in left, maybe-const in right.
-        if (str2 != param && param == strMayBeConst)
         {{
         }}
         else
@@ -7518,18 +7500,6 @@ Module Test
 
         ' 3. Creation in else: non-const in left, non-const in right.
         If str2 <> param AndAlso param <> str Then
-        Else
-            Dim c As New Command1(param, param)
-        End If
-        
-        ' 4. Creation in else: non-const in left, non-const differen variable in right.
-        If str2 <> param AndAlso param2 <> str Then
-        Else
-            Dim c As New Command1(param, param)
-        End If
-        
-        ' 5. Creation in else: negation of non-const in left, maybe-const in right.
-        If str2 <> param AndAlso param = strMayBeConst Then
         Else
             Dim c As New Command1(param, param)
         End If
@@ -7579,7 +7549,7 @@ class Test
         }}
         else
         {{
-            Command c = new Command1(param, param);
+            Command c = new Command2(param, param); // Diagnostic where left of '&&' is true and right of '&&' is false.
         }}
 
         // 3. Creation in if and else: maybe-const in left, negation of non-const in right.
@@ -7591,15 +7561,39 @@ class Test
         {{
             Command c = new Command2(param, param); // Diagnostic (if left is false, param maybe non-const)
         }}
+
+        // 4. Creation in else: non-const in left, non-const different variable in right.
+        if (param != str && param2 != str2)
+        {{
+        }}
+        else
+        {{
+            Command c = new Command2(param, param); // Diagnostic (if left is true and right is false, param maybe non-const)
+        }}
+
+        // 5. Creation in else: negation of non-const in left, maybe-const in right.
+        if (str2 != param && param == strMayBeConst)
+        {{
+        }}
+        else
+        {{
+            Command c = new Command2(param, param); // Diagnostic (if left is true and right is false, param maybe non-const)
+        }}
     }}
 }}
 ",
             // Test0.cs(117,25): warning CA2100: Review if the query string passed to 'Command2.Command2(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(117, 25, "Command2.Command2(string cmd, string parameter2)", "M1"),
+            // Test0.cs(121,25): warning CA2100: Review if the query string passed to 'Command2.Command2(string cmd, string parameter2)' in 'M1', accepts any user input.
+            GetCSharpResultAt(121, 25, "Command2.Command2(string cmd, string parameter2)", "M1"),
             // Test0.cs(127,25): warning CA2100: Review if the query string passed to 'Command2.Command2(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(127, 25, "Command2.Command2(string cmd, string parameter2)", "M1"),
             // Test0.cs(131,25): warning CA2100: Review if the query string passed to 'Command2.Command2(string cmd, string parameter2)' in 'M1', accepts any user input.
-            GetCSharpResultAt(131, 25, "Command2.Command2(string cmd, string parameter2)", "M1"));
+            GetCSharpResultAt(131, 25, "Command2.Command2(string cmd, string parameter2)", "M1"),
+            // Test0.cs(140, 25): warning CA2100: Review if the query string passed to 'Command2.Command2(string cmd, string parameter2)' in 'M1', accepts any user input.
+            GetCSharpResultAt(140, 25, "Command2.Command2(string cmd, string parameter2)", "M1"),
+            // Test0.cs(149,25): warning CA2100: Review if the query string passed to 'Command2.Command2(string cmd, string parameter2)' in 'M1', accepts any user input.
+            GetCSharpResultAt(149, 25, "Command2.Command2(string cmd, string parameter2)", "M1"));
 
             VerifyBasic($@"
 {SetupCodeBasic}
@@ -7633,7 +7627,7 @@ Module Test
         If str2 <> param AndAlso param = strMayBeConst Then
             Dim c As New Command2(param, param) ' Diagnostic
         Else
-            Dim c As New Command1(param, param)
+            Dim c As New Command2(param, param) ' Diagnostic where left of 'AndAlso' is true and right of 'AndAlso' is false.
         End If
 
         ' 3. Creation in if and else: maybe-const in left, negation of non-const in right.
@@ -7642,14 +7636,32 @@ Module Test
         Else
             Dim c As New Command2(param, param) ' Diagnostic (if left is false, param maybe non-const)
         End If
+
+        ' 4. Creation in else: non-const in left, non-const differen variable in right.
+        If str2 <> param AndAlso param2 <> str Then
+        Else
+            Dim c As New Command2(param, param) ' Diagnostic (if left is true and right is false, param maybe non-const)
+        End If
+        
+        ' 5. Creation in else: negation of non-const in left, maybe-const in right.
+        If str2 <> param AndAlso param = strMayBeConst Then
+        Else
+            Dim c As New Command2(param, param) ' Diagnostic (if left is true and right is false, param maybe non-const)
+        End If
     End Sub
 End Module",
             // Test0.vb(151,22): warning CA2100: Review if the query string passed to 'Sub Command2.New(cmd As String, parameter2 As String)' in 'M1', accepts any user input.
             GetBasicResultAt(151, 22, "Sub Command2.New(cmd As String, parameter2 As String)", "M1"),
+            // Test0.vb(153,22): warning CA2100: Review if the query string passed to 'Sub Command2.New(cmd As String, parameter2 As String)' in 'M1', accepts any user input.
+            GetBasicResultAt(153, 22, "Sub Command2.New(cmd As String, parameter2 As String)", "M1"),
             // Test0.vb(158,22): warning CA2100: Review if the query string passed to 'Sub Command2.New(cmd As String, parameter2 As String)' in 'M1', accepts any user input.
             GetBasicResultAt(158, 22, "Sub Command2.New(cmd As String, parameter2 As String)", "M1"),
             // Test0.vb(160,22): warning CA2100: Review if the query string passed to 'Sub Command2.New(cmd As String, parameter2 As String)' in 'M1', accepts any user input.
-            GetBasicResultAt(160, 22, "Sub Command2.New(cmd As String, parameter2 As String)", "M1"));
+            GetBasicResultAt(160, 22, "Sub Command2.New(cmd As String, parameter2 As String)", "M1"),
+            // Test0.vb(166,22): warning CA2100: Review if the query string passed to 'Sub Command2.New(cmd As String, parameter2 As String)' in 'M1', accepts any user input.
+            GetBasicResultAt(166, 22, "Sub Command2.New(cmd As String, parameter2 As String)", "M1"),
+            // Test0.vb(172,22): warning CA2100: Review if the query string passed to 'Sub Command2.New(cmd As String, parameter2 As String)' in 'M1', accepts any user input.
+            GetBasicResultAt(172, 22, "Sub Command2.New(cmd As String, parameter2 As String)", "M1"));
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
@@ -8020,7 +8032,7 @@ class Test
 
         if (param == strConst && !(strConst2 == param || param == strMayBeNonConst))
         {{
-            Command c = new Command3(param, param);
+            Command c = new Command3(param, param);   // No diagnostic here as first condition ensures param == strConst.
         }}
         else
         {{
@@ -8040,8 +8052,6 @@ class Test
 ",
             // Test0.cs(142,25): warning CA2100: Review if the query string passed to 'Command2.Command2(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(142, 25, "Command2.Command2(string cmd, string parameter2)", "M1"),
-            // Test0.cs(147,25): warning CA2100: Review if the query string passed to 'Command3.Command3(string cmd, string parameter2)' in 'M1', accepts any user input.
-            GetCSharpResultAt(147, 25, "Command3.Command3(string cmd, string parameter2)", "M1"),
             // Test0.cs(151,25): warning CA2100: Review if the query string passed to 'Command4.Command4(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(151, 25, "Command4.Command4(string cmd, string parameter2)", "M1"),
             // Test0.cs(160,25): warning CA2100: Review if the query string passed to 'Command6.Command6(string cmd, string parameter2)' in 'M1', accepts any user input.
@@ -8105,7 +8115,7 @@ Module Test
         End If
 
         If param = strConst AndAlso Not(strConst2 = param OrElse param = strMayBeNonConst) Then
-            Dim c As Command = New Command3(param, param)
+            Dim c As Command = New Command3(param, param)   ' No diagnostic here as first condition ensures param = strConst.
         Else
             Dim c As Command = New Command4(param, param)
         End If
@@ -8119,8 +8129,6 @@ Module Test
 End Module",
             // Test0.vb(175,32): warning CA2100: Review if the query string passed to 'Sub Command2.New(cmd As String, parameter2 As String)' in 'M1', accepts any user input.
             GetBasicResultAt(175, 32, "Sub Command2.New(cmd As String, parameter2 As String)", "M1"),
-            // Test0.vb(179,32): warning CA2100: Review if the query string passed to 'Sub Command3.New(cmd As String, parameter2 As String)' in 'M1', accepts any user input.
-            GetBasicResultAt(179, 32, "Sub Command3.New(cmd As String, parameter2 As String)", "M1"),
             // Test0.vb(181,32): warning CA2100: Review if the query string passed to 'Sub Command4.New(cmd As String, parameter2 As String)' in 'M1', accepts any user input.
             GetBasicResultAt(181, 32, "Sub Command4.New(cmd As String, parameter2 As String)", "M1"),
             // Test0.vb(187,32): warning CA2100: Review if the query string passed to 'Sub Command6.New(cmd As String, parameter2 As String)' in 'M1', accepts any user input.

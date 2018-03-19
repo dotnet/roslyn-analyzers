@@ -45,8 +45,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
             protected override void ResetCurrentAnalysisData(StringContentAnalysisData newAnalysisDataOpt = null) => ResetAnalysisData(CurrentAnalysisData, newAnalysisDataOpt);
 
             #region Predicate analysis
-            private static bool IsValidValueForPredicateAnalysis(StringContainsNonLiteralState value) => value == StringContainsNonLiteralState.No;
-
             protected override void SetValueForEqualsOrNotEqualsComparisonOperator(IBinaryOperation operation, StringContentAnalysisData negatedCurrentAnalysisData, bool equals)
             {
                 Debug.Assert(operation.IsComparisonOperator());

@@ -137,12 +137,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
                 }
             }
 
-            private void ValidateOperation(IOperation operation)
-            {
-                var notValidatedLocations = GetNotValidatedLocations(operation);
-                SetAbstractValue(notValidatedLocations, ParameterValidationAbstractValue.Validated);
-            }
-
             private IEnumerable<AbstractLocation> GetNotValidatedLocations(IOperation operation)
             {
                 var pointsToLocation = GetPointsToAbstractValue(operation);

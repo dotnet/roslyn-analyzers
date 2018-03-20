@@ -1,13 +1,9 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Operations.ControlFlow;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
@@ -36,22 +32,22 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
             Debug.Assert(topmostBlock != null);
 
             var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
-            (DataFlowAnalysisResult<ParameterValidationBlockAnalysisResult, ParameterValidationAbstractValue> parameterValidationAnalysisResult, ImmutableDictionary<IParameterSymbol, SyntaxNode> hazardousParameterUsages) GetOrComputeLocationAnalysisResultForInvokedMethod(IBlockOperation methodTopmostBlock, IMethodSymbol method)
+            ParameterValidationResultWithHazardousUsages GetOrComputeLocationAnalysisResultForInvokedMethod(IBlockOperation methodTopmostBlock, IMethodSymbol method)
             {
                 // getOrComputeLocationAnalysisResultOpt = null, so we do interprocedural analysis only one level down.
                 Debug.Assert(methodTopmostBlock != null);
                 return GetOrComputeResult(methodTopmostBlock, method, wellKnownTypeProvider, getOrComputeLocationAnalysisResultOpt: null, pessimisticAnalysis: pessimisticAnalysis);
             };
 
-            var result = GetOrComputeResult(topmostBlock, owningSymbol, wellKnownTypeProvider, GetOrComputeLocationAnalysisResultForInvokedMethod, pessimisticAnalysis);
-            return result.hazardousParameterUsages;
+            ParameterValidationResultWithHazardousUsages result = GetOrComputeResult(topmostBlock, owningSymbol, wellKnownTypeProvider, GetOrComputeLocationAnalysisResultForInvokedMethod, pessimisticAnalysis);
+            return result.HazardousParameterUsages;
         }
 
-        private static (DataFlowAnalysisResult<ParameterValidationBlockAnalysisResult, ParameterValidationAbstractValue> parameterValidationAnalysisResult, ImmutableDictionary<IParameterSymbol, SyntaxNode> hazardousParameterUsages) GetOrComputeResult(
+        private static ParameterValidationResultWithHazardousUsages GetOrComputeResult(
             IOperation topmostBlock,
             ISymbol owningSymbol,
             WellKnownTypeProvider wellKnownTypeProvider,
-            Func<IBlockOperation, IMethodSymbol, (DataFlowAnalysisResult<ParameterValidationBlockAnalysisResult, ParameterValidationAbstractValue>, ImmutableDictionary<IParameterSymbol, SyntaxNode>)> getOrComputeLocationAnalysisResultOpt,
+            Func<IBlockOperation, IMethodSymbol, ParameterValidationResultWithHazardousUsages> getOrComputeLocationAnalysisResultOpt,
             bool pessimisticAnalysis)
         {
             var cfg = ControlFlowGraph.Create(topmostBlock);
@@ -63,13 +59,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
             return GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, nullAnalysisResult, pointsToAnalysisResult, getOrComputeLocationAnalysisResultOpt, pessimisticAnalysis);
         }
 
-        private static (DataFlowAnalysisResult<ParameterValidationBlockAnalysisResult, ParameterValidationAbstractValue> parameterValidationAnalysisResult, ImmutableDictionary<IParameterSymbol, SyntaxNode> hazardousParameterUsages) GetOrComputeResult(
+        private static ParameterValidationResultWithHazardousUsages GetOrComputeResult(
             ControlFlowGraph cfg,
             ISymbol owningSymbol,
             WellKnownTypeProvider wellKnownTypeProvider,
             DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResult,
             DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResult,
-            Func<IBlockOperation, IMethodSymbol, (DataFlowAnalysisResult<ParameterValidationBlockAnalysisResult, ParameterValidationAbstractValue>, ImmutableDictionary<IParameterSymbol, SyntaxNode>)> getOrComputeLocationAnalysisResultOpt,
+            Func<IBlockOperation, IMethodSymbol, ParameterValidationResultWithHazardousUsages> getOrComputeLocationAnalysisResultOpt,
             bool pessimisticAnalysis)
         {
             var operationVisitor = new ParameterValidationDataFlowOperationVisitor(ParameterValidationAbstractValueDomain.Default,
@@ -86,7 +82,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
                 data = Flow(newOperationVisitor, block, data);
             }
 
-            return (analysisResult, newOperationVisitor.HazardousParameterUsages);
+            return new ParameterValidationResultWithHazardousUsages(analysisResult, newOperationVisitor.HazardousParameterUsages);
         }
 
         internal override ParameterValidationBlockAnalysisResult ToResult(BasicBlock basicBlock, DataFlowAnalysisInfo<ParameterValidationAnalysisData> blockAnalysisData) => new ParameterValidationBlockAnalysisResult(basicBlock, blockAnalysisData);

@@ -22,14 +22,14 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
         /// </summary>
         private sealed class ParameterValidationDataFlowOperationVisitor : AbstractLocationDataFlowOperationVisitor<ParameterValidationAnalysisData, ParameterValidationAbstractValue>
         {
-            private readonly Func<IBlockOperation, IMethodSymbol, (DataFlowAnalysisResult<ParameterValidationBlockAnalysisResult, ParameterValidationAbstractValue> parameterValidationAnalysisResult, ImmutableDictionary<IParameterSymbol, SyntaxNode> hazardousParameterUsages)> _getOrComputeLocationAnalysisResultOpt;
+            private readonly Func<IBlockOperation, IMethodSymbol, ParameterValidationResultWithHazardousUsages> _getOrComputeLocationAnalysisResultOpt;
             private readonly ImmutableDictionary<IParameterSymbol, SyntaxNode>.Builder _hazardousParameterUsageBuilderOpt;
 
             public ParameterValidationDataFlowOperationVisitor(
                 ParameterValidationAbstractValueDomain valueDomain,
                 ISymbol owningSymbol,
                 WellKnownTypeProvider wellKnownTypeProvider,
-                Func<IBlockOperation, IMethodSymbol, (DataFlowAnalysisResult<ParameterValidationBlockAnalysisResult, ParameterValidationAbstractValue>, ImmutableDictionary<IParameterSymbol, SyntaxNode>)> getOrComputeLocationAnalysisResultOpt,
+                Func<IBlockOperation, IMethodSymbol, ParameterValidationResultWithHazardousUsages> getOrComputeLocationAnalysisResultOpt,
                 DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> nullAnalysisResult,
                 DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResult,
                 bool pessimisticAnalysis,
@@ -278,9 +278,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
                                 var methodTopmostBlock = targetMethod.GetTopmostOperationBlock(WellKnownTypeProvider.Compilation);
                                 if (methodTopmostBlock != null)
                                 {
-                                    var invokedMethodAnalysisResult = _getOrComputeLocationAnalysisResultOpt(methodTopmostBlock, targetMethod);
-                                    var invokedMethodLocationAnalysisResult = invokedMethodAnalysisResult.parameterValidationAnalysisResult;
-                                    var hazardousParameterUsagesInInvokedMethod = invokedMethodAnalysisResult.hazardousParameterUsages;
+                                    ParameterValidationResultWithHazardousUsages invokedMethodAnalysisResult = _getOrComputeLocationAnalysisResultOpt(methodTopmostBlock, targetMethod);
+                                    var invokedMethodLocationAnalysisResult = invokedMethodAnalysisResult.ParameterValidationAnalysisResult;
+                                    var hazardousParameterUsagesInInvokedMethod = invokedMethodAnalysisResult.HazardousParameterUsages;
                                     if (invokedMethodLocationAnalysisResult != null)
                                     {
                                         Debug.Assert(hazardousParameterUsagesInInvokedMethod != null);

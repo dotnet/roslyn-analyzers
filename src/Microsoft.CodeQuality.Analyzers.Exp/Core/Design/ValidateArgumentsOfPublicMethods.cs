@@ -52,7 +52,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Design
                     }
 
                     // Bail out early if we have no parameter references in the method body. 
-                    if (!operationBlockContext.OperationBlocks.HasAnyOperationDescendant<IParameterReferenceOperation>())
+                    if (!operationBlockContext.OperationBlocks.HasAnyOperationDescendant(OperationKind.ParameterReference))
                     {
                         return;
                     }

@@ -104,7 +104,7 @@
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
         <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
-        <target state="needs-review-translation">Typ „{0}” zawiera pola możliwe do likwidacji, lecz sam nie jest możliwy do likwidacji</target>
+        <target state="translated">Typ „{0}” zawiera pola możliwe do likwidacji („{1}”), ale sam nie jest możliwy do likwidacji</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">

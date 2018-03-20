@@ -104,7 +104,7 @@
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
         <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
-        <target state="needs-review-translation">'{0}' türü atılabilir alanlar içeriyor ancak atılabilir değil</target>
+        <target state="translated">'{0}' türü '{1}' atılabilir alanlarını içeriyor ancak atılabilir değil</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">

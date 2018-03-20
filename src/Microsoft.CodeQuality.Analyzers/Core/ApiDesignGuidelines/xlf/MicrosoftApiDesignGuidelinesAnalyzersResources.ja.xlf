@@ -104,7 +104,7 @@
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
         <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
-        <target state="needs-review-translation">型 '{0}' は破棄可能なフィールドを所有しますが、破棄可能ではありません</target>
+        <target state="translated">型 '{0}' は破棄可能なフィールド '{1}' を所有しますが、破棄可能ではありません</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">

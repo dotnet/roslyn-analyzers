@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesDescription">
         <source>SQL queries that directly use user input can be vulnerable to SQL injection attacks. Review this SQL query for potential vulnerabilities, and consider using a parameterized SQL query.</source>
-        <target state="new">SQL queries that directly use user input can be vulnerable to SQL injection attacks. Review this SQL query for potential vulnerabilities, and consider using a parameterized SQL query.</target>
+        <target state="translated">Consultas SQL que usam diretamente a entrada do usuário podem ser vulneráveis a ataques de injeção de SQL. Examine essa consulta SQL para verificar se há vulnerabilidades potenciais e considere o uso de uma consulta SQL parametrizada.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesMessageNoNonLiterals">
         <source>Review if the query string passed to '{0}' in '{1}', accepts any user input.</source>
-        <target state="new">Review if the query string passed to '{0}' in '{1}', accepts any user input.</target>
+        <target state="translated">Examine se a cadeia de caracteres de consulta passada para '{0}' em '{1}' aceita uma entrada do usuário.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesTitle">
         <source>Review SQL queries for security vulnerabilities</source>
-        <target state="new">Review SQL queries for security vulnerabilities</target>
+        <target state="translated">Examinar consultas SQL para verificar se há vulnerabilidades de segurança</target>
         <note />
       </trans-unit>
     </body>

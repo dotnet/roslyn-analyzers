@@ -104,7 +104,7 @@
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
         <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
-        <target state="needs-review-translation">Тип "{0}" владеет высвобождаемыми полями, но не является высвобождаемым</target>
+        <target state="translated">Тип "{0}" владеет высвобождаемыми полями "{1}", но не является высвобождаемым</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">

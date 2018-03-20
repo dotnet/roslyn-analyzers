@@ -104,7 +104,7 @@
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
         <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
-        <target state="needs-review-translation">삭제 가능한 필드가 있는 '{0}' 형식을 삭제할 수 없습니다.</target>
+        <target state="translated">삭제 가능한 필드 '{1}'이(가) 있는 '{0}' 형식을 삭제할 수 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">

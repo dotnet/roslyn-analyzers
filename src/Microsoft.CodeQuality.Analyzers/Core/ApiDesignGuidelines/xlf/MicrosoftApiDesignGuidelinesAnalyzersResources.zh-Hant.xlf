@@ -104,7 +104,7 @@
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
         <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
-        <target state="needs-review-translation">類型 '{0}' 擁有可處置的欄位，但其本身並非可處置</target>
+        <target state="translated">類型 '{0}' 擁有可處置的欄位 '{1}' 但其本身並非可處置項目</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">

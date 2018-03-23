@@ -1,3 +1,13 @@
+### CA1303: Do not pass literals as localized parameters ###
+
+A method passes a string literal as a parameter to a constructor or method in the .NET Framework class library and that string should be localizable.
+
+Category: Globalization
+
+Severity: Warning
+
+Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1303-do-not-pass-literals-as-localized-parameters](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1303-do-not-pass-literals-as-localized-parameters)
+
 ### CA2000: Dispose objects before losing scope ###
 
 A local object of a IDisposable type is created but the object is not disposed before all references to the object are out of scope.

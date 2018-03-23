@@ -64,11 +64,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
             protected override NullAbstractValue GetDefaultValueForParameterOnExit(ITypeSymbol parameterType)
                 => parameterType.IsValueType ? NullAbstractValue.NotNull : NullAbstractValue.MaybeNull;
 
-            protected override NullAbstractValue ComputeAnalysisValueForReferenceOperation(IOperation operation, NullAbstractValue defaultValue)
-            {
-                return base.ComputeAnalysisValueForReferenceOperation(operation, defaultValue);
-            }
-
             #region Predicate analysis
             private static bool IsValidValueForPredicateAnalysis(NullAbstractValue value)
             {

@@ -363,8 +363,8 @@
   <data name="CallGCSuppressFinalizeCorrectlyMessageOutsideDispose" xml:space="preserve">
     <value>{0} calls {1}, a method that is typically only called within an implementation of 'IDisposable.Dispose'. Refer to the IDisposable pattern for more information.</value>
   </data>
-  <data name="InstantiateArgumentExceptionsCorrectlyTitle" xml:space="preserve">
-    <value>Instantiate argument exceptions correctly</value>
+  <data name="InstantiateArgumentExceptionsCorrectlyCodeFixIncorrectMessage" xml:space="preserve">
+    <value>Pass parameter name in the correct position</value>
   </data>
   <data name="InstantiateArgumentExceptionsCorrectlyDescription" xml:space="preserve">
     <value>A call is made to the default (parameterless) constructor of an exception type that is or derives from ArgumentException, or an incorrect string argument is passed to a parameterized constructor of an exception type that is or derives from ArgumentException.</value>
@@ -380,5 +380,20 @@
   </data>
   <data name="UseArrayEmpty" xml:space="preserve">
     <value>Use Array.Empty</value>
+  </data>
+  <data name="InstantiateArgumentExceptionsCorrectlyCodeFixIncorrectParameterName" xml:space="preserve">
+    <value>Pass message in the correct position</value>
+  </data>
+  <data name="InstantiateArgumentExceptionsCorrectlyCodeFixNoArguments" xml:space="preserve">
+    <value>Call {0} constructor</value>
+  </data>
+  <data name="InstantiateArgumentExceptionsCorrectlyTitle" xml:space="preserve">
+    <value>Instantiate ArgumentExceptions correctly</value>
+  </data>
+  <data name="InstantiateArgumentExceptionsCorrectlyCodeFixSwappedMessageAndParameterName" xml:space="preserve">
+    <value>Swap message and parameter name</value>
+  </data>
+  <data name="InstantiateArgumentExceptionsCorrectlyMessageSwappedMessageAndParameterName" xml:space="preserve">
+    <value>Method {0} confuses the {1} and {2} arguments passed to the {3} constructor.</value>
   </data>
 </root>

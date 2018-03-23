@@ -412,11 +412,6 @@
         <target state="translated">{0} は、通常 'IDisposable.Dispose' の実装内でのみ呼び出されるメソッド {1} を呼び出しています。詳細については、IDisposable パターンを参照してください。</target>
         <note />
       </trans-unit>
-      <trans-unit id="InstantiateArgumentExceptionsCorrectlyTitle">
-        <source>Instantiate argument exceptions correctly</source>
-        <target state="translated">引数の例外を正しくインスタンス化します</target>
-        <note />
-      </trans-unit>
       <trans-unit id="InstantiateArgumentExceptionsCorrectlyDescription">
         <source>A call is made to the default (parameterless) constructor of an exception type that is or derives from ArgumentException, or an incorrect string argument is passed to a parameterized constructor of an exception type that is or derives from ArgumentException.</source>
         <target state="translated">ArgumentException またはそれから派生した例外の種類の既定の (パラメーターのない) コンストラクターに対して呼び出しが行われます。または、正しくない文字列引数が、ArgumentException またはそれから派生した例外の種類のパラメーター化されたコンストラクターに渡されます。</target>
@@ -440,6 +435,36 @@
       <trans-unit id="UseArrayEmpty">
         <source>Use Array.Empty</source>
         <target state="translated">Array.Empty を使用します</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstantiateArgumentExceptionsCorrectlyCodeFixIncorrectMessage">
+        <source>Pass parameter name in the correct position</source>
+        <target state="new">Pass parameter name in the correct position</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstantiateArgumentExceptionsCorrectlyCodeFixIncorrectParameterName">
+        <source>Pass message in the correct position</source>
+        <target state="new">Pass message in the correct position</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstantiateArgumentExceptionsCorrectlyCodeFixNoArguments">
+        <source>Call {0} constructor</source>
+        <target state="new">Call {0} constructor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstantiateArgumentExceptionsCorrectlyTitle">
+        <source>Instantiate ArgumentExceptions correctly</source>
+        <target state="new">Instantiate ArgumentExceptions correctly</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstantiateArgumentExceptionsCorrectlyCodeFixSwappedMessageAndParameterName">
+        <source>Swap message and parameter name</source>
+        <target state="new">Swap message and parameter name</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstantiateArgumentExceptionsCorrectlyMessageSwappedMessageAndParameterName">
+        <source>Method {0} confuses the {1} and {2} arguments passed to the {3} constructor.</source>
+        <target state="new">Method {0} confuses the {1} and {2} arguments passed to the {3} constructor.</target>
         <note />
       </trans-unit>
     </body>

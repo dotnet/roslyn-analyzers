@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading;
 using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities.Extensions
@@ -14,6 +15,11 @@ namespace Analyzer.Utilities.Extensions
             }
 
             return model.GetDeclaredSymbol(node) ?? model.GetSymbolInfo(node).Symbol;
+        }
+
+        public static IMethodSymbol GetContainingMethodSymbol(this SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            return (IMethodSymbol)semanticModel.GetEnclosingSymbol(node.SpanStart, cancellationToken);
         }
     }
 }

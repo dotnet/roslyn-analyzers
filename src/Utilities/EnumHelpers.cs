@@ -1,14 +1,21 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
-namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.Helpers
+namespace Analyzer.Utilities
 {
     internal static class EnumHelpers
     {
+        internal static TEnum Parse<TEnum>(string value, bool ignoreCase = false)
+            where TEnum : struct
+        {
+            return (TEnum)Enum.Parse(typeof(TEnum), value, ignoreCase);
+        }
+
         internal static bool TryConvertToUInt64(object value, SpecialType specialType, out ulong convertedValue)
         {
             bool success = false;

@@ -10,19 +10,28 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     /// It stores:
     ///  (1) Analysis values for all operations in the graph and
     ///  (2) <see cref="AbstractBlockAnalysisResult{TAnalysisData, TAbstractAnalysisValue}"/> for every basic block in the graph.
+    ///  (3) Merged analysis state for all the unhandled throw operations in the graph.
     /// </summary>
     internal class DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue>
         where TAnalysisResult: class
     {
         private readonly ImmutableDictionary<BasicBlock, TAnalysisResult> _basicBlockStateMap;
         private readonly ImmutableDictionary<IOperation, TAbstractAnalysisValue> _operationStateMap;
-        public DataFlowAnalysisResult(ImmutableDictionary<BasicBlock, TAnalysisResult> basicBlockStateMap, ImmutableDictionary<IOperation, TAbstractAnalysisValue> operationStateMap)
+        public DataFlowAnalysisResult(
+            ImmutableDictionary<BasicBlock, TAnalysisResult> basicBlockStateMap,
+            ImmutableDictionary<IOperation, TAbstractAnalysisValue> operationStateMap,
+            TAnalysisResult mergedStateForUnhandledThrowOperationsOpt,
+            ControlFlowGraph cfg)
         {
             _basicBlockStateMap = basicBlockStateMap;
             _operationStateMap = operationStateMap;
+            MergedStateForUnhandledThrowOperationsOpt = mergedStateForUnhandledThrowOperationsOpt;
+            ControlFlowGraph = cfg;
         }
 
         public TAnalysisResult this[BasicBlock block] => _basicBlockStateMap[block];
         public TAbstractAnalysisValue this[IOperation operation] => _operationStateMap[operation];
+        public TAnalysisResult MergedStateForUnhandledThrowOperationsOpt;
+        public ControlFlowGraph ControlFlowGraph { get; }
     }
 }

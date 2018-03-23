@@ -12,13 +12,13 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.UnitTests.Security
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer() => new ReviewSqlQueriesForSecurityVulnerabilities();
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new ReviewSqlQueriesForSecurityVulnerabilities();
 
-        private new DiagnosticResult GetCSharpResultAt(int line, int column, string invokedSymbol, string containingMethod) =>
+        protected new DiagnosticResult GetCSharpResultAt(int line, int column, string invokedSymbol, string containingMethod) =>
             GetCSharpResultAt(line, column, ReviewSqlQueriesForSecurityVulnerabilities.Rule, invokedSymbol, containingMethod);
 
-        private new DiagnosticResult GetBasicResultAt(int line, int column, string invokedSymbol, string containingMethod) =>
+        protected new DiagnosticResult GetBasicResultAt(int line, int column, string invokedSymbol, string containingMethod) =>
             GetBasicResultAt(line, column, ReviewSqlQueriesForSecurityVulnerabilities.Rule, invokedSymbol, containingMethod);
 
-        private const string SetupCodeCSharp = @"
+        protected const string SetupCodeCSharp = @"
 using System.Data;
 
 class Command : IDbCommand
@@ -102,7 +102,7 @@ class Adapter : IDataAdapter
     }
 }";
 
-        private const string SetupCodeBasic = @"
+        protected const string SetupCodeBasic = @"
 Imports System
 Imports System.Data
 

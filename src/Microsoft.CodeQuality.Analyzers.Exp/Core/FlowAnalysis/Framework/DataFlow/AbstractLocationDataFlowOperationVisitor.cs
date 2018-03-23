@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -17,17 +18,27 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         protected AbstractLocationDataFlowOperationVisitor(
             AbstractValueDomain<TAbstractAnalysisValue> valueDomain,
             ISymbol owningSymbol,
+            WellKnownTypeProvider wellKnownTypeProvider,
             bool pessimisticAnalysis,
+            bool predicateAnalysis,
             DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt,
+            DataFlowAnalysisResult<CopyAnalysis.CopyBlockAnalysisResult, CopyAnalysis.CopyAbstractValue> copyAnalysisResultOpt,
             DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResultOpt)
-            : base(valueDomain, owningSymbol, pessimisticAnalysis, nullAnalysisResultOpt, pointsToAnalysisResultOpt)
+            : base(valueDomain, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, predicateAnalysis,
+                  nullAnalysisResultOpt, copyAnalysisResultOpt, pointsToAnalysisResultOpt)
         {
             Debug.Assert(pointsToAnalysisResultOpt != null);
         }
 
         protected abstract TAbstractAnalysisValue GetAbstractValue(AbstractLocation location);
         protected abstract void SetAbstractValue(AbstractLocation location, TAbstractAnalysisValue value);
-        protected abstract void SetAbstractValue(PointsToAbstractValue location, TAbstractAnalysisValue value);
+        protected virtual void SetAbstractValue(PointsToAbstractValue instanceLocation, TAbstractAnalysisValue value)
+        {
+            foreach (var location in instanceLocation.Locations)
+            {
+                SetAbstractValue(location, value);
+            }
+        }
 
         protected override void ResetValueTypeInstanceAnalysisData(IOperation operation)
         {
@@ -80,10 +91,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         }
 
         protected abstract void SetValueForParameterPointsToLocationOnEntry(IParameterSymbol parameter, PointsToAbstractValue pointsToAbstractValue);
-        protected abstract void SetValueForParameterPointsToLocationOnExit(IParameterSymbol parameter, PointsToAbstractValue pointsToAbstractValue);
+        protected abstract void SetValueForParameterPointsToLocationOnExit(IParameterSymbol parameter, AnalysisEntity analysisEntity, PointsToAbstractValue pointsToAbstractValue);
 
         protected override void SetValueForParameterOnEntry(IParameterSymbol parameter, AnalysisEntity analysisEntity)
         {
+            Debug.Assert(analysisEntity.SymbolOpt == parameter);
             if (TryGetPointsToAbstractValueAtCurrentBlockExit(analysisEntity, out PointsToAbstractValue pointsToAbstractValue))
             {
                 SetValueForParameterPointsToLocationOnEntry(parameter, pointsToAbstractValue);
@@ -93,14 +105,50 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         protected override void SetValueForParameterOnExit(IParameterSymbol parameter, AnalysisEntity analysisEntity)
         {
             Debug.Assert(analysisEntity.SymbolOpt == parameter);
-            if (parameter.RefKind != RefKind.None)
+            if (TryGetPointsToAbstractValueAtCurrentBlockEntry(analysisEntity, out PointsToAbstractValue pointsToAbstractValue))
             {
-                if (TryGetPointsToAbstractValueAtCurrentBlockEntry(analysisEntity, out PointsToAbstractValue pointsToAbstractValue))
+                SetValueForParameterPointsToLocationOnExit(parameter, analysisEntity, pointsToAbstractValue);
+            }
+        }
+
+        /// <summary>
+        /// Helper method to reset analysis data for analysis locations.
+        /// If <paramref name="newAnalysisDataOpt"/> is null, all the analysis values in <paramref name="currentAnalysisDataOpt"/> are set to <see cref="ValueDomain.UnknownOrMayBeValue"/>.
+        /// Otherwise, all the key-value paris in <paramref name="newAnalysisDataOpt"/> are transfered to <paramref name="currentAnalysisDataOpt"/> and keys in <paramref name="currentAnalysisDataOpt"/> which
+        /// are not present in <paramref name="newAnalysisDataOpt"/> are set to <see cref="ValueDomain.UnknownOrMayBeValue"/>.
+        /// </summary>
+        protected void ResetAnalysisData(IDictionary<AbstractLocation, TAbstractAnalysisValue> currentAnalysisDataOpt, IDictionary<AbstractLocation, TAbstractAnalysisValue> newAnalysisDataOpt)
+        {
+            // Reset the current analysis data, while ensuring that we don't violate the monotonicity, i.e. we cannot remove any existing key from currentAnalysisData.
+            if (newAnalysisDataOpt == null)
+            {
+                // Just set the values for existing keys to ValueDomain.UnknownOrMayBeValue.
+                var keys = currentAnalysisDataOpt?.Keys.ToImmutableArray();
+                foreach (var key in keys)
                 {
-                    SetValueForParameterPointsToLocationOnExit(parameter, pointsToAbstractValue);
+                    SetAbstractValue(key, ValueDomain.UnknownOrMayBeValue);
+                }
+            }
+            else
+            {
+                // Merge the values from current and new analysis data.
+                var keys = currentAnalysisDataOpt?.Keys.Concat(newAnalysisDataOpt.Keys).ToImmutableHashSet();
+                foreach (var key in keys)
+                {
+                    var value1 = currentAnalysisDataOpt != null && currentAnalysisDataOpt.TryGetValue(key, out var currentValue) ? currentValue : ValueDomain.Bottom;
+                    var value2 = newAnalysisDataOpt.TryGetValue(key, out var newValue) ? newValue : ValueDomain.Bottom;
+                    var mergedValue = ValueDomain.Merge(value1, value2);
+                    SetAbstractValue(key, mergedValue);
                 }
             }
         }
+
+        // TODO: Remove these temporary methods once we move to compiler's CFG
+        // https://github.com/dotnet/roslyn-analyzers/issues/1567
+        #region Temporary methods to workaround lack of *real* CFG
+        protected IDictionary<AbstractLocation, TAbstractAnalysisValue> GetClonedAnalysisDataHelper(IDictionary<AbstractLocation, TAbstractAnalysisValue> analysisData)
+            => new Dictionary<AbstractLocation, TAbstractAnalysisValue>(analysisData);
+        #endregion
 
         #region Visitor methods
 

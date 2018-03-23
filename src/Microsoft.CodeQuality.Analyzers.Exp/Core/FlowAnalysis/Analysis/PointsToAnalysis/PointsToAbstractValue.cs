@@ -15,6 +15,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
     {
         public static PointsToAbstractValue Undefined = new PointsToAbstractValue(PointsToAbstractValueKind.Undefined);
         public static PointsToAbstractValue NoLocation = new PointsToAbstractValue(PointsToAbstractValueKind.NoLocation);
+        public static PointsToAbstractValue NullLocation = new PointsToAbstractValue(ImmutableHashSet.Create(AbstractLocation.Null), PointsToAbstractValueKind.Known);
         public static PointsToAbstractValue Unknown = new PointsToAbstractValue(PointsToAbstractValueKind.Unknown);
         
         private PointsToAbstractValue(ImmutableHashSet<AbstractLocation> locations, PointsToAbstractValueKind kind)

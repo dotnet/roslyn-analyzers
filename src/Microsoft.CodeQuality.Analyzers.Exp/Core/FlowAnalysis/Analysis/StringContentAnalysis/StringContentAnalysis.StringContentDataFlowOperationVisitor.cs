@@ -2,6 +2,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using Analyzer.Utilities.Extensions;
+using Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
 {
@@ -17,16 +20,21 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
             public StringContentDataFlowOperationVisitor(
                 StringContentAbstractValueDomain valueDomain,
                 ISymbol owningSymbol,
+                WellKnownTypeProvider wellKnownTypeProvider,
                 bool pessimisticAnalysis,
+                DataFlowAnalysisResult<CopyBlockAnalysisResult, CopyAbstractValue> copyAnalysisResultOpt,
                 DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt,
                 DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResultOpt)
-                : base(valueDomain, owningSymbol, pessimisticAnalysis, nullAnalysisResultOpt, pointsToAnalysisResultOpt)
+                : base(valueDomain, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, predicateAnalysis: true,
+                      nullAnalysisResultOpt: nullAnalysisResultOpt, copyAnalysisResultOpt: copyAnalysisResultOpt, pointsToAnalysisResultOpt: pointsToAnalysisResultOpt)
             {
             }
 
             protected override IEnumerable<AnalysisEntity> TrackedEntities => CurrentAnalysisData.Keys;
 
-            protected override void SetAbstractValue(AnalysisEntity analysisEntity, StringContentAbstractValue value) => CurrentAnalysisData[analysisEntity] = value;
+            protected override void SetAbstractValue(AnalysisEntity analysisEntity, StringContentAbstractValue value) => SetAbstractValue(CurrentAnalysisData, analysisEntity, value);
+
+            private static void SetAbstractValue(StringContentAnalysisData analysisData, AnalysisEntity analysisEntity, StringContentAbstractValue value) => analysisData[analysisEntity] = value;
 
             protected override bool HasAbstractValue(AnalysisEntity analysisEntity) => CurrentAnalysisData.ContainsKey(analysisEntity);
 
@@ -36,13 +44,57 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
 
             protected override void ResetCurrentAnalysisData(StringContentAnalysisData newAnalysisDataOpt = null) => ResetAnalysisData(CurrentAnalysisData, newAnalysisDataOpt);
 
+            #region Predicate analysis
+            protected override void SetValueForEqualsOrNotEqualsComparisonOperator(IBinaryOperation operation, StringContentAnalysisData negatedCurrentAnalysisData, bool equals)
+            {
+                Debug.Assert(operation.IsComparisonOperator());
+
+                var analysisData = equals ? CurrentAnalysisData : negatedCurrentAnalysisData;
+
+                // Handle 'a == "SomeString"' and 'a != "SomeString"'
+                SetValueForComparisonOperator(operation.LeftOperand, operation.RightOperand, analysisData);
+
+                // Handle '"SomeString" == a' and '"SomeString" != a'
+                SetValueForComparisonOperator(operation.RightOperand, operation.LeftOperand, analysisData);
+            }
+
+            private void SetValueForComparisonOperator(IOperation target, IOperation assignedValue, StringContentAnalysisData analysisData)
+            {
+                StringContentAbstractValue stringContentValue = GetCachedAbstractValue(assignedValue);
+                if (stringContentValue.IsLiteralState &&
+                    AnalysisEntityFactory.TryCreate(target, out AnalysisEntity targetEntity))
+                {
+                    if (analysisData.TryGetValue(targetEntity, out StringContentAbstractValue existingValue) &&
+                        existingValue.IsLiteralState)
+                    {
+                        stringContentValue = stringContentValue.IntersectLiteralValues(existingValue);
+                    }
+
+                    CopyAbstractValue copyValue = GetCopyAbstractValue(target);
+                    if (copyValue.Kind == CopyAbstractValueKind.Known)
+                    {
+                        Debug.Assert(copyValue.AnalysisEntities.Contains(targetEntity));
+                        foreach (var analysisEntity in copyValue.AnalysisEntities)
+                        {
+                            SetAbstractValue(analysisData, analysisEntity, stringContentValue);
+                        }
+                    }
+                    else
+                    {
+                        SetAbstractValue(analysisData, targetEntity, stringContentValue);
+                    }                    
+                }
+            }
+
+            #endregion
+
             // TODO: Remove these temporary methods once we move to compiler's CFG
             // https://github.com/dotnet/roslyn-analyzers/issues/1567
             #region Temporary methods to workaround lack of *real* CFG
             protected override StringContentAnalysisData MergeAnalysisData(StringContentAnalysisData value1, StringContentAnalysisData value2)
                 => StringContentAnalysisDomainInstance.Merge(value1, value2);
-            protected override StringContentAnalysisData GetClonedAnalysisData()
-                => GetClonedAnalysisData(CurrentAnalysisData);
+            protected override StringContentAnalysisData GetClonedAnalysisData(StringContentAnalysisData analysisData)
+                => GetClonedAnalysisDataHelper(analysisData);
             protected override bool Equals(StringContentAnalysisData value1, StringContentAnalysisData value2)
                 => EqualsHelper(value1, value2);
             #endregion
@@ -64,14 +116,14 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
                     }
                     else
                     {
-                        return StringContentAbstractValue.ContainsNonLiteralState;
+                        return StringContentAbstractValue.MayBeContainsNonLiteralState;
                     }
                 }
 
                 return ValueDomain.UnknownOrMayBeValue;
             }
 
-            public override StringContentAbstractValue VisitBinaryOperator(IBinaryOperation operation, object argument)
+            public override StringContentAbstractValue VisitBinaryOperatorCore(IBinaryOperation operation, object argument)
             {
                 switch (operation.OperatorKind)
                 {
@@ -82,7 +134,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
                         return leftValue.MergeBinaryAdd(rightValue);
 
                     default:
-                        return base.VisitBinaryOperator(operation, argument);
+                        return base.VisitBinaryOperatorCore(operation, argument);
                 }
             }
 

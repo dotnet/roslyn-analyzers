@@ -7,6 +7,9 @@ using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.Exp.UnitTests.Reliability
 {
+    [Trait(Traits.DataflowAnalysis, Traits.Dataflow.DisposeAnalysis)]
+    [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
+    [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
     public partial class DisposeObjectsBeforeLosingScopeTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer() => new DisposeObjectsBeforeLosingScope();
@@ -3179,7 +3182,7 @@ class Test
             // VB has no local functions.
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
         public void LocalFunctionInvocation_CapturedValueAssignedNewDisposable_Diagnostic()
         {
             VerifyCSharp(@"
@@ -3354,7 +3357,7 @@ Module Test
 End Module");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
         public void LambdaInvocation_CapturedValueAssignedNewDisposable_Diagnostic()
         {
             VerifyCSharp(@"

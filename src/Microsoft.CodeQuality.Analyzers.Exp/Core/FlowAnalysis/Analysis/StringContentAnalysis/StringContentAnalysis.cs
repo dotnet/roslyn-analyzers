@@ -23,13 +23,16 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
         public static DataFlowAnalysisResult<StringContentBlockAnalysisResult, StringContentAbstractValue> GetOrComputeResult(
             ControlFlowGraph cfg,
             ISymbol owningSymbol,
+            WellKnownTypeProvider wellKnownTypeProvider,
+            DataFlowAnalysisResult<CopyAnalysis.CopyBlockAnalysisResult, CopyAnalysis.CopyAbstractValue> copyAnalysisResultOpt,
             DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt = null,
             DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResultOpt = null,
             bool pessimisticAnalsysis = true)
         {
-            var operationVisitor = new StringContentDataFlowOperationVisitor(StringContentAbstractValueDomain.Default, owningSymbol, pessimisticAnalsysis, nullAnalysisResultOpt, pointsToAnalysisResultOpt);
+            var operationVisitor = new StringContentDataFlowOperationVisitor(StringContentAbstractValueDomain.Default, owningSymbol,
+                wellKnownTypeProvider, pessimisticAnalsysis, copyAnalysisResultOpt, nullAnalysisResultOpt, pointsToAnalysisResultOpt);
             var nullAnalysis = new StringContentAnalysis(StringContentAnalysisDomainInstance, operationVisitor);
-            return nullAnalysis.GetOrComputeResultCore(cfg);
+            return nullAnalysis.GetOrComputeResultCore(cfg, cacheResult: false);
         }
 
         internal override StringContentBlockAnalysisResult ToResult(BasicBlock basicBlock, DataFlowAnalysisInfo<StringContentAnalysisData> blockAnalysisData) => new StringContentBlockAnalysisResult(basicBlock, blockAnalysisData);

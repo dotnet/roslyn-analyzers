@@ -35,11 +35,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
                 {
                     result = NullAbstractValue.MaybeNull;
                 }
-                else if (value1 == NullAbstractValue.Undefined)
+                else if (value1 == NullAbstractValue.Invalid || value1 == NullAbstractValue.Undefined)
                 {
                     result = value2;
                 }
-                else if (value2 == NullAbstractValue.Undefined)
+                else if (value2 == NullAbstractValue.Invalid || value2 == NullAbstractValue.Undefined)
                 {
                     result = value1;
                 }

@@ -7,6 +7,9 @@ using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.Exp.UnitTests.Usage
 {
+    [Trait(Traits.DataflowAnalysis, Traits.Dataflow.DisposeAnalysis)]
+    [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
+    [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
     public partial class DisposableFieldsShouldBeDisposedTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer() => new DisposableFieldsShouldBeDisposed();

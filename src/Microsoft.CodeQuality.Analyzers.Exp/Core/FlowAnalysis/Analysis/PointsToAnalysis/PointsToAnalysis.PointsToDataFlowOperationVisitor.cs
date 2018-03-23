@@ -25,9 +25,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 PointsToAnalysisDomain pointsToAnalysisDomain,
                 PointsToAbstractValueDomain valueDomain,
                 ISymbol owningSymbol,
+                WellKnownTypeProvider wellKnownTypeProvider,
                 bool pessimisticAnalysis,
                 DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt)
-                : base(valueDomain, owningSymbol, pessimisticAnalysis, nullAnalysisResultOpt: nullAnalysisResultOpt, pointsToAnalysisResultOpt: null)
+                : base(valueDomain, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, predicateAnalysis: false, nullAnalysisResultOpt: nullAnalysisResultOpt, copyAnalysisResultOpt: null, pointsToAnalysisResultOpt: null)
             {
                 _defaultPointsToValueGenerator = defaultPointsToValueGenerator;
                 _pointsToAnalysisDomain = pointsToAnalysisDomain;
@@ -52,7 +53,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
             protected override PointsToAbstractValue GetAbstractValue(AnalysisEntity analysisEntity)
             {
-                if (analysisEntity.Type.HasValueCopySemantics())
+                if (analysisEntity.Type.IsValueType)
                 {
                     return PointsToAbstractValue.NoLocation;
                 }
@@ -68,11 +69,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
             protected override PointsToAbstractValue GetPointsToAbstractValue(IOperation operation) => base.GetCachedAbstractValue(operation);
             
-            protected override PointsToAbstractValue GetAbstractDefaultValue(ITypeSymbol type) => PointsToAbstractValue.NoLocation;
+            protected override PointsToAbstractValue GetAbstractDefaultValue(ITypeSymbol type) => type != null && type.IsValueType ? PointsToAbstractValue.NoLocation : PointsToAbstractValue.NullLocation;
 
             protected override void SetAbstractValue(AnalysisEntity analysisEntity, PointsToAbstractValue value)
             {
-                if (!analysisEntity.Type.HasValueCopySemantics())
+                if (analysisEntity.Type.IsReferenceType)
                 {
                     CurrentAnalysisData[analysisEntity] = value;
                 }
@@ -81,7 +82,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             protected override void SetValueForParameterOnEntry(IParameterSymbol parameter, AnalysisEntity analysisEntity)
             {
                 // Create a dummy PointsTo value for each reference type parameter.
-                if (!parameter.Type.HasValueCopySemantics())
+                if (parameter.Type.IsReferenceType)
                 {
                     var value = new PointsToAbstractValue(AbstractLocation.CreateSymbolLocation(parameter));
                     SetAbstractValue(analysisEntity, value);
@@ -98,21 +99,21 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             protected override PointsToAbstractValue ComputeAnalysisValueForReferenceOperation(IOperation operation, PointsToAbstractValue defaultValue)
             {
                 if (operation.Type != null &&
-                    !operation.Type.HasValueCopySemantics() &&
+                    operation.Type.IsReferenceType &&
                     AnalysisEntityFactory.TryCreate(operation, out AnalysisEntity analysisEntity))
                 {
                     return GetAbstractValue(analysisEntity);
                 }
                 else
                 {
-                    Debug.Assert(operation.Type == null || !operation.Type.HasValueCopySemantics() || defaultValue == PointsToAbstractValue.NoLocation);
+                    Debug.Assert(operation.Type == null || operation.Type.IsReferenceType || defaultValue == PointsToAbstractValue.NoLocation);
                     return defaultValue;
                 }
             }
 
             protected override PointsToAbstractValue ComputeAnalysisValueForOutArgument(AnalysisEntity analysisEntity, IArgumentOperation operation, PointsToAbstractValue defaultValue)
             {
-                if (analysisEntity.Type.HasValueCopySemantics())
+                if (analysisEntity.Type.IsValueType)
                 {
                     return PointsToAbstractValue.NoLocation;
                 }
@@ -126,8 +127,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             #region Temporary methods to workaround lack of *real* CFG
             protected override PointsToAnalysisData MergeAnalysisData(PointsToAnalysisData value1, PointsToAnalysisData value2)
                 => _pointsToAnalysisDomain.Merge(value1, value2);
-            protected override PointsToAnalysisData GetClonedAnalysisData()
-                => GetClonedAnalysisData(CurrentAnalysisData);
+            protected override PointsToAnalysisData GetClonedAnalysisData(PointsToAnalysisData analysisData)
+                => GetClonedAnalysisDataHelper(analysisData);
             protected override bool Equals(PointsToAnalysisData value1, PointsToAnalysisData value2)
                 => EqualsHelper(value1, value2);
             #endregion
@@ -138,11 +139,16 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             {
                 var value = base.DefaultVisit(operation, argument);
 
-                // Constants, operations with NullAbstractValue.Null and operations with value copy semantics (value type and strings)
-                // do not point to any location.
-                if (operation.ConstantValue.HasValue ||
-                    GetNullAbstractValue(operation) == NullAnalysis.NullAbstractValue.Null ||
-                    (operation.Type != null && operation.Type.HasValueCopySemantics()))
+                // Special handling for:
+                //  1. Null value: NullLocation
+                //  2. Constants and value types do not point to any location.
+                if (GetNullAbstractValue(operation) == NullAnalysis.NullAbstractValue.Null)
+                {
+                    Debug.Assert(operation.Type == null || operation.Type.IsReferenceType);
+                    return PointsToAbstractValue.NullLocation;
+                }
+                else if (operation.ConstantValue.HasValue ||
+                    (operation.Type != null && operation.Type.IsValueType))
                 {
                     return PointsToAbstractValue.NoLocation;
                 }
@@ -294,9 +300,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 return PointsToAbstractValue.NoLocation;
             }
 
-            public override PointsToAbstractValue VisitBinaryOperator(IBinaryOperation operation, object argument)
+            public override PointsToAbstractValue VisitBinaryOperatorCore(IBinaryOperation operation, object argument)
             {
-                var _ = base.VisitBinaryOperator(operation, argument);
+                var _ = base.VisitBinaryOperatorCore(operation, argument);
                 return PointsToAbstractValue.Unknown;
             }
 
@@ -312,15 +318,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 return PointsToAbstractValue.NoLocation;
             }
 
-            public override PointsToAbstractValue VisitThrow(IThrowOperation operation, object argument)
+            public override PointsToAbstractValue VisitThrowCore(IThrowOperation operation, object argument)
             {
-                var _ = base.VisitThrow(operation, argument);
+                var _ = base.VisitThrowCore(operation, argument);
                 return PointsToAbstractValue.NoLocation;
             }
 
             private static PointsToAbstractValue VisitInvocationCommon(IOperation operation)
             {
-                if (!operation.Type.HasValueCopySemantics())
+                if (operation.Type.IsReferenceType)
                 {
                     AbstractLocation location = AbstractLocation.CreateAllocationLocation(operation, operation.Type);
                     return new PointsToAbstractValue(location);

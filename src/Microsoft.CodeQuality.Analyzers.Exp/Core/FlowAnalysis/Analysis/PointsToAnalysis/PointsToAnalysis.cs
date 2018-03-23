@@ -12,28 +12,28 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
     /// </summary>
     internal partial class PointsToAnalysis : ForwardDataFlowAnalysis<PointsToAnalysisData, PointsToBlockAnalysisResult, PointsToAbstractValue>
     {
-        private readonly DefaultPointsToValueGenerator _defaultPointsToValueGenerator;
         public static readonly AbstractValueDomain<PointsToAbstractValue> PointsToAbstractValueDomainInstance = PointsToAbstractValueDomain.Default;
 
-        private PointsToAnalysis(PointsToAnalysisDomain analysisDomain, PointsToDataFlowOperationVisitor operationVisitor, DefaultPointsToValueGenerator defaultPointsToValueGenerator)
+        private PointsToAnalysis(PointsToAnalysisDomain analysisDomain, PointsToDataFlowOperationVisitor operationVisitor)
             : base(analysisDomain, operationVisitor)
         {
-            _defaultPointsToValueGenerator = defaultPointsToValueGenerator;
         }
 
         public static DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> GetOrComputeResult(
             ControlFlowGraph cfg,
             ISymbol owningSymbol,
+            WellKnownTypeProvider wellKnownTypeProvider,
             DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt = null,
             bool pessimisticAnalysis = true)
         {
             var defaultPointsToValueGenerator = new DefaultPointsToValueGenerator();
-            var analysisDomain = new PointsToAnalysisDomain(defaultPointsToValueGenerator, PointsToAbstractValueDomain.Default);
-            var operationVisitor = new PointsToDataFlowOperationVisitor(defaultPointsToValueGenerator, analysisDomain, PointsToAbstractValueDomain.Default, owningSymbol, pessimisticAnalysis, nullAnalysisResultOpt);
-            var pointsToAnalysis = new PointsToAnalysis(analysisDomain, operationVisitor, defaultPointsToValueGenerator);
-            return pointsToAnalysis.GetOrComputeResultCore(cfg);
+            var analysisDomain = new PointsToAnalysisDomain(defaultPointsToValueGenerator, PointsToAbstractValueDomainInstance);
+            var operationVisitor = new PointsToDataFlowOperationVisitor(analysisDomain.DefaultPointsToValueGenerator, analysisDomain,
+                PointsToAbstractValueDomain.Default, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, nullAnalysisResultOpt);
+            var pointsToAnalysis = new PointsToAnalysis(analysisDomain, operationVisitor);
+            return pointsToAnalysis.GetOrComputeResultCore(cfg, cacheResult: true);
         }
 
-        internal override PointsToBlockAnalysisResult ToResult(BasicBlock basicBlock, DataFlowAnalysisInfo<PointsToAnalysisData> blockAnalysisData) => new PointsToBlockAnalysisResult(basicBlock, blockAnalysisData, _defaultPointsToValueGenerator.GetDefaultPointsToValueMap());
+        internal override PointsToBlockAnalysisResult ToResult(BasicBlock basicBlock, DataFlowAnalysisInfo<PointsToAnalysisData> blockAnalysisData) => new PointsToBlockAnalysisResult(basicBlock, blockAnalysisData, ((PointsToAnalysisDomain)AnalysisDomain).DefaultPointsToValueGenerator.GetDefaultPointsToValueMap());
     }
 }

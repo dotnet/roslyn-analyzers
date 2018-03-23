@@ -1495,5 +1495,40 @@ End Module",
             // Test0.vb(14,17): warning CA1508: 'param' is never 'Nothing'. Remove or refactor the condition(s) to avoid dead code.
             GetBasicNeverNullResultAt(14, 17, "param", "Nothing"));
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact]
+        public void ConditionalAccessNullCoalesce_Field_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+class C
+{
+    public int X;
+}
+
+class Test
+{
+    public C _c;
+    void M1()
+    {
+        var x = _c?.X;
+        var y = _c ?? new C();
+    }
+}
+");
+
+            VerifyBasic(@"
+Class C
+    Public X As Integer
+End Class
+
+Class Test
+    Public _c As C
+    Private Sub M1()
+        Dim x = _c?.X
+        Dim x2 = If(_c, new C())
+    End Sub
+End Class");
+        }
     }
 }

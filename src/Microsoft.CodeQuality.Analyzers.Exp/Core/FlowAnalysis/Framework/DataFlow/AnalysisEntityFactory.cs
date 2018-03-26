@@ -78,6 +78,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             ISymbol symbolOpt = null;
             ImmutableArray<AbstractIndex> indices = ImmutableArray<AbstractIndex>.Empty;
             IOperation instanceOpt = null;
+            ITypeSymbol type = operation.Type;
             switch (operation)
             {
                 case ILocalReferenceOperation localReference:
@@ -122,16 +123,19 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     break;
 
                 case IInstanceReferenceOperation instanceReference:
-                    instanceOpt = instanceReference.GetInstance();
-                    if (instanceOpt == null)
+                    if (_getPointsToAbstractValueOpt != null)
                     {
-                        // Reference to this or base instance.
-                        analysisEntity = ThisOrMeInstance;
-                    }
-                    else
-                    {
-                        var instanceLocation = _getPointsToAbstractValueOpt(instanceReference);
-                        analysisEntity = AnalysisEntity.Create(instanceReference, instanceLocation);
+                        instanceOpt = instanceReference.GetInstance();
+                        if (instanceOpt == null)
+                        {
+                            // Reference to this or base instance.
+                            analysisEntity = ThisOrMeInstance;
+                        }
+                        else
+                        {
+                            var instanceLocation = _getPointsToAbstractValueOpt(instanceReference);
+                            analysisEntity = AnalysisEntity.Create(instanceReference, instanceLocation);
+                        }
                     }
                     break;
 
@@ -163,13 +167,18 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
                     break;
 
+                case IVariableDeclaratorOperation variableDeclarator:
+                    symbolOpt = variableDeclarator.Symbol;
+                    type = variableDeclarator.Symbol.Type;
+                    break;
+
                 default:
                     break;
             }
 
             if (symbolOpt != null || !indices.IsEmpty)
             {
-                TryCreate(symbolOpt, indices, operation.Type, instanceOpt, out analysisEntity);
+                TryCreate(symbolOpt, indices, type, instanceOpt, out analysisEntity);
             }
 
             _analysisEntityMap[operation] = analysisEntity;

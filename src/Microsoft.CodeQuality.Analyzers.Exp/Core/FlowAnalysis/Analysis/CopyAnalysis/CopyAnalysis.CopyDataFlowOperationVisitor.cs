@@ -3,8 +3,8 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Linq;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeAnalysis.Operations.ControlFlow;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
 {
@@ -40,11 +40,41 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
 
             protected override void SetAbstractValue(AnalysisEntity analysisEntity, CopyAbstractValue value)
             {
+                Debug.Assert(analysisEntity != null);
+                Debug.Assert(value != null);
+
                 SetAbstractValue(CurrentAnalysisData, analysisEntity, value, fromPredicate: false);
+
+                if (IsCurrentlyPerformingPredicateAnalysis)
+                {
+                    SetAbstractValue(NegatedCurrentAnalysisDataStack.Peek(), analysisEntity, value, fromPredicate: false);
+                }
             }
 
             private static void SetAbstractValue(CopyAnalysisData copyAnalysisData, AnalysisEntity analysisEntity, CopyAbstractValue value, bool fromPredicate)
             {
+                AssertValidCopyAnalysisData(copyAnalysisData);
+
+                // Don't track entities if do not know about it's instance location.
+                if (analysisEntity.HasUnknownInstanceLocation)
+                {
+                    return;
+                }
+
+                if (value.AnalysisEntities.Count > 0)
+                {
+                    if (copyAnalysisData.TryGetValue(value.AnalysisEntities.First(), out var fixedUpValue))
+                    {
+                        value = fixedUpValue;
+                    }
+
+                    var validEntities = value.AnalysisEntities.Where(entity => !entity.HasUnknownInstanceLocation).ToImmutableHashSet();
+                    if (validEntities.Count < value.AnalysisEntities.Count)
+                    {
+                        value = validEntities.Count > 0 ? new CopyAbstractValue(validEntities) : CopyAbstractValue.Unknown;
+                    }
+                }
+
                 // Handle updating the existing value if not setting the value from predicate analysis.
                 if (!fromPredicate &&
                     copyAnalysisData.TryGetValue(analysisEntity, out CopyAbstractValue existingValue))
@@ -62,6 +92,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
                         foreach (var entityToUpdate in newValueForEntitiesInOldSet.AnalysisEntities)
                         {
                             Debug.Assert(copyAnalysisData[entityToUpdate] == existingValue);
+                            Debug.Assert(newValueForEntitiesInOldSet.AnalysisEntities.Contains(entityToUpdate));
                             copyAnalysisData[entityToUpdate] = newValueForEntitiesInOldSet;
                         }
                     }
@@ -86,8 +117,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
                 var newValue = new CopyAbstractValue(newAnalysisEntities);
                 foreach (var entityToUpdate in newAnalysisEntities)
                 {
+                    Debug.Assert(newValue.AnalysisEntities.Count > 0);
+                    Debug.Assert(newValue.AnalysisEntities.Contains(entityToUpdate));
                     copyAnalysisData[entityToUpdate] = newValue;
                 }
+
+                AssertValidCopyAnalysisData(copyAnalysisData);
             }
 
             protected override void SetValueForParameterOnEntry(IParameterSymbol parameter, AnalysisEntity analysisEntity)
@@ -117,9 +152,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
 
             protected override CopyAbstractValue ComputeAnalysisValueForOutArgument(AnalysisEntity analysisEntity, IArgumentOperation operation, CopyAbstractValue defaultValue)
             {
-                var value = new CopyAbstractValue(analysisEntity);
-                SetAbstractValue(analysisEntity, value);
-                return value;
+                SetAbstractValue(analysisEntity, ValueDomain.UnknownOrMayBeValue);
+                return GetAbstractValue(analysisEntity);
             }
 
             #region Predicate analysis
@@ -127,7 +161,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
             {
                 Debug.Assert(operation.IsComparisonOperator());
 
-                if (AnalysisEntityFactory.TryCreate(operation.LeftOperand, out AnalysisEntity leftEntity) &&
+                if (GetCopyAbstractValue(operation.LeftOperand).Kind != CopyAbstractValueKind.Unknown &&
+                    GetCopyAbstractValue(operation.RightOperand).Kind != CopyAbstractValueKind.Unknown &&
+                    AnalysisEntityFactory.TryCreate(operation.LeftOperand, out AnalysisEntity leftEntity) &&
                     AnalysisEntityFactory.TryCreate(operation.RightOperand, out AnalysisEntity rightEntity))
                 {
                     var predicateKind = PredicateValueKind.Unknown;
@@ -141,8 +177,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
                         // For both cases, condition on right is always true or always false and redundant.
                         predicateKind = equals ? PredicateValueKind.AlwaysTrue : PredicateValueKind.AlwaysFalse;
                     }
-                    else if (negatedCurrentAnalysisData.TryGetValue(rightEntity, out rightValue) &&
-                        rightValue.AnalysisEntities.Contains(leftEntity))
+                    else if (negatedCurrentAnalysisData.TryGetValue(rightEntity, out var negatedRightValue) &&
+                        negatedRightValue.AnalysisEntities.Contains(leftEntity))
                     {
                         // We have "a == b || a == b" or "a == b || a != b"
                         // For both cases, condition on right is always true or always false and redundant.
@@ -189,6 +225,31 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
             public override CopyAbstractValue DefaultVisit(IOperation operation, object argument)
             {
                 var _ = base.DefaultVisit(operation, argument);
+                return CopyAbstractValue.Unknown;
+            }
+
+            public override CopyAbstractValue VisitConversion(IConversionOperation operation, object argument)
+            {
+                var operandValue = Visit(operation.Operand, argument);
+
+                if (TryInferConversion(operation, out bool alwaysSucceed, out bool alwaysFail))
+                {
+                    Debug.Assert(!alwaysSucceed || !alwaysFail);
+                    
+                    // Flow the copy value of the operand to the converted operation if conversion may succeed.
+                    if (!alwaysFail)
+                    {
+                        // For try cast, also ensure conversion always succeeds before flowing copy value.
+                        // TODO: For direct cast, we should check if conversion is implicit.
+                        // For now, we only flow values for reference type direct cast conversions.
+                        if (operation.IsTryCast && alwaysSucceed ||
+                            !operation.IsTryCast && operation.Type.IsReferenceType)
+                        {
+                            return operandValue;
+                        }
+                    }
+                }
+
                 return CopyAbstractValue.Unknown;
             }
             #endregion

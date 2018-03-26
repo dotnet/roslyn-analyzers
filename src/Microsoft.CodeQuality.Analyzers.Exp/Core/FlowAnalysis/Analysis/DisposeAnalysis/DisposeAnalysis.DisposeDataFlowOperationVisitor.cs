@@ -77,9 +77,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
 
             protected override void SetAbstractValue(AbstractLocation location, DisposeAbstractValue value)
             {
-                Debug.Assert(location.LocationTypeOpt.IsDisposable(WellKnownTypeProvider.IDisposable));
+                Debug.Assert(location.IsNull || location.LocationTypeOpt.IsDisposable(WellKnownTypeProvider.IDisposable));
 
-                CurrentAnalysisData[location] = value;
+                if (!location.IsNull)
+                {
+                    CurrentAnalysisData[location] = value;
+                }
             }
 
             protected override void ResetCurrentAnalysisData(DisposeAnalysisData newAnalysisDataOpt = null) => ResetAnalysisData(CurrentAnalysisData, newAnalysisDataOpt);
@@ -159,6 +162,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
 
             protected override void SetAbstractValueForAssignment(IOperation target, IOperation assignedValueOperation, DisposeAbstractValue assignedValue)
             {
+                if (assignedValueOperation == null)
+                {
+                    return;
+                }
+
                 // Temporary workaround for missing dataflow support for tuples
                 // https://github.com/dotnet/roslyn-analyzers/issues/1571
                 if (assignedValueOperation?.Kind == OperationKind.Tuple)

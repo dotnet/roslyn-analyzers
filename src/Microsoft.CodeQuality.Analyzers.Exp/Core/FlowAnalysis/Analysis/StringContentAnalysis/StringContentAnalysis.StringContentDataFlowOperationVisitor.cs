@@ -140,7 +140,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
                 return ValueDomain.UnknownOrMayBeValue;
             }
 
-            public override StringContentAbstractValue VisitBinaryOperatorCore(IBinaryOperation operation, object argument)
+            public override StringContentAbstractValue VisitBinaryOperator_NonConditional(IBinaryOperation operation, object argument)
             {
                 switch (operation.OperatorKind)
                 {
@@ -151,29 +151,21 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
                         return leftValue.MergeBinaryAdd(rightValue);
 
                     default:
-                        return base.VisitBinaryOperatorCore(operation, argument);
+                        return base.VisitBinaryOperator_NonConditional(operation, argument);
                 }
             }
 
-            public override StringContentAbstractValue VisitCompoundAssignment(ICompoundAssignmentOperation operation, object argument)
+            public override StringContentAbstractValue ComputeValueForCompoundAssignment(ICompoundAssignmentOperation operation, StringContentAbstractValue targetValue, StringContentAbstractValue assignedValue)
             {
-                StringContentAbstractValue value;
                 switch (operation.OperatorKind)
                 {
                     case BinaryOperatorKind.Add:
                     case BinaryOperatorKind.Concatenate:
-                        var leftValue = Visit(operation.Target, argument);
-                        var rightValue = Visit(operation.Value, argument);
-                        value = leftValue.MergeBinaryAdd(rightValue);
-                        break;
+                        return targetValue.MergeBinaryAdd(assignedValue);
 
                     default:
-                        value = base.VisitCompoundAssignment(operation, argument);
-                        break;
+                        return base.ComputeValueForCompoundAssignment(operation, targetValue, assignedValue);
                 }
-
-                SetAbstractValueForAssignment(operation.Target, operation.Value, value);
-                return value;
             }
 
             public override StringContentAbstractValue VisitNameOf(INameOfOperation operation, object argument)

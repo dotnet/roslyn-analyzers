@@ -53,7 +53,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
             protected override PointsToAbstractValue GetAbstractValue(AnalysisEntity analysisEntity)
             {
-                if (analysisEntity.Type.IsValueType)
+                if (!analysisEntity.Type.IsReferenceType)
                 {
                     return PointsToAbstractValue.NoLocation;
                 }
@@ -69,7 +69,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
             protected override PointsToAbstractValue GetPointsToAbstractValue(IOperation operation) => base.GetCachedAbstractValue(operation);
             
-            protected override PointsToAbstractValue GetAbstractDefaultValue(ITypeSymbol type) => type != null && type.IsValueType ? PointsToAbstractValue.NoLocation : PointsToAbstractValue.NullLocation;
+            protected override PointsToAbstractValue GetAbstractDefaultValue(ITypeSymbol type) => type != null && !type.IsReferenceType ? PointsToAbstractValue.NoLocation : PointsToAbstractValue.NullLocation;
 
             protected override void SetAbstractValue(AnalysisEntity analysisEntity, PointsToAbstractValue value)
             {
@@ -106,14 +106,14 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 }
                 else
                 {
-                    Debug.Assert(operation.Type == null || operation.Type.IsReferenceType || defaultValue == PointsToAbstractValue.NoLocation);
+                    Debug.Assert(operation.Type == null || !operation.Type.IsValueType || defaultValue == PointsToAbstractValue.NoLocation);
                     return defaultValue;
                 }
             }
 
             protected override PointsToAbstractValue ComputeAnalysisValueForOutArgument(AnalysisEntity analysisEntity, IArgumentOperation operation, PointsToAbstractValue defaultValue)
             {
-                if (analysisEntity.Type.IsValueType)
+                if (!analysisEntity.Type.IsReferenceType)
                 {
                     return PointsToAbstractValue.NoLocation;
                 }
@@ -127,6 +127,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             #region Temporary methods to workaround lack of *real* CFG
             protected override PointsToAnalysisData MergeAnalysisData(PointsToAnalysisData value1, PointsToAnalysisData value2)
                 => _pointsToAnalysisDomain.Merge(value1, value2);
+            protected override PointsToAnalysisData MergeAnalysisDataForBackEdge(PointsToAnalysisData value1, PointsToAnalysisData value2)
+                => _pointsToAnalysisDomain.MergeAnalysisDataForBackEdge(value1, value2);
             protected override PointsToAnalysisData GetClonedAnalysisData(PointsToAnalysisData analysisData)
                 => GetClonedAnalysisDataHelper(analysisData);
             protected override bool Equals(PointsToAnalysisData value1, PointsToAnalysisData value2)
@@ -142,13 +144,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 // Special handling for:
                 //  1. Null value: NullLocation
                 //  2. Constants and value types do not point to any location.
-                if (GetNullAbstractValue(operation) == NullAnalysis.NullAbstractValue.Null)
+                if (GetNullAbstractValue(operation) == NullAnalysis.NullAbstractValue.Null &&
+                    (operation.Type == null || operation.Type.IsReferenceType))
                 {
-                    Debug.Assert(operation.Type == null || operation.Type.IsReferenceType);
                     return PointsToAbstractValue.NullLocation;
                 }
                 else if (operation.ConstantValue.HasValue ||
-                    (operation.Type != null && operation.Type.IsValueType))
+                    (operation.Type != null && !operation.Type.IsReferenceType))
                 {
                     return PointsToAbstractValue.NoLocation;
                 }
@@ -300,9 +302,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 return PointsToAbstractValue.NoLocation;
             }
 
-            public override PointsToAbstractValue VisitBinaryOperatorCore(IBinaryOperation operation, object argument)
+            public override PointsToAbstractValue VisitBinaryOperator_NonConditional(IBinaryOperation operation, object argument)
             {
-                var _ = base.VisitBinaryOperatorCore(operation, argument);
+                var _ = base.VisitBinaryOperator_NonConditional(operation, argument);
                 return PointsToAbstractValue.Unknown;
             }
 

@@ -140,7 +140,6 @@ namespace Microsoft.CodeAnalysis.Operations.ControlFlow
                     _labeledBlocks.Add(label.Label, _currentBlock);
                     break;
 
-                case OperationKind.Return:
                 case OperationKind.Branch:
                     isLastStatement = true;
                     break;

@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis;
 
@@ -30,11 +31,19 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
 
             protected override IEnumerable<AnalysisEntity> TrackedEntities => CurrentAnalysisData.Keys;
 
-            protected override void SetAbstractValue(AnalysisEntity analysisEntity, NullAbstractValue value) => SetAbstractValue(CurrentAnalysisData, analysisEntity, value);
+            protected override void SetAbstractValue(AnalysisEntity analysisEntity, NullAbstractValue value)
+            {
+                SetAbstractValue(CurrentAnalysisData, analysisEntity, value);
+
+                if (IsCurrentlyPerformingPredicateAnalysis)
+                {
+                    SetAbstractValue(NegatedCurrentAnalysisDataStack.Peek(), analysisEntity, value);
+                }
+            }
 
             private static void SetAbstractValue(NullAnalysisData analysisData, AnalysisEntity analysisEntity, NullAbstractValue value)
             {
-                if (analysisEntity.Type.IsReferenceType)
+                if (!analysisEntity.Type.IsNonNullableValueType())
                 {
                     analysisData[analysisEntity] = value;
                 }
@@ -46,7 +55,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
 
             protected override NullAbstractValue GetAbstractDefaultValue(ITypeSymbol type)
             {
-                if (type.IsValueType)
+                if (type.IsNonNullableValueType())
                 {
                     return NullAbstractValue.NotNull;
                 }
@@ -59,10 +68,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
             protected override void ResetCurrentAnalysisData(NullAnalysisData newAnalysisDataOpt = null) => ResetAnalysisData(CurrentAnalysisData, newAnalysisDataOpt);
 
             protected override NullAbstractValue GetDefaultValueForParameterOnEntry(ITypeSymbol parameterType)
-                => parameterType.IsValueType ? NullAbstractValue.NotNull : NullAbstractValue.MaybeNull;
+                => parameterType.IsNonNullableValueType() ? NullAbstractValue.NotNull : NullAbstractValue.MaybeNull;
 
             protected override NullAbstractValue GetDefaultValueForParameterOnExit(ITypeSymbol parameterType)
-                => parameterType.IsValueType ? NullAbstractValue.NotNull : NullAbstractValue.MaybeNull;
+                => parameterType.IsNonNullableValueType() ? NullAbstractValue.NotNull : NullAbstractValue.MaybeNull;
 
             #region Predicate analysis
             private static bool IsValidValueForPredicateAnalysis(NullAbstractValue value)
@@ -232,7 +241,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
                         NullAbstractValue.Null :
                         NullAbstractValue.NotNull;
                 }
-                else if (operation.Type != null && operation.Type.IsValueType)
+                else if (operation.Type.IsNonNullableValueType())
                 {
                     return NullAbstractValue.NotNull;
                 }
@@ -244,7 +253,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
             {
                 var value = base.VisitAssignmentOperation(operation, argument);
 
-                if (operation.Target.Type?.IsValueType == true)
+                if (operation.Target.Type?.IsNonNullableValueType() == true)
                 {
                     return NullAbstractValue.NotNull;
                 }
@@ -257,7 +266,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
                 var leftValue = Visit(operation.Value, argument);
                 var rightValue = Visit(operation.WhenNull, argument);
 
-                if (operation.Type.IsValueType)
+                if (operation.Type.IsNonNullableValueType())
                 {
                     return NullAbstractValue.NotNull;
                 }
@@ -285,7 +294,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
                 var leftValue = Visit(operation.Operation, argument);
                 var rightValue = Visit(operation.WhenNotNull, argument);
 
-                if (operation.Type.IsValueType)
+                if (operation.Type.IsNonNullableValueType())
                 {
                     return NullAbstractValue.NotNull;
                 }
@@ -311,12 +320,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
             public override NullAbstractValue VisitDeclarationExpression(IDeclarationExpressionOperation operation, object argument)
             {
                 var _ = base.VisitDeclarationExpression(operation, argument);
-                return NullAbstractValue.NotNull;
-            }
-
-            public override NullAbstractValue VisitAwait(IAwaitOperation operation, object argument)
-            {
-                var _ = base.VisitAwait(operation, argument);
                 return NullAbstractValue.NotNull;
             }
 
@@ -448,7 +451,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
 
             private NullAbstractValue GetValueBasedOnInstanceOrReferenceValue(IOperation referenceOrInstance, ITypeSymbol operationType, NullAbstractValue defaultValue)
             {
-                if (operationType != null && operationType.IsValueType)
+                if (operationType != null && operationType.IsNonNullableValueType())
                 {
                     return NullAbstractValue.NotNull;
                 }
@@ -481,9 +484,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
                 return GetValueBasedOnInstanceOrReferenceValue(operation.Instance, operation.Type, value);
             }
 
-            public override NullAbstractValue VisitMethodReference(IMethodReferenceOperation operation, object argument)
+            public override NullAbstractValue VisitMethodReferenceCore(IMethodReferenceOperation operation, object argument)
             {
-                var value = base.VisitMethodReference(operation, argument);
+                var value = base.VisitMethodReferenceCore(operation, argument);
                 return GetValueBasedOnInstanceOrReferenceValue(operation.Instance, operation.Type, value);
             }
 
@@ -509,6 +512,33 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
             {
                 var value = base.VisitDynamicIndexerAccess(operation, argument);
                 return GetValueBasedOnInstanceOrReferenceValue(operation.Operation, operation.Type, value);
+            }
+
+            public override NullAbstractValue VisitConversion(IConversionOperation operation, object argument)
+            {
+                var value = Visit(operation.Operand, argument);
+                if (value == NullAbstractValue.NotNull)
+                {
+                    if (TryInferConversion(operation, out bool alwaysSucceed, out bool alwaysFail))
+                    {
+                        Debug.Assert(!alwaysSucceed || !alwaysFail);
+                        if (alwaysFail)
+                        {
+                            value = NullAbstractValue.Null;
+                        }
+                        else if (operation.IsTryCast && !alwaysSucceed)
+                        {
+                            // TryCast which may or may not succeed.
+                            value = NullAbstractValue.MaybeNull;
+                        }
+                    }
+                    else
+                    {
+                        value = NullAbstractValue.MaybeNull;
+                    }
+                }
+
+                return value;
             }
 
             #endregion

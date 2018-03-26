@@ -131,7 +131,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             }
 
             return resultBuilder.ToResult(ToResult, OperationVisitor.GetStateMap(),
-                OperationVisitor.GetPredicateValueKindMap(), OperationVisitor.GetMergedDataForUnhandledThrowOperations(), cfg);
+                OperationVisitor.GetPredicateValueKindMap(), OperationVisitor.GetMergedDataForUnhandledThrowOperations(),
+                cfg, OperationVisitor.ValueDomain.UnknownOrMayBeValue);
         }
 
         private TAnalysisData Flow(BasicBlock block, TAnalysisData data)

@@ -46,8 +46,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 // Additionally, only report on members within externally visible types for FxCop compat.
                 if (!field.IsStatic &&
                     !field.IsConst &&
-                    (field.IsPublic() || field.IsProtected() || field.DeclaredAccessibility == Accessibility.ProtectedOrInternal || field.DeclaredAccessibility == Accessibility.ProtectedOrFriend) &&
-                    field.ContainingType.IsExternallyVisible())
+                    field.IsExternallyVisible())
                 {
                     obj.ReportDiagnostic(field.CreateDiagnostic(Rule));
                 }

@@ -193,7 +193,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         {
             if (AnalysisEntityFactory.TryCreate(operation, out AnalysisEntity analysisEntity))
             {
-                ResetValueTypeInstanceAnalysisData(analysisEntity);
+                if (analysisEntity.Type.HasValueCopySemantics())
+                {
+                    ResetValueTypeInstanceAnalysisData(analysisEntity);
+                }
             }
         }
 

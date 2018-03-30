@@ -1986,7 +1986,7 @@ Module Test
 End Module");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1648")]
         public void WhileLoop_MissingDisposeOnExit_Diagnostic()
         {
             VerifyCSharp(@"
@@ -2149,7 +2149,7 @@ Module Test
 End Module");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1648")]
         public void DoWhileLoop_MissingDisposeOnExit_Diagnostic()
         {
             VerifyCSharp(@"
@@ -2313,7 +2313,7 @@ Module Test
 End Module");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1648")]
         public void ForLoop_MissingDisposeOnExit_Diagnostic()
         {
             VerifyCSharp(@"
@@ -5473,6 +5473,33 @@ End Class
             GetBasicResultAt(15, 22, "Sub Test.M1()", "New A()"),
             // Test0.vb(20,22): warning CA2000: In method 'Sub Test.M2()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
             GetBasicResultAt(20, 22, "Sub Test.M2()", "New A()"));
+        }
+
+        [Fact]
+        public void DisposableAllocation_IncrementOperator_RegressionTest()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class Test
+{
+    private int i;
+    void M()
+    {
+        var a = new A();
+        i++;
+        a.Dispose();
+    }
+}
+");
         }
     }
 }

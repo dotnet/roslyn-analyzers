@@ -40,26 +40,29 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
 
             protected override StringContentAbstractValue GetAbstractValue(AnalysisEntity analysisEntity) => CurrentAnalysisData.TryGetValue(analysisEntity, out var value) ? value : ValueDomain.UnknownOrMayBeValue;
 
-            protected override StringContentAbstractValue GetAbstractDefaultValue(ITypeSymbol type) => StringContentAbstractValue.DoesNotContainNonLiteralState;
+            protected override StringContentAbstractValue GetAbstractDefaultValue(ITypeSymbol type) => StringContentAbstractValue.DoesNotContainLiteralOrNonLiteralState;
 
             protected override void ResetCurrentAnalysisData(StringContentAnalysisData newAnalysisDataOpt = null) => ResetAnalysisData(CurrentAnalysisData, newAnalysisDataOpt);
 
             #region Predicate analysis
-            protected override void SetValueForEqualsOrNotEqualsComparisonOperator(IBinaryOperation operation, StringContentAnalysisData negatedCurrentAnalysisData, bool equals)
+            protected override PredicateValueKind SetValueForEqualsOrNotEqualsComparisonOperator(IBinaryOperation operation, StringContentAnalysisData negatedCurrentAnalysisData, bool equals)
             {
                 Debug.Assert(operation.IsComparisonOperator());
 
-                var analysisData = equals ? CurrentAnalysisData : negatedCurrentAnalysisData;
+                var predicateValueKind = PredicateValueKind.Unknown;
 
                 // Handle 'a == "SomeString"' and 'a != "SomeString"'
-                SetValueForComparisonOperator(operation.LeftOperand, operation.RightOperand, analysisData);
+                SetValueForComparisonOperator(operation.LeftOperand, operation.RightOperand, negatedCurrentAnalysisData, equals, ref predicateValueKind);
 
                 // Handle '"SomeString" == a' and '"SomeString" != a'
-                SetValueForComparisonOperator(operation.RightOperand, operation.LeftOperand, analysisData);
+                SetValueForComparisonOperator(operation.RightOperand, operation.LeftOperand, negatedCurrentAnalysisData, equals, ref predicateValueKind);
+
+                return predicateValueKind;
             }
 
-            private void SetValueForComparisonOperator(IOperation target, IOperation assignedValue, StringContentAnalysisData analysisData)
+            private void SetValueForComparisonOperator(IOperation target, IOperation assignedValue, StringContentAnalysisData negatedCurrentAnalysisData, bool equals, ref PredicateValueKind predicateValueKind)
             {
+                var analysisData = equals ? CurrentAnalysisData : negatedCurrentAnalysisData;
                 StringContentAbstractValue stringContentValue = GetCachedAbstractValue(assignedValue);
                 if (stringContentValue.IsLiteralState &&
                     AnalysisEntityFactory.TryCreate(target, out AnalysisEntity targetEntity))
@@ -67,7 +70,21 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
                     if (analysisData.TryGetValue(targetEntity, out StringContentAbstractValue existingValue) &&
                         existingValue.IsLiteralState)
                     {
-                        stringContentValue = stringContentValue.IntersectLiteralValues(existingValue);
+                        var newStringContentValue = stringContentValue.IntersectLiteralValues(existingValue);
+                        if (newStringContentValue.NonLiteralState == StringContainsNonLiteralState.Invalid)
+                        {
+                            predicateValueKind = equals ? PredicateValueKind.AlwaysFalse : PredicateValueKind.AlwaysTrue;
+                        }
+                        else if (predicateValueKind != PredicateValueKind.AlwaysFalse &&
+                            newStringContentValue.IsLiteralState &&
+                            newStringContentValue.LiteralValues.Count == 1 &&
+                            stringContentValue.LiteralValues.Count == 1 &&
+                            existingValue.LiteralValues.Count == 1)
+                        {
+                            predicateValueKind = equals ? PredicateValueKind.AlwaysTrue : PredicateValueKind.AlwaysFalse;
+                        }
+
+                        stringContentValue = newStringContentValue;
                     }
 
                     CopyAbstractValue copyValue = GetCopyAbstractValue(target);
@@ -105,7 +122,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
                 var _ = base.DefaultVisit(operation, argument);
                 if (operation.Type == null)
                 {
-                    return StringContentAbstractValue.DoesNotContainNonLiteralState;
+                    return StringContentAbstractValue.DoesNotContainLiteralOrNonLiteralState;
                 }
 
                 if (operation.Type.SpecialType == SpecialType.System_String)
@@ -123,7 +140,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
                 return ValueDomain.UnknownOrMayBeValue;
             }
 
-            public override StringContentAbstractValue VisitBinaryOperatorCore(IBinaryOperation operation, object argument)
+            public override StringContentAbstractValue VisitBinaryOperator_NonConditional(IBinaryOperation operation, object argument)
             {
                 switch (operation.OperatorKind)
                 {
@@ -134,29 +151,21 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
                         return leftValue.MergeBinaryAdd(rightValue);
 
                     default:
-                        return base.VisitBinaryOperatorCore(operation, argument);
+                        return base.VisitBinaryOperator_NonConditional(operation, argument);
                 }
             }
 
-            public override StringContentAbstractValue VisitCompoundAssignment(ICompoundAssignmentOperation operation, object argument)
+            public override StringContentAbstractValue ComputeValueForCompoundAssignment(ICompoundAssignmentOperation operation, StringContentAbstractValue targetValue, StringContentAbstractValue assignedValue)
             {
-                StringContentAbstractValue value;
                 switch (operation.OperatorKind)
                 {
                     case BinaryOperatorKind.Add:
                     case BinaryOperatorKind.Concatenate:
-                        var leftValue = Visit(operation.Target, argument);
-                        var rightValue = Visit(operation.Value, argument);
-                        value = leftValue.MergeBinaryAdd(rightValue);
-                        break;
+                        return targetValue.MergeBinaryAdd(assignedValue);
 
                     default:
-                        value = base.VisitCompoundAssignment(operation, argument);
-                        break;
+                        return base.ComputeValueForCompoundAssignment(operation, targetValue, assignedValue);
                 }
-
-                SetAbstractValueForAssignment(operation.Target, operation.Value, value);
-                return value;
             }
 
             public override StringContentAbstractValue VisitNameOf(INameOfOperation operation, object argument)

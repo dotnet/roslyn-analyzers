@@ -377,10 +377,10 @@ Class Test
     End Sub
 
     Private Sub M1()
-        Dim t As Test = """"    ' Implicit user defined conversion
-        Dim str As String = t   ' Implicit user defined conversion
+        Dim t As Test = """"    ' Implicit user defined conversion
+        Dim str As String = t   ' Implicit user defined conversion
         Dim c As New Command1(str, str)
-    End Sub
+    End Sub
 
     Public Shared Widening Operator CType(ByVal value As String) As Test
         Return Nothing
@@ -451,10 +451,10 @@ Class Test
     End Sub
 
     Private Sub M1()
-        Dim t As Test = CType("""", Test)       ' Explicit user defined conversion
-        Dim str As String = CType(t, String)    ' Explicit user defined conversion
+        Dim t As Test = CType("""", Test)       ' Explicit user defined conversion
+        Dim str As String = CType(t, String)    ' Explicit user defined conversion
         Dim c As New Command1(str, str)
-    End Sub
+    End Sub
 
     Public Shared Narrowing Operator CType(ByVal value As String) As Test
         Return Nothing

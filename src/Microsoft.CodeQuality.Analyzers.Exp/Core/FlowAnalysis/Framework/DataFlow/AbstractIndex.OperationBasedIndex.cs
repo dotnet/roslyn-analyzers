@@ -17,16 +17,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
             public IOperation Operation { get; }
 
-            public override bool Equals(AbstractIndex other)
-            {
-                return other is OperationBasedIndex otherIndex &&
-                    Operation.Equals(otherIndex.Operation);
-            }
-
-            public override int GetHashCode()
-            {
-                return HashUtilities.Combine(Operation.GetHashCode(), nameof(OperationBasedIndex).GetHashCode());
-            }
+            protected override int ComputeHashCode() => HashUtilities.Combine(Operation.GetHashCode(), nameof(OperationBasedIndex).GetHashCode());
         }
     }
 }

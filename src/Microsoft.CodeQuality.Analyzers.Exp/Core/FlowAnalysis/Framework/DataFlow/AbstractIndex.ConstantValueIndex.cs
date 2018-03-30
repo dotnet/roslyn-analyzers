@@ -15,16 +15,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
             public uint Index { get; }
 
-            public override bool Equals(AbstractIndex other)
-            {
-                return other is ConstantValueIndex otherIndex &&
-                    Index == otherIndex.Index;
-            }
-
-            public override int GetHashCode()
-            {
-                return HashUtilities.Combine(Index.GetHashCode(), nameof(ConstantValueIndex).GetHashCode());
-            }
+            protected override int ComputeHashCode() => HashUtilities.Combine(Index.GetHashCode(), nameof(ConstantValueIndex).GetHashCode());
         }
     }
 }

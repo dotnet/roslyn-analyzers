@@ -12,7 +12,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
     /// It contains the set of <see cref="IOperation"/>s that dispose an associated disposable <see cref="AbstractLocation"/> and
     /// the dispose <see cref="Kind"/>.
     /// </summary>
-    internal class DisposeAbstractValue : IEquatable<DisposeAbstractValue>
+    internal class DisposeAbstractValue : CacheBasedEquatable<DisposeAbstractValue>
     {
         public static readonly DisposeAbstractValue NotDisposable = new DisposeAbstractValue(DisposeAbstractValueKind.NotDisposable);
         public static readonly DisposeAbstractValue NotDisposed = new DisposeAbstractValue(DisposeAbstractValueKind.NotDisposed);
@@ -71,34 +71,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
         public ImmutableHashSet<IOperation> DisposingOrEscapingOperations { get; }
         public DisposeAbstractValueKind Kind { get; }
 
-        public static bool operator ==(DisposeAbstractValue value1, DisposeAbstractValue value2)
-        {
-            if ((object)value1 == null)
-            {
-                return (object)value2 == null;
-            }
-
-            return value1.Equals(value2);
-        }
-
-        public static bool operator !=(DisposeAbstractValue value1, DisposeAbstractValue value2)
-        {
-            return !(value1 == value2);
-        }
-
-        public bool Equals(DisposeAbstractValue other)
-        {
-            return other != null &&
-                Kind == other.Kind &&
-                DisposingOrEscapingOperations.SetEquals(other.DisposingOrEscapingOperations);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as DisposeAbstractValue);
-        }
-
-        public override int GetHashCode()
+        protected override int ComputeHashCode()
         {
             int hashCode = HashUtilities.Combine(Kind.GetHashCode(), DisposingOrEscapingOperations.Count.GetHashCode());
             foreach (var operation in DisposingOrEscapingOperations)

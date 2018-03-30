@@ -271,13 +271,14 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         private IEnumerable<AnalysisEntity> GetChildAnalysisEntities(AnalysisEntity analysisEntity)
         {
-            IEnumerable<AnalysisEntity> dependentAnalysisEntities = GetChildAnalysisEntities(analysisEntity.InstanceLocation);
-            if (analysisEntity.Type.HasValueCopySemantics())
+            var hasValueCopySemantics = analysisEntity.Type.HasValueCopySemantics();
+            foreach (var entity in GetChildAnalysisEntities(analysisEntity.InstanceLocation))
             {
-                dependentAnalysisEntities = dependentAnalysisEntities.Where(info => info.HasAncestorOrSelf(analysisEntity));
+                if (!hasValueCopySemantics || entity.HasAncestorOrSelf(analysisEntity))
+                {
+                    yield return entity;
+                }
             }
-
-            return dependentAnalysisEntities;
         }
 
         private IEnumerable<AnalysisEntity> GetChildAnalysisEntities(PointsToAbstractValue instanceLocationOpt)
@@ -285,15 +286,19 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             // We are interested only in dependent child/member infos, not the root info.
             if (instanceLocationOpt != null)
             {
-                IEnumerable<AnalysisEntity> trackedEntities = TrackedEntities;
+                IList<AnalysisEntity> trackedEntities = TrackedEntities?.ToList();
                 if (trackedEntities != null)
                 {
-                    return trackedEntities.Where(entity => entity.InstanceLocation.Equals(instanceLocationOpt) && entity.IsChildOrInstanceMember)
-                        .ToImmutableHashSet();
+                    Debug.Assert(trackedEntities.ToSet().Count == trackedEntities.Count);
+                    foreach (var entity in trackedEntities)
+                    {
+                        if (entity.InstanceLocation.Equals(instanceLocationOpt) && entity.IsChildOrInstanceMember)
+                        {
+                            yield return entity;
+                        }
+                    }
                 }
             }
-
-            return ImmutableHashSet<AnalysisEntity>.Empty;
         }
 
         #endregion

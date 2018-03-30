@@ -28,8 +28,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     ///     3. An optional parent key if this key has the same <see cref="InstanceLocation"/> as the parent (i.e. parent is a value type).
     /// </para>
     /// </summary>
-    internal sealed class AnalysisEntity : IEquatable<AnalysisEntity>
+    internal sealed class AnalysisEntity : CacheBasedEquatable<AnalysisEntity>
     {
+        private readonly Lazy<int> _lazyIgnoringLocationHashCode;
+
         private AnalysisEntity(
             ISymbol symbolOpt,
             ImmutableArray<AbstractIndex> indices,
@@ -50,6 +52,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             InstanceLocation = location;
             Type = type;
             ParentOpt = parentOpt;
+
+            _lazyIgnoringLocationHashCode = new Lazy<int>(ComputeIgnoringLocationHashCode);
         }
 
         private AnalysisEntity(ISymbol symbolOpt, ImmutableArray<AbstractIndex> indices, PointsToAbstractValue location, ITypeSymbol type, AnalysisEntity parentOpt)
@@ -145,49 +149,16 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         public bool HasUnknownInstanceLocation => InstanceLocation.Kind == PointsToAbstractValueKind.Unknown;
 
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as AnalysisEntity);
-        }
+        public bool EqualsIgnoringInstanceLocation(AnalysisEntity other) => _lazyIgnoringLocationHashCode.Value == other?._lazyIgnoringLocationHashCode.Value;
+        public int EqualsIgnoringInstanceLocationId => _lazyIgnoringLocationHashCode.Value;
 
-        public static bool operator ==(AnalysisEntity value1, AnalysisEntity value2)
-        {
-            if ((object)value1 == null)
-            {
-                return (object)value2 == null;
-            }
-
-            return value1.Equals(value2);
-        }
-
-        public static bool operator !=(AnalysisEntity value1, AnalysisEntity value2)
-        {
-            return !(value1 == value2);
-        }
-
-        public bool Equals(AnalysisEntity other)
-        {
-            return EqualsIgnoringInstanceLocation(other) &&
-                InstanceLocation == other.InstanceLocation;
-        }
-
-        public bool EqualsIgnoringInstanceLocation(AnalysisEntity other)
-        {
-            return other != null &&
-                SymbolOpt == other.SymbolOpt &&
-                InstanceReferenceOperationSyntaxOpt == other.InstanceReferenceOperationSyntaxOpt &&
-                Indices.SequenceEqual(other.Indices) &&
-                Type.Equals(other.Type) &&
-                ParentOpt == other.ParentOpt;
-        }
-
-        public override int GetHashCode()
+        protected override int ComputeHashCode() => HashUtilities.Combine(InstanceLocation.GetHashCode(), _lazyIgnoringLocationHashCode.Value);
+        private int ComputeIgnoringLocationHashCode()
         {
             var hashCode = HashUtilities.Combine(SymbolOpt?.GetHashCode() ?? 0,
                 HashUtilities.Combine(InstanceReferenceOperationSyntaxOpt?.GetHashCode() ?? 0,
-                HashUtilities.Combine(InstanceLocation.GetHashCode(),
                 HashUtilities.Combine(Type.GetHashCode(),
-                HashUtilities.Combine(ParentOpt?.GetHashCode() ?? 0, Indices.Length.GetHashCode())))));
+                HashUtilities.Combine(ParentOpt?.GetHashCode() ?? 0, Indices.Length.GetHashCode()))));
 
             foreach (AbstractIndex index in Indices)
             {

@@ -10,7 +10,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
     /// <summary>
     /// Abstract copy value shared by a set of one of more <see cref="AnalysisEntity"/> instances tracked by <see cref="CopyAnalysis"/>.
     /// </summary>
-    internal class CopyAbstractValue : IEquatable<CopyAbstractValue>
+    internal class CopyAbstractValue : CacheBasedEquatable<CopyAbstractValue>
     {
         public static CopyAbstractValue NotApplicable = new CopyAbstractValue(CopyAbstractValueKind.NotApplicable);
         public static CopyAbstractValue Invalid = new CopyAbstractValue(CopyAbstractValueKind.Invalid);
@@ -53,34 +53,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
         public ImmutableHashSet<AnalysisEntity> AnalysisEntities { get; }
         public CopyAbstractValueKind Kind { get; }
 
-        public static bool operator ==(CopyAbstractValue value1, CopyAbstractValue value2)
-        {
-            if ((object)value1 == null)
-            {
-                return (object)value2 == null;
-            }
-
-            return value1.Equals(value2);
-        }
-
-        public static bool operator !=(CopyAbstractValue value1, CopyAbstractValue value2)
-        {
-            return !(value1 == value2);
-        }
-
-        public bool Equals(CopyAbstractValue other)
-        {
-            return other != null &&
-                Kind == other.Kind &&
-                AnalysisEntities.SetEquals(other.AnalysisEntities);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as CopyAbstractValue);
-        }
-
-        public override int GetHashCode()
+        protected override int ComputeHashCode()
         {
             int hashCode = HashUtilities.Combine(Kind.GetHashCode(), AnalysisEntities.Count.GetHashCode());
             foreach (var location in AnalysisEntities)

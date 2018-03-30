@@ -12,7 +12,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
     /// <summary>
     /// Abstract string content data value for <see cref="AnalysisEntity"/>/<see cref="IOperation"/> tracked by <see cref="StringContentAnalysis"/>.
     /// </summary>
-    internal partial class StringContentAbstractValue : IEquatable<StringContentAbstractValue>
+    internal partial class StringContentAbstractValue : CacheBasedEquatable<StringContentAbstractValue>
     {
         public static readonly StringContentAbstractValue UndefinedState = new StringContentAbstractValue(ImmutableHashSet<string>.Empty, StringContainsNonLiteralState.Undefined);
         public static readonly StringContentAbstractValue InvalidState = new StringContentAbstractValue(ImmutableHashSet<string>.Empty, StringContainsNonLiteralState.Invalid);
@@ -68,34 +68,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
         /// </summary>
         public ImmutableHashSet<string> LiteralValues { get; }
 
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as StringContentAbstractValue);
-        }
-
-        public static bool operator ==(StringContentAbstractValue value1, StringContentAbstractValue value2)
-        {
-            if ((object)value1 == null)
-            {
-                return (object)value2 == null;
-            }
-
-            return value1.Equals(value2);
-        }
-
-        public static bool operator !=(StringContentAbstractValue value1, StringContentAbstractValue value2)
-        {
-            return !(value1 == value2);
-        }
-
-        public bool Equals(StringContentAbstractValue other)
-        {
-            return other != null &&
-                NonLiteralState == other.NonLiteralState &&
-                LiteralValues.SetEquals(other.LiteralValues);
-        }
-
-        public override int GetHashCode()
+        protected override int ComputeHashCode()
         {
             var hashCode = NonLiteralState.GetHashCode();
             foreach (var literal in LiteralValues.OrderBy(s => s))

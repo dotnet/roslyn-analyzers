@@ -1313,7 +1313,7 @@ public class Test
         System.Diagnostics.Contracts.Contract.Requires(x == null);
         System.Diagnostics.Contracts.Contract.Requires(c == _c);
         var y = str.ToString();
-        var z = c.X;    // No diagnostic as we don't know the value of _c.
+        var z = c.X;
     }
 
     public void M2(string str, C c)
@@ -1339,6 +1339,8 @@ public class Test
 ",
             // Test0.cs(15,17): warning CA1062: In externally visible method 'void Test.M1(string str, C c)', validate parameter 'str' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetCSharpResultAt(15, 17, "void Test.M1(string str, C c)", "str"),
+            // Test0.cs(16,17): warning CA1062: In externally visible method 'void Test.M1(string str, C c)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(16, 17, "void Test.M1(string str, C c)", "c"),
             // Test0.cs(23,17): warning CA1062: In externally visible method 'void Test.M2(string str, C c)', validate parameter 'str' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetCSharpResultAt(23, 17, "void Test.M2(string str, C c)", "str"),
             // Test0.cs(24,17): warning CA1062: In externally visible method 'void Test.M2(string str, C c)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
@@ -1363,7 +1365,7 @@ Public Class Test
         System.Diagnostics.Contracts.Contract.Requires(x Is Nothing)
         System.Diagnostics.Contracts.Contract.Requires(c Is _c)
         Dim y = str.ToString()
-        Dim z = c.X     ' No diagnostic as we don't know the value of _c.
+        Dim z = c.X
     End Sub
 
     Public Sub M2(str As String, c As C)
@@ -1385,6 +1387,8 @@ Public Class Test
 End Class",
             // Test0.vb(15,17): warning CA1062: In externally visible method 'Sub Test.M1(str As String, c As C)', validate parameter 'str' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetBasicResultAt(15, 17, "Sub Test.M1(str As String, c As C)", "str"),
+            // Test0.vb(16,17): warning CA1062: In externally visible method 'Sub Test.M1(str As String, c As C)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetBasicResultAt(16, 17, "Sub Test.M1(str As String, c As C)", "c"),
             // Test0.vb(22,17): warning CA1062: In externally visible method 'Sub Test.M2(str As String, c As C)', validate parameter 'str' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetBasicResultAt(22, 17, "Sub Test.M2(str As String, c As C)", "str"),
             // Test0.vb(23,17): warning CA1062: In externally visible method 'Sub Test.M2(str As String, c As C)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.

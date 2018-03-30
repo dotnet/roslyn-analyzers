@@ -143,6 +143,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         public ITypeSymbol Type { get; }
         public AnalysisEntity ParentOpt { get; }
 
+        public bool HasUnknownInstanceLocation => InstanceLocation.Kind == PointsToAbstractValueKind.Unknown;
+
         public override bool Equals(object obj)
         {
             return Equals(obj as AnalysisEntity);

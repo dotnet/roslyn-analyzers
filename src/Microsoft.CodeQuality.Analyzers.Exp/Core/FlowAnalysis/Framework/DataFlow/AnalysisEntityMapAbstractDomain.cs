@@ -29,12 +29,14 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 return key.SymbolOpt != null ? ValueDomain.Merge(value, defaultValue) : defaultValue;
             }
 
-            var resultMap = new Dictionary<AnalysisEntity, TValue>();            
+            var resultMap = new Dictionary<AnalysisEntity, TValue>();
+            var map2LookupIgnoringInstanceLocation = map2.Keys.ToLookup(entity => entity.EqualsIgnoringInstanceLocationId);
             foreach (var entry1 in map1)
             {
                 AnalysisEntity key1 = entry1.Key;
                 TValue value1 = entry1.Value;
-                var equivalentKeys2 = map2.Keys.Where(key => key.EqualsIgnoringInstanceLocation(key1));
+                
+                var equivalentKeys2 = map2LookupIgnoringInstanceLocation[key1.EqualsIgnoringInstanceLocationId];
                 if (!equivalentKeys2.Any())
                 {
                     TValue mergedValue = GetMergedValueForEntityPresentInOneMap(key1, value1);

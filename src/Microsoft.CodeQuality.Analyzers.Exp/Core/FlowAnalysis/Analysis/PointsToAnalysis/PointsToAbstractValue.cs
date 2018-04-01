@@ -11,7 +11,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
     /// Abstract PointsTo value for an <see cref="AnalysisEntity"/>/<see cref="IOperation"/> tracked by <see cref="PointsToAnalysis"/>.
     /// It contains the set of possible <see cref="AbstractLocation"/>s that the entity or the operation can point to and the <see cref="Kind"/> of the location(s).
     /// </summary>
-    internal class PointsToAbstractValue: IEquatable<PointsToAbstractValue>
+    internal class PointsToAbstractValue: CacheBasedEquatable<PointsToAbstractValue>
     {
         public static PointsToAbstractValue Undefined = new PointsToAbstractValue(PointsToAbstractValueKind.Undefined);
         public static PointsToAbstractValue NoLocation = new PointsToAbstractValue(PointsToAbstractValueKind.NoLocation);
@@ -46,34 +46,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
         public ImmutableHashSet<AbstractLocation> Locations { get; }
         public PointsToAbstractValueKind Kind { get; }
 
-        public static bool operator ==(PointsToAbstractValue value1, PointsToAbstractValue value2)
-        {
-            if ((object)value1 == null)
-            {
-                return (object)value2 == null;
-            }
-
-            return value1.Equals(value2);
-        }
-
-        public static bool operator !=(PointsToAbstractValue value1, PointsToAbstractValue value2)
-        {
-            return !(value1 == value2);
-        }
-
-        public bool Equals(PointsToAbstractValue other)
-        {
-            return other != null &&
-                Kind == other.Kind &&
-                Locations.SetEquals(other.Locations);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as PointsToAbstractValue);
-        }
-
-        public override int GetHashCode()
+        protected override int ComputeHashCode()
         {
             int hashCode = HashUtilities.Combine(Kind.GetHashCode(), Locations.Count.GetHashCode());
             foreach (var location in Locations)

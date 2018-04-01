@@ -2,7 +2,6 @@
 
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using System;
 using System.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow
@@ -20,7 +19,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     ///     3. Location created for certain symbols which do not have a declaration in executable code, i.e. no <see cref="IOperation"/> for declaration (such as parameter symbols, member symbols, etc. - <see cref="CreateSymbolLocation(ISymbol)"/>).
     /// </para>
     /// </summary>
-    internal sealed class AbstractLocation : IEquatable<AbstractLocation>
+    internal sealed class AbstractLocation : CacheBasedEquatable<AbstractLocation>
     {
         public static readonly AbstractLocation Null = new AbstractLocation(creationOpt: null, analysisEntityOpt: null, symbolOpt: null, locationTypeOpt: null);
 
@@ -59,41 +58,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             }
         }
 
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as AbstractLocation);
-        }
-
-        public static bool operator ==(AbstractLocation value1, AbstractLocation value2)
-        {
-            if ((object)value1 == null)
-            {
-                return (object)value2 == null;
-            }
-
-            return value1.Equals(value2);
-        }
-
-        public static bool operator !=(AbstractLocation value1, AbstractLocation value2)
-        {
-            return !(value1 == value2);
-        }
-
-        public bool Equals(AbstractLocation other)
-        {
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            return other != null &&
-                CreationOpt == other.CreationOpt &&
-                AnalysisEntityOpt == other.AnalysisEntityOpt &&
-                SymbolOpt == other.SymbolOpt &&
-                LocationTypeOpt == other.LocationTypeOpt;
-        }
-
-        public override int GetHashCode()
+        protected override int ComputeHashCode()
         {
             return HashUtilities.Combine(CreationOpt?.GetHashCode() ?? 0,
                 HashUtilities.Combine(SymbolOpt?.GetHashCode() ?? 0,

@@ -179,7 +179,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             public override PointsToAbstractValue VisitInstanceReference(IInstanceReferenceOperation operation, object argument)
             {
                 var _ = base.VisitInstanceReference(operation, argument);
-                IOperation currentInstanceOperation = operation.GetInstance();
+                IOperation currentInstanceOperation = operation.GetInstance(IsInsideObjectInitializer);
                 return currentInstanceOperation != null ?
                     GetCachedAbstractValue(currentInstanceOperation) :
                     ThisOrMePointsToAbstractValue;
@@ -213,7 +213,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 var pointsToAbstractValue = new PointsToAbstractValue(location);
                 CacheAbstractValue(operation, pointsToAbstractValue);
 
-                var _ = VisitArray(operation.Initializers, argument);
+                var _ = base.VisitAnonymousObjectCreation(operation, argument);
                 return pointsToAbstractValue;
             }
 

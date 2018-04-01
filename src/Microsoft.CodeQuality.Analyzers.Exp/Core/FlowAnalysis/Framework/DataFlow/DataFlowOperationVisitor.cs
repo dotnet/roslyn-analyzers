@@ -78,6 +78,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         /// </summary>
         protected bool IsCurrentlyPerformingPredicateAnalysis => NegatedCurrentAnalysisDataStack.Count > 0;
 
+        /// <summary>
+        /// PERF: Track if we are within an <see cref="IObjectOrCollectionInitializerOperation"/> or an <see cref="IAnonymousObjectCreationOperation"/>.
+        /// </summary>
+        protected bool IsInsideObjectInitializer { get; private set; }
+
         protected DataFlowOperationVisitor(
             AbstractValueDomain<TAbstractAnalysisValue> valueDomain,
             ISymbol owningSymbol,
@@ -109,10 +114,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             ThisOrMePointsToAbstractValue = GetThisOrMeInstancePointsToValue(owningSymbol.ContainingType);
 
             AnalysisEntityFactory = new AnalysisEntityFactory(
-                (pointsToAnalysisResultOpt != null || IsPointsToAnalysis) ?
+                getPointsToAbstractValueOpt: (pointsToAnalysisResultOpt != null || IsPointsToAnalysis) ?
                     GetPointsToAbstractValue :
                     (Func<IOperation, PointsToAbstractValue>)null,
-                owningSymbol.ContainingType);
+                getIsInsideObjectInitializer: () => IsInsideObjectInitializer,
+                containingTypeSymbol: owningSymbol.ContainingType);
             NegatedCurrentAnalysisDataStack = new Stack<TAnalysisData>();
         }
 
@@ -1013,6 +1019,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         public override TAbstractAnalysisValue VisitObjectOrCollectionInitializer(IObjectOrCollectionInitializerOperation operation, object argument)
         {
+            var savedIsInsideObjectInitializer = IsInsideObjectInitializer;
+            IsInsideObjectInitializer = true;
+
             // Special handling for collection initializers as we need to track indices.
             uint collectionElementInitializerIndex = 0;
             foreach (var elementInitializer in operation.Initializers)
@@ -1028,6 +1037,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 }
             }
 
+            IsInsideObjectInitializer = savedIsInsideObjectInitializer;
             return ValueDomain.UnknownOrMayBeValue;
         }
 
@@ -1348,17 +1358,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 return base.VisitBinaryOperator(operation, argument);
             }
 
+            NegatedCurrentAnalysisDataStack.Pop();
             var leftValue = Visit(operation.LeftOperand, argument);
-            AfterVisitOperand();
             var rightValue = Visit(operation.RightOperand, argument);
-            AfterVisitOperand();
+            NegatedCurrentAnalysisDataStack.Push(GetClonedCurrentAnalysisData());
             return ValueDomain.Merge(leftValue, rightValue);
-
-            void AfterVisitOperand()
-            {
-                CurrentAnalysisData = MergeAnalysisData(CurrentAnalysisData, NegatedCurrentAnalysisDataStack.Pop());
-                NegatedCurrentAnalysisDataStack.Push(GetClonedCurrentAnalysisData());
-            };
         }
 
         public sealed override TAbstractAnalysisValue VisitBinaryOperator(IBinaryOperation operation, object argument)
@@ -1574,6 +1578,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             var value = base.VisitAnonymousFunction(operation, argument);
             ResetCurrentAnalysisData();
             CurrentAnalysisData = savedCurrentAnalysisData;
+            return value;
+        }
+
+        public override TAbstractAnalysisValue VisitAnonymousObjectCreation(IAnonymousObjectCreationOperation operation, object argument)
+        {
+            var savedIsInsideObjectInitializer = IsInsideObjectInitializer;
+            IsInsideObjectInitializer = true;
+            var value = base.VisitAnonymousObjectCreation(operation, argument);
+            IsInsideObjectInitializer = savedIsInsideObjectInitializer;
             return value;
         }
 

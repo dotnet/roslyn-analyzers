@@ -15,16 +15,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
             public AnalysisEntity AnalysisEntity { get; }
 
-            public override bool Equals(AbstractIndex other)
-            {
-                return other is AnalysisEntityBasedIndex otherIndex &&
-                    AnalysisEntity.Equals(otherIndex.AnalysisEntity);
-            }
-
-            public override int GetHashCode()
-            {
-                return HashUtilities.Combine(AnalysisEntity.GetHashCode(), nameof(AnalysisEntityBasedIndex).GetHashCode());
-            }
+            protected override int ComputeHashCode() => HashUtilities.Combine(AnalysisEntity.GetHashCode(), nameof(AnalysisEntityBasedIndex).GetHashCode());
         }
     }
 }

@@ -57,3 +57,13 @@ Category: Usage
 Severity: Warning
 
 Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2213-disposable-fields-should-be-disposed](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2213-disposable-fields-should-be-disposed)
+
+### CA2215: Dispose methods should call base class dispose ###
+
+A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type.
+
+Category: Usage
+
+Severity: Warning
+
+Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2215-dispose-methods-should-call-base-class-dispose](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2215-dispose-methods-should-call-base-class-dispose)

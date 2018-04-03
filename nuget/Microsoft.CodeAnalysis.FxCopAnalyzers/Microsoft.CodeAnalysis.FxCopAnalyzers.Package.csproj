@@ -14,6 +14,7 @@
   
   <ItemGroup>
     <AnalyzerNupkgDependency Include="Microsoft.CodeQuality.Analyzers" />
+    <AnalyzerNupkgDependency Include="Microsoft.CodeQuality.Analyzers.Exp" />
     <AnalyzerNupkgDependency Include="Microsoft.NetCore.Analyzers" />
     <AnalyzerNupkgDependency Include="Microsoft.NetFramework.Analyzers" />
     <AnalyzerNupkgDependency Include="Text.Analyzers" />
@@ -21,6 +22,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.Analyzers.Package.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeQuality.Analyzers.Exp\Microsoft.CodeQuality.Analyzers.Exp.Package.csproj" />
     <ProjectReference Include="..\Microsoft.NetFramework.Analyzers\Microsoft.NetFramework.Analyzers.Package.csproj" />
     <ProjectReference Include="..\Microsoft.NetCore.Analyzers\Microsoft.NetCore.Analyzers.Package.csproj" />
     <ProjectReference Include="..\Text.Analyzers\Text.Analyzers.Package.csproj" />

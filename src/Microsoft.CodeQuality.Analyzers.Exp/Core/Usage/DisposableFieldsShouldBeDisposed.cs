@@ -85,12 +85,10 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Usage
 
                     if (disposeAnalysisHelper.HasAnyDisposableCreationDescendant(operationBlockStartContext.OperationBlocks, containingMethod))
                     {
-                        ControlFlowGraph cfg;
                         DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> disposeAnalysisResult;
                         DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResult;
-                        if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockStartContext.OperationBlocks, containingMethod, out cfg, out disposeAnalysisResult, out pointsToAnalysisResult))
+                        if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockStartContext.OperationBlocks, containingMethod, out disposeAnalysisResult, out pointsToAnalysisResult))
                         {
-                            Debug.Assert(cfg != null);
                             Debug.Assert(disposeAnalysisResult != null);
                             Debug.Assert(pointsToAnalysisResult != null);
 
@@ -133,25 +131,25 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Usage
                     }
 
                     // Mark fields disposed in Dispose method(s).
-                    if (containingMethod.GetDisposeMethodKind(operationBlockStartContext.Compilation) != DisposeMethodKind.None)
+                    if (containingMethod.GetDisposeMethodKind(disposeAnalysisHelper.IDisposable) != DisposeMethodKind.None)
                     {
                         var disposableFields = disposeAnalysisHelper.GetDisposableFields(containingMethod.ContainingType);
                         if (!disposableFields.IsEmpty)
                         {
-                            ControlFlowGraph cfg;
                             DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> disposeAnalysisResult;
                             DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResult;
                             ImmutableDictionary<IFieldSymbol, PointsToAbstractValue> trackedInstanceFieldPointsToMap;
                             if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockStartContext.OperationBlocks, containingMethod, trackInstanceFields: true,
-                                cfg: out cfg, disposeAnalysisResult: out disposeAnalysisResult, pointsToAnalysisResult: out pointsToAnalysisResult, trackedInstanceFieldPointsToMap: out trackedInstanceFieldPointsToMap))
+                                disposeAnalysisResult: out disposeAnalysisResult, pointsToAnalysisResult: out pointsToAnalysisResult, trackedInstanceFieldPointsToMap: out trackedInstanceFieldPointsToMap))
                             {
+                                BasicBlock exitBlock = disposeAnalysisResult.ControlFlowGraph.Exit;
                                 foreach (var fieldWithPointsToValue in trackedInstanceFieldPointsToMap)
                                 {
                                     IFieldSymbol field = fieldWithPointsToValue.Key;
                                     PointsToAbstractValue pointsToValue = fieldWithPointsToValue.Value;
 
                                     Debug.Assert(field.Type.IsDisposable(disposeAnalysisHelper.IDisposable));
-                                    ImmutableDictionary<AbstractLocation, DisposeAbstractValue> disposeDataAtExit = disposeAnalysisResult[cfg.Exit].InputData;
+                                    ImmutableDictionary<AbstractLocation, DisposeAbstractValue> disposeDataAtExit = disposeAnalysisResult[exitBlock].OutputData;
                                     var disposed = false;
                                     foreach (var location in pointsToValue.Locations)
                                     {

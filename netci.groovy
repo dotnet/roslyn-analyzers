@@ -38,6 +38,11 @@ static addBuildSteps(def job, def projectName, def opsysName, def configName, de
   def buildFullJobName = Utilities.getFullJobName(projectName, buildJobName, isPR)
 
   job.with {
+    wrappers {
+      credentialsBinding {
+        string("CODECOV_TOKEN", "CODECOV_TOKEN_DOTNET_ROSLYN_ANALYZERS")
+      }
+    }
     steps {
       batchFile(""".\\build\\CIBuild.cmd -configuration ${configName} -prepareMachine""")
     }

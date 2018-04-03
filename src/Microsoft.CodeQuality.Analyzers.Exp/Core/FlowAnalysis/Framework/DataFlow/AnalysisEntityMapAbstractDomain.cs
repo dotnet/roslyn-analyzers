@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -17,21 +16,30 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         {
         }
 
+        protected virtual TValue GetDefaultValue(AnalysisEntity analysisEntity) => ValueDomain.UnknownOrMayBeValue;
+
         protected override IDictionary<AnalysisEntity, TValue> MergeCore(IDictionary<AnalysisEntity, TValue> map1, IDictionary<AnalysisEntity, TValue> map2)
         {
             Debug.Assert(map1 != null);
             Debug.Assert(map2 != null);
 
+            TValue GetMergedValueForEntityPresentInOneMap(AnalysisEntity key, TValue value)
+            {
+                var defaultValue = GetDefaultValue(key);
+                return key.SymbolOpt != null ? ValueDomain.Merge(value, defaultValue) : defaultValue;
+            }
+
             var resultMap = new Dictionary<AnalysisEntity, TValue>();
+            var map2LookupIgnoringInstanceLocation = map2.Keys.ToLookup(entity => entity.EqualsIgnoringInstanceLocationId);
             foreach (var entry1 in map1)
             {
                 AnalysisEntity key1 = entry1.Key;
                 TValue value1 = entry1.Value;
-                var equivalentKeys2 = map2.Keys.Where(key => key.EqualsIgnoringInstanceLocation(key1));
+                
+                var equivalentKeys2 = map2LookupIgnoringInstanceLocation[key1.EqualsIgnoringInstanceLocationId];
                 if (!equivalentKeys2.Any())
                 {
-                    // Absence of entity from one branch indicates we don't know its values.
-                    TValue mergedValue = ValueDomain.Merge(value1, ValueDomain.UnknownOrMayBeValue);
+                    TValue mergedValue = GetMergedValueForEntityPresentInOneMap(key1, value1);
                     resultMap.Add(key1, mergedValue);
                     continue;
                 }
@@ -51,6 +59,16 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                         {
                             mergedValue = ValueDomain.Merge(mergedValue, existingValue);
                         }
+                        else if (ReferenceEquals(mergedValue, ValueDomain.UnknownOrMayBeValue))
+                        {
+                            // PERF: Do not add a new key-value pair to the resultMap if the value is UnknownOrMayBeValue.
+                            continue;
+                        }
+                        else if (key1.SymbolOpt == null || key1.SymbolOpt != key2.SymbolOpt)
+                        {
+                            // PERF: Do not add a add a new key-value pair to the resultMap for unrelated entities or non-symbol based entities.
+                            continue;
+                        }
 
                         resultMap[mergedKey] = mergedValue;
                     }
@@ -63,8 +81,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 var value2 = kvp.Value;
                 if (!resultMap.ContainsKey(key2))
                 {
-                    // Absence of entity from one branch indicates we don't know its values.
-                    TValue mergedValue = ValueDomain.Merge(value2, ValueDomain.UnknownOrMayBeValue);
+                    TValue mergedValue = GetMergedValueForEntityPresentInOneMap(key2, value2);
                     resultMap.Add(key2, mergedValue);
                 }
             }

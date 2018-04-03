@@ -104,7 +104,7 @@
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
         <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
-        <target state="needs-review-translation">Il tipo '{0}' è proprietario di campi Disposable ma non è Disposable</target>
+        <target state="translated">Il tipo '{0}' è proprietario di campi Disposable '{1}' ma non è Disposable</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">
@@ -309,7 +309,7 @@
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageOperator">
         <source>{0} should define operator(s) '{1}' since it implements IComparable.</source>
-        <target state="needs-review-translation">{0} deve definire l'operatore '{1}' dal momento che implementa IComparable.</target>
+        <target state="translated">{0} deve definire l'operatore o gli operatori '{1}' perché implementa IComparable.</target>
         <note>1 is a comma-separated list</note>
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassTitle">
@@ -1284,7 +1284,7 @@
       </trans-unit>
       <trans-unit id="OverrideGetHashCodeOnOverridingEqualsDescription">
         <source>GetHashCode returns a value, based on the current instance, that is suited for hashing algorithms and data structures such as a hash table. Two objects that are the same type and are equal must return the same hash code.</source>
-        <target state="translated">GetHashCode restituisce un valore, basato sull'istanza corrente, che è appropriato per algoritmi di hash e strutture dei dati come una tabella hash. Due oggetti uguali e dello stesso tipo devono restituire lo stesso codice hash.</target>
+        <target state="translated">GetHashCode restituisce un valore, basato sull'istanza corrente, che è appropriato per algoritmi hash e strutture dei dati come una tabella hash. Due oggetti uguali e dello stesso tipo devono restituire lo stesso codice hash.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideGetHashCodeOnOverridingEqualsMessage">
@@ -1474,7 +1474,7 @@
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageBoth">
         <source>{0} should define operator(s) '{1}' and Equals since it implements IComparable.</source>
-        <target state="new">{0} should define operator(s) '{1}' and Equals since it implements IComparable.</target>
+        <target state="translated">{0} deve definire l'operatore o gli operatori '{1}' e Equals perché implementa IComparable.</target>
         <note>1 is a comma-separated list</note>
       </trans-unit>
     </body>

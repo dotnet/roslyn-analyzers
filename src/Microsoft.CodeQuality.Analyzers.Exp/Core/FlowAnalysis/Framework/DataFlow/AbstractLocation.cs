@@ -2,7 +2,6 @@
 
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using System;
 using System.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow
@@ -20,63 +19,50 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     ///     3. Location created for certain symbols which do not have a declaration in executable code, i.e. no <see cref="IOperation"/> for declaration (such as parameter symbols, member symbols, etc. - <see cref="CreateSymbolLocation(ISymbol)"/>).
     /// </para>
     /// </summary>
-    internal sealed class AbstractLocation : IEquatable<AbstractLocation>
+    internal sealed class AbstractLocation : CacheBasedEquatable<AbstractLocation>
     {
-        private AbstractLocation(IOperation creationOpt, ISymbol symbolOpt, ITypeSymbol locationType)
+        public static readonly AbstractLocation Null = new AbstractLocation(creationOpt: null, analysisEntityOpt: null, symbolOpt: null, locationTypeOpt: null);
+
+        private AbstractLocation(IOperation creationOpt, AnalysisEntity analysisEntityOpt, ISymbol symbolOpt, ITypeSymbol locationTypeOpt)
         {
-            Debug.Assert(creationOpt != null ^ symbolOpt != null);
+            CreationOpt = creationOpt;
+            AnalysisEntityOpt = analysisEntityOpt;
+            SymbolOpt = symbolOpt;
+            LocationTypeOpt = locationTypeOpt;
+        }
+
+        private static AbstractLocation Create(IOperation creationOpt, AnalysisEntity analysisEntityOpt, ISymbol symbolOpt, ITypeSymbol locationType)
+        {
+            Debug.Assert(creationOpt != null ^ symbolOpt != null ^ analysisEntityOpt != null);
             Debug.Assert(locationType != null);
 
-            CreationOpt = creationOpt;
-            SymbolOpt = symbolOpt;
-            LocationType = locationType;
+            return new AbstractLocation(creationOpt, analysisEntityOpt, symbolOpt, locationType);
         }
 
-        public static AbstractLocation CreateAllocationLocation(IOperation creation, ITypeSymbol locationType) => new AbstractLocation(creation, symbolOpt: null, locationType: locationType);
-        public static AbstractLocation CreateThisOrMeLocation(INamedTypeSymbol namedTypeSymbol) => new AbstractLocation(creationOpt: null, symbolOpt: namedTypeSymbol, locationType: namedTypeSymbol);
-        public static AbstractLocation CreateSymbolLocation(ISymbol symbol) => new AbstractLocation(creationOpt: null, symbolOpt: symbol, locationType: symbol.GetMemerOrLocalOrParameterType());
+        public static AbstractLocation CreateAllocationLocation(IOperation creation, ITypeSymbol locationType) => Create(creation, analysisEntityOpt: null, symbolOpt: null, locationType: locationType);
+        public static AbstractLocation CreateAnalysisEntityDefaultLocation(AnalysisEntity analysisEntity) => Create(creationOpt: null, analysisEntityOpt: analysisEntity, symbolOpt: null, locationType: analysisEntity.Type);
+        public static AbstractLocation CreateThisOrMeLocation(INamedTypeSymbol namedTypeSymbol) => Create(creationOpt: null, analysisEntityOpt: null, symbolOpt: namedTypeSymbol, locationType: namedTypeSymbol);
+        public static AbstractLocation CreateSymbolLocation(ISymbol symbol) => Create(creationOpt: null, analysisEntityOpt: null, symbolOpt: symbol, locationType: symbol.GetMemerOrLocalOrParameterType());
 
         public IOperation CreationOpt { get; }
+        public AnalysisEntity AnalysisEntityOpt { get; }
         public ISymbol SymbolOpt { get; }
-        public ITypeSymbol LocationType { get; }
-        
-        public override bool Equals(object obj)
+        public ITypeSymbol LocationTypeOpt { get; }
+        public bool IsNull
         {
-            return Equals(obj as AbstractLocation);
-        }
-
-        public static bool operator ==(AbstractLocation value1, AbstractLocation value2)
-        {
-            if ((object)value1 == null)
+            get
             {
-                return (object)value2 == null;
+                var isNull = ReferenceEquals(this, Null);
+                Debug.Assert(isNull || LocationTypeOpt != null);
+                return isNull;
             }
-
-            return value1.Equals(value2);
         }
 
-        public static bool operator !=(AbstractLocation value1, AbstractLocation value2)
-        {
-            return !(value1 == value2);
-        }
-
-        public bool Equals(AbstractLocation other)
-        {
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            return other != null &&
-                CreationOpt == other.CreationOpt &&
-                SymbolOpt == other.SymbolOpt &&
-                LocationType == other.LocationType;
-        }
-
-        public override int GetHashCode()
+        protected override int ComputeHashCode()
         {
             return HashUtilities.Combine(CreationOpt?.GetHashCode() ?? 0,
-                HashUtilities.Combine(SymbolOpt?.GetHashCode() ?? 0, LocationType.GetHashCode()));
+                HashUtilities.Combine(SymbolOpt?.GetHashCode() ?? 0,
+                HashUtilities.Combine(AnalysisEntityOpt?.GetHashCode() ?? 0, LocationTypeOpt?.GetHashCode() ?? 0)));
         }
     }
 }

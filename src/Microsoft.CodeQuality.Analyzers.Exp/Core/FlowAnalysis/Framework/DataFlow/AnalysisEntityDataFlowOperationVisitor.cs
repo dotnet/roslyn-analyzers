@@ -6,6 +6,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
+using Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
 
@@ -21,20 +22,18 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         protected abstract TAbstractAnalysisValue GetAbstractValue(AnalysisEntity analysisEntity);
         protected abstract bool HasAbstractValue(AnalysisEntity analysisEntity);
         
-        protected AnalysisEntityFactory AnalysisEntityFactory { get; }
-
         protected AnalysisEntityDataFlowOperationVisitor(
             AbstractValueDomain<TAbstractAnalysisValue> valueDomain,
-            INamedTypeSymbol containingTypeSymbol,
+            ISymbol owningSymbol,
+            WellKnownTypeProvider wellKnownTypeProvider,
+            bool pessimisticAnalysis,
+            bool predicateAnalysis,
             DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> nullAnalysisResultOpt,
+            DataFlowAnalysisResult<CopyBlockAnalysisResult, CopyAbstractValue> copyAnalysisResultOpt,
             DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResultOpt)
-            : base (valueDomain, containingTypeSymbol, nullAnalysisResultOpt, pointsToAnalysisResultOpt)
+            : base (valueDomain, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, predicateAnalysis,
+                  nullAnalysisResultOpt, copyAnalysisResultOpt, pointsToAnalysisResultOpt)
         {
-            AnalysisEntityFactory = new AnalysisEntityFactory(
-                (pointsToAnalysisResultOpt != null || IsPointsToAnalysis) ?
-                    GetPointsToAbstractValue :
-                    (Func<IOperation, PointsToAbstractValue>)null,
-                containingTypeSymbol);
         }
 
         protected override TAbstractAnalysisValue ComputeAnalysisValueForReferenceOperation(IOperation operation, TAbstractAnalysisValue defaultValue)
@@ -52,6 +51,25 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             {
                 return defaultValue;
             }
+        }
+
+        protected sealed override TAbstractAnalysisValue ComputeAnalysisValueForOutArgument(IArgumentOperation operation, TAbstractAnalysisValue defaultValue)
+        {
+            if (AnalysisEntityFactory.TryCreate(operation, out AnalysisEntity analysisEntity))
+            {
+                var value = ComputeAnalysisValueForOutArgument(analysisEntity, operation, defaultValue);
+                SetAbstractValue(analysisEntity, value);
+                return GetAbstractValue(analysisEntity);
+            }
+            else
+            {
+                return defaultValue;
+            }
+        }
+
+        protected virtual TAbstractAnalysisValue ComputeAnalysisValueForOutArgument(AnalysisEntity analysisEntity, IArgumentOperation operation, TAbstractAnalysisValue defaultValue)
+        {
+            return defaultValue;
         }
 
         /// <summary>
@@ -135,6 +153,24 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             SetAbstractValue(targetAnalysisEntity, assignedValue);
         }
 
+        protected override void SetValueForParameterOnEntry(IParameterSymbol parameter, AnalysisEntity analysisEntity)
+        {
+            Debug.Assert(analysisEntity.SymbolOpt == parameter);
+            SetAbstractValue(analysisEntity, GetDefaultValueForParameterOnEntry(analysisEntity.Type));
+        }
+
+        protected override void SetValueForParameterOnExit(IParameterSymbol parameter, AnalysisEntity analysisEntity)
+        {
+            Debug.Assert(analysisEntity.SymbolOpt == parameter);
+            if (parameter.RefKind != RefKind.None)
+            {
+                SetAbstractValue(analysisEntity, GetDefaultValueForParameterOnExit(analysisEntity.Type));
+            }
+        }
+
+        protected virtual TAbstractAnalysisValue GetDefaultValueForParameterOnEntry(ITypeSymbol parameterType) => ValueDomain.UnknownOrMayBeValue;
+        protected virtual TAbstractAnalysisValue GetDefaultValueForParameterOnExit(ITypeSymbol parameterType) => ValueDomain.UnknownOrMayBeValue;
+
         #endregion
 
         #region Helper methods for reseting/transfer instance analysis data when PointsTo analysis results are available
@@ -157,7 +193,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         {
             if (AnalysisEntityFactory.TryCreate(operation, out AnalysisEntity analysisEntity))
             {
-                ResetValueTypeInstanceAnalysisData(analysisEntity);
+                if (analysisEntity.Type.HasValueCopySemantics())
+                {
+                    ResetValueTypeInstanceAnalysisData(analysisEntity);
+                }
             }
         }
 
@@ -172,7 +211,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             Debug.Assert(!operation.Type.HasValueCopySemantics());
 
             var pointsToValue = GetPointsToAbstractValue(operation);
-            if (pointsToValue.Kind != PointsToAbstractValueKind.Known)
+            if (pointsToValue.Locations.IsEmpty)
             {
                 return;
             }
@@ -232,13 +271,14 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         private IEnumerable<AnalysisEntity> GetChildAnalysisEntities(AnalysisEntity analysisEntity)
         {
-            IEnumerable<AnalysisEntity> dependentAnalysisEntities = GetChildAnalysisEntities(analysisEntity.InstanceLocation);
-            if (analysisEntity.Type.HasValueCopySemantics())
+            var hasValueCopySemantics = analysisEntity.Type.HasValueCopySemantics();
+            foreach (var entity in GetChildAnalysisEntities(analysisEntity.InstanceLocation))
             {
-                dependentAnalysisEntities = dependentAnalysisEntities.Where(info => info.HasAncestorOrSelf(analysisEntity));
+                if (!hasValueCopySemantics || entity.HasAncestorOrSelf(analysisEntity))
+                {
+                    yield return entity;
+                }
             }
-
-            return dependentAnalysisEntities;
         }
 
         private IEnumerable<AnalysisEntity> GetChildAnalysisEntities(PointsToAbstractValue instanceLocationOpt)
@@ -246,15 +286,19 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             // We are interested only in dependent child/member infos, not the root info.
             if (instanceLocationOpt != null)
             {
-                IEnumerable<AnalysisEntity> trackedEntities = TrackedEntities;
+                IList<AnalysisEntity> trackedEntities = TrackedEntities?.ToList();
                 if (trackedEntities != null)
                 {
-                    return trackedEntities.Where(entity => entity.InstanceLocation.Equals(instanceLocationOpt) && entity.IsChildOrInstanceMember)
-                        .ToImmutableHashSet();
+                    Debug.Assert(trackedEntities.ToSet().Count == trackedEntities.Count);
+                    foreach (var entity in trackedEntities)
+                    {
+                        if (entity.InstanceLocation.Equals(instanceLocationOpt) && entity.IsChildOrInstanceMember)
+                        {
+                            yield return entity;
+                        }
+                    }
                 }
             }
-
-            return ImmutableHashSet<AnalysisEntity>.Empty;
         }
 
         #endregion
@@ -262,8 +306,21 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         // TODO: Remove these temporary methods once we move to compiler's CFG
         // https://github.com/dotnet/roslyn-analyzers/issues/1567
         #region Temporary methods to workaround lack of *real* CFG
-        protected IDictionary<AnalysisEntity, TAbstractAnalysisValue> GetClonedAnalysisData(IDictionary<AnalysisEntity, TAbstractAnalysisValue> analysisData)
+        protected IDictionary<AnalysisEntity, TAbstractAnalysisValue> GetClonedAnalysisDataHelper(IDictionary<AnalysisEntity, TAbstractAnalysisValue> analysisData)
             => new Dictionary<AnalysisEntity, TAbstractAnalysisValue>(analysisData);
+        #endregion
+
+        #region Visitor methods
+        protected override TAbstractAnalysisValue VisitAssignmentOperation(IAssignmentOperation operation, object argument)
+        {
+            var value = base.VisitAssignmentOperation(operation, argument);
+            if (AnalysisEntityFactory.TryCreate(operation.Target, out AnalysisEntity targetEntity))
+            {
+                value = GetAbstractValue(targetEntity);
+            }
+
+            return value;
+        }
         #endregion
     }
 }

@@ -10,6 +10,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
         Undefined,
         Null,
         NotNull,
-        MaybeNull
+        MaybeNull,
+        Invalid
     }
 }

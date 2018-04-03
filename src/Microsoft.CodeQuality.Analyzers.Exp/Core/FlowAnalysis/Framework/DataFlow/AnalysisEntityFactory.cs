@@ -13,17 +13,22 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     /// <summary>
     /// Factory to create <see cref="AnalysisEntity"/> objects for operations, symbol declarations, etc.
     /// This factory also tracks analysis entities that share the same instance location (e.g. value type members).
+    /// NOTE: This factory must only be used from within an <see cref="OperationVisitor"/>, as it is tied to the visitor's state tracking via <see cref="_getIsInsideObjectInitializer"/> delegate.
     /// </summary>
     internal sealed class AnalysisEntityFactory
     {
         private readonly Dictionary<IOperation, AnalysisEntity> _analysisEntityMap;
         private readonly Dictionary<ISymbol, PointsToAbstractValue> _instanceLocationsForSymbols;
         private readonly Func<IOperation, PointsToAbstractValue> _getPointsToAbstractValueOpt;
-        
+        private readonly Func<bool> _getIsInsideObjectInitializer;
+
         public AnalysisEntityFactory(
-            Func<IOperation, PointsToAbstractValue> getPointsToAbstractValueOpt, INamedTypeSymbol containingTypeSymbol)
+            Func<IOperation, PointsToAbstractValue> getPointsToAbstractValueOpt,
+            Func<bool> getIsInsideObjectInitializer,
+            INamedTypeSymbol containingTypeSymbol)
         {
             _getPointsToAbstractValueOpt = getPointsToAbstractValueOpt;
+            _getIsInsideObjectInitializer = getIsInsideObjectInitializer;
             _analysisEntityMap = new Dictionary<IOperation, AnalysisEntity>();
             _instanceLocationsForSymbols = new Dictionary<ISymbol, PointsToAbstractValue>();
 
@@ -78,6 +83,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             ISymbol symbolOpt = null;
             ImmutableArray<AbstractIndex> indices = ImmutableArray<AbstractIndex>.Empty;
             IOperation instanceOpt = null;
+            ITypeSymbol type = operation.Type;
             switch (operation)
             {
                 case ILocalReferenceOperation localReference:
@@ -122,16 +128,19 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     break;
 
                 case IInstanceReferenceOperation instanceReference:
-                    instanceOpt = instanceReference.GetInstance();
-                    if (instanceOpt == null)
+                    if (_getPointsToAbstractValueOpt != null)
                     {
-                        // Reference to this or base instance.
-                        analysisEntity = ThisOrMeInstance;
-                    }
-                    else
-                    {
-                        var instanceLocation = _getPointsToAbstractValueOpt(instanceReference);
-                        analysisEntity = AnalysisEntity.Create(instanceReference, instanceLocation);
+                        instanceOpt = instanceReference.GetInstance(_getIsInsideObjectInitializer());
+                        if (instanceOpt == null)
+                        {
+                            // Reference to this or base instance.
+                            analysisEntity = ThisOrMeInstance;
+                        }
+                        else
+                        {
+                            var instanceLocation = _getPointsToAbstractValueOpt(instanceReference);
+                            analysisEntity = AnalysisEntity.Create(instanceReference, instanceLocation);
+                        }
                     }
                     break;
 
@@ -146,13 +155,35 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 case IParenthesizedOperation parenthesized:
                     return TryCreate(parenthesized.Operand, out analysisEntity);
 
+                case IArgumentOperation argument:
+                    return TryCreate(argument.Value, out analysisEntity);
+
+                case IDeclarationExpressionOperation declarationExpression:
+                    switch (declarationExpression.Expression)
+                    {
+                        case ILocalReferenceOperation localReference:
+                            return TryCreateForSymbolDeclaration(localReference.Local, out analysisEntity);
+
+                        case ITupleOperation tupleOperation:
+                            // TODO handle tuple operations
+                            // https://github.com/dotnet/roslyn-analyzers/issues/1571
+                            break;
+                    }
+
+                    break;
+
+                case IVariableDeclaratorOperation variableDeclarator:
+                    symbolOpt = variableDeclarator.Symbol;
+                    type = variableDeclarator.Symbol.Type;
+                    break;
+
                 default:
                     break;
             }
 
             if (symbolOpt != null || !indices.IsEmpty)
             {
-                TryCreate(symbolOpt, indices, operation.Type, instanceOpt, out analysisEntity);
+                TryCreate(symbolOpt, indices, type, instanceOpt, out analysisEntity);
             }
 
             _analysisEntityMap[operation] = analysisEntity;
@@ -238,7 +269,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             AnalysisEntity parentOpt = null;
             if (instanceOpt?.Type != null)
             {
-                if (instanceOpt.Type.HasValueCopySemantics())
+                if (instanceOpt.Type.IsValueType)
                 {
                     if (TryCreate(instanceOpt, out parentOpt))
                     {

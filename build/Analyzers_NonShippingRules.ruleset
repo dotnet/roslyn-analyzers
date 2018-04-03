@@ -4,20 +4,11 @@
   <Include Path=".\Analyzers_ShippingRules.ruleset" Action="Default" />
 
   <Rules AnalyzerId="Microsoft.ApiDesignGuidelines.Analyzers" RuleNamespace="Microsoft.ApiDesignGuidelines.Analyzers">
-    <!-- IdentifiersShouldNotContainUnderscores - test names contain underscores -->
-    <!-- Fix tracked by https://github.com/dotnet/roslyn-analyzers/issues/1354 -->
+    <!-- IdentifiersShouldNotContainUnderscores - test names contain underscores and this is fine -->
     <Rule Id="CA1707" Action="None" />
   </Rules>
   
   <Rules AnalyzerId="Microsoft.CodeQuality.Analyzers" RuleNamespace="Microsoft.CodeQuality.Analyzers.Maintainability">
-    <!-- Unused parameter rule has many violations in non-shipping projects -->
-    <!-- Reenabling is tracked by https://github.com/dotnet/roslyn-analyzers/issues/1355 -->
-    <Rule Id="CA1801" Action="None" />
-
-    <!-- Test for empty strings using 'string.Length' property or 'string.IsNullOrEmpty' method instead of an Equality check. -->
-    <!-- Rule has many violations in non-shipping projects -->
-    <Rule Id="CA1820" Action="None" />
-
     <!-- Mark member as static rule has many violations in non-shipping projects -->
     <Rule Id="CA1822" Action="None" />
   </Rules>

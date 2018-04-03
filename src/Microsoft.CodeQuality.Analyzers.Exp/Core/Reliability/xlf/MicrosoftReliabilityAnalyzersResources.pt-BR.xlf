@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="DisposeObjectsBeforeLosingScopeDescription">
         <source>If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</source>
-        <target state="new">If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</target>
+        <target state="translated">Se um objeto descartável não for descartado de forma explícita antes que todas as referências a ele estejam fora do escopo, o objeto será descartado em algum momento indeterminado quando o coletor de lixo executar o finalizador do objeto. Como um evento excepcional pode ocorrer e impedir que o finalizador do objeto seja executado, em vez disso o objeto deve ser descartado de forma explícita.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeMessage">
         <source>In method '{0}', call System.IDisposable.Dispose on object created by '{1}' before all references to it are out of scope.</source>
-        <target state="new">In method '{0}', call System.IDisposable.Dispose on object created by '{1}' before all references to it are out of scope.</target>
+        <target state="translated">No método '{0}', chame System.IDisposable.Dispose no objeto criado por '{1}' antes que todas as referências a ele fiquem fora do escopo.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeTitle">
         <source>Dispose objects before losing scope</source>
-        <target state="new">Dispose objects before losing scope</target>
+        <target state="translated">Descartar objetos antes de perder o escopo</target>
         <note />
       </trans-unit>
     </body>

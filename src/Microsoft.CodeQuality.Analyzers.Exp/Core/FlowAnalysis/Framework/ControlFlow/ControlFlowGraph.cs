@@ -21,8 +21,10 @@ namespace Microsoft.CodeAnalysis.Operations.ControlFlow
             return result;
         }
 
-        public ControlFlowGraph()
+        public ControlFlowGraph(IOperation rootOperation)
         {
+            RootOperation = rootOperation;
+
             _blocks = ImmutableHashSet.CreateBuilder<BasicBlock>();
             Entry = new BasicBlock(BasicBlockKind.Entry);
             Exit = new BasicBlock(BasicBlockKind.Exit);
@@ -31,6 +33,7 @@ namespace Microsoft.CodeAnalysis.Operations.ControlFlow
             AddBlock(Exit);
         }
 
+        public IOperation RootOperation { get; }
         public BasicBlock Entry { get; private set; }
         public BasicBlock Exit { get; private set; }
         public ImmutableHashSet<BasicBlock> Blocks => _blocks.ToImmutable();

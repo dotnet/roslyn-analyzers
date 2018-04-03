@@ -33,7 +33,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             _info[block] = newData;
         }
 
-        public DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue> ToResult<TAnalysisResult, TAbstractAnalysisValue>(Func<BasicBlock, DataFlowAnalysisInfo<TAnalysisData>, TAnalysisResult> getResult, ImmutableDictionary<IOperation, TAbstractAnalysisValue> stateMap)
+        public DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue> ToResult<TAnalysisResult, TAbstractAnalysisValue>(
+            Func<BasicBlock, DataFlowAnalysisInfo<TAnalysisData>, TAnalysisResult> getResult,
+            ImmutableDictionary<IOperation, TAbstractAnalysisValue> stateMap,
+            ImmutableDictionary<IOperation, PredicateValueKind> predicateValueKindMap,
+            TAnalysisData mergedDataForUnhandledThrowOperations,
+            ControlFlowGraph cfg,
+            TAbstractAnalysisValue defaultUnknownValue)
             where TAnalysisResult: class
         {
             var resultBuilder = ImmutableDictionary.CreateBuilder<BasicBlock, TAnalysisResult>();
@@ -45,7 +51,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 resultBuilder.Add(block, result);
             }
 
-            return new DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue>(resultBuilder.ToImmutable(), stateMap);
+            TAnalysisResult mergedStateForUnhandledThrowOperations = null;
+            if (mergedDataForUnhandledThrowOperations != null)
+            {
+                var info = new DataFlowAnalysisInfo<TAnalysisData>(mergedDataForUnhandledThrowOperations, mergedDataForUnhandledThrowOperations);
+                mergedStateForUnhandledThrowOperations = getResult(cfg.Exit, info);
+            }
+
+            return new DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue>(resultBuilder.ToImmutable(), stateMap,
+                predicateValueKindMap, mergedStateForUnhandledThrowOperations, cfg, defaultUnknownValue);
         }
     }
 }

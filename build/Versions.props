@@ -1,5 +1,9 @@
 <Project>
   <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <VersionBase>2.6.1</VersionBase>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
 
@@ -7,9 +11,12 @@
     <UsingToolVSSDK>true</UsingToolVSSDK>
 
     <!-- Toolset -->
-    <RoslynToolsRepoToolsetVersion>1.0.0-beta-62615-02</RoslynToolsRepoToolsetVersion>
+    <RoslynToolsRepoToolsetVersion>1.0.0-beta-62705-01</RoslynToolsRepoToolsetVersion>
     <VSWhereVersion>2.3.2</VSWhereVersion>
     <MicrosoftVSSDKVersion>15.0.26201-alpha</MicrosoftVSSDKVersion>
+    <MicrosoftDiaSymReaderPdb2PdbVersion>1.1.0-beta1-62624-01</MicrosoftDiaSymReaderPdb2PdbVersion>
+    <OpenCoverVersion>4.6.519</OpenCoverVersion>
+    <CodecovVersion>1.0.3</CodecovVersion>
 
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>2.6.0</MicrosoftCodeAnalysisVersion>

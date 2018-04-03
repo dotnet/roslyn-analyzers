@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow
 {
@@ -50,7 +50,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return result;
         }
 
-        public override ImmutableHashSet<T> Merge(ImmutableHashSet<T> value1, ImmutableHashSet<T> value2)
+        public override ImmutableHashSet<T> Merge(ImmutableHashSet<T> value1, ImmutableHashSet<T> value2) => MergeOrIntersect(value1, value2, merge: true);
+
+        public ImmutableHashSet<T> Intersect(ImmutableHashSet<T> value1, ImmutableHashSet<T> value2) => MergeOrIntersect(value1, value2, merge: false);
+
+        private static ImmutableHashSet<T> MergeOrIntersect(ImmutableHashSet<T> value1, ImmutableHashSet<T> value2, bool merge)
         {
             if (value1 == null)
             {
@@ -69,10 +73,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 return value1;
             }
 
-            var builder = ImmutableHashSet.CreateBuilder<T>();
-            builder.UnionWith(value1);
-            builder.UnionWith(value2);
-            return builder.ToImmutable();
+            var values = merge ? value1.Concat(value2) : value1.Intersect(value2);
+            return ImmutableHashSet.CreateRange(values);
         }
+
     }
 }

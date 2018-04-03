@@ -104,7 +104,7 @@
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
         <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
-        <target state="needs-review-translation">類型 '{0}' 擁有可處置的欄位，但其本身並非可處置</target>
+        <target state="translated">類型 '{0}' 擁有可處置的欄位 '{1}' 但其本身並非可處置項目</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">
@@ -309,7 +309,7 @@
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageOperator">
         <source>{0} should define operator(s) '{1}' since it implements IComparable.</source>
-        <target state="needs-review-translation">{0} 因為會實作 IComparable，所以應會定義運算子 '{1}'。</target>
+        <target state="translated">因為 {0} 會實作 IComparable，所以應定義運算子 '{1}'。</target>
         <note>1 is a comma-separated list</note>
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassTitle">
@@ -1474,7 +1474,7 @@
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageBoth">
         <source>{0} should define operator(s) '{1}' and Equals since it implements IComparable.</source>
-        <target state="new">{0} should define operator(s) '{1}' and Equals since it implements IComparable.</target>
+        <target state="translated">因為 {0} 會實作 IComparable，所以應定義運算子 '{1}' 與等於。</target>
         <note>1 is a comma-separated list</note>
       </trans-unit>
     </body>

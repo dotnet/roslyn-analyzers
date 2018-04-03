@@ -104,7 +104,7 @@
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
         <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
-        <target state="needs-review-translation">Der Typ "{0}" besitzt verwerfbare Felder, ist jedoch nicht verwerfbar.</target>
+        <target state="translated">Der Typ "{0}" besitzt verwerfbare Felder "{1}", ist jedoch nicht verwerfbar.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">
@@ -309,7 +309,7 @@
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageOperator">
         <source>{0} should define operator(s) '{1}' since it implements IComparable.</source>
-        <target state="needs-review-translation">"{0}" muss den Operator "{1}" definieren, weil IComparable implementiert wird.</target>
+        <target state="translated">"{0}" muss die Operatoren "{1}" definieren, weil IComparable implementiert wird.</target>
         <note>1 is a comma-separated list</note>
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassTitle">
@@ -1474,7 +1474,7 @@
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageBoth">
         <source>{0} should define operator(s) '{1}' and Equals since it implements IComparable.</source>
-        <target state="new">{0} should define operator(s) '{1}' and Equals since it implements IComparable.</target>
+        <target state="translated">"{0}" muss die Operatoren "{1}" und "Equals" definieren, weil IComparable implementiert wird.</target>
         <note>1 is a comma-separated list</note>
       </trans-unit>
     </body>

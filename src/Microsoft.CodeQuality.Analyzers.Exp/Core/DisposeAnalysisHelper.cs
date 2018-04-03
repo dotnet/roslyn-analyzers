@@ -2,17 +2,16 @@
 
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Operations.ControlFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow;
+using Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
@@ -42,22 +41,19 @@ namespace Microsoft.CodeQuality.Analyzers.Exp
             OperationKind.DynamicObjectCreation,
             OperationKind.Invocation);
 
-        public INamedTypeSymbol IDisposable { get; }
-        private readonly INamedTypeSymbol _iCollection;
-        private readonly INamedTypeSymbol _genericICollection;
+        private readonly WellKnownTypeProvider _wellKnownTypeProvider;
         private readonly ImmutableHashSet<INamedTypeSymbol> _disposeOwnershipTransferLikelyTypes;
         private ConcurrentDictionary<INamedTypeSymbol, ImmutableHashSet<IFieldSymbol>> _lazyDisposableFieldsMap;
+        public INamedTypeSymbol IDisposable => _wellKnownTypeProvider.IDisposable;
 
         private DisposeAnalysisHelper(Compilation compilation)
         {
-            IDisposable = WellKnownTypes.IDisposable(compilation);
+            _wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
             if (IDisposable != null)
             {
-                _iCollection = WellKnownTypes.ICollection(compilation);
-                _genericICollection = WellKnownTypes.GenericICollection(compilation);
                 _disposeOwnershipTransferLikelyTypes = GetDisposeOwnershipTransferLikelyTypes(compilation);
             }
-        }
+        }        
 
         private static ImmutableHashSet<INamedTypeSymbol> GetDisposeOwnershipTransferLikelyTypes(Compilation compilation)
         {
@@ -97,28 +93,25 @@ namespace Microsoft.CodeQuality.Analyzers.Exp
         public bool TryGetOrComputeResult(
             ImmutableArray<IOperation> operationBlocks,
             IMethodSymbol containingMethod,
-            out ControlFlowGraph cfg,
             out DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> disposeAnalysisResult)
         {
-            return TryGetOrComputeResult(operationBlocks, containingMethod, out cfg, out disposeAnalysisResult, out var _);
+            return TryGetOrComputeResult(operationBlocks, containingMethod, out disposeAnalysisResult, out var _);
         }
 
         public bool TryGetOrComputeResult(
             ImmutableArray<IOperation> operationBlocks,
             IMethodSymbol containingMethod,
-            out ControlFlowGraph cfg,
             out DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> disposeAnalysisResult,
             out DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResult)
         {
             return TryGetOrComputeResult(operationBlocks, containingMethod, trackInstanceFields: false,
-                cfg: out cfg, disposeAnalysisResult: out disposeAnalysisResult, pointsToAnalysisResult: out pointsToAnalysisResult, trackedInstanceFieldPointsToMap: out var _);
+                disposeAnalysisResult: out disposeAnalysisResult, pointsToAnalysisResult: out pointsToAnalysisResult, trackedInstanceFieldPointsToMap: out var _);
         }
 
         public bool TryGetOrComputeResult(
             ImmutableArray<IOperation> operationBlocks,
             IMethodSymbol containingMethod,
             bool trackInstanceFields,
-            out ControlFlowGraph cfg,
             out DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> disposeAnalysisResult,
             out DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResult,
             out ImmutableDictionary<IFieldSymbol, PointsToAbstractValue> trackedInstanceFieldPointsToMap)
@@ -128,17 +121,21 @@ namespace Microsoft.CodeQuality.Analyzers.Exp
                 IBlockOperation topmostBlock = operationRoot.GetTopmostParentBlock();
                 if (topmostBlock != null)
                 {
-                    cfg = ControlFlowGraph.Create(topmostBlock);
-                    var nullAnalysisResult = NullAnalysis.GetOrComputeResult(cfg, containingMethod.ContainingType);
-                    pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod.ContainingType, nullAnalysisResult);
-                    disposeAnalysisResult = DisposeAnalysis.GetOrComputeResult(cfg, IDisposable, _iCollection,
-                        _genericICollection, _disposeOwnershipTransferLikelyTypes, containingMethod.ContainingType, pointsToAnalysisResult,
+                    var cfg = ControlFlowGraph.Create(topmostBlock);
+
+                    // Invoking an instance method may likely invalidate all the instance field analysis state, i.e.
+                    // reference type fields might be re-assigned to point to different objects in the called method.
+                    // An optimistic points to analysis assumes that the points to values of instance fields don't change on invoking an instance method.
+                    // A pessimistic points to analysis resets all the instance state and assumes the instance field might point to any object, hence has unknown state.
+                    // For dispose analysis, we want to perform an optimistic points to analysis as we assume a disposable field is not likely to be re-assigned to a separate object in helper method invocations in Dispose.
+                    var nullAnalysisResult = NullAnalysis.GetOrComputeResult(cfg, containingMethod, _wellKnownTypeProvider, copyAnalysisResultOpt: null, pessimisticAnalysis: false);
+                    pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, _wellKnownTypeProvider, nullAnalysisResult, pessimisticAnalysis: false);
+                    disposeAnalysisResult = DisposeAnalysis.GetOrComputeResult(cfg, containingMethod, _wellKnownTypeProvider, _disposeOwnershipTransferLikelyTypes, pointsToAnalysisResult,
                         trackInstanceFields, out trackedInstanceFieldPointsToMap, nullAnalysisResult);
                     return true;
                 }
             }
 
-            cfg = null;
             disposeAnalysisResult = null;
             pointsToAnalysisResult = null;
             trackedInstanceFieldPointsToMap = null;
@@ -147,24 +144,17 @@ namespace Microsoft.CodeQuality.Analyzers.Exp
 
         private bool HasDisposableOwnershipTransferForParameter(IMethodSymbol containingMethod) =>
             containingMethod.MethodKind == MethodKind.Constructor &&
-            containingMethod.Parameters.Length == 1 &&
-            _disposeOwnershipTransferLikelyTypes.Contains(containingMethod.Parameters[0].Type);
+            containingMethod.Parameters.Any(p => _disposeOwnershipTransferLikelyTypes.Contains(p.Type));
+
+        private bool IsDisposableCreation(IOperation operation)
+            => (s_DisposableCreationKinds.Contains(operation.Kind) ||
+                operation.Parent is IArgumentOperation argument && argument.Parameter.RefKind == RefKind.Out) &&
+               operation.Type?.IsDisposable(IDisposable) == true;
 
         public bool HasAnyDisposableCreationDescendant(ImmutableArray<IOperation> operationBlocks, IMethodSymbol containingMethod)
         {
-            foreach (var operationBlock in operationBlocks)
-            {
-                foreach (var descendant in operationBlock.DescendantsAndSelf())
-                {
-                    if (s_DisposableCreationKinds.Contains(descendant.Kind) &&
-                        descendant.Type.IsDisposable(IDisposable))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return HasDisposableOwnershipTransferForParameter(containingMethod);
+            return operationBlocks.HasAnyOperationDescendant(IsDisposableCreation) ||
+                HasDisposableOwnershipTransferForParameter(containingMethod);
         }
 
         public ImmutableHashSet<IFieldSymbol> GetDisposableFields(INamedTypeSymbol namedType)
@@ -181,7 +171,10 @@ namespace Microsoft.CodeQuality.Analyzers.Exp
             }
             else
             {
-                disposableFields = namedType.GetMembers().OfType<IFieldSymbol>().Where(f => f.Type.IsDisposable(IDisposable)).ToImmutableHashSet();
+                disposableFields = namedType.GetMembers()
+                    .OfType<IFieldSymbol>()
+                    .Where(f => f.Type.IsDisposable(IDisposable) && !f.Type.DerivesFrom(_wellKnownTypeProvider.Task))
+                    .ToImmutableHashSet();
             }
 
             return _lazyDisposableFieldsMap.GetOrAdd(namedType, disposableFields);
@@ -195,20 +188,11 @@ namespace Microsoft.CodeQuality.Analyzers.Exp
         {
             if (location.CreationOpt == null)
             {
-                return false;
+                return location.SymbolOpt?.Kind == SymbolKind.Parameter &&
+                    HasDisposableOwnershipTransferForParameter(containingMethod);
             }
 
-            if (s_DisposableCreationKinds.Contains(location.CreationOpt.Kind))
-            {
-                return true;
-            }
-
-            if (location.CreationOpt.Kind == OperationKind.ParameterReference)
-            {
-                return HasDisposableOwnershipTransferForParameter(containingMethod);
-            }
-
-            return false;
+            return IsDisposableCreation(location.CreationOpt);
         }
     }
 }

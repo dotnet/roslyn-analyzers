@@ -7,6 +7,9 @@ using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.Exp.UnitTests.Reliability
 {
+    [Trait(Traits.DataflowAnalysis, Traits.Dataflow.DisposeAnalysis)]
+    [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
+    [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
     public partial class DisposeObjectsBeforeLosingScopeTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer() => new DisposeObjectsBeforeLosingScope();
@@ -286,6 +289,185 @@ Class Test
 End Class",
             // Test0.vb(13,13): warning CA2000: In method 'Sub Test.M1(a As A)', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
             GetBasicResultAt(13, 13, "Sub Test.M1(a As A)", "New A()"));
+        }
+
+        [Fact]
+        public void OutAndRefParametersWithDisposableAssignment_NoDisposeCall_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1(ref A a1, out A a2)
+    {
+        a1 = new A();
+        a2 = new A();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Throw New NotImplementedException()
+    End Sub
+End Class
+
+Class Test
+    Sub M1(ByRef a As A)
+        a = New A()
+    End Sub
+End Class");
+        }
+
+        [Fact]
+        public void OutDisposableArgument_NoDisposeCall_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1(out A param)
+    {
+        param = new A();
+    }
+
+    void M2(out A param2)
+    {
+        M3(out param2);
+    }
+
+    void M3(out A param3)
+    {
+        param3 = new A();
+    }
+
+    void Method()
+    {
+        A a;
+        M1(out a);
+        A local = a;
+        M1(out a);
+
+        M1(out var a2);
+
+        A a3;
+        M2(out a3);
+    }
+}
+",
+            // Test0.cs(32,12): warning CA2000: In method 'void Test.Method()', call System.IDisposable.Dispose on object created by 'out a' before all references to it are out of scope.
+            GetCSharpResultAt(32, 12, "void Test.Method()", "out a"),
+            // Test0.cs(34,12): warning CA2000: In method 'void Test.Method()', call System.IDisposable.Dispose on object created by 'out a' before all references to it are out of scope.
+            GetCSharpResultAt(34, 12, "void Test.Method()", "out a"),
+            // Test0.cs(36,12): warning CA2000: In method 'void Test.Method()', call System.IDisposable.Dispose on object created by 'out var a2' before all references to it are out of scope.
+            GetCSharpResultAt(36, 12, "void Test.Method()", "out var a2"),
+            // Test0.cs(39,12): warning CA2000: In method 'void Test.Method()', call System.IDisposable.Dispose on object created by 'out a3' before all references to it are out of scope.
+            GetCSharpResultAt(39, 12, "void Test.Method()", "out a3"));
+        }
+
+        [Fact]
+        public void OutDisposableArgument_DisposeCall_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1(out A param)
+    {
+        param = new A();
+    }
+
+    void M2(out A param2)
+    {
+        M3(out param2);
+    }
+
+    void M3(out A param3)
+    {
+        param3 = new A();
+    }
+
+    void Method()
+    {
+        A a;
+        M1(out a);
+        A local = a;
+        M1(out a);
+
+        M1(out var a2);
+
+        A a3;
+        M2(out a3);
+
+        local.Dispose();
+        a.Dispose();
+        a2.Dispose();
+        a3.Dispose();
+    }
+}
+");
+        }
+
+        [Fact]
+        public void TryGetSpecialCase_OutDisposableArgument_NoDisposeCall_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class MyCollection
+{
+    private readonly Dictionary<int, A> _map;
+    public MyCollection(Dictionary<int, A> map)
+    {
+        _map = map;
+    }
+
+    public bool ValueExists(int i)
+    {
+        return _map.TryGetValue(i, out var value);
+    }
+}
+");
         }
 
         [Fact]
@@ -1113,6 +1295,120 @@ End Class");
         }
 
         [Fact]
+        public void CollectionAdd_IReadOnlyCollection_SpecialCases_ElementWithDisposableAssignment_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class MyReadOnlyCollection : IReadOnlyCollection<A>
+{
+    public void Add(A item)
+    {
+    }
+    
+    public int Count => throw new NotImplementedException();
+
+    public IEnumerator<A> GetEnumerator()
+    {
+        throw new NotImplementedException();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        var myReadOnlyCollection = new MyReadOnlyCollection();
+        myReadOnlyCollection.Add(new A());
+        A a = new A();
+        myReadOnlyCollection.Add(a);
+
+        var builder = ImmutableArray.CreateBuilder<A>();
+        builder.Add(new A());
+        A a2 = new A();
+        builder.Add(a2);
+
+        var bag = new ConcurrentBag<A>();
+        builder.Add(new A());
+        A a3 = new A();
+        builder.Add(a3);
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+Imports System.Collections
+Imports System.Collections.Concurrent
+Imports System.Collections.Generic
+Imports System.Collections.Immutable
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Throw New NotImplementedException()
+    End Sub
+End Class
+
+Class MyReadOnlyCollection
+    Implements IReadOnlyCollection(Of A)
+
+    Public Sub Add(ByVal item As A)
+    End Sub
+
+    Public ReadOnly Property Count As Integer Implements IReadOnlyCollection(Of A).Count
+        Get
+            Throw New NotImplementedException()
+        End Get
+    End Property
+
+    Public Function GetEnumerator() As IEnumerator(Of A) Implements IEnumerable(Of A).GetEnumerator
+        Throw New NotImplementedException()
+    End Function
+
+    Private Function IEnumerable_GetEnumerator() As IEnumerator Implements IEnumerable.GetEnumerator
+        Throw New NotImplementedException()
+    End Function
+End Class
+
+Class Test
+    Private Sub M1()
+        Dim myReadOnlyCollection = New MyReadOnlyCollection()
+        myReadOnlyCollection.Add(New A())
+        Dim a As A = New A()
+        myReadOnlyCollection.Add(a)
+
+        Dim builder = ImmutableArray.CreateBuilder(Of A)()
+        builder.Add(New A())
+        Dim a2 As A = New A()
+        builder.Add(a2)
+
+        Dim bag = New ConcurrentBag(Of A)()
+        builder.Add(New A())
+        Dim a3 As A = New A()
+        builder.Add(a3)
+    End Sub
+End Class");
+        }
+
+        [Fact]
         public void MemberInitializerWithDisposableAssignment_NoDiagnostic()
         {
             VerifyCSharp(@"
@@ -1399,7 +1695,7 @@ End Class");
         [Fact]
         public void LocalWithDisposableAssignment_ByRefEscape_NoDiagnostic()
         {
-            // Local/parameter passed by ref/out are escaped.
+            // Local/parameter passed by ref is escaped.
             VerifyCSharp(@"
 using System;
 
@@ -1448,6 +1744,41 @@ Class Test
         a = Nothing
     End Sub
 End Class");
+        }
+
+        [Fact]
+        public void LocalWithDisposableAssignment_OutRefKind_NotDisposed_Diagnostic()
+        {
+            // Local/parameter passed as out is not considered escaped.
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        A a = new A();
+        M2(out a);
+    }
+
+    void M2(out A a)
+    {
+        a = new A();
+    }
+}
+",
+            // Test0.cs(16,15): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(16, 15, "void Test.M1()", "new A()"),
+            // Test0.cs(17,12): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'out a' before all references to it are out of scope.
+            GetCSharpResultAt(17, 12, "void Test.M1()", "out a"));
         }
 
         [Fact]
@@ -1655,7 +1986,7 @@ Module Test
 End Module");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1648")]
         public void WhileLoop_MissingDisposeOnExit_Diagnostic()
         {
             VerifyCSharp(@"
@@ -1818,7 +2149,7 @@ Module Test
 End Module");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1648")]
         public void DoWhileLoop_MissingDisposeOnExit_Diagnostic()
         {
             VerifyCSharp(@"
@@ -1982,7 +2313,7 @@ Module Test
 End Module");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1648")]
         public void ForLoop_MissingDisposeOnExit_Diagnostic()
         {
             VerifyCSharp(@"
@@ -2726,6 +3057,65 @@ End Class");
         }
 
         [Fact]
+        public void ReturnStatement_02_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : I, IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+interface I
+{
+}
+
+class Test
+{
+    I M1()
+    {
+        return new A();
+    }
+
+    I M2()
+    {
+        return new A() as I;
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+Imports System.Collections.Generic
+
+Class A
+    Implements I, IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Throw New NotImplementedException()
+    End Sub
+End Class
+
+Interface I
+End Interface
+
+Class Test
+
+    Private Function M1() As I
+        Return New A()
+    End Function
+
+    Private Function M2() As I
+        Return TryCast(New A(), I)
+    End Function
+End Class");
+        }
+
+        [Fact]
         public void LocalFunctionInvocation_EmptyBody_Diagnostic()
         {
             // Currently we do not generate a diagnostic as we do not analyze local function invocations and pessimistically assume it invalidates all saved state.
@@ -2792,7 +3182,7 @@ class Test
             // VB has no local functions.
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
         public void LocalFunctionInvocation_CapturedValueAssignedNewDisposable_Diagnostic()
         {
             VerifyCSharp(@"
@@ -2967,7 +3357,7 @@ Module Test
 End Module");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
         public void LambdaInvocation_CapturedValueAssignedNewDisposable_Diagnostic()
         {
             VerifyCSharp(@"
@@ -4426,6 +4816,41 @@ class B : IDisposable
             GetCSharpResultAt(16, 15, "void B.Dispose()", "new A()"));
         }
 
+        [Fact, WorkItem(1597, "https://github.com/dotnet/roslyn-analyzers/issues/1597")]
+        public void DisposableObjectInErrorCode_02_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Text;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        var builder = new StringBuilder();
+        using ()        // This erroneous code used to cause a null reference exception in the analysis.
+        this.WriteTo(new StringWriter(builder));
+        return;
+    }
+
+    void WriteTo(StringWriter x)
+    {
+    }
+}
+", TestValidationMode.AllowCompileErrors,
+            // Test0.cs(20,22): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new StringWriter(builder)' before all references to it are out of scope.
+            GetCSharpResultAt(20, 22, "void Test.M1()", "new StringWriter(builder)"));
+        }
+
         [Fact]
         public void DelegateCreation_Disposed_NoDiagnostic()
         {
@@ -4518,6 +4943,560 @@ class Test
             select a;
         var y = new A();
         y.Dispose();
+    }
+}
+");
+        }
+
+        [Fact]
+        public void SystemThreadingTask_SpecialCase_NotDisposed_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.Threading.Tasks;
+
+public class A
+{
+    void M()
+    {
+        Task t = new Task(null);
+        M1(out var t2);
+    }
+
+    void M1(out Task<int> t)
+    {
+        t = null;
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+Imports System.Threading.Tasks
+Imports System.Runtime.InteropServices
+
+Public Class A
+
+    Private Sub M()
+        Dim t As Task = New Task(Nothing)
+        Dim t2 As Task = Nothing
+        M1(t2)
+    End Sub
+
+    Private Sub M1(<Out> ByRef t As Task(Of Integer))
+        t = Nothing
+    End Sub
+End Class");
+        }
+
+        [Fact]
+        public void MultipleReturnStatements_AllInstancesReturned_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class Test
+{
+    A M1(bool flag)
+    {
+        A a;
+        if (flag)
+        {
+            A a2 = new A();
+            a = a2;
+            return a;
+        }
+
+        A a3 = new A();
+        a = a3;
+        return a;
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+Imports System.Threading.Tasks
+Imports System.Runtime.InteropServices
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Throw New NotImplementedException()
+    End Sub
+End Class
+
+Public Class Test
+    Private Function M1(ByVal flag As Boolean) As A
+        Dim a As A
+        If flag Then
+            Dim a2 As New A()
+            a = a2
+            Return a
+        End If
+
+        Dim a3 As New A()
+        a = a3
+        Return a
+    End Function
+End Class
+");
+        }
+
+        [Fact]
+        public void MultipleReturnStatements_AllInstancesEscapedWithOutParameter_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class Test
+{
+    void M1(bool flag, out A a)
+    {
+        if (flag)
+        {
+            A a2 = new A();
+            a = a2;
+            return;
+        }
+
+        A a3 = new A();
+        a = a3;
+        return;
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+Imports System.Threading.Tasks
+Imports System.Runtime.InteropServices
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Throw New NotImplementedException()
+    End Sub
+End Class
+
+Public Class Test
+    Private Sub M1(ByVal flag As Boolean, <Out> ByRef a As A)
+        If flag Then
+            Dim a2 As New A()
+            a = a2
+            Return
+        End If
+
+        Dim a3 As New A()
+        a = a3
+        Return
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public void MultipleReturnStatements_AllButOneInstanceReturned_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class B : A
+{
+}
+
+public class Test
+{
+    A M1(int flag, bool flag2, bool flag3)
+    {
+        A a = null;
+        if (flag == 0)
+        {
+            A a2 = new A();        // Escaped with return inside below nested 'if'.
+            a = a2;
+
+            if (!flag2)
+            {
+                if (flag3)
+                {
+                    return a;
+                }
+            }
+        }
+        else
+        {
+            a = new A();        // Escaped with return inside below nested 'else'.
+            if (flag == 1)
+            {
+                a = new B();    // Never disposed.
+            }
+            else
+            {
+                if (flag3)
+                {
+                    a = new A();    // Escaped with return inside below 'else'.
+                }
+
+                if (flag2)
+                {
+                }
+                else
+                {
+                    return a;
+                }
+            }
+        }
+
+        A a3 = new A();     // Escaped with below return.
+        a = a3;
+        return a;
+    }
+}
+",
+            // Test0.cs(39,21): warning CA2000: In method 'A Test.M1(int flag, bool flag2, bool flag3)', call System.IDisposable.Dispose on object created by 'new B()' before all references to it are out of scope.
+            GetCSharpResultAt(39, 21, "A Test.M1(int flag, bool flag2, bool flag3)", "new B()"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.Threading.Tasks
+Imports System.Runtime.InteropServices
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Throw New NotImplementedException()
+    End Sub
+End Class
+
+Class B
+    Inherits A
+End Class
+
+Public Class Test
+    Private Function M1(flag As Integer, flag2 As Boolean, flag3 As Boolean) As A
+        Dim a As A = Nothing
+        If flag = 0 Then
+            Dim a2 As A = New A()   ' Escaped with return inside below nested 'if'.
+            a = a2
+            If Not flag2 Then
+                If flag3 Then
+                    Return a
+                End If
+            End If
+        Else
+            a = New A()     ' Escaped with return inside below nested 'else'.
+            If flag = 1 Then
+                a = New B()     ' Never disposed
+            Else
+                If flag3 Then
+                    a = New A()     ' Escaped with return inside below 'else'.
+                End If
+
+                If flag2 Then
+                Else
+                    Return a
+                End If
+            End If
+        End If
+
+        Dim a3 As A = New A()     ' Escaped with below return.
+        a = a3
+        Return a
+    End Function
+End Class
+",
+            // Test0.vb(31,21): warning CA2000: In method 'Function Test.M1(flag As Integer, flag2 As Boolean, flag3 As Boolean) As A', call System.IDisposable.Dispose on object created by 'New B()' before all references to it are out of scope.
+            GetBasicResultAt(31, 21, "Function Test.M1(flag As Integer, flag2 As Boolean, flag3 As Boolean) As A", "New B()"));
+        }
+
+        [Fact]
+        public void MultipleReturnStatements_AllButOneInstanceEscapedWithOutParameter_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class B : A
+{
+}
+
+public class Test
+{
+    void M1(int flag, bool flag2, bool flag3, out A a)
+    {
+        a = null;
+        if (flag == 0)
+        {
+            A a2 = new A();        // Escaped with return inside below nested 'if'.
+            a = a2;
+
+            if (!flag2)
+            {
+                if (flag3)
+                {
+                    return;
+                }
+            }
+        }
+        else
+        {
+            a = new A();        // Escaped with return inside below nested 'else'.
+            if (flag == 1)
+            {
+                a = new B();    // Never disposed.
+            }
+            else
+            {
+                if (flag3)
+                {
+                    a = new A();    // Escaped with return inside below 'else'.
+                }
+
+                if (flag2)
+                {
+                }
+                else
+                {
+                    return;
+                }
+            }
+        }
+
+        A a3 = new A();     // Escaped with below return.
+        a = a3;
+        return;
+    }
+}
+",
+            // Test0.cs(39,21): warning CA2000: In method 'void Test.M1(int flag, bool flag2, bool flag3, out A a)', call System.IDisposable.Dispose on object created by 'new B()' before all references to it are out of scope.
+            GetCSharpResultAt(39, 21, "void Test.M1(int flag, bool flag2, bool flag3, out A a)", "new B()"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.Threading.Tasks
+Imports System.Runtime.InteropServices
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Throw New NotImplementedException()
+    End Sub
+End Class
+
+Class B
+    Inherits A
+End Class
+
+Public Class Test
+    Private Sub M1(flag As Integer, flag2 As Boolean, flag3 As Boolean, <Out> ByRef a As A)
+        a = Nothing
+        If flag = 0 Then
+            Dim a2 As A = New A()   ' Escaped with return inside below nested 'if'.
+            a = a2
+            If Not flag2 Then
+                If flag3 Then
+                    Return
+                End If
+            End If
+        Else
+            a = New A()     ' Escaped with return inside below nested 'else'.
+            If flag = 1 Then
+                a = New B()     ' Never disposed
+            Else
+                If flag3 Then
+                    a = New A()     ' Escaped with return inside below 'else'.
+                End If
+
+                If flag2 Then
+                Else
+                    Return
+                End If
+            End If
+        End If
+
+        Dim a3 As A = New A()     ' Escaped with below return.
+        a = a3
+        Return
+    End Sub
+End Class
+",
+            // Test0.vb(31,21): warning CA2000: In method 'Sub Test.M1(flag As Integer, flag2 As Boolean, flag3 As Boolean, ByRef a As A)', call System.IDisposable.Dispose on object created by 'New B()' before all references to it are out of scope.
+            GetBasicResultAt(31, 21, "Sub Test.M1(flag As Integer, flag2 As Boolean, flag3 As Boolean, ByRef a As A)", "New B()"));
+        }
+
+        [Fact]
+        public void DisposableAllocation_AssignedToTuple_Escaped_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class Test
+{
+    (A, int) M1()
+    {
+        A a = new A();
+        return (a, 0);
+    }
+
+    (A, int) M2()
+    {
+        A a = new A();
+        (A, int) b = (a, 0);
+        return b;
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+Imports System.Threading.Tasks
+Imports System.Runtime.InteropServices
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Throw New NotImplementedException()
+    End Sub
+End Class
+
+Public Class Test
+    Private Function M1() As (a As A, i As Integer)
+        Dim a As A = New A()
+        Return (a, 0)
+    End Function
+
+    Private Function M2() As (a As A, i As Integer)
+        Dim a As A = New A()
+        Dim b As (a As A, i As Integer) = (a, 0)
+        Return b
+    End Function
+End Class
+");
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1571"), WorkItem(1571, "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
+        public void DisposableAllocation_AssignedToTuple_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class Test
+{
+    void M1()
+    {
+        A a = new A();
+        var b = (a, 0);
+    }
+
+    void M2()
+    {
+        A a = new A();
+        (A, int) b = (a, 0);
+    }
+}",
+            // Test0.cs(16,15): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(16, 15, "void Test.M1()", "new A()"),
+            // Test0.cs(22,15): warning CA2000: In method 'void Test.M2()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(22, 15, "void Test.M2()", "new A()"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.Threading.Tasks
+Imports System.Runtime.InteropServices
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Throw New NotImplementedException()
+    End Sub
+End Class
+
+Public Class Test
+    Private Sub M1()
+        Dim a As A = New A()
+        Dim b = (a, 0)
+    End Sub
+
+    Private Sub M2()
+        Dim a As A = New A()
+        Dim b As (a As A, i As Integer) = (a, 0)
+    End Sub
+End Class
+",
+            // Test0.vb(15,22): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(15, 22, "Sub Test.M1()", "New A()"),
+            // Test0.vb(20,22): warning CA2000: In method 'Sub Test.M2()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(20, 22, "Sub Test.M2()", "New A()"));
+        }
+
+        [Fact]
+        public void DisposableAllocation_IncrementOperator_RegressionTest()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class Test
+{
+    private int i;
+    void M()
+    {
+        var a = new A();
+        i++;
+        a.Dispose();
     }
 }
 ");

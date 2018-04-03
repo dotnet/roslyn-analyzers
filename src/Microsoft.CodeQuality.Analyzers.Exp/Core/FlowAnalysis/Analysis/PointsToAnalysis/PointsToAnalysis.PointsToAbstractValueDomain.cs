@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 {
@@ -77,8 +78,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                     return PointsToAbstractValue.Unknown;
                 }
 
-                Debug.Assert(value1.Kind == PointsToAbstractValueKind.Known && value2.Kind == PointsToAbstractValueKind.Known);
-                return new PointsToAbstractValue(_locationsDomain.Merge(value1.Locations, value2.Locations));
+                var mergedLocations = _locationsDomain.Merge(value1.Locations, value2.Locations);
+                if (mergedLocations.Count == 1 && mergedLocations.Single().IsNull)
+                {
+                    return PointsToAbstractValue.NullLocation;
+                }
+
+                return new PointsToAbstractValue(mergedLocations);
             }
         }
     }

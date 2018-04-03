@@ -278,8 +278,23 @@ public enum MultipleMissingPowerOfTwoEnumClass
     Two = 2,
     Four = 4,
     ThirtyTwo = 32
-}}
+}}";
 
+            // Verify CA1027: Mark enums with FlagsAttribute
+            string codeWithoutFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: false);
+            VerifyCSharp(codeWithoutFlags,
+                GetCA1027CSharpResultAt(3, 13, "MissingPowerOfTwoEnumClass"),
+                GetCA1027CSharpResultAt(13, 13, "MultipleMissingPowerOfTwoEnumClass"));
+
+            // Verify no CA2217: Do not mark enums with FlagsAttribute
+            string codeWithFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: true);
+            VerifyCSharp(codeWithFlags);
+        }
+
+        [Fact]
+        public void CSharp_EnumWithFlagsAttributes_IncorrectNumbers()
+        {
+            string code = @"
 {0}
 public enum AnotherTestValue
 {{
@@ -296,9 +311,7 @@ public enum AnotherTestValue
             // Verify CA2217: Do not mark enums with FlagsAttribute
             string codeWithFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: true);
             VerifyCSharp(codeWithFlags,
-                GetCA2217CSharpResultAt(3, 13, "MissingPowerOfTwoEnumClass", "8"),
-                GetCA2217CSharpResultAt(13, 13, "MultipleMissingPowerOfTwoEnumClass", "8, 16"),
-                GetCA2217CSharpResultAt(23, 13, "AnotherTestValue", "2"));
+                GetCA2217CSharpResultAt(3, 13, "AnotherTestValue", "2"));
         }
 
         [Fact]
@@ -322,7 +335,23 @@ Public Enum MultipleMissingPowerOfTwoEnumClass
 	Four = 4
 	ThirtyTwo = 32
 End Enum
+";
 
+            // Verify CA1027: Mark enums with FlagsAttribute
+            string codeWithoutFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: false);
+            VerifyBasic(codeWithoutFlags,
+                GetCA1027BasicResultAt(3, 13, "MissingPowerOfTwoEnumClass"),
+                GetCA1027BasicResultAt(12, 13, "MultipleMissingPowerOfTwoEnumClass"));
+
+            // Verify no CA2217: Do not mark enums with FlagsAttribute
+            string codeWithFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: true);
+            VerifyBasic(codeWithFlags);
+        }
+
+        [Fact]
+        public void VisualBasic_EnumWithFlagsAttributes_IncorrectNumbers()
+        {
+            string code = @"
 {0}
 Public Enum AnotherTestValue
 	Value1 = 0
@@ -339,9 +368,7 @@ End Enum
             // Verify CA2217: Do not mark enums with FlagsAttribute
             string codeWithFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: true);
             VerifyBasic(codeWithFlags,
-                GetCA2217BasicResultAt(3, 13, "MissingPowerOfTwoEnumClass", "8"),
-                GetCA2217BasicResultAt(12, 13, "MultipleMissingPowerOfTwoEnumClass", "8, 16"),
-                GetCA2217BasicResultAt(21, 13, "AnotherTestValue", "2"));
+                GetCA2217BasicResultAt(3, 13, "AnotherTestValue", "2"));
         }
 
         [Fact]

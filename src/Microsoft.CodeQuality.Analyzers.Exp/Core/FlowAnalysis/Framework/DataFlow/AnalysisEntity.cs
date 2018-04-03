@@ -38,7 +38,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             SyntaxNode instanceReferenceOperationSyntaxOpt,
             PointsToAbstractValue location,
             ITypeSymbol type,
-            AnalysisEntity parentOpt)
+            AnalysisEntity parentOpt,
+            bool isThisOrMeInstance)
         {
             Debug.Assert(!indices.IsDefault);
             Debug.Assert(symbolOpt != null || !indices.IsEmpty || instanceReferenceOperationSyntaxOpt != null);
@@ -52,26 +53,27 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             InstanceLocation = location;
             Type = type;
             ParentOpt = parentOpt;
+            IsThisOrMeInstance = isThisOrMeInstance;
 
             _lazyIgnoringLocationHashCode = new Lazy<int>(ComputeIgnoringLocationHashCode);
         }
 
         private AnalysisEntity(ISymbol symbolOpt, ImmutableArray<AbstractIndex> indices, PointsToAbstractValue location, ITypeSymbol type, AnalysisEntity parentOpt)
-            : this(symbolOpt, indices, instanceReferenceOperationSyntaxOpt: null, location: location, type: type, parentOpt: parentOpt)
+            : this(symbolOpt, indices, instanceReferenceOperationSyntaxOpt: null, location: location, type: type, parentOpt: parentOpt, isThisOrMeInstance: false)
         {
             Debug.Assert(symbolOpt != null || !indices.IsEmpty);
         }
 
         private AnalysisEntity(IInstanceReferenceOperation instanceReferenceOperation, PointsToAbstractValue location)
             : this(symbolOpt: null, indices: ImmutableArray<AbstractIndex>.Empty, instanceReferenceOperationSyntaxOpt: instanceReferenceOperation.Syntax,
-                  location: location, type: instanceReferenceOperation.Type, parentOpt: null)
+                  location: location, type: instanceReferenceOperation.Type, parentOpt: null, isThisOrMeInstance: false)
         {
             Debug.Assert(instanceReferenceOperation != null);
         }
 
-        private AnalysisEntity(INamedTypeSymbol namedType, PointsToAbstractValue location)
+        private AnalysisEntity(INamedTypeSymbol namedType, PointsToAbstractValue location, bool isThisOrMeInstance)
             : this(symbolOpt: namedType, indices: ImmutableArray<AbstractIndex>.Empty, instanceReferenceOperationSyntaxOpt: null,
-                  location: location, type: namedType, parentOpt: null)
+                  location: location, type: namedType, parentOpt: null, isThisOrMeInstance: isThisOrMeInstance)
         {
         }
 
@@ -102,7 +104,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             Debug.Assert(instanceLocation.Locations.Single().CreationOpt == null);
             Debug.Assert(instanceLocation.Locations.Single().SymbolOpt == typeSymbol);
 
-            return new AnalysisEntity(typeSymbol, instanceLocation);
+            return new AnalysisEntity(typeSymbol, instanceLocation, isThisOrMeInstance: true);
         }
 
         public AnalysisEntity WithMergedInstanceLocation(AnalysisEntity analysisEntityToMerge)
@@ -112,13 +114,18 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             Debug.Assert(!InstanceLocation.Equals(analysisEntityToMerge.InstanceLocation));
 
             var mergedInstanceLocation = PointsToAnalysis.PointsToAnalysis.PointsToAbstractValueDomainInstance.Merge(InstanceLocation, analysisEntityToMerge.InstanceLocation);
-            return new AnalysisEntity(SymbolOpt, Indices, InstanceReferenceOperationSyntaxOpt, mergedInstanceLocation, Type, ParentOpt);
+            return new AnalysisEntity(SymbolOpt, Indices, InstanceReferenceOperationSyntaxOpt, mergedInstanceLocation, Type, ParentOpt, IsThisOrMeInstance);
         }
 
         public bool IsChildOrInstanceMember
         {
             get
             {
+                if (IsThisOrMeInstance)
+                {
+                    return false;
+                }
+
                 bool result;
                 if (SymbolOpt != null)
                 {
@@ -146,6 +153,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         public PointsToAbstractValue InstanceLocation { get; }
         public ITypeSymbol Type { get; }
         public AnalysisEntity ParentOpt { get; }
+        public bool IsThisOrMeInstance { get; }
 
         public bool HasUnknownInstanceLocation => InstanceLocation.Kind == PointsToAbstractValueKind.Unknown;
 
@@ -158,7 +166,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             var hashCode = HashUtilities.Combine(SymbolOpt?.GetHashCode() ?? 0,
                 HashUtilities.Combine(InstanceReferenceOperationSyntaxOpt?.GetHashCode() ?? 0,
                 HashUtilities.Combine(Type.GetHashCode(),
-                HashUtilities.Combine(ParentOpt?.GetHashCode() ?? 0, Indices.Length.GetHashCode()))));
+                HashUtilities.Combine(ParentOpt?.GetHashCode() ?? 0,
+                HashUtilities.Combine(IsThisOrMeInstance.GetHashCode(), Indices.Length.GetHashCode())))));
 
             foreach (AbstractIndex index in Indices)
             {

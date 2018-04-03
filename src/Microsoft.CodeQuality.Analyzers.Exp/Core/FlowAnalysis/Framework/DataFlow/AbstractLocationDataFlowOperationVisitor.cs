@@ -40,11 +40,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             }
         }
 
-        protected override void ResetValueTypeInstanceAnalysisData(IOperation operation)
+        protected override void ResetValueTypeInstanceAnalysisData(AnalysisEntity analysisEntity)
         {
         }
 
-        protected override void ResetReferenceTypeInstanceAnalysisData(IOperation operation)
+        protected override void ResetReferenceTypeInstanceAnalysisData(PointsToAbstractValue pointsToAbstractValue)
         {
         }
 

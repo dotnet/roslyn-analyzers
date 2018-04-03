@@ -180,7 +180,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         /// as the given <paramref name="analysisEntity"/>.
         /// </summary>
         /// <param name="analysisEntity"></param>
-        private void ResetValueTypeInstanceAnalysisData(AnalysisEntity analysisEntity)
+        protected override void ResetValueTypeInstanceAnalysisData(AnalysisEntity analysisEntity)
         {
             Debug.Assert(HasPointsToAnalysisResult);
             Debug.Assert(analysisEntity.Type.HasValueCopySemantics());
@@ -189,32 +189,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             ResetInstanceAnalysisDataCore(dependantAnalysisEntities);
         }
 
-        protected override void ResetValueTypeInstanceAnalysisData(IOperation operation)
-        {
-            if (AnalysisEntityFactory.TryCreate(operation, out AnalysisEntity analysisEntity))
-            {
-                if (analysisEntity.Type.HasValueCopySemantics())
-                {
-                    ResetValueTypeInstanceAnalysisData(analysisEntity);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Resets all the analysis data for all <see cref="AnalysisEntity"/> instances that share the same <see cref="AnalysisEntity.InstanceLocation"/>
-        /// as pointed to by given reference type <paramref name="operation"/>.
-        /// </summary>
-        /// <param name="operation"></param>
-        protected override void ResetReferenceTypeInstanceAnalysisData(IOperation operation)
+        protected override void ResetReferenceTypeInstanceAnalysisData(PointsToAbstractValue pointsToValue)
         {
             Debug.Assert(HasPointsToAnalysisResult);
-            Debug.Assert(!operation.Type.HasValueCopySemantics());
-
-            var pointsToValue = GetPointsToAbstractValue(operation);
-            if (pointsToValue.Locations.IsEmpty)
-            {
-                return;
-            }
+            Debug.Assert(!pointsToValue.Locations.IsEmpty);
 
             IEnumerable<AnalysisEntity> dependantAnalysisEntities = GetChildAnalysisEntities(pointsToValue);
             ResetInstanceAnalysisDataCore(dependantAnalysisEntities);

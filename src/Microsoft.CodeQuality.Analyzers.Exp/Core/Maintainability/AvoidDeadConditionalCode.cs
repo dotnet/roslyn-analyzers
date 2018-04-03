@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -64,7 +65,14 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
                     foreach (var operationRoot in operationBlockStartContext.OperationBlocks)
                     {
                         IBlockOperation topmostBlock = operationRoot.GetTopmostParentBlock();
-                        if (topmostBlock != null && topmostBlock.HasAnyOperationDescendant(op => (op as IBinaryOperation)?.IsComparisonOperator() == true || op.Kind == OperationKind.Coalesce || op.Kind == OperationKind.ConditionalAccess))
+
+                        bool ShouldAnalyze(IOperation op) =>
+                                (op as IBinaryOperation)?.IsComparisonOperator() == true ||
+                                (op as IInvocationOperation)?.TargetMethod.ReturnType.SpecialType == SpecialType.System_Boolean ||
+                                op.Kind == OperationKind.Coalesce ||
+                                op.Kind == OperationKind.ConditionalAccess;
+
+                        if (topmostBlock != null && topmostBlock.HasAnyOperationDescendant(ShouldAnalyze))
                         {
                             var cfg = ControlFlowGraph.Create(topmostBlock);
                             var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockStartContext.Compilation);
@@ -77,47 +85,24 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
 
                             operationBlockStartContext.RegisterOperationAction(operationContext =>
                             {
-                                PredicateValueKind GetPredicateKind(IBinaryOperation operation)
-                                {
-                                    if (operation.IsComparisonOperator())
-                                    {
-                                        PredicateValueKind binaryPredicateKind = nullAnalysisResult.GetPredicateKind(operation);
-                                        if (binaryPredicateKind != PredicateValueKind.Unknown)
-                                        {
-                                            return binaryPredicateKind;
-                                        }
-
-                                        binaryPredicateKind = copyAnalysisResult.GetPredicateKind(operation);
-                                        if (binaryPredicateKind != PredicateValueKind.Unknown)
-                                        {
-                                            return binaryPredicateKind;
-                                        }
-
-                                        binaryPredicateKind = stringContentAnalysisResult.GetPredicateKind(operation);
-                                        if (binaryPredicateKind != PredicateValueKind.Unknown)
-                                        {
-                                            return binaryPredicateKind;
-                                        };
-                                    }
-
-                                    return PredicateValueKind.Unknown;
-                                }
-
                                 var binaryOperation = (IBinaryOperation)operationContext.Operation;
                                 PredicateValueKind predicateKind = GetPredicateKind(binaryOperation);
                                 if (predicateKind != PredicateValueKind.Unknown &&
                                     (!(binaryOperation.LeftOperand is IBinaryOperation leftBinary) || GetPredicateKind(leftBinary) == PredicateValueKind.Unknown) &&
                                     (!(binaryOperation.RightOperand is IBinaryOperation rightBinary) || GetPredicateKind(rightBinary) == PredicateValueKind.Unknown))
                                 {
-                                    // '{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.
-                                    var arg1 = binaryOperation.Syntax.ToString();
-                                    var arg2 = predicateKind == PredicateValueKind.AlwaysTrue ? 
-                                        (binaryOperation.Language == LanguageNames.VisualBasic ? "True" : "true") :
-                                        (binaryOperation.Language == LanguageNames.VisualBasic ? "False" : "false");
-                                    var diagnostic = binaryOperation.CreateDiagnostic(AlwaysTrueFalseOrNullRule, arg1, arg2);
-                                    operationContext.ReportDiagnostic(diagnostic);
+                                    ReportAlwaysTrueFalseOrNullDiagnostic(operationContext, predicateKind);
                                 }
                             }, OperationKind.BinaryOperator);
+
+                            operationBlockStartContext.RegisterOperationAction(operationContext =>
+                            {
+                                PredicateValueKind predicateKind = GetPredicateKind(operationContext.Operation);
+                                if (predicateKind != PredicateValueKind.Unknown)
+                                {
+                                    ReportAlwaysTrueFalseOrNullDiagnostic(operationContext, predicateKind);
+                                }
+                            }, OperationKind.Invocation);
 
                             operationBlockStartContext.RegisterOperationAction(operationContext =>
                             {
@@ -146,6 +131,52 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
                                 var diagnostic = nullCheckedOperation.CreateDiagnostic(rule, arg1, arg2);
                                 operationContext.ReportDiagnostic(diagnostic);
                             }, OperationKind.Coalesce, OperationKind.ConditionalAccess);
+
+                            PredicateValueKind GetPredicateKind(IOperation operation)
+                            {
+                                Debug.Assert(operation.Kind == OperationKind.BinaryOperator || operation.Kind == OperationKind.Invocation);
+
+                                if (operation is IBinaryOperation binaryOperation &&
+                                    binaryOperation.IsComparisonOperator() ||
+                                    operation is IInvocationOperation invocationOperation &&
+                                    invocationOperation.Type?.SpecialType == SpecialType.System_Boolean)
+                                {
+                                    PredicateValueKind predicateKind = nullAnalysisResult.GetPredicateKind(operation);
+                                    if (predicateKind != PredicateValueKind.Unknown)
+                                    {
+                                        return predicateKind;
+                                    }
+
+                                    predicateKind = copyAnalysisResult.GetPredicateKind(operation);
+                                    if (predicateKind != PredicateValueKind.Unknown)
+                                    {
+                                        return predicateKind;
+                                    }
+
+                                    predicateKind = stringContentAnalysisResult.GetPredicateKind(operation);
+                                    if (predicateKind != PredicateValueKind.Unknown)
+                                    {
+                                        return predicateKind;
+                                    };
+                                }
+
+                                return PredicateValueKind.Unknown;
+                            }
+
+                            void ReportAlwaysTrueFalseOrNullDiagnostic(OperationAnalysisContext operationContext, PredicateValueKind predicateKind)
+                            {
+                                Debug.Assert(predicateKind != PredicateValueKind.Unknown);
+
+                                var operation = operationContext.Operation;
+
+                                // '{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.
+                                var arg1 = operation.Syntax.ToString();
+                                var arg2 = predicateKind == PredicateValueKind.AlwaysTrue ?
+                                    (operation.Language == LanguageNames.VisualBasic ? "True" : "true") :
+                                    (operation.Language == LanguageNames.VisualBasic ? "False" : "false");
+                                var diagnostic = operation.CreateDiagnostic(AlwaysTrueFalseOrNullRule, arg1, arg2);
+                                operationContext.ReportDiagnostic(diagnostic);
+                            }
                         }
                     }
                 });

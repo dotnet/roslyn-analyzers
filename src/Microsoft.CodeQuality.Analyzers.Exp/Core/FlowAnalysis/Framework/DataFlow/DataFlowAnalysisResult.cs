@@ -54,8 +54,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 return _defaultUnknownValue;
             }
         }
-        public PredicateValueKind GetPredicateKind(IBinaryOperation operation) => _predicateValueKindMap.TryGetValue(operation, out var valueKind) ? valueKind : PredicateValueKind.Unknown;
-        public PredicateValueKind GetPredicateKind(IConversionOperation operation) => _predicateValueKindMap.TryGetValue(operation, out var valueKind) ? valueKind : PredicateValueKind.Unknown;
+        public PredicateValueKind GetPredicateKind(IOperation operation) => _predicateValueKindMap.TryGetValue(operation, out var valueKind) ? valueKind : PredicateValueKind.Unknown;
         public TAnalysisResult MergedStateForUnhandledThrowOperationsOpt;
         public ControlFlowGraph ControlFlowGraph { get; }
     }

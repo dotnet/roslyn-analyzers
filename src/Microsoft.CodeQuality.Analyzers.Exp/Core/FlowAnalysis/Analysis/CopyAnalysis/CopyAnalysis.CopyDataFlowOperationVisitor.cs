@@ -157,14 +157,17 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
             }
 
             #region Predicate analysis
-            protected override PredicateValueKind SetValueForEqualsOrNotEqualsComparisonOperator(IBinaryOperation operation, CopyAnalysisData negatedCurrentAnalysisData, bool equals)
+            protected override PredicateValueKind SetValueForEqualsOrNotEqualsComparisonOperator(
+                IOperation leftOperand,
+                IOperation rightOperand,
+                CopyAnalysisData negatedCurrentAnalysisData,
+                bool equals,
+                bool isReferenceEquality)
             {
-                Debug.Assert(operation.IsComparisonOperator());
-
-                if (GetCopyAbstractValue(operation.LeftOperand).Kind != CopyAbstractValueKind.Unknown &&
-                    GetCopyAbstractValue(operation.RightOperand).Kind != CopyAbstractValueKind.Unknown &&
-                    AnalysisEntityFactory.TryCreate(operation.LeftOperand, out AnalysisEntity leftEntity) &&
-                    AnalysisEntityFactory.TryCreate(operation.RightOperand, out AnalysisEntity rightEntity))
+                if (GetCopyAbstractValue(leftOperand).Kind != CopyAbstractValueKind.Unknown &&
+                    GetCopyAbstractValue(rightOperand).Kind != CopyAbstractValueKind.Unknown &&
+                    AnalysisEntityFactory.TryCreate(leftOperand, out AnalysisEntity leftEntity) &&
+                    AnalysisEntityFactory.TryCreate(rightOperand, out AnalysisEntity rightEntity))
                 {
                     var predicateKind = PredicateValueKind.Unknown;
                     if (!CurrentAnalysisData.TryGetValue(rightEntity, out CopyAbstractValue rightValue))
@@ -175,14 +178,22 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
                     {
                         // We have "a == b && a == b" or "a == b && a != b"
                         // For both cases, condition on right is always true or always false and redundant.
-                        predicateKind = equals ? PredicateValueKind.AlwaysTrue : PredicateValueKind.AlwaysFalse;
+                        // NOTE: CopyAnalysis only tracks value equal entities
+                        if (!isReferenceEquality)
+                        {
+                            predicateKind = equals ? PredicateValueKind.AlwaysTrue : PredicateValueKind.AlwaysFalse;
+                        }
                     }
                     else if (negatedCurrentAnalysisData.TryGetValue(rightEntity, out var negatedRightValue) &&
                         negatedRightValue.AnalysisEntities.Contains(leftEntity))
                     {
                         // We have "a == b || a == b" or "a == b || a != b"
                         // For both cases, condition on right is always true or always false and redundant.
-                        predicateKind = equals ? PredicateValueKind.AlwaysFalse : PredicateValueKind.AlwaysTrue;                        
+                        // NOTE: CopyAnalysis only tracks value equal entities
+                        if (!isReferenceEquality)
+                        {
+                            predicateKind = equals ? PredicateValueKind.AlwaysFalse : PredicateValueKind.AlwaysTrue;
+                        }
                     }
 
                     if (predicateKind != PredicateValueKind.Unknown)

@@ -4354,5 +4354,764 @@ class Test : Base
             // Test0.cs(15,29): warning CA1508: 'c' is never 'null'. Remove or refactor the condition(s) to avoid dead code.
             GetCSharpResultAt(15, 29, "c", "null"));
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact]
+        public void InsideLockStatement_FieldCheck_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+class C
+{
+}
+
+class Test
+{
+    private C _c;
+    private readonly object _gate = new object();
+    void EnsureC()
+    {
+        if (_c == null)
+        {
+            lock (_gate)
+            {
+                if (_c == null)
+                {
+                    _c = new C();
+                }
+            }
+        }
+    }
+}
+");
+
+            VerifyBasic(@"
+Class C
+End Class
+
+Class Test
+    Private _c As C
+    Private ReadOnly _gate As New Object
+
+    Private Sub EnsureC()
+        If _c Is Nothing Then
+            SyncLock _gate
+                If _c Is Nothing Then
+                    _c = New C()
+                End If
+            End SyncLock
+        End If
+    End Sub
+End Class");
+        }
+
+        [Fact]
+        public void StaticObjectReferenceEquals_Diagnostic()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public int X;
+}
+
+public class Test
+{
+    public void M1(C c)
+    {
+        if (ReferenceEquals(c, null))
+        {
+            return;
+        }
+
+        if (c != null)
+        {
+        }
+    }
+
+    public void M2(C c, C c2)
+    {
+        if (!ReferenceEquals(c, c2))
+        {
+            return;
+        }
+
+        if (c != c2)
+        {
+        }
+    }
+
+    public void M3(C c, C c2)
+    {
+        if (c != c2)
+        {
+            return;
+        }
+
+        // No diagnostic: Copy analysis only tracks value equality, hence we are conservative about flagging redundant reference equal checks.
+        if (!ReferenceEquals(c, c2))
+        {
+        }
+    }
+}",
+            // Test0.cs(16,13): warning CA1508: 'c != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(16, 13, "c != null", "true"),
+            // Test0.cs(28,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(28, 13, "c != c2", "false"));
+
+            VerifyBasic(@"
+Public Class C
+    Public X As Integer
+End Class
+
+Public Class Test
+    Public Sub M1(c As C)
+        If ReferenceEquals(c, Nothing) Then
+            Return
+        End If
+
+        If c IsNot Nothing Then
+        End If
+    End Sub
+
+    Public Sub M2(c As C, c2 As C)
+        If Not ReferenceEquals(c, c2) Then
+            Return
+        End If
+
+        If c IsNot c2 Then
+        End If
+    End Sub
+
+    Public Sub M3(c As C, c2 As C)
+        If c IsNot c2 Then
+            Return
+        End If
+
+        ' No diagnostic: Copy analysis only tracks value equality, hence we are conservative about flagging redundant reference equal checks.
+        If Not ReferenceEquals(c, c2) Then
+        End If
+    End Sub
+End Class",
+            // Test0.vb(12,12): warning CA1508: 'c IsNot Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(12, 12, "c IsNot Nothing", "True"),
+            // Test0.vb(21,12): warning CA1508: 'c IsNot c2' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(21, 12, "c IsNot c2", "False"));
+        }
+
+        [Fact]
+        public void StaticObjectEquals_NoObjectEqualsOverride_Diagnostic()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public int X;
+}
+
+public class Test
+{
+    public void M1(C c)
+    {
+        if (object.Equals(c, null))
+        {
+            return;
+        }
+
+        if (c != null)
+        {
+        }
+    }
+
+    public void M2(C c, C c2)
+    {
+        if (!object.Equals(c, c2))
+        {
+            return;
+        }
+
+        if (c != c2)
+        {
+        }
+    }
+
+    public void M3(C c, C c2)
+    {
+        if (c != c2)
+        {
+            return;
+        }
+
+        // No diagnostic: Copy analysis only tracks value equality, hence we are conservative about flagging redundant reference equal checks.
+        if (!object.Equals(c, c2))
+        {
+        }
+    }
+}",
+            // Test0.cs(16,13): warning CA1508: 'c != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(16, 13, "c != null", "true"),
+            // Test0.cs(28,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(28, 13, "c != c2", "false"));
+
+            VerifyBasic(@"
+Public Class C
+    Public X As Integer
+End Class
+
+Public Class Test
+    Public Sub M1(c As C)
+        If object.Equals(c, Nothing) Then
+            Return
+        End If
+
+        If c IsNot Nothing Then
+        End If
+    End Sub
+
+    Public Sub M2(c As C, c2 As C)
+        If Not object.Equals(c, c2) Then
+            Return
+        End If
+
+        If c IsNot c2 Then
+        End If
+    End Sub
+
+    Public Sub M3(c As C, c2 As C)
+        If c IsNot c2 Then
+            Return
+        End If
+
+        ' No diagnostic: Copy analysis only tracks value equality, hence we are conservative about flagging redundant reference equal checks.
+        If Not object.Equals(c, c2) Then
+        End If
+    End Sub
+End Class",
+            // Test0.vb(12,12): warning CA1508: 'c IsNot Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(12, 12, "c IsNot Nothing", "True"),
+            // Test0.vb(21,12): warning CA1508: 'c IsNot c2' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(21, 12, "c IsNot c2", "False"));
+        }
+
+        [Fact]
+        public void StaticObjectEquals_ObjectEqualsOverride_Diagnostic()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public int X;
+
+    public override bool Equals(object other) => true;
+}
+
+public class Test
+{
+    public void M1(C c)
+    {
+        if (object.Equals(c, null))
+        {
+            return;
+        }
+
+        if (c != null)
+        {
+        }
+    }
+
+    public void M2(C c, C c2)
+    {
+        if (!object.Equals(c, c2))
+        {
+            return;
+        }
+
+        if (c != c2)
+        {
+        }
+    }
+
+    public void M3(C c, C c2)
+    {
+        if (c != c2)
+        {
+            return;
+        }
+
+        if (!object.Equals(c, c2))
+        {
+        }
+    }
+}",
+            // Test0.cs(18,13): warning CA1508: 'c != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(18, 13, "c != null", "true"),
+            // Test0.cs(30,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(30, 13, "c != c2", "false"),
+            // Test0.cs(42,14): warning CA1508: 'object.Equals(c, c2)' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(42, 14, "object.Equals(c, c2)", "true"));
+
+            VerifyBasic(@"
+Public Class C
+    Public X As Integer
+
+    Public Overrides Function Equals(other As Object) As Boolean
+        Return True
+    End Function
+End Class
+
+Public Class Test
+    Public Sub M1(c As C)
+        If object.Equals(c, Nothing) Then
+            Return
+        End If
+
+        If c IsNot Nothing Then
+        End If
+    End Sub
+
+    Public Sub M2(c As C, c2 As C)
+        If Not object.Equals(c, c2) Then
+            Return
+        End If
+
+        If c IsNot c2 Then
+        End If
+    End Sub
+
+    Public Sub M3(c As C, c2 As C)
+        If c IsNot c2 Then
+            Return
+        End If
+
+        If Not object.Equals(c, c2) Then
+        End If
+    End Sub
+End Class",
+            // Test0.vb(16,12): warning CA1508: 'c IsNot Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(16, 12, "c IsNot Nothing", "True"),
+            // Test0.vb(25,12): warning CA1508: 'c IsNot c2' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(25, 12, "c IsNot c2", "False"),
+            // Test0.vb(34,16): warning CA1508: 'object.Equals(c, c2)' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(34, 16, "object.Equals(c, c2)", "True"));
+        }
+
+        [Fact]
+        public void ObjectEquals_NoObjectEqualsOverride_Diagnostic()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public int X;
+}
+
+public class Test
+{
+    public void M1(C c, C c2)
+    {
+        if (c == null || !c.Equals(c2))
+        {
+            return;
+        }
+
+        if (c2 != null)
+        {
+        }
+    }
+
+    public void M2(C c, C c2)
+    {
+        if (!c.Equals(c2))
+        {
+            return;
+        }
+
+        if (c != c2)
+        {
+        }
+    }
+
+    public void M3(C c, C c2)
+    {
+        if (c != c2)
+        {
+            return;
+        }
+
+        // No diagnostic: Copy analysis only tracks value equality, hence we are conservative about flagging redundant reference equal checks.
+        if (!c.Equals(c2))
+        {
+        }
+    }
+}",
+            // Test0.cs(16,13): warning CA1508: 'c2 != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(16, 13, "c2 != null", "true"),
+            // Test0.cs(28,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(28, 13, "c != c2", "false"));
+
+            VerifyBasic(@"
+Public Class C
+    Public X As Integer
+End Class
+
+Public Class Test
+    Public Sub M1(c As C, c2 As C)
+        If c Is Nothing OrElse Not c.Equals(c2) Then
+            Return
+        End If
+
+        If c2 IsNot Nothing Then
+        End If
+    End Sub
+
+    Public Sub M2(c As C, c2 As C)
+        If Not c.Equals(c2) Then
+            Return
+        End If
+
+        If c IsNot c2 Then
+        End If
+    End Sub
+
+    Public Sub M3(c As C, c2 As C)
+        If c IsNot c2 Then
+            Return
+        End If
+
+        ' No diagnostic: Copy analysis only tracks value equality, hence we are conservative about flagging redundant reference equal checks.
+        If Not c.Equals(c2) Then
+        End If
+    End Sub
+End Class",
+            // Test0.vb(12,12): warning CA1508: 'c2 IsNot Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(12, 12, "c2 IsNot Nothing", "True"),
+            // Test0.vb(21,12): warning CA1508: 'c IsNot c2' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(21, 12, "c IsNot c2", "False"));
+        }
+
+        [Fact]
+        public void ObjectEquals_ObjectEqualsOverride_Diagnostic()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public int X;
+
+    public override bool Equals(object other) => true;
+}
+
+public class Test
+{
+    public void M1(C c, C c2)
+    {
+        if (c == null || !c.Equals(c2))
+        {
+            return;
+        }
+
+        if (c2 != null)
+        {
+        }
+    }
+
+    public void M2(C c, C c2)
+    {
+        if (!c.Equals(c2))
+        {
+            return;
+        }
+
+        if (c != c2)
+        {
+        }
+    }
+
+    public void M3(C c, C c2)
+    {
+        if (c != c2)
+        {
+            return;
+        }
+
+        if (!c.Equals(c2))
+        {
+        }
+    }
+}",
+            // Test0.cs(18,13): warning CA1508: 'c2 != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(18, 13, "c2 != null", "true"),
+            // Test0.cs(30,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(30, 13, "c != c2", "false"),
+            // Test0.cs(42,14): warning CA1508: 'c.Equals(c2)' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(42, 14, "c.Equals(c2)", "true"));
+
+            VerifyBasic(@"
+Public Class C
+    Public X As Integer
+
+    Public Overrides Function Equals(other As Object) As Boolean
+        Return True
+    End Function
+End Class
+
+Public Class Test
+    Public Sub M1(c As C, c2 As C)
+        If c Is Nothing OrElse Not c.Equals(c2) Then
+            Return
+        End If
+
+        If c2 IsNot Nothing Then
+        End If
+    End Sub
+
+    Public Sub M2(c As C, c2 As C)
+        If Not c.Equals(c2) Then
+            Return
+        End If
+
+        If c IsNot c2 Then
+        End If
+    End Sub
+
+    Public Sub M3(c As C, c2 As C)
+        If c IsNot c2 Then
+            Return
+        End If
+
+        If Not c.Equals(c2) Then
+        End If
+    End Sub
+End Class",
+            // Test0.vb(16,12): warning CA1508: 'c2 IsNot Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(16, 12, "c2 IsNot Nothing", "True"),
+            // Test0.vb(25,12): warning CA1508: 'c IsNot c2' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(25, 12, "c IsNot c2", "False"),
+            // Test0.vb(34,16): warning CA1508: 'c.Equals(c2)' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(34, 16, "c.Equals(c2)", "True"));
+        }
+
+        [Fact]
+        public void IEquatableEquals_ExplicitImplementation_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IEquatable<C>
+{
+    public int X;
+
+    bool IEquatable<C>.Equals(C other) => true;
+}
+
+public class Test
+{
+    public void M1(C c, C c2)
+    {
+        if (c == null || !c.Equals(c2))
+        {
+            return;
+        }
+
+        if (c2 != null)
+        {
+        }
+    }
+
+    public void M2(C c, C c2)
+    {
+        if (!c.Equals(c2))
+        {
+            return;
+        }
+
+        if (c != c2)
+        {
+        }
+    }
+
+    public void M3(C c, C c2)
+    {
+        if (c != c2)
+        {
+            return;
+        }
+
+        if (!c.Equals(c2))
+        {
+        }
+    }
+}
+",
+            // Test0.cs(20,13): warning CA1508: 'c2 != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(20, 13, "c2 != null", "true"),
+            // Test0.cs(32,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(32, 13, "c != c2", "false"));
+
+            VerifyBasic(@"
+Imports System
+
+Public Class C
+    Implements IEquatable(Of C)
+
+    Public X As Integer
+    Public Function Equals(other As C) As Boolean Implements IEquatable(Of C).Equals
+        Return True
+    End Function
+End Class
+
+Public Class Test
+    Public Sub M1(c As C, c2 As C)
+        If c Is Nothing OrElse Not c.Equals(c2) Then
+            Return
+        End If
+
+        If c2 IsNot Nothing Then
+        End If
+    End Sub
+
+    Public Sub M2(c As C, c2 As C)
+        If Not c.Equals(c2) Then
+            Return
+        End If
+
+        If c IsNot c2 Then
+        End If
+    End Sub
+
+    Public Sub M3(c As C, c2 As C)
+        If c IsNot c2 Then
+            Return
+        End If
+
+        If Not c.Equals(c2) Then
+        End If
+    End Sub
+End Class",
+            // Test0.vb(19,12): warning CA1508: 'c2 IsNot Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(19, 12, "c2 IsNot Nothing", "True"),
+            // Test0.vb(28,12): warning CA1508: 'c IsNot c2' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(28, 12, "c IsNot c2", "False"),
+            // Test0.vb(37,16): warning CA1508: 'c.Equals(c2)' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(37, 16, "c.Equals(c2)", "True"));
+        }
+
+        [Fact]
+        public void IEquatableEquals_ImplicitImplementation_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IEquatable<C>
+{
+    public int X;
+
+    public bool Equals(C other) => true;
+}
+
+public class Test
+{
+    public void M1(C c, C c2)
+    {
+        if (c == null || !c.Equals(c2))
+        {
+            return;
+        }
+
+        if (c2 != null)
+        {
+        }
+    }
+
+    public void M2(C c, C c2)
+    {
+        if (!c.Equals(c2))
+        {
+            return;
+        }
+
+        if (c != c2)
+        {
+        }
+    }
+
+    public void M3(C c, C c2)
+    {
+        if (c != c2)
+        {
+            return;
+        }
+
+        if (!c.Equals(c2))
+        {
+        }
+    }
+}
+",
+            // Test0.cs(20,13): warning CA1508: 'c2 != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(20, 13, "c2 != null", "true"),
+            // Test0.cs(32,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(32, 13, "c != c2", "false"),
+            // Test0.cs(44,14): warning CA1508: 'c.Equals(c2)' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(44, 14, "c.Equals(c2)", "true"));
+        }
+
+        [Fact]
+        public void IEquatableEquals_Override_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public abstract class MyEquatable<T> : IEquatable<T>
+{
+    public abstract bool Equals(T other);
+}
+
+public class C : MyEquatable<C>
+{
+    public int X;
+    public override bool Equals(C other) => true;
+}
+
+public class Test
+{
+    public void M1(C c, C c2)
+    {
+        if (c == null || !c.Equals(c2))
+        {
+            return;
+        }
+
+        if (c2 != null)
+        {
+        }
+    }
+
+    public void M2(C c, C c2)
+    {
+        if (!c.Equals(c2))
+        {
+            return;
+        }
+
+        if (c != c2)
+        {
+        }
+    }
+
+    public void M3(C c, C c2)
+    {
+        if (c != c2)
+        {
+            return;
+        }
+
+        if (!c.Equals(c2))
+        {
+        }
+    }
+}
+",
+            // Test0.cs(24,13): warning CA1508: 'c2 != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(24, 13, "c2 != null", "true"),
+            // Test0.cs(36,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(36, 13, "c != c2", "false"),
+            // Test0.cs(48,14): warning CA1508: 'c.Equals(c2)' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(48, 14, "c.Equals(c2)", "true"));
+        }
     }
 }

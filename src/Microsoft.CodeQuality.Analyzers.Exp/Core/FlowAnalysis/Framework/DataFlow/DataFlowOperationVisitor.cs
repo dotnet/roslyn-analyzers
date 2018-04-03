@@ -111,7 +111,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             _valueCacheBuilder = ImmutableDictionary.CreateBuilder<IOperation, TAbstractAnalysisValue>();
             _predicateValueKindCacheBuilder = ImmutableDictionary.CreateBuilder<IOperation, PredicateValueKind>();
             _pendingArgumentsToReset = new List<IArgumentOperation>();
-            ThisOrMePointsToAbstractValue = GetThisOrMeInstancePointsToValue(owningSymbol.ContainingType);
+            ThisOrMePointsToAbstractValue = GetThisOrMeInstancePointsToValue(owningSymbol);
 
             AnalysisEntityFactory = new AnalysisEntityFactory(
                 getPointsToAbstractValueOpt: (pointsToAnalysisResultOpt != null || IsPointsToAnalysis) ?
@@ -135,11 +135,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     _pointsToAnalysisResultOpt?.GetHashCode() ?? 0))))))));
         }
 
-        private static PointsToAbstractValue GetThisOrMeInstancePointsToValue(INamedTypeSymbol containingTypeSymbol)
+        private static PointsToAbstractValue GetThisOrMeInstancePointsToValue(ISymbol owningSymbol)
         {
-            if (!containingTypeSymbol.HasValueCopySemantics())
+            if (!owningSymbol.IsStatic &&
+                !owningSymbol.ContainingType.HasValueCopySemantics())
             {
-                var thisOrMeLocation = AbstractLocation.CreateThisOrMeLocation(containingTypeSymbol);
+                var thisOrMeLocation = AbstractLocation.CreateThisOrMeLocation(owningSymbol.ContainingType);
                 return new PointsToAbstractValue(thisOrMeLocation);
             }
             else
@@ -366,25 +367,25 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             Debug.Assert(PredicateAnalysis);
             Debug.Assert(operation.IsComparisonOperator());
 
+            var isReferenceEquality = operation.OperatorMethod == null && !operation.Type.HasValueCopySemantics();
             switch (operation.OperatorKind)
             {
                 case BinaryOperatorKind.Equals:
                 case BinaryOperatorKind.ObjectValueEquals:
-                    return SetValueForEqualsOrNotEqualsComparisonOperator(operation, negatedCurrentAnalysisData, equals: true);
+                    return SetValueForEqualsOrNotEqualsComparisonOperator(operation.LeftOperand, operation.RightOperand, negatedCurrentAnalysisData, equals: true, isReferenceEquality: isReferenceEquality);
 
                 case BinaryOperatorKind.NotEquals:
                 case BinaryOperatorKind.ObjectValueNotEquals:
-                    return SetValueForEqualsOrNotEqualsComparisonOperator(operation, negatedCurrentAnalysisData, equals: false);
+                    return SetValueForEqualsOrNotEqualsComparisonOperator(operation.LeftOperand, operation.RightOperand, negatedCurrentAnalysisData, equals: false, isReferenceEquality: isReferenceEquality);
 
                 default:
                     return PredicateValueKind.Unknown;
             }
         }
 
-        protected virtual PredicateValueKind SetValueForEqualsOrNotEqualsComparisonOperator(IBinaryOperation operation, TAnalysisData negatedCurrentAnalysisData, bool equals)
+        protected virtual PredicateValueKind SetValueForEqualsOrNotEqualsComparisonOperator(IOperation leftOperand, IOperation rightOperand, TAnalysisData negatedCurrentAnalysisData, bool equals, bool isReferenceEquality)
         {
             Debug.Assert(PredicateAnalysis);
-            Debug.Assert(operation.IsComparisonOperator());
             throw new NotImplementedException();
         }
 
@@ -475,9 +476,52 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         #endregion
 
         #region Helper methods for reseting/transfer instance analysis data when PointsTo analysis results are available
+        /// <summary>
+        /// Resets all the analysis data for all <see cref="AnalysisEntity"/> instances that share the same <see cref="AnalysisEntity.InstanceLocation"/>
+        /// as the given <paramref name="analysisEntity"/>.
+        /// </summary>
+        /// <param name="analysisEntity"></param>
+        protected abstract void ResetValueTypeInstanceAnalysisData(AnalysisEntity analysisEntity);
 
-        protected abstract void ResetValueTypeInstanceAnalysisData(IOperation operation);
-        protected abstract void ResetReferenceTypeInstanceAnalysisData(IOperation operation);
+        /// <summary>
+        /// Resets all the analysis data for all <see cref="AnalysisEntity"/> instances that share the same <see cref="AnalysisEntity.InstanceLocation"/>
+        /// as the given <paramref name="pointsToAbstractValue"/>.
+        /// </summary>
+        /// <param name="operation"></param>
+        protected abstract void ResetReferenceTypeInstanceAnalysisData(PointsToAbstractValue pointsToAbstractValue);
+
+        private void ResetValueTypeInstanceAnalysisData(IOperation operation)
+        {
+            Debug.Assert(HasPointsToAnalysisResult);
+            Debug.Assert(operation.Type.HasValueCopySemantics());
+
+            if (AnalysisEntityFactory.TryCreate(operation, out AnalysisEntity analysisEntity))
+            {
+                if (analysisEntity.Type.HasValueCopySemantics())
+                {
+                    ResetValueTypeInstanceAnalysisData(analysisEntity);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Resets all the analysis data for all <see cref="AnalysisEntity"/> instances that share the same <see cref="AnalysisEntity.InstanceLocation"/>
+        /// as pointed to by given reference type <paramref name="operation"/>.
+        /// </summary>
+        /// <param name="operation"></param>
+        private void ResetReferenceTypeInstanceAnalysisData(IOperation operation)
+        {
+            Debug.Assert(HasPointsToAnalysisResult);
+            Debug.Assert(!operation.Type.HasValueCopySemantics());
+
+            var pointsToValue = GetPointsToAbstractValue(operation);
+            if (pointsToValue.Locations.IsEmpty)
+            {
+                return;
+            }
+
+            ResetReferenceTypeInstanceAnalysisData(pointsToValue);
+        }
 
         /// <summary>
         /// Reset all the instance analysis data if <see cref="HasPointsToAnalysisResult"/> is true and <see cref="PessimisticAnalysis"/> is also true.
@@ -497,6 +541,27 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             else
             {
                 ResetReferenceTypeInstanceAnalysisData(operation);
+            }
+        }
+
+        /// <summary>
+        /// Reset all the instance analysis data for <see cref="AnalysisEntityFactory.ThisOrMeInstance"/> if <see cref="HasPointsToAnalysisResult"/> is true and <see cref="PessimisticAnalysis"/> is also true.
+        /// If we are using or performing points to analysis, certain operations can invalidate all the analysis data off the containing instance.
+        /// </summary>
+        private void ResetThisOrMeInstanceAnalysisData()
+        {
+            if (!HasPointsToAnalysisResult || !PessimisticAnalysis)
+            {
+                return;
+            }
+
+            if (AnalysisEntityFactory.ThisOrMeInstance.Type.HasValueCopySemantics())
+            {
+                ResetValueTypeInstanceAnalysisData(AnalysisEntityFactory.ThisOrMeInstance);
+            }
+            else
+            {
+                ResetReferenceTypeInstanceAnalysisData(ThisOrMePointsToAbstractValue);
             }
         }
 
@@ -1288,6 +1353,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             else
             {
                 value = VisitInvocation_NonLambdaOrDelegateOrLocalFunction(operation, argument);
+
+                // Predicate analysis for different equality compare methods.
+                PerformPredicateAnalysis();
             }
 
             // Invocation might invalidate all the analysis data on the invoked instance.
@@ -1295,6 +1363,79 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             ResetInstanceAnalysisData(operation.Instance);
 
             return value;
+
+            void PerformPredicateAnalysis()
+            {
+                if (PredicateAnalysis &&
+                    operation.TargetMethod.ReturnType.SpecialType == SpecialType.System_Boolean)
+                {
+                    IOperation leftOperand = null;
+                    IOperation rightOperand = null;
+                    bool isReferenceEquality = false;
+                    if (operation.Arguments.Length == 2 &&
+                        operation.TargetMethod.IsStaticObjectEqualsOrReferenceEquals())
+                    {
+                        // 1. "static bool object.ReferenceEquals(o1, o2)"
+                        // 2. "static bool object.Equals(o1, o2)"
+                        leftOperand = operation.Arguments[0];
+                        rightOperand = operation.Arguments[1];
+                        isReferenceEquality = operation.TargetMethod.Name == "ReferenceEquals" ||
+                            (AnalysisEntityFactory.TryCreate(operation.Arguments[0].Value, out var analysisEntity) &&
+                             !analysisEntity.Type.HasValueCopySemantics() &&
+                             (analysisEntity.Type as INamedTypeSymbol)?.OverridesEquals() == false);
+                    }
+                    else
+                    {
+                        // 1. "bool virtual object.Equals(other)"
+                        // 2. "bool override Equals(other)"
+                        // 3. "bool IEquatable<T>.Equals(other)"
+                        if (operation.Arguments.Length == 1 &&
+                            (operation.TargetMethod.IsObjectEquals() ||
+                             operation.TargetMethod.IsObjectEqualsOverride() ||
+                             IsOverrideOrImplementationOfEquatableEquals(operation.TargetMethod)))
+                        {
+                            leftOperand = operation.Instance;
+                            rightOperand = operation.Arguments[0];
+                            isReferenceEquality = operation.TargetMethod.IsObjectEquals();
+                        }
+                    }
+
+                    if (leftOperand != null && rightOperand != null)
+                    {
+                        TAnalysisData savedPreviousAnalysisDataOpt = OnStartPredicateAnalysis();
+                        PredicateValueKind predicateValueKind = SetValueForEqualsOrNotEqualsComparisonOperator(
+                            leftOperand,
+                            rightOperand,
+                            negatedCurrentAnalysisData: NegatedCurrentAnalysisDataStack.Peek(),
+                            equals: true,
+                            isReferenceEquality: isReferenceEquality);
+                        SetPredicateValueKind(operation, predicateValueKind);
+                        OnEndPredicateAnalysis(savedPreviousAnalysisDataOpt);
+                    }
+
+                    bool IsOverrideOrImplementationOfEquatableEquals(IMethodSymbol methodSymbol)
+                    {
+                        if (WellKnownTypeProvider.GenericIEquatable == null)
+                        {
+                            return false;
+                        }
+
+                        foreach (var interfaceType in methodSymbol.ContainingType.AllInterfaces)
+                        {
+                            if (interfaceType.OriginalDefinition.Equals(WellKnownTypeProvider.GenericIEquatable))
+                            {
+                                var equalsMember = interfaceType.GetMembers("Equals").OfType<IMethodSymbol>().FirstOrDefault();
+                                if (equalsMember != null && methodSymbol.IsOverrideOrImplementationOfInterfaceMember(equalsMember))
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+
+                        return false;
+                    }
+                }
+            }
         }
 
         public virtual TAbstractAnalysisValue VisitInvocation_NonLambdaOrDelegateOrLocalFunction(IInvocationOperation operation, object argument)
@@ -1365,34 +1506,43 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return ValueDomain.Merge(leftValue, rightValue);
         }
 
+        private TAnalysisData OnStartPredicateAnalysis()
+        {
+            TAnalysisData savedPreviousAnalysisDataOpt = default(TAnalysisData);
+            if (PredicateAnalysis && !IsCurrentlyPerformingPredicateAnalysis)
+            {
+                savedPreviousAnalysisDataOpt = GetClonedCurrentAnalysisData();
+
+                // Topmost predicate operator not inside a conditional expression.
+                NegatedCurrentAnalysisDataStack.Push(GetClonedCurrentAnalysisData());
+            }
+
+            return savedPreviousAnalysisDataOpt;
+        }
+
+        private void OnEndPredicateAnalysis(TAnalysisData savedPreviousAnalysisDataOpt)
+        {
+            if (!ReferenceEquals(savedPreviousAnalysisDataOpt, default(TAnalysisData)))
+            {
+                Debug.Assert(PredicateAnalysis);
+
+                // Merge the CurrentAnalysisData with savedPreviousAnalysisData. 
+                CurrentAnalysisData = MergeAnalysisData(savedPreviousAnalysisDataOpt, CurrentAnalysisData);
+                NegatedCurrentAnalysisDataStack.Pop();
+            }
+        }
+
+        private void SetPredicateValueKind(IOperation operation, PredicateValueKind predicateValueKind)
+        {
+            if (predicateValueKind != PredicateValueKind.Unknown ||
+                _predicateValueKindCacheBuilder.ContainsKey(operation))
+            {
+                _predicateValueKindCacheBuilder[operation] = predicateValueKind;
+            }
+        }
+
         public sealed override TAbstractAnalysisValue VisitBinaryOperator(IBinaryOperation operation, object argument)
         {
-            var isTopmostOperationNeedingPredicateAnalysis = PredicateAnalysis && !IsCurrentlyPerformingPredicateAnalysis;
-            TAnalysisData savedPreviousAnalysisData = default(TAnalysisData);
-
-            void OnStartPredicateOperatorAnalysis()
-            {
-                if (isTopmostOperationNeedingPredicateAnalysis)
-                {
-                    savedPreviousAnalysisData = GetClonedCurrentAnalysisData();
-
-                    // Topmost predicate operator not inside a conditional expression.
-                    NegatedCurrentAnalysisDataStack.Push(GetClonedCurrentAnalysisData());
-                }
-            };
-
-            void OnEndPredicateOperatorAnalysis()
-            {
-                if (isTopmostOperationNeedingPredicateAnalysis)
-                {
-                    Debug.Assert(!ReferenceEquals(savedPreviousAnalysisData, default(TAnalysisData)));
-
-                    // Merge the CurrentAnalysisData with savedPreviousAnalysisData. 
-                    CurrentAnalysisData = MergeAnalysisData(savedPreviousAnalysisData, CurrentAnalysisData);
-                    NegatedCurrentAnalysisDataStack.Pop();
-                }
-            };
-
             if (operation.IsConditionalOperator())
             {
                 TAnalysisData MergeConditional(TAnalysisData leftData, TAnalysisData rightData, bool negatedSense = false)
@@ -1408,7 +1558,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                         rightData;
                 };
 
-                OnStartPredicateOperatorAnalysis();
+                TAnalysisData savedPreviousAnalysisDataOpt = OnStartPredicateAnalysis();
 
                 TAbstractAnalysisValue leftValue = Visit(operation.LeftOperand, argument);
 
@@ -1439,7 +1589,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
                 CurrentAnalysisData = MergeConditional(leftConditionalData, rightConditionalData);
 
-                if (PredicateAnalysis && !isTopmostOperationNeedingPredicateAnalysis)
+                if (PredicateAnalysis && savedPreviousAnalysisDataOpt == null)
                 {
                     // Update the latest NegatedCurrentAnalysisData for parent operations. 
                     TAnalysisData rightNegatedCurrentAnalysisData = NegatedCurrentAnalysisDataStack.Pop();
@@ -1448,7 +1598,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 }
                 else
                 {
-                    OnEndPredicateOperatorAnalysis();
+                    OnEndPredicateAnalysis(savedPreviousAnalysisDataOpt);
                 }
 
                 return ValueDomain.UnknownOrMayBeValue;
@@ -1456,17 +1606,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
             if (PredicateAnalysis && operation.IsComparisonOperator())
             {
-                OnStartPredicateOperatorAnalysis();
+                TAnalysisData savedPreviousAnalysisDataOpt = OnStartPredicateAnalysis();
                 var value = VisitBinaryOperator_NonConditional(operation, argument);
 
                 PredicateValueKind predicateKind = SetValueForComparisonOperator(operation, NegatedCurrentAnalysisDataStack.Peek());
-                if (predicateKind != PredicateValueKind.Unknown ||
-                    _predicateValueKindCacheBuilder.ContainsKey(operation))
-                {
-                    _predicateValueKindCacheBuilder[operation] = predicateKind;
-                }
+                SetPredicateValueKind(operation, predicateKind);
 
-                OnEndPredicateOperatorAnalysis();
+                OnEndPredicateAnalysis(savedPreviousAnalysisDataOpt);
                 return value;
             }
 
@@ -1588,6 +1734,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             var value = base.VisitAnonymousObjectCreation(operation, argument);
             IsInsideObjectInitializer = savedIsInsideObjectInitializer;
             return value;
+        }
+
+        public override TAbstractAnalysisValue VisitLock(ILockOperation operation, object argument)
+        {
+            // Multi-threaded instance method.
+            // Conservatively reset all the instance analysis data for the ThisOrMeInstance.
+            ResetThisOrMeInstanceAnalysisData();
+
+            return base.VisitLock(operation, argument);
         }
 
         #endregion

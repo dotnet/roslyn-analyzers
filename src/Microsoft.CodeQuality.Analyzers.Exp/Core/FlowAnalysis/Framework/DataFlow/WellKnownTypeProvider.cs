@@ -25,6 +25,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             Task = WellKnownTypes.Task(compilation);
             CollectionTypes = GetWellKnownCollectionTypes(compilation);
             SerializationInfo = WellKnownTypes.SerializationInfo(compilation);
+            GenericIEquatable = WellKnownTypes.GenericIEquatable(compilation);
         }
 
         public static WellKnownTypeProvider GetOrCreate(Compilation compilation) => s_providerCache.GetValue(compilation, s_ProviderCacheCallback);
@@ -55,6 +56,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         /// <see cref="INamedTypeSymbol"/> for <see cref="System.Runtime.Serialization.SerializationInfo"/>
         /// </summary>
         public INamedTypeSymbol SerializationInfo { get; }
+
+        /// <summary>
+        /// <see cref="INamedTypeSymbol"/> for <see cref="System.IEquatable{T}"/>
+        /// </summary>
+        public INamedTypeSymbol GenericIEquatable { get; }
 
         /// <summary>
         /// Set containing following named types, if not null:

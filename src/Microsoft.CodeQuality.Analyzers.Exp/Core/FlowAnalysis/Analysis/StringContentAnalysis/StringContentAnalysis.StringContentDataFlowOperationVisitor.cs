@@ -45,17 +45,20 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
             protected override void ResetCurrentAnalysisData(StringContentAnalysisData newAnalysisDataOpt = null) => ResetAnalysisData(CurrentAnalysisData, newAnalysisDataOpt);
 
             #region Predicate analysis
-            protected override PredicateValueKind SetValueForEqualsOrNotEqualsComparisonOperator(IBinaryOperation operation, StringContentAnalysisData negatedCurrentAnalysisData, bool equals)
+            protected override PredicateValueKind SetValueForEqualsOrNotEqualsComparisonOperator(
+                IOperation leftOperand,
+                IOperation rightOperand,
+                StringContentAnalysisData negatedCurrentAnalysisData,
+                bool equals,
+                bool isReferenceEquality)
             {
-                Debug.Assert(operation.IsComparisonOperator());
-
                 var predicateValueKind = PredicateValueKind.Unknown;
 
                 // Handle 'a == "SomeString"' and 'a != "SomeString"'
-                SetValueForComparisonOperator(operation.LeftOperand, operation.RightOperand, negatedCurrentAnalysisData, equals, ref predicateValueKind);
+                SetValueForComparisonOperator(leftOperand, rightOperand, negatedCurrentAnalysisData, equals, ref predicateValueKind);
 
                 // Handle '"SomeString" == a' and '"SomeString" != a'
-                SetValueForComparisonOperator(operation.RightOperand, operation.LeftOperand, negatedCurrentAnalysisData, equals, ref predicateValueKind);
+                SetValueForComparisonOperator(rightOperand, leftOperand, negatedCurrentAnalysisData, equals, ref predicateValueKind);
 
                 return predicateValueKind;
             }

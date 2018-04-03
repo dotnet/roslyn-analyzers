@@ -141,5 +141,215 @@ Public Class A
     Public Const field as System.String = ""X""
 End Class");
         }
+
+        [Fact]
+        public void CSharp_ProtectedVariable_PublicContainingType()
+        {
+            VerifyCSharp(@"
+public class A
+{
+    protected string field;
+}", GetCSharpResultAt(4, 22, DoNotDeclareVisibleInstanceFieldsAnalyzer.RuleId, DoNotDeclareVisibleInstanceFieldsAnalyzer.Rule.MessageFormat.ToString()));
+        }
+
+        [Fact]
+        public void VisualBasic_ProtectedVariable_PublicContainingType()
+        {
+            VerifyBasic(@"
+Public Class A
+    Protected field As System.String
+End Class", GetBasicResultAt(3, 15, DoNotDeclareVisibleInstanceFieldsAnalyzer.RuleId, DoNotDeclareVisibleInstanceFieldsAnalyzer.Rule.MessageFormat.ToString()));
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CSharp_ProtectedVariable_InternalContainingType()
+        {
+            VerifyCSharp(@"
+        internal class A
+        {
+            protected string field; 
+
+            public class B
+            {
+                protected string field; 
+            }
+        }");
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void VisualBasic_ProtectedVariable_InternalContainingType()
+        {
+            VerifyBasic(@"
+        Friend Class A
+            Protected field As System.String
+
+            Public Class B
+                Protected field As System.String
+            End Class
+        End Class
+        ");
+        }
+
+        [Fact]
+        public void CSharp_ProtectedStaticVariable()
+        {
+            VerifyCSharp(@"
+        public class A
+        {
+            protected static string field; 
+        }");
+        }
+
+        [Fact]
+        public void VisualBasic_ProtectedStaticVariable()
+        {
+            VerifyBasic(@"
+        Public Class A
+            Protected Shared field as System.String
+        End Class");
+        }
+
+        [Fact]
+        public void CSharp_ProtectedStaticReadonlyVariable()
+        {
+            VerifyCSharp(@"
+        public class A
+        {
+            protected static readonly string field; 
+        }");
+        }
+
+        [Fact]
+        public void VisualBasic_ProtectedStaticReadonlyVariable()
+        {
+            VerifyBasic(@"
+        Public Class A
+            Protected Shared ReadOnly field as System.String
+        End Class");
+        }
+
+        [Fact]
+        public void CSharp_ProtectedConstVariable()
+        {
+            VerifyCSharp(@"
+        public class A
+        {
+            protected const string field = ""X""; 
+        }");
+        }
+
+        [Fact]
+        public void VisualBasic_ProtectedConstVariable()
+        {
+            VerifyBasic(@"
+        Public Class A
+            Protected Const field as System.String = ""X""
+        End Class");
+        }
+
+        [Fact]
+        public void CSharp_ProtectedInternalVariable_PublicContainingType()
+        {
+            VerifyCSharp(@"
+public class A
+{
+    protected internal string field;
+}", GetCSharpResultAt(4, 31, DoNotDeclareVisibleInstanceFieldsAnalyzer.RuleId, DoNotDeclareVisibleInstanceFieldsAnalyzer.Rule.MessageFormat.ToString()));
+        }
+
+        [Fact]
+        public void VisualBasic_ProtectedFriendVariable_PublicContainingType()
+        {
+            VerifyBasic(@"
+Public Class A
+    Protected Friend field As System.String
+End Class", GetBasicResultAt(3, 22, DoNotDeclareVisibleInstanceFieldsAnalyzer.RuleId, DoNotDeclareVisibleInstanceFieldsAnalyzer.Rule.MessageFormat.ToString()));
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CSharp_ProtectedInternalVariable_InternalContainingType()
+        {
+            VerifyCSharp(@"
+        internal class A
+        {
+            protected internal string field; 
+
+            public class B
+            {
+                protected internal string field; 
+            }
+        }");
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void VisualBasic_ProtectedFriendVariable_InternalContainingType()
+        {
+            VerifyBasic(@"
+        Friend Class A
+            Protected Friend field As System.String
+
+            Public Class B
+                Protected Friend field As System.String
+            End Class
+        End Class
+        ");
+        }
+
+        [Fact]
+        public void CSharp_ProtectedInternalStaticVariable()
+        {
+            VerifyCSharp(@"
+        public class A
+        {
+            protected internal static string field; 
+        }");
+        }
+
+        [Fact]
+        public void VisualBasic_ProtectedFriendStaticVariable()
+        {
+            VerifyBasic(@"
+        Public Class A
+            Protected Friend Shared field as System.String
+        End Class");
+        }
+
+        [Fact]
+        public void CSharp_ProtectedInternalStaticReadonlyVariable()
+        {
+            VerifyCSharp(@"
+        public class A
+        {
+            protected internal static readonly string field; 
+        }");
+        }
+
+        [Fact]
+        public void VisualBasic_ProtectedFriendStaticReadonlyVariable()
+        {
+            VerifyBasic(@"
+        Public Class A
+            Protected Friend Shared ReadOnly field as System.String
+        End Class");
+        }
+
+        [Fact]
+        public void CSharp_ProtectedInternalConstVariable()
+        {
+            VerifyCSharp(@"
+        public class A
+        {
+            protected internal const string field = ""X""; 
+        }");
+        }
+
+        [Fact]
+        public void VisualBasic_ProtectedFriendConstVariable()
+        {
+            VerifyBasic(@"
+        Public Class A
+            Protected Friend Const field as System.String = ""X""
+        End Class");
+        }
     }
 }

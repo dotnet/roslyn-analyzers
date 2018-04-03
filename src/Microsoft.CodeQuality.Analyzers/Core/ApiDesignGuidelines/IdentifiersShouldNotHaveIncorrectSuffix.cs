@@ -95,7 +95,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 [AttributeSuffix] = ImmutableArray.CreateRange(new[] { "System.Attribute" }),
                 [CollectionSuffix] = ImmutableArray.CreateRange(new[] { "System.Collections.IEnumerable" }),
-                [DictionarySuffix] = ImmutableArray.CreateRange(new[] { "System.Collections.IDictionary", "System.Collections.Generic.IReadOnlyDictionary`2" }),
+                [DictionarySuffix] = ImmutableArray.CreateRange(new[] { "System.Collections.IDictionary", "System.Collections.Generic.IDictionary`2", "System.Collections.Generic.IReadOnlyDictionary`2" }),
                 [EventArgsSuffix] = ImmutableArray.CreateRange(new[] { "System.EventArgs" }),
                 [ExceptionSuffix] = ImmutableArray.CreateRange(new[] { "System.Exception" }),
                 [PermissionSuffix] = ImmutableArray.CreateRange(new[] { "System.Security.IPermission" }),

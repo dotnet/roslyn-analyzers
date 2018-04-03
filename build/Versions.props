@@ -12,7 +12,7 @@
 
     <!-- Toolset -->
     <RoslynToolsRepoToolsetVersion>1.0.0-beta-62705-01</RoslynToolsRepoToolsetVersion>
-    <VSWhereVersion>2.1.4</VSWhereVersion>
+    <VSWhereVersion>2.3.2</VSWhereVersion>
     <MicrosoftVSSDKVersion>15.0.26201-alpha</MicrosoftVSSDKVersion>
     <MicrosoftDiaSymReaderPdb2PdbVersion>1.1.0-beta1-62624-01</MicrosoftDiaSymReaderPdb2PdbVersion>
     <OpenCoverVersion>4.6.519</OpenCoverVersion>

@@ -9,6 +9,8 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
+#pragma warning disable CA1820 // Test for empty strings using string length
+
 namespace MetaCompilation.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]

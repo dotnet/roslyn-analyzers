@@ -801,6 +801,182 @@ End Class
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
+        public void NullCompare_WhileLoop_WithBreak()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M(string param, string param2, bool flag)
+    {
+        string str = null;
+        while (param == str)
+        {
+            // param = null here
+            if (param == str)
+            {
+            }
+            
+            if (flag)
+            {
+                param = param2;
+                break;
+            }
+
+            // param = null here
+            if (param != str)
+            {
+            }
+        }
+
+        // param is unknown here
+        if (str == param)
+        {
+        }
+        if (str != param)
+        {
+        }
+    }
+}
+",
+            // Test0.cs(10,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(10, 17, "param == str", "true"),
+            // Test0.cs(21,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(21, 17, "param != str", "false"));
+
+            VerifyBasic(@"
+Module Test
+    ' While loop
+    Private Sub M1(param As String, param2 As String, flag As Boolean)
+        Dim str As String = Nothing
+        While param = str
+            ' param == null here
+            If param = str Then
+            End If
+            If flag Then
+                param = param2
+                Exit While
+            End If
+            ' param == null here
+            If param <> str Then
+            End If
+        End While
+
+        ' param is unknown here
+        If str = param Then
+            End If
+        If str <> param Then
+        End If
+    End Sub
+End Module",
+            // Test0.vb(8,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(8, 16, "param = str", "True"),
+            // Test0.vb(15,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(15, 16, "param <> str", "False"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact]
+        public void NullCompare_WhileLoop_WithContinue()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M(string param, string param2, string param3, bool flag)
+    {
+        string str = null;
+        param3 = str;
+        while (param == str)
+        {
+            // param = null here.
+            if (param == str)
+            {
+            }
+            
+            // param3 is unknown here due to continue statement in the loop.
+            if (param3 == str)
+            {
+            }
+            
+            if (flag)
+            {
+                param3 = param2;
+                continue;
+            }
+
+            // param = null here.
+            if (param != str)
+            {
+            }
+            
+            // param3 is unknown here due to continue statement in the loop.
+            if (param3 != str)
+            {
+            }
+        }
+
+        // param = null here
+        if (str == param)
+        {
+        }
+        if (str != param)
+        {
+        }
+    }
+}
+",
+            // Test0.cs(11,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(11, 17, "param == str", "true"),
+            // Test0.cs(27,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(27, 17, "param != str", "false"),
+            // Test0.cs(38,13): warning CA1508: 'str == param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(38, 13, "str == param", "false"),
+            // Test0.cs(41,13): warning CA1508: 'str != param' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(41, 13, "str != param", "true"));
+
+            VerifyBasic(@"
+Module Test
+    ' While loop
+    Private Sub M1(param As String, param2 As String, param3 As String, flag As Boolean)
+        Dim str As String = Nothing
+        param3 = str
+        While param = str
+            ' param == null here
+            If param = str Then
+            End If
+            ' param3 is unknown here due to continue statement in the loop.
+            If param3 = str Then
+            End If
+            If flag Then
+                param3 = param2
+                Continue While
+            End If
+            ' param == null here
+            If param <> str Then
+            End If
+            ' param3 is unknown here due to continue statement in the loop.
+            If param3 <> str Then
+            End If
+        End While
+
+        ' param = null here
+        If str = param Then
+            End If
+        If str <> param Then
+        End If
+    End Sub
+End Module",
+            // Test0.vb(9,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(9, 16, "param = str", "True"),
+            // Test0.vb(19,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(19, 16, "param <> str", "False"),
+            // Test0.vb(27,12): warning CA1508: 'str = param' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(27, 12, "str = param", "False"),
+            // Test0.vb(29,12): warning CA1508: 'str <> param' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(29, 12, "str <> param", "True"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact]
         public void NullCompare_DoWhileLoop()
         {
             VerifyCSharp(@"
@@ -935,6 +1111,254 @@ Module Test
         Loop While param IsNot Nothing
     End Sub
 End Module");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact]
+        public void NullCompare_DoWhileLoop_WithBreak()
+        {
+            VerifyCSharp(@"
+class C
+{
+}
+
+class Test
+{
+    void M(C param, C param2, bool flag)
+    {
+        C cNotNull = new C();
+        do
+        {
+            // param is unknown here
+            if (cNotNull == param)
+            {
+            }
+            if (flag)
+            {
+                param = param2;
+                break;
+            }
+            if (cNotNull != param)
+            {
+            }
+        }
+        while (param != cNotNull);
+
+        // param is unknown here
+        if (param == cNotNull)
+        {
+        }
+        if (param != cNotNull)
+        {
+        }
+    }
+}
+");
+
+            VerifyBasic(@"
+Class C
+End Class
+
+Module Test
+    ' Do-While top loop
+    Private Sub M(param As String, param2 As String, flag As Boolean)
+        Dim cNotNull As New C()
+        Do While param IsNot cNotNull
+            ' param is unknown here
+            If cNotNull Is param Then
+            End If
+            If flag Then
+                param = param2
+                Exit Do
+            End If
+            If cNotNull IsNot param Then
+            End If
+        Loop
+
+        ' param is unknown here due to Exit While
+        If param Is cNotNull Then
+        End If
+        If param IsNot cNotNull Then
+        End If
+    End Sub
+
+    ' Do-While bottom loop
+    Private Sub M2(param As String, param2 As String, flag As Boolean)
+        Dim cNotNull As New C()
+        Do
+            ' param2 is unknown here
+            If cNotNull Is param2 Then
+            End If
+            If flag Then
+                param2 = param
+                Exit Do
+            End If
+            If cNotNull IsNot param2 Then
+            End If
+        Loop While param2 IsNot cNotNull
+
+        ' param2 is unknown here due to Exit While
+        If param2 Is cNotNull Then
+        End If
+        If param2 IsNot cNotNull Then
+        End If
+    End Sub
+End Module");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact]
+        public void NullCompare_DoWhileLoop_WithContinue()
+        {
+            VerifyCSharp(@"
+class C
+{
+}
+
+class Test
+{
+    void M(C param, C param2, C param3, bool flag)
+    {
+        C cNull = null;
+        param3 = null;
+        do
+        {
+            // param is unknown here from first loop iteration.
+            if (cNull == param)
+            {
+            }
+            // param3 is unknown here due to continue statement.
+            if (cNull == param3)
+            {
+            }
+            if (flag)
+            {
+                param3 = param2;
+                continue;
+            }
+            // param is unknown here from first loop iteration.
+            if (cNull != param)
+            {
+            }
+            // param is unknown here due to continue statement.
+            if (cNull != param)
+            {
+            }
+        }
+        while (param != cNull);
+
+        // param = cNull here
+        if (param == cNull)
+        {
+        }
+        if (param != cNull)
+        {
+        }
+
+        // param3 is unknwon here
+        if (param3 == cNull)
+        {
+        }
+        if (param3 != cNull)
+        {
+        }
+    }
+}
+",
+            // Test0.cs(39,13): warning CA1508: 'param == cNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(39, 13, "param == cNull", "true"),
+            // Test0.cs(42,13): warning CA1508: 'param != cNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(42, 13, "param != cNull", "false"));
+
+            VerifyBasic(@"
+Class C
+End Class
+
+Module Test
+    ' Do-While top loop
+    Private Sub M(param As C, param2 As C, param3 As C, flag As Boolean)
+        Dim cNull As C = Nothing
+        param3 = Nothing
+        Do While param IsNot cNull
+            ' param is non-null here
+            If cNull Is param Then
+            End If
+            ' param3 is unknown here due to continue statement in the loop.
+            If cNull Is param3 Then
+            End If
+            If flag Then
+                param3 = param2
+                Continue Do
+            End If
+            ' param is non-null here
+            If cNull IsNot param Then
+            End If
+            ' param3 is unknown here due to continue statement in the loop.
+            If cNull IsNot param3 Then
+            End If
+        Loop
+
+        ' param = cNull here
+        If param Is cNull Then
+        End If
+        If param IsNot cNull Then
+        End If
+
+        ' param3 is unknown here due.
+        If param3 Is cNull Then
+        End If
+        If param3 IsNot cNull Then
+        End If            
+    End Sub
+
+    ' Do-While bottom loop
+    Private Sub M2(param As C, param2 As C, param4 As C, flag As Boolean)
+        Dim cNull As C = Nothing
+        param4 = Nothing
+        Do
+            ' param2 is unknown here from first loop iteration
+            If cNull Is param2 Then
+            End If
+            ' param4 is unknown here due to continue statement in the loop
+            If cNull Is param4 Then
+            End If
+            If flag Then
+                param4 = param
+                Continue Do
+            End If
+            ' param2 is unknown here from first loop iteration
+            If cNull IsNot param2 Then
+            End If
+            ' param4 is unknown here due to continue statement in the loop
+            If cNull IsNot param4 Then
+            End If
+        Loop While param2 IsNot cNull
+
+        ' param2 = cNull here
+        If param2 Is cNull Then
+        End If
+        If param2 IsNot cNull Then
+        End If
+
+        ' param4 is unknown here
+        If param4 Is cNull Then
+        End If
+        If param4 IsNot cNull Then
+        End If
+    End Sub
+End Module",
+            // Test0.vb(12,16): warning CA1508: 'cNull Is param' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(12, 16, "cNull Is param", "False"),
+            // Test0.vb(22,16): warning CA1508: 'cNull IsNot param' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(22, 16, "cNull IsNot param", "True"),
+            // Test0.vb(30,12): warning CA1508: 'param Is cNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(30, 12, "param Is cNull", "True"),
+            // Test0.vb(32,12): warning CA1508: 'param IsNot cNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(32, 12, "param IsNot cNull", "False"),
+            // Test0.vb(66,12): warning CA1508: 'param2 Is cNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(66, 12, "param2 Is cNull", "True"),
+            // Test0.vb(68,12): warning CA1508: 'param2 IsNot cNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(68, 12, "param2 IsNot cNull", "False"));
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
@@ -1139,6 +1563,179 @@ End Class
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
+        public void NullCompare_ForLoop_WithBreak()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M(string param, string param2, bool flag)
+    {
+        string str;
+        for (str = null; param == str;)
+        {
+            // param = null here
+            if (param == str)
+            {
+            }
+            
+            if (flag)
+            {
+                param = param2;
+                break;
+            }
+
+            // param = null here
+            if (param != str)
+            {
+            }
+        }
+
+        // param is unknown here
+        if (str == param)
+        {
+        }
+        if (str != param)
+        {
+        }
+    }
+}
+",
+            // Test0.cs(10,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(10, 17, "param == str", "true"),
+            // Test0.cs(21,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(21, 17, "param != str", "false"));
+
+            VerifyBasic(@"
+Module Test
+    ' While loop
+    Private Sub M1(param As String, param2 As String, flag As Boolean)
+        Dim str As String = Nothing
+        For i As Integer = 0 To 10
+            param = str
+            ' param == null here
+            If param = str Then
+            End If
+            If flag Then
+                param = param2
+                Exit For
+            End If
+            ' param == null here
+            If param <> str Then
+            End If
+        Next
+
+        ' param is unknown here
+        If str = param Then
+            End If
+        If str <> param Then
+        End If
+    End Sub
+End Module",
+            // Test0.vb(9,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(9, 16, "param = str", "True"),
+            // Test0.vb(16,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(16, 16, "param <> str", "False"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact]
+        public void NullCompare_ForLoop_WithContinue()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M(string param, string param2, string param3, bool flag)
+    {
+        string str;
+        param3 = null;
+        for (str = null; param == str;)
+        {
+            // param = null here.
+            if (param == str)
+            {
+            }
+            
+            // param3 is unknown here due to continue statement in the loop.
+            if (param3 == str)
+            {
+            }
+            
+            if (flag)
+            {
+                param3 = param2;
+                continue;
+            }
+
+            // param = null here.
+            if (param != str)
+            {
+            }
+            
+            // param3 is unknown here due to continue statement in the loop.
+            if (param3 != str)
+            {
+            }
+        }
+
+        // param = null here
+        if (str == param)
+        {
+        }
+        if (str != param)
+        {
+        }
+    }
+}
+",
+            // Test0.cs(11,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(11, 17, "param == str", "true"),
+            // Test0.cs(27,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(27, 17, "param != str", "false"),
+            // Test0.cs(38,13): warning CA1508: 'str == param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(38, 13, "str == param", "false"),
+            // Test0.cs(41,13): warning CA1508: 'str != param' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(41, 13, "str != param", "true"));
+
+            VerifyBasic(@"
+Module Test
+    Private Sub M1(param As String, param2 As String, param3 As String, flag As Boolean)
+        Dim str As String = Nothing
+        param3 = Nothing
+        For i As Integer = 0 To 10
+            param = str
+            ' param == null here
+            If param = str Then
+            End If
+            ' param3 is unknown here due to continue statement in the loop.
+            If param3 = str Then
+            End If
+            If flag Then
+                param3 = param2
+                Continue For
+            End If
+            ' param == null here
+            If param <> str Then
+            End If
+            ' param3 is unknown here due to continue statement in the loop.
+            If param3 <> str Then
+            End If
+        Next
+
+        ' param is unknown here
+        If str = param Then
+            End If
+        If str <> param Then
+        End If
+    End Sub
+End Module",
+            // Test0.vb(9,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(9, 16, "param = str", "True"),
+            // Test0.vb(19,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(19, 16, "param <> str", "False"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact]
         public void ValueCompare_ForLoop()
         {
             VerifyCSharp(@"
@@ -1228,6 +1825,198 @@ End Module
 Class C
 End Class
 ");
+        }
+
+        [Fact]
+        public void NullCompare_ForEachLoop_WithBreak()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M(string param, string param2, bool flag)
+    {
+        string str = null;
+        param = str;
+        foreach (var ch in param2)
+        {
+            // param = null here
+            if (param == str)
+            {
+            }
+            
+            if (flag)
+            {
+                param = param2;
+                break;
+            }
+
+            // param = null here
+            if (param != str)
+            {
+            }
+        }
+
+        // param is unknown here
+        if (str == param)
+        {
+        }
+        if (str != param)
+        {
+        }
+    }
+}
+",
+            // Test0.cs(11,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(11, 17, "param == str", "true"),
+            // Test0.cs(22,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(22, 17, "param != str", "false"));
+
+            VerifyBasic(@"
+Module Test
+    ' While loop
+    Private Sub M1(param As String, param2 As String, flag As Boolean)
+        Dim str As String = Nothing
+        param = str
+        For Each ch As Char in param2
+            ' param == null here
+            If param = str Then
+            End If
+            If flag Then
+                param = param2
+                Exit For
+            End If
+            ' param == null here
+            If param <> str Then
+            End If
+        Next
+
+        ' param is unknown here
+        If str = param Then
+            End If
+        If str <> param Then
+        End If
+    End Sub
+End Module",
+            // Test0.vb(9,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(9, 16, "param = str", "True"),
+            // Test0.vb(16,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(16, 16, "param <> str", "False"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact]
+        public void NullCompare_ForEachLoop_WithContinue()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M(string param, string param2, string param3, bool flag)
+    {
+        string str = null;
+        param3 = null;
+        param = str;
+        foreach (var ch in param2)
+        {
+            // param = null here.
+            if (param == str)
+            {
+            }
+            
+            // param3 is unknown here due to continue statement in the loop.
+            if (param3 == str)
+            {
+            }
+            
+            if (flag)
+            {
+                param3 = param2;
+                continue;
+            }
+
+            // param = null here.
+            if (param != str)
+            {
+            }
+            
+            // param3 is unknown here due to continue statement in the loop.
+            if (param3 != str)
+            {
+            }
+        }
+
+        // param = null here
+        if (str == param)
+        {
+        }
+        if (str != param)
+        {
+        }
+
+        // param3 is unkown here
+        if (str == param3)
+        {
+        }
+        if (str != param3)
+        {
+        }
+    }
+}
+",
+            // Test0.cs(12,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(12, 17, "param == str", "true"),
+            // Test0.cs(28,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(28, 17, "param != str", "false"),
+            // Test0.cs(39,13): warning CA1508: 'str == param' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(39, 13, "str == param", "true"),
+            // Test0.cs(42,13): warning CA1508: 'str != param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(42, 13, "str != param", "false"));
+
+            VerifyBasic(@"
+Module Test
+    Private Sub M1(param As String, param2 As String, param3 As String, flag As Boolean)
+        Dim str As String = Nothing
+        param3 = Nothing
+        param = str
+        For Each ch As Char in param2
+            ' param == null here
+            If param = str Then
+            End If
+            ' param3 is unknown here due to continue statement in the loop.
+            If param3 = str Then
+            End If
+            If flag Then
+                param3 = param2
+                Continue For
+            End If
+            ' param == null here
+            If param <> str Then
+            End If
+            ' param3 is unknown here due to continue statement in the loop.
+            If param3 <> str Then
+            End If
+        Next
+
+        ' param = null here
+        If str = param Then
+            End If
+        If str <> param Then
+        End If
+
+        ' param3 is unknown here
+        If str = param3 Then
+            End If
+        If str <> param3 Then
+        End If
+    End Sub
+End Module",
+            // Test0.vb(9,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(9, 16, "param = str", "True"),
+            // Test0.vb(19,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(19, 16, "param <> str", "False"),
+            // Test0.vb(27,12): warning CA1508: 'str = param' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(27, 12, "str = param", "True"),
+            // Test0.vb(29,12): warning CA1508: 'str <> param' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(29, 12, "str <> param", "False"));
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
@@ -1432,6 +2221,7 @@ class C
 ",
             // Test0.cs(20,13): warning CA1508: 'param != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
             GetCSharpResultAt(20, 13, "param != null", "true"));
+
             VerifyBasic(@"
 Class Test
     Private Sub M(param As C, i As Integer)

@@ -8,12 +8,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     {
         private sealed class ConstantValueIndex : AbstractIndex
         {
-            public ConstantValueIndex(uint index)
+            public ConstantValueIndex(int index)
             {
                 Index = index;
             }
 
-            public uint Index { get; }
+            public int Index { get; }
 
             protected override int ComputeHashCode() => HashUtilities.Combine(Index.GetHashCode(), nameof(ConstantValueIndex).GetHashCode());
         }

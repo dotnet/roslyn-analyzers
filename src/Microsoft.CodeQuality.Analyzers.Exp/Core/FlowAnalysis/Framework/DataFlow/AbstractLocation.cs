@@ -21,14 +21,19 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     /// </summary>
     internal sealed class AbstractLocation : CacheBasedEquatable<AbstractLocation>
     {
-        public static readonly AbstractLocation Null = new AbstractLocation(creationOpt: null, analysisEntityOpt: null, symbolOpt: null, locationTypeOpt: null);
-
-        private AbstractLocation(IOperation creationOpt, AnalysisEntity analysisEntityOpt, ISymbol symbolOpt, ITypeSymbol locationTypeOpt)
+        private readonly bool _isSpecialSingleton;
+        public static readonly AbstractLocation Null = new AbstractLocation(creationOpt: null, analysisEntityOpt: null, symbolOpt: null, locationTypeOpt: null, isSpecialSingleton: true);
+        public static readonly AbstractLocation NoLocation = new AbstractLocation(creationOpt: null, analysisEntityOpt: null, symbolOpt: null, locationTypeOpt: null, isSpecialSingleton: true);
+        
+        private AbstractLocation(IOperation creationOpt, AnalysisEntity analysisEntityOpt, ISymbol symbolOpt, ITypeSymbol locationTypeOpt, bool isSpecialSingleton)
         {
+            Debug.Assert(isSpecialSingleton ^ (locationTypeOpt != null));
+
             CreationOpt = creationOpt;
             AnalysisEntityOpt = analysisEntityOpt;
             SymbolOpt = symbolOpt;
             LocationTypeOpt = locationTypeOpt;
+            _isSpecialSingleton = isSpecialSingleton;
         }
 
         private static AbstractLocation Create(IOperation creationOpt, AnalysisEntity analysisEntityOpt, ISymbol symbolOpt, ITypeSymbol locationType)
@@ -36,7 +41,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             Debug.Assert(creationOpt != null ^ symbolOpt != null ^ analysisEntityOpt != null);
             Debug.Assert(locationType != null);
 
-            return new AbstractLocation(creationOpt, analysisEntityOpt, symbolOpt, locationType);
+            return new AbstractLocation(creationOpt, analysisEntityOpt, symbolOpt, locationType, isSpecialSingleton: false);
         }
 
         public static AbstractLocation CreateAllocationLocation(IOperation creation, ITypeSymbol locationType) => Create(creation, analysisEntityOpt: null, symbolOpt: null, locationType: locationType);
@@ -48,21 +53,16 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         public AnalysisEntity AnalysisEntityOpt { get; }
         public ISymbol SymbolOpt { get; }
         public ITypeSymbol LocationTypeOpt { get; }
-        public bool IsNull
-        {
-            get
-            {
-                var isNull = ReferenceEquals(this, Null);
-                Debug.Assert(isNull || LocationTypeOpt != null);
-                return isNull;
-            }
-        }
+        public bool IsNull => ReferenceEquals(this, Null);
+        public bool IsNoLocation => ReferenceEquals(this, NoLocation);
 
         protected override int ComputeHashCode()
         {
             return HashUtilities.Combine(CreationOpt?.GetHashCode() ?? 0,
                 HashUtilities.Combine(SymbolOpt?.GetHashCode() ?? 0,
-                HashUtilities.Combine(AnalysisEntityOpt?.GetHashCode() ?? 0, LocationTypeOpt?.GetHashCode() ?? 0)));
+                HashUtilities.Combine(AnalysisEntityOpt?.GetHashCode() ?? 0,
+                HashUtilities.Combine(LocationTypeOpt?.GetHashCode() ?? 0,
+                HashUtilities.Combine(_isSpecialSingleton.GetHashCode(), IsNull.GetHashCode())))));
         }
     }
 }

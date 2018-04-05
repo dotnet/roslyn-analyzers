@@ -28,20 +28,22 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         protected AbstractAnalysisDomain<TAnalysisData> AnalysisDomain { get; }
         protected DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> OperationVisitor { get; }
-        private DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> NullAnalysisResultOpt { get; }
 
-        protected DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue> GetOrComputeResultCore(ControlFlowGraph cfg, bool cacheResult)
+        protected DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue> GetOrComputeResultCore(
+            ControlFlowGraph cfg,
+            bool cacheResult,
+            DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue> seedResultOpt = null)
         {
             if (!cacheResult)
             {
-                return Run(cfg);
+                return Run(cfg, seedResultOpt);
             }
 
             var analysisResultsMap = s_resultCache.GetOrCreateValue(cfg.RootOperation);
-            return analysisResultsMap.GetOrAdd(OperationVisitor, _ => Run(cfg));
+            return analysisResultsMap.GetOrAdd(OperationVisitor, _ => Run(cfg, seedResultOpt));
         }
 
-        private DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue> Run(ControlFlowGraph cfg)
+        private DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue> Run(ControlFlowGraph cfg, DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue> seedResultOpt)
         {
             var resultBuilder = new DataFlowAnalysisResultBuilder<TAnalysisData>();
 
@@ -52,20 +54,35 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             }
 
             var worklist = new Queue<BasicBlock>();
+            var pendingBlocksNeedingAtLeastOnePass = new HashSet<BasicBlock>(cfg.Blocks);
             var entry = GetEntry(cfg);
 
-            // Initialize the input of the initial block
-            // with the default abstract value of the domain.
-            UpdateInput(resultBuilder, entry, AnalysisDomain.Bottom);
+            // Are we computing the analysis data from scratch?
+            if (seedResultOpt == null)
+            {
+                // Initialize the input of the initial block
+                // with the default abstract value of the domain.
+                UpdateInput(resultBuilder, entry, AnalysisDomain.Bottom);
+            }
+            else
+            {
+                // Initialize the input and output of every block
+                // with the previously computed value.
+                foreach (var block in cfg.Blocks)
+                {
+                    UpdateInput(resultBuilder, block, GetInputData(seedResultOpt[block]));
+                }
+            }
 
-            // Add the entry block to the worklist.
+            // Add the block to the worklist.
             worklist.Enqueue(entry);
 
-            while (worklist.Count > 0)
+            while (worklist.Count > 0 || pendingBlocksNeedingAtLeastOnePass.Count > 0)
             {
                 // Get the next block to process
                 // and its associated result.
-                var block = worklist.Dequeue();
+                var block = worklist.Count > 0 ? worklist.Dequeue() : pendingBlocksNeedingAtLeastOnePass.ElementAt(0);
+                var needsAtLeastOnePass = pendingBlocksNeedingAtLeastOnePass.Remove(block);
 
                 // Get the outputs of all predecessor blocks of the current block.
                 var inputs = GetPredecessors(block).Select(b => GetOutput(resultBuilder[b]));
@@ -89,55 +106,60 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 }
 
                 // Compare the previous input with the new input.
-                var compare = AnalysisDomain.Compare(GetInput(resultBuilder[block]), input);
-
-                // The newly computed abstract values for each basic block
-                // must be always greater or equal than the previous value
-                // to ensure termination. 
-                Debug.Assert(compare <= 0, "The newly computed abstract value must be greater or equal than the previous one.");
-
-                // Is old input value < new input value ?
-                if (compare < 0 || block.Kind == BasicBlockKind.Entry)
+                if (!needsAtLeastOnePass)
                 {
-                    // The newly computed value is greater than the previous value,
-                    // so we need to update the current block result's
-                    // input values with the new ones.
-                    UpdateInput(resultBuilder, block, AnalysisDomain.Clone(input));
-
-                    // Flow the new input through the block to get a new output.
-                    var output = Flow(block, input);
-
-                    // Compare the previous output with the new output.
-                    compare = AnalysisDomain.Compare(GetOutput(resultBuilder[block]), output);
+                    int compare = AnalysisDomain.Compare(GetInput(resultBuilder[block]), input);
 
                     // The newly computed abstract values for each basic block
                     // must be always greater or equal than the previous value
                     // to ensure termination. 
                     Debug.Assert(compare <= 0, "The newly computed abstract value must be greater or equal than the previous one.");
 
-                    // Is old output value < new output value ?
-                    if (compare < 0 || block.Kind == BasicBlockKind.Entry)
+                    // Is old input value >= new input value
+                    if (compare >= 0)
                     {
-                        // The newly computed value is greater than the previous value,
-                        // so we need to update the current block result's
-                        // output values with the new ones.
-                        UpdateOutput(resultBuilder, block, output);
-
-                        // Since the new output value is different than the previous one, 
-                        // we need to propagate it to all the successor blocks of the current block.
-                        EnqueueRange(worklist, GetSuccessors(block));
+                        continue;
                     }
                 }
+
+                // The newly computed value is greater than the previous value,
+                // so we need to update the current block result's
+                // input values with the new ones.
+                UpdateInput(resultBuilder, block, AnalysisDomain.Clone(input));
+
+                // Flow the new input through the block to get a new output.
+                var output = Flow(OperationVisitor, block, input);
+
+                // Compare the previous output with the new output.
+                if (!needsAtLeastOnePass)
+                {
+                    int compare = AnalysisDomain.Compare(GetOutput(resultBuilder[block]), output);
+
+                    // The newly computed abstract values for each basic block
+                    // must be always greater or equal than the previous value
+                    // to ensure termination. 
+                    Debug.Assert(compare <= 0, "The newly computed abstract value must be greater or equal than the previous one.");
+
+                    // Is old output value >= new output value ?
+                    if (compare >= 0)
+                    {
+                        continue;
+                    }
+                }
+
+                // The newly computed value is greater than the previous value,
+                // so we need to update the current block result's
+                // output values with the new ones.
+                UpdateOutput(resultBuilder, block, output);
+
+                // Since the new output value is different than the previous one, 
+                // we need to propagate it to all the successor blocks of the current block.
+                EnqueueRange(worklist, GetSuccessors(block));
             }
 
             return resultBuilder.ToResult(ToResult, OperationVisitor.GetStateMap(),
                 OperationVisitor.GetPredicateValueKindMap(), OperationVisitor.GetMergedDataForUnhandledThrowOperations(),
                 cfg, OperationVisitor.ValueDomain.UnknownOrMayBeValue);
-        }
-
-        private TAnalysisData Flow(BasicBlock block, TAnalysisData data)
-        {
-            return Flow(OperationVisitor, block, data);
         }
 
         public static TAnalysisData Flow(DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> operationVisitor, BasicBlock block, TAnalysisData data)
@@ -176,6 +198,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         protected virtual IEnumerable<BasicBlock> GetSuccessors(BasicBlock block) => block.Successors;
         protected virtual TAnalysisData GetInput(DataFlowAnalysisInfo<TAnalysisData> result) => result.Input;
         protected virtual TAnalysisData GetOutput(DataFlowAnalysisInfo<TAnalysisData> result) => result.Output;
+        protected abstract TAnalysisData GetInputData(TAnalysisResult result);
 
         protected virtual void UpdateInput(DataFlowAnalysisResultBuilder<TAnalysisData> builder, BasicBlock block, TAnalysisData newInput)
         {

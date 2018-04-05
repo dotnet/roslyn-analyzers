@@ -9,11 +9,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
     {
         /// <summary>State is undefined.</summary>
         Undefined = 0,
+        /// <summary>The variable state is invalid due to predicate analysis.</summary>
+        Invalid,
         /// <summary>The variable does not contain any instances of non-literal string.</summary>
         No,
         /// <summary>The variable may or may not contain instances of a non-literal string.</summary>
         Maybe,
-        /// <summary>The variable state is invalid due to predicate analysis.</summary>
-        Invalid,
     }
 }

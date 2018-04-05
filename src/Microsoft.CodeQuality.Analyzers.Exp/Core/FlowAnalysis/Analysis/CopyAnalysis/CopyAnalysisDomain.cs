@@ -21,7 +21,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
             {
             }
 
-            protected override CopyAnalysisData MergeCore(CopyAnalysisData map1, CopyAnalysisData map2)
+            public override CopyAnalysisData Merge(CopyAnalysisData map1, CopyAnalysisData map2)
             {
                 Debug.Assert(map1 != null);
                 Debug.Assert(map2 != null);

@@ -8,7 +8,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     /// </summary>
     internal abstract partial class AbstractIndex : CacheBasedEquatable<AbstractIndex>
     {
-        public static AbstractIndex Create(uint index) => new ConstantValueIndex(index);
+        public static AbstractIndex Create(int index) => new ConstantValueIndex(index);
         public static AbstractIndex Create(AnalysisEntity analysisEntity) => new AnalysisEntityBasedIndex(analysisEntity);
         public static AbstractIndex Create(IOperation operation) => new OperationBasedIndex(operation);
     }

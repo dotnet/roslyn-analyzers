@@ -33,7 +33,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             _instanceLocationsForSymbols = new Dictionary<ISymbol, PointsToAbstractValue>();
 
             var thisOrMeInstanceLocation = AbstractLocation.CreateThisOrMeLocation(containingTypeSymbol);
-            var instanceLocation = new PointsToAbstractValue(thisOrMeInstanceLocation);
+            var instanceLocation = PointsToAbstractValue.Create(thisOrMeInstanceLocation, mayBeNull: false);
             ThisOrMeInstance = AnalysisEntity.CreateThisOrMeInstance(containingTypeSymbol, instanceLocation);
         }
 
@@ -60,7 +60,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         {
             if (operation.ConstantValue.HasValue && operation.ConstantValue.Value is int index)
             {
-                return AbstractIndex.Create((uint)index);
+                return AbstractIndex.Create(index);
             }
             // TODO: We need to find the abstract value for the entity to use it for indexing.
             // https://github.com/dotnet/roslyn-analyzers/issues/1577
@@ -279,7 +279,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     {
                         // For value type allocations, we store the points to location.
                         var instancePointsToValue = _getPointsToAbstractValueOpt(instanceOpt);
-                        if (instancePointsToValue.Kind != PointsToAbstractValueKind.NoLocation)
+                        if (!ReferenceEquals(instancePointsToValue, PointsToAbstractValue.NoLocation))
                         {
                             instanceLocationOpt = instancePointsToValue;
                         }
@@ -310,7 +310,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     else
                     {
                         var location = AbstractLocation.CreateSymbolLocation(symbolOpt);
-                        instanceLocationOpt = new PointsToAbstractValue(location);
+                        instanceLocationOpt = PointsToAbstractValue.Create(location, mayBeNull: false);
                     }
 
                     _instanceLocationsForSymbols.Add(symbolOpt, instanceLocationOpt);

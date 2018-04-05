@@ -23,17 +23,19 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             ControlFlowGraph cfg,
             ISymbol owningSymbol,
             WellKnownTypeProvider wellKnownTypeProvider,
-            DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt = null,
+            DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResultOpt = null,
+            DataFlowAnalysisResult<CopyAnalysis.CopyBlockAnalysisResult, CopyAnalysis.CopyAbstractValue> copyAnalysisResultOpt = null,
             bool pessimisticAnalysis = true)
         {
             var defaultPointsToValueGenerator = new DefaultPointsToValueGenerator();
             var analysisDomain = new PointsToAnalysisDomain(defaultPointsToValueGenerator, PointsToAbstractValueDomainInstance);
             var operationVisitor = new PointsToDataFlowOperationVisitor(analysisDomain.DefaultPointsToValueGenerator, analysisDomain,
-                PointsToAbstractValueDomain.Default, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, nullAnalysisResultOpt);
+                PointsToAbstractValueDomain.Default, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, copyAnalysisResultOpt);
             var pointsToAnalysis = new PointsToAnalysis(analysisDomain, operationVisitor);
-            return pointsToAnalysis.GetOrComputeResultCore(cfg, cacheResult: true);
+            return pointsToAnalysis.GetOrComputeResultCore(cfg, cacheResult: true, seedResultOpt: pointsToAnalysisResultOpt);
         }
 
         internal override PointsToBlockAnalysisResult ToResult(BasicBlock basicBlock, DataFlowAnalysisInfo<PointsToAnalysisData> blockAnalysisData) => new PointsToBlockAnalysisResult(basicBlock, blockAnalysisData, ((PointsToAnalysisDomain)AnalysisDomain).DefaultPointsToValueGenerator.GetDefaultPointsToValueMap());
+        protected override PointsToAnalysisData GetInputData(PointsToBlockAnalysisResult result) => result.InputData;
     }
 }

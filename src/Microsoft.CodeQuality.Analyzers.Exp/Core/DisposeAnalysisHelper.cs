@@ -5,15 +5,12 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Operations.ControlFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow;
-using Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis;
-using Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
 
 namespace Microsoft.CodeQuality.Analyzers.Exp
@@ -128,10 +125,9 @@ namespace Microsoft.CodeQuality.Analyzers.Exp
                     // An optimistic points to analysis assumes that the points to values of instance fields don't change on invoking an instance method.
                     // A pessimistic points to analysis resets all the instance state and assumes the instance field might point to any object, hence has unknown state.
                     // For dispose analysis, we want to perform an optimistic points to analysis as we assume a disposable field is not likely to be re-assigned to a separate object in helper method invocations in Dispose.
-                    var nullAnalysisResult = NullAnalysis.GetOrComputeResult(cfg, containingMethod, _wellKnownTypeProvider, copyAnalysisResultOpt: null, pessimisticAnalysis: false);
-                    pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, _wellKnownTypeProvider, nullAnalysisResult, pessimisticAnalysis: false);
+                    pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, _wellKnownTypeProvider, pessimisticAnalysis: false);
                     disposeAnalysisResult = DisposeAnalysis.GetOrComputeResult(cfg, containingMethod, _wellKnownTypeProvider, _disposeOwnershipTransferLikelyTypes, pointsToAnalysisResult,
-                        trackInstanceFields, out trackedInstanceFieldPointsToMap, nullAnalysisResult);
+                        trackInstanceFields, out trackedInstanceFieldPointsToMap);
                     return true;
                 }
             }

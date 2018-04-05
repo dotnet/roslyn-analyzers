@@ -30,17 +30,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         /// </returns>
         public sealed override int Compare(IDictionary<TKey, TValue> oldValue, IDictionary<TKey, TValue> newValue)
         {
-            if (oldValue == null && newValue != null)
-            {
-                return -1;
-            }
-            
-            if (oldValue != null && newValue == null)
-            {
-                return 1;
-            }
+            Debug.Assert(oldValue != null);
+            Debug.Assert(newValue != null);
 
-            if (oldValue == null || ReferenceEquals(oldValue, newValue))
+            if (ReferenceEquals(oldValue, newValue))
             {
                 return 0;
             }
@@ -72,27 +65,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return newValueIsBigger ? -1 : 0;
         }
 
-        public sealed override IDictionary<TKey, TValue> Merge(IDictionary<TKey, TValue> value1, IDictionary<TKey, TValue> value2)
-        {
-            if (value1 == null && value2 != null)
-            {
-                return value2;
-            }
-
-            if (value1 != null && value2 == null)
-            {
-                return value1;
-            }
-
-            if (value1 == null)
-            {
-                return null;
-            }
-
-            return MergeCore(value1, value2);
-        }
-
-        protected virtual IDictionary<TKey, TValue> MergeCore(IDictionary<TKey, TValue> value1, IDictionary<TKey, TValue> value2)
+        public override IDictionary<TKey, TValue> Merge(IDictionary<TKey, TValue> value1, IDictionary<TKey, TValue> value2)
         {
             Debug.Assert(value1 != null);
             Debug.Assert(value2 != null);

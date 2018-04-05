@@ -8,7 +8,6 @@ using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Operations.ControlFlow;
-using Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
@@ -30,14 +29,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
                 ISymbol owningSymbol,
                 WellKnownTypeProvider wellKnownTypeProvider,
                 Func<IBlockOperation, IMethodSymbol, ParameterValidationResultWithHazardousUsages> getOrComputeLocationAnalysisResultOpt,
-                DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> nullAnalysisResult,
                 DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResult,
                 bool pessimisticAnalysis,
                 bool trackHazardousParameterUsages = false)
-                : base(valueDomain, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, predicateAnalysis: false, nullAnalysisResultOpt: nullAnalysisResult, copyAnalysisResultOpt: null, pointsToAnalysisResultOpt: pointsToAnalysisResult)
+                : base(valueDomain, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, predicateAnalysis: false, copyAnalysisResultOpt: null, pointsToAnalysisResultOpt: pointsToAnalysisResult)
             {
                 Debug.Assert(owningSymbol.Kind == SymbolKind.Method);
-                Debug.Assert(nullAnalysisResult != null);
                 Debug.Assert(pointsToAnalysisResult != null);
 
                 _getOrComputeLocationAnalysisResultOpt = getOrComputeLocationAnalysisResultOpt;
@@ -112,7 +109,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
             {
                 if (pointsToAbstractValue.Kind == PointsToAbstractValueKind.Known)
                 {
-                    Debug.Assert(pointsToAbstractValue.Locations.Count == 1);
                     var value = HasValidatedNotNullAttribute(parameter) ? ParameterValidationAbstractValue.Validated : ParameterValidationAbstractValue.NotValidated;
                     SetAbstractValue(pointsToAbstractValue.Locations, value);
                 }

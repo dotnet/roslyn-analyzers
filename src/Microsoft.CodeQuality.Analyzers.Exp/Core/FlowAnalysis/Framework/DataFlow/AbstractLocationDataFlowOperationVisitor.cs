@@ -21,11 +21,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             WellKnownTypeProvider wellKnownTypeProvider,
             bool pessimisticAnalysis,
             bool predicateAnalysis,
-            DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt,
             DataFlowAnalysisResult<CopyAnalysis.CopyBlockAnalysisResult, CopyAnalysis.CopyAbstractValue> copyAnalysisResultOpt,
             DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResultOpt)
             : base(valueDomain, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, predicateAnalysis,
-                  nullAnalysisResultOpt, copyAnalysisResultOpt, pointsToAnalysisResultOpt)
+                  copyAnalysisResultOpt, pointsToAnalysisResultOpt)
         {
             Debug.Assert(pointsToAnalysisResultOpt != null);
         }

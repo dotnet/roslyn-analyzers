@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
 {
@@ -12,7 +12,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
         /// <summary>
         /// Abstract value domain for <see cref="CopyAnalysis"/> to merge and compare <see cref="CopyAbstractValue"/> values.
         /// </summary>
-        private class CopyAbstractValueDomain : AbstractValueDomain<CopyAbstractValue>
+        private sealed class CopyAbstractValueDomain : AbstractValueDomain<CopyAbstractValue>
         {
             public static CopyAbstractValueDomain Default = new CopyAbstractValueDomain();
             private readonly SetAbstractDomain<AnalysisEntity> _entitiesDomain = new SetAbstractDomain<AnalysisEntity>();
@@ -25,14 +25,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
 
             public override int Compare(CopyAbstractValue oldValue, CopyAbstractValue newValue)
             {
-                if (oldValue == null)
-                {
-                    return newValue == null ? 0 : -1;
-                }
-                else if (newValue == null)
-                {
-                    return 1;
-                }
+                Debug.Assert(oldValue != null);
+                Debug.Assert(newValue != null);
 
                 if (ReferenceEquals(oldValue, newValue))
                 {
@@ -49,6 +43,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
                 }
                 else
                 {
+                    Debug.Fail("Non-monotonic Merge function");
                     return 1;
                 }
             }
@@ -63,7 +58,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
                 {
                     return value1;
                 }
-                else if(value1.Kind == CopyAbstractValueKind.Invalid || value1.Kind == CopyAbstractValueKind.NotApplicable)
+                else if (value1.Kind == CopyAbstractValueKind.Invalid || value1.Kind == CopyAbstractValueKind.NotApplicable)
                 {
                     return value2;
                 }

@@ -724,20 +724,24 @@ class Test
 
             VerifyBasic(@"
 Class C
-    Public ReadOnly Property ContainingC As C
 End Class
 
-Module Test
-    Private Sub M1(param As C)
-        If param Is Nothing OrElse param.ContainingC Is Nothing Then
-            Return
-        End If
+Class Test
+    Private Property [Next] As Test
+    Private Property CInstances As C()
 
-        While param IsNot Nothing
-            param = param.ContainingC
+    Private Sub M(ByVal flag As Boolean)
+        Dim current = Me
+        While current IsNot Nothing
+            For Each x In current.CInstances
+                If flag Then Return
+            Next
+
+            current = current.[Next]
         End While
     End Sub
-End Module");
+End Class
+");
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
@@ -5902,6 +5906,38 @@ public class Test
             GetCSharpResultAt(36, 13, "c != c2", "false"),
             // Test0.cs(48,14): warning CA1508: 'c.Equals(c2)' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
             GetCSharpResultAt(48, 14, "c.Equals(c2)", "true"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact]
+        public void MultidimensionalArray_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M()
+    {
+        var x = new int[,] { { 1, 2 }, { 2, 3 } };
+        if (x == null)
+        {
+        }
+    }
+}
+",
+            // Test0.cs(7,13): warning CA1508: 'x == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(7, 13, "x == null", "false"));
+
+            VerifyBasic(@"
+Class Test
+    Private Sub M()
+        Dim x = New Integer(,) { { 1, 2 }, { 2, 3 } }
+        If x Is Nothing Then
+        End If
+    End Sub
+End Class
+",
+            // Test0.vb(5,12): warning CA1508: 'x Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(5, 12, "x Is Nothing", "False"));
         }
     }
 }

@@ -13,18 +13,34 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
         Undefined,
 
         /// <summary>
+        /// Invalid value based on predicate analysis.
+        /// </summary>
+        Invalid,
+
+        /// <summary>
         /// Points to one or more known possible locations.
         /// </summary>
         Known,
 
         /// <summary>
-        /// Indicates no tracked location (for e.g. literals, constants, etc.).
-        /// </summary>
-        NoLocation,
-
-        /// <summary>
         /// Points to unknown set of locations.
         /// </summary>
         Unknown,
+    }
+
+    internal static class PointsToAbstractValueExtensions
+    {
+        public static bool IsInvalidOrUndefined(this PointsToAbstractValueKind kind)
+        {
+            switch (kind)
+            {
+                case PointsToAbstractValueKind.Invalid:
+                case PointsToAbstractValueKind.Undefined:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
     }
 }

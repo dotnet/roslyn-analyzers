@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis;
@@ -23,14 +24,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
                 WellKnownTypeProvider wellKnownTypeProvider,
                 bool pessimisticAnalysis,
                 DataFlowAnalysisResult<CopyBlockAnalysisResult, CopyAbstractValue> copyAnalysisResultOpt,
-                DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt,
                 DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResultOpt)
                 : base(valueDomain, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, predicateAnalysis: true,
-                      nullAnalysisResultOpt: nullAnalysisResultOpt, copyAnalysisResultOpt: copyAnalysisResultOpt, pointsToAnalysisResultOpt: pointsToAnalysisResultOpt)
+                      copyAnalysisResultOpt: copyAnalysisResultOpt, pointsToAnalysisResultOpt: pointsToAnalysisResultOpt)
             {
             }
 
-            protected override IEnumerable<AnalysisEntity> TrackedEntities => CurrentAnalysisData.Keys;
+            protected override void AddTrackedEntities(ImmutableArray<AnalysisEntity>.Builder builder) => builder.AddRange(CurrentAnalysisData.Keys);
 
             protected override void SetAbstractValue(AnalysisEntity analysisEntity, StringContentAbstractValue value) => SetAbstractValue(CurrentAnalysisData, analysisEntity, value);
 
@@ -112,7 +112,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
             // https://github.com/dotnet/roslyn-analyzers/issues/1567
             #region Temporary methods to workaround lack of *real* CFG
             protected override StringContentAnalysisData MergeAnalysisData(StringContentAnalysisData value1, StringContentAnalysisData value2)
-                => StringContentAnalysisDomainInstance.Merge(value1, value2);
+                => StringContentAnalysisDomain.Instance.Merge(value1, value2);
             protected override StringContentAnalysisData GetClonedAnalysisData(StringContentAnalysisData analysisData)
                 => GetClonedAnalysisDataHelper(analysisData);
             protected override bool Equals(StringContentAnalysisData value1, StringContentAnalysisData value2)

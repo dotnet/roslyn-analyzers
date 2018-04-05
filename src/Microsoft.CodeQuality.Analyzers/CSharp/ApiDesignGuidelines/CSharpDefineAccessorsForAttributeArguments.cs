@@ -16,5 +16,11 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class CSharpDefineAccessorsForAttributeArgumentsAnalyzer : DefineAccessorsForAttributeArgumentsAnalyzer
     {
+        protected override bool IsAssignableTo(ITypeSymbol fromSymbol, ITypeSymbol toSymbol, Compilation compilation)
+        {
+            return fromSymbol != null &&
+                toSymbol != null &&
+                ((CSharpCompilation)compilation).ClassifyConversion(fromSymbol, toSymbol).IsImplicit;
+        }
     }
 }

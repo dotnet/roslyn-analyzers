@@ -10,5 +10,12 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class CSharpUseGenericEventHandlerInstancesAnalyzer : UseGenericEventHandlerInstancesAnalyzer
     {
+        protected override bool IsAssignableTo(Compilation compilation, ITypeSymbol fromSymbol, ITypeSymbol toSymbol)
+        {
+            return
+                fromSymbol != null &&
+                toSymbol != null &&
+                ((CSharpCompilation)compilation).ClassifyConversion(fromSymbol, toSymbol).IsImplicit;
+        }
     }
 }

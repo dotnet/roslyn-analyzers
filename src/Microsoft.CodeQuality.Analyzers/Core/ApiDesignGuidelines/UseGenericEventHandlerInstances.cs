@@ -68,6 +68,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleForDelegates, RuleForEvents, RuleForEvents2);
+        protected abstract bool IsAssignableTo(Compilation compilation, ITypeSymbol fromSymbol, ITypeSymbol toSymbol);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -95,7 +96,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     bool IsEventArgsParameter(IParameterSymbol parameter)
                     {
                         var type = parameter.Type;
-                        if (type.IsAssignableTo(eventArgs, context.Compilation))
+                        if (IsAssignableTo(context.Compilation, type, eventArgs))
                         {
                             return true;
                         }

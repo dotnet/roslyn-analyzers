@@ -12,5 +12,8 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
     Public Class BasicUseGenericEventHandlerInstancesAnalyzer
         Inherits UseGenericEventHandlerInstancesAnalyzer
 
+        Protected Overrides Function IsAssignableTo(compilation As Compilation, fromSymbol As ITypeSymbol, toSymbol As ITypeSymbol) As Boolean
+            Return fromSymbol IsNot Nothing AndAlso toSymbol IsNot Nothing AndAlso DirectCast(compilation, VisualBasicCompilation).ClassifyConversion(fromSymbol, toSymbol).IsWidening
+        End Function
     End Class
 End Namespace

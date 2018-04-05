@@ -111,7 +111,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             _valueCacheBuilder = ImmutableDictionary.CreateBuilder<IOperation, TAbstractAnalysisValue>();
             _predicateValueKindCacheBuilder = ImmutableDictionary.CreateBuilder<IOperation, PredicateValueKind>();
             _pendingArgumentsToReset = new List<IArgumentOperation>();
-            ThisOrMePointsToAbstractValue = GetThisOrMeInstancePointsToValue(owningSymbol.ContainingType);
+            ThisOrMePointsToAbstractValue = GetThisOrMeInstancePointsToValue(owningSymbol);
 
             AnalysisEntityFactory = new AnalysisEntityFactory(
                 getPointsToAbstractValueOpt: (pointsToAnalysisResultOpt != null || IsPointsToAnalysis) ?
@@ -120,6 +120,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 getIsInsideObjectInitializer: () => IsInsideObjectInitializer,
                 containingTypeSymbol: owningSymbol.ContainingType);
             NegatedCurrentAnalysisDataStack = new Stack<TAnalysisData>();
+            MergedAnalysisDataAtBreakStatementsStack = new Stack<TAnalysisData>();
+            MergedAnalysisDataAtContinueStatementsStack = new Stack<TAnalysisData>();
         }
 
         public override int GetHashCode()
@@ -135,11 +137,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     _pointsToAnalysisResultOpt?.GetHashCode() ?? 0))))))));
         }
 
-        private static PointsToAbstractValue GetThisOrMeInstancePointsToValue(INamedTypeSymbol containingTypeSymbol)
+        private static PointsToAbstractValue GetThisOrMeInstancePointsToValue(ISymbol owningSymbol)
         {
-            if (!containingTypeSymbol.HasValueCopySemantics())
+            if (!owningSymbol.IsStatic &&
+                !owningSymbol.ContainingType.HasValueCopySemantics())
             {
-                var thisOrMeLocation = AbstractLocation.CreateThisOrMeLocation(containingTypeSymbol);
+                var thisOrMeLocation = AbstractLocation.CreateThisOrMeLocation(owningSymbol.ContainingType);
                 return new PointsToAbstractValue(thisOrMeLocation);
             }
             else
@@ -366,25 +369,25 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             Debug.Assert(PredicateAnalysis);
             Debug.Assert(operation.IsComparisonOperator());
 
+            var isReferenceEquality = operation.OperatorMethod == null && !operation.Type.HasValueCopySemantics();
             switch (operation.OperatorKind)
             {
                 case BinaryOperatorKind.Equals:
                 case BinaryOperatorKind.ObjectValueEquals:
-                    return SetValueForEqualsOrNotEqualsComparisonOperator(operation, negatedCurrentAnalysisData, equals: true);
+                    return SetValueForEqualsOrNotEqualsComparisonOperator(operation.LeftOperand, operation.RightOperand, negatedCurrentAnalysisData, equals: true, isReferenceEquality: isReferenceEquality);
 
                 case BinaryOperatorKind.NotEquals:
                 case BinaryOperatorKind.ObjectValueNotEquals:
-                    return SetValueForEqualsOrNotEqualsComparisonOperator(operation, negatedCurrentAnalysisData, equals: false);
+                    return SetValueForEqualsOrNotEqualsComparisonOperator(operation.LeftOperand, operation.RightOperand, negatedCurrentAnalysisData, equals: false, isReferenceEquality: isReferenceEquality);
 
                 default:
                     return PredicateValueKind.Unknown;
             }
         }
 
-        protected virtual PredicateValueKind SetValueForEqualsOrNotEqualsComparisonOperator(IBinaryOperation operation, TAnalysisData negatedCurrentAnalysisData, bool equals)
+        protected virtual PredicateValueKind SetValueForEqualsOrNotEqualsComparisonOperator(IOperation leftOperand, IOperation rightOperand, TAnalysisData negatedCurrentAnalysisData, bool equals, bool isReferenceEquality)
         {
             Debug.Assert(PredicateAnalysis);
-            Debug.Assert(operation.IsComparisonOperator());
             throw new NotImplementedException();
         }
 
@@ -475,9 +478,52 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         #endregion
 
         #region Helper methods for reseting/transfer instance analysis data when PointsTo analysis results are available
+        /// <summary>
+        /// Resets all the analysis data for all <see cref="AnalysisEntity"/> instances that share the same <see cref="AnalysisEntity.InstanceLocation"/>
+        /// as the given <paramref name="analysisEntity"/>.
+        /// </summary>
+        /// <param name="analysisEntity"></param>
+        protected abstract void ResetValueTypeInstanceAnalysisData(AnalysisEntity analysisEntity);
 
-        protected abstract void ResetValueTypeInstanceAnalysisData(IOperation operation);
-        protected abstract void ResetReferenceTypeInstanceAnalysisData(IOperation operation);
+        /// <summary>
+        /// Resets all the analysis data for all <see cref="AnalysisEntity"/> instances that share the same <see cref="AnalysisEntity.InstanceLocation"/>
+        /// as the given <paramref name="pointsToAbstractValue"/>.
+        /// </summary>
+        /// <param name="operation"></param>
+        protected abstract void ResetReferenceTypeInstanceAnalysisData(PointsToAbstractValue pointsToAbstractValue);
+
+        private void ResetValueTypeInstanceAnalysisData(IOperation operation)
+        {
+            Debug.Assert(HasPointsToAnalysisResult);
+            Debug.Assert(operation.Type.HasValueCopySemantics());
+
+            if (AnalysisEntityFactory.TryCreate(operation, out AnalysisEntity analysisEntity))
+            {
+                if (analysisEntity.Type.HasValueCopySemantics())
+                {
+                    ResetValueTypeInstanceAnalysisData(analysisEntity);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Resets all the analysis data for all <see cref="AnalysisEntity"/> instances that share the same <see cref="AnalysisEntity.InstanceLocation"/>
+        /// as pointed to by given reference type <paramref name="operation"/>.
+        /// </summary>
+        /// <param name="operation"></param>
+        private void ResetReferenceTypeInstanceAnalysisData(IOperation operation)
+        {
+            Debug.Assert(HasPointsToAnalysisResult);
+            Debug.Assert(!operation.Type.HasValueCopySemantics());
+
+            var pointsToValue = GetPointsToAbstractValue(operation);
+            if (pointsToValue.Locations.IsEmpty)
+            {
+                return;
+            }
+
+            ResetReferenceTypeInstanceAnalysisData(pointsToValue);
+        }
 
         /// <summary>
         /// Reset all the instance analysis data if <see cref="HasPointsToAnalysisResult"/> is true and <see cref="PessimisticAnalysis"/> is also true.
@@ -497,6 +543,27 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             else
             {
                 ResetReferenceTypeInstanceAnalysisData(operation);
+            }
+        }
+
+        /// <summary>
+        /// Reset all the instance analysis data for <see cref="AnalysisEntityFactory.ThisOrMeInstance"/> if <see cref="HasPointsToAnalysisResult"/> is true and <see cref="PessimisticAnalysis"/> is also true.
+        /// If we are using or performing points to analysis, certain operations can invalidate all the analysis data off the containing instance.
+        /// </summary>
+        private void ResetThisOrMeInstanceAnalysisData()
+        {
+            if (!HasPointsToAnalysisResult || !PessimisticAnalysis)
+            {
+                return;
+            }
+
+            if (AnalysisEntityFactory.ThisOrMeInstance.Type.HasValueCopySemantics())
+            {
+                ResetValueTypeInstanceAnalysisData(AnalysisEntityFactory.ThisOrMeInstance);
+            }
+            else
+            {
+                ResetReferenceTypeInstanceAnalysisData(ThisOrMePointsToAbstractValue);
             }
         }
 
@@ -600,6 +667,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         // Temporary workaround to track analysis state at CFG exit - remove once we move to the compiler CFG.
         public TAnalysisData MergedAnalysisDataAtReturnStatements { get; private set; }
 
+        // Temporary workaround to track analysis state at break statements - remove once we move to the compiler CFG.
+        private Stack<TAnalysisData> MergedAnalysisDataAtBreakStatementsStack { get; }
+
+        // Temporary workaround to track analysis state at continue statements - remove once we move to the compiler CFG.
+        private Stack<TAnalysisData> MergedAnalysisDataAtContinueStatementsStack { get; }
+
         public sealed override TAbstractAnalysisValue VisitReturn(IReturnOperation operation, object argument)
         {
             var value = VisitReturnCore(operation, argument);
@@ -616,15 +689,76 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return base.VisitReturn(operation, argument);
         }
 
+        public sealed override TAbstractAnalysisValue VisitBranch(IBranchOperation operation, object argument)
+        {
+            var value = base.VisitBranch(operation, argument);
+            OnBranchOperation(operation.BranchKind);
+            return value;
+        }
+
+        private void OnBranchOperation(BranchKind branchKind)
+        {
+            Stack<TAnalysisData> mergedAnalysisDataStack = null;
+            switch (branchKind)
+            {
+                case BranchKind.Break:
+                    mergedAnalysisDataStack = MergedAnalysisDataAtBreakStatementsStack;
+                    break;
+
+                case BranchKind.Continue:
+                    mergedAnalysisDataStack = MergedAnalysisDataAtContinueStatementsStack;
+                    break;
+            }
+
+            if (mergedAnalysisDataStack?.Count > 0)
+            {
+                TAnalysisData mergedAnalysisData = mergedAnalysisDataStack.Pop();
+                mergedAnalysisData = mergedAnalysisData == null ?
+                    GetClonedCurrentAnalysisData() :
+                    MergeAnalysisData(mergedAnalysisData, CurrentAnalysisData);
+                mergedAnalysisDataStack.Push(mergedAnalysisData);
+            }
+        }
+
         // Temporary workaround to track exception analysis state - remove once we move to the compiler CFG.
         public Dictionary<IThrowOperation, TAnalysisData> AnalysisDataForUnhandledThrowOperations { get; private set; }
 
-        protected static bool IsBlockOperationWithReturnOrThrow(IOperation operation) =>
+        protected static bool IsBlockOperationWithBranch(IOperation operation) =>
             operation is IBlockOperation blockOperation &&
-            HasReturnOrThrow(blockOperation.Operations);
+            HasBranch(blockOperation.Operations);
 
-        protected static bool HasReturnOrThrow(ImmutableArray<IOperation> operations) =>
-            operations.Any(o => o is IReturnOperation || o is IThrowOperation || IsBlockOperationWithReturnOrThrow(o));
+        private bool HasNonDefaultBranchOperationState() =>
+            MergedAnalysisDataAtReturnStatements != null ||
+            AnalysisDataForUnhandledThrowOperations?.Count > 0 ||
+            (MergedAnalysisDataAtBreakStatementsStack.Count > 0 && MergedAnalysisDataAtBreakStatementsStack.Peek() != null) ||
+            (MergedAnalysisDataAtContinueStatementsStack.Count > 0 && MergedAnalysisDataAtContinueStatementsStack.Peek() != null);
+
+        protected static bool HasBranch(ImmutableArray<IOperation> operations)
+        {
+            foreach (var operation in operations)
+            {
+                if (operation != null)
+                {
+                    switch (operation.Kind)
+                    {
+                        case OperationKind.Return:
+                        case OperationKind.Throw:
+                        case OperationKind.Branch:
+                            return true;
+
+                        default:
+                            if (IsBlockOperationWithBranch(operation))
+                            {
+                                return true;
+                            }
+
+                            break;
+                    }
+                }
+            }
+
+            return false;
+        }
 
         public sealed override TAbstractAnalysisValue VisitConditional(IConditionalOperation operation, object argument)
         {
@@ -644,13 +778,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             var whenFalse = Visit(operation.WhenFalse, argument);
             whenFalseBranchAnalysisData = CurrentAnalysisData;
 
-            if (MergedAnalysisDataAtReturnStatements != null || AnalysisDataForUnhandledThrowOperations?.Count > 0)
+            if (HasNonDefaultBranchOperationState())
             {
-                if (IsBlockOperationWithReturnOrThrow(operation.WhenTrue))
+                if (IsBlockOperationWithBranch(operation.WhenTrue))
                 {
                     whenTrueBranchAnalysisData = whenFalseBranchAnalysisData;
                 }
-                else if (IsBlockOperationWithReturnOrThrow(operation.WhenFalse))
+                else if (IsBlockOperationWithBranch(operation.WhenFalse))
                 {
                     whenFalseBranchAnalysisData = whenTrueBranchAnalysisData;
                 }
@@ -667,14 +801,43 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return ValueDomain.Merge(whenTrue, whenFalse);
         }
 
+        private void OnStartLoopOperationAnalysis()
+        {
+            MergedAnalysisDataAtBreakStatementsStack.Push(default(TAnalysisData));
+            MergedAnalysisDataAtContinueStatementsStack.Push(default(TAnalysisData));
+        }
+
+        private void MergeAnalysisDataFromContinueStatements()
+        {
+            TAnalysisData mergedAnalysisDataAtContinueStatements = MergedAnalysisDataAtContinueStatementsStack.Peek();
+            if (mergedAnalysisDataAtContinueStatements != null)
+            {
+                CurrentAnalysisData = MergeAnalysisData(CurrentAnalysisData, mergedAnalysisDataAtContinueStatements);
+            }
+        }
+
+        private void OnEndLoopOperationAnalysis()
+        {
+            TAnalysisData mergedAnalysisDataAtBreakStatements = MergedAnalysisDataAtBreakStatementsStack.Pop();
+            if (mergedAnalysisDataAtBreakStatements != null)
+            {
+                CurrentAnalysisData = MergeAnalysisData(CurrentAnalysisData, mergedAnalysisDataAtBreakStatements);
+            }
+
+            MergedAnalysisDataAtContinueStatementsStack.Pop();
+        }
+
         public sealed override TAbstractAnalysisValue VisitWhileLoop(IWhileLoopOperation operation, object argument)
         {
+            OnStartLoopOperationAnalysis();
             TAnalysisData beforeLoopAnalysisData = GetClonedCurrentAnalysisData();
             TAnalysisData negatedCurrentAnalysisDataAfterCondition = default(TAnalysisData);
             TAnalysisData previousIterationAnalysisData = default(TAnalysisData);
 
-            bool VisitConditionAndBreak()
+            bool VisitCondition()
             {
+                MergeAnalysisDataFromContinueStatements();
+
                 if (PredicateAnalysis)
                 {
                     NegatedCurrentAnalysisDataStack.Push(GetClonedCurrentAnalysisData());
@@ -702,7 +865,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             {
                 if (operation.ConditionIsTop)
                 {
-                    if (VisitConditionAndBreak())
+                    if (VisitCondition())
                     {
                         break;
                     }
@@ -717,7 +880,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
                 if (!operation.ConditionIsTop)
                 {
-                    if (VisitConditionAndBreak())
+                    if (VisitCondition())
                     {
                         break;
                     }
@@ -735,11 +898,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             }
 
             var unusedIgnoredCondition = Visit(operation.IgnoredCondition, argument);
+            OnEndLoopOperationAnalysis();
             return ValueDomain.Bottom;
         }
 
         public sealed override TAbstractAnalysisValue VisitForLoop(IForLoopOperation operation, object argument)
         {
+            OnStartLoopOperationAnalysis();
             var unusedBeforeValue = VisitArray(operation.Before, argument);
             var beforeLoopAnalysisData = GetClonedCurrentAnalysisData();
             TAnalysisData negatedCurrentAnalysisDataAfterCondition = default(TAnalysisData);
@@ -758,6 +923,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     NegatedCurrentAnalysisDataStack.Push(GetClonedCurrentAnalysisData());
                 }
 
+                MergeAnalysisDataFromContinueStatements();
                 var unusedConditionValue = Visit(operation.Condition, argument);
                 if (PredicateAnalysis)
                 {
@@ -780,11 +946,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 CurrentAnalysisData = negatedCurrentAnalysisDataAfterCondition;
             }
 
+            OnEndLoopOperationAnalysis();
             return ValueDomain.Bottom;
         }
 
         public sealed override TAbstractAnalysisValue VisitForEachLoop(IForEachLoopOperation operation, object argument)
         {
+            OnStartLoopOperationAnalysis();
             var unusedLoopControlVariableValue = Visit(operation.LoopControlVariable, argument);
             SetAbstractDefaultValueForForEachLoopControlVariable(operation);
 
@@ -801,6 +969,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     CurrentAnalysisData = MergeAnalysisDataForBackEdge(beforeLoopAnalysisData, CurrentAnalysisData);
                 }
 
+                MergeAnalysisDataFromContinueStatements();
+
                 fixedPointReached = previousIterationAnalysisData != null && Equals(previousIterationAnalysisData, CurrentAnalysisData);
                 previousIterationAnalysisData = GetClonedCurrentAnalysisData();
                 if (fixedPointReached)
@@ -811,11 +981,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 var unusedBodyValue = Visit(operation.Body, argument);
             }
 
+            OnEndLoopOperationAnalysis();
             return ValueDomain.Bottom;
         }
 
         public sealed override TAbstractAnalysisValue VisitForToLoop(IForToLoopOperation operation, object argument)
         {
+            OnStartLoopOperationAnalysis();
             var loopControlVariableValue = Visit(operation.LoopControlVariable, argument);
             var initialValue = Visit(operation.InitialValue, argument);
             SetAbstractValueForAssignment(operation.LoopControlVariable, operation.InitialValue, initialValue);
@@ -832,6 +1004,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     CurrentAnalysisData = MergeAnalysisDataForBackEdge(beforeLoopAnalysisData, CurrentAnalysisData);
                 }
 
+                MergeAnalysisDataFromContinueStatements();
+
                 var unusedLimitValue = Visit(operation.LimitValue, argument);
                 fixedPointReached = previousIterationAnalysisData != null && Equals(previousIterationAnalysisData, CurrentAnalysisData);
                 previousIterationAnalysisData = GetClonedCurrentAnalysisData();
@@ -847,6 +1021,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 var unusedNextVariablesValue = VisitArray(operation.NextVariables, argument);
             }
 
+            OnEndLoopOperationAnalysis();
             return ValueDomain.Bottom;
         }
 
@@ -857,40 +1032,63 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         public sealed override TAbstractAnalysisValue VisitSwitch(ISwitchOperation operation, object argument)
         {
+            MergedAnalysisDataAtBreakStatementsStack.Push(default(TAnalysisData));
             var value = Visit(operation.Value, argument);
             var perSwitchCaseAnalysisData = new Dictionary<ISwitchCaseOperation, TAnalysisData>();
-            TAnalysisData mergedAnalysisData = CurrentAnalysisData;
+            TAnalysisData beforeSwitchCasesAnalysisData = CurrentAnalysisData;
+            bool hasDefaultClause = false;
             foreach (var switchCase in operation.Cases)
             {
                 var switchCaseAnalysisData = GetClonedCurrentAnalysisData();
                 perSwitchCaseAnalysisData.Add(switchCase, switchCaseAnalysisData);
 
                 // Switch with Default clause.
-                if (switchCase.Clauses.Any(clause => clause.CaseKind == CaseKind.Default))
+                if (!hasDefaultClause && switchCase.Clauses.Any(clause => clause.CaseKind == CaseKind.Default))
                 {
-                    mergedAnalysisData = default(TAnalysisData);
+                    hasDefaultClause = true;
                 }
             }
 
             foreach (var switchCase in operation.Cases)
             {
                 CurrentAnalysisData = perSwitchCaseAnalysisData[switchCase];
-                var _ = Visit(switchCase, argument);
-                if (!HasReturnOrThrow(switchCase.Body))
+                _ = Visit(switchCase, argument);
+
+                // Workaround for VB: Implicit break at end of each switch case that does not have an explicit branch.
+                if (operation.Language == LanguageNames.VisualBasic && !HasBranch(switchCase.Body))
                 {
-                    mergedAnalysisData = MergeAnalysisData(mergedAnalysisData, CurrentAnalysisData);
+                    OnBranchOperation(BranchKind.Break);
                 }
             }
 
-            if (mergedAnalysisData != null)
+            TAnalysisData mergedAnalysisDataAtBreakStatements = MergedAnalysisDataAtBreakStatementsStack.Pop();
+            if (mergedAnalysisDataAtBreakStatements != null)
             {
-                CurrentAnalysisData = mergedAnalysisData;
+                // Switch statement with at least one break.
+                // If default case is present, set current analysis data to merge data at break statements.
+                // Otherwise, merge the data at break statements with the data before switch analysis data.
+                if (hasDefaultClause)
+                {
+                    CurrentAnalysisData = mergedAnalysisDataAtBreakStatements;
+                }
+                else
+                {
+                    CurrentAnalysisData = MergeAnalysisData(beforeSwitchCasesAnalysisData, mergedAnalysisDataAtBreakStatements);
+                }
             }
             else
             {
-                // All switch cases have a throw or return, so reset the current analysis data as subsequent code is dead code.
-                Debug.Assert(operation.Cases.All(switchCase => HasReturnOrThrow(switchCase.Body)));
-                ResetCurrentAnalysisData();
+                // Switch statement without break.
+                // If default case is present, set current analysis data to before switch analysis data.
+                // Otherwise, reset the current analysis data as subsequent code is dead code.
+                if (hasDefaultClause)
+                {
+                    CurrentAnalysisData = beforeSwitchCasesAnalysisData;
+                }
+                else
+                {
+                    ResetCurrentAnalysisData();
+                }
             }
 
             return ValueDomain.Bottom;
@@ -1288,6 +1486,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             else
             {
                 value = VisitInvocation_NonLambdaOrDelegateOrLocalFunction(operation, argument);
+
+                // Predicate analysis for different equality compare methods.
+                PerformPredicateAnalysis();
             }
 
             // Invocation might invalidate all the analysis data on the invoked instance.
@@ -1295,6 +1496,79 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             ResetInstanceAnalysisData(operation.Instance);
 
             return value;
+
+            void PerformPredicateAnalysis()
+            {
+                if (PredicateAnalysis &&
+                    operation.TargetMethod.ReturnType.SpecialType == SpecialType.System_Boolean)
+                {
+                    IOperation leftOperand = null;
+                    IOperation rightOperand = null;
+                    bool isReferenceEquality = false;
+                    if (operation.Arguments.Length == 2 &&
+                        operation.TargetMethod.IsStaticObjectEqualsOrReferenceEquals())
+                    {
+                        // 1. "static bool object.ReferenceEquals(o1, o2)"
+                        // 2. "static bool object.Equals(o1, o2)"
+                        leftOperand = operation.Arguments[0];
+                        rightOperand = operation.Arguments[1];
+                        isReferenceEquality = operation.TargetMethod.Name == "ReferenceEquals" ||
+                            (AnalysisEntityFactory.TryCreate(operation.Arguments[0].Value, out var analysisEntity) &&
+                             !analysisEntity.Type.HasValueCopySemantics() &&
+                             (analysisEntity.Type as INamedTypeSymbol)?.OverridesEquals() == false);
+                    }
+                    else
+                    {
+                        // 1. "bool virtual object.Equals(other)"
+                        // 2. "bool override Equals(other)"
+                        // 3. "bool IEquatable<T>.Equals(other)"
+                        if (operation.Arguments.Length == 1 &&
+                            (operation.TargetMethod.IsObjectEquals() ||
+                             operation.TargetMethod.IsObjectEqualsOverride() ||
+                             IsOverrideOrImplementationOfEquatableEquals(operation.TargetMethod)))
+                        {
+                            leftOperand = operation.Instance;
+                            rightOperand = operation.Arguments[0];
+                            isReferenceEquality = operation.TargetMethod.IsObjectEquals();
+                        }
+                    }
+
+                    if (leftOperand != null && rightOperand != null)
+                    {
+                        TAnalysisData savedPreviousAnalysisDataOpt = OnStartPredicateAnalysis();
+                        PredicateValueKind predicateValueKind = SetValueForEqualsOrNotEqualsComparisonOperator(
+                            leftOperand,
+                            rightOperand,
+                            negatedCurrentAnalysisData: NegatedCurrentAnalysisDataStack.Peek(),
+                            equals: true,
+                            isReferenceEquality: isReferenceEquality);
+                        SetPredicateValueKind(operation, predicateValueKind);
+                        OnEndPredicateAnalysis(savedPreviousAnalysisDataOpt);
+                    }
+
+                    bool IsOverrideOrImplementationOfEquatableEquals(IMethodSymbol methodSymbol)
+                    {
+                        if (WellKnownTypeProvider.GenericIEquatable == null)
+                        {
+                            return false;
+                        }
+
+                        foreach (var interfaceType in methodSymbol.ContainingType.AllInterfaces)
+                        {
+                            if (interfaceType.OriginalDefinition.Equals(WellKnownTypeProvider.GenericIEquatable))
+                            {
+                                var equalsMember = interfaceType.GetMembers("Equals").OfType<IMethodSymbol>().FirstOrDefault();
+                                if (equalsMember != null && methodSymbol.IsOverrideOrImplementationOfInterfaceMember(equalsMember))
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+
+                        return false;
+                    }
+                }
+            }
         }
 
         public virtual TAbstractAnalysisValue VisitInvocation_NonLambdaOrDelegateOrLocalFunction(IInvocationOperation operation, object argument)
@@ -1365,34 +1639,43 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return ValueDomain.Merge(leftValue, rightValue);
         }
 
+        private TAnalysisData OnStartPredicateAnalysis()
+        {
+            TAnalysisData savedPreviousAnalysisDataOpt = default(TAnalysisData);
+            if (PredicateAnalysis && !IsCurrentlyPerformingPredicateAnalysis)
+            {
+                savedPreviousAnalysisDataOpt = GetClonedCurrentAnalysisData();
+
+                // Topmost predicate operator not inside a conditional expression.
+                NegatedCurrentAnalysisDataStack.Push(GetClonedCurrentAnalysisData());
+            }
+
+            return savedPreviousAnalysisDataOpt;
+        }
+
+        private void OnEndPredicateAnalysis(TAnalysisData savedPreviousAnalysisDataOpt)
+        {
+            if (!ReferenceEquals(savedPreviousAnalysisDataOpt, default(TAnalysisData)))
+            {
+                Debug.Assert(PredicateAnalysis);
+
+                // Merge the CurrentAnalysisData with savedPreviousAnalysisData. 
+                CurrentAnalysisData = MergeAnalysisData(savedPreviousAnalysisDataOpt, CurrentAnalysisData);
+                NegatedCurrentAnalysisDataStack.Pop();
+            }
+        }
+
+        private void SetPredicateValueKind(IOperation operation, PredicateValueKind predicateValueKind)
+        {
+            if (predicateValueKind != PredicateValueKind.Unknown ||
+                _predicateValueKindCacheBuilder.ContainsKey(operation))
+            {
+                _predicateValueKindCacheBuilder[operation] = predicateValueKind;
+            }
+        }
+
         public sealed override TAbstractAnalysisValue VisitBinaryOperator(IBinaryOperation operation, object argument)
         {
-            var isTopmostOperationNeedingPredicateAnalysis = PredicateAnalysis && !IsCurrentlyPerformingPredicateAnalysis;
-            TAnalysisData savedPreviousAnalysisData = default(TAnalysisData);
-
-            void OnStartPredicateOperatorAnalysis()
-            {
-                if (isTopmostOperationNeedingPredicateAnalysis)
-                {
-                    savedPreviousAnalysisData = GetClonedCurrentAnalysisData();
-
-                    // Topmost predicate operator not inside a conditional expression.
-                    NegatedCurrentAnalysisDataStack.Push(GetClonedCurrentAnalysisData());
-                }
-            };
-
-            void OnEndPredicateOperatorAnalysis()
-            {
-                if (isTopmostOperationNeedingPredicateAnalysis)
-                {
-                    Debug.Assert(!ReferenceEquals(savedPreviousAnalysisData, default(TAnalysisData)));
-
-                    // Merge the CurrentAnalysisData with savedPreviousAnalysisData. 
-                    CurrentAnalysisData = MergeAnalysisData(savedPreviousAnalysisData, CurrentAnalysisData);
-                    NegatedCurrentAnalysisDataStack.Pop();
-                }
-            };
-
             if (operation.IsConditionalOperator())
             {
                 TAnalysisData MergeConditional(TAnalysisData leftData, TAnalysisData rightData, bool negatedSense = false)
@@ -1408,7 +1691,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                         rightData;
                 };
 
-                OnStartPredicateOperatorAnalysis();
+                TAnalysisData savedPreviousAnalysisDataOpt = OnStartPredicateAnalysis();
 
                 TAbstractAnalysisValue leftValue = Visit(operation.LeftOperand, argument);
 
@@ -1439,7 +1722,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
                 CurrentAnalysisData = MergeConditional(leftConditionalData, rightConditionalData);
 
-                if (PredicateAnalysis && !isTopmostOperationNeedingPredicateAnalysis)
+                if (PredicateAnalysis && savedPreviousAnalysisDataOpt == null)
                 {
                     // Update the latest NegatedCurrentAnalysisData for parent operations. 
                     TAnalysisData rightNegatedCurrentAnalysisData = NegatedCurrentAnalysisDataStack.Pop();
@@ -1448,7 +1731,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 }
                 else
                 {
-                    OnEndPredicateOperatorAnalysis();
+                    OnEndPredicateAnalysis(savedPreviousAnalysisDataOpt);
                 }
 
                 return ValueDomain.UnknownOrMayBeValue;
@@ -1456,17 +1739,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
             if (PredicateAnalysis && operation.IsComparisonOperator())
             {
-                OnStartPredicateOperatorAnalysis();
+                TAnalysisData savedPreviousAnalysisDataOpt = OnStartPredicateAnalysis();
                 var value = VisitBinaryOperator_NonConditional(operation, argument);
 
                 PredicateValueKind predicateKind = SetValueForComparisonOperator(operation, NegatedCurrentAnalysisDataStack.Peek());
-                if (predicateKind != PredicateValueKind.Unknown ||
-                    _predicateValueKindCacheBuilder.ContainsKey(operation))
-                {
-                    _predicateValueKindCacheBuilder[operation] = predicateKind;
-                }
+                SetPredicateValueKind(operation, predicateKind);
 
-                OnEndPredicateOperatorAnalysis();
+                OnEndPredicateAnalysis(savedPreviousAnalysisDataOpt);
                 return value;
             }
 
@@ -1588,6 +1867,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             var value = base.VisitAnonymousObjectCreation(operation, argument);
             IsInsideObjectInitializer = savedIsInsideObjectInitializer;
             return value;
+        }
+
+        public override TAbstractAnalysisValue VisitLock(ILockOperation operation, object argument)
+        {
+            // Multi-threaded instance method.
+            // Conservatively reset all the instance analysis data for the ThisOrMeInstance.
+            ResetThisOrMeInstanceAnalysisData();
+
+            return base.VisitLock(operation, argument);
         }
 
         #endregion

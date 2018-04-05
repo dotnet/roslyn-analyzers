@@ -87,19 +87,23 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
                 }
             }
 
-            protected override PredicateValueKind SetValueForEqualsOrNotEqualsComparisonOperator(IBinaryOperation operation, NullAnalysisData negatedCurrentAnalysisData, bool equals)
+            protected override PredicateValueKind SetValueForEqualsOrNotEqualsComparisonOperator(
+                IOperation leftOperand,
+                IOperation rightOperand,
+                NullAnalysisData negatedCurrentAnalysisData,
+                bool equals,
+                bool isReferenceEquality)
             {
-                Debug.Assert(operation.IsComparisonOperator());
                 var predicateValueKind = PredicateValueKind.Unknown;
 
                 // Handle "a == null" and "a != null"
-                if (SetValueForComparisonOperator(operation.LeftOperand, operation.RightOperand, negatedCurrentAnalysisData, equals, ref predicateValueKind))
+                if (SetValueForComparisonOperator(leftOperand, rightOperand, negatedCurrentAnalysisData, equals, ref predicateValueKind))
                 {
                     return predicateValueKind;
                 }
 
                 // Otherwise, handle "null == a" and "null != a"
-                SetValueForComparisonOperator(operation.RightOperand, operation.LeftOperand, negatedCurrentAnalysisData, equals, ref predicateValueKind);
+                SetValueForComparisonOperator(rightOperand, leftOperand, negatedCurrentAnalysisData, equals, ref predicateValueKind);
                 return predicateValueKind;
             }
 

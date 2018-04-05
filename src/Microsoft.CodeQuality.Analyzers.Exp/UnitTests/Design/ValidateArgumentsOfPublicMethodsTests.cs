@@ -2526,6 +2526,363 @@ Public Class Test
         myLambda()
     End Sub
 End Class");
-        }        
+        }
+
+        [Fact]
+        public void TryCast_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public class A
+{
+}
+
+public class B : A
+{
+}
+
+public class Test
+{
+    public void M1(A a)
+    {
+        if (a is B)
+        {
+        }
+
+        if (a is B b)
+        {
+        }
+
+        var c = a as B;
+    }
+}
+");
+
+            VerifyBasic(@"
+Public Class A
+End Class
+
+Public Class B
+    Inherits A
+End Class
+Public Class Test
+    Public Sub M1(a As A)
+        If TypeOf(a) Is B Then
+        End If
+
+        Dim b = TryCast(a, b)
+    End Sub
+End Class");
+        }
+
+        [Fact]
+        public void DirectCastToObject_BeforeNullCheck_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public int X;
+}
+
+public class Test
+{
+    public void M1(C c)
+    {
+        if ((object)c == null)
+        {
+            return;
+        }
+
+        var x = c.X;
+    }
+}
+");
+
+            VerifyBasic(@"
+Public Class C
+    Public X As Integer
+End Class
+
+Public Class Test
+    Public Sub M1(c As C)
+        If DirectCast(c, Object) Is Nothing Then
+            Return
+        End If
+
+        Dim x = c.X
+    End Sub
+End Class");
+        }
+
+        [Fact]
+        public void StaticObjectReferenceEquals_BeforeHazardousUsages_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public int X;
+}
+
+public class Test
+{
+    public void M1(C c)
+    {
+        if (ReferenceEquals(c, null))
+        {
+            return;
+        }
+
+        var x = c.X;
+    }
+}
+");
+
+            VerifyBasic(@"
+Public Class C
+    Public X As Integer
+End Class
+
+Public Class Test
+    Public Sub M1(c As C)
+        If ReferenceEquals(c, Nothing) Then
+            Return
+        End If
+
+        Dim x = c.X
+    End Sub
+End Class");
+        }
+
+        [Fact]
+        public void StaticObjectEquals_BeforeHazardousUsages_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public int X;
+}
+
+public class Test
+{
+    public void M1(C c)
+    {
+        if (object.Equals(c, null))
+        {
+            return;
+        }
+
+        var x = c.X;
+    }
+}
+");
+
+            VerifyBasic(@"
+Public Class C
+    Public X As Integer
+End Class
+
+Public Class Test
+    Public Sub M1(c As C)
+        If Object.Equals(c, Nothing) Then
+            Return
+        End If
+
+        Dim x = c.X
+    End Sub
+End Class");
+        }
+
+        [Fact]
+        public void ObjectEquals_BeforeHazardousUsages_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public int X;
+}
+
+public class Test
+{
+    public void M1(C c, C c2)
+    {
+        if (c == null || !c.Equals(c2))
+        {
+            return;
+        }
+
+        var x = c2.X;
+    }
+}
+");
+
+            VerifyBasic(@"
+Public Class C
+    Public X As Integer
+End Class
+
+Public Class Test
+    Public Sub M1(c As C, c2 As C)
+        If c Is Nothing OrElse Not c.Equals(c2) Then
+            Return
+        End If
+
+        Dim x = c2.X
+    End Sub
+End Class");
+        }
+
+        [Fact]
+        public void ObjectEqualsOverride_BeforeHazardousUsages_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public int X;
+
+    public override bool Equals(object other) => true;
+}
+
+public class Test
+{
+    public void M1(C c, C c2)
+    {
+        if (c == null || !c.Equals(c2))
+        {
+            return;
+        }
+
+        var x = c2.X;
+    }
+}
+");
+
+            VerifyBasic(@"
+Public Class C
+    Public X As Integer
+
+    Public Overrides Function Equals(other As Object) As Boolean
+        Return True
+    End Function
+End Class
+
+Public Class Test
+    Public Sub M1(c As C, c2 As C)
+        If c Is Nothing OrElse Not c.Equals(c2) Then
+            Return
+        End If
+
+        Dim x = c2.X
+    End Sub
+End Class");
+        }
+
+        [Fact]
+        public void IEquatableEquals_ExplicitImplementation_BeforeHazardousUsages_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IEquatable<C>
+{
+    public int X;
+
+    bool IEquatable<C>.Equals(C other) => true;
+}
+
+public class Test
+{
+    public void M1(C c, C c2)
+    {
+        if (c == null || !c.Equals(c2))
+        {
+            return;
+        }
+
+        var x = c2.X;
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Public Class C
+    Implements IEquatable(Of C)
+
+    Public X As Integer
+    Public Function Equals(other As C) As Boolean Implements IEquatable(Of C).Equals
+        Return True
+    End Function
+End Class
+
+Public Class Test
+    Public Sub M1(c As C, c2 As C)
+        If c Is Nothing OrElse Not c.Equals(c2) Then
+            Return
+        End If
+
+        Dim x = c2.X
+    End Sub
+End Class");
+        }
+
+        [Fact]
+        public void IEquatableEquals_ImplicitImplementation_BeforeHazardousUsages_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IEquatable<C>
+{
+    public int X;
+
+    public bool Equals(C other) => true;
+}
+
+public class Test
+{
+    public void M1(C c, C c2)
+    {
+        if (c == null || !c.Equals(c2))
+        {
+            return;
+        }
+
+        var x = c2.X;
+    }
+}
+");
+        }
+
+        [Fact]
+        public void IEquatableEquals_Override_BeforeHazardousUsages_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public abstract class MyEquatable<T> : IEquatable<T>
+{
+    public abstract bool Equals(T other);
+}
+
+public class C : MyEquatable<C>
+{
+    public int X;
+    public override bool Equals(C other) => true;
+}
+
+public class Test
+{
+    public void M1(C c, C c2)
+    {
+        if (c == null || !c.Equals(c2))
+        {
+            return;
+        }
+
+        var x = c2.X;
+    }
+}
+");
+        }
     }
 }

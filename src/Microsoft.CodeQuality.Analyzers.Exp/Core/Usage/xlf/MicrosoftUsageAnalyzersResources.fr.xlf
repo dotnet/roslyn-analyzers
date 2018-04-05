@@ -17,6 +17,21 @@
         <target state="translated">'{0}' contient un champ '{1}' avec le type IDisposable '{2}', mais il n'est jamais supprimé. Changez la méthode Dispose sur '{0}' pour appeler Close ou Dispose sur ce champ.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeDescription">
+        <source>A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.</source>
+        <target state="new">A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeMessage">
+        <source>Ensure that method '{0}' calls '{1}' in all possible control flow paths.</source>
+        <target state="new">Ensure that method '{0}' calls '{1}' in all possible control flow paths.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeTitle">
+        <source>Dispose methods should call base class dispose</source>
+        <target state="new">Dispose methods should call base class dispose</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

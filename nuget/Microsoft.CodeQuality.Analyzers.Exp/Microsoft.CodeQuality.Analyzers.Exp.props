@@ -14,6 +14,7 @@
       -Microsoft.Reliability#CA2000;
       -Microsoft.Security#CA2100;
       -Microsoft.Usage#CA2213;
+      -Microsoft.Usage#CA2215;
     </CodeAnalysisRuleSetOverrides>
   </PropertyGroup>
 </Project>

@@ -126,4 +126,13 @@
   <data name="DisposableFieldsShouldBeDisposedTitle" xml:space="preserve">
     <value>Disposable fields should be disposed</value>
   </data>
+  <data name="DisposeMethodsShouldCallBaseClassDisposeDescription" xml:space="preserve">
+    <value>A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.</value>
+  </data>
+  <data name="DisposeMethodsShouldCallBaseClassDisposeMessage" xml:space="preserve">
+    <value>Ensure that method '{0}' calls '{1}' in all possible control flow paths.</value>
+  </data>
+  <data name="DisposeMethodsShouldCallBaseClassDisposeTitle" xml:space="preserve">
+    <value>Dispose methods should call base class dispose</value>
+  </data>
 </root>

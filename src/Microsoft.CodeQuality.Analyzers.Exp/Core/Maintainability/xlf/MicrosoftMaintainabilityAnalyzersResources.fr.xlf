@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="AvoidDeadConditionalCodeTitle">
         <source>Avoid dead conditional code</source>
-        <target state="new">Avoid dead conditional code</target>
+        <target state="translated">Éviter le code conditionnel mort</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeAlwaysTruFalseOrNullMessage">
         <source>'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
-        <target state="new">'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</target>
+        <target state="translated">'{0}' est toujours '{1}'. Supprimez ou refactorisez les conditions pour éviter d'avoir du code mort.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeNeverNullMessage">
         <source>'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
-        <target state="new">'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</target>
+        <target state="translated">'{0}' n'est jamais '{1}'. Supprimez ou refactorisez les conditions pour éviter d'avoir du code mort.</target>
         <note />
       </trans-unit>
     </body>

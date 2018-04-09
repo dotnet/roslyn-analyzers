@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="AvoidDeadConditionalCodeTitle">
         <source>Avoid dead conditional code</source>
-        <target state="new">Avoid dead conditional code</target>
+        <target state="translated">避免無作用條件式程式碼</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeAlwaysTruFalseOrNullMessage">
         <source>'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
-        <target state="new">'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</target>
+        <target state="translated">'{0}' 一律會是 '{1}'。請移除或重構條件以避免無作用程式碼。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeNeverNullMessage">
         <source>'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
-        <target state="new">'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</target>
+        <target state="translated">'{0}' 絕對不會是 '{1}'。請移除或重構條件以避免無作用程式碼。</target>
         <note />
       </trans-unit>
     </body>

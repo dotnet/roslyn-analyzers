@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="DoNotPassLiteralsAsLocalizedParametersDescription">
         <source>A method passes a string literal as a parameter to a constructor or method in the .NET Framework class library and that string should be localizable. To fix a violation of this rule, replace the string literal with a string retrieved through an instance of the ResourceManager class.</source>
-        <target state="new">A method passes a string literal as a parameter to a constructor or method in the .NET Framework class library and that string should be localizable. To fix a violation of this rule, replace the string literal with a string retrieved through an instance of the ResourceManager class.</target>
+        <target state="translated">Metoda předává řetězcový literál jako parametr do konstruktoru nebo metody v knihovně tříd .NET Framework a tento řetězec by měl být lokalizovatelný. Pokud chcete porušení tohoto pravidla opravit, nahraďte tento řetězcový literál řetězcem načteným prostřednictvím instance třídy ResourceManager.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassLiteralsAsLocalizedParametersMessage">
         <source>Method '{0}' passes a literal string as parameter '{1}' of a call to '{2}'. Retrieve the following string(s) from a resource table instead: "{3}".</source>
-        <target state="new">Method '{0}' passes a literal string as parameter '{1}' of a call to '{2}'. Retrieve the following string(s) from a resource table instead: "{3}".</target>
+        <target state="translated">Metoda {0} předává řetězcový literál jako parametr {1} volání objektu {2}. Načtěte místo toho z tabulky prostředku následující řetězce: {3}.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassLiteralsAsLocalizedParametersTitle">
         <source>Do not pass literals as localized parameters</source>
-        <target state="new">Do not pass literals as localized parameters</target>
+        <target state="translated">Nepředávat literály jako lokalizované parametry</target>
         <note />
       </trans-unit>
     </body>

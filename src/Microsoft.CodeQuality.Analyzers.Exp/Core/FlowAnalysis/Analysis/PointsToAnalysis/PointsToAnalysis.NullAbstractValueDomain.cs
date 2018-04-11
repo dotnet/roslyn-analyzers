@@ -2,16 +2,16 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis
+namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 {
-    using NullAnalysisData = IDictionary<AnalysisEntity, NullAbstractValue>;
+    using PointsToAnalysisData = IDictionary<AnalysisEntity, PointsToAbstractValue>;
 
-    internal partial class NullAnalysis : ForwardDataFlowAnalysis<NullAnalysisData, NullBlockAnalysisResult, NullAbstractValue>
+    internal partial class PointsToAnalysis : ForwardDataFlowAnalysis<PointsToAnalysisData, PointsToBlockAnalysisResult, PointsToAbstractValue>
     {
         /// <summary>
-        /// Abstract value domain for <see cref="NullAnalysis"/> to merge and compare <see cref="NullAbstractValue"/> values.
+        /// Abstract value domain to merge and compare <see cref="NullAbstractValue"/> values.
         /// </summary>
-        private class NullAbstractValueDomain : AbstractValueDomain<NullAbstractValue>
+        private sealed class NullAbstractValueDomain : AbstractValueDomain<NullAbstractValue>
         {
             public static NullAbstractValueDomain Default = new NullAbstractValueDomain();
 

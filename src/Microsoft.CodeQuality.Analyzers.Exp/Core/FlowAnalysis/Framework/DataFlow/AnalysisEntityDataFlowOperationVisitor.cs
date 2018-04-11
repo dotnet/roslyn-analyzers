@@ -1,13 +1,11 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis;
-using Microsoft.CodeAnalysis.Operations.DataFlow.NullAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow
@@ -17,24 +15,23 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     /// </summary>
     internal abstract class AnalysisEntityDataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> : DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue>
     {
-        protected abstract IEnumerable<AnalysisEntity> TrackedEntities { get; }
-        protected abstract void SetAbstractValue(AnalysisEntity analysisEntity, TAbstractAnalysisValue value);
-        protected abstract TAbstractAnalysisValue GetAbstractValue(AnalysisEntity analysisEntity);
-        protected abstract bool HasAbstractValue(AnalysisEntity analysisEntity);
-        
         protected AnalysisEntityDataFlowOperationVisitor(
             AbstractValueDomain<TAbstractAnalysisValue> valueDomain,
             ISymbol owningSymbol,
             WellKnownTypeProvider wellKnownTypeProvider,
             bool pessimisticAnalysis,
             bool predicateAnalysis,
-            DataFlowAnalysisResult<NullBlockAnalysisResult, NullAbstractValue> nullAnalysisResultOpt,
             DataFlowAnalysisResult<CopyBlockAnalysisResult, CopyAbstractValue> copyAnalysisResultOpt,
             DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResultOpt)
             : base (valueDomain, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, predicateAnalysis,
-                  nullAnalysisResultOpt, copyAnalysisResultOpt, pointsToAnalysisResultOpt)
+                  copyAnalysisResultOpt, pointsToAnalysisResultOpt)
         {
         }
+
+        protected abstract void AddTrackedEntities(ImmutableArray<AnalysisEntity>.Builder builder);
+        protected abstract void SetAbstractValue(AnalysisEntity analysisEntity, TAbstractAnalysisValue value);
+        protected abstract TAbstractAnalysisValue GetAbstractValue(AnalysisEntity analysisEntity);
+        protected abstract bool HasAbstractValue(AnalysisEntity analysisEntity);
 
         protected override TAbstractAnalysisValue ComputeAnalysisValueForReferenceOperation(IOperation operation, TAbstractAnalysisValue defaultValue)
         {
@@ -192,7 +189,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         protected override void ResetReferenceTypeInstanceAnalysisData(PointsToAbstractValue pointsToValue)
         {
             Debug.Assert(HasPointsToAnalysisResult);
-            Debug.Assert(!pointsToValue.Locations.IsEmpty);
 
             IEnumerable<AnalysisEntity> dependantAnalysisEntities = GetChildAnalysisEntities(pointsToValue);
             ResetInstanceAnalysisDataCore(dependantAnalysisEntities);
@@ -230,11 +226,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             {
                 // For allocations.
                 PointsToAbstractValue newValueLocation = GetPointsToAbstractValue(assignedValueOperation);
-                if (newValueLocation.Kind == PointsToAbstractValueKind.NoLocation)
-                {
-                    return;
-                }
-
                 dependentAnalysisEntities = GetChildAnalysisEntities(newValueLocation);
             }
 
@@ -259,16 +250,17 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             }
         }
 
-        private IEnumerable<AnalysisEntity> GetChildAnalysisEntities(PointsToAbstractValue instanceLocationOpt)
+        protected IEnumerable<AnalysisEntity> GetChildAnalysisEntities(PointsToAbstractValue instanceLocationOpt)
         {
             // We are interested only in dependent child/member infos, not the root info.
             if (instanceLocationOpt != null)
             {
-                IList<AnalysisEntity> trackedEntities = TrackedEntities?.ToList();
-                if (trackedEntities != null)
+                var trackedEntitiesBuilder = ImmutableArray.CreateBuilder<AnalysisEntity>();
+                AddTrackedEntities(trackedEntitiesBuilder);
+                if (trackedEntitiesBuilder.Count > 0)
                 {
-                    Debug.Assert(trackedEntities.ToSet().Count == trackedEntities.Count);
-                    foreach (var entity in trackedEntities)
+                    Debug.Assert(trackedEntitiesBuilder.ToSet().Count == trackedEntitiesBuilder.Count);
+                    foreach (var entity in trackedEntitiesBuilder)
                     {
                         if (entity.InstanceLocation.Equals(instanceLocationOpt) && entity.IsChildOrInstanceMember)
                         {

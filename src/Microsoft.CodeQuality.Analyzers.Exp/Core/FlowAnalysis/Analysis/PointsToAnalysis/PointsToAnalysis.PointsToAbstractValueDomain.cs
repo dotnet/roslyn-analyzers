@@ -1,9 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 {
@@ -27,64 +25,77 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
             public override int Compare(PointsToAbstractValue oldValue, PointsToAbstractValue newValue)
             {
-                if (oldValue == null)
-                {
-                    return newValue == null ? 0 : -1;
-                }
-                else if (newValue == null)
-                {
-                    return 1;
-                }
+                Debug.Assert(oldValue != null);
+                Debug.Assert(newValue != null);
 
-                if (ReferenceEquals(oldValue, newValue))
+                if (ReferenceEquals(oldValue, newValue) ||
+                    oldValue.Kind.IsInvalidOrUndefined() ||
+                    newValue.Kind.IsInvalidOrUndefined())
                 {
                     return 0;
                 }
 
                 if (oldValue.Kind == newValue.Kind)
                 {
-                    return _locationsDomain.Compare(oldValue.Locations, newValue.Locations);
+                    int locationsCompareResult = _locationsDomain.Compare(oldValue.Locations, newValue.Locations);
+                    var nullCompareResult = NullAbstractValueDomain.Default.Compare(oldValue.NullState, newValue.NullState);
+                    if (locationsCompareResult > 0 || nullCompareResult > 0)
+                    {
+                        Debug.Fail("Non-monotonic Merge function");
+                        return 1;
+                    }
+                    else if (locationsCompareResult < 0 || nullCompareResult < 0)
+                    {
+                        return -1;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
                 }
                 else if (oldValue.Kind < newValue.Kind)
                 {
+                    Debug.Assert(NullAbstractValueDomain.Default.Compare(oldValue.NullState, newValue.NullState) <= 0);
                     return -1;
                 }
                 else
                 {
+                    Debug.Fail("Non-monotonic Merge function");
                     return 1;
                 }
             }
 
             public override PointsToAbstractValue Merge(PointsToAbstractValue value1, PointsToAbstractValue value2)
             {
-                if (value1 == null)
-                {
-                    return value2;
-                }
-                else if (value2 == null)
-                {
-                    return value1;
-                }
-                else if(value1.Kind == PointsToAbstractValueKind.Undefined || value1.Kind == PointsToAbstractValueKind.NoLocation)
-                {
-                    return value2;
-                }
-                else if (value2.Kind == PointsToAbstractValueKind.Undefined || value2.Kind == PointsToAbstractValueKind.NoLocation)
+                Debug.Assert(value1 != null);
+                Debug.Assert(value2 != null);
+
+                if (value1 == value2)
                 {
                     return value1;
                 }
-                else if (value1.Kind == PointsToAbstractValueKind.Unknown || value2.Kind == PointsToAbstractValueKind.Unknown)
+                else if (value1.Kind.IsInvalidOrUndefined())
+                {
+                    return value2;
+                }
+                else if (value2.Kind.IsInvalidOrUndefined())
+                {
+                    return value1;
+                }
+                else if (value1.Kind == PointsToAbstractValueKind.Unknown ||
+                    value2.Kind == PointsToAbstractValueKind.Unknown)
                 {
                     return PointsToAbstractValue.Unknown;
                 }
 
                 var mergedLocations = _locationsDomain.Merge(value1.Locations, value2.Locations);
-                if (mergedLocations.Count == 1 && mergedLocations.Single().IsNull)
-                {
-                    return PointsToAbstractValue.NullLocation;
-                }
+                var mergedNullState = NullAbstractValueDomain.Default.Merge(value1.NullState, value2.NullState);
+                var result = PointsToAbstractValue.Create(mergedLocations, mergedNullState);
 
-                return new PointsToAbstractValue(mergedLocations);
+                Debug.Assert(Compare(value1, result) <= 0);
+                Debug.Assert(Compare(value2, result) <= 0);
+
+                return result;
             }
         }
     }

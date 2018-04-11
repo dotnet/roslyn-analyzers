@@ -26,11 +26,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
             ISymbol owningSymbol,
             WellKnownTypeProvider wellKnownTypeProvider,
             ImmutableHashSet<INamedTypeSymbol> disposeOwnershipTransferLikelyTypes,
-            DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResult,
-            DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt = null)
+            DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResult)
         {
             return GetOrComputeResultCore(cfg, owningSymbol, wellKnownTypeProvider, disposeOwnershipTransferLikelyTypes, pointsToAnalysisResult,
-                nullAnalysisResultOpt, trackInstanceFields: false, trackedInstanceFieldPointsToMap: out var _);
+                trackInstanceFields: false, trackedInstanceFieldPointsToMap: out var _);
         }
 
         public static DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> GetOrComputeResult(
@@ -40,11 +39,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
             ImmutableHashSet<INamedTypeSymbol> disposeOwnershipTransferLikelyTypes,
             DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResult,
             bool trackInstanceFields,
-            out ImmutableDictionary<IFieldSymbol, PointsToAnalysis.PointsToAbstractValue> trackedInstanceFieldPointsToMap,
-            DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt = null)
+            out ImmutableDictionary<IFieldSymbol, PointsToAnalysis.PointsToAbstractValue> trackedInstanceFieldPointsToMap)
         {
             return GetOrComputeResultCore(cfg, owningSymbol, wellKnownTypeProvider, disposeOwnershipTransferLikelyTypes, pointsToAnalysisResult,
-                nullAnalysisResultOpt, trackInstanceFields, out trackedInstanceFieldPointsToMap);
+                trackInstanceFields, out trackedInstanceFieldPointsToMap);
         }
 
         private static DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> GetOrComputeResultCore(
@@ -53,7 +51,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
             WellKnownTypeProvider wellKnownTypeProvider,
             ImmutableHashSet<INamedTypeSymbol> disposeOwnershipTransferLikelyTypes,
             DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResult,
-            DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResultOpt,
             bool trackInstanceFields,
             out ImmutableDictionary<IFieldSymbol, PointsToAnalysis.PointsToAbstractValue> trackedInstanceFieldPointsToMap)
         {
@@ -63,7 +60,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
             Debug.Assert(pointsToAnalysisResult != null);
 
             var operationVisitor = new DisposeDataFlowOperationVisitor(DisposeAbstractValueDomain.Default, owningSymbol, wellKnownTypeProvider,
-                disposeOwnershipTransferLikelyTypes, trackInstanceFields, pointsToAnalysisResult, nullAnalysisResultOpt);
+                disposeOwnershipTransferLikelyTypes, trackInstanceFields, pointsToAnalysisResult);
             var disposeAnalysis = new DisposeAnalysis(DisposeAnalysisDomainInstance, operationVisitor);
             var result = disposeAnalysis.GetOrComputeResultCore(cfg, cacheResult: false);
             trackedInstanceFieldPointsToMap = trackInstanceFields ? operationVisitor.TrackedInstanceFieldPointsToMap : null;
@@ -71,5 +68,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
         }
 
         internal override DisposeBlockAnalysisResult ToResult(BasicBlock basicBlock, DataFlowAnalysisInfo<IDictionary<AbstractLocation, DisposeAbstractValue>> blockAnalysisData) => new DisposeBlockAnalysisResult(basicBlock, blockAnalysisData);
+        protected override DisposeAnalysisData GetInputData(DisposeBlockAnalysisResult result) => result.InputData;
     }
 }

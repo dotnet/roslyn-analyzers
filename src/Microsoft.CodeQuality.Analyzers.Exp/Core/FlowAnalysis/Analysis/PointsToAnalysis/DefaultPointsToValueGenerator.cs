@@ -22,19 +22,22 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
         public PointsToAbstractValue GetOrCreateDefaultValue(AnalysisEntity analysisEntity)
         {
-            Debug.Assert(analysisEntity.Type.IsReferenceType);
+            Debug.Assert(analysisEntity.Type.IsReferenceTypeOrNullableValueType());
             Debug.Assert(_lazyDefaultPointsToValueMap == null);
 
             if (!_defaultPointsToValueMapBuilder.TryGetValue(analysisEntity, out PointsToAbstractValue value))
             {
                 value = analysisEntity.SymbolOpt?.Kind == SymbolKind.Local ?
                     PointsToAbstractValue.Undefined :
-                    new PointsToAbstractValue(AbstractLocation.CreateAnalysisEntityDefaultLocation(analysisEntity));
+                    PointsToAbstractValue.Create(AbstractLocation.CreateAnalysisEntityDefaultLocation(analysisEntity), mayBeNull: true);
                 _defaultPointsToValueMapBuilder.Add(analysisEntity, value);
             }
 
             return value;
         }
+
+        public void AddTrackedEntities(ImmutableArray<AnalysisEntity>.Builder builder) => builder.AddRange(_defaultPointsToValueMapBuilder.Keys);
+        public bool IsTrackedEntity(AnalysisEntity analysisEntity) => _defaultPointsToValueMapBuilder.ContainsKey(analysisEntity);
 
         public ImmutableDictionary<AnalysisEntity, PointsToAbstractValue> GetDefaultPointsToValueMap()
         {

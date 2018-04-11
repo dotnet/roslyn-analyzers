@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow
@@ -13,14 +14,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         public override int Compare(ImmutableHashSet<T> oldValue, ImmutableHashSet<T> newValue)
         {
-            if (oldValue == null)
-            {
-                return newValue == null ? 0 : -1;
-            }
-            else if (newValue == null)
-            {
-                return 1;
-            }
+            Debug.Assert(oldValue != null);
+            Debug.Assert(newValue != null);
 
             if (ReferenceEquals(oldValue, newValue))
             {
@@ -56,15 +51,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         private static ImmutableHashSet<T> MergeOrIntersect(ImmutableHashSet<T> value1, ImmutableHashSet<T> value2, bool merge)
         {
-            if (value1 == null)
-            {
-                return value2;
-            }
-            else if (value2 == null)
-            {
-                return value1;
-            }
-            else if (value1.IsEmpty)
+            Debug.Assert(value1 != null);
+            Debug.Assert(value2 != null);
+
+            if (value1.IsEmpty)
             {
                 return value2;
             }
@@ -76,6 +66,5 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             var values = merge ? value1.Concat(value2) : value1.Intersect(value2);
             return ImmutableHashSet.CreateRange(values);
         }
-
     }
 }

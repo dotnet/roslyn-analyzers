@@ -25,14 +25,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
 
             public override int Compare(DisposeAbstractValue oldValue, DisposeAbstractValue newValue)
             {
-                if (oldValue == null)
-                {
-                    return newValue == null ? 0 : -1;
-                }
-                else if (newValue == null)
-                {
-                    return 1;
-                }
+                Debug.Assert(oldValue != null);
+                Debug.Assert(newValue != null);
 
                 if (ReferenceEquals(oldValue, newValue))
                 {
@@ -49,6 +43,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 }
                 else
                 {
+                    Debug.Fail("Non-monotonic Merge function");
                     return 1;
                 }
             }

@@ -30,14 +30,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         /// <returns>A value that is greater than all <paramref name="values"/></returns>
         public virtual T Merge(IEnumerable<T> values)
         {
-            switch (values.Count())
+            var valuesArray = values.Where(v => v != null).ToArray();
+            switch (valuesArray.Length)
             {
                 case 0:
                     return Bottom;
                 case 1:
-                    return values.Single();
+                    return valuesArray[0];
                 default:
-                    return values.Aggregate(Merge);
+                    return valuesArray.Aggregate(Merge);
             }
         }
 

@@ -51,30 +51,28 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
             bool pessimisticAnalysis)
         {
             var cfg = ControlFlowGraph.Create(topmostBlock);
-            var nullAnalysisResult = NullAnalysis.NullAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider);
-            var pointsToAnalysisResult = PointsToAnalysis.PointsToAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, nullAnalysisResult);
-            var copyAnalysisResult = CopyAnalysis.CopyAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, nullAnalysisResultOpt: nullAnalysisResult, pointsToAnalysisResultOpt: pointsToAnalysisResult);
-            // Do another null analysis pass to improve the results from PointsTo and Copy analysis.
-            nullAnalysisResult = NullAnalysis.NullAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResultOpt: pointsToAnalysisResult);
-            return GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, nullAnalysisResult, pointsToAnalysisResult, getOrComputeLocationAnalysisResultOpt, pessimisticAnalysis);
+            var pointsToAnalysisResult = PointsToAnalysis.PointsToAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider);
+            var copyAnalysisResult = CopyAnalysis.CopyAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, pointsToAnalysisResultOpt: pointsToAnalysisResult);
+            // Do another analysis pass to improve the results from PointsTo and Copy analysis.
+            pointsToAnalysisResult = PointsToAnalysis.PointsToAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, pointsToAnalysisResult, copyAnalysisResult);
+            return GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, pointsToAnalysisResult, getOrComputeLocationAnalysisResultOpt, pessimisticAnalysis);
         }
 
         private static ParameterValidationResultWithHazardousUsages GetOrComputeResult(
             ControlFlowGraph cfg,
             ISymbol owningSymbol,
             WellKnownTypeProvider wellKnownTypeProvider,
-            DataFlowAnalysisResult<NullAnalysis.NullBlockAnalysisResult, NullAnalysis.NullAbstractValue> nullAnalysisResult,
             DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResult,
             Func<IBlockOperation, IMethodSymbol, ParameterValidationResultWithHazardousUsages> getOrComputeLocationAnalysisResultOpt,
             bool pessimisticAnalysis)
         {
             var operationVisitor = new ParameterValidationDataFlowOperationVisitor(ParameterValidationAbstractValueDomain.Default,
-                owningSymbol, wellKnownTypeProvider, getOrComputeLocationAnalysisResultOpt, nullAnalysisResult, pointsToAnalysisResult, pessimisticAnalysis);
+                owningSymbol, wellKnownTypeProvider, getOrComputeLocationAnalysisResultOpt, pointsToAnalysisResult, pessimisticAnalysis);
             var analysis = new ParameterValidationAnalysis(ParameterValidationAnalysisDomainInstance, operationVisitor);
             var analysisResult = analysis.GetOrComputeResultCore(cfg, cacheResult: true);
 
             var newOperationVisitor = new ParameterValidationDataFlowOperationVisitor(ParameterValidationAbstractValueDomain.Default,
-                    owningSymbol, wellKnownTypeProvider, getOrComputeLocationAnalysisResultOpt, nullAnalysisResult, pointsToAnalysisResult, pessimisticAnalysis, trackHazardousParameterUsages: true);
+                    owningSymbol, wellKnownTypeProvider, getOrComputeLocationAnalysisResultOpt, pointsToAnalysisResult, pessimisticAnalysis, trackHazardousParameterUsages: true);
             var resultBuilder = new DataFlowAnalysisResultBuilder<ParameterValidationAnalysisData>();
             foreach (var block in cfg.Blocks)
             {
@@ -86,5 +84,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
         }
 
         internal override ParameterValidationBlockAnalysisResult ToResult(BasicBlock basicBlock, DataFlowAnalysisInfo<ParameterValidationAnalysisData> blockAnalysisData) => new ParameterValidationBlockAnalysisResult(basicBlock, blockAnalysisData);
+        protected override ParameterValidationAnalysisData GetInputData(ParameterValidationBlockAnalysisResult result) => result.InputData;
     }
 }

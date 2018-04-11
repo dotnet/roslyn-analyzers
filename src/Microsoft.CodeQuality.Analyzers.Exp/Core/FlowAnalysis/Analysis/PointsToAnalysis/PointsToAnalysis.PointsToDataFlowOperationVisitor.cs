@@ -264,7 +264,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 IOperation target,
                 ref PredicateValueKind predicateValueKind)
             {
+                // Compute the negated value.
                 NullAbstractValue negatedValue = NegatePredicateValue(value);
+
+                // Check if the key already has an existing "Null" or "NotNull" NullState that would make the condition always true or false.
+                // If so, set the predicateValueKind to always true/false, set the value in branch that can never be taken to NullAbstractValue.Invalid
+                // and turn off value inference in one of the branch.
                 if (CurrentAnalysisData.TryGetValue(key, out PointsToAbstractValue existingPointsToValue))
                 {
                     NullAbstractValue existingNullValue = existingPointsToValue.NullState;
@@ -289,6 +294,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                     }
                 }
 
+                // Swap value and negatedValue if we are processing not-equals operator.
                 if (!equals)
                 {
                     if (value != NullAbstractValue.Invalid && negatedValue != NullAbstractValue.Invalid)

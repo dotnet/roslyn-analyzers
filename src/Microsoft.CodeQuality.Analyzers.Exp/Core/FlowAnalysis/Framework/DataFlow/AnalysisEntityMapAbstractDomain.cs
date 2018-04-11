@@ -63,7 +63,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     {
                         if (key1.SymbolOpt == null || key1.SymbolOpt != key2.SymbolOpt)
                         {
-                            // PERF: Do not add a add a new key-value pair to the resultMap for unrelated entities or non-symbol based entities.
+                            // PERF: Do not add a new key-value pair to the resultMap for unrelated entities or non-symbol based entities.
                             continue;
                         }
 

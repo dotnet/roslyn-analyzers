@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeAnalysis.Operations.ControlFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
@@ -28,11 +27,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
                 ParameterValidationAbstractValueDomain valueDomain,
                 ISymbol owningSymbol,
                 WellKnownTypeProvider wellKnownTypeProvider,
+                ControlFlowGraph cfg,
                 Func<IBlockOperation, IMethodSymbol, ParameterValidationResultWithHazardousUsages> getOrComputeLocationAnalysisResultOpt,
                 DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResult,
                 bool pessimisticAnalysis,
                 bool trackHazardousParameterUsages = false)
-                : base(valueDomain, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, predicateAnalysis: false, copyAnalysisResultOpt: null, pointsToAnalysisResultOpt: pointsToAnalysisResult)
+                : base(valueDomain, owningSymbol, wellKnownTypeProvider, cfg, pessimisticAnalysis,
+                      predicateAnalysis: false, copyAnalysisResultOpt: null, pointsToAnalysisResultOpt: pointsToAnalysisResult)
             {
                 Debug.Assert(owningSymbol.Kind == SymbolKind.Method);
                 Debug.Assert(pointsToAnalysisResult != null);
@@ -61,10 +62,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
 
             protected override ParameterValidationAbstractValue GetAbstractDefaultValue(ITypeSymbol type) => ValueDomain.Bottom;
 
+            protected override bool HasAnyAbstractValue(ParameterValidationAnalysisData data) => data.Count > 0;
+
             protected override ParameterValidationAbstractValue GetAbstractValue(AbstractLocation location)
                 => CurrentAnalysisData.TryGetValue(location, out var value) ? value : ValueDomain.Bottom;
 
-            protected override void ResetCurrentAnalysisData(ParameterValidationAnalysisData newAnalysisDataOpt = null) => ResetAnalysisData(CurrentAnalysisData, newAnalysisDataOpt);
+            protected override void ResetCurrentAnalysisData() => ResetAnalysisData(CurrentAnalysisData);
 
             private bool IsTrackedLocation(AbstractLocation location) =>
                 location.SymbolOpt is IParameterSymbol parameter && parameter.Type.IsReferenceType && parameter.ContainingSymbol == OwningSymbol;
@@ -89,7 +92,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
                 }
             }
 
-            protected override void SetAbstractValueForAssignment(IOperation target, IOperation assignedValueOperation, ParameterValidationAbstractValue assignedValue)
+            protected override void SetAbstractValueForAssignment(IOperation target, IOperation assignedValueOperation, ParameterValidationAbstractValue assignedValue, bool mayBeAssignment = false)
             {
                 // We are only tracking default parameter locations.
             }
@@ -107,7 +110,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
 
             protected override void SetValueForParameterPointsToLocationOnEntry(IParameterSymbol parameter, PointsToAbstractValue pointsToAbstractValue)
             {
-                if (pointsToAbstractValue.Kind == PointsToAbstractValueKind.Known)
+                if (pointsToAbstractValue.Kind == PointsToAbstractValueKind.KnownLocations)
                 {
                     var value = HasValidatedNotNullAttribute(parameter) ? ParameterValidationAbstractValue.Validated : ParameterValidationAbstractValue.NotValidated;
                     SetAbstractValue(pointsToAbstractValue.Locations, value);
@@ -292,7 +295,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
                                         else if (!targetMethod.IsVirtual && !targetMethod.IsOverride)
                                         {
                                             // Check if this is a non-virtual non-override method that validates the argument.
-                                            BasicBlock invokedMethodExitBlock = invokedMethodLocationAnalysisResult.ControlFlowGraph.Exit;
+                                            BasicBlock invokedMethodExitBlock = invokedMethodLocationAnalysisResult.ControlFlowGraph.GetExit();
                                             foreach (var kvp in invokedMethodLocationAnalysisResult[invokedMethodExitBlock].OutputData)
                                             {
                                                 AbstractLocation parameterLocation = kvp.Key;

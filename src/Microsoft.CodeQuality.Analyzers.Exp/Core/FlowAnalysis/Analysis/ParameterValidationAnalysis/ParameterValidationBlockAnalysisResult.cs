@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using Microsoft.CodeAnalysis.Operations.ControlFlow;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
 {
@@ -12,7 +11,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
     /// Result from execution of <see cref="ParameterValidationAnalysis"/> on a basic block.
     /// It stores ParameterValidation values for each <see cref="AbstractLocation"/> at the start and end of the basic block.
     /// </summary>
-    internal class ParameterValidationBlockAnalysisResult : AbstractBlockAnalysisResult<ParameterValidationAnalysisData, ParameterValidationAbstractValue>
+    internal class ParameterValidationBlockAnalysisResult : AbstractBlockAnalysisResult
     {
         public ParameterValidationBlockAnalysisResult(BasicBlock basicBlock, DataFlowAnalysisInfo<ParameterValidationAnalysisData> blockAnalysisData)
             : base (basicBlock)

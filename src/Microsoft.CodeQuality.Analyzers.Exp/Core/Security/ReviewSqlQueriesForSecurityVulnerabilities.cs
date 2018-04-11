@@ -7,7 +7,6 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
-using Microsoft.CodeAnalysis.Operations.ControlFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
@@ -213,14 +212,14 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Security
                 var topmostBlock = argumentValue.GetTopmostParentBlock();
                 if (topmostBlock != null)
                 {
-                    var cfg = ControlFlowGraph.Create(topmostBlock);
+                    var cfg = SemanticModel.GetControlFlowGraph(topmostBlock);
                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation);
-                    var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider);
-                    var copyAnalysisResult = CopyAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider);
+                    var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, wellKnownTypeProvider);
+                    var copyAnalysisResult = CopyAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, wellKnownTypeProvider);
                     // Do another analysis pass to improve the results from PointsTo and Copy analysis.
-                    pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, pointsToAnalysisResult, copyAnalysisResult);
-                    var stringContentResult = StringContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
-                    StringContentAbstractValue value = stringContentResult[argumentValue];
+                    pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, wellKnownTypeProvider, copyAnalysisResult);
+                    var stringContentResult = StringContentAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
+                    StringContentAbstractValue value = stringContentResult[argumentValue.Kind, argumentValue.Syntax];
                     if (value.NonLiteralState == StringContainsNonLiteralState.No)
                     {
                         // The value is a constant literal or default/unitialized, so avoid flagging this usage.

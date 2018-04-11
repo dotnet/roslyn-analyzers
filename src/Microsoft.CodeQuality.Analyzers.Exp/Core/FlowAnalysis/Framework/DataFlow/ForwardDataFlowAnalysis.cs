@@ -9,7 +9,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     /// </summary>
     internal abstract class ForwardDataFlowAnalysis<TAnalysisData, TAnalysisResult, TAbstractAnalysisValue> : DataFlowAnalysis<TAnalysisData, TAnalysisResult, TAbstractAnalysisValue>
         where TAnalysisData: class
-        where TAnalysisResult : AbstractBlockAnalysisResult<TAnalysisData, TAbstractAnalysisValue>
+        where TAnalysisResult : AbstractBlockAnalysisResult
     {
         protected ForwardDataFlowAnalysis(AbstractAnalysisDomain<TAnalysisData> analysisDomain, DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> operationVisitor)
             : base(analysisDomain, operationVisitor)

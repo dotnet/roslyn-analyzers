@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using Microsoft.CodeAnalysis.Operations.ControlFlow;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
 {
@@ -12,7 +11,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
     /// Result from execution of <see cref="DisposeAnalysis"/> on a basic block.
     /// It store dispose values for each <see cref="AbstractLocation"/> at the start and end of the basic block.
     /// </summary>
-    internal class DisposeBlockAnalysisResult : AbstractBlockAnalysisResult<DisposeAnalysisData, DisposeAbstractValue>
+    internal class DisposeBlockAnalysisResult : AbstractBlockAnalysisResult
     {
         public DisposeBlockAnalysisResult(BasicBlock basicBlock, DataFlowAnalysisInfo<DisposeAnalysisData> blockAnalysisData)
             : base (basicBlock)

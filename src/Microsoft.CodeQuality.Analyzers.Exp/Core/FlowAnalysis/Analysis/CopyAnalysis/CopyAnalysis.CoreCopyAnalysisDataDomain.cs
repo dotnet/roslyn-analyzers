@@ -5,28 +5,28 @@ using System.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
 {
-    using CopyAnalysisData = IDictionary<AnalysisEntity, CopyAbstractValue>;
+    using CoreCopyAnalysisData = IDictionary<AnalysisEntity, CopyAbstractValue>;
 
     internal partial class CopyAnalysis : ForwardDataFlowAnalysis<CopyAnalysisData, CopyBlockAnalysisResult, CopyAbstractValue>
     {
         /// <summary>
-        /// An abstract analysis domain implementation <see cref="CopyAnalysis"/>.
+        /// An abstract analysis domain implementation for <see cref="CoreCopyAnalysisData"/>.
         /// </summary>
-        private class CopyAnalysisDomain : MapAbstractDomain<AnalysisEntity, CopyAbstractValue>
+        private sealed class CoreCopyAnalysisDataDomain : MapAbstractDomain<AnalysisEntity, CopyAbstractValue>
         {
-            public static readonly CopyAnalysisDomain Instance = new CopyAnalysisDomain(CopyAbstractValueDomain.Default);
+            public static readonly CoreCopyAnalysisDataDomain Instance = new CoreCopyAnalysisDataDomain(CopyAbstractValueDomain.Default);
 
-            private CopyAnalysisDomain(AbstractValueDomain<CopyAbstractValue> valueDomain)
+            private CoreCopyAnalysisDataDomain(AbstractValueDomain<CopyAbstractValue> valueDomain)
             : base(valueDomain)
             {
             }
 
-            public override CopyAnalysisData Merge(CopyAnalysisData map1, CopyAnalysisData map2)
+            public override CoreCopyAnalysisData Merge(CoreCopyAnalysisData map1, CoreCopyAnalysisData map2)
             {
                 Debug.Assert(map1 != null);
                 Debug.Assert(map2 != null);
-                AssertValidCopyAnalysisData(map1);
-                AssertValidCopyAnalysisData(map2);
+                CopyAnalysisData.AssertValidCopyAnalysisData(map1);
+                CopyAnalysisData.AssertValidCopyAnalysisData(map2);
 
                 var result = new Dictionary<AnalysisEntity, CopyAbstractValue>();
                 foreach (var kvp in map1)
@@ -57,7 +57,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
                     }
                 }
 
-                AssertValidCopyAnalysisData(result);
+                CopyAnalysisData.AssertValidCopyAnalysisData(result);
                 return result;
 
                 CopyAbstractValue GetDefaultValue(AnalysisEntity analysisEntity) => new CopyAbstractValue(analysisEntity);

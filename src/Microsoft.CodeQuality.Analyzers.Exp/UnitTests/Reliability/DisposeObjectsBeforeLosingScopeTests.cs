@@ -2366,7 +2366,7 @@ End Module",
             GetBasicResultAt(16, 17, "Sub Test.M1()", "New A()"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1669")]
         public void ForLoop_MissingDisposeOnEntry_Diagnostic()
         {
             VerifyCSharp(@"
@@ -3115,7 +3115,7 @@ Class Test
 End Class");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1676")]
         public void LocalFunctionInvocation_EmptyBody_Diagnostic()
         {
             // Currently we do not generate a diagnostic as we do not analyze local function invocations and pessimistically assume it invalidates all saved state.
@@ -3248,7 +3248,7 @@ class Test
             // VB has no local functions.
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1676")]
         public void LambdaInvocation_EmptyBody_Diagnostic()
         {
             // Currently we do not generate a diagnostic as we do not analyze lambda invocations and pessimistically assume it invalidates all saved state.

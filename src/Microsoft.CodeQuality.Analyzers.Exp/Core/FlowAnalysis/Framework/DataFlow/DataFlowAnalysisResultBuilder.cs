@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using Microsoft.CodeAnalysis.Operations.ControlFlow;
+using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow
 {
@@ -55,7 +55,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             if (mergedDataForUnhandledThrowOperations != null)
             {
                 var info = new DataFlowAnalysisInfo<TAnalysisData>(mergedDataForUnhandledThrowOperations, mergedDataForUnhandledThrowOperations);
-                mergedStateForUnhandledThrowOperations = getResult(cfg.Exit, info);
+                mergedStateForUnhandledThrowOperations = getResult(cfg.GetExit(), info);
             }
 
             return new DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue>(resultBuilder.ToImmutable(), stateMap,

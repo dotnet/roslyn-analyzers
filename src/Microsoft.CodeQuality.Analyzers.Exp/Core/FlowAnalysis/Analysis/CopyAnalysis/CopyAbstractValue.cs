@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Analyzer.Utilities;
-using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 
@@ -56,9 +55,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
         protected override int ComputeHashCode()
         {
             int hashCode = HashUtilities.Combine(Kind.GetHashCode(), AnalysisEntities.Count.GetHashCode());
-            foreach (var location in AnalysisEntities)
+            foreach (var entity in AnalysisEntities)
             {
-                hashCode = HashUtilities.Combine(location.GetHashCode(), hashCode);
+                hashCode = HashUtilities.Combine(entity.GetHashCode(), hashCode);
             }
 
             return hashCode;

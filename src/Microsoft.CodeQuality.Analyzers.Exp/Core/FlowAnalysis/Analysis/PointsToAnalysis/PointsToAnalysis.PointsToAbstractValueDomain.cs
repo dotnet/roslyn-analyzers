@@ -5,8 +5,6 @@ using System.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 {
-    using PointsToAnalysisData = IDictionary<AnalysisEntity, PointsToAbstractValue>;
-
     internal partial class PointsToAnalysis : ForwardDataFlowAnalysis<PointsToAnalysisData, PointsToBlockAnalysisResult, PointsToAbstractValue>
     {
         /// <summary>
@@ -16,6 +14,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
         {
             public static PointsToAbstractValueDomain Default = new PointsToAbstractValueDomain();
             private readonly SetAbstractDomain<AbstractLocation> _locationsDomain = new SetAbstractDomain<AbstractLocation>();
+            private readonly SetAbstractDomain<IOperation> _lValueCapturesDomain = new SetAbstractDomain<IOperation>();
 
             private PointsToAbstractValueDomain() { }
 
@@ -28,9 +27,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 Debug.Assert(oldValue != null);
                 Debug.Assert(newValue != null);
 
-                if (ReferenceEquals(oldValue, newValue) ||
-                    oldValue.Kind.IsInvalidOrUndefined() ||
-                    newValue.Kind.IsInvalidOrUndefined())
+                if (ReferenceEquals(oldValue, newValue))
                 {
                     return 0;
                 }
@@ -38,13 +35,14 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 if (oldValue.Kind == newValue.Kind)
                 {
                     int locationsCompareResult = _locationsDomain.Compare(oldValue.Locations, newValue.Locations);
+                    int lValueCapturesCompareResult = _lValueCapturesDomain.Compare(oldValue.LValueCapturedOperations, newValue.LValueCapturedOperations);
                     var nullCompareResult = NullAbstractValueDomain.Default.Compare(oldValue.NullState, newValue.NullState);
-                    if (locationsCompareResult > 0 || nullCompareResult > 0)
+                    if (locationsCompareResult > 0 || lValueCapturesCompareResult > 0 || nullCompareResult > 0)
                     {
                         Debug.Fail("Non-monotonic Merge function");
                         return 1;
                     }
-                    else if (locationsCompareResult < 0 || nullCompareResult < 0)
+                    else if (locationsCompareResult < 0 || lValueCapturesCompareResult < 0 || nullCompareResult < 0)
                     {
                         return -1;
                     }
@@ -70,27 +68,45 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 Debug.Assert(value1 != null);
                 Debug.Assert(value2 != null);
 
+                PointsToAbstractValue result;
                 if (value1 == value2)
                 {
-                    return value1;
+                    result = value1;
                 }
-                else if (value1.Kind.IsInvalidOrUndefined())
+                else if (value1.Kind == PointsToAbstractValueKind.Invalid)
                 {
-                    return value2;
+                    result = value2;
                 }
-                else if (value2.Kind.IsInvalidOrUndefined())
+                else if (value2.Kind == PointsToAbstractValueKind.Invalid)
                 {
-                    return value1;
+                    result = value1;
+                }
+                else if (value1.Kind == PointsToAbstractValueKind.Undefined)
+                {
+                    result = value2;
+                }
+                else if (value2.Kind == PointsToAbstractValueKind.Undefined)
+                {
+                    result = value1;
                 }
                 else if (value1.Kind == PointsToAbstractValueKind.Unknown ||
                     value2.Kind == PointsToAbstractValueKind.Unknown)
                 {
-                    return PointsToAbstractValue.Unknown;
+                    result = PointsToAbstractValue.Unknown;
                 }
-
-                var mergedLocations = _locationsDomain.Merge(value1.Locations, value2.Locations);
-                var mergedNullState = NullAbstractValueDomain.Default.Merge(value1.NullState, value2.NullState);
-                var result = PointsToAbstractValue.Create(mergedLocations, mergedNullState);
+                else if (value1.Kind == PointsToAbstractValueKind.KnownLValueCaptures)
+                {
+                    Debug.Assert(value2.Kind == PointsToAbstractValueKind.KnownLValueCaptures);
+                    var mergedLValueCaptures = _lValueCapturesDomain.Merge(value1.LValueCapturedOperations, value2.LValueCapturedOperations);
+                    result = PointsToAbstractValue.Create(mergedLValueCaptures);
+                }
+                else
+                {
+                    Debug.Assert(value2.Kind == PointsToAbstractValueKind.KnownLocations);
+                    var mergedLocations = _locationsDomain.Merge(value1.Locations, value2.Locations);
+                    var mergedNullState = NullAbstractValueDomain.Default.Merge(value1.NullState, value2.NullState);
+                    result = PointsToAbstractValue.Create(mergedLocations, mergedNullState);
+                }
 
                 Debug.Assert(Compare(value1, result) <= 0);
                 Debug.Assert(Compare(value2, result) <= 0);

@@ -27,7 +27,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
             if (!_defaultPointsToValueMapBuilder.TryGetValue(analysisEntity, out PointsToAbstractValue value))
             {
-                value = analysisEntity.SymbolOpt?.Kind == SymbolKind.Local ?
+                value = analysisEntity.SymbolOpt?.Kind == SymbolKind.Local || analysisEntity.CaptureIdOpt != null ?
                     PointsToAbstractValue.Undefined :
                     PointsToAbstractValue.Create(AbstractLocation.CreateAnalysisEntityDefaultLocation(analysisEntity), mayBeNull: true);
                 _defaultPointsToValueMapBuilder.Add(analysisEntity, value);

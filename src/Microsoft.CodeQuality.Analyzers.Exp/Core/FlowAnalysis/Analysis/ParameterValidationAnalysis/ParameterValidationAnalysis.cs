@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using Microsoft.CodeAnalysis.Operations.ControlFlow;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
 {
@@ -24,7 +23,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
         }
 
         public static ImmutableDictionary<IParameterSymbol, SyntaxNode> GetOrComputeHazardousParameterUsages(
-            IOperation topmostBlock,
+            IBlockOperation topmostBlock,
             Compilation compilation,
             ISymbol owningSymbol,
             bool pessimisticAnalysis = true)
@@ -44,22 +43,23 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
         }
 
         private static ParameterValidationResultWithHazardousUsages GetOrComputeResult(
-            IOperation topmostBlock,
+            IBlockOperation topmostBlock,
             ISymbol owningSymbol,
             WellKnownTypeProvider wellKnownTypeProvider,
             Func<IBlockOperation, IMethodSymbol, ParameterValidationResultWithHazardousUsages> getOrComputeLocationAnalysisResultOpt,
             bool pessimisticAnalysis)
         {
-            var cfg = ControlFlowGraph.Create(topmostBlock);
-            var pointsToAnalysisResult = PointsToAnalysis.PointsToAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider);
-            var copyAnalysisResult = CopyAnalysis.CopyAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, pointsToAnalysisResultOpt: pointsToAnalysisResult);
+            var cfg = SemanticModel.GetControlFlowGraph(topmostBlock);
+            var pointsToAnalysisResult = PointsToAnalysis.PointsToAnalysis.GetOrComputeResult(cfg, topmostBlock, owningSymbol, wellKnownTypeProvider);
+            var copyAnalysisResult = CopyAnalysis.CopyAnalysis.GetOrComputeResult(cfg, topmostBlock, owningSymbol, wellKnownTypeProvider, pointsToAnalysisResultOpt: pointsToAnalysisResult);
             // Do another analysis pass to improve the results from PointsTo and Copy analysis.
-            pointsToAnalysisResult = PointsToAnalysis.PointsToAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, pointsToAnalysisResult, copyAnalysisResult);
-            return GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, pointsToAnalysisResult, getOrComputeLocationAnalysisResultOpt, pessimisticAnalysis);
+            pointsToAnalysisResult = PointsToAnalysis.PointsToAnalysis.GetOrComputeResult(cfg, topmostBlock, owningSymbol, wellKnownTypeProvider, copyAnalysisResult);
+            return GetOrComputeResult(cfg, topmostBlock, owningSymbol, wellKnownTypeProvider, pointsToAnalysisResult, getOrComputeLocationAnalysisResultOpt, pessimisticAnalysis);
         }
 
         private static ParameterValidationResultWithHazardousUsages GetOrComputeResult(
             ControlFlowGraph cfg,
+            IOperation rootOperation,
             ISymbol owningSymbol,
             WellKnownTypeProvider wellKnownTypeProvider,
             DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResult,
@@ -67,12 +67,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
             bool pessimisticAnalysis)
         {
             var operationVisitor = new ParameterValidationDataFlowOperationVisitor(ParameterValidationAbstractValueDomain.Default,
-                owningSymbol, wellKnownTypeProvider, getOrComputeLocationAnalysisResultOpt, pointsToAnalysisResult, pessimisticAnalysis);
+                owningSymbol, wellKnownTypeProvider, cfg, getOrComputeLocationAnalysisResultOpt, pointsToAnalysisResult, pessimisticAnalysis);
             var analysis = new ParameterValidationAnalysis(ParameterValidationAnalysisDomainInstance, operationVisitor);
-            var analysisResult = analysis.GetOrComputeResultCore(cfg, cacheResult: true);
+            var analysisResult = analysis.GetOrComputeResultCore(cfg, rootOperation, cacheResult: true);
 
             var newOperationVisitor = new ParameterValidationDataFlowOperationVisitor(ParameterValidationAbstractValueDomain.Default,
-                    owningSymbol, wellKnownTypeProvider, getOrComputeLocationAnalysisResultOpt, pointsToAnalysisResult, pessimisticAnalysis, trackHazardousParameterUsages: true);
+                    owningSymbol, wellKnownTypeProvider, cfg, getOrComputeLocationAnalysisResultOpt, pointsToAnalysisResult, pessimisticAnalysis, trackHazardousParameterUsages: true);
             var resultBuilder = new DataFlowAnalysisResultBuilder<ParameterValidationAnalysisData>();
             foreach (var block in cfg.Blocks)
             {
@@ -84,6 +84,5 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
         }
 
         internal override ParameterValidationBlockAnalysisResult ToResult(BasicBlock basicBlock, DataFlowAnalysisInfo<ParameterValidationAnalysisData> blockAnalysisData) => new ParameterValidationBlockAnalysisResult(basicBlock, blockAnalysisData);
-        protected override ParameterValidationAnalysisData GetInputData(ParameterValidationBlockAnalysisResult result) => result.InputData;
     }
 }

@@ -1,14 +1,12 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
-using Microsoft.CodeAnalysis.Operations.ControlFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis;
 
@@ -57,7 +55,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Reliability
                     DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> disposeAnalysisResult;
                     if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockContext.OperationBlocks, containingMethod, out disposeAnalysisResult))
                     {
-                        BasicBlock exitBlock = disposeAnalysisResult.ControlFlowGraph.Exit;
+                        BasicBlock exitBlock = disposeAnalysisResult.ControlFlowGraph.GetExit();
                         ImmutableDictionary<AbstractLocation, DisposeAbstractValue> disposeDataAtExit = disposeAnalysisResult[exitBlock].OutputData;
                         foreach (var kvp in disposeDataAtExit)
                         {
@@ -71,7 +69,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Reliability
 
                             if (disposeValue.Kind == DisposeAbstractValueKind.NotDisposed ||
                                 (disposeValue.DisposingOrEscapingOperations.Count > 0 &&
-                                 disposeValue.DisposingOrEscapingOperations.All(d => d.IsInsideCatchClause())))
+                                 disposeValue.DisposingOrEscapingOperations.All(d => d.IsInsideCatchRegion(disposeAnalysisResult.ControlFlowGraph))))
                             {
                                 // CA2000: In method '{0}', call System.IDisposable.Dispose on object created by '{1}' before all references to it are out of scope.
                                 var arg1 = containingMethod.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);

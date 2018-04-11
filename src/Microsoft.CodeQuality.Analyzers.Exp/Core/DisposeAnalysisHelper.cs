@@ -8,7 +8,6 @@ using System.Threading;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
-using Microsoft.CodeAnalysis.Operations.ControlFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
@@ -118,15 +117,15 @@ namespace Microsoft.CodeQuality.Analyzers.Exp
                 IBlockOperation topmostBlock = operationRoot.GetTopmostParentBlock();
                 if (topmostBlock != null)
                 {
-                    var cfg = ControlFlowGraph.Create(topmostBlock);
+                    var cfg = SemanticModel.GetControlFlowGraph(topmostBlock);
 
                     // Invoking an instance method may likely invalidate all the instance field analysis state, i.e.
                     // reference type fields might be re-assigned to point to different objects in the called method.
                     // An optimistic points to analysis assumes that the points to values of instance fields don't change on invoking an instance method.
                     // A pessimistic points to analysis resets all the instance state and assumes the instance field might point to any object, hence has unknown state.
                     // For dispose analysis, we want to perform an optimistic points to analysis as we assume a disposable field is not likely to be re-assigned to a separate object in helper method invocations in Dispose.
-                    pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, _wellKnownTypeProvider, pessimisticAnalysis: false);
-                    disposeAnalysisResult = DisposeAnalysis.GetOrComputeResult(cfg, containingMethod, _wellKnownTypeProvider, _disposeOwnershipTransferLikelyTypes, pointsToAnalysisResult,
+                    pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, _wellKnownTypeProvider, pessimisticAnalysis: false);
+                    disposeAnalysisResult = DisposeAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, _wellKnownTypeProvider, _disposeOwnershipTransferLikelyTypes, pointsToAnalysisResult,
                         trackInstanceFields, out trackedInstanceFieldPointsToMap);
                     return true;
                 }

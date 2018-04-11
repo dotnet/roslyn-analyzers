@@ -5,13 +5,10 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeAnalysis.Operations.ControlFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 {
-    using PointsToAnalysisData = IDictionary<AnalysisEntity, PointsToAbstractValue>;
-
     internal partial class PointsToAnalysis : ForwardDataFlowAnalysis<PointsToAnalysisData, PointsToBlockAnalysisResult, PointsToAbstractValue>
     {
         /// <summary>
@@ -28,9 +25,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 PointsToAbstractValueDomain valueDomain,
                 ISymbol owningSymbol,
                 WellKnownTypeProvider wellKnownTypeProvider,
+                ControlFlowGraph cfg,
                 bool pessimisticAnalysis,
                 DataFlowAnalysisResult<CopyBlockAnalysisResult, CopyAbstractValue> copyAnalysisResultOpt)
-                : base(valueDomain, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, predicateAnalysis: true, copyAnalysisResultOpt: copyAnalysisResultOpt, pointsToAnalysisResultOpt: null)
+                : base(valueDomain, owningSymbol, wellKnownTypeProvider, cfg, pessimisticAnalysis, predicateAnalysis: true, copyAnalysisResultOpt: copyAnalysisResultOpt, pointsToAnalysisResultOpt: null)
             {
                 _defaultPointsToValueGenerator = defaultPointsToValueGenerator;
                 _pointsToAnalysisDomain = pointsToAnalysisDomain;
@@ -38,10 +36,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
             public override PointsToAnalysisData Flow(IOperation statement, BasicBlock block, PointsToAnalysisData input)
             {
-                if (input != null)
+                // Ensure PointsTo value is set for the "this" or "Me" instance.
+                if (input != null && !HasAbstractValue(AnalysisEntityFactory.ThisOrMeInstance))
                 {
-                    // Always set the PointsTo value for the "this" or "Me" instance.
-                    input[AnalysisEntityFactory.ThisOrMeInstance] = ThisOrMePointsToAbstractValue;
+                    input.SetAbstactValue(AnalysisEntityFactory.ThisOrMeInstance, ThisOrMePointsToAbstractValue);
                 }
 
                 return base.Flow(statement, block, input);
@@ -55,18 +53,20 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
                 // Ensure we skip duplicates.
                 var defaultPointsToEntities = builder.ToSet();
-                foreach (var key in CurrentAnalysisData.Keys)
+                foreach (var key in CurrentAnalysisData.CoreAnalysisData.Keys)
                 {
                     if (!defaultPointsToEntities.Contains(key))
                     {
                         builder.Add(key);
                     }
                 }
-
             }
+
             protected override bool IsPointsToAnalysis => true;
 
-            protected override bool HasAbstractValue(AnalysisEntity analysisEntity) => CurrentAnalysisData.ContainsKey(analysisEntity);
+            protected override bool HasAbstractValue(AnalysisEntity analysisEntity) => CurrentAnalysisData.HasAbstractValue(analysisEntity);
+
+            protected override void StopTrackingEntity(AnalysisEntity analysisEntity) => CurrentAnalysisData.RemoveEntries(analysisEntity);
 
             protected override PointsToAbstractValue GetAbstractValue(AnalysisEntity analysisEntity)
             {
@@ -87,6 +87,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
             protected override PointsToAbstractValue GetAbstractDefaultValue(ITypeSymbol type) => !ShouldBeTracked(type) ? PointsToAbstractValue.NoLocation : PointsToAbstractValue.NullLocation;
 
+            protected override bool HasAnyAbstractValue(PointsToAnalysisData data) => data.HasAnyAbstractValue;
+
             protected override void SetAbstractValue(AnalysisEntity analysisEntity, PointsToAbstractValue value)
             {
                 SetAbstractValue(CurrentAnalysisData, analysisEntity, value);
@@ -101,14 +103,19 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             {
                 if (ShouldBeTracked(analysisEntity.Type))
                 {
-                    analysisData[analysisEntity] = value;
+                    analysisData.SetAbstactValue(analysisEntity, value);
                 }
             }
 
-            private static void SetAbstractValueFromPredicate(PointsToAnalysisData analysisData, AnalysisEntity analysisEntity, IOperation operation, NullAbstractValue nullState)
+            private static void SetAbstractValueFromPredicate(
+                AnalysisEntity analysisEntity,
+                IOperation operation,
+                NullAbstractValue nullState,
+                PointsToAnalysisData sourceAnalysisData,
+                PointsToAnalysisData targetAnalysisData)
             {
                 Debug.Assert(IsValidValueForPredicateAnalysis(nullState) || nullState == NullAbstractValue.Invalid);
-                if (analysisData.TryGetValue(analysisEntity, out PointsToAbstractValue existingValue))
+                if (sourceAnalysisData.TryGetValue(analysisEntity, out PointsToAbstractValue existingValue))
                 {
                     PointsToAbstractValue newPointsToValue;
                     switch (nullState)
@@ -129,7 +136,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                             throw new InvalidProgramException();
                     }
 
-                    analysisData[analysisEntity] = newPointsToValue;
+                    targetAnalysisData.SetAbstactValue(analysisEntity, newPointsToValue);
                 }
             }
 
@@ -148,7 +155,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 // Do not escape the PointsTo value for parameter at exit.
             }
 
-            protected override void ResetCurrentAnalysisData(PointsToAnalysisData newAnalysisDataOpt = null) => ResetAnalysisData(CurrentAnalysisData, newAnalysisDataOpt);
+            protected override void ResetCurrentAnalysisData() => CurrentAnalysisData.Reset(ValueDomain.UnknownOrMayBeValue);
 
             protected override PointsToAbstractValue ComputeAnalysisValueForReferenceOperation(IOperation operation, PointsToAbstractValue defaultValue)
             {
@@ -176,6 +183,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             }
 
             #region Predicate analysis
+            protected override PointsToAnalysisData GetEmptyAnalysisDataForPredicateAnalysis() => new PointsToAnalysisData();
+
             private static bool IsValidValueForPredicateAnalysis(NullAbstractValue value)
             {
                 switch (value)
@@ -192,60 +201,68 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             protected override PredicateValueKind SetValueForEqualsOrNotEqualsComparisonOperator(
                 IOperation leftOperand,
                 IOperation rightOperand,
-                PointsToAnalysisData negatedCurrentAnalysisData,
                 bool equals,
-                bool isReferenceEquality)
+                bool isReferenceEquality,
+                PointsToAnalysisData targetAnalysisData)
             {
                 var predicateValueKind = PredicateValueKind.Unknown;
 
                 // Handle "a == null" and "a != null"
-                if (SetValueForComparisonOperator(leftOperand, rightOperand, negatedCurrentAnalysisData, equals, ref predicateValueKind))
+                if (SetValueForComparisonOperator(leftOperand, rightOperand, equals, ref predicateValueKind, targetAnalysisData))
                 {
                     return predicateValueKind;
                 }
 
                 // Otherwise, handle "null == a" and "null != a"
-                SetValueForComparisonOperator(rightOperand, leftOperand, negatedCurrentAnalysisData, equals, ref predicateValueKind);
+                SetValueForComparisonOperator(rightOperand, leftOperand, equals, ref predicateValueKind, targetAnalysisData);
                 return predicateValueKind;
             }
 
-            private bool SetValueForComparisonOperator(IOperation target, IOperation assignedValue, PointsToAnalysisData negatedCurrentAnalysisData, bool equals, ref PredicateValueKind predicateValueKind)
+            protected override PredicateValueKind SetValueForIsNullComparisonOperator(IOperation leftOperand, bool equals, PointsToAnalysisData targetAnalysisData)
             {
-                NullAbstractValue value = GetNullAbstractValue(assignedValue);
+                var predicateValueKind = PredicateValueKind.Unknown;
+                SetValueForComparisonOperator(leftOperand, value: NullAbstractValue.Null, equals: equals, predicateValueKind: ref predicateValueKind, targetAnalysisData: targetAnalysisData);
+                return predicateValueKind;
+            }
+
+            private bool SetValueForComparisonOperator(
+                IOperation target,
+                IOperation assignedValueOperation,
+                bool equals,
+                ref PredicateValueKind predicateValueKind,
+                PointsToAnalysisData targetAnalysisData)
+            {
+                NullAbstractValue value = GetNullAbstractValue(assignedValueOperation);
+                return SetValueForComparisonOperator(target, value, equals, ref predicateValueKind, targetAnalysisData);
+            }
+
+            private bool SetValueForComparisonOperator(
+                IOperation target,
+                NullAbstractValue value,
+                bool equals,
+                ref PredicateValueKind predicateValueKind,
+                PointsToAnalysisData targetAnalysisData)
+            {
                 if (IsValidValueForPredicateAnalysis(value) &&
                     AnalysisEntityFactory.TryCreate(target, out AnalysisEntity targetEntity))
                 {
-                    bool inferInCurrentAnalysisData = true;
-                    bool inferInNegatedCurrentAnalysisData = true;
-                    if (value == NullAbstractValue.NotNull)
-                    {
-                        // Comparison with a non-null value guarantees that we can infer result in only one of the branches.
-                        // For example, predicate "a == c", where we know 'c' is non-null, guarantees 'a' is non-null in CurrentAnalysisData,
-                        // but we cannot infer anything about nullness of 'a' in NegatedCurrentAnalysisData.
-                        if (equals)
-                        {
-                            inferInNegatedCurrentAnalysisData = false;
-                        }
-                        else
-                        {
-                            inferInCurrentAnalysisData = false;
-                        }
-                    }
+                    // Comparison with a non-null value guarantees that we can infer result in only one of the branches.
+                    // For example, predicate "a == c", where we know 'c' is non-null, guarantees 'a' is non-null in CurrentAnalysisData,
+                    bool inferInTargetAnalysisData = !(value == NullAbstractValue.NotNull && !equals);
 
                     CopyAbstractValue copyValue = GetCopyAbstractValue(target);
                     if (copyValue.Kind == CopyAbstractValueKind.Known)
                     {
-                        Debug.Assert(copyValue.AnalysisEntities.Contains(targetEntity));
                         foreach (var analysisEntity in copyValue.AnalysisEntities)
                         {
-                            SetValueFromPredicate(analysisEntity, value, negatedCurrentAnalysisData, equals,
-                                inferInCurrentAnalysisData, inferInNegatedCurrentAnalysisData, target, ref predicateValueKind);
+                            SetValueFromPredicate(analysisEntity, value, equals, inferInTargetAnalysisData,
+                                target, ref predicateValueKind, sourceAnalysisData:CurrentAnalysisData, targetAnalysisData: targetAnalysisData);
                         }
                     }
                     else
                     {
-                        SetValueFromPredicate(targetEntity, value, negatedCurrentAnalysisData, equals,
-                            inferInCurrentAnalysisData, inferInNegatedCurrentAnalysisData, target, ref predicateValueKind);
+                        SetValueFromPredicate(targetEntity, value, equals, inferInTargetAnalysisData,
+                            target, ref predicateValueKind, sourceAnalysisData: CurrentAnalysisData, targetAnalysisData: targetAnalysisData);
                     }
 
                     return true;
@@ -254,15 +271,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 return false;
             }
 
-            private void SetValueFromPredicate(
+            private static void SetValueFromPredicate(
                 AnalysisEntity key,
                 NullAbstractValue value,
-                PointsToAnalysisData negatedCurrentAnalysisData,
                 bool equals,
-                bool inferInCurrentAnalysisData,
-                bool inferInNegatedCurrentAnalysisData,
+                bool inferInTargetAnalysisData,
                 IOperation target,
-                ref PredicateValueKind predicateValueKind)
+                ref PredicateValueKind predicateValueKind,
+                PointsToAnalysisData sourceAnalysisData,
+                PointsToAnalysisData targetAnalysisData)
             {
                 // Compute the negated value.
                 NullAbstractValue negatedValue = NegatePredicateValue(value);
@@ -270,7 +287,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 // Check if the key already has an existing "Null" or "NotNull" NullState that would make the condition always true or false.
                 // If so, set the predicateValueKind to always true/false, set the value in branch that can never be taken to NullAbstractValue.Invalid
                 // and turn off value inference in one of the branch.
-                if (CurrentAnalysisData.TryGetValue(key, out PointsToAbstractValue existingPointsToValue))
+                if (sourceAnalysisData.TryGetValue(key, out PointsToAbstractValue existingPointsToValue))
                 {
                     NullAbstractValue existingNullValue = existingPointsToValue.NullState;
                     if (IsValidValueForPredicateAnalysis(existingNullValue) &&
@@ -281,7 +298,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                         {
                             predicateValueKind = PredicateValueKind.AlwaysTrue;
                             negatedValue = NullAbstractValue.Invalid;
-                            inferInCurrentAnalysisData = false;
+                            inferInTargetAnalysisData = false;
                         }
 
                         if (negatedValue == existingNullValue && equals ||
@@ -289,7 +306,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                         {
                             predicateValueKind = PredicateValueKind.AlwaysFalse;
                             value = NullAbstractValue.Invalid;
-                            inferInNegatedCurrentAnalysisData = false;
                         }
                     }
                 }
@@ -305,16 +321,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                     }
                 }
 
-                if (inferInCurrentAnalysisData)
+                if (inferInTargetAnalysisData)
                 {
                     // Set value for the CurrentAnalysisData.
-                    SetAbstractValueFromPredicate(CurrentAnalysisData, key, target, value);
-                }
-
-                if (inferInNegatedCurrentAnalysisData)
-                {
-                    // Set negated value for the NegatedCurrentAnalysisData.
-                    SetAbstractValueFromPredicate(negatedCurrentAnalysisData, key, target, negatedValue);
+                    SetAbstractValueFromPredicate(key, target, value, sourceAnalysisData, targetAnalysisData);
                 }
             }
 
@@ -344,9 +354,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             protected override PointsToAnalysisData MergeAnalysisDataForBackEdge(PointsToAnalysisData forwardEdgeAnalysisData, PointsToAnalysisData backEdgeAnalysisData)
                 => _pointsToAnalysisDomain.MergeAnalysisDataForBackEdge(forwardEdgeAnalysisData, backEdgeAnalysisData, GetChildAnalysisEntities);
             protected override PointsToAnalysisData GetClonedAnalysisData(PointsToAnalysisData analysisData)
-                => GetClonedAnalysisDataHelper(analysisData);
+                => (PointsToAnalysisData)analysisData.Clone();
             protected override bool Equals(PointsToAnalysisData value1, PointsToAnalysisData value2)
-                => EqualsHelper(value1, value2);
+                => value1.Equals(value2);
             #endregion
 
             #region Visitor methods
@@ -376,18 +386,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 }
 
                 return ValueDomain.UnknownOrMayBeValue;
-            }
-
-            public override PointsToAbstractValue VisitCoalesce(ICoalesceOperation operation, object argument)
-            {
-                var value = base.VisitCoalesce(operation, argument);
-                var rightNullValue = GetNullAbstractValue(operation.WhenNull);
-                if (rightNullValue == NullAbstractValue.NotNull)
-                {
-                    value = value.MakeNonNull(operation);
-                }
-
-                return value;
             }
 
             public override PointsToAbstractValue VisitAwait(IAwaitOperation operation, object argument)
@@ -470,7 +468,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 {
                     IOperation objectCreation = operation.GetCreation();
                     PointsToAbstractValue objectCreationLocation = GetCachedAbstractValue(objectCreation);
-                    Debug.Assert(objectCreationLocation.Kind == PointsToAbstractValueKind.Known);
+                    Debug.Assert(objectCreationLocation.Kind == PointsToAbstractValueKind.KnownLocations);
                     Debug.Assert(objectCreationLocation.Locations.Count == 1);
 
                     PointsToAbstractValue memberInstanceLocation = PointsToAbstractValue.Create(AbstractLocation.CreateAllocationLocation(operation, memberReference.Type), mayBeNull: false);
@@ -536,9 +534,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 return PointsToAbstractValue.NoLocation;
             }
 
-            public override PointsToAbstractValue VisitBinaryOperator_NonConditional(IBinaryOperation operation, object argument)
+            public override PointsToAbstractValue VisitBinaryOperatorCore(IBinaryOperation operation, object argument)
             {
-                var _ = base.VisitBinaryOperator_NonConditional(operation, argument);
+                var _ = base.VisitBinaryOperatorCore(operation, argument);
                 return PointsToAbstractValue.Unknown;
             }
 
@@ -551,12 +549,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             public override PointsToAbstractValue VisitTypeOf(ITypeOfOperation operation, object argument)
             {
                 var _ = base.VisitTypeOf(operation, argument);
-                return PointsToAbstractValue.NoLocation;
-            }
-
-            public override PointsToAbstractValue VisitThrowCore(IThrowOperation operation, object argument)
-            {
-                var _ = base.VisitThrowCore(operation, argument);
                 return PointsToAbstractValue.NoLocation;
             }
 
@@ -600,7 +592,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                 }
 
                 NullAbstractValue referenceOrInstanceValue = referenceOrInstance != null ? GetNullAbstractValue(referenceOrInstance) : NullAbstractValue.NotNull;
-                return referenceOrInstanceValue == NullAbstractValue.Null ? NullAbstractValue.Null : defaultValue;
+                switch (referenceOrInstanceValue)
+                {
+                    case NullAbstractValue.Invalid:
+                    case NullAbstractValue.Null:
+                        return referenceOrInstanceValue;
+
+                    default:
+                        return defaultValue;
+                }
             }
 
             private PointsToAbstractValue GetValueBasedOnInstanceOrReferenceValue(IOperation referenceOrInstance, IOperation operation, PointsToAbstractValue defaultValue)
@@ -613,6 +613,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
                     case NullAbstractValue.Null:
                         return defaultValue.MakeNull();
+
+                    case NullAbstractValue.Invalid:
+                        return PointsToAbstractValue.Invalid;
 
                     default:
                         return defaultValue;
@@ -683,6 +686,31 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
                     {
                         value = value.MakeMayBeNull();
                     }
+                }
+
+                return value;
+            }
+
+            public override PointsToAbstractValue VisitFlowCapture(IFlowCaptureOperation operation, object argument)
+            {
+                var value = base.VisitFlowCapture(operation, argument);
+                if (IsLValueFlowCapture(operation.Id) &&
+                    AnalysisEntityFactory.TryCreate(operation, out AnalysisEntity flowCaptureEntity))
+                {
+                    value = PointsToAbstractValue.Create(operation.Value);
+                    SetAbstractValue(flowCaptureEntity, value);
+                }
+
+                return value;
+            }
+
+            public override PointsToAbstractValue VisitFlowCaptureReference(IFlowCaptureReferenceOperation operation, object argument)
+            {
+                var value = base.VisitFlowCaptureReference(operation, argument);
+                if (IsLValueFlowCapture(operation.Id) &&
+                    AnalysisEntityFactory.TryCreate(operation, out AnalysisEntity flowCaptureEntity))
+                {
+                    return GetAbstractValue(flowCaptureEntity);
                 }
 
                 return value;

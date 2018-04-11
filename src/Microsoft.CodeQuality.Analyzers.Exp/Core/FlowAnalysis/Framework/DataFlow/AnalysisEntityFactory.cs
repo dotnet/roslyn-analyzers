@@ -158,6 +158,14 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 case IArgumentOperation argument:
                     return TryCreate(argument.Value, out analysisEntity);
 
+                case IFlowCaptureOperation flowCapture:
+                    analysisEntity = AnalysisEntity.Create(flowCapture);
+                    break;
+
+                case IFlowCaptureReferenceOperation flowCaptureReference:
+                    analysisEntity = AnalysisEntity.Create(flowCaptureReference);
+                    break;
+
                 case IDeclarationExpressionOperation declarationExpression:
                     switch (declarationExpression.Expression)
                     {

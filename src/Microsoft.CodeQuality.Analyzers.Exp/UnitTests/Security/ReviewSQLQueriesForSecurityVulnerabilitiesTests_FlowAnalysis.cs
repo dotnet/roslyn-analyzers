@@ -1225,7 +1225,7 @@ End Module",
             GetBasicResultAt(135, 22, "Sub Adapter1.New(cmd As String, parameter2 As String)", "M1"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1669")]
         public void FlowAnalysis_ForLoop_NonConstant_Diagnostic()
         {
             VerifyCSharp($@"
@@ -2303,7 +2303,7 @@ End Class",
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1674")]
         public void FlowAnalysis_PointsTo_ReferenceTypeAllocationAndInitializer_NoDiagnostic()
         {
             VerifyCSharp($@"
@@ -2437,7 +2437,7 @@ End Class",
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1674")]
         public void FlowAnalysis_PointsTo_ValueTypeAllocationAndInitializer_NoDiagnostic()
         {
             VerifyCSharp($@"
@@ -2510,7 +2510,7 @@ End Class");
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1674")]
         public void FlowAnalysis_PointsTo_ValueTypeAllocationAndInitializer_02_NoDiagnostic()
         {
             VerifyCSharp($@"
@@ -3439,7 +3439,7 @@ End Class",
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1674")]
         public void FlowAnalysis_PointsTo_ReferenceType_ThisInstanceReference_NoDiagnostic()
         {
             VerifyCSharp($@"
@@ -3599,7 +3599,7 @@ End Structure",
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1674")]
         public void FlowAnalysis_PointsTo_ValueType_ThisInstanceReference_NoDiagnostic()
         {
             VerifyCSharp($@"
@@ -5235,7 +5235,7 @@ End Class
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1674")]
         public void FlowAnalysis_PointsTo_ReferenceTypeArray_NoDiagnostic()
         {
             VerifyCSharp($@"
@@ -6270,7 +6270,7 @@ End Module",
             GetBasicResultAt(188, 17, "Sub Command2.New(cmd As String, parameter2 As String)", "M5"));
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1669")]
         public void FlowAnalysis_SwitchStatement()
         {
             VerifyCSharp($@"

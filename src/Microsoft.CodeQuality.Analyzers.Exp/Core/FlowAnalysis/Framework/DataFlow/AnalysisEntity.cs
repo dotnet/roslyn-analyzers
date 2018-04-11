@@ -36,13 +36,14 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             ISymbol symbolOpt,
             ImmutableArray<AbstractIndex> indices,
             SyntaxNode instanceReferenceOperationSyntaxOpt,
+            int? captureIdOpt,
             PointsToAbstractValue location,
             ITypeSymbol type,
             AnalysisEntity parentOpt,
             bool isThisOrMeInstance)
         {
             Debug.Assert(!indices.IsDefault);
-            Debug.Assert(symbolOpt != null || !indices.IsEmpty || instanceReferenceOperationSyntaxOpt != null);
+            Debug.Assert(symbolOpt != null || !indices.IsEmpty || instanceReferenceOperationSyntaxOpt != null || captureIdOpt.HasValue);
             Debug.Assert(location != null);
             Debug.Assert(type != null);
             Debug.Assert(parentOpt == null || parentOpt.Type.HasValueCopySemantics());
@@ -50,6 +51,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             SymbolOpt = symbolOpt;
             Indices = indices;
             InstanceReferenceOperationSyntaxOpt = instanceReferenceOperationSyntaxOpt;
+            CaptureIdOpt = captureIdOpt;
             InstanceLocation = location;
             Type = type;
             ParentOpt = parentOpt;
@@ -59,21 +61,27 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         }
 
         private AnalysisEntity(ISymbol symbolOpt, ImmutableArray<AbstractIndex> indices, PointsToAbstractValue location, ITypeSymbol type, AnalysisEntity parentOpt)
-            : this(symbolOpt, indices, instanceReferenceOperationSyntaxOpt: null, location: location, type: type, parentOpt: parentOpt, isThisOrMeInstance: false)
+            : this(symbolOpt, indices, instanceReferenceOperationSyntaxOpt: null, captureIdOpt: null, location: location, type: type, parentOpt: parentOpt, isThisOrMeInstance: false)
         {
             Debug.Assert(symbolOpt != null || !indices.IsEmpty);
         }
 
         private AnalysisEntity(IInstanceReferenceOperation instanceReferenceOperation, PointsToAbstractValue location)
             : this(symbolOpt: null, indices: ImmutableArray<AbstractIndex>.Empty, instanceReferenceOperationSyntaxOpt: instanceReferenceOperation.Syntax,
-                  location: location, type: instanceReferenceOperation.Type, parentOpt: null, isThisOrMeInstance: false)
+                  captureIdOpt: null, location: location, type: instanceReferenceOperation.Type, parentOpt: null, isThisOrMeInstance: false)
         {
             Debug.Assert(instanceReferenceOperation != null);
         }
 
+        private AnalysisEntity(int captureId, ITypeSymbol capturedType)
+            : this(symbolOpt: null, indices: ImmutableArray<AbstractIndex>.Empty, instanceReferenceOperationSyntaxOpt: null,
+                  captureIdOpt: captureId, location: PointsToAbstractValue.NoLocation, type: capturedType, parentOpt: null, isThisOrMeInstance: false)
+        {
+        }
+
         private AnalysisEntity(INamedTypeSymbol namedType, PointsToAbstractValue location, bool isThisOrMeInstance)
             : this(symbolOpt: namedType, indices: ImmutableArray<AbstractIndex>.Empty, instanceReferenceOperationSyntaxOpt: null,
-                  location: location, type: namedType, parentOpt: null, isThisOrMeInstance: isThisOrMeInstance)
+                  captureIdOpt: null, location: location, type: namedType, parentOpt: null, isThisOrMeInstance: isThisOrMeInstance)
         {
         }
 
@@ -96,6 +104,20 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return new AnalysisEntity(instanceReferenceOperation, instanceLocation);
         }
 
+        public static AnalysisEntity Create(IFlowCaptureOperation flowCaptureOperation)
+        {
+            Debug.Assert(flowCaptureOperation != null);
+
+            return new AnalysisEntity(flowCaptureOperation.Id, flowCaptureOperation.Value.Type);
+        }
+
+        public static AnalysisEntity Create(IFlowCaptureReferenceOperation flowCaptureReferenceOperation)
+        {
+            Debug.Assert(flowCaptureReferenceOperation != null);
+
+            return new AnalysisEntity(flowCaptureReferenceOperation.Id, flowCaptureReferenceOperation.Type);
+        }
+
         public static AnalysisEntity CreateThisOrMeInstance(INamedTypeSymbol typeSymbol, PointsToAbstractValue instanceLocation)
         {
             Debug.Assert(typeSymbol != null);
@@ -114,7 +136,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             Debug.Assert(!InstanceLocation.Equals(analysisEntityToMerge.InstanceLocation));
 
             var mergedInstanceLocation = PointsToAnalysis.PointsToAnalysis.PointsToAbstractValueDomainInstance.Merge(InstanceLocation, analysisEntityToMerge.InstanceLocation);
-            return new AnalysisEntity(SymbolOpt, Indices, InstanceReferenceOperationSyntaxOpt, mergedInstanceLocation, Type, ParentOpt, IsThisOrMeInstance);
+            return new AnalysisEntity(SymbolOpt, Indices, InstanceReferenceOperationSyntaxOpt, CaptureIdOpt, mergedInstanceLocation, Type, ParentOpt, IsThisOrMeInstance);
         }
 
         public bool IsChildOrInstanceMember
@@ -150,6 +172,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         public ISymbol SymbolOpt { get; }
         public ImmutableArray<AbstractIndex> Indices { get; }
         public SyntaxNode InstanceReferenceOperationSyntaxOpt { get; }
+        public int? CaptureIdOpt { get; }
         public PointsToAbstractValue InstanceLocation { get; }
         public ITypeSymbol Type { get; }
         public AnalysisEntity ParentOpt { get; }
@@ -165,9 +188,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         {
             var hashCode = HashUtilities.Combine(SymbolOpt?.GetHashCode() ?? 0,
                 HashUtilities.Combine(InstanceReferenceOperationSyntaxOpt?.GetHashCode() ?? 0,
+                HashUtilities.Combine(CaptureIdOpt?.GetHashCode() ?? 0,
                 HashUtilities.Combine(Type.GetHashCode(),
                 HashUtilities.Combine(ParentOpt?.GetHashCode() ?? 0,
-                HashUtilities.Combine(IsThisOrMeInstance.GetHashCode(), Indices.Length.GetHashCode())))));
+                HashUtilities.Combine(IsThisOrMeInstance.GetHashCode(), Indices.Length.GetHashCode()))))));
 
             foreach (AbstractIndex index in Indices)
             {

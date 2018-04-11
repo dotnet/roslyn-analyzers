@@ -2402,7 +2402,7 @@ public class Test
             // VB has no local functions.
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1676")]
         public void LocalFunction_HazardousUsagesInBody_NoDiagnostic()
         {
             VerifyCSharp(@"
@@ -2477,7 +2477,7 @@ Public Class Test
 End Class");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1676")]
         public void Lambda_HazardousUsagesInBody_NoDiagnostic()
         {
             VerifyCSharp(@"

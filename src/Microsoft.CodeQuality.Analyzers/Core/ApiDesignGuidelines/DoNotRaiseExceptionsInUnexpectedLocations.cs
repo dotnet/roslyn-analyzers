@@ -15,8 +15,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     /// <summary>
     /// CA1065: Do not raise exceptions in unexpected locations
     /// </summary>
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer : DiagnosticAnalyzer
+    public abstract class DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1065";
 
@@ -102,7 +101,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         if (thrownExceptionType != null && thrownExceptionType.DerivesFrom(exceptionType))
                         {
                             // If no exceptions are allowed or if the thrown exceptions is not an allowed one..
-                            if (methodCategory.AllowedExceptions.IsEmpty || !methodCategory.AllowedExceptions.Contains(thrownExceptionType))
+                            if (methodCategory.AllowedExceptions.IsEmpty || !methodCategory.AllowedExceptions.Any(n => IsAssignableTo(thrownExceptionType, n, compilation)))
                             {
                                 operationContext.ReportDiagnostic(
                                     operationContext.Operation.Syntax.CreateDiagnostic(methodCategory.Rule, methodSymbol.Name, thrownExceptionType.Name));
@@ -112,6 +111,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 });
             });
         }
+
+        protected abstract bool IsAssignableTo(ITypeSymbol fromSymbol, ITypeSymbol toSymbol, Compilation compilation);
 
         /// <summary>
         /// This object describes a class of methods where exception throwing statements should be analyzed.

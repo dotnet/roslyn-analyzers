@@ -55,7 +55,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 diagnostic);
         }
 
-        private async Task<Document> ImplementMissingMembersAsync(
+        private static async Task<Document> ImplementMissingMembersAsync(
             SyntaxNode declaration,
             INamedTypeSymbol typeSymbol,
             Document document,

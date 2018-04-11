@@ -229,7 +229,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static bool IsEqualsOverrideOrInterfaceImplementation(IMethodSymbol method, Compilation compilation)
         {
-            return method.IsEqualsOverride() || IsEqualsInterfaceImplementation(method, compilation);
+            return method.IsObjectEqualsOverride() || IsEqualsInterfaceImplementation(method, compilation);
         }
 
         /// <summary>

@@ -177,7 +177,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         var value = (string)constructorArguments[i].Value;
                         string classDisplayString = attributeData.AttributeClass.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat);
-                        if (value.Equals(string.Empty, StringComparison.Ordinal))
+                        if (value.Length == 0)
                         {
                             reportDiagnostic(syntax.CreateDiagnostic(EmptyRule,
                                 classDisplayString,
@@ -209,7 +209,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     var value = (string)(namedArgument.Value.Value);
                     string classDisplayString = attributeData.AttributeClass.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat);
-                    if (value.Equals(string.Empty, StringComparison.Ordinal))
+                    if (value.Length == 0)
                     {
                         reportDiagnostic(syntax.CreateDiagnostic(EmptyRule,
                             classDisplayString,

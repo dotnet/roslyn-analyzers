@@ -13,12 +13,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new UseNameofInPlaceOfStringAnalyzer();
+            return new BasicUseNameofInPlaceOfStringAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new UseNameofInPlaceOfStringAnalyzer();
+            return new CSharpUseNameofInPlaceOfStringAnalyzer();
 
         }
 

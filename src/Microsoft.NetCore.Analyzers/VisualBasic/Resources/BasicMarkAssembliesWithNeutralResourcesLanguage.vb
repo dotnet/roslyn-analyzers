@@ -29,7 +29,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Resources
                 End Sub, SyntaxKind.Attribute)
         End Sub
 
-        Private Function CheckBasicAttribute(node As SyntaxNode) As Boolean
+        Private Shared Function CheckBasicAttribute(node As SyntaxNode) As Boolean
             Dim attribute = TryCast(node, AttributeSyntax)
             Return (attribute?.Name?.GetLastToken().Text.Equals(GeneratedCodeAttribute, StringComparison.Ordinal) = True AndAlso
                 attribute.ArgumentList.Arguments.Count > 0).GetValueOrDefault()

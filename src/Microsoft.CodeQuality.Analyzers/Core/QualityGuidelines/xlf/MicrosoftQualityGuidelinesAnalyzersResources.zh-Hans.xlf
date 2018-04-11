@@ -77,21 +77,6 @@
         <target state="translated">成员 {0} 不访问实例数据，可标记为 static (在 Visual Basic 中为 Shared)</target>
         <note />
       </trans-unit>
-      <trans-unit id="DisposeObjectsBeforeLosingScopeTitle">
-        <source>Dispose Objects Before Losing Scope</source>
-        <target state="translated">超出范围前释放对象</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DisposeObjectsBeforeLosingScopeDescription">
-        <source>Because an exceptional event might occur that will prevent the finalizer of an object from running, the object should be explicitly disposed before all references to it are out of scope.</source>
-        <target state="translated">由于可能会发生阻止某一对象的终结器运行的意外事件，因此在对该对象的所有引用超出范围之前，应显式释放该对象。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DisposeObjectsBeforeLosingScopeMessage">
-        <source>Dispose Objects Before Losing Scope</source>
-        <target state="translated">超出范围前释放对象</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ReviewVisibleEventHandlersTitle">
         <source>Review visible event handlers</source>
         <target state="translated">检查可见的事件处理程序</target>

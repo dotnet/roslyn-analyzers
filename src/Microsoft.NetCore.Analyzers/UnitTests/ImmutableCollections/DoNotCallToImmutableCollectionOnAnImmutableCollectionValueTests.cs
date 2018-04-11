@@ -3,6 +3,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
+using Test.Utilities.MinimalImplementations;
 using Xunit;
 
 namespace Microsoft.NetCore.Analyzers.ImmutableCollections.UnitTests
@@ -201,7 +202,7 @@ class C
         p3.To{collectionName}();
     }}
 }}
-", MinimalImmutableCollectionsSource.CSharp },
+", ImmutableCollectionsSource.CSharp },
                 ReferenceFlags.RemoveImmutable,
                 // Test0.cs(18,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
                 GetCSharpResultAt(17, 9, collectionName),
@@ -225,7 +226,7 @@ Class C
 		p3.To{collectionName}()
 	End Sub
 End Class
-", MinimalImmutableCollectionsSource.Basic },
+", ImmutableCollectionsSource.Basic },
                 ReferenceFlags.RemoveImmutable,
                 // Test0.vb(14,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
                 GetBasicResultAt(14, 3, collectionName),
@@ -257,7 +258,7 @@ class C
         p3.To{collectionName}();
     }}
 }}
-", MinimalImmutableCollectionsSource.CSharp },
+", ImmutableCollectionsSource.CSharp },
                 ReferenceFlags.RemoveImmutable,
                 // Test0.cs(18,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
                 GetCSharpResultAt(17, 9, collectionName),
@@ -281,7 +282,7 @@ Class C
 		p3.To{collectionName}()
 	End Sub
 End Class
-", MinimalImmutableCollectionsSource.Basic },
+", ImmutableCollectionsSource.Basic },
                 ReferenceFlags.RemoveImmutable,
                 // Test0.vb(14, 3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
                 GetBasicResultAt(14, 3, collectionName),

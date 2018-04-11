@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -41,6 +42,24 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 "PadLeft",
                 "PadRight",
                 "Substring",
+            });
+
+        private static readonly ImmutableHashSet<string> s_nUnitMethodNames = ImmutableHashSet.CreateRange(
+            new[] {
+                "Throws",
+                "Catch",
+                "DoesNotThrow",
+                "ThrowsAsync",
+                "CatchAsync",
+                "DoesNotThrowAsync"
+            });
+
+        private static readonly ImmutableHashSet<string> s_xUnitMethodNames = ImmutableHashSet.Create(
+            new[] {
+                "Throws",
+                "ThrowsAsync",
+                "ThrowsAny",
+                "ThrowsAnyAsync",
             });
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
@@ -110,66 +129,169 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterOperationBlockStartAction(osContext =>
+            analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                var method = osContext.OwningSymbol as IMethodSymbol;
-                if (method == null)
+                INamedTypeSymbol expectedExceptionType = WellKnownTypes.ExpectedException(compilationContext.Compilation);
+                INamedTypeSymbol nunitAssertType = WellKnownTypes.NunitAssert(compilationContext.Compilation);
+                INamedTypeSymbol xunitAssertType = WellKnownTypes.XunitAssert(compilationContext.Compilation);
+
+                compilationContext.RegisterOperationBlockStartAction(osContext =>
                 {
-                    return;
+                    var method = osContext.OwningSymbol as IMethodSymbol;
+                    if (method == null)
+                    {
+                        return;
+                    }
+
+                    osContext.RegisterOperationAction(opContext =>
+                    {
+                        IOperation expression = ((IExpressionStatementOperation)opContext.Operation).Operation;
+                        DiagnosticDescriptor rule = null;
+                        string targetMethodName = null;
+                        switch (expression.Kind)
+                        {
+                            case OperationKind.ObjectCreation:
+                                IMethodSymbol ctor = ((IObjectCreationOperation)expression).Constructor;
+                                if (ctor != null)
+                                {
+                                    rule = ObjectCreationRule;
+                                    targetMethodName = ctor.ContainingType.Name;
+                                }
+                                break;
+
+                            case OperationKind.Invocation:
+                                IInvocationOperation invocationExpression = ((IInvocationOperation)expression);
+                                IMethodSymbol targetMethod = invocationExpression.TargetMethod;
+                                if (targetMethod == null)
+                                {
+                                    break;
+                                }
+
+                                if (IsStringCreatingMethod(targetMethod))
+                                {
+                                    rule = StringCreationRule;
+                                }
+                                else if (IsTryParseMethod(targetMethod))
+                                {
+                                    rule = TryParseRule;
+                                }
+                                else if (IsHResultOrErrorCodeReturningMethod(targetMethod))
+                                {
+                                    rule = HResultOrErrorCodeRule;
+                                }
+                                else if (IsPureMethod(targetMethod, opContext.Compilation))
+                                {
+                                    rule = PureMethodRule;
+                                }
+
+                                targetMethodName = targetMethod.Name;
+                                break;
+                        }
+
+                        if (rule != null)
+                        {
+                            if (ShouldSkipAnalyzing(opContext, expectedExceptionType, xunitAssertType, nunitAssertType))
+                            {
+                                return;
+                            }
+
+                            Diagnostic diagnostic = Diagnostic.Create(rule, expression.Syntax.GetLocation(), method.Name, targetMethodName);
+                            opContext.ReportDiagnostic(diagnostic);
+                        }
+                    }, OperationKind.ExpressionStatement);
+                });
+            });
+        }
+
+        private static bool ShouldSkipAnalyzing(OperationAnalysisContext operationContext, INamedTypeSymbol expectedExceptionType, INamedTypeSymbol xunitAssertType, INamedTypeSymbol nunitAssertType)
+        {
+            bool IsThrowsArgument(IParameterSymbol parameterSymbol, string argumentName, ImmutableHashSet<string> methodNames, INamedTypeSymbol assertSymbol)
+            {
+                return parameterSymbol.Name == argumentName &&
+                       parameterSymbol.ContainingSymbol is IMethodSymbol methodSymbol &&
+                       methodNames.Contains(methodSymbol.Name) &&
+                       methodSymbol.ContainingSymbol == assertSymbol;
+            }
+
+            bool IsNUnitThrowsArgument(IParameterSymbol parameterSymbol)
+            {
+                return IsThrowsArgument(parameterSymbol, "code", s_nUnitMethodNames, nunitAssertType);
+            }
+
+            bool IsXunitThrowsArgument(IParameterSymbol parameterSymbol)
+            {
+                return IsThrowsArgument(parameterSymbol, "testCode", s_xUnitMethodNames, xunitAssertType);
+            }
+
+            // We skip analysis for the last statement in a lambda passed to Assert.Throws/ThrowsAsync (xUnit and NUnit), or the last
+            // statement in a method annotated with [ExpectedException] (MSTest)
+
+            if (expectedExceptionType == null && xunitAssertType == null && nunitAssertType == null)
+            {
+                return false;
+            }
+
+            // Note: We do not attempt to account for a synchronously-running ThrowsAsync with something like return Task.CompletedTask;
+            // as the last line.
+
+            // We only skip analysis if we're in a method
+            if (operationContext.ContainingSymbol.Kind != SymbolKind.Method)
+            {
+                return false;
+            }
+
+            // Get the enclosing block. If that block's parent isn't null (MSTest case) or an IAnonymousFunctionOperation (xUnit/NUnit), then
+            // we bail immediately
+            if (!(operationContext.Operation.Parent is IBlockOperation enclosingBlock))
+            {
+                return false;
+            }
+
+            if (enclosingBlock.Parent != null && enclosingBlock.Parent.Kind != OperationKind.AnonymousFunction)
+            {
+                return false;
+            }
+
+            // Only skip analyzing the last non-implicit statement in the function
+            bool foundBlock = false;
+            foreach (var statement in enclosingBlock.Operations)
+            {
+                if (statement == operationContext.Operation)
+                {
+                    foundBlock = true;
+                }
+                else if (foundBlock)
+                {
+                    if (!statement.IsImplicit)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            // If the parent is Null, we're in the MSTest case. Otherwise, we're in the xUnit/NUnit case.
+            if (enclosingBlock.Parent == null)
+            {
+                if (expectedExceptionType == null)
+                {
+                    return false;
                 }
 
-                osContext.RegisterOperationAction(opContext =>
+                IMethodSymbol methodSymbol = (IMethodSymbol)operationContext.ContainingSymbol;
+
+                return methodSymbol.GetAttributes().Any(attr => attr.AttributeClass == expectedExceptionType);
+            }
+            else
+            {
+                IArgumentOperation argumentOperation = enclosingBlock.GetAncestor<IArgumentOperation>(OperationKind.Argument);
+
+                if (argumentOperation == null)
                 {
-                    IOperation expression = ((IExpressionStatementOperation)opContext.Operation).Operation;
-                    DiagnosticDescriptor rule = null;
-                    string targetMethodName = null;
-                    switch (expression.Kind)
-                    {
-                        case OperationKind.ObjectCreation:
-                            IMethodSymbol ctor = ((IObjectCreationOperation)expression).Constructor;
-                            if (ctor != null)
-                            {
-                                rule = ObjectCreationRule;
-                                targetMethodName = ctor.ContainingType.Name;
-                            }
-                            break;
+                    return false;
+                }
 
-                        case OperationKind.Invocation:
-                            IInvocationOperation invocationExpression = ((IInvocationOperation)expression);
-                            IMethodSymbol targetMethod = invocationExpression.TargetMethod;
-                            if (targetMethod == null)
-                            {
-                                break;
-                            }
-
-                            if (IsStringCreatingMethod(targetMethod))
-                            {
-                                rule = StringCreationRule;
-                            }
-                            else if (IsTryParseMethod(targetMethod))
-                            {
-                                rule = TryParseRule;
-                            }
-                            else if (IsHResultOrErrorCodeReturningMethod(targetMethod))
-                            {
-                                rule = HResultOrErrorCodeRule;
-                            }
-                            else if (IsPureMethod(targetMethod, opContext.Compilation))
-                            {
-                                rule = PureMethodRule;
-                            }
-
-                            targetMethodName = targetMethod.Name;
-                            break;
-                    }
-
-                    if (rule != null)
-                    {
-                        Diagnostic diagnostic = Diagnostic.Create(rule, expression.Syntax.GetLocation(), method.Name, targetMethodName);
-                        opContext.ReportDiagnostic(diagnostic);
-                    }
-                }, OperationKind.ExpressionStatement);
-            });
+                return IsNUnitThrowsArgument(argumentOperation.Parameter) || IsXunitThrowsArgument(argumentOperation.Parameter);
+            }
         }
 
         private static bool IsStringCreatingMethod(IMethodSymbol method)

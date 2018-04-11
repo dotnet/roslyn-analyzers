@@ -41,7 +41,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
         }
 
-        private Task<Document> MakeSealed(DocumentEditor editor, SyntaxNode declaration)
+        private static Task<Document> MakeSealed(DocumentEditor editor, SyntaxNode declaration)
         {
             DeclarationModifiers modifiers = editor.Generator.GetModifiers(declaration);
             editor.SetModifiers(declaration, modifiers + DeclarationModifiers.Sealed);

@@ -1,5 +1,9 @@
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <SharedNuGetArguments>-NoPackageAnalysis -prop binaries=$(OutDir) -prop authors=$(NuGetAuthors) -prop projectURL=$(NuGetProjectURL) -prop releaseNotes="$(NuGetReleaseNotes)" -prop tags="$(NuGetTags)" -prop licenseURL=$(NuGetLicenseURL) -prop buildName=$(TF_BUILD_BUILDDEFINITIONNAME)</SharedNuGetArguments>
   </PropertyGroup>
   

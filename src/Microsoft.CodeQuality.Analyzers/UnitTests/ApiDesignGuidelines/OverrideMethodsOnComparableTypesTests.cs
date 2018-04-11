@@ -114,7 +114,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             return true;
         }
     }
-", GetCA1036CSharpResultAt(4, 18, "A"));
+", GetCA1036CSharpBothResultAt(4, 18, "A", "<=, >="));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -433,7 +433,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
     }
 ",
-            GetCA1036CSharpResultAt(4, 18, "A"));
+            GetCA1036CSharpBothResultAt(4, 18, "A", "<=, >="));
         }
 
         [Fact]
@@ -470,7 +470,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
     }
 ",
-            GetCA1036CSharpResultAt(4, 18, "A"));
+            GetCA1036CSharpOperatorsResultAt(4, 18, "A", "==, !=, <=, >="));
         }
 
         [Fact]
@@ -507,7 +507,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
     }
 ",
-            GetCA1036CSharpResultAt(4, 19, "A"));
+            GetCA1036CSharpOperatorsResultAt(4, 19, "A", "<, <=, >, >="));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -611,7 +611,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
     }
 ",
-            GetCA1036CSharpResultAt(4, 18, "A"));
+            GetCA1036CSharpOperatorsResultAt(4, 18, "A", "==, !=, <=, >="));
         }
 
         [Fact]
@@ -650,7 +650,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
     }
 ",
-            GetCA1036CSharpResultAt(6, 18, "A"));
+            GetCA1036CSharpOperatorsResultAt(6, 18, "A", "==, !=, <=, >="));
         }
 
         [Fact]
@@ -737,7 +737,7 @@ Public Structure A : Implements IComparable
 
 End Structure
 ",
-            GetCA1036BasicResultAt(4, 18, "A"));
+            GetCA1036BasicBothResultAt(4, 18, "A", "<=, >="));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -1004,7 +1004,7 @@ Public Class A : Implements IComparable
 
 End Class
 ",
-            GetCA1036BasicResultAt(4, 14, "A"));
+            GetCA1036BasicBothResultAt(4, 14, "A", "<=, >="));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -1105,7 +1105,7 @@ Public Class A : Implements IComparable
 
 End Class
 ",
-            GetCA1036BasicResultAt(4, 14, "A"));
+            GetCA1036BasicOperatorsResultAt(4, 14, "A", "=, <>, <=, >="));
         }
 
         [Fact]
@@ -1138,7 +1138,7 @@ Public Structure A : Implements IComparable
 
 End Structure
 ",
-            GetCA1036BasicResultAt(4, 18, "A"));
+            GetCA1036BasicOperatorsResultAt(4, 18, "A", "<, <=, >, >="));
         }
 
         [Fact]
@@ -1171,7 +1171,7 @@ Public Structure A : Implements IComparable(Of Integer)
 
 End Structure
 ",
-            GetCA1036BasicResultAt(4, 18, "A"));
+            GetCA1036BasicOperatorsResultAt(4, 18, "A", "<, <=, >, >="));
         }
 
         [Fact]
@@ -1208,7 +1208,7 @@ Public Structure A : Implements IDerived
 
 End Structure
 ",
-            GetCA1036BasicResultAt(8, 18, "A"));
+            GetCA1036BasicOperatorsResultAt(8, 18, "A", "<, <=, >, >="));
         }
 
         [Fact]
@@ -1227,15 +1227,39 @@ Enum MyEnum
 End Enum");
         }
 
-        private static DiagnosticResult GetCA1036CSharpResultAt(int line, int column, string typeName)
+        private static DiagnosticResult GetCA1036CSharpEqualsResultAt(int line, int column, string typeName)
         {
             var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals, typeName);
             return GetCSharpResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, message);
         }
 
-        private static DiagnosticResult GetCA1036BasicResultAt(int line, int column, string typeName)
+        private static DiagnosticResult GetCA1036BasicEqualsResultAt(int line, int column, string typeName)
         {
             var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals, typeName);
+            return GetBasicResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetCA1036CSharpOperatorsResultAt(int line, int column, string typeName, string operators)
+        {
+            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageOperator, typeName, operators);
+            return GetCSharpResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetCA1036BasicOperatorsResultAt(int line, int column, string typeName, string operators)
+        {
+            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageOperator, typeName, operators);
+            return GetBasicResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetCA1036CSharpBothResultAt(int line, int column, string typeName, string operators)
+        {
+            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageBoth, typeName, operators);
+            return GetCSharpResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetCA1036BasicBothResultAt(int line, int column, string typeName, string operators)
+        {
+            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageBoth, typeName, operators);
             return GetBasicResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, message);
         }
     }

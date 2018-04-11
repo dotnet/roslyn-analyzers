@@ -39,7 +39,7 @@
       </trans-unit>
       <trans-unit id="RemoveUnusedParameterMessage">
         <source>Remove unused parameter</source>
-        <target state="new">Remove unused parameter</target>
+        <target state="translated">Supprimer le paramètre inutilisé</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsTitle">

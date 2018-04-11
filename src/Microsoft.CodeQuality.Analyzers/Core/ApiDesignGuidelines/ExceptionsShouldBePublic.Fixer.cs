@@ -45,7 +45,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             context.RegisterCodeFix(action, diagnostic);
         }
 
-        private async Task<Document> MakePublic(Document document, SyntaxNode classDecl, CancellationToken cancellationToken)
+        private static async Task<Document> MakePublic(Document document, SyntaxNode classDecl, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
 

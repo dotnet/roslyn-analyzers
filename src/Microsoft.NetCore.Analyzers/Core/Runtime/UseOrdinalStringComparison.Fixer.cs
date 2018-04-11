@@ -88,7 +88,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return invocation;
         }
 
-        internal SyntaxNode CreateOrdinalMemberAccess(SyntaxGenerator generator, SemanticModel model)
+        internal static SyntaxNode CreateOrdinalMemberAccess(SyntaxGenerator generator, SemanticModel model)
         {
             INamedTypeSymbol stringComparisonType = WellKnownTypes.StringComparison(model.Compilation);
             return generator.MemberAccessExpression(
@@ -96,7 +96,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 generator.IdentifierName(UseOrdinalStringComparisonAnalyzer.OrdinalText));
         }
 
-        protected bool CanAddStringComparison(IMethodSymbol methodSymbol, SemanticModel model)
+        protected static bool CanAddStringComparison(IMethodSymbol methodSymbol, SemanticModel model)
         {
             if (WellKnownTypes.StringComparison(model.Compilation) == null)
             {

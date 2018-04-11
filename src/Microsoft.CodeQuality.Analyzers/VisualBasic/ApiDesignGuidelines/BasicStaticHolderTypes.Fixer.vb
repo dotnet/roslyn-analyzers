@@ -50,7 +50,7 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
             End If
         End Function
 
-        Private Function AddNotInheritableKeyword(document As Document, root As SyntaxNode, classStatement As ClassStatementSyntax) As Task(Of Document)
+        Private Shared Function AddNotInheritableKeyword(document As Document, root As SyntaxNode, classStatement As ClassStatementSyntax) As Task(Of Document)
             Dim notInheritableKeyword = SyntaxFactory.Token(SyntaxKind.NotInheritableKeyword).WithAdditionalAnnotations(Formatter.Annotation)
             Dim newClassStatement = classStatement.AddModifiers(notInheritableKeyword)
             Dim newRoot = root.ReplaceNode(classStatement, newClassStatement)

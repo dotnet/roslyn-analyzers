@@ -193,15 +193,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 return missingBits;
             }
-            else if (!IsPowerOfTwo(powersOfTwo + 1))
-            {
-                // All values are powers of two, but one of the powers of two in the sequence is missing.
-                // Example: { 1, 2, 4, 16 }, value missing is "8".
-                // Compute the missing powers of two.
-                var highestSetBit = (ulong)Math.Log(powersOfTwo, 2);
-                var nextPowerOfTwo = (ulong)Math.Pow(2, highestSetBit + 1);
-                return nextPowerOfTwo - (powersOfTwo + 1);
-            }
 
             return 0;
         }

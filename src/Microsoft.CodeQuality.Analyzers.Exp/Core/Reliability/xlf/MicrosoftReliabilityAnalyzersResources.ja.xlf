@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ja" original="../MicrosoftReliabilityAnalyzersResources.resx">
+    <body>
+      <trans-unit id="DisposeObjectsBeforeLosingScopeDescription">
+        <source>If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</source>
+        <target state="translated">破棄可能なオブジェクトは、自身へのすべての参照がスコープ外になる前に明示的に破棄されなかった場合、ガベージ コレクターがそのオブジェクトのファイナライザーを実行した際に不特定の時点で破棄されます。ただし例外的なイベントが起こってオブジェクトのファイナライザーの実行が妨げられる場合もあるため、オブジェクトの破棄は明示的に行ってください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposeObjectsBeforeLosingScopeMessage">
+        <source>In method '{0}', call System.IDisposable.Dispose on object created by '{1}' before all references to it are out of scope.</source>
+        <target state="translated">メソッド '{0}' では、'{1}' によって作成されたオブジェクトに対するすべての参照がスコープ外になる前に、そのオブジェクトの System.IDisposable.Dispose() を呼び出してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposeObjectsBeforeLosingScopeTitle">
+        <source>Dispose objects before losing scope</source>
+        <target state="translated">スコープ外になる前にオブジェクトを破棄する</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

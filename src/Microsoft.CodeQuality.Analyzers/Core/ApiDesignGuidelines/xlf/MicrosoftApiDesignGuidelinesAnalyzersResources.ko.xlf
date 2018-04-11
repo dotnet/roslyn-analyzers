@@ -102,14 +102,9 @@
         <target state="translated">클래스는 System.IDisposable 형식인 인스턴스 필드를 선언하고 구현하지만, IDisposable을 구현하지 않습니다. IDisposable 필드를 선언하는 클래스는 관리되지 않는 리소스를 간접적으로 소유하며, IDisposable 인터페이스를 구현해야 합니다.</target>
         <note />
       </trans-unit>
-      <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageDependsOnFix">
-        <source>Implement IDisposable on {0} because it creates members of the following IDisposable types: {1}. If {0} has previously shipped, adding new members that implement IDisposable to this type is considered a breaking change to existing consumers.</source>
-        <target state="translated">IDisposable 형식 {1}의 멤버가 만들어지므로 {0}에 IDisposable을 구현하세요. {0}이(가) 이전에 제공된 경우 이 형식에 IDisposable을 구현하는 새 멤버를 추가하면 기존 소비자는 이를 새로운 변경 사항으로 인식합니다.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
-        <source>Type '{0}' owns disposable fields but is not disposable</source>
-        <target state="translated">삭제 가능한 필드가 있는 '{0}' 형식을 삭제할 수 없습니다.</target>
+        <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
+        <target state="translated">삭제 가능한 필드 '{1}'이(가) 있는 '{0}' 형식을 삭제할 수 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">
@@ -293,8 +288,8 @@
         <note />
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesMessage">
-        <source>Interface methods should be callable by child types</source>
-        <target state="translated">인터페이스 메서드는 자식 형식에서 호출할 수 있어야 합니다.</target>
+        <source>Make '{0}' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of '{1}' and is visible to derived classes.</source>
+        <target state="translated">{0}을(를) sealed로 설정(이 클래스가 이전에 함께 제공된 경우 새롭게 변경)하거나, 메서드를 비명시적으로 구현하거나, '{1}'의 기능을 노출하여 파생 클래스에 표시하는 새 메서드를 구현하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesTitle">
@@ -313,9 +308,9 @@
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageOperator">
-        <source>{0} should define operator '{1}' since it implements IComparable.</source>
+        <source>{0} should define operator(s) '{1}' since it implements IComparable.</source>
         <target state="translated">{0}은(는) IComparable을 구현하므로 연산자 '{1}'을(를) 정의해야 합니다.</target>
-        <note />
+        <note>1 is a comma-separated list</note>
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassTitle">
         <source>Move pinvokes to native methods class</source>
@@ -395,21 +390,6 @@
       <trans-unit id="DoNotMarkEnumsWithFlagsMessage">
         <source>Do not mark enums with FlagsAttribute</source>
         <target state="translated">FlagsAttribute로 열거형을 표시하지 마세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityTitle">
-        <source>Do not decrease inherited member visibility</source>
-        <target state="translated">상속된 멤버 표시 유형을 줄이지 마세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityDescription">
-        <source>You should not change the access modifier for inherited members. Changing an inherited member to private does not prevent callers from accessing the base class implementation of the method.</source>
-        <target state="translated">상속된 멤버의 액세스 한정자를 변경하지 않아야 합니다. 상속된 멤버를 private으로 변경해도 호출자는 메서드의 기본 클래스 구현에 액세스할 수 있습니다.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityMessage">
-        <source>Do not decrease inherited member visibility</source>
-        <target state="translated">상속된 멤버 표시 유형을 줄이지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesTitle">
@@ -1432,11 +1412,6 @@
         <target state="translated">.ConfigureAwait(false)를 추가하세요.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityCodeFix">
-        <source>Increase visibility for '{0}'</source>
-        <target state="translated">'{0}'의 표시 수준을 높이세요.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
         <source>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</source>
         <target state="translated">형식 T가 Object.Equals(개체)를 재정의하면 비교 작업을 수행하기 전에 구현에서 개체 인수를 올바른 형식 T로 캐스팅해야 합니다. 형식이 IEquatable&lt;T&gt;를 구현하여 메서드 T.Equals(T)를 제공하고, 인수가 컴파일 시간에 형식 T라고 알려진 경우 컴파일러가 Object.Equals(개체) 대신 IEquatable&lt;T&gt;.Equals(T)를 호출할 수 있으며 성능을 향상하는 캐스팅이 요구되지 않습니다.</target>
@@ -1469,33 +1444,38 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
         <source>Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="new">Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</target>
+        <target state="translated">'{0}'을(를) 제거하고 제네릭 EventHandler로 바꿔 사용하세요(예: EventHandler&lt;T&gt;, 여기서 T는 유효한 EventArgs임).</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
         <source>A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="new">A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</target>
+        <target state="translated">형식이 void를 반환하는 대리자를 포함하며 이 형식의 시그니처는 매개 변수 2개(개체 및 EventArgs에 할당할 수 있는 형식) 및 포함하는 어셈블리 대상 Microsoft .NET Framework 2.0을 포함합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
         <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="new">Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</target>
+        <target state="translated">이벤트 '{0}'을(를) 제네릭 EventHandler를 사용하여 형식 '{1}'(으)로 바꾸세요(예: EventHandler&lt;T&gt;, 여기서 T는 유효한 EventArgs임).</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">
         <source>A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.</source>
-        <target state="new">A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.</target>
+        <target state="translated">public 또는 protected 이벤트를 처리하는 대리자에 올바른 시그니처, 반환 형식 또는 매개 변수 이름이 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Message">
         <source>Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</source>
-        <target state="new">Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</target>
+        <target state="translated">Event MyEvent As EventHandler(Of MyEventArgs)와 같이 이벤트 형식을 명시적으로 정의하여 제네릭 EventHandler를 사용하도록 이벤트 '{0}'을(를) 변경하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Description">
         <source>A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="new">A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</target>
+        <target state="translated">형식이 void를 반환하는 EventHandler 대리자를 선언하는 이벤트를 포함하며 이 형식의 시그니처는 매개 변수 2개(개체 및 EventArgs에 할당할 수 있는 형식) 및 포함하는 어셈블리 대상 Microsoft .NET Framework 2.0을 포함합니다.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="OverrideMethodsOnComparableTypesMessageBoth">
+        <source>{0} should define operator(s) '{1}' and Equals since it implements IComparable.</source>
+        <target state="translated">{0}은(는) IComparable을 구현하므로 '{1}' 및 같음 연산자를 정의해야 합니다.</target>
+        <note>1 is a comma-separated list</note>
       </trans-unit>
     </body>
   </file>

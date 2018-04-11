@@ -16,9 +16,7 @@ namespace Microsoft.NetFramework.Analyzers
     /// Secure DTD processing and entity resolution in XML
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-#pragma warning disable RS1001 // Missing diagnostic analyzer attribute.
     public sealed class DoNotUseInsecureDtdProcessingAnalyzer : DiagnosticAnalyzer
-#pragma warning restore RS1001 // Missing diagnostic analyzer attribute.
     {
         internal const string RuleId = "CA3075";
         private const string HelpLink = "http://aka.ms/CA3075";
@@ -30,7 +28,7 @@ namespace Microsoft.NetFramework.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleDoNotUseInsecureDtdProcessing);
 
-        private void RegisterAnalyzer(OperationBlockStartAnalysisContext context, CompilationSecurityTypes types, Version frameworkVersion)
+        private static void RegisterAnalyzer(OperationBlockStartAnalysisContext context, CompilationSecurityTypes types, Version frameworkVersion)
         {
             var analyzer = new OperationAnalyzer(types, frameworkVersion);
             context.RegisterOperationAction(

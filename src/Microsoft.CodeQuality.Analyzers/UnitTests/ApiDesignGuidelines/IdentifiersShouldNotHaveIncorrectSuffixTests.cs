@@ -689,6 +689,153 @@ End Class");
         }
 
         [Fact]
+        public void CA1711_CSharp_NoDiagnostic_TypeImplementsGenericIDictionary()
+        {
+            VerifyCSharp(
+@"using System;
+using System.Collections;
+using System.Collections.Generic;
+
+public class MyGenericDictionary : IDictionary<string, string>
+{
+    public string this[string key]
+    {
+        get { return null; }
+        set { }
+    }
+
+    public int Count => 0;
+    public bool IsReadOnly => true;
+    public ICollection<string> Keys => null;
+    public ICollection<string> Values => null;
+    public void Add(string key, string value) { }
+    public void Add(KeyValuePair<string, string> item) { }
+    public void Clear() { }
+    public void CopyTo(KeyValuePair<string, string>[] array, int index) { }
+
+    public bool Remove(string key) 
+    { 
+        return false;
+    }
+
+    public bool Remove(KeyValuePair<string, string> item) 
+    { 
+        return false;
+    }
+
+    public bool TryGetValue(string key, out string value)
+    {
+        value = null;
+        return false;
+    }
+
+    public bool Contains(KeyValuePair<string, string> item)
+    {
+        return false;
+    }
+
+    public bool ContainsKey(string key)
+    {
+        return false;
+    }
+
+    public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+    {
+        return null;
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return null;
+    }
+}");
+        }
+
+        [Fact]
+        public void CA1711_Basic_NoDiagnostic_TypeImplementsGenericIDictionary()
+        {
+            VerifyBasic(
+@"Imports System.Collections
+Imports System.Collections.Generic
+
+Public Class MyGenericDictionary
+    Implements IDictionary(Of String, String)
+
+    Default Public Property Item(key As String) As String Implements IDictionary(Of String, String).Item
+        Get
+            Return Nothing
+        End Get
+        Set(value As String)
+        End Set
+    End Property
+
+    Public ReadOnly Property Count As Integer Implements ICollection(Of KeyValuePair(Of String, String)).Count
+        Get
+            Return 0
+        End Get
+    End Property
+
+    Public ReadOnly Property IsReadOnly As Boolean Implements ICollection(Of KeyValuePair(Of String, String)).IsReadOnly
+        Get
+            Return True
+        End Get
+    End Property
+
+    Public ReadOnly Property Keys As ICollection(Of String) Implements IDictionary(Of String, String).Keys
+        Get
+            Return Nothing
+        End Get
+    End Property
+
+    Public ReadOnly Property Values As ICollection(Of String) Implements IDictionary(Of String, String).Values
+        Get
+            Return Nothing
+        End Get
+    End Property
+
+    Public Sub Add(key As String, value As String) Implements IDictionary(Of String, String).Add
+    End Sub
+
+    Public Sub Add(item As KeyValuePair(Of String, String)) Implements ICollection(Of KeyValuePair(Of String, String)).Add
+    End Sub
+
+    Public Sub Clear() Implements ICollection(Of KeyValuePair(Of String, String)).Clear
+    End Sub
+
+    Public Sub CopyTo(array() As KeyValuePair(Of String, String), arrayIndex As Integer) Implements ICollection(Of KeyValuePair(Of String, String)).CopyTo
+    End Sub
+
+    Public Function Remove(key As String) As Boolean Implements IDictionary(Of String, String).Remove
+        Return False
+    End Function
+
+    Public Function Remove(item As KeyValuePair(Of String, String)) As Boolean Implements ICollection(Of KeyValuePair(Of String, String)).Remove
+        Return False
+    End Function
+
+    Public Function TryGetValue(key As String, ByRef value As String) As Boolean Implements IDictionary(Of String, String).TryGetValue
+        Return False
+    End Function
+
+    Public Function Contains(item As KeyValuePair(Of String, String)) As Boolean Implements ICollection(Of KeyValuePair(Of String, String)).Contains
+        Return False
+    End Function
+
+    Public Function ContainsKey(key As String) As Boolean Implements IDictionary(Of String, String).ContainsKey
+        Return False
+    End Function
+
+    Public Function GetEnumerator() As IEnumerator(Of KeyValuePair(Of String, String)) Implements IEnumerable(Of KeyValuePair(Of String, String)).GetEnumerator
+        Return Nothing
+    End Function
+
+    Private Function IEnumerable_GetEnumerator() As IEnumerator Implements IEnumerable.GetEnumerator
+        Return Nothing
+    End Function
+End Class");
+        }
+
+        [Fact]
         public void CA1711_CSharp_NoDiagnostic_TypeImplementsNonGenericIDictionary()
         {
             VerifyCSharp(

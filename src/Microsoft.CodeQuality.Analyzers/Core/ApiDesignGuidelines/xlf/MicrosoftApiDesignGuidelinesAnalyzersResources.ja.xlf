@@ -102,14 +102,9 @@
         <target state="translated">クラスが System.IDisposable 型であるインスタンス フィールドを宣言および実装していますが、IDisposable を実装していません。IDisposable フィールドを宣言するクラスは間接的にアンマネージ リソースを所有しているため、IDisposable インターフェイスを実装する必要があります。</target>
         <note />
       </trans-unit>
-      <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageDependsOnFix">
-        <source>Implement IDisposable on {0} because it creates members of the following IDisposable types: {1}. If {0} has previously shipped, adding new members that implement IDisposable to this type is considered a breaking change to existing consumers.</source>
-        <target state="translated">次の IDisposable 型のメンバーを作成するため、IDisposable を {0} で実装します: {1}。{0} が以前に出荷されている場合、IDisposable を実装する新しいメンバーを追加することは、既存のコンシューマーにとって重大な変更になります。</target>
-        <note />
-      </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
-        <source>Type '{0}' owns disposable fields but is not disposable</source>
-        <target state="translated">型 '{0}' は破棄可能なフィールドを所有しますが、破棄可能ではありません</target>
+        <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
+        <target state="translated">型 '{0}' は破棄可能なフィールド '{1}' を所有しますが、破棄可能ではありません</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">
@@ -293,8 +288,8 @@
         <note />
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesMessage">
-        <source>Interface methods should be callable by child types</source>
-        <target state="translated">インターフェイス メソッドは、子型によって呼び出し可能でなければなりません</target>
+        <source>Make '{0}' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of '{1}' and is visible to derived classes.</source>
+        <target state="translated">'{0}' をシールドにするか (このクラスが以前に出荷されている場合は重大な変更)、メソッドを非明示的に実装するか、'{1}' の機能を公開して派生クラスに表示される新しいメソッドを実装します。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesTitle">
@@ -313,9 +308,9 @@
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageOperator">
-        <source>{0} should define operator '{1}' since it implements IComparable.</source>
+        <source>{0} should define operator(s) '{1}' since it implements IComparable.</source>
         <target state="translated">{0} は、IComparable を実装しているため、演算子 '{1}' を定義しなければなりません。</target>
-        <note />
+        <note>1 is a comma-separated list</note>
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassTitle">
         <source>Move pinvokes to native methods class</source>
@@ -395,21 +390,6 @@
       <trans-unit id="DoNotMarkEnumsWithFlagsMessage">
         <source>Do not mark enums with FlagsAttribute</source>
         <target state="translated">列挙型を FlagsAttribute に設定しません</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityTitle">
-        <source>Do not decrease inherited member visibility</source>
-        <target state="translated">継承されたメンバーの参照範囲を縮小しません</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityDescription">
-        <source>You should not change the access modifier for inherited members. Changing an inherited member to private does not prevent callers from accessing the base class implementation of the method.</source>
-        <target state="translated">継承されたメンバーのアクセス修飾子は変更しないでください。継承されたメンバーをプライベートに変更しても、呼び出し元がメソッドの基底クラスの実装にアクセスできなくなることはありません。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityMessage">
-        <source>Do not decrease inherited member visibility</source>
-        <target state="translated">継承されたメンバーの参照範囲を縮小しません</target>
         <note />
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesTitle">
@@ -1432,11 +1412,6 @@
         <target state="translated">.ConfigureAwait(false) を追加します</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityCodeFix">
-        <source>Increase visibility for '{0}'</source>
-        <target state="translated">'{0}' の可視性を向上させます</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
         <source>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</source>
         <target state="translated">型 T が Object.Equals(object) をオーバーライドする場合、実装では、比較を実行する前に、オブジェクト引数を正しい型 T にキャストする必要があります。型が IEquatable&lt;T&gt; を実装し、メソッド T.Equals(T) を提供する場合、および引数がコンパイル時に型 T であることがわかる場合、コンパイラは、Object.Equals(object) の代わりに IEquatable&lt;T&gt;.Equals(T) を呼び出すことができます。この場合、キャストが不要になり、パフォーマンスが向上します。</target>
@@ -1469,33 +1444,38 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
         <source>Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="new">Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</target>
+        <target state="translated">'{0}' を削除し、その使用を汎用 EventHandler で置き換えます。例: EventHandler&lt;T&gt; (T は有効な EventArgs)</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
         <source>A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="new">A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</target>
+        <target state="translated">型に void を返すデリゲートが含まれており、デリゲートのシグネチャに 2 つのパラメーター (1 つはオブジェクト、もう 1 つは EventArgs に割り当て可能な型) が含まれ、包含アセンブリの対象が .NET Framework 2.0 です。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
         <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="new">Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</target>
+        <target state="translated">イベント '{0}' を変更し、型 '{1}' を汎用 EventHandler で置き換えます。例: EventHandler&lt;T&gt; (T は有効な EventArgs)</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">
         <source>A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.</source>
-        <target state="new">A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.</target>
+        <target state="translated">公開イベントまたは保護されたイベントを処理するデリゲートに正しいシグネチャがないか、型またはパラメーター名を返します。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Message">
         <source>Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</source>
-        <target state="new">Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</target>
+        <target state="translated">汎用 EventHandler を使用するために、イベント型を明示的に定義して、イベント '{0}' を変更します。例: Event MyEvent As EventHandler(Of MyEventArgs)</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Description">
         <source>A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="new">A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</target>
+        <target state="translated">型に void を返す EventHandler デリゲートを宣言するイベントが含まれており、デリゲートのシグネチャに 2 つのパラメーター (1 つはオブジェクト、もう 1 つは EventArgs に割り当て可能な型) が含まれ、包含アセンブリの対象が .NET Framework 2.0 です。</target>
         <note />
+      </trans-unit>
+      <trans-unit id="OverrideMethodsOnComparableTypesMessageBoth">
+        <source>{0} should define operator(s) '{1}' and Equals since it implements IComparable.</source>
+        <target state="translated">{0} は、IComparable を実装しているため、演算子 '{1}' と Equals を定義しなければなりません。</target>
+        <note>1 is a comma-separated list</note>
       </trans-unit>
     </body>
   </file>

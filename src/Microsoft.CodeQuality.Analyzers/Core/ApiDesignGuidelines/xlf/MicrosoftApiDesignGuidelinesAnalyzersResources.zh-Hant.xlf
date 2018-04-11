@@ -102,14 +102,9 @@
         <target state="translated">類別會宣告及實作類型為 System.IDisposable 的執行個體欄位，且該類別不會實作 IDisposable。宣告 IDisposable 欄位的類別會間接擁有非受控資源，且應實作 IDisposable 介面。</target>
         <note />
       </trans-unit>
-      <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageDependsOnFix">
-        <source>Implement IDisposable on {0} because it creates members of the following IDisposable types: {1}. If {0} has previously shipped, adding new members that implement IDisposable to this type is considered a breaking change to existing consumers.</source>
-        <target state="translated">因為 {0} 它會建立下列 IDisposable 類型的成員，所以請於其上實作 IDisposable: {1}。若先前已送出 {0}，則對這個類型新增實作 IDisposable 的新成員，會被視為現有消費者的中斷變更。</target>
-        <note />
-      </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
-        <source>Type '{0}' owns disposable fields but is not disposable</source>
-        <target state="translated">類型 '{0}' 擁有可處置的欄位，但其本身並非可處置</target>
+        <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
+        <target state="translated">類型 '{0}' 擁有可處置的欄位 '{1}' 但其本身並非可處置項目</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">
@@ -293,8 +288,8 @@
         <note />
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesMessage">
-        <source>Interface methods should be callable by child types</source>
-        <target state="translated">介面方法應可由子類型呼叫</target>
+        <source>Make '{0}' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of '{1}' and is visible to derived classes.</source>
+        <target state="translated">密封 {0} (若先前已發佈這個類別則為中斷變更)、以非明確的方式實作方法，或是實作會公開 '{1}' 功能並向衍生類別顯示的新方法。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesTitle">
@@ -313,9 +308,9 @@
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageOperator">
-        <source>{0} should define operator '{1}' since it implements IComparable.</source>
-        <target state="translated">{0} 因為會實作 IComparable，所以應會定義運算子 '{1}'。</target>
-        <note />
+        <source>{0} should define operator(s) '{1}' since it implements IComparable.</source>
+        <target state="translated">因為 {0} 會實作 IComparable，所以應定義運算子 '{1}'。</target>
+        <note>1 is a comma-separated list</note>
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassTitle">
         <source>Move pinvokes to native methods class</source>
@@ -395,21 +390,6 @@
       <trans-unit id="DoNotMarkEnumsWithFlagsMessage">
         <source>Do not mark enums with FlagsAttribute</source>
         <target state="translated">請勿將列舉標記為 FlagsAttribute</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityTitle">
-        <source>Do not decrease inherited member visibility</source>
-        <target state="translated">請勿降低繼承成員的可見度</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityDescription">
-        <source>You should not change the access modifier for inherited members. Changing an inherited member to private does not prevent callers from accessing the base class implementation of the method.</source>
-        <target state="translated">您不應變更繼承成員的存取修飾詞。將繼承成員變更為私用，並不會讓呼叫者無法存取方法的基底類別實作。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityMessage">
-        <source>Do not decrease inherited member visibility</source>
-        <target state="translated">請勿降低繼承成員的可見度</target>
         <note />
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesTitle">
@@ -1432,11 +1412,6 @@
         <target state="translated">附加 .ConfigureAwait(false)</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityCodeFix">
-        <source>Increase visibility for '{0}'</source>
-        <target state="translated">增加 '{0}' 的可見度</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
         <source>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</source>
         <target state="translated">當類型 T 覆寫 Object.Equals(object) 時，實作必須先將物件引數轉換為正確的類型 T，然後再執行比較。若類型會實作 IEquatable&lt;T&gt;，因而提供方法 T.Equals(T)，且若引數在編譯期間已知為類型 T，則編譯器可以呼叫 IEquatable&lt;T&gt;.Equals(T) 而不是呼叫 Object.Equals(object)，且無須任何轉換，因此提高了效能。</target>
@@ -1469,33 +1444,38 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
         <source>Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="new">Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</target>
+        <target state="translated">請移除 '{0}' 並以泛型 EventHandler 取代其使用方式，例如 EventHandler&lt;T&gt;，其中 T 為有效的 EventArgs</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
         <source>A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="new">A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</target>
+        <target state="translated">類型包含傳回 void 的委派，其簽章包含兩個參數 (第一個參數是物件，第二個參數則是可指派給 EventArgs 的類型)，而內含的組件則以 Microsoft .NET Framework 2.0 為目標。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
         <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="new">Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</target>
+        <target state="translated">變更事件 '{0}' 以使用泛型 EventHandler 取代類型 '{1}'，例如 EventHandler&lt;T&gt;，其中 T 為有效的 EventArgs</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">
         <source>A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.</source>
-        <target state="new">A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.</target>
+        <target state="translated">處理公開或受保護事件的委派沒有正確的簽章、傳回類型或參數名稱。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Message">
         <source>Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</source>
-        <target state="new">Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</target>
+        <target state="translated">明確定義事件類型，以將事件 '{0}' 變更為使用泛型 EventHandler，例如 Event MyEvent As EventHandler(Of MyEventArgs)。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Description">
         <source>A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="new">A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</target>
+        <target state="translated">類型包含的事件會宣告傳回 void 的 EventHandler 委派，其簽章內含兩個參數 (第一個為物件，第二個為可指派至 EventArgs 的類型)，而內含的組件則以 Microsoft .NET Framework 2.0 為目標。</target>
         <note />
+      </trans-unit>
+      <trans-unit id="OverrideMethodsOnComparableTypesMessageBoth">
+        <source>{0} should define operator(s) '{1}' and Equals since it implements IComparable.</source>
+        <target state="translated">因為 {0} 會實作 IComparable，所以應定義運算子 '{1}' 與等於。</target>
+        <note>1 is a comma-separated list</note>
       </trans-unit>
     </body>
   </file>

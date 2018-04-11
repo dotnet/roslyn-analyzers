@@ -71,7 +71,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             context.RegisterCodeFix(CodeAction.Create(title, c => AddMethodAsync(context.Document, context.Span, methodNode, targetNode, uriType, c), equivalenceKey: title), context.Diagnostics);
         }
 
-        private async Task<Document> AddMethodAsync(Document document, TextSpan span, SyntaxNode methodNode, SyntaxNode targetNode, INamedTypeSymbol uriType, CancellationToken cancellationToken)
+        private static async Task<Document> AddMethodAsync(Document document, TextSpan span, SyntaxNode methodNode, SyntaxNode targetNode, INamedTypeSymbol uriType, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
@@ -111,7 +111,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return generator.ReplaceNode(original, originalParameters[parameterIndex], newParameter);
         }
 
-        private int GetParameterIndex(IMethodSymbol methodSymbol, SyntaxTree tree, TextSpan span)
+        private static int GetParameterIndex(IMethodSymbol methodSymbol, SyntaxTree tree, TextSpan span)
         {
             for (var i = 0; i < methodSymbol.Parameters.Length; i++)
             {

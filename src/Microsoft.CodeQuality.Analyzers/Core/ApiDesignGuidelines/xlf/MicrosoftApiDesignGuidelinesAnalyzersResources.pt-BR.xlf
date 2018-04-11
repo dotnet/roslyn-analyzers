@@ -102,14 +102,9 @@
         <target state="translated">Uma classe declara e implementa um campo de instância que é um tipo System.IDisposable e a classe não implementa IDisposable. Uma classe que declara um campo IDisposable é proprietária indireta de um recurso não gerenciado e deve implementar a interface IDisposable.</target>
         <note />
       </trans-unit>
-      <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageDependsOnFix">
-        <source>Implement IDisposable on {0} because it creates members of the following IDisposable types: {1}. If {0} has previously shipped, adding new members that implement IDisposable to this type is considered a breaking change to existing consumers.</source>
-        <target state="translated">Implemente IDisposable em {0} porque ele cria membros dos seguintes tipos IDisposable: {1}. Se {0} tiver sido enviado anteriormente, a adição de novos membros que implementem IDisposable a esse tipo será considerada uma alteração interruptiva para os consumidores existentes.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
-        <source>Type '{0}' owns disposable fields but is not disposable</source>
-        <target state="translated">O tipo '{0}' tem campos descartáveis, mas não é descartável</target>
+        <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
+        <target state="translated">O tipo '{0}' tem campos descartáveis '{1}', mas não é descartável</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">
@@ -293,8 +288,8 @@
         <note />
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesMessage">
-        <source>Interface methods should be callable by child types</source>
-        <target state="translated">Métodos de interface devem poder ser chamados por tipos filho</target>
+        <source>Make '{0}' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of '{1}' and is visible to derived classes.</source>
+        <target state="translated">Torne '{0}' selado (uma alteração significativa se essa classe foi fornecida anteriormente), implemente o método de forma não explícita ou implemente um novo método que expõe a funcionalidade de '{1}' e é visível para todas as classes derivadas.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesTitle">
@@ -313,9 +308,9 @@
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageOperator">
-        <source>{0} should define operator '{1}' since it implements IComparable.</source>
-        <target state="translated">{0} deve definir o operador '{1}', pois implementa IComparable.</target>
-        <note />
+        <source>{0} should define operator(s) '{1}' since it implements IComparable.</source>
+        <target state="translated">{0} deve definir os operadores '{1}', pois implementa IComparable.</target>
+        <note>1 is a comma-separated list</note>
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassTitle">
         <source>Move pinvokes to native methods class</source>
@@ -395,21 +390,6 @@
       <trans-unit id="DoNotMarkEnumsWithFlagsMessage">
         <source>Do not mark enums with FlagsAttribute</source>
         <target state="translated">Não marcar enums com FlagsAttribute</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityTitle">
-        <source>Do not decrease inherited member visibility</source>
-        <target state="translated">Não diminuir a visibilidade dos membros herdados</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityDescription">
-        <source>You should not change the access modifier for inherited members. Changing an inherited member to private does not prevent callers from accessing the base class implementation of the method.</source>
-        <target state="translated">Você não deve alterar o modificador de acesso para membros herdados. Alterar um membro herdado para privado não impede os chamadores de acessar a implementação da classe base do método.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityMessage">
-        <source>Do not decrease inherited member visibility</source>
-        <target state="translated">Não diminuir a visibilidade dos membros herdados</target>
         <note />
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesTitle">
@@ -1432,11 +1412,6 @@
         <target state="translated">Acrescentar .ConfigureAwait(false)</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotDecreaseInheritedMemberVisibilityCodeFix">
-        <source>Increase visibility for '{0}'</source>
-        <target state="translated">Aumentar a visibilidade para '{0}'</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
         <source>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</source>
         <target state="translated">Quando um tipo T substitui Object.Equals(object), a implementação deve transmitir o argumento de objeto para o tipo T correto antes de realizar a comparação. Se o tipo implementar IEquatable&lt;T&gt; e, portanto, oferecer o método T.Equals(T) e, se o argumento for conhecido no tempo de compilação como sendo do tipo T, então o compilador poderá chamar IEquatable&lt;T&gt;.Equals(T) em vez de Object.Equals(object) e nenhuma transmissão será necessária, melhorando o desempenho.</target>
@@ -1469,33 +1444,38 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
         <source>Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="new">Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</target>
+        <target state="translated">Remover '{0}' e substituir seu uso por um EventHandler genérico, por exemplo, EventHandler&lt;T&gt;, em que T é um EventArgs válido</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
         <source>A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="new">A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</target>
+        <target state="translated">Um tipo contém um delegado que retorna void, cuja assinatura contém dois parâmetros (o primeiro é um objeto e o segundo é um tipo atribuível a EventArgs) e o assembly recipiente é direcionado para o Microsoft .NET Framework 2.0.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
         <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="new">Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</target>
+        <target state="translated">Alterar o evento '{0}' para substituir o tipo '{1}' por um EventHandler genérico, por exemplo, EventHandler&lt;T&gt;, em que T é um EventArgs válido</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">
         <source>A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.</source>
-        <target state="new">A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.</target>
+        <target state="translated">Um representante que manipula um evento público ou protegido não tem a assinatura, o tipo de retorno ou os nomes de parâmetro corretos.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Message">
         <source>Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</source>
-        <target state="new">Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</target>
+        <target state="translated">Altere o evento '{0}' para usar um EventHandler genérico definindo o tipo de evento de forma explícita, por exemplo, Evento MyEvent como EventHandler(Of MyEventArgs).</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Description">
         <source>A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="new">A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</target>
+        <target state="translated">Um tipo contém um evento que declara um representante EventHandler que retorna nulo, cuja assinatura contém dois parâmetros (o primeiro é um objeto e o segundo é um tipo atribuível a EventArgs), e o assembly recipiente é direcionado ao Microsoft .NET Framework 2.0.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="OverrideMethodsOnComparableTypesMessageBoth">
+        <source>{0} should define operator(s) '{1}' and Equals since it implements IComparable.</source>
+        <target state="translated">{0} deve definir os operadores '{1}' e Equals, pois implementa IComparable.</target>
+        <note>1 is a comma-separated list</note>
       </trans-unit>
     </body>
   </file>

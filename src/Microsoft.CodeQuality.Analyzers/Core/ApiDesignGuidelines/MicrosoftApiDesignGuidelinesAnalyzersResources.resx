@@ -177,11 +177,8 @@
   <data name="TypesThatOwnDisposableFieldsShouldBeDisposableDescription" xml:space="preserve">
     <value>A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.</value>
   </data>
-  <data name="TypesThatOwnDisposableFieldsShouldBeDisposableMessageDependsOnFix" xml:space="preserve">
-    <value>Implement IDisposable on {0} because it creates members of the following IDisposable types: {1}. If {0} has previously shipped, adding new members that implement IDisposable to this type is considered a breaking change to existing consumers.</value>
-  </data>
   <data name="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking" xml:space="preserve">
-    <value>Type '{0}' owns disposable fields but is not disposable</value>
+    <value>Type '{0}' owns disposable field(s) '{1}' but is not disposable</value>
   </data>
   <data name="UseGenericEventHandlerInstancesTitle" xml:space="preserve">
     <value>Use generic event handler instances</value>
@@ -310,7 +307,7 @@
     <value>An unsealed externally visible type provides an explicit method implementation of a public interface and does not provide an alternative externally visible method that has the same name.</value>
   </data>
   <data name="InterfaceMethodsShouldBeCallableByChildTypesMessage" xml:space="preserve">
-    <value>Interface methods should be callable by child types</value>
+    <value>Make '{0}' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of '{1}' and is visible to derived classes.</value>
   </data>
   <data name="OverrideMethodsOnComparableTypesTitle" xml:space="preserve">
     <value>Override methods on comparable types</value>
@@ -322,7 +319,8 @@
     <value>{0} should override Equals since it implements IComparable.</value>
   </data>
   <data name="OverrideMethodsOnComparableTypesMessageOperator" xml:space="preserve">
-    <value>{0} should define operator '{1}' since it implements IComparable.</value>
+    <value>{0} should define operator(s) '{1}' since it implements IComparable.</value>
+    <comment>1 is a comma-separated list</comment>
   </data>
   <data name="MovePInvokesToNativeMethodsClassTitle" xml:space="preserve">
     <value>Move pinvokes to native methods class</value>
@@ -371,15 +369,6 @@
   </data>
   <data name="DoNotMarkEnumsWithFlagsMessage" xml:space="preserve">
     <value>Do not mark enums with FlagsAttribute</value>
-  </data>
-  <data name="DoNotDecreaseInheritedMemberVisibilityTitle" xml:space="preserve">
-    <value>Do not decrease inherited member visibility</value>
-  </data>
-  <data name="DoNotDecreaseInheritedMemberVisibilityDescription" xml:space="preserve">
-    <value>You should not change the access modifier for inherited members. Changing an inherited member to private does not prevent callers from accessing the base class implementation of the method.</value>
-  </data>
-  <data name="DoNotDecreaseInheritedMemberVisibilityMessage" xml:space="preserve">
-    <value>Do not decrease inherited member visibility</value>
   </data>
   <data name="OperatorOverloadsHaveNamedAlternatesTitle" xml:space="preserve">
     <value>Operator overloads have named alternates</value>
@@ -993,9 +982,6 @@
   <data name="AppendConfigureAwaitFalse" xml:space="preserve">
     <value>Append .ConfigureAwait(false)</value>
   </data>
-  <data name="DoNotDecreaseInheritedMemberVisibilityCodeFix" xml:space="preserve">
-    <value>Increase visibility for '{0}'</value>
-  </data>
   <data name="ImplementIEquatableWhenOverridingObjectEqualsDescription" xml:space="preserve">
     <value>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</value>
   </data>
@@ -1013,5 +999,9 @@
   </data>
   <data name="DoNotHideBaseClassMethodsTitle" xml:space="preserve">
     <value>Do not hide base class methods</value>
+  </data>
+  <data name="OverrideMethodsOnComparableTypesMessageBoth" xml:space="preserve">
+    <value>{0} should define operator(s) '{1}' and Equals since it implements IComparable.</value>
+    <comment>1 is a comma-separated list</comment>
   </data>
 </root>

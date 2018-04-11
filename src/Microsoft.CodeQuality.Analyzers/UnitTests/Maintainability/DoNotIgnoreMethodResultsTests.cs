@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
+using Test.Utilities.MinimalImplementations;
 using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
@@ -65,6 +67,110 @@ Public Class C
     End Function
 End Class
 ");
+        }
+
+        [WorkItem(1369, "https://github.com/dotnet/roslyn-analyzers/issues/1369")]
+        [Fact]
+        public void ExpectedExceptionLastLine()
+        {
+            VerifyCSharp(new[] { @"
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+public class Test
+{
+    [ExpectedException]
+    public void ThrowsException()
+    {
+        new Test();
+    }
+}", MSTestAttributes.CSharp });
+
+            VerifyBasic(new[] { @"
+Imports System
+Imports System.Globalization
+Imports Microsoft.VisualStudio.TestTools.UnitTesting
+
+Class C
+    <ExpectedException>
+    Public Sub ThrowsException()
+        Console.WriteLine(Me)
+        Dim sample As String = ""Sample""
+        sample.ToLower(CultureInfo.InvariantCulture)
+    End Sub
+End Class", MSTestAttributes.VisualBasic });
+        }
+
+        [WorkItem(1369, "https://github.com/dotnet/roslyn-analyzers/issues/1369")]
+        [InlineData("Xunit", "Throws", "Exception", true)]
+        [InlineData("Xunit", "ThrowsAny", "Exception", true)]
+        [InlineData("NUnit.Framework", "Throws", "Exception", false)]
+        [InlineData("NUnit.Framework", "Catch", "", false)]
+        [InlineData("NUnit.Framework", "DoesNotThrow", "", false)]
+        [Theory]
+        public void UnitTestingThrows(string @namespace, string method, string generic, bool useXunit)
+        {
+            VerifyCSharp(new[] { $@"
+using System;
+using {@namespace};
+
+public class Test
+{{
+    public void ThrowsException()
+    {{
+        Assert.{method}{(generic.Length == 0 ? string.Empty : $"<{generic}>")}(() => {{ new Test(); }});
+    }}
+}}", useXunit ? XunitApis.CSharp : NUnitApis.CSharp });
+
+            VerifyBasic(new[] { $@"
+Imports System
+Imports System.Globalization
+Imports {@namespace}
+
+Class C
+    Public Sub ThrowsException()
+        Assert.{method}{(generic.Length == 0 ? string.Empty : $"(Of {generic})")}(Sub()
+                                        Dim sample As String = ""Sample""
+                                        sample.ToLower(CultureInfo.InvariantCulture)
+                                    End Sub)
+    End Sub
+End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic });
+        }
+
+        [WorkItem(1369, "https://github.com/dotnet/roslyn-analyzers/issues/1369")]
+        [InlineData("Xunit", "ThrowsAsync", "Exception", true)]
+        [InlineData("Xunit", "ThrowsAnyAsync", "Exception", true)]
+        [InlineData("NUnit.Framework", "ThrowsAsync", "Exception", false)]
+        [InlineData("NUnit.Framework", "CatchAsync", "", false)]
+        [InlineData("NUnit.Framework", "DoesNotThrowAsync", "", false)]
+        [Theory]
+        public void UnitTestingThrowsAsync(string @namespace, string method, string generic, bool useXunit)
+        {
+            VerifyCSharp(new[] { $@"
+using System;
+using System.Threading.Tasks;
+using {@namespace};
+
+public class Test
+{{
+    public void ThrowsException()
+    {{
+        Assert.{method}{(generic.Length == 0 ? string.Empty : $"<{generic}>")}(async () => {{ new Test(); }});
+    }}
+}}", useXunit ? XunitApis.CSharp : NUnitApis.CSharp });
+
+            VerifyBasic(new[] { $@"
+Imports System
+Imports System.Globalization
+Imports {@namespace}
+
+Class C
+    Public Sub ThrowsException()
+        Assert.{method}{(generic.Length == 0 ? string.Empty : $"(Of {generic})")}(Async Function()
+                                        Dim sample As String = ""Sample""
+                                        sample.ToLower(CultureInfo.InvariantCulture)
+                                    End Function)
+    End Sub
+End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic });
         }
 
         #endregion
@@ -288,10 +394,128 @@ End Module
     GetBasicPureMethodResultAt(11, 9, "DoesNotUseResult", "Returns1"));
         }
 
+        [WorkItem(1369, "https://github.com/dotnet/roslyn-analyzers/issues/1369")]
+        [InlineData("Xunit", "Throws", "Exception", true)]
+        [InlineData("Xunit", "ThrowsAny", "Exception", true)]
+        [InlineData("NUnit.Framework", "Throws", "Exception", false)]
+        [InlineData("NUnit.Framework", "Catch", "", false)]
+        [InlineData("NUnit.Framework", "DoesNotThrow", "", false)]
+        [Theory]
+        public void UnitTestingThrows_NotLastLineStillDiagnostic(string @namespace, string method, string generic, bool useXunit)
+        {
+            VerifyCSharp(new[] { $@"
+using System;
+using {@namespace};
+
+public class Test
+{{
+    public void ThrowsException()
+    {{
+        Assert.{method}{(generic.Length == 0 ? string.Empty : $"<{generic}>")}(() => {{
+            new Test();
+            return;
+        }});
+    }}
+}}", useXunit ? XunitApis.CSharp : NUnitApis.CSharp },
+                GetCSharpObjectCreationResultAt(10, 13, "ThrowsException", "Test"));
+
+            VerifyBasic(new[] { $@"
+Imports System
+Imports System.Globalization
+Imports {@namespace}
+
+Class C
+    Public Sub ThrowsException()
+        Assert.{method}{(generic.Length == 0 ? string.Empty : $"(Of {generic})")}(Sub()
+                                        Dim sample As String = ""Sample""
+                                        sample.ToLower(CultureInfo.InvariantCulture)
+                                        Return
+                                    End Sub)
+    End Sub
+End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic },
+                GetBasicStringCreationResultAt(10, 41, "ThrowsException", "ToLower"));
+        }
+
+        [WorkItem(1369, "https://github.com/dotnet/roslyn-analyzers/issues/1369")]
+        [InlineData("Xunit", "ThrowsAsync", "Exception", true)]
+        [InlineData("Xunit", "ThrowsAnyAsync", "Exception", true)]
+        [InlineData("NUnit.Framework", "ThrowsAsync", "Exception", false)]
+        [InlineData("NUnit.Framework", "CatchAsync", "", false)]
+        [InlineData("NUnit.Framework", "DoesNotThrowAsync", "", false)]
+        [Theory]
+        public void UnitTestingThrowsAsync_NotLastLineStillDiagnostic(string @namespace, string method, string generic, bool useXunit)
+        {
+            VerifyCSharp(new[] { $@"
+using System;
+using {@namespace};
+
+public class Test
+{{
+    public void ThrowsException()
+    {{
+        Assert.{method}{(generic.Length == 0 ? string.Empty : $"<{generic}>")}(async () => {{
+            new Test();
+            return;
+        }});
+    }}
+}}", useXunit ? XunitApis.CSharp : NUnitApis.CSharp },
+                GetCSharpObjectCreationResultAt(10, 13, "ThrowsException", "Test"));
+
+            VerifyBasic(new[] { $@"
+Imports System
+Imports System.Globalization
+Imports {@namespace}
+
+Class C
+    Public Sub ThrowsException()
+        Assert.{method}{(generic.Length == 0 ? string.Empty : $"(Of {generic})")}(Async Function()
+                                        Dim sample As String = ""Sample""
+                                        sample.ToLower(CultureInfo.InvariantCulture)
+                                        Return
+                                    End Function)
+    End Sub
+End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic },
+                GetBasicStringCreationResultAt(10, 41, "ThrowsException", "ToLower"));
+        }
+
+        [WorkItem(1369, "https://github.com/dotnet/roslyn-analyzers/issues/1369")]
+        [Fact]
+        public void ExpectedException_NotLastLineDiagnostic()
+        {
+            VerifyCSharp(new[] { @"
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+public class Test
+{
+    [ExpectedException]
+    public void ThrowsException()
+    {
+        new Test();
+        return;
+    }
+}", MSTestAttributes.CSharp },
+                GetCSharpObjectCreationResultAt(9, 9, "ThrowsException", "Test"));
+
+            VerifyBasic(new[] { @"
+Imports System
+Imports System.Globalization
+Imports Microsoft.VisualStudio.TestTools.UnitTesting
+
+Class C
+    <ExpectedException>
+    Public Sub ThrowsException()
+        Console.WriteLine(Me)
+        Dim sample As String = ""Sample""
+        sample.ToLower(CultureInfo.InvariantCulture)
+        Return
+    End Sub
+End Class", MSTestAttributes.VisualBasic },
+                GetBasicStringCreationResultAt(11, 9, "ThrowsException", "ToLower"));
+        }
+
         #endregion
 
         #region Helpers
-
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {

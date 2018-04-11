@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="de" original="../MicrosoftReliabilityAnalyzersResources.resx">
+    <body>
+      <trans-unit id="DisposeObjectsBeforeLosingScopeDescription">
+        <source>If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</source>
+        <target state="translated">Wenn ein verwerfbares Objekt nicht explizit verworfen wird, bevor alle Verweise darauf sich außerhalb des gültigen Bereichs befinden, wird das Objekt zu einem unbestimmten Zeitpunkt verworfen, wenn der Garbage Collector den Finalizer des Objekts ausführt. Da ein außergewöhnliches Ereignis eintreten und die Ausführung des Objektfinalizers verhindern kann, sollte das Objekt stattdessen explizit verworfen werden.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposeObjectsBeforeLosingScopeMessage">
+        <source>In method '{0}', call System.IDisposable.Dispose on object created by '{1}' before all references to it are out of scope.</source>
+        <target state="translated">Rufen Sie in der Methode "{0}" System.IDisposable.Dispose() für das von "'{1'}" erstellte Objekt auf, bevor alle Verweise darauf außerhalb des gültigen Bereichs liegen.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposeObjectsBeforeLosingScopeTitle">
+        <source>Dispose objects before losing scope</source>
+        <target state="translated">Objekte verwerfen, bevor Bereich verloren geht</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

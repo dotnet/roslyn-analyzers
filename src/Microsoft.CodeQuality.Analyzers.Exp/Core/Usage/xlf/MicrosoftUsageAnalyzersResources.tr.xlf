@@ -19,17 +19,17 @@
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeDescription">
         <source>A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.</source>
-        <target state="new">A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.</target>
+        <target state="translated">System.IDisposable uygulayan bir tür, aynı zamanda IDisposable uygulayan bir türden devralır. Devralma türünün Dispose yöntemi, üst türün Dispose yöntemini çağırmaz. Bu kuralın ihlalini düzeltmek için Dispose yönteminde base.Dispose öğesini çağırın.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeMessage">
         <source>Ensure that method '{0}' calls '{1}' in all possible control flow paths.</source>
-        <target state="new">Ensure that method '{0}' calls '{1}' in all possible control flow paths.</target>
+        <target state="translated">'{0}' yönteminin olası tüm denetim akışı yollarında '{1}' çağırdığından emin olun.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeTitle">
         <source>Dispose methods should call base class dispose</source>
-        <target state="new">Dispose methods should call base class dispose</target>
+        <target state="translated">Dispose yöntemleri temel sınıf dispose yöntemini çağırmalıdır</target>
         <note />
       </trans-unit>
     </body>

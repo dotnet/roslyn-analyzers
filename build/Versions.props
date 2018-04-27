@@ -19,8 +19,8 @@
     <CodecovVersion>1.0.3</CodecovVersion>
 
     <!-- Roslyn -->
-    <MicrosoftCodeAnalysisVersion>2.6.0</MicrosoftCodeAnalysisVersion>
-    <MicrosoftNetCompilersVersion>2.6.0</MicrosoftNetCompilersVersion>
+    <MicrosoftCodeAnalysisVersion>2.8.0-dataflow-62824-01</MicrosoftCodeAnalysisVersion>
+    <MicrosoftNetCompilersVersion>2.6.1</MicrosoftNetCompilersVersion>
     <MicrosoftCodeAnalysisFXCopAnalyersVersion>2.6.1-beta1-62512-01</MicrosoftCodeAnalysisFXCopAnalyersVersion>
     <MicrosoftCodeAnalysisAnalyersVersion>2.6.1-beta1-62512-01</MicrosoftCodeAnalysisAnalyersVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>

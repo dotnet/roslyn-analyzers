@@ -3,7 +3,6 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeAnalysis.Operations.ControlFlow;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow
 {
@@ -54,6 +53,31 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 return _defaultUnknownValue;
             }
         }
+
+        public TAbstractAnalysisValue this[OperationKind operationKind, SyntaxNode syntax]
+        {
+            get
+            {
+                var value = _defaultUnknownValue;
+                foreach (var kvp in _operationStateMap)
+                {
+                    if (kvp.Key.Kind == operationKind && kvp.Key.Syntax == syntax)
+                    {
+                        if (!kvp.Key.IsImplicit)
+                        {
+                            return kvp.Value;
+                        }
+                        else
+                        {
+                            value = kvp.Value;
+                        }
+                    }
+                }
+
+                return value;
+            }
+        }
+
         public PredicateValueKind GetPredicateKind(IOperation operation) => _predicateValueKindMap.TryGetValue(operation, out var valueKind) ? valueKind : PredicateValueKind.Unknown;
         public TAnalysisResult MergedStateForUnhandledThrowOperationsOpt;
         public ControlFlowGraph ControlFlowGraph { get; }

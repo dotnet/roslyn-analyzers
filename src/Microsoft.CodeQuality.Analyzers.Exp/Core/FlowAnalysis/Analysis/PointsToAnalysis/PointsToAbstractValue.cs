@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Analyzer.Utilities;
-using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
@@ -14,7 +13,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
     /// </summary>
     internal class PointsToAbstractValue: CacheBasedEquatable<PointsToAbstractValue>
     {
-        public static PointsToAbstractValue Undefined = new PointsToAbstractValue(PointsToAbstractValueKind.Undefined, NullAbstractValue.MaybeNull);
+        public static PointsToAbstractValue Undefined = new PointsToAbstractValue(PointsToAbstractValueKind.Undefined, NullAbstractValue.Undefined);
         public static PointsToAbstractValue Invalid = new PointsToAbstractValue(PointsToAbstractValueKind.Invalid, NullAbstractValue.Invalid);
         public static PointsToAbstractValue Unknown = new PointsToAbstractValue(PointsToAbstractValueKind.Unknown, NullAbstractValue.MaybeNull);
         public static PointsToAbstractValue NoLocation = new PointsToAbstractValue(ImmutableHashSet.Create(AbstractLocation.NoLocation), NullAbstractValue.NotNull);
@@ -28,16 +27,29 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             Debug.Assert(nullState != NullAbstractValue.Invalid);
 
             Locations = locations;
-            Kind = PointsToAbstractValueKind.Known;
+            LValueCapturedOperations = ImmutableHashSet<IOperation>.Empty;
+            Kind = PointsToAbstractValueKind.KnownLocations;
             NullState = nullState;
+        }
+
+        private PointsToAbstractValue(ImmutableHashSet<IOperation> lValueCapturedOperations)
+        {
+            Debug.Assert(!lValueCapturedOperations.IsEmpty);
+
+            LValueCapturedOperations = lValueCapturedOperations;
+            Locations = ImmutableHashSet<AbstractLocation>.Empty;
+            Kind = PointsToAbstractValueKind.KnownLValueCaptures;
+            NullState = NullAbstractValue.NotNull;
         }
 
         private PointsToAbstractValue(PointsToAbstractValueKind kind, NullAbstractValue nullState)
         {
-            Debug.Assert(kind != PointsToAbstractValueKind.Known);
+            Debug.Assert(kind != PointsToAbstractValueKind.KnownLocations);
+            Debug.Assert(kind != PointsToAbstractValueKind.KnownLValueCaptures);
             Debug.Assert(nullState != NullAbstractValue.Null);
 
             Locations = ImmutableHashSet<AbstractLocation>.Empty;
+            LValueCapturedOperations = ImmutableHashSet<IOperation>.Empty;
             Kind = kind;
             NullState = nullState;
         }
@@ -48,6 +60,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             Debug.Assert(!location.IsNoLocation, "Use 'PointsToAbstractValue.NoLocation' singleton");
 
             return new PointsToAbstractValue(ImmutableHashSet.Create(location), mayBeNull ? NullAbstractValue.MaybeNull : NullAbstractValue.NotNull);
+        }
+
+        public static PointsToAbstractValue Create(IOperation lValueCapturedOperation)
+        {
+            Debug.Assert(lValueCapturedOperation != null);
+            return new PointsToAbstractValue(ImmutableHashSet.Create(lValueCapturedOperation));
         }
 
         public static PointsToAbstractValue Create(ImmutableHashSet<AbstractLocation> locations, NullAbstractValue nullState)
@@ -70,14 +88,22 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             return new PointsToAbstractValue(locations, nullState);
         }
 
+        public static PointsToAbstractValue Create(ImmutableHashSet<IOperation> lValueCapturedOperations)
+        {
+            Debug.Assert(!lValueCapturedOperations.IsEmpty);
+            return new PointsToAbstractValue(lValueCapturedOperations);
+        }
+
         public PointsToAbstractValue MakeNonNull(IOperation operation)
         {
+            Debug.Assert(Kind != PointsToAbstractValueKind.KnownLValueCaptures);
+
             if (NullState == NullAbstractValue.NotNull)
             {
                 return this;
             }
 
-            if (Kind != PointsToAbstractValueKind.Known)
+            if (Kind != PointsToAbstractValueKind.KnownLocations)
             {
                 return Create(AbstractLocation.CreateAllocationLocation(operation, operation.Type), mayBeNull: false);
             }
@@ -93,12 +119,14 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
         public PointsToAbstractValue MakeNull()
         {
+            Debug.Assert(Kind != PointsToAbstractValueKind.KnownLValueCaptures);
+
             if (NullState == NullAbstractValue.Null)
             {
                 return this;
             }
 
-            if (Kind != PointsToAbstractValueKind.Known)
+            if (Kind != PointsToAbstractValueKind.KnownLocations)
             {
                 return NullLocation;
             }
@@ -108,7 +136,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
         public PointsToAbstractValue MakeMayBeNull()
         {
+            Debug.Assert(Kind != PointsToAbstractValueKind.KnownLValueCaptures);
             Debug.Assert(NullState != NullAbstractValue.Null);
+
             if (NullState == NullAbstractValue.MaybeNull || ReferenceEquals(this, Unknown))
             {
                 return this;
@@ -123,16 +153,24 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
         }
 
         public ImmutableHashSet<AbstractLocation> Locations { get; }
+        public ImmutableHashSet<IOperation> LValueCapturedOperations { get; }
         public PointsToAbstractValueKind Kind { get; }
         public NullAbstractValue NullState { get; }
 
         protected override int ComputeHashCode()
         {
-            int hashCode = HashUtilities.Combine(Kind.GetHashCode(),
-                HashUtilities.Combine(NullState.GetHashCode(), Locations.Count.GetHashCode()));
+            int hashCode = HashUtilities.Combine(Kind.GetHashCode(), NullState.GetHashCode());
+
+            hashCode = HashUtilities.Combine(Locations.Count.GetHashCode(), hashCode);
             foreach (var location in Locations)
             {
                 hashCode = HashUtilities.Combine(location.GetHashCode(), hashCode);
+            }
+
+            hashCode = HashUtilities.Combine(LValueCapturedOperations.Count.GetHashCode(), hashCode);
+            foreach (var lValueCapturedOperation in LValueCapturedOperations)
+            {
+                hashCode = HashUtilities.Combine(lValueCapturedOperation.GetHashCode(), hashCode);
             }
 
             return hashCode;

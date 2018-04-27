@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 {
-    using PointsToAnalysisData = IDictionary<AnalysisEntity, PointsToAbstractValue>;
-
     internal partial class PointsToAnalysis : ForwardDataFlowAnalysis<PointsToAnalysisData, PointsToBlockAnalysisResult, PointsToAbstractValue>
     {
         /// <summary>

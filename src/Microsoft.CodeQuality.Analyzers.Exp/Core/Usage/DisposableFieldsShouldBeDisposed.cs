@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -9,7 +8,6 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
-using Microsoft.CodeAnalysis.Operations.ControlFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
@@ -115,7 +113,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Usage
                                 if (fieldReference.Parent is ISimpleAssignmentOperation simpleAssignmentOperation &&
                                     simpleAssignmentOperation.Target == fieldReference)
                                 {
-                                    PointsToAbstractValue assignedPointsToValue = pointsToAnalysisResult[simpleAssignmentOperation.Value];
+                                    PointsToAbstractValue assignedPointsToValue = pointsToAnalysisResult[simpleAssignmentOperation.Value.Kind, simpleAssignmentOperation.Value.Syntax];
                                     foreach (var location in assignedPointsToValue.Locations)
                                     {
                                         if (disposeAnalysisHelper.IsDisposableCreationOrDisposeOwnershipTransfer(location, containingMethod))
@@ -142,7 +140,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Usage
                             if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockStartContext.OperationBlocks, containingMethod, trackInstanceFields: true,
                                 disposeAnalysisResult: out disposeAnalysisResult, pointsToAnalysisResult: out pointsToAnalysisResult, trackedInstanceFieldPointsToMap: out trackedInstanceFieldPointsToMap))
                             {
-                                BasicBlock exitBlock = disposeAnalysisResult.ControlFlowGraph.Exit;
+                                BasicBlock exitBlock = disposeAnalysisResult.ControlFlowGraph.GetExit();
                                 foreach (var fieldWithPointsToValue in trackedInstanceFieldPointsToMap)
                                 {
                                     IFieldSymbol field = fieldWithPointsToValue.Key;

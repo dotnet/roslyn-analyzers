@@ -11,7 +11,6 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
-using Microsoft.CodeAnalysis.Operations.ControlFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
@@ -99,7 +98,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Globalization
                     {
                         if (ShouldBeLocalized(parameter, containingPropertySymbolOpt, localizableStateAttributeSymbol, conditionalAttributeSymbol, systemConsoleSymbol, typesToIgnore))
                         {
-                            StringContentAbstractValue stringContentValue = lazyStringContentResult.Value[operation];
+                            StringContentAbstractValue stringContentValue = lazyStringContentResult.Value[operation.Kind, operation.Syntax];
                             if (stringContentValue.IsLiteralState)
                             {
                                 Debug.Assert(stringContentValue.LiteralValues.Count > 0);
@@ -142,13 +141,13 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Globalization
                             IBlockOperation topmostBlock = operationRoot.GetTopmostParentBlock();
                             if (topmostBlock != null)
                             {
-                                var cfg = ControlFlowGraph.Create(topmostBlock);
+                                var cfg = SemanticModel.GetControlFlowGraph(topmostBlock);
                                 var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockStartContext.Compilation);
-                                var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider);
-                                var copyAnalysisResult = CopyAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, pointsToAnalysisResultOpt: pointsToAnalysisResult);
+                                var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, wellKnownTypeProvider);
+                                var copyAnalysisResult = CopyAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, wellKnownTypeProvider, pointsToAnalysisResultOpt: pointsToAnalysisResult);
                                 // Do another analysis pass to improve the results from PointsTo and Copy analysis.
-                                pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, pointsToAnalysisResult, copyAnalysisResult);
-                                return StringContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
+                                pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, wellKnownTypeProvider, copyAnalysisResult);
+                                return StringContentAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
                             }
                         }
 

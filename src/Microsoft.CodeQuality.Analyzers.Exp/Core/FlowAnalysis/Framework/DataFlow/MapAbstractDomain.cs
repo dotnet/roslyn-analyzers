@@ -62,6 +62,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 }
             }
 
+            if (!newValueIsBigger)
+            {
+                newValueIsBigger = newValue.Count > oldValue.Count;
+            }
+
             return newValueIsBigger ? -1 : 0;
         }
 

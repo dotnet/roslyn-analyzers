@@ -3,7 +3,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Linq;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
@@ -19,11 +18,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             AbstractValueDomain<TAbstractAnalysisValue> valueDomain,
             ISymbol owningSymbol,
             WellKnownTypeProvider wellKnownTypeProvider,
+            ControlFlowGraph cfg,
             bool pessimisticAnalysis,
             bool predicateAnalysis,
             DataFlowAnalysisResult<CopyBlockAnalysisResult, CopyAbstractValue> copyAnalysisResultOpt,
             DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResultOpt)
-            : base (valueDomain, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, predicateAnalysis,
+            : base (valueDomain, owningSymbol, wellKnownTypeProvider, cfg, pessimisticAnalysis, predicateAnalysis,
                   copyAnalysisResultOpt, pointsToAnalysisResultOpt)
         {
         }
@@ -32,6 +32,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         protected abstract void SetAbstractValue(AnalysisEntity analysisEntity, TAbstractAnalysisValue value);
         protected abstract TAbstractAnalysisValue GetAbstractValue(AnalysisEntity analysisEntity);
         protected abstract bool HasAbstractValue(AnalysisEntity analysisEntity);
+        protected abstract void StopTrackingEntity(AnalysisEntity analysisEntity);
 
         protected override TAbstractAnalysisValue ComputeAnalysisValueForReferenceOperation(IOperation operation, TAbstractAnalysisValue defaultValue)
         {
@@ -71,34 +72,36 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         /// <summary>
         /// Helper method to reset analysis data for analysis entities.
-        /// If <paramref name="newAnalysisDataOpt"/> is null, all the analysis values in <paramref name="currentAnalysisDataOpt"/> are set to <see cref="ValueDomain.UnknownOrMayBeValue"/>.
-        /// Otherwise, all the key-value paris in <paramref name="newAnalysisDataOpt"/> are transfered to <paramref name="currentAnalysisDataOpt"/> and keys in <paramref name="currentAnalysisDataOpt"/> which
-        /// are not present in <paramref name="newAnalysisDataOpt"/> are set to <see cref="ValueDomain.UnknownOrMayBeValue"/>.
         /// </summary>
-        /// <param name="currentAnalysisDataOpt"></param>
-        /// <param name="newAnalysisDataOpt"></param>
-        protected void ResetAnalysisData(IDictionary<AnalysisEntity, TAbstractAnalysisValue> currentAnalysisDataOpt, IDictionary<AnalysisEntity, TAbstractAnalysisValue> newAnalysisDataOpt)
+        protected void ResetAnalysisData(IDictionary<AnalysisEntity, TAbstractAnalysisValue> currentAnalysisDataOpt)
         {
             // Reset the current analysis data, while ensuring that we don't violate the monotonicity, i.e. we cannot remove any existing key from currentAnalysisData.
-            if (newAnalysisDataOpt == null)
+            // Just set the values for existing keys to ValueDomain.UnknownOrMayBeValue.
+            var keys = currentAnalysisDataOpt?.Keys.ToImmutableArray();
+            foreach (var key in keys)
             {
-                // Just set the values for existing keys to ValueDomain.UnknownOrMayBeValue.
-                var keys = currentAnalysisDataOpt?.Keys.ToImmutableArray();
-                foreach (var key in keys)
-                {
-                    SetAbstractValue(key, ValueDomain.UnknownOrMayBeValue);
-                }
+                SetAbstractValue(key, ValueDomain.UnknownOrMayBeValue);
             }
-            else
+        }
+
+        protected override void OnLeavingRegion(ControlFlowGraph.Region region)
+        {
+            base.OnLeavingRegion(region);
+
+            // Stop tracking entities for locals that are now out of scope.
+            // Additionally, stop tracking all the child entities for local if the local type has value copy semantics.
+            foreach (var local in region.Locals)
             {
-                // Merge the values from current and new analysis data.
-                var keys = currentAnalysisDataOpt?.Keys.Concat(newAnalysisDataOpt.Keys).ToImmutableHashSet();
-                foreach (var key in keys)
+                var success = AnalysisEntityFactory.TryCreateForSymbolDeclaration(local, out AnalysisEntity analysisEntity);
+                Debug.Assert(success);
+                StopTrackingEntity(analysisEntity);
+
+                if (analysisEntity.Type.HasValueCopySemantics())
                 {
-                    var value1 = currentAnalysisDataOpt != null && currentAnalysisDataOpt.TryGetValue(key, out var currentValue) ? currentValue : ValueDomain.Bottom;
-                    var value2 = newAnalysisDataOpt.TryGetValue(key, out var newValue) ? newValue : ValueDomain.Bottom;
-                    var mergedValue = ValueDomain.Merge(value1, value2);
-                    SetAbstractValue(key, mergedValue);
+                    foreach (var childEntity in GetChildAnalysisEntities(analysisEntity))
+                    {
+                        StopTrackingEntity(childEntity);
+                    }
                 }
             }
         }
@@ -120,10 +123,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             }
         }
 
-        protected override void SetAbstractValueForAssignment(IOperation target, IOperation assignedValueOperation, TAbstractAnalysisValue assignedValue)
+        protected override void SetAbstractValueForAssignment(IOperation target, IOperation assignedValueOperation, TAbstractAnalysisValue assignedValue, bool mayBeAssignment = false)
         {
             if (AnalysisEntityFactory.TryCreate(target, out AnalysisEntity targetAnalysisEntity))
             {
+                if (mayBeAssignment)
+                {
+                    assignedValue = ValueDomain.Merge(GetAbstractValue(targetAnalysisEntity), assignedValue);
+                }
+
                 SetAbstractValueForAssignment(targetAnalysisEntity, assignedValueOperation, assignedValue);
             }
         }
@@ -134,11 +142,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             if (HasPointsToAnalysisResult &&
                 targetAnalysisEntity.Type.HasValueCopySemantics())
             {
-                if (HasAbstractValue(targetAnalysisEntity))
-                {
-                    // Reset the analysis values for analysis entities within the target instance.
-                    ResetValueTypeInstanceAnalysisData(targetAnalysisEntity);
-                }
+                // Reset the analysis values for analysis entities within the target instance.
+                ResetValueTypeInstanceAnalysisData(targetAnalysisEntity);
 
                 if (assignedValueOperation != null)
                 {
@@ -271,6 +276,44 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             }
         }
 
+        #endregion
+
+        #region Predicate analysis
+        protected override void UpdateReachability(BasicBlock basicBlock, TAnalysisData analysisData, bool isReachable)
+        {
+            Debug.Assert(PredicateAnalysis);
+            var predicatedData = analysisData as AnalysisEntityBasedPredicateAnalysisData<TAbstractAnalysisValue>;
+            if (predicatedData != null)
+            {
+                Debug.Assert(!isReachable || predicatedData.IsReachableBlockData);
+                predicatedData.IsReachableBlockData = isReachable;
+            }
+        }
+
+        protected override bool IsReachableBlockData(TAnalysisData analysisData)
+            => (analysisData as AnalysisEntityBasedPredicateAnalysisData<TAbstractAnalysisValue>)?.IsReachableBlockData ?? true;
+
+        protected sealed override void StartTrackingPredicatedData(AnalysisEntity predicatedEntity, TAnalysisData truePredicateData, TAnalysisData falsePredicateData)
+                => (CurrentAnalysisData as AnalysisEntityBasedPredicateAnalysisData<TAbstractAnalysisValue>)?.StartTrackingPredicatedData(
+                        predicatedEntity,
+                        truePredicateData as AnalysisEntityBasedPredicateAnalysisData<TAbstractAnalysisValue>,
+                        falsePredicateData as AnalysisEntityBasedPredicateAnalysisData<TAbstractAnalysisValue>);
+        protected sealed override void StopTrackingPredicatedData(AnalysisEntity predicatedEntity)
+            => (CurrentAnalysisData as AnalysisEntityBasedPredicateAnalysisData<TAbstractAnalysisValue>)?.StopTrackingPredicatedData(predicatedEntity);
+        protected sealed override bool HasPredicatedDataForEntity(AnalysisEntity predicatedEntity)
+            => (CurrentAnalysisData as AnalysisEntityBasedPredicateAnalysisData<TAbstractAnalysisValue>)?.HasPredicatedDataForEntity(predicatedEntity) == true;
+        protected sealed override void TransferPredicatedData(AnalysisEntity fromEntity, AnalysisEntity toEntity)
+            => (CurrentAnalysisData as AnalysisEntityBasedPredicateAnalysisData<TAbstractAnalysisValue>)?.TransferPredicatedData(fromEntity, toEntity);
+        protected sealed override PredicateValueKind ApplyPredicatedDataForEntity(TAnalysisData analysisData, AnalysisEntity predicatedEntity, bool trueData)
+            => (analysisData as AnalysisEntityBasedPredicateAnalysisData<TAbstractAnalysisValue>)?.ApplyPredicatedDataForEntity(predicatedEntity, trueData) ?? PredicateValueKind.Unknown;
+        protected override void SetPredicateValueKind(IOperation operation, TAnalysisData analysisData, PredicateValueKind predicateValueKind)
+        {
+            base.SetPredicateValueKind(operation, analysisData, predicateValueKind);
+            if (predicateValueKind == PredicateValueKind.AlwaysFalse)
+            {
+                (analysisData as AnalysisEntityBasedPredicateAnalysisData<TAbstractAnalysisValue>).IsReachableBlockData = false;
+            }
+        }
         #endregion
 
         // TODO: Remove these temporary methods once we move to compiler's CFG

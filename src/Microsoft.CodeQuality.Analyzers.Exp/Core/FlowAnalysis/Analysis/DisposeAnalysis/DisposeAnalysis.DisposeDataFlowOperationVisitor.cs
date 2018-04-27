@@ -34,10 +34,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 DisposeAbstractValueDomain valueDomain,
                 ISymbol owningSymbol,
                 WellKnownTypeProvider wellKnownTypeProvider,
+                ControlFlowGraph cfg,
                 ImmutableHashSet<INamedTypeSymbol> disposeOwnershipTransferLikelyTypes,
                 bool trackInstanceFields,
                 DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResult)
-                : base(valueDomain, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, predicateAnalysis: false, copyAnalysisResultOpt: null, pointsToAnalysisResultOpt: pointsToAnalysisResult)
+                : base(valueDomain, owningSymbol, wellKnownTypeProvider, cfg, pessimisticAnalysis,
+                      predicateAnalysis: false, copyAnalysisResultOpt: null, pointsToAnalysisResultOpt: pointsToAnalysisResult)
             {
                 Debug.Assert(wellKnownTypeProvider.IDisposable != null);
                 Debug.Assert(wellKnownTypeProvider.CollectionTypes.All(ct => ct.TypeKind == TypeKind.Interface));
@@ -73,6 +75,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
 
             protected override DisposeAbstractValue GetAbstractValue(AbstractLocation location) => CurrentAnalysisData.TryGetValue(location, out var value) ? value : ValueDomain.UnknownOrMayBeValue;
 
+            protected override bool HasAnyAbstractValue(DisposeAnalysisData data) => data.Count > 0;
+
             protected override void SetAbstractValue(AbstractLocation location, DisposeAbstractValue value)
             {
                 Debug.Assert(location.IsNull || location.LocationTypeOpt.IsDisposable(WellKnownTypeProvider.IDisposable));
@@ -83,7 +87,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 }
             }
 
-            protected override void ResetCurrentAnalysisData(DisposeAnalysisData newAnalysisDataOpt = null) => ResetAnalysisData(CurrentAnalysisData, newAnalysisDataOpt);
+            protected override void ResetCurrentAnalysisData() => ResetAnalysisData(CurrentAnalysisData);
 
             protected override DisposeAbstractValue HandleInstanceCreation(ITypeSymbol instanceType, PointsToAbstractValue instanceLocation, DisposeAbstractValue defaultValue)
             {
@@ -124,6 +128,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
 
             private void HandlePossibleEscapingOperation(IOperation escapingOperation, IOperation escapedInstance)
             {
+                Debug.Assert(escapingOperation != null);
+                Debug.Assert(escapedInstance != null);
+
                 PointsToAbstractValue pointsToValue = GetPointsToAbstractValue(escapedInstance);
                 foreach (AbstractLocation location in pointsToValue.Locations)
                 {
@@ -158,7 +165,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
             {
             }
 
-            protected override void SetAbstractValueForAssignment(IOperation target, IOperation assignedValueOperation, DisposeAbstractValue assignedValue)
+            protected override void SetAbstractValueForAssignment(IOperation target, IOperation assignedValueOperation, DisposeAbstractValue assignedValue, bool mayBeAssignment = false)
             {
                 if (assignedValueOperation == null)
                 {
@@ -309,34 +316,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
                 return value;
             }
 
-            protected override DisposeAbstractValue VisitReturnCore(IReturnOperation operation, object argument)
+            protected override void ProcessReturnValue(IOperation returnValue)
             {
-                var value = base.VisitReturnCore(operation, argument);
-                if (operation.ReturnedValue != null)
+                if (returnValue != null)
                 {
-                    HandlePossibleEscapingOperation(operation, operation.ReturnedValue);
+                    HandlePossibleEscapingOperation(escapingOperation: returnValue, escapedInstance: returnValue);
                 }
-
-                return value;
-            }
-
-            public override DisposeAbstractValue VisitUsing(IUsingOperation operation, object argument)
-            {
-                var value = base.VisitUsing(operation, argument);
-                if (operation.Resources is IVariableDeclarationGroupOperation varDeclGroup)
-                {
-                    var variablerInitializers = varDeclGroup.Declarations.SelectMany(declaration => declaration.Declarators).Select(declarator => declarator.GetVariableInitializer()?.Value).WhereNotNull();
-                    foreach (var disposedInstance in variablerInitializers)
-                    {
-                        HandleDisposingOperation(operation, disposedInstance);
-                    }
-                }
-                else if (operation.Resources != null)
-                {
-                    HandleDisposingOperation(operation, operation.Resources);
-                }
-
-                return value;
             }
 
             public override DisposeAbstractValue VisitConversion(IConversionOperation operation, object argument)

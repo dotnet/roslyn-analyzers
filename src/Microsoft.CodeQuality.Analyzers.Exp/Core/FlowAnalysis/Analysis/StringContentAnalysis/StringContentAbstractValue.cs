@@ -70,7 +70,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
 
         protected override int ComputeHashCode()
         {
-            var hashCode = NonLiteralState.GetHashCode();
+            var hashCode = HashUtilities.Combine(NonLiteralState.GetHashCode(), LiteralValues.Count.GetHashCode());
             foreach (var literal in LiteralValues.OrderBy(s => s))
             {
                 hashCode = HashUtilities.Combine(hashCode, literal.GetHashCode());

@@ -1,15 +1,11 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
-using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
 {
-    using CopyAnalysisData = IDictionary<AnalysisEntity, CopyAbstractValue>;
-
     internal partial class CopyAnalysis : ForwardDataFlowAnalysis<CopyAnalysisData, CopyBlockAnalysisResult, CopyAbstractValue>
     {
         /// <summary>
@@ -21,15 +17,48 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
                 CopyAbstractValueDomain valueDomain,
                 ISymbol owningSymbol,
                 WellKnownTypeProvider wellKnownTypeProvider,
+                ControlFlowGraph cfg,
                 bool pessimisticAnalysis,
                 DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResultOpt)
-                : base(valueDomain, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, predicateAnalysis: true, copyAnalysisResultOpt: null, pointsToAnalysisResultOpt: pointsToAnalysisResultOpt)
+                : base(valueDomain, owningSymbol, wellKnownTypeProvider, cfg, pessimisticAnalysis,
+                      predicateAnalysis: true, copyAnalysisResultOpt: null, pointsToAnalysisResultOpt: pointsToAnalysisResultOpt)
             {
             }
 
-            protected override void AddTrackedEntities(ImmutableArray<AnalysisEntity>.Builder builder) => builder.AddRange(CurrentAnalysisData.Keys);
+            public override CopyAnalysisData Flow(IOperation statement, BasicBlock block, CopyAnalysisData input)
+            {
+                AssertValidCopyAnalysisData(input);
+                var output = base.Flow(statement, block, input);
+                AssertValidCopyAnalysisData(output);
+                return output;
+            }
 
-            protected override bool HasAbstractValue(AnalysisEntity analysisEntity) => CurrentAnalysisData.ContainsKey(analysisEntity);
+            public override CopyAnalysisData FlowBranch(BasicBlock fromBlock, BranchWithInfo branch, CopyAnalysisData input)
+            {
+                AssertValidCopyAnalysisData(input);
+                var output = base.FlowBranch(fromBlock, branch, input);
+                AssertValidCopyAnalysisData(output);
+                return output;
+            }
+
+            protected override void AddTrackedEntities(ImmutableArray<AnalysisEntity>.Builder builder) => CurrentAnalysisData.AddTrackedEntities(builder);
+
+            protected override bool HasAbstractValue(AnalysisEntity analysisEntity) => CurrentAnalysisData.HasAbstractValue(analysisEntity);
+
+            protected override bool HasAnyAbstractValue(CopyAnalysisData data) => data.HasAnyAbstractValue;
+
+            protected override void StopTrackingEntity(AnalysisEntity analysisEntity)
+            {
+                AssertValidCopyAnalysisData(CurrentAnalysisData);
+                
+                // First set the value to unknown so we remove the entity from existing copy sets.
+                SetAbstractValue(analysisEntity, CopyAbstractValue.Unknown);
+                AssertValidCopyAnalysisData(CurrentAnalysisData);
+
+                // Now it should be safe to remove the entry.
+                CurrentAnalysisData.RemoveEntries(analysisEntity);
+                AssertValidCopyAnalysisData(CurrentAnalysisData);
+            }
 
             protected override CopyAbstractValue GetAbstractValue(AnalysisEntity analysisEntity) => CurrentAnalysisData.TryGetValue(analysisEntity, out var value) ? value : CopyAbstractValue.Unknown;
 
@@ -52,7 +81,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
 
             private static void SetAbstractValue(CopyAnalysisData copyAnalysisData, AnalysisEntity analysisEntity, CopyAbstractValue value, bool fromPredicate)
             {
-                AssertValidCopyAnalysisData(copyAnalysisData);
+                SetAbstractValue(sourceCopyAnalysisData: copyAnalysisData, targetCopyAnalysisData: copyAnalysisData,
+                    analysisEntity: analysisEntity, value: value, fromPredicate: fromPredicate);
+            }
+
+            private static void SetAbstractValue(CopyAnalysisData sourceCopyAnalysisData, CopyAnalysisData targetCopyAnalysisData, AnalysisEntity analysisEntity, CopyAbstractValue value, bool fromPredicate)
+            {
+                AssertValidCopyAnalysisData(sourceCopyAnalysisData);
+                AssertValidCopyAnalysisData(targetCopyAnalysisData);
+                Debug.Assert(ReferenceEquals(sourceCopyAnalysisData, targetCopyAnalysisData) || fromPredicate);
 
                 // Don't track entities if do not know about it's instance location.
                 if (analysisEntity.HasUnknownInstanceLocation)
@@ -62,7 +99,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
 
                 if (value.AnalysisEntities.Count > 0)
                 {
-                    if (copyAnalysisData.TryGetValue(value.AnalysisEntities.First(), out var fixedUpValue))
+                    if (sourceCopyAnalysisData.TryGetValue(value.AnalysisEntities.First(), out var fixedUpValue))
                     {
                         value = fixedUpValue;
                     }
@@ -76,7 +113,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
 
                 // Handle updating the existing value if not setting the value from predicate analysis.
                 if (!fromPredicate &&
-                    copyAnalysisData.TryGetValue(analysisEntity, out CopyAbstractValue existingValue))
+                    sourceCopyAnalysisData.TryGetValue(analysisEntity, out CopyAbstractValue existingValue))
                 {
                     if (existingValue == value)
                     {
@@ -90,9 +127,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
                         var newValueForEntitiesInOldSet = existingValue.WithEntityRemoved(analysisEntity);
                         foreach (var entityToUpdate in newValueForEntitiesInOldSet.AnalysisEntities)
                         {
-                            Debug.Assert(copyAnalysisData[entityToUpdate] == existingValue);
                             Debug.Assert(newValueForEntitiesInOldSet.AnalysisEntities.Contains(entityToUpdate));
-                            copyAnalysisData[entityToUpdate] = newValueForEntitiesInOldSet;
+                            targetCopyAnalysisData.SetAbstactValue(entityToUpdate, newValueForEntitiesInOldSet, isEntityBeingAssigned: false);
                         }
                     }
                 }
@@ -102,7 +138,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
                 if (fromPredicate)
                 {
                     // Also include the existing values for the analysis entity.
-                    if (copyAnalysisData.TryGetValue(analysisEntity, out existingValue))
+                    if (sourceCopyAnalysisData.TryGetValue(analysisEntity, out existingValue))
                     {
                         if (existingValue.Kind == CopyAbstractValueKind.Invalid)
                         {
@@ -118,10 +154,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
                 {
                     Debug.Assert(newValue.AnalysisEntities.Count > 0);
                     Debug.Assert(newValue.AnalysisEntities.Contains(entityToUpdate));
-                    copyAnalysisData[entityToUpdate] = newValue;
+                    targetCopyAnalysisData.SetAbstactValue(entityToUpdate, newValue, isEntityBeingAssigned: entityToUpdate == analysisEntity);
                 }
 
-                AssertValidCopyAnalysisData(copyAnalysisData);
+                AssertValidCopyAnalysisData(targetCopyAnalysisData);
             }
 
             protected override void SetValueForParameterOnEntry(IParameterSymbol parameter, AnalysisEntity analysisEntity)
@@ -135,7 +171,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
                 // Do not escape the copy value for parameter at exit.
             }
 
-            protected override void ResetCurrentAnalysisData(CopyAnalysisData newAnalysisDataOpt = null) => ResetAnalysisData(CurrentAnalysisData, newAnalysisDataOpt);
+            protected override void ResetCurrentAnalysisData() => CurrentAnalysisData.Reset(ValueDomain.UnknownOrMayBeValue);
 
             protected override CopyAbstractValue ComputeAnalysisValueForReferenceOperation(IOperation operation, CopyAbstractValue defaultValue)
             {
@@ -159,9 +195,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
             protected override PredicateValueKind SetValueForEqualsOrNotEqualsComparisonOperator(
                 IOperation leftOperand,
                 IOperation rightOperand,
-                CopyAnalysisData negatedCurrentAnalysisData,
                 bool equals,
-                bool isReferenceEquality)
+                bool isReferenceEquality,
+                CopyAnalysisData targetAnalysisData)
             {
                 if (GetCopyAbstractValue(leftOperand).Kind != CopyAbstractValueKind.Unknown &&
                     GetCopyAbstractValue(rightOperand).Kind != CopyAbstractValueKind.Unknown &&
@@ -183,52 +219,44 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
                             predicateKind = equals ? PredicateValueKind.AlwaysTrue : PredicateValueKind.AlwaysFalse;
                         }
                     }
-                    else if (negatedCurrentAnalysisData.TryGetValue(rightEntity, out var negatedRightValue) &&
-                        negatedRightValue.AnalysisEntities.Contains(leftEntity))
-                    {
-                        // We have "a == b || a == b" or "a == b || a != b"
-                        // For both cases, condition on right is always true or always false and redundant.
-                        // NOTE: CopyAnalysis only tracks value equal entities
-                        if (!isReferenceEquality)
-                        {
-                            predicateKind = equals ? PredicateValueKind.AlwaysFalse : PredicateValueKind.AlwaysTrue;
-                        }
-                    }
 
                     if (predicateKind != PredicateValueKind.Unknown)
                     {
                         if (!equals)
                         {
                             // "a == b && a != b" or "a == b || a != b"
-                            // CurrentAnalysisData and negatedCurrentAnalysisData are both unknown values.
                             foreach (var entity in rightValue.AnalysisEntities)
                             {
-                                SetAbstractValue(CurrentAnalysisData, entity, CopyAbstractValue.Invalid, fromPredicate: true);
-                                SetAbstractValue(negatedCurrentAnalysisData, entity, CopyAbstractValue.Invalid, fromPredicate: true);
+                                SetAbstractValue(targetAnalysisData, entity, CopyAbstractValue.Invalid, fromPredicate: true);
                             }
                         }
 
                         return predicateKind;
                     }
 
-                    var analysisData = equals ? CurrentAnalysisData : negatedCurrentAnalysisData;
-                    SetAbstractValue(analysisData, leftEntity, rightValue, fromPredicate: true);
+                    if (equals)
+                    {
+                        SetAbstractValue(targetAnalysisData, leftEntity, rightValue, fromPredicate: true);
+                    }
                 }
 
                 return PredicateValueKind.Unknown;
             }
 
+            protected override PredicateValueKind SetValueForIsNullComparisonOperator(IOperation leftOperand, bool equals, CopyAnalysisData copyAnalysisData) => PredicateValueKind.Unknown;
+            protected override CopyAnalysisData GetEmptyAnalysisDataForPredicateAnalysis() => new CopyAnalysisData();
+            
             #endregion
 
             // TODO: Remove these temporary methods once we move to compiler's CFG
             // https://github.com/dotnet/roslyn-analyzers/issues/1567
             #region Temporary methods to workaround lack of *real* CFG
             protected override CopyAnalysisData MergeAnalysisData(CopyAnalysisData value1, CopyAnalysisData value2)
-                => CopyAnalysisDomain.Instance.Merge(value1, value2);
+                => s_AnalysisDomain.Merge(value1, value2);
             protected override CopyAnalysisData GetClonedAnalysisData(CopyAnalysisData analysisData)
-                => GetClonedAnalysisDataHelper(analysisData);
+                => (CopyAnalysisData)analysisData.Clone();
             protected override bool Equals(CopyAnalysisData value1, CopyAnalysisData value2)
-                => EqualsHelper(value1, value2);
+                => value1.Equals(value2);
             #endregion
 
             #region Visitor overrides

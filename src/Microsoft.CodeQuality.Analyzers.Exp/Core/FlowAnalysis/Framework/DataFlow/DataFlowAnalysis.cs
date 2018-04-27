@@ -1,11 +1,14 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Microsoft.CodeAnalysis.Operations.ControlFlow;
+using Analyzer.Utilities.Extensions;
+using static Microsoft.CodeAnalysis.Operations.ControlFlowGraph;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow
 {
@@ -15,7 +18,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     /// </summary>
     internal abstract class DataFlowAnalysis<TAnalysisData, TAnalysisResult, TAbstractAnalysisValue>
         where TAnalysisData : class
-        where TAnalysisResult : AbstractBlockAnalysisResult<TAnalysisData, TAbstractAnalysisValue>
+        where TAnalysisResult : AbstractBlockAnalysisResult
     {
         private static readonly ConditionalWeakTable<IOperation, ConcurrentDictionary<DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue>, DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue>>> s_resultCache =
             new ConditionalWeakTable<IOperation, ConcurrentDictionary<DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue>, DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue>>>();
@@ -28,107 +31,106 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         protected AbstractAnalysisDomain<TAnalysisData> AnalysisDomain { get; }
         protected DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> OperationVisitor { get; }
+        private Dictionary<Region, TAnalysisData> MergedInputAnalysisDataForFinallyRegions { get; set; }
 
         protected DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue> GetOrComputeResultCore(
             ControlFlowGraph cfg,
-            bool cacheResult,
-            DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue> seedResultOpt = null)
+            IOperation rootOperation,
+            bool cacheResult)
         {
-            if (!cacheResult)
+            if (cfg == null)
             {
-                return Run(cfg, seedResultOpt);
+                throw new ArgumentNullException(nameof(cfg));
             }
 
-            var analysisResultsMap = s_resultCache.GetOrCreateValue(cfg.RootOperation);
-            return analysisResultsMap.GetOrAdd(OperationVisitor, _ => Run(cfg, seedResultOpt));
+            if (rootOperation == null)
+            {
+                throw new ArgumentNullException(nameof(rootOperation));
+            }
+
+            if (!cacheResult)
+            {
+                return Run(cfg);
+            }
+
+            var analysisResultsMap = s_resultCache.GetOrCreateValue(rootOperation);
+            return analysisResultsMap.GetOrAdd(OperationVisitor, _ => Run(cfg));
         }
 
-        private DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue> Run(ControlFlowGraph cfg, DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue> seedResultOpt)
+        private DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue> Run(ControlFlowGraph cfg)
         {
             var resultBuilder = new DataFlowAnalysisResultBuilder<TAnalysisData>();
+            var uniqueSuccessors = new HashSet<BasicBlock>();
+            var ordinalToBlockMap = new Dictionary<int, BasicBlock>();
+            var finallyBlockSuccessorsMap = new Dictionary<int, List<BranchWithInfo>>();
+            var catchBlockInputDataMap = new Dictionary<Region, TAnalysisData>();
 
             // Add each basic block to the result.
             foreach (var block in cfg.Blocks)
             {
                 resultBuilder.Add(block);
+                ordinalToBlockMap.Add(block.Ordinal, block);
             }
 
             var worklist = new Queue<BasicBlock>();
             var pendingBlocksNeedingAtLeastOnePass = new HashSet<BasicBlock>(cfg.Blocks);
-            var entry = GetEntry(cfg);
+            var entry = cfg.GetEntry();
 
-            // Are we computing the analysis data from scratch?
-            if (seedResultOpt == null)
-            {
-                // Initialize the input of the initial block
-                // with the default abstract value of the domain.
-                UpdateInput(resultBuilder, entry, AnalysisDomain.Bottom);
-            }
-            else
-            {
-                // Initialize the input and output of every block
-                // with the previously computed value.
-                foreach (var block in cfg.Blocks)
-                {
-                    UpdateInput(resultBuilder, block, GetInputData(seedResultOpt[block]));
-                }
-            }
+            // Initialize the input of the initial block
+            // with the default abstract value of the domain.
+            UpdateInput(resultBuilder, entry, AnalysisDomain.Bottom);
 
             // Add the block to the worklist.
             worklist.Enqueue(entry);
 
             while (worklist.Count > 0 || pendingBlocksNeedingAtLeastOnePass.Count > 0)
             {
-                // Get the next block to process
-                // and its associated result.
+                // Get the next block to process from the worklist.
+                // If worklist is empty, get any one of the pendingBlocksNeedingAtLeastOnePass, which must be unreachable from Entry block.
                 var block = worklist.Count > 0 ? worklist.Dequeue() : pendingBlocksNeedingAtLeastOnePass.ElementAt(0);
+
+                // Optimization: We process the block only if all its predecessor blocks have been processed once.
+                if (HasUnprocessedPredecessorBlock(block))
+                {
+                    continue;
+                }
+
                 var needsAtLeastOnePass = pendingBlocksNeedingAtLeastOnePass.Remove(block);
 
-                // Get the outputs of all predecessor blocks of the current block.
-                var inputs = GetPredecessors(block).Select(b => GetOutput(resultBuilder[b]));
-
-                // Merge all the outputs to get the new input of the current block.
-                var input = AnalysisDomain.Merge(inputs);
-
-                // Merge might return one of the original input values if only one of them is a valid non-null value.
-                if (inputs.Any(i => ReferenceEquals(input, i)))
+                // Get the input data for the block.
+                var input = GetInput(resultBuilder[block]);
+                if (input == null)
                 {
-                    input = AnalysisDomain.Clone(input);
-                }
+                    Debug.Assert(needsAtLeastOnePass);
 
-                // Temporary workaround due to lack of *real* CFG
-                // TODO: Remove the below if statement once we move to compiler's CFG
-                // https://github.com/dotnet/roslyn-analyzers/issues/1567
-                if (block.Kind == BasicBlockKind.Exit &&
-                    OperationVisitor.MergedAnalysisDataAtReturnStatements != null)
-                {
-                    input = AnalysisDomain.Merge(input, OperationVisitor.MergedAnalysisDataAtReturnStatements);
-                }
-
-                // Compare the previous input with the new input.
-                if (!needsAtLeastOnePass)
-                {
-                    int compare = AnalysisDomain.Compare(GetInput(resultBuilder[block]), input);
-
-                    // The newly computed abstract values for each basic block
-                    // must be always greater or equal than the previous value
-                    // to ensure termination. 
-                    Debug.Assert(compare <= 0, "The newly computed abstract value must be greater or equal than the previous one.");
-
-                    // Is old input value >= new input value
-                    if (compare >= 0)
+                    // For catch and filter regions, we track the initial input data in the catchBlockInputDataMap.
+                    Region enclosingTryAndCatchRegion = GetEnclosingTryAndCatchRegionIfStartsHandler(block);
+                    if (enclosingTryAndCatchRegion != null)
                     {
-                        continue;
+                        Debug.Assert(enclosingTryAndCatchRegion.Kind == RegionKind.TryAndCatch);
+                        Debug.Assert(block.Region.Kind == RegionKind.Catch || block.Region.Kind == RegionKind.Filter);
+                        Debug.Assert(block.Region.FirstBlockOrdinal == block.Ordinal);
+                        input = catchBlockInputDataMap[enclosingTryAndCatchRegion];
                     }
+                    else
+                    {
+                        input = AnalysisDomain.Bottom;
+                    }
+
+                    UpdateInput(resultBuilder, block, input);
                 }
 
-                // The newly computed value is greater than the previous value,
-                // so we need to update the current block result's
-                // input values with the new ones.
-                UpdateInput(resultBuilder, block, AnalysisDomain.Clone(input));
+                // Check if we are starting a try region which has one or more associated catch/filter regions.
+                // If so, we conservatively merge the input data for try region into the input data for the associated catch/filter regions.
+                if (block.Region?.Kind == RegionKind.Try &&
+                    block.Region?.Enclosing?.Kind == RegionKind.TryAndCatch &&
+                    block.Region.Enclosing.FirstBlockOrdinal == block.Ordinal)
+                {
+                    MergeIntoCatchInputData(block.Region.Enclosing, input);
+                }
 
                 // Flow the new input through the block to get a new output.
-                var output = Flow(OperationVisitor, block, input);
+                var output = Flow(OperationVisitor, block, AnalysisDomain.Clone(input));
 
                 // Compare the previous output with the new output.
                 if (!needsAtLeastOnePass)
@@ -143,6 +145,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     // Is old output value >= new output value ?
                     if (compare >= 0)
                     {
+                        Debug.Assert(IsValidWorklistState());
                         continue;
                     }
                 }
@@ -154,60 +157,264 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
                 // Since the new output value is different than the previous one, 
                 // we need to propagate it to all the successor blocks of the current block.
-                EnqueueRange(worklist, GetSuccessors(block));
+                uniqueSuccessors.Clear();
+
+                // Get the successors with corresponding flow branches.
+                // CONSIDER: Currently we need to do a bunch of branch adjusments for branches to/from finally, catch and filter regions.
+                //           We should revisit the overall CFG API and the walker to avoid such adjustments.
+                var successorsWithAdjustedBranches = GetSuccessorsWithAdjustedBranches(block).ToArray();
+                foreach ((BranchWithInfo successorWithBranch, BranchWithInfo preadjustSuccessorWithBranch) successorWithAdjustedBranch in successorsWithAdjustedBranches)
+                {
+                    // successorWithAdjustedBranch returns a pair of branches:
+                    //  1. successorWithBranch - This is the adjusted branch for a branch from inside a try region to outside the try region, where we don't flow into finally region.
+                    //                           The adjusted branch is targeted into the finally.
+                    //  2. preadjustSuccessorWithBranch - This is the original branch, which is primarily used to update the input data and successors of finally and catch region regions.
+                    //                                    Currently, these blocks have no branch coming out from it.
+
+                    // Flow the current analysis data through the branch.
+                    var newSuccessorInput = OperationVisitor.FlowBranch(block, successorWithAdjustedBranch.successorWithBranch, AnalysisDomain.Clone(output));
+                    if (successorWithAdjustedBranch.preadjustSuccessorWithBranch != null)
+                    {
+                        UpdateFinallySuccessorsAndCatchInput(successorWithAdjustedBranch.preadjustSuccessorWithBranch, newSuccessorInput);
+                    }
+
+                    // Certain branches have no destination (e.g. BranchKind.Throw), so we don't need to update the input data for the branch destination block.
+                    var successorBlockOpt = successorWithAdjustedBranch.successorWithBranch.Destination;
+                    if (successorBlockOpt == null)
+                    {
+                        continue;
+                    }
+
+                    // Perf: We can stop tracking data for entities whose lifetime is limited by the leaving regions.
+                    //       Below invocation explicitly drops such data from destination input.
+                    newSuccessorInput = OperationVisitor.OnLeavingRegions(successorWithAdjustedBranch.successorWithBranch.LeavingRegions, block, newSuccessorInput);
+
+                    // Get the current input data for the successor block, and check if it changes after merging the new input data.
+                    var currentSuccessorInput = GetInput(resultBuilder[successorBlockOpt]);
+                    var mergedSuccessorInput = currentSuccessorInput != null ?
+                        AnalysisDomain.Merge(currentSuccessorInput, newSuccessorInput) :
+                        newSuccessorInput;
+
+                    if (currentSuccessorInput != null)
+                    {
+                        int compare = AnalysisDomain.Compare(currentSuccessorInput, mergedSuccessorInput);
+
+                        // The newly computed abstract values for each basic block
+                        // must be always greater or equal than the previous value
+                        // to ensure termination.
+                        Debug.Assert(compare <= 0, "The newly computed abstract value must be greater or equal than the previous one.");
+
+                        // Is old input value >= new input value
+                        if (compare >= 0)
+                        {
+                            continue;
+                        }
+                    }
+
+                    // Input to successor has changed, so we need to update its new input and
+                    // reprocess the successor by adding it to the worklist.
+                    UpdateInput(resultBuilder, successorBlockOpt, mergedSuccessorInput);
+
+                    if (uniqueSuccessors.Add(successorBlockOpt))
+                    {
+                        worklist.Enqueue(successorBlockOpt);
+                    }
+                }
+
+                Debug.Assert(IsValidWorklistState());
             }
 
             return resultBuilder.ToResult(ToResult, OperationVisitor.GetStateMap(),
                 OperationVisitor.GetPredicateValueKindMap(), OperationVisitor.GetMergedDataForUnhandledThrowOperations(),
                 cfg, OperationVisitor.ValueDomain.UnknownOrMayBeValue);
+
+            void MergeIntoCatchInputData(Region tryAndCatchRegion, TAnalysisData dataToMerge)
+            {
+                Debug.Assert(tryAndCatchRegion.Kind == RegionKind.TryAndCatch);
+
+                if (!catchBlockInputDataMap.TryGetValue(tryAndCatchRegion, out var catchBlockInputData))
+                {
+                    catchBlockInputData = AnalysisDomain.Clone(dataToMerge);
+                }
+                else
+                {
+                    catchBlockInputData = AnalysisDomain.Merge(catchBlockInputData, dataToMerge);
+                }
+
+                catchBlockInputDataMap[tryAndCatchRegion] = catchBlockInputData;
+            }
+
+            // Ensures that we have a valid worklist/pendingBlocksNeedingAtLeastOnePass state.
+            bool IsValidWorklistState()
+            {
+                if (worklist.Count == 0 && pendingBlocksNeedingAtLeastOnePass.Count == 0)
+                {
+                    return true;
+                }
+
+                foreach (var block in worklist.Concat(pendingBlocksNeedingAtLeastOnePass))
+                {
+                    if (block.Predecessors.IsEmpty || !HasUnprocessedPredecessorBlock(block))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            bool HasUnprocessedPredecessorBlock(BasicBlock block)
+            {
+                var predecessorsWithBranches = block.GetPredecessorsWithBranches(ordinalToBlockMap);
+                return predecessorsWithBranches.Any(predecessorWithBranch =>
+                    predecessorWithBranch.predecessorBlock.Ordinal < block.Ordinal &&
+                    pendingBlocksNeedingAtLeastOnePass.Contains(predecessorWithBranch.predecessorBlock));
+            }
+
+            // If this block starts a catch/filter region, return the enclosing TryAndCatch region.
+            Region GetEnclosingTryAndCatchRegionIfStartsHandler(BasicBlock block)
+            {
+                if (block.Region?.FirstBlockOrdinal == block.Ordinal)
+                {
+                    switch (block.Region.Kind)
+                    {
+                        case RegionKind.Catch:
+                            if (block.Region.Enclosing.Kind == RegionKind.TryAndCatch)
+                            {
+                                return block.Region.Enclosing;
+                            }
+                            break;
+
+                        case RegionKind.Filter:
+                            if (block.Region.Enclosing.Kind == RegionKind.FilterAndHandler &&
+                                block.Region.Enclosing.Enclosing?.Kind == RegionKind.TryAndCatch)
+                            {
+                                return block.Region.Enclosing.Enclosing;
+                            }
+                            break;
+                    }
+                }
+
+                return null;
+            }
+
+            IEnumerable<(BranchWithInfo successorWithBranch, BranchWithInfo preadjustSuccessorWithBranch)> GetSuccessorsWithAdjustedBranches(BasicBlock basicBlock)
+            {
+                if (basicBlock.Kind != BasicBlockKind.Exit)
+                {
+                    // If this is the last block of finally region, use the finallyBlockSuccessorsMap to get its successors.
+                    if (finallyBlockSuccessorsMap.TryGetValue(basicBlock.Ordinal, out var finallySuccessors))
+                    {
+                        Debug.Assert(basicBlock.Region.Kind == RegionKind.Finally);
+                        foreach (var successor in finallySuccessors)
+                        {
+                            yield return (successor, null);
+                        }
+                    }
+                    else
+                    {
+                        var preadjustSuccessorWithbranch = basicBlock.GetNextBranchWithInfo();
+                        var adjustedSuccessorWithBranch = AdjustBranchIfFinalizing(preadjustSuccessorWithbranch);
+                        yield return (successorWithBranch: adjustedSuccessorWithBranch, preadjustSuccessorWithBranch: preadjustSuccessorWithbranch);
+
+                        if (basicBlock.Conditional.Branch.Destination != null)
+                        {
+                            preadjustSuccessorWithbranch = basicBlock.GetConditionalBranchWithInfo();
+                            adjustedSuccessorWithBranch = AdjustBranchIfFinalizing(preadjustSuccessorWithbranch);
+                            yield return (successorWithBranch: adjustedSuccessorWithBranch, preadjustSuccessorWithBranch: preadjustSuccessorWithbranch);
+                        }
+                    }
+                }
+            }
+
+            // Adjust the branch if we are going to be executing one or more finally regions, but the CFG's branch doesn't account for these.
+            BranchWithInfo AdjustBranchIfFinalizing(BranchWithInfo branch)
+            {
+                if (branch.FinallyRegions.Length > 0)
+                {
+                    var firstFinally = branch.FinallyRegions[0];
+                    var destination = ordinalToBlockMap[firstFinally.FirstBlockOrdinal];
+                    return branch.With(destination, enteringRegions: ImmutableArray<Region>.Empty,
+                        leavingRegions: ImmutableArray<Region>.Empty, finallyRegions: ImmutableArray<Region>.Empty);
+                }
+                else
+                {
+                    return branch;
+                }
+            }
+
+            // Updates the successors of finally blocks.
+            // Also updates the merged input data tracked for catch blocks.
+            void UpdateFinallySuccessorsAndCatchInput(BranchWithInfo branch, TAnalysisData branchData)
+            {
+                // Compute and update finally successors.
+                if (branch.FinallyRegions.Length > 0)
+                {
+                    var successor = branch.With(conditionOpt: null, valueOpt: null, jumpIfTrue: null);
+                    for (var i = branch.FinallyRegions.Length - 1; i >= 0; i--)
+                    {
+                        Region finallyRegion = branch.FinallyRegions[i];
+                        UpdateFinallySuccessor(finallyRegion, successor);
+                        successor = new BranchWithInfo(destination: ordinalToBlockMap[finallyRegion.FirstBlockOrdinal]);
+                    }
+                }
+
+                // Update catch input data.
+                if (branch.LeavingRegions.Length > 0)
+                {
+                    foreach (var tryAndCatchRegion in branch.LeavingRegions.Where(region => region.Kind == RegionKind.TryAndCatch))
+                    {
+                        var catchRegion = tryAndCatchRegion.Regions.FirstOrDefault(region => region.Kind == RegionKind.Catch || region.Kind == RegionKind.FilterAndHandler);
+                        if (catchRegion != null)
+                        {
+                            MergeIntoCatchInputData(tryAndCatchRegion, branchData);
+                            
+                            // We also need to enqueue the catch block into the worklist as there is no direct branch into catch.
+                            worklist.Enqueue(ordinalToBlockMap[catchRegion.FirstBlockOrdinal]);
+                        }
+                    }
+                }
+            }
+
+            void UpdateFinallySuccessor(Region finallyRegion, BranchWithInfo successor)
+            {
+                Debug.Assert(finallyRegion.Kind == RegionKind.Finally);
+                if (!finallyBlockSuccessorsMap.TryGetValue(finallyRegion.LastBlockOrdinal, out var lastBlockSuccessors))
+                {
+                    lastBlockSuccessors = new List<BranchWithInfo>();
+                    finallyBlockSuccessorsMap.Add(finallyRegion.LastBlockOrdinal, lastBlockSuccessors);
+                }
+
+                lastBlockSuccessors.Add(successor);
+            }
         }
 
         public static TAnalysisData Flow(DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> operationVisitor, BasicBlock block, TAnalysisData data)
         {
-            if (block.Kind == BasicBlockKind.Entry)
-            {
-                operationVisitor.OnEntry(block, data);
-            }
-            else if (block.Kind == BasicBlockKind.Exit)
-            {
-                operationVisitor.OnExit(block, data);
-            }
+            operationVisitor.OnStartBlockAnalysis(block, data);
 
             foreach (var statement in block.Statements)
             {
                 data = operationVisitor.Flow(statement, block, data);
             }
 
+            operationVisitor.OnEndBlockAnalysis(block);
+
             return data;
         }
 
-        private static void EnqueueRange<T>(Queue<T> self, IEnumerable<T> collection)
-        {
-            foreach (var item in collection)
-            {
-                if (!self.Contains(item))
-                {
-                    self.Enqueue(item);
-                }
-            }
-        }
-
         internal abstract TAnalysisResult ToResult(BasicBlock basicBlock, DataFlowAnalysisInfo<TAnalysisData> blockAnalysisData);
-        protected virtual BasicBlock GetEntry(ControlFlowGraph cfg) => cfg.Entry;
-        protected virtual IEnumerable<BasicBlock> GetPredecessors(BasicBlock block) => block.Predecessors;
-        protected virtual IEnumerable<BasicBlock> GetSuccessors(BasicBlock block) => block.Successors;
-        protected virtual TAnalysisData GetInput(DataFlowAnalysisInfo<TAnalysisData> result) => result.Input;
-        protected virtual TAnalysisData GetOutput(DataFlowAnalysisInfo<TAnalysisData> result) => result.Output;
-        protected abstract TAnalysisData GetInputData(TAnalysisResult result);
-
-        protected virtual void UpdateInput(DataFlowAnalysisResultBuilder<TAnalysisData> builder, BasicBlock block, TAnalysisData newInput)
+        private static TAnalysisData GetInput(DataFlowAnalysisInfo<TAnalysisData> result) => result.Input;
+        private static TAnalysisData GetOutput(DataFlowAnalysisInfo<TAnalysisData> result) => result.Output;
+        
+        private static void UpdateInput(DataFlowAnalysisResultBuilder<TAnalysisData> builder, BasicBlock block, TAnalysisData newInput)
         {
             var currentData = builder[block];
             var newData = currentData.WithInput(newInput);
             builder.Update(block, newData);
         }
 
-        protected virtual void UpdateOutput(DataFlowAnalysisResultBuilder<TAnalysisData> builder, BasicBlock block, TAnalysisData newOutput)
+        private static void UpdateOutput(DataFlowAnalysisResultBuilder<TAnalysisData> builder, BasicBlock block, TAnalysisData newOutput)
         {
             var currentData = builder[block];
             var newData = currentData.WithOutput(newOutput);

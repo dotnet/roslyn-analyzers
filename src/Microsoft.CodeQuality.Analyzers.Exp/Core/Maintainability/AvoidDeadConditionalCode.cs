@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using Analyzer.Utilities;
@@ -7,7 +8,6 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
-using Microsoft.CodeAnalysis.Operations.ControlFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis;
 using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
@@ -54,14 +54,14 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                compilationContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
+                compilationContext.RegisterOperationBlockAction(operationBlockContext =>
                 {
-                    if (!(operationBlockStartContext.OwningSymbol is IMethodSymbol containingMethod))
+                    if (!(operationBlockContext.OwningSymbol is IMethodSymbol containingMethod))
                     {
                         return;
                     }
 
-                    foreach (var operationRoot in operationBlockStartContext.OperationBlocks)
+                    foreach (var operationRoot in operationBlockContext.OperationBlocks)
                     {
                         IBlockOperation topmostBlock = operationRoot.GetTopmostParentBlock();
 
@@ -69,75 +69,77 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
                                 (op as IBinaryOperation)?.IsComparisonOperator() == true ||
                                 (op as IInvocationOperation)?.TargetMethod.ReturnType.SpecialType == SpecialType.System_Boolean ||
                                 op.Kind == OperationKind.Coalesce ||
-                                op.Kind == OperationKind.ConditionalAccess;
+                                op.Kind == OperationKind.ConditionalAccess ||
+                                op.Kind == OperationKind.IsNull;
 
                         if (topmostBlock != null && topmostBlock.HasAnyOperationDescendant(ShouldAnalyze))
                         {
-                            var cfg = ControlFlowGraph.Create(topmostBlock);
-                            var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockStartContext.Compilation);
-                            var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider);
-                            var copyAnalysisResult = CopyAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, pointsToAnalysisResultOpt: pointsToAnalysisResult);
+                            var cfg = SemanticModel.GetControlFlowGraph(topmostBlock);
+                            var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockContext.Compilation);
+                            var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, wellKnownTypeProvider);
+                            var copyAnalysisResult = CopyAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, wellKnownTypeProvider, pointsToAnalysisResultOpt: pointsToAnalysisResult);
                             // Do another analysis pass to improve the results from PointsTo and Copy analysis.
-                            pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, pointsToAnalysisResult, copyAnalysisResult);
-                            var stringContentAnalysisResult = StringContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
+                            pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, wellKnownTypeProvider, copyAnalysisResult);
+                            var stringContentAnalysisResult = StringContentAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
 
-                            operationBlockStartContext.RegisterOperationAction(operationContext =>
+                            foreach (var operation in cfg.DescendantOperations())
                             {
-                                var binaryOperation = (IBinaryOperation)operationContext.Operation;
-                                PredicateValueKind predicateKind = GetPredicateKind(binaryOperation);
-                                if (predicateKind != PredicateValueKind.Unknown &&
-                                    (!(binaryOperation.LeftOperand is IBinaryOperation leftBinary) || GetPredicateKind(leftBinary) == PredicateValueKind.Unknown) &&
-                                    (!(binaryOperation.RightOperand is IBinaryOperation rightBinary) || GetPredicateKind(rightBinary) == PredicateValueKind.Unknown))
+                                switch (operation.Kind)
                                 {
-                                    ReportAlwaysTrueFalseOrNullDiagnostic(operationContext, predicateKind);
-                                }
-                            }, OperationKind.BinaryOperator);
+                                    case OperationKind.BinaryOperator:
+                                        var binaryOperation = (IBinaryOperation)operation;
+                                        PredicateValueKind predicateKind = GetPredicateKind(binaryOperation);
+                                        if (predicateKind != PredicateValueKind.Unknown &&
+                                            (!(binaryOperation.LeftOperand is IBinaryOperation leftBinary) || GetPredicateKind(leftBinary) == PredicateValueKind.Unknown) &&
+                                            (!(binaryOperation.RightOperand is IBinaryOperation rightBinary) || GetPredicateKind(rightBinary) == PredicateValueKind.Unknown))
+                                        {
+                                            ReportAlwaysTrueFalseOrNullDiagnostic(operation, predicateKind);
+                                        }
 
-                            operationBlockStartContext.RegisterOperationAction(operationContext =>
-                            {
-                                PredicateValueKind predicateKind = GetPredicateKind(operationContext.Operation);
-                                if (predicateKind != PredicateValueKind.Unknown)
-                                {
-                                    ReportAlwaysTrueFalseOrNullDiagnostic(operationContext, predicateKind);
-                                }
-                            }, OperationKind.Invocation);
-
-                            operationBlockStartContext.RegisterOperationAction(operationContext =>
-                            {
-                                IOperation nullCheckedOperation = operationContext.Operation.Kind == OperationKind.Coalesce ?
-                                    ((ICoalesceOperation)operationContext.Operation).Value :
-                                    ((IConditionalAccessOperation)operationContext.Operation).Operation;
-
-                                // '{0}' is always/never '{1}'. Remove or refactor the condition(s) to avoid dead code.
-                                DiagnosticDescriptor rule;
-                                switch (pointsToAnalysisResult[nullCheckedOperation].NullState)
-                                {
-                                    case NullAbstractValue.Null:
-                                        rule = AlwaysTrueFalseOrNullRule;
                                         break;
 
-                                    case NullAbstractValue.NotNull:
-                                        rule = NeverNullRule;
+                                    case OperationKind.Invocation:
+                                        predicateKind = GetPredicateKind(operation);
+                                        if (predicateKind != PredicateValueKind.Unknown)
+                                        {
+                                            ReportAlwaysTrueFalseOrNullDiagnostic(operation, predicateKind);
+                                        }
+
                                         break;
 
-                                    default:
-                                        return;
-                                }
+                                    case OperationKind.IsNull:
+                                        // '{0}' is always/never '{1}'. Remove or refactor the condition(s) to avoid dead code.
+                                        predicateKind = GetPredicateKind(operation);
+                                        DiagnosticDescriptor rule;
+                                        switch (predicateKind)
+                                        {
+                                            case PredicateValueKind.AlwaysTrue:
+                                                rule = AlwaysTrueFalseOrNullRule;
+                                                break;
 
-                                var arg1 = nullCheckedOperation.Syntax.ToString();
-                                var arg2 = nullCheckedOperation.Language == LanguageNames.VisualBasic ? "Nothing" : "null";
-                                var diagnostic = nullCheckedOperation.CreateDiagnostic(rule, arg1, arg2);
-                                operationContext.ReportDiagnostic(diagnostic);
-                            }, OperationKind.Coalesce, OperationKind.ConditionalAccess);
+                                            case PredicateValueKind.AlwaysFalse:
+                                                rule = NeverNullRule;
+                                                break;
+
+                                            default:
+                                                continue;
+                                        }
+
+                                        var arg1 = operation.Syntax.ToString();
+                                        var arg2 = operation.Language == LanguageNames.VisualBasic ? "Nothing" : "null";
+                                        var diagnostic = operation.CreateDiagnostic(rule, arg1, arg2);
+                                        operationBlockContext.ReportDiagnostic(diagnostic);
+                                        break;
+                                }
+                            }
 
                             PredicateValueKind GetPredicateKind(IOperation operation)
                             {
-                                Debug.Assert(operation.Kind == OperationKind.BinaryOperator || operation.Kind == OperationKind.Invocation);
+                                Debug.Assert(operation.Kind == OperationKind.BinaryOperator || operation.Kind == OperationKind.Invocation || operation.Kind == OperationKind.IsNull);
 
                                 if (operation is IBinaryOperation binaryOperation &&
                                     binaryOperation.IsComparisonOperator() ||
-                                    operation is IInvocationOperation invocationOperation &&
-                                    invocationOperation.Type?.SpecialType == SpecialType.System_Boolean)
+                                    operation.Type?.SpecialType == SpecialType.System_Boolean)
                                 {
                                     PredicateValueKind predicateKind = pointsToAnalysisResult.GetPredicateKind(operation);
                                     if (predicateKind != PredicateValueKind.Unknown)
@@ -161,11 +163,9 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
                                 return PredicateValueKind.Unknown;
                             }
 
-                            void ReportAlwaysTrueFalseOrNullDiagnostic(OperationAnalysisContext operationContext, PredicateValueKind predicateKind)
+                            void ReportAlwaysTrueFalseOrNullDiagnostic(IOperation operation, PredicateValueKind predicateKind)
                             {
                                 Debug.Assert(predicateKind != PredicateValueKind.Unknown);
-
-                                var operation = operationContext.Operation;
 
                                 // '{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.
                                 var arg1 = operation.Syntax.ToString();
@@ -173,7 +173,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
                                     (operation.Language == LanguageNames.VisualBasic ? "True" : "true") :
                                     (operation.Language == LanguageNames.VisualBasic ? "False" : "false");
                                 var diagnostic = operation.CreateDiagnostic(AlwaysTrueFalseOrNullRule, arg1, arg2);
-                                operationContext.ReportDiagnostic(diagnostic);
+                                operationBlockContext.ReportDiagnostic(diagnostic);
                             }
                         }
                     }

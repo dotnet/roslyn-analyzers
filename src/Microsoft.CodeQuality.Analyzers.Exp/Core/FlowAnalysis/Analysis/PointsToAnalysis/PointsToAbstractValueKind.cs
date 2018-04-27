@@ -8,19 +8,25 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
     internal enum PointsToAbstractValueKind
     {
         /// <summary>
-        /// Undefined value.
-        /// </summary>
-        Undefined,
-
-        /// <summary>
         /// Invalid value based on predicate analysis.
         /// </summary>
         Invalid,
 
         /// <summary>
+        /// Undefined value.
+        /// </summary>
+        Undefined,
+
+        /// <summary>
         /// Points to one or more known possible locations.
         /// </summary>
-        Known,
+        KnownLocations,
+
+        /// <summary>
+        /// Points to one or more known possible l-values.
+        /// Used for pointers, ref expressions and l-value flow captures.
+        /// </summary>
+        KnownLValueCaptures,
 
         /// <summary>
         /// Points to unknown set of locations.

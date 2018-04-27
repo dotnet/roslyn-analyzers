@@ -1,11 +1,9 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
-using Microsoft.CodeAnalysis.Operations.ControlFlow;
 using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow
@@ -19,11 +17,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             AbstractValueDomain<TAbstractAnalysisValue> valueDomain,
             ISymbol owningSymbol,
             WellKnownTypeProvider wellKnownTypeProvider,
+            ControlFlowGraph cfg,
             bool pessimisticAnalysis,
             bool predicateAnalysis,
             DataFlowAnalysisResult<CopyAnalysis.CopyBlockAnalysisResult, CopyAnalysis.CopyAbstractValue> copyAnalysisResultOpt,
             DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResultOpt)
-            : base(valueDomain, owningSymbol, wellKnownTypeProvider, pessimisticAnalysis, predicateAnalysis,
+            : base(valueDomain, owningSymbol, wellKnownTypeProvider, cfg, pessimisticAnalysis, predicateAnalysis,
                   copyAnalysisResultOpt, pointsToAnalysisResultOpt)
         {
             Debug.Assert(pointsToAnalysisResultOpt != null);
@@ -45,31 +44,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         protected override void ResetReferenceTypeInstanceAnalysisData(PointsToAbstractValue pointsToAbstractValue)
         {
-        }
-
-        protected void ResetCurrentAnalysisData(IDictionary<AbstractLocation, TAbstractAnalysisValue> currentAnalysisData, IDictionary<AbstractLocation, TAbstractAnalysisValue> newAnalysisDataOpt)
-        {
-            // Reset the current analysis data, while ensuring that we don't violate the monotonicity, i.e. we cannot remove any existing key from currentAnalysisData.
-            if (newAnalysisDataOpt == null)
-            {
-                // Just set the values for existing keys to ValueDomain.UnknownOrMayBeValue.
-                foreach (var key in currentAnalysisData.Keys)
-                {
-                    SetAbstractValue(key, ValueDomain.UnknownOrMayBeValue);
-                }
-            }
-            else
-            {
-                // Merge the values from current and new analysis data.
-                var keys = currentAnalysisData.Keys.Concat(newAnalysisDataOpt.Keys).ToArray();
-                foreach (var key in keys)
-                {
-                    var value1 = currentAnalysisData.TryGetValue(key, out var currentValue) ? currentValue : ValueDomain.Bottom;
-                    var value2 = newAnalysisDataOpt.TryGetValue(key, out var newValue) ? newValue : ValueDomain.Bottom;
-                    var mergedValue = ValueDomain.Merge(value1, value2);
-                    SetAbstractValue(key, mergedValue);
-                }
-            }
         }
 
         protected virtual TAbstractAnalysisValue HandleInstanceCreation(ITypeSymbol instanceType, PointsToAbstractValue instanceLocation, TAbstractAnalysisValue defaultValue)
@@ -112,33 +86,15 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         /// <summary>
         /// Helper method to reset analysis data for analysis locations.
-        /// If <paramref name="newAnalysisDataOpt"/> is null, all the analysis values in <paramref name="currentAnalysisDataOpt"/> are set to <see cref="ValueDomain.UnknownOrMayBeValue"/>.
-        /// Otherwise, all the key-value paris in <paramref name="newAnalysisDataOpt"/> are transfered to <paramref name="currentAnalysisDataOpt"/> and keys in <paramref name="currentAnalysisDataOpt"/> which
-        /// are not present in <paramref name="newAnalysisDataOpt"/> are set to <see cref="ValueDomain.UnknownOrMayBeValue"/>.
         /// </summary>
-        protected void ResetAnalysisData(IDictionary<AbstractLocation, TAbstractAnalysisValue> currentAnalysisDataOpt, IDictionary<AbstractLocation, TAbstractAnalysisValue> newAnalysisDataOpt)
+        protected void ResetAnalysisData(IDictionary<AbstractLocation, TAbstractAnalysisValue> currentAnalysisDataOpt)
         {
             // Reset the current analysis data, while ensuring that we don't violate the monotonicity, i.e. we cannot remove any existing key from currentAnalysisData.
-            if (newAnalysisDataOpt == null)
+            // Just set the values for existing keys to ValueDomain.UnknownOrMayBeValue.
+            var keys = currentAnalysisDataOpt?.Keys.ToImmutableArray();
+            foreach (var key in keys)
             {
-                // Just set the values for existing keys to ValueDomain.UnknownOrMayBeValue.
-                var keys = currentAnalysisDataOpt?.Keys.ToImmutableArray();
-                foreach (var key in keys)
-                {
-                    SetAbstractValue(key, ValueDomain.UnknownOrMayBeValue);
-                }
-            }
-            else
-            {
-                // Merge the values from current and new analysis data.
-                var keys = currentAnalysisDataOpt?.Keys.Concat(newAnalysisDataOpt.Keys).ToImmutableHashSet();
-                foreach (var key in keys)
-                {
-                    var value1 = currentAnalysisDataOpt != null && currentAnalysisDataOpt.TryGetValue(key, out var currentValue) ? currentValue : ValueDomain.Bottom;
-                    var value2 = newAnalysisDataOpt.TryGetValue(key, out var newValue) ? newValue : ValueDomain.Bottom;
-                    var mergedValue = ValueDomain.Merge(value1, value2);
-                    SetAbstractValue(key, mergedValue);
-                }
+                SetAbstractValue(key, ValueDomain.UnknownOrMayBeValue);
             }
         }
 

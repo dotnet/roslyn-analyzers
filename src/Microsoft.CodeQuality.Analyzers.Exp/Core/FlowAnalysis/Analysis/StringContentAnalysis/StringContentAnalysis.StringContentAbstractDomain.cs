@@ -5,8 +5,6 @@ using System.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
 {
-    using StringContentAnalysisData = IDictionary<AnalysisEntity, StringContentAbstractValue>;
-
     internal partial class StringContentAnalysis : ForwardDataFlowAnalysis<StringContentAnalysisData, StringContentBlockAnalysisResult, StringContentAbstractValue>
     {
         /// <summary>
@@ -54,13 +52,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
                     {
                         return 0;
                     }
-                }
-                else if (oldValue.NonLiteralState == StringContainsNonLiteralState.Invalid ||
-                    oldValue.NonLiteralState == StringContainsNonLiteralState.Undefined ||
-                    newValue.NonLiteralState == StringContainsNonLiteralState.Invalid ||
-                    newValue.NonLiteralState == StringContainsNonLiteralState.Undefined)
-                {
-                    return 0;
                 }
                 else if (oldValue.NonLiteralState < newValue.NonLiteralState)
                 {

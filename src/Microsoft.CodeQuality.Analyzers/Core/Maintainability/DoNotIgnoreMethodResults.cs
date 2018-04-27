@@ -240,14 +240,17 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return false;
             }
 
-            // Get the enclosing block. If that block's parent isn't null (MSTest case) or an IAnonymousFunctionOperation (xUnit/NUnit), then
-            // we bail immediately
+            // Get the enclosing block.
             if (!(operationContext.Operation.Parent is IBlockOperation enclosingBlock))
             {
                 return false;
             }
 
-            if (enclosingBlock.Parent != null && enclosingBlock.Parent.Kind != OperationKind.AnonymousFunction)
+            // If enclosing block isn't the topmost IBlockOperation (MSTest case) or its parent isn't an IAnonymousFunctionOperation (xUnit/NUnit), then
+            // we bail immediately
+            var hasTopmostBlockParent = enclosingBlock == operationContext.Operation.GetTopmostParentBlock();
+            var hasAnonymousFunctionParent = enclosingBlock.Parent?.Kind == OperationKind.AnonymousFunction;
+            if (!hasTopmostBlockParent && !hasAnonymousFunctionParent)
             {
                 return false;
             }
@@ -269,8 +272,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 }
             }
 
-            // If the parent is Null, we're in the MSTest case. Otherwise, we're in the xUnit/NUnit case.
-            if (enclosingBlock.Parent == null)
+            // If enclosing block is the topmost block, we're in the MSTest case. Otherwise, we're in the xUnit/NUnit case.
+            if (hasTopmostBlockParent)
             {
                 if (expectedExceptionType == null)
                 {

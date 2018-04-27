@@ -5,7 +5,7 @@ using Analyzer.Utilities;
 
 namespace Microsoft.CodeAnalysis.Operations.DataFlow
 {
-    internal class ThrowBranchWithExceptionType : IEquatable<ThrowBranchWithExceptionType>
+    internal sealed class ThrowBranchWithExceptionType : IEquatable<ThrowBranchWithExceptionType>
     {
         public ThrowBranchWithExceptionType(BranchWithInfo branch, INamedTypeSymbol exceptionType)
         {

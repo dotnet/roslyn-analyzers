@@ -68,6 +68,8 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
                         bool ShouldAnalyze(IOperation op) =>
                                 (op as IBinaryOperation)?.IsComparisonOperator() == true ||
                                 (op as IInvocationOperation)?.TargetMethod.ReturnType.SpecialType == SpecialType.System_Boolean ||
+                                op.Kind == OperationKind.Coalesce ||
+                                op.Kind == OperationKind.ConditionalAccess ||
                                 op.Kind == OperationKind.IsNull;
 
                         if (topmostBlock != null && topmostBlock.HasAnyOperationDescendant(ShouldAnalyze))

@@ -62,7 +62,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             var resultBuilder = new DataFlowAnalysisResultBuilder<TAnalysisData>();
             var uniqueSuccessors = new HashSet<BasicBlock>();
             var ordinalToBlockMap = new Dictionary<int, BasicBlock>();
-            var finallyOrCatchBlockSuccessorsMap = new Dictionary<int, List<BranchWithInfo>>();
+            var finallyBlockSuccessorsMap = new Dictionary<int, List<BranchWithInfo>>();
             var catchBlockInputDataMap = new Dictionary<Region, TAnalysisData>();
 
             // Add each basic block to the result.
@@ -175,7 +175,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     var newSuccessorInput = OperationVisitor.FlowBranch(block, successorWithAdjustedBranch.successorWithBranch, AnalysisDomain.Clone(output));
                     if (successorWithAdjustedBranch.preadjustSuccessorWithBranch != null)
                     {
-                        UpdateFinallyAndCatchSuccessors(successorWithAdjustedBranch.preadjustSuccessorWithBranch, newSuccessorInput);
+                        UpdateFinallySuccessorsAndCatchInput(successorWithAdjustedBranch.preadjustSuccessorWithBranch, newSuccessorInput);
                     }
 
                     // Certain branches have no destination (e.g. BranchKind.Throw), so we don't need to update the input data for the branch destination block.
@@ -302,11 +302,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             {
                 if (basicBlock.Kind != BasicBlockKind.Exit)
                 {
-                    // If this is the last block of finally/catch region, use the finallyOrCatchBlockSuccessorsMap to get its successors.
-                    if (finallyOrCatchBlockSuccessorsMap.TryGetValue(basicBlock.Ordinal, out var finallyOrCatchSuccessors))
+                    // If this is the last block of finally region, use the finallyBlockSuccessorsMap to get its successors.
+                    if (finallyBlockSuccessorsMap.TryGetValue(basicBlock.Ordinal, out var finallySuccessors))
                     {
-                        Debug.Assert(basicBlock.Region.Kind == RegionKind.Finally || basicBlock.Region.Kind == RegionKind.Catch || basicBlock.Region.Kind == RegionKind.FilterAndHandler);
-                        foreach (var successor in finallyOrCatchSuccessors)
+                        Debug.Assert(basicBlock.Region.Kind == RegionKind.Finally);
+                        foreach (var successor in finallySuccessors)
                         {
                             yield return (successor, null);
                         }
@@ -343,9 +343,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 }
             }
 
-            // Updates the successors of finally/catch blocks.
+            // Updates the successors of finally blocks.
             // Also updates the merged input data tracked for catch blocks.
-            void UpdateFinallyAndCatchSuccessors(BranchWithInfo branch, TAnalysisData branchData)
+            void UpdateFinallySuccessorsAndCatchInput(BranchWithInfo branch, TAnalysisData branchData)
             {
                 // Compute and update finally successors.
                 if (branch.FinallyRegions.Length > 0)
@@ -354,50 +354,35 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     for (var i = branch.FinallyRegions.Length - 1; i >= 0; i--)
                     {
                         Region finallyRegion = branch.FinallyRegions[i];
-                        UpdateFinallyOrCatchSuccessor(finallyRegion, successor);
+                        UpdateFinallySuccessor(finallyRegion, successor);
                         successor = new BranchWithInfo(destination: ordinalToBlockMap[finallyRegion.FirstBlockOrdinal]);
                     }
                 }
 
-                // Compute and update catch successors.
+                // Update catch input data.
                 if (branch.LeavingRegions.Length > 0)
                 {
-                    // If we are going to execute at least one finally, then first finally is catch block's successor.
-                    var successor = branch.With(conditionOpt: null, valueOpt: null, jumpIfTrue: null);
-                    if (branch.FinallyRegions.Length > 0)
-                    {
-                        var finallyRegion = branch.FinallyRegions[0];
-                        successor = new BranchWithInfo(destination: ordinalToBlockMap[finallyRegion.FirstBlockOrdinal]);
-                    }
-
                     foreach (var tryAndCatchRegion in branch.LeavingRegions.Where(region => region.Kind == RegionKind.TryAndCatch))
                     {
-                        var hasHandler = false;
-                        foreach (var catchRegion in tryAndCatchRegion.Regions.Where(region => region.Kind == RegionKind.Catch || region.Kind == RegionKind.FilterAndHandler))
-                        {
-                            UpdateFinallyOrCatchSuccessor(catchRegion, successor);
-
-                            // We also need to enqueue the catch block into the worklist as there is no direct branch into catch.
-                            worklist.Enqueue(ordinalToBlockMap[catchRegion.FirstBlockOrdinal]);
-
-                            hasHandler = true;
-                        }
-
-                        if (hasHandler)
+                        var catchRegion = tryAndCatchRegion.Regions.FirstOrDefault(region => region.Kind == RegionKind.Catch || region.Kind == RegionKind.FilterAndHandler);
+                        if (catchRegion != null)
                         {
                             MergeIntoCatchInputData(tryAndCatchRegion, branchData);
+                            
+                            // We also need to enqueue the catch block into the worklist as there is no direct branch into catch.
+                            worklist.Enqueue(ordinalToBlockMap[catchRegion.FirstBlockOrdinal]);
                         }
                     }
                 }
             }
 
-            void UpdateFinallyOrCatchSuccessor(Region finallyOrCatchRegion, BranchWithInfo successor)
+            void UpdateFinallySuccessor(Region finallyRegion, BranchWithInfo successor)
             {
-                Debug.Assert(finallyOrCatchRegion.Kind == RegionKind.Finally || finallyOrCatchRegion.Kind == RegionKind.Catch || finallyOrCatchRegion.Kind == RegionKind.FilterAndHandler);
-                if (!finallyOrCatchBlockSuccessorsMap.TryGetValue(finallyOrCatchRegion.LastBlockOrdinal, out var lastBlockSuccessors))
+                Debug.Assert(finallyRegion.Kind == RegionKind.Finally);
+                if (!finallyBlockSuccessorsMap.TryGetValue(finallyRegion.LastBlockOrdinal, out var lastBlockSuccessors))
                 {
                     lastBlockSuccessors = new List<BranchWithInfo>();
-                    finallyOrCatchBlockSuccessorsMap.Add(finallyOrCatchRegion.LastBlockOrdinal, lastBlockSuccessors);
+                    finallyBlockSuccessorsMap.Add(finallyRegion.LastBlockOrdinal, lastBlockSuccessors);
                 }
 
                 lastBlockSuccessors.Add(successor);

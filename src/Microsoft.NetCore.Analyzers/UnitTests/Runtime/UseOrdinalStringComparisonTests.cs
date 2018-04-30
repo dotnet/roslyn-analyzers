@@ -230,7 +230,7 @@ End Class
         }
 
         [Fact]
-        public void CA1309OperatorOverloadTestCSharp()
+        public void CA1309OperatorOverloadTestCSharp_NoDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -240,21 +240,17 @@ class C
     void Method()
     {
         string a = null, b = null;
-        // not allowed
         if (a == b) { }
         if (a != b) { }
-        // this is allowed
         if (a == null) { }
         if (null == a) { }
     }
 }
-",
-                CSharpResult(10, 15),
-                CSharpResult(11, 15));
+");
         }
 
         [Fact]
-        public void CA1309OperatorOverloadTestBasic()
+        public void CA1309OperatorOverloadTestBasic_NoDiagnostic()
         {
             VerifyBasic(@"
 Imports System
@@ -262,12 +258,10 @@ Imports System
 Class C
     Sub Method()
         Dim a As String, b As String
-        ' not allowed
         If a = b Then
         End If
         If a <> b Then
         End If
-        ' this is allowed
         If a = Nothing Then
         End If
         If a Is Nothing Then
@@ -276,9 +270,7 @@ Class C
         End If
     End Sub
 End Class
-",
-                BasicResult(8, 14),
-                BasicResult(10, 14));
+");
         }
 
         [Fact]

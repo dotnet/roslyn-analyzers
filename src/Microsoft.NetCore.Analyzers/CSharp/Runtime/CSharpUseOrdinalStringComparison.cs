@@ -28,12 +28,5 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 
             return invocation.GetLocation();
         }
-
-        protected override Location GetOperatorTokenLocation(SyntaxNode binaryOperationNode)
-        {
-            Debug.Assert(binaryOperationNode is BinaryExpressionSyntax);
-
-            return ((BinaryExpressionSyntax)binaryOperationNode).OperatorToken.GetLocation();
-        }
     }
 }

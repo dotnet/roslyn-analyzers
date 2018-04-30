@@ -35,7 +35,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal const string IgnoreCaseText = "IgnoreCase";
 
         protected abstract Location GetMethodNameLocation(SyntaxNode invocationNode);
-        protected abstract Location GetOperatorTokenLocation(SyntaxNode binaryOperationNode);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -50,75 +49,39 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     INamedTypeSymbol stringComparisonType = context.Compilation.GetTypeByMetadataName(StringComparisonTypeName);
                     if (stringComparisonType != null)
                     {
-                        context.RegisterOperationAction(operationContext => AnalyzeOperation(operationContext, stringComparisonType),
-                                                        OperationKind.Invocation,
-                                                        OperationKind.BinaryOperator);
+                        context.RegisterOperationAction(operationContext =>
+                            {
+                                var operation = (IInvocationOperation)operationContext.Operation;
+                                IMethodSymbol methodSymbol = operation.TargetMethod;
+                                if (methodSymbol != null &&
+                                    methodSymbol.ContainingType.SpecialType == SpecialType.System_String &&
+                                    IsEqualsOrCompare(methodSymbol.Name))
+                                {
+                                    if (!IsAcceptableOverload(methodSymbol, stringComparisonType))
+                                    {
+                                        // wrong overload
+                                        operationContext.ReportDiagnostic(Diagnostic.Create(Rule, GetMethodNameLocation(operation.Syntax)));
+                                    }
+                                    else
+                                    {
+                                        IArgumentOperation lastArgument = operation.Arguments.Last();
+                                        if (lastArgument.Value.Kind == OperationKind.FieldReference)
+                                        {
+                                            IFieldSymbol fieldSymbol = ((IFieldReferenceOperation)lastArgument.Value).Field;
+                                            if (fieldSymbol != null &&
+                                                fieldSymbol.ContainingType.Equals(stringComparisonType) &&
+                                                !IsOrdinalOrOrdinalIgnoreCase(fieldSymbol.Name))
+                                            {
+                                                // right overload, wrong value
+                                                operationContext.ReportDiagnostic(lastArgument.Syntax.CreateDiagnostic(Rule));
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            OperationKind.Invocation);
                     }
                 });
-        }
-
-        private void AnalyzeOperation(OperationAnalysisContext context, INamedTypeSymbol stringComparisonType)
-        {
-            OperationKind kind = context.Operation.Kind;
-            if (kind == OperationKind.Invocation)
-            {
-                AnalyzeInvocationExpression((IInvocationOperation)context.Operation, stringComparisonType, context.ReportDiagnostic, GetMethodNameLocation);
-            }
-            else
-            {
-                AnalyzeBinaryExpression((IBinaryOperation)context.Operation, context.ReportDiagnostic, GetOperatorTokenLocation);
-            }
-        }
-
-        private static void AnalyzeInvocationExpression(IInvocationOperation operation, INamedTypeSymbol stringComparisonType, Action<Diagnostic> reportDiagnostic, Func<SyntaxNode, Location> getMethodNameLocation)
-        {
-            IMethodSymbol methodSymbol = operation.TargetMethod;
-            if (methodSymbol != null &&
-                methodSymbol.ContainingType.SpecialType == SpecialType.System_String &&
-                IsEqualsOrCompare(methodSymbol.Name))
-            {
-                if (!IsAcceptableOverload(methodSymbol, stringComparisonType))
-                {
-                    // wrong overload
-                    reportDiagnostic(Diagnostic.Create(Rule, getMethodNameLocation(operation.Syntax)));
-                }
-                else
-                {
-                    IArgumentOperation lastArgument = operation.Arguments.Last();
-                    if (lastArgument.Value.Kind == OperationKind.FieldReference)
-                    {
-                        IFieldSymbol fieldSymbol = ((IFieldReferenceOperation)lastArgument.Value).Field;
-                        if (fieldSymbol != null &&
-                            fieldSymbol.ContainingType.Equals(stringComparisonType) &&
-                            !IsOrdinalOrOrdinalIgnoreCase(fieldSymbol.Name))
-                        {
-                            // right overload, wrong value
-                            reportDiagnostic(lastArgument.Syntax.CreateDiagnostic(Rule));
-                        }
-                    }
-                }
-            }
-        }
-
-        private static void AnalyzeBinaryExpression(IBinaryOperation operation, Action<Diagnostic> reportDiagnostic, Func<SyntaxNode, Location> getOperatorTokenLocation)
-        {
-            if (operation.OperatorKind == BinaryOperatorKind.Equals || operation.OperatorKind == BinaryOperatorKind.NotEquals)
-            {
-                // If either of the operands is not of string type, we shouldn't report a diagnostic.
-                if (operation.LeftOperand.Type?.SpecialType != SpecialType.System_String ||
-                    operation.RightOperand.Type?.SpecialType != SpecialType.System_String)
-                {
-                    return;
-                }
-
-                // If either of the operands is null, we shouldn't report a diagnostic.
-                if (operation.LeftOperand.HasNullConstantValue() || operation.RightOperand.HasNullConstantValue())
-                {
-                    return;
-                }
-
-                reportDiagnostic(Diagnostic.Create(Rule, getOperatorTokenLocation(operation.Syntax)));
-            }
         }
 
         private static bool IsEqualsOrCompare(string methodName)

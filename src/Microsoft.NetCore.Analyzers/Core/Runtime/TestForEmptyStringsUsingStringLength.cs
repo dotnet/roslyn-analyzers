@@ -45,7 +45,21 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            context.RegisterOperationAction(AnalyzeInvocationExpression, OperationKind.Invocation);
+            context.RegisterOperationAction(AnalyzeNode, OperationKind.Invocation, OperationKind.BinaryOperator);
+        }
+
+        private static void AnalyzeNode(OperationAnalysisContext context)
+        {
+            switch (context.Operation.Kind)
+            {
+                case OperationKind.Invocation:
+                    AnalyzeInvocationExpression(context);
+                    break;
+
+                default:
+                    AnalyzeBinaryExpression(context);
+                    break;
+            }
         }
 
         /// <summary>
@@ -65,6 +79,33 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
             }
         }
+
+        /// <summary>
+        /// Check to see if we have a equals or not equals expression where an empty string is being
+        /// compared.
+        /// </summary>
+        private static void AnalyzeBinaryExpression(OperationAnalysisContext context)
+        {
+            var binaryOperation = (IBinaryOperation)context.Operation;
+
+            if (binaryOperation.OperatorKind != BinaryOperatorKind.Equals &&
+                binaryOperation.OperatorKind != BinaryOperatorKind.NotEquals)
+            {
+                return;
+            }
+
+            if (binaryOperation.LeftOperand.Type?.SpecialType != SpecialType.System_String ||
+                binaryOperation.RightOperand.Type?.SpecialType != SpecialType.System_String)
+            {
+                return;
+            }
+
+            if (IsEmptyString(binaryOperation.LeftOperand) || IsEmptyString(binaryOperation.RightOperand))
+            {
+                context.ReportDiagnostic(binaryOperation.Syntax.CreateDiagnostic(s_rule));
+            }
+        }
+
 
         /// <summary>
         /// Checks if the given method is the string.Equals method.

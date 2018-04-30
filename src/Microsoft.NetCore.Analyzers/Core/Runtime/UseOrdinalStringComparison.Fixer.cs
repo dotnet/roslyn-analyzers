@@ -45,15 +45,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                          equivalenceKey: title),
                                                     diagnostic);
             }
-            else if (IsInEqualsContext(node))
-            {
-                // "a == b" => "string.Equals(a, b, StringComparison.Ordinal)"
-                // "a != b" => "!string.Equals(a, b, StringComparison.Ordinal)"
-                context.RegisterCodeFix(new MyCodeAction(title,
-                                                         async ct => await FixEquals(context.Document, syntaxGenerator, root, node, context.CancellationToken).ConfigureAwait(false),
-                                                         equivalenceKey: title),
-                                                    diagnostic);
-            }
         }
 
         protected abstract bool IsInArgumentContext(SyntaxNode node);
@@ -61,9 +52,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         protected abstract bool IsInIdentifierNameContext(SyntaxNode node);
         protected abstract Task<Document> FixIdentifierName(Document document, SyntaxGenerator generator, SyntaxNode root, SyntaxNode identifier, CancellationToken cancellationToken);
-
-        protected abstract bool IsInEqualsContext(SyntaxNode node);
-        protected abstract Task<Document> FixEquals(Document document, SyntaxGenerator generator, SyntaxNode root, SyntaxNode node, CancellationToken cancellationToken);
 
         internal SyntaxNode CreateEqualsExpression(SyntaxGenerator generator, SemanticModel model, SyntaxNode operand1, SyntaxNode operand2, bool isEquals)
         {

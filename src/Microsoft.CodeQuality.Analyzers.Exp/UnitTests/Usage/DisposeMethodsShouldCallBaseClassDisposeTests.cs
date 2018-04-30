@@ -830,6 +830,7 @@ End Class",
         [Fact, WorkItem(1671, "https://github.com/dotnet/roslyn-analyzers/issues/1671")]
         public void ErrorCase_NoDiagnostic()
         {
+            // Missing "using System;" causes "Equals" method be marked as IsOverride but with null OverriddenMethod.
             VerifyCSharp(@"
 public class BaseClass<T> : IComparable<T>
      where T : IComparable<T>

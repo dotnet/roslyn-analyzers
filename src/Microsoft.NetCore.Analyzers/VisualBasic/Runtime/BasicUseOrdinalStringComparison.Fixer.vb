@@ -58,17 +58,5 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
             End If
             Return document
         End Function
-
-        Protected Overrides Function IsInEqualsContext(node As SyntaxNode) As Boolean
-            Return node.IsKind(SyntaxKind.EqualsExpression) OrElse node.IsKind(SyntaxKind.NotEqualsExpression)
-        End Function
-
-        Protected Overrides Async Function FixEquals(document As Document, generator As SyntaxGenerator, root As SyntaxNode, node As SyntaxNode, cancellationToken As CancellationToken) As Task(Of Document)
-            Dim model = Await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(False)
-            Dim binaryExpression = CType(node, BinaryExpressionSyntax)
-            Dim fixedExpr = CreateEqualsExpression(generator, model, binaryExpression.Left, binaryExpression.Right, binaryExpression.IsKind(SyntaxKind.EqualsExpression)).WithAdditionalAnnotations(Formatter.Annotation)
-            Dim newRoot = root.ReplaceNode(node, fixedExpr)
-            Return document.WithSyntaxRoot(newRoot)
-        End Function
     End Class
 End Namespace

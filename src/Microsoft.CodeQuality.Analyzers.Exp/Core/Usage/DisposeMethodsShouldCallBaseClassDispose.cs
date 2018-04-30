@@ -53,7 +53,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Usage
                 compilationContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
                     if (!(operationBlockStartContext.OwningSymbol is IMethodSymbol containingMethod) ||
-                        !containingMethod.IsOverride ||
+                        containingMethod.OverriddenMethod == null ||
                         containingMethod.OverriddenMethod.IsAbstract)
                     {
                         return;

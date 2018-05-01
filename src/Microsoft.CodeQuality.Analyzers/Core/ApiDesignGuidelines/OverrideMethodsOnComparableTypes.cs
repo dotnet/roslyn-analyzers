@@ -93,8 +93,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            if (namedTypeSymbol.AllInterfaces.Any(t => t.Equals(comparableType) ||
-                                                      (t.ConstructedFrom?.Equals(genericComparableType) ?? false)))
+            if (IsComparableWithBaseNotComparable(namedTypeSymbol, comparableType, genericComparableType))
             {
                 var overridesEquals = namedTypeSymbol.OverridesEquals();
                 string comparisonOperatorsString = GetNeededComparisonOperators(namedTypeSymbol);
@@ -113,6 +112,28 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
             }
         }
+
+        private static bool IsComparableWithBaseNotComparable(INamedTypeSymbol namedTypeSymbol, INamedTypeSymbol comparableType, INamedTypeSymbol genericComparableType)
+        {
+            if (!IsComparableCore(namedTypeSymbol, comparableType, genericComparableType))
+            {
+                return false;
+            }
+
+            foreach (var baseType in namedTypeSymbol.GetBaseTypes())
+            {
+                if (IsComparableCore(baseType, comparableType, genericComparableType))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool IsComparableCore(INamedTypeSymbol namedTypeSymbol, INamedTypeSymbol comparableType, INamedTypeSymbol genericComparableType)
+            => namedTypeSymbol.AllInterfaces.Any(t => t.Equals(comparableType) ||
+                                                    (t.ConstructedFrom?.Equals(genericComparableType) ?? false));
 
         private static string GetNeededComparisonOperators(INamedTypeSymbol symbol)
         {

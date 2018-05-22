@@ -1,0 +1,10 @@
+<Project>
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(CODECOV_TOKEN)' != ''">
+    <PackageReference Include="Codecov" Version="$(CodecovVersion)" />
+    <PackageReference Include="OpenCover" Version="$(OpenCoverVersion)" />
+  </ItemGroup>
+</Project>

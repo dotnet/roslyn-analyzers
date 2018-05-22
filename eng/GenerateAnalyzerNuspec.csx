@@ -14,12 +14,22 @@ result.AppendLine(@"<package xmlns=""http://schemas.microsoft.com/packaging/2011
 result.AppendLine(@"  <metadata>");
 
 string version = null;
+string repositoryType = null;
+string repositoryUrl = null;
+string repositoryCommit = null;
 
 foreach (string entry in metadataList)
 {
     int equals = entry.IndexOf('=');
     string name = entry.Substring(0, equals);
     string value = entry.Substring(equals + 1);
+    switch (name)
+    {
+        case "repositoryType": repositoryType = value; continue;
+        case "repositoryUrl": repositoryUrl = value; continue;
+        case "repositoryCommit": repositoryCommit = value; continue;
+    }
+    
     if (value != "")
     {
         result.AppendLine($"    <{name}>{value}</{name}>");
@@ -29,6 +39,11 @@ foreach (string entry in metadataList)
     {
         version = value;
     }
+}
+
+if (!string.IsNullOrEmpty(repositoryType))
+{
+    result.AppendLine($@"    <repository type=""{repositoryType}"" url=""{repositoryUrl}"" commit=""{repositoryCommit}""/>");
 }
 
 if (dependencyList.Length > 0)

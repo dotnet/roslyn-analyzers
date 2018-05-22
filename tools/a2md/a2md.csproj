@@ -1,8 +1,5 @@
 ﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project>
-  <ImportGroup Label="Settings">
-    <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
-  </ImportGroup>
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
     <RootNamespace>a2md</RootNamespace>
@@ -25,7 +22,4 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis" Version="2.0.0" />
   </ItemGroup>
-  <ImportGroup Label="Targets">
-    <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />
-  </ImportGroup>
 </Project>

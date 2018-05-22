@@ -48,7 +48,7 @@
   </PropertyGroup>
   
   <!-- Returns the current build version. Used in .vsixmanifests to substitute our build version into them -->
-  <Target Name="GetBuildVersion" Outputs="$(BuildVersion)" />
+  <Target Name="GetVsixVersion" Outputs="$(BuildVersion)" />
   
   <!-- Update common properties -->
   <PropertyGroup>

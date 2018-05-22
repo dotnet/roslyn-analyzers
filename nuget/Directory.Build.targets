@@ -4,7 +4,8 @@
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
   </PropertyGroup>
 
-  <Import Project="$(RepoRoot)build\GenerateAnalyzerNuspec.targets" Condition="'$(IsPackable)' == 'true'"/>
+  <Import Project="Sdk.targets" Sdk="RoslynTools.RepoToolset" />
+  <Import Project="$(RepoRoot)eng\GenerateAnalyzerNuspec.targets" Condition="'$(IsPackable)' == 'true'"/>
 
   <!-- Nothing to build, just create packages -->
   <Target Name="Build">

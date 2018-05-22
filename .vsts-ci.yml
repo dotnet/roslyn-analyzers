@@ -15,7 +15,7 @@ steps:
     signType: real
     esrpSigning: true
 
-- script: build\CIBuild.cmd -configuration $(BuildConfiguration)
+- script: eng\common\CIBuild.cmd -configuration $(BuildConfiguration)
   displayName: Build
 
 - task: PublishTestResults@1

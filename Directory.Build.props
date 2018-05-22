@@ -1,43 +1,7 @@
 <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project>
   <PropertyGroup>
-    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-  </PropertyGroup>
-
-  <Import Project="build\NuGet.props"/>
-  <Import Project="build\Versions.props"/>
-  <Import Project="build\RepoToolset\RestoreSources.props"/>
-
-  <ItemGroup>
-    <PackageReference Include="RoslynTools.RepoToolset" Version="$(RoslynToolsRepoToolsetVersion)" />
-  </ItemGroup>
-
-  <PropertyGroup>
-    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
-
-    <RestoreSources>$(RestoreSources);https://dotnet.myget.org/F/roslyn-tools/api/v3/index.json</RestoreSources>
-    
-    <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
-
-    <!--  
-      RepoToolset props and targets are conditionally imported based on whether RepoToolsetDir is set or not
-      to allow VS to load packages and perform automatic package restore. 
-      TODO: Remove once we can use a custom SDK (https://github.com/Microsoft/msbuild/issues/1493)
-    -->
-    <_RepoToolsetDir>$(NuGetPackageRoot)roslyntools.repotoolset\$(RoslynToolsRepoToolsetVersion)\tools\</_RepoToolsetDir>
-    <RepoToolsetDir Condition="'$(BuildingInsideVisualStudio)' != 'true' or Exists('$(_RepoToolsetDir)')">$(_RepoToolsetDir)</RepoToolsetDir>
-
-    <AssetsDir>$(RepoRoot)assets\</AssetsDir>
-
-    <RepositoryUrl>https://github.com/dotnet/roslyn-analyzers</RepositoryUrl>
-    <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
-
+    <AssetsDir>$(MSBuildThisFileDirectory)assets\</AssetsDir>
     <VSSDKTargetPlatformRegRootSuffix>RoslynDev</VSSDKTargetPlatformRegRootSuffix>
   </PropertyGroup>
-
-  <!-- 
-    TODO: Import layout props so that design-time build executed before package restore is finished doesn't
-    product artifacts into wrong obj directories. Remove once we can use a custom SDK (https://github.com/Microsoft/msbuild/issues/1493)
-  -->
-  <Import Project="build\RepoToolset\ProjectLayout.props"/>
 </Project>

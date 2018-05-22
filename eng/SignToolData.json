@@ -69,7 +69,8 @@
       "certificate": "NuGet",
       "strongName": null,
       "values": [
-        "packages/*.nupkg"
+        "packages/*.nupkg",
+        "packages/*/*.nupkg"
       ]
     }
   ]

@@ -2,7 +2,7 @@
 <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="4db2d63d-3320-4fbd-bf80-07f8d1500bd3" Version="|%CurrentProject%;GetBuildVersion|" Language="en-US" Publisher="Microsoft"  />
+    <Identity Id="4db2d63d-3320-4fbd-bf80-07f8d1500bd3" Version="|%CurrentProject%;GetVsixVersion|" Language="en-US" Publisher="Microsoft"  />
     <DisplayName>Microsoft Code Analysis 2017</DisplayName>
     <Description xml:space="preserve">Live code analysis rules and code fixes addressing API design, performance, security, and best practices for C# and Visual Basic.</Description>
     <MoreInfo>https://go.microsoft.com/fwlink/?linkid=849061</MoreInfo>
@@ -19,7 +19,7 @@
 
     <Dependency d:ProjectName="Microsoft.CodeQuality.Analyzers.Setup"
                 DisplayName="|Microsoft.CodeQuality.Analyzers.Setup;VSIXNameProjectOutputGroup|"
-                Version="[|%CurrentProject%;GetBuildVersion|,)"
+                Version="[|%CurrentProject%;GetVsixVersion|,)"
                 d:Source="Project"
                 d:InstallSource="Embed"
                 d:VsixSubPath="Vsixes"
@@ -28,7 +28,7 @@
 
     <Dependency d:ProjectName="Microsoft.NetFramework.Analyzers.Setup"
                 DisplayName="|Microsoft.NetFramework.Analyzers.Setup;VSIXNameProjectOutputGroup|"
-                Version="[|%CurrentProject%;GetBuildVersion|,)"
+                Version="[|%CurrentProject%;GetVsixVersion|,)"
                 d:Source="Project"
                 d:InstallSource="Embed"
                 d:VsixSubPath="Vsixes"
@@ -37,7 +37,7 @@
 
     <Dependency d:ProjectName="Microsoft.NetCore.Analyzers.Setup"
                 DisplayName="|Microsoft.NetCore.Analyzers.Setup;VSIXNameProjectOutputGroup|"
-                Version="[|%CurrentProject%;GetBuildVersion|,)"
+                Version="[|%CurrentProject%;GetVsixVersion|,)"
                 d:Source="Project"
                 d:InstallSource="Embed"
                 d:VsixSubPath="Vsixes"
@@ -46,7 +46,7 @@
     
     <Dependency d:ProjectName="Text.Analyzers.Setup"
                 DisplayName="|Text.Analyzers.Setup;VSIXNameProjectOutputGroup|"
-                Version="[|%CurrentProject%;GetBuildVersion|,)"
+                Version="[|%CurrentProject%;GetVsixVersion|,)"
                 d:Source="Project"
                 d:InstallSource="Embed"
                 d:VsixSubPath="Vsixes"

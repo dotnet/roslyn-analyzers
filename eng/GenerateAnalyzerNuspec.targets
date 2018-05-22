@@ -10,7 +10,8 @@
   </PropertyGroup>
 
   <Target Name="GenerateAnalyzerNuspecFile"
-          BeforeTargets="$(PackDependsOn)" 
+          BeforeTargets="$(PackDependsOn)"
+          DependsOnTargets="InitializeSourceControlInformation" 
           Condition="'@(AnalyzerNupkgFile)' != '' or '@(AnalyzerNupkgAssembly)' != '' or'@(AnalyzerNupkgDependency)' != ''">
     <PropertyGroup>
       <PackageId>$(NuspecPackageId)</PackageId>
@@ -30,7 +31,10 @@
       <_NuspecMetadata Include="tags=$(PackageTags)" />
       <_NuspecMetadata Include="serviceable=$(Serviceable)" />
       <_NuspecMetadata Include="developmentDependency=true" />
+      <_NuspecMetadata Include="repositoryType=$(RepositoryType)" />
+      <_NuspecMetadata Include="repositoryCommit=$(SourceRevisionId)" />
+      <_NuspecMetadata Include="repositoryUrl=$(PrivateRepositoryUrl)" />
     </ItemGroup>
-    <Exec Command='"$(ToolsetCompilerPackageDir)tools\csi.exe" "$(RepoRoot)build\GenerateAnalyzerNuspec.csx" "$(NuspecFile)" "$(AssetsDir)\" "$(MSBuildProjectDirectory)" "$(TargetFramework)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)"' />
+    <Exec Command='"$(CscToolPath)\csi.exe" "$(RepoRoot)eng\GenerateAnalyzerNuspec.csx" "$(NuspecFile)" "$(AssetsDir)\" "$(MSBuildProjectDirectory)" "$(TargetFramework)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)"' />
   </Target>
 </Project>

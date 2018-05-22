@@ -47,7 +47,7 @@
       <_RunOnCore Condition="$(TargetFramework.StartsWith('netcoreapp'))">true</_RunOnCore>
       
       <_UseOpenCover>false</_UseOpenCover>
-      <_UseOpenCover Condition="'$(CODECOV_TOKEN)' != '' and '$(_RunOnCore)' != 'true'">true</_UseOpenCover>
+      <_UseOpenCover Condition="'$(CODECOV_TOKEN)' != '' and '$(Configuration)' == 'Debug' and '$(_RunOnCore)' != 'true'">true</_UseOpenCover>
     </PropertyGroup>
 
     <Error Text="Architecture specified in TestArchitectures is not supported: '$(_TestArchitecture)'" File="XUnit"

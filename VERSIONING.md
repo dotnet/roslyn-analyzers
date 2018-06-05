@@ -12,7 +12,7 @@ Following is the versioning scheme that is being used for analyzer packages:
 Current and Released Versions of Analyzer Packages
 ==================================================
 
-Current version of all analyzer packages that are built out of this repo are tracked by the `VersionBase` property defined in [Versions.Props](.//build//Versions.props)
+Current version of all analyzer packages that are built out of this repo are tracked by the `VersionPrefix` property defined in [Versions.Props](.//eng//Versions.props)
 
 Released versions of analyzer packages, with the last GitHub Commit Tag and SHA are below:
 
@@ -27,3 +27,4 @@ Sr. No. |  Release Version | Commit Tag       | Commit SHA                      
 7       | 2.6.0-beta1 (pre-release)     | v2.6.0-beta1    | [6f3a651](https://github.com/dotnet/roslyn-analyzers/commit/6f3a65166a9e8c18efa122c5843ecf749a7f263a)   | Microsoft.CodeAnalysis.Analyzers, Microsoft.CodeAnalysis.FxCopAnalyzers, Microsoft.CodeQuality.Analyzers, Microsoft.Net.RoslynDiagnostics, Microsoft.NetCore.Analyzers, Microsoft.NetFramework.Analyzers,  Roslyn.Diagnostics.Analyzers, Text.Analyzers
 8       | 2.6.0-beta2 (pre-release)     | v2.6.0-beta2    | [f43577b](https://github.com/dotnet/roslyn-analyzers/commit/f43577bc2e8d545e4dfc2484edde2710df7a48f9)   | Microsoft.CodeAnalysis.Analyzers, Microsoft.CodeAnalysis.FxCopAnalyzers, Microsoft.CodeQuality.Analyzers, Microsoft.Net.RoslynDiagnostics, Microsoft.NetCore.Analyzers, Microsoft.NetFramework.Analyzers,  Roslyn.Diagnostics.Analyzers, Text.Analyzers
 9       | 2.6.0 (release)               | v2.6.0          | [32d8c24](https://github.com/dotnet/roslyn-analyzers/commit/32d8c24893858ae68fc829c9e26bdd499c74e404)   | Microsoft.CodeAnalysis.Analyzers, Microsoft.CodeAnalysis.FxCopAnalyzers, Microsoft.CodeQuality.Analyzers, Microsoft.Net.RoslynDiagnostics, Microsoft.NetCore.Analyzers, Microsoft.NetFramework.Analyzers,  Roslyn.Diagnostics.Analyzers, Text.Analyzers
+10       | 2.6.1 (release)               | v2.6.1          | [9c7e47f](https://github.com/dotnet/roslyn-analyzers/commit/9c7e47fdc74bf0c765ea663917c43f02c82f9731)   | Microsoft.CodeAnalysis.Analyzers, Microsoft.CodeAnalysis.FxCopAnalyzers, Microsoft.CodeQuality.Analyzers, Microsoft.Net.RoslynDiagnostics, Microsoft.NetCore.Analyzers, Microsoft.NetFramework.Analyzers,  Roslyn.Diagnostics.Analyzers, Text.Analyzers

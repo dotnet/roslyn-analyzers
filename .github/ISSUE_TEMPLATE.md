@@ -1,6 +1,6 @@
 #### Analyzer package
 
-Example: Microsoft.CodeQuality.Analyzers, version [2.6.0](https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers/2.6.0)
+Example: Microsoft.CodeQuality.Analyzers, version [2.6.1](https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers/2.6.1)
 
 #### Analyzer
 

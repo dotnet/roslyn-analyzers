@@ -4,9 +4,11 @@ Example: [Microsoft.CodeAnalysis.FxCopAnalyzers](https://www.nuget.org/packages/
 
 #### Package Version
 
-#### Analyzer
+Example: v2.6.1
 
-Example: IdentifiersShouldNotMatchKeywords
+#### Diagnostic ID
+
+Example: [CA1716](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1716-identifiers-should-not-match-keywords)
 
 #### Repro steps
 

@@ -1,6 +1,8 @@
 #### Analyzer package
 
-Example: Microsoft.CodeQuality.Analyzers, version [2.6.1](https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers/2.6.1)
+Example: [Microsoft.CodeAnalysis.FxCopAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)
+
+#### Package Version
 
 #### Analyzer
 

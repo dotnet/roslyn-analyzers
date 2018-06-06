@@ -30,7 +30,7 @@ For instructions on using this tutorial, see [Instructions](src/MetaCompilation.
 Microsoft.CodeAnalysis.Analyzers
 --------------------------------
 
-*Latest stable version:* [2.6.1](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers/)
+*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers)
 
 Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
 
@@ -39,7 +39,7 @@ Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
 Microsoft.CodeQuality.Analyzers
 --------------------------------
 
-*Latest stable version:* [2.6.1](https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers/)
+*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeQuality.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers)
 
 Provides common code quality guidelines.
 
@@ -48,7 +48,7 @@ Provides common code quality guidelines.
 Microsoft.CodeQuality.Analyzers.Exp
 --------------------------------
 
-*Latest pre-release version:* [2.6.1-beta1-62929-01](https://dotnet.myget.org/feed/roslyn-analyzers/package/nuget/Microsoft.CodeQuality.Analyzers.Exp)
+*Latest pre-release version:* [![NuGet](https://img.shields.io/myget/v/Microsoft.CodeQuality.Analyzers.Exp.svg)](https://dotnet.myget.org/feed/roslyn-analyzers/package/nuget/Microsoft.CodeQuality.Analyzers.Exp)
 
 Experimental package based on Dataflow Analysis to provide code quality guidelines in executable code.
 
@@ -57,7 +57,7 @@ Experimental package based on Dataflow Analysis to provide code quality guidelin
 Microsoft.NetCore.Analyzers
 -----------------
 
-*Latest stable version:* [2.6.1](https://www.nuget.org/packages/Microsoft.NetCore.Analyzers/)
+*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.NetCore.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.NetCore.Analyzers)
 
 Analyzers for APIs specific to .NET Core.
 
@@ -66,7 +66,7 @@ Analyzers for APIs specific to .NET Core.
 Microsoft.NetFramework.Analyzers
 -----------------
 
-*Latest stable version:* [2.6.1](https://www.nuget.org/packages/Microsoft.NetFramework.Analyzers/)
+*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.NetFramework.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.NetFramework.Analyzers)
 
 Analyzers for APIs specific to the desktop .NET Framework.
 
@@ -75,7 +75,7 @@ Analyzers for APIs specific to the desktop .NET Framework.
 Roslyn.Diagnostics.Analyzers
 -------------------------------
 
-*Latest stable version:* [2.6.1](https://www.nuget.org/packages/Roslyn.Diagnostics.Analyzers/)
+*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Roslyn.Diagnostics.Analyzers.svg)](https://www.nuget.org/packages/Roslyn.Diagnostics.Analyzers)
 
 Contains analyzers specific to the .NET Compiler Platform ("Roslyn") project.
 
@@ -84,7 +84,7 @@ Contains analyzers specific to the .NET Compiler Platform ("Roslyn") project.
 Text.Analyzers
 -------------------------------
 
-*Latest stable version:* [2.6.1](https://www.nuget.org/packages/Text.Analyzers/)
+*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Text.Analyzers.svg)](https://www.nuget.org/packages/Text.Analyzers)
 
 Contains analyzers for text included in code, such as comments.
 

@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
     /// <summary>
     /// Abstract domain for a <see cref="DataFlowAnalysis"/> to merge and compare values.

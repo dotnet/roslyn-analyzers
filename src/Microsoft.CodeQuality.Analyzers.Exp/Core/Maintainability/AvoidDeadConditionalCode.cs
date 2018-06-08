@@ -8,10 +8,10 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
-using Microsoft.CodeAnalysis.Operations.DataFlow;
-using Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis;
-using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
-using Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.StringContentAnalysis;
 
 namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
 {
@@ -63,8 +63,6 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
 
                     foreach (var operationRoot in operationBlockContext.OperationBlocks)
                     {
-                        IBlockOperation topmostBlock = operationRoot.GetTopmostParentBlock();
-
                         bool ShouldAnalyze(IOperation op) =>
                                 (op as IBinaryOperation)?.IsComparisonOperator() == true ||
                                 (op as IInvocationOperation)?.TargetMethod.ReturnType.SpecialType == SpecialType.System_Boolean ||
@@ -72,15 +70,15 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Maintainability
                                 op.Kind == OperationKind.ConditionalAccess ||
                                 op.Kind == OperationKind.IsNull;
 
-                        if (topmostBlock != null && topmostBlock.HasAnyOperationDescendant(ShouldAnalyze))
+                        if (operationRoot.HasAnyOperationDescendant(ShouldAnalyze))
                         {
-                            var cfg = SemanticModel.GetControlFlowGraph(topmostBlock);
+                            var cfg = operationRoot.GetEnclosingControlFlowGraph();
                             var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockContext.Compilation);
-                            var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, wellKnownTypeProvider);
-                            var copyAnalysisResult = CopyAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, wellKnownTypeProvider, pointsToAnalysisResultOpt: pointsToAnalysisResult);
+                            var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider);
+                            var copyAnalysisResult = CopyAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, pointsToAnalysisResultOpt: pointsToAnalysisResult);
                             // Do another analysis pass to improve the results from PointsTo and Copy analysis.
-                            pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, wellKnownTypeProvider, copyAnalysisResult);
-                            var stringContentAnalysisResult = StringContentAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
+                            pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, copyAnalysisResult);
+                            var stringContentAnalysisResult = StringContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
 
                             foreach (var operation in cfg.DescendantOperations())
                             {

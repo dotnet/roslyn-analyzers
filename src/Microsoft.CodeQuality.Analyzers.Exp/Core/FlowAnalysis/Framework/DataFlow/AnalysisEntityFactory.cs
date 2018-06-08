@@ -6,9 +6,10 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
+using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
     /// <summary>
     /// Factory to create <see cref="AnalysisEntity"/> objects for operations, symbol declarations, etc.

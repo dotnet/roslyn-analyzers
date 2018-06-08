@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
     /// <summary>
     /// An abstract domain implementation for analyses that store dictionary typed data.

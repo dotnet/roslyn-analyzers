@@ -3,8 +3,9 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using Analyzer.Utilities.Extensions;
+using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
     /// <summary>
     /// Result from execution of a <see cref="DataFlowAnalysis"/> on a control flow graph.

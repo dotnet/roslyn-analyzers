@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.StringContentAnalysis
 {
     internal partial class StringContentAnalysis : ForwardDataFlowAnalysis<StringContentAnalysisData, StringContentBlockAnalysisResult, StringContentAbstractValue>
     {

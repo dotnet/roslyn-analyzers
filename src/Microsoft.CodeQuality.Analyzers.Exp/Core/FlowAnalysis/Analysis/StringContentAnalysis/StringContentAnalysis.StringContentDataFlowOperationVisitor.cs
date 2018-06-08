@@ -3,9 +3,10 @@
 using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis;
+using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.StringContentAnalysis
 {
     internal partial class StringContentAnalysis : ForwardDataFlowAnalysis<StringContentAnalysisData, StringContentBlockAnalysisResult, StringContentAbstractValue>
     {

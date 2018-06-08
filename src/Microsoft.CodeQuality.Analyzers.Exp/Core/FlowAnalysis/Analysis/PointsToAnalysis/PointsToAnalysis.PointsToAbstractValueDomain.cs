@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
 {
     internal partial class PointsToAnalysis : ForwardDataFlowAnalysis<PointsToAnalysisData, PointsToBlockAnalysisResult, PointsToAbstractValue>
     {

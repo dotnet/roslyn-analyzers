@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
     /// <summary>
     /// Used by <see cref="DataFlowAnalysis"/> to store intermediate dataflow results while executing data flow analysis

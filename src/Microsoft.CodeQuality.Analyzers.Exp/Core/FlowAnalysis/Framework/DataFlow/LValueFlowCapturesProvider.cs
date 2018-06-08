@@ -5,32 +5,33 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Analyzer.Utilities.Extensions;
+using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
     /// <summary>
     /// Helper class to detect <see cref="IFlowCaptureOperation"/>s that are l-value captures.
     /// </summary>
     internal static class LValueFlowCapturesProvider
     {
-        private static readonly ConditionalWeakTable<ControlFlowGraph, ImmutableHashSet<int>> s_lValueFlowCapturesCache =
-            new ConditionalWeakTable<ControlFlowGraph, ImmutableHashSet<int>>();
+        private static readonly ConditionalWeakTable<ControlFlowGraph, ImmutableHashSet<CaptureId>> s_lValueFlowCapturesCache =
+            new ConditionalWeakTable<ControlFlowGraph, ImmutableHashSet<CaptureId>>();
 
-        public static ImmutableHashSet<int> GetOrCreateLValueFlowCaptures(ControlFlowGraph cfg)
+        public static ImmutableHashSet<CaptureId> GetOrCreateLValueFlowCaptures(ControlFlowGraph cfg)
             => s_lValueFlowCapturesCache.GetValue(cfg, CreateLValueFlowCaptures);
 
-        private static ImmutableHashSet<int> CreateLValueFlowCaptures(ControlFlowGraph cfg)
+        private static ImmutableHashSet<CaptureId> CreateLValueFlowCaptures(ControlFlowGraph cfg)
         {
-            ImmutableHashSet<int>.Builder lvalueFlowCaptureIdBuilder = null;
+            ImmutableHashSet<CaptureId>.Builder lvalueFlowCaptureIdBuilder = null;
 #if DEBUG
-            var rvalueFlowCaptureIds = new HashSet<int>();
+            var rvalueFlowCaptureIds = new HashSet<CaptureId>();
 #endif
             foreach (var flowCaptureReference in cfg.DescendantOperations<IFlowCaptureReferenceOperation>(OperationKind.FlowCaptureReference))
             {
                 if (flowCaptureReference.Parent is IAssignmentOperation assignment &&
                     assignment.Target == flowCaptureReference)
                 {
-                    lvalueFlowCaptureIdBuilder = lvalueFlowCaptureIdBuilder ?? ImmutableHashSet.CreateBuilder<int>();
+                    lvalueFlowCaptureIdBuilder = lvalueFlowCaptureIdBuilder ?? ImmutableHashSet.CreateBuilder<CaptureId>();
                     lvalueFlowCaptureIdBuilder.Add(flowCaptureReference.Id);
                 }
 #if DEBUG
@@ -51,7 +52,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             }
 #endif
 
-            return lvalueFlowCaptureIdBuilder != null ? lvalueFlowCaptureIdBuilder.ToImmutable() : ImmutableHashSet<int>.Empty;
+            return lvalueFlowCaptureIdBuilder != null ? lvalueFlowCaptureIdBuilder.ToImmutable() : ImmutableHashSet<CaptureId>.Empty;
         }
     }
 }

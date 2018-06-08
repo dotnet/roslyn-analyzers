@@ -3,7 +3,7 @@
 using System.Diagnostics;
 using Analyzer.Utilities;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
     internal abstract partial class AbstractIndex
     {

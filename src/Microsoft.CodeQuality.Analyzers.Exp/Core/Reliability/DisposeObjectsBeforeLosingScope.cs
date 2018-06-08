@@ -7,8 +7,9 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
-using Microsoft.CodeAnalysis.Operations.DataFlow;
-using Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis;
 
 namespace Microsoft.CodeQuality.Analyzers.Exp.Reliability
 {

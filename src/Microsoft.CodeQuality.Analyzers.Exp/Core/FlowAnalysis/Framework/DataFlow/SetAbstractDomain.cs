@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
     internal class SetAbstractDomain<T> : AbstractDomain<ImmutableHashSet<T>>
     {

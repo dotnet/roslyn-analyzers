@@ -7,11 +7,11 @@ using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis;
-using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
-using static Microsoft.CodeAnalysis.Operations.ControlFlowGraph;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
+using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
     /// <summary>
     /// Operation visitor to flow the abstract dataflow analysis values across a given statement in a basic block.
@@ -20,7 +20,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
     {
         private readonly DataFlowAnalysisResult<CopyBlockAnalysisResult, CopyAbstractValue> _copyAnalysisResultOpt;
         private readonly DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> _pointsToAnalysisResultOpt;
-        private readonly ImmutableHashSet<int> _lValueFlowCaptures;
+        private readonly ImmutableHashSet<CaptureId> _lValueFlowCaptures;
         private readonly ImmutableDictionary<IOperation, TAbstractAnalysisValue>.Builder _valueCacheBuilder;
         private readonly ImmutableDictionary<IOperation, PredicateValueKind>.Builder _predicateValueKindCacheBuilder;
         private readonly List<IArgumentOperation> _pendingArgumentsToReset;
@@ -54,7 +54,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         }
 
         protected BasicBlock CurrentBasicBlock { get; private set; }
-        protected bool? FlowBranchJumpIfTrue { get; private set; }
+        protected ControlFlowConditionKind FlowBranchConditionKind { get; private set; }
         protected PointsToAbstractValue ThisOrMePointsToAbstractValue { get; }
         protected AnalysisEntityFactory AnalysisEntityFactory { get; }
         protected WellKnownTypeProvider WellKnownTypeProvider { get; }
@@ -87,7 +87,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         /// </summary>
         protected bool IsInsideObjectInitializer { get; private set; }
 
-        protected bool IsLValueFlowCapture(int captureId) => _lValueFlowCaptures.Contains(captureId);
+        protected bool IsLValueFlowCapture(CaptureId captureId) => _lValueFlowCaptures.Contains(captureId);
 
         protected DataFlowOperationVisitor(
             AbstractValueDomain<TAbstractAnalysisValue> valueDomain,
@@ -219,13 +219,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         public void OnEndBlockAnalysis(BasicBlock block)
         {
-            if (block.Region != null &&
-                block.Region.LastBlockOrdinal == block.Ordinal &&
-                (block.Region.Kind == RegionKind.Finally ||
-                 block.Region.Kind == RegionKind.Catch ||
-                 block.Region.Kind == RegionKind.Filter))
+            if (block.EnclosingRegion != null &&
+                block.EnclosingRegion.LastBlockOrdinal == block.Ordinal &&
+                (block.EnclosingRegion.Kind == ControlFlowRegionKind.Finally ||
+                 block.EnclosingRegion.Kind == ControlFlowRegionKind.Catch ||
+                 block.EnclosingRegion.Kind == ControlFlowRegionKind.Filter))
             {
-                OnLeavingRegion(block.Region);
+                OnLeavingRegion(block.EnclosingRegion);
             }
 
             CurrentBasicBlock = null;
@@ -281,40 +281,40 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             CurrentBasicBlock = fromBlock;
             CurrentAnalysisData = input;
 
-            if (branch.ConditionOpt != null)
+            if (branch.BranchValueOpt != null)
             {
-                Debug.Assert(branch.JumpIfTrue.HasValue);
-                FlowBranchJumpIfTrue = branch.JumpIfTrue;
-                Visit(branch.ConditionOpt, null);
+                FlowBranchConditionKind = branch.ControlFlowConditionKind;
+                Visit(branch.BranchValueOpt, null);
 
-                // We visit the condition twice - once for the condition true branch, and once for the condition false branch.
-                // Below check ensures we execute AfterVisitRoot only once.
-                if (!_visitedFlowBranchConditions.Add(branch.ConditionOpt))
+                if (branch.ControlFlowConditionKind != ControlFlowConditionKind.None)
                 {
-                    AfterVisitRoot(branch.ConditionOpt);
-                    _visitedFlowBranchConditions.Remove(branch.ConditionOpt);
+                    // We visit the condition twice - once for the condition true branch, and once for the condition false branch.
+                    // Below check ensures we execute AfterVisitRoot only once.
+                    if (!_visitedFlowBranchConditions.Add(branch.BranchValueOpt))
+                    {
+                        AfterVisitRoot(branch.BranchValueOpt);
+                        _visitedFlowBranchConditions.Remove(branch.BranchValueOpt);
+                    }
+                }
+                else
+                {
+                    AfterVisitRoot(branch.BranchValueOpt);
                 }
 
-                FlowBranchJumpIfTrue = null;
-            }
-
-            if (branch.ValueOpt != null)
-            {
-                Visit(branch.ValueOpt, null);
-                AfterVisitRoot(branch.ValueOpt);
+                FlowBranchConditionKind = ControlFlowConditionKind.None;
             }
 
             // Special handling for return and throw branches.
             switch (branch.Kind)
             {
-                case BasicBlock.BranchKind.Return:
-                    ProcessReturnValue(branch.ValueOpt);
+                case ControlFlowBranchSemantics.Return:
+                    ProcessReturnValue(branch.BranchValueOpt);
                     break;
 
-                case BasicBlock.BranchKind.Throw:
-                case BasicBlock.BranchKind.ReThrow:
+                case ControlFlowBranchSemantics.Throw:
+                case ControlFlowBranchSemantics.Rethrow:
                     // Update the tracked merged analysis data at throw branches.
-                    var exceptionType = branch.ValueOpt.GetThrowExceptionType(CurrentBasicBlock) as INamedTypeSymbol;
+                    var exceptionType = branch.BranchValueOpt?.GetThrowExceptionType(CurrentBasicBlock) as INamedTypeSymbol;
                     if (exceptionType != null &&
                         exceptionType.DerivesFrom(WellKnownTypeProvider.Exception, baseTypesOnly: true))
                     {
@@ -323,7 +323,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                         AnalysisDataForUnhandledThrowOperations[branchWithPredecessor] = GetClonedCurrentAnalysisData();
                     }
 
-                    ProcessThrowValue(branch.ValueOpt);
+                    ProcessThrowValue(branch.BranchValueOpt);
                     break;
             }
 
@@ -334,7 +334,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         {
         }
 
-        public TAnalysisData OnLeavingRegions(ImmutableArray<Region> regions, BasicBlock currentBasicBlock, TAnalysisData input)
+        public TAnalysisData OnLeavingRegions(ImmutableArray<ControlFlowRegion> regions, BasicBlock currentBasicBlock, TAnalysisData input)
         {
             CurrentBasicBlock = currentBasicBlock;
             CurrentAnalysisData = input;
@@ -348,7 +348,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return CurrentAnalysisData;
         }
 
-        protected virtual void OnLeavingRegion(Region region)
+        protected virtual void OnLeavingRegion(ControlFlowRegion region)
         {
         }
 
@@ -620,7 +620,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 operation.Kind == OperationKind.Argument ||
                 operation.Kind == OperationKind.FlowCaptureReference);
 
-            if (!FlowBranchJumpIfTrue.HasValue || !IsRootOfCondition())
+            if (FlowBranchConditionKind == ControlFlowConditionKind.None || !IsRootOfCondition())
             {
                 // Operation is a predicate which is not a conditional.
                 // For example, "x = operation", where operation is "a == b".
@@ -642,9 +642,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 #if DEBUG
                     TAnalysisData savedCurrentAnalysisData = GetClonedCurrentAnalysisData();
 #endif
-                    FlowBranchJumpIfTrue = true;
+                    FlowBranchConditionKind = ControlFlowConditionKind.WhenTrue;
                     PerformPredicateAnalysisCore(operation, GetClonedCurrentAnalysisData());
-                    FlowBranchJumpIfTrue = null;
+                    FlowBranchConditionKind = ControlFlowConditionKind.None;
 #if DEBUG
                     Debug.Assert(Equals(savedCurrentAnalysisData, CurrentAnalysisData), "Expected no updates to CurrentAnalysisData");
 #endif
@@ -670,13 +670,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                         TAnalysisData savedCurrentAnalysisData = GetClonedCurrentAnalysisData();
 #endif
                         TAnalysisData truePredicatedData = GetEmptyAnalysisDataForPredicateAnalysis();
-                        FlowBranchJumpIfTrue = true;
+                        FlowBranchConditionKind = ControlFlowConditionKind.WhenTrue;
                         PerformPredicateAnalysisCore(operation, truePredicatedData);
 
                         TAnalysisData falsePredicatedData = GetEmptyAnalysisDataForPredicateAnalysis();
-                        FlowBranchJumpIfTrue = false;
+                        FlowBranchConditionKind = ControlFlowConditionKind.WhenFalse;
                         PerformPredicateAnalysisCore(operation, falsePredicatedData);
-                        FlowBranchJumpIfTrue = null;
+                        FlowBranchConditionKind = ControlFlowConditionKind.None;
 
 #if DEBUG
                         Debug.Assert(Equals(savedCurrentAnalysisData, CurrentAnalysisData), "Expected no updates to CurrentAnalysisData");
@@ -757,14 +757,14 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         private void PerformPredicateAnalysisCore(IOperation operation, TAnalysisData targetAnalysisData)
         {
             Debug.Assert(PredicateAnalysis);
-            Debug.Assert(FlowBranchJumpIfTrue.HasValue);
+            Debug.Assert(FlowBranchConditionKind != ControlFlowConditionKind.None);
 
             PredicateValueKind predicateValueKind = PredicateValueKind.Unknown;
             switch (operation)
             {
                 case IIsNullOperation isNullOperation:
                     // Predicate analysis for null checks.
-                    predicateValueKind = SetValueForIsNullComparisonOperator(isNullOperation.Operand, equals: FlowBranchJumpIfTrue.Value, targetAnalysisData: targetAnalysisData);
+                    predicateValueKind = SetValueForIsNullComparisonOperator(isNullOperation.Operand, equals: FlowBranchConditionKind == ControlFlowConditionKind.WhenTrue, targetAnalysisData: targetAnalysisData);
                     break;
 
                 case IBinaryOperation binaryOperation:
@@ -776,9 +776,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 case IUnaryOperation unaryOperation:
                     // Predicate analysis for unary not operator.
                     Debug.Assert(unaryOperation.OperatorKind == UnaryOperatorKind.Not);
-                    FlowBranchJumpIfTrue = !FlowBranchJumpIfTrue.Value;
+                    FlowBranchConditionKind = FlowBranchConditionKind.Negate();
                     PerformPredicateAnalysisCore(unaryOperation.Operand, targetAnalysisData);
-                    FlowBranchJumpIfTrue = !FlowBranchJumpIfTrue.Value;
+                    FlowBranchConditionKind = FlowBranchConditionKind.Negate();
                     break;
 
                 case IArgumentOperation argument:
@@ -799,7 +799,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     Debug.Assert(result);
                     Debug.Assert(flowCaptureReferenceEntity.CaptureIdOpt != null);
                     Debug.Assert(HasPredicatedDataForEntity(flowCaptureReferenceEntity));
-                    predicateValueKind = ApplyPredicatedDataForEntity(targetAnalysisData, flowCaptureReferenceEntity, trueData: FlowBranchJumpIfTrue.Value);
+                    predicateValueKind = ApplyPredicatedDataForEntity(targetAnalysisData, flowCaptureReferenceEntity, trueData: FlowBranchConditionKind == ControlFlowConditionKind.WhenTrue);
                     break;
 
                 case IInvocationOperation invocation:
@@ -842,7 +842,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                         predicateValueKind = SetValueForEqualsOrNotEqualsComparisonOperator(
                             leftOperand,
                             rightOperand,
-                            equals: FlowBranchJumpIfTrue.Value,
+                            equals: FlowBranchConditionKind == ControlFlowConditionKind.WhenTrue,
                             isReferenceEquality: isReferenceEquality,
                             targetAnalysisData: targetAnalysisData);
                     }
@@ -887,7 +887,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             if (predicateValueKind != PredicateValueKind.Unknown ||
                 _predicateValueKindCacheBuilder.ContainsKey(operation))
             {
-                if (FlowBranchJumpIfTrue.HasValue && !FlowBranchJumpIfTrue.Value)
+                if (FlowBranchConditionKind == ControlFlowConditionKind.WhenFalse)
                 {
                     switch (predicateValueKind)
                     {
@@ -909,6 +909,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         {
             Debug.Assert(PredicateAnalysis);
             Debug.Assert(operation.IsComparisonOperator());
+            Debug.Assert(FlowBranchConditionKind != ControlFlowConditionKind.None);
 
             var isReferenceEquality = operation.OperatorMethod == null && !operation.Type.HasValueCopySemantics();
             bool equals;
@@ -928,7 +929,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     return PredicateValueKind.Unknown;
             }
 
-            if (!FlowBranchJumpIfTrue.Value)
+            if (FlowBranchConditionKind == ControlFlowConditionKind.WhenFalse)
             {
                 equals = !equals;
             }
@@ -1531,53 +1532,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             return assignedValue;
         }
 
-        public override TAbstractAnalysisValue VisitObjectOrCollectionInitializer(IObjectOrCollectionInitializerOperation operation, object argument)
-        {
-            var savedIsInsideObjectInitializer = IsInsideObjectInitializer;
-            IsInsideObjectInitializer = true;
-
-            // Special handling for collection initializers as we need to track indices.
-            int collectionElementInitializerIndex = 0;
-            foreach (var elementInitializer in operation.Initializers)
-            {
-                if (elementInitializer is ICollectionElementInitializerOperation collectionElementInitializer)
-                {
-                    var _ = Visit(elementInitializer, argument: collectionElementInitializerIndex);
-                    collectionElementInitializerIndex += collectionElementInitializer.Arguments.Length;
-                }
-                else
-                {
-                    var _ = Visit(elementInitializer, argument);
-                }
-            }
-
-            IsInsideObjectInitializer = savedIsInsideObjectInitializer;
-            return ValueDomain.UnknownOrMayBeValue;
-        }
-
-        public override TAbstractAnalysisValue VisitCollectionElementInitializer(ICollectionElementInitializerOperation operation, object argument)
-        {
-            var objectCreation = operation.GetAncestor<IObjectCreationOperation>(OperationKind.ObjectCreation);
-            ITypeSymbol collectionElementType = operation.AddMethod?.Parameters.FirstOrDefault()?.Type;
-            if (collectionElementType != null)
-            {
-                var index = (int)argument;
-                for (int i = 0; i < operation.Arguments.Length; i++, index++)
-                {
-                    var abstractIndex = AbstractIndex.Create(index);
-                    IOperation elementInitializer = operation.Arguments[i];
-                    TAbstractAnalysisValue argumentValue = Visit(elementInitializer, argument: null);
-                    SetAbstractValueForElementInitializer(objectCreation, ImmutableArray.Create(abstractIndex), collectionElementType, elementInitializer, argumentValue);
-                }
-            }
-            else
-            {
-                var _ = base.VisitCollectionElementInitializer(operation, argument: null);
-            }
-
-            return ValueDomain.UnknownOrMayBeValue;
-        }
-
         public override TAbstractAnalysisValue VisitArrayInitializer(IArrayInitializerOperation operation, object argument)
         {
             var arrayCreation = operation.GetAncestor<IArrayCreationOperation>(OperationKind.ArrayCreation);
@@ -1765,12 +1719,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             // Is first argument of a Contract check invocation?
             if (PredicateAnalysis && IsContractCheckArgument(operation))
             {
-                Debug.Assert(!FlowBranchJumpIfTrue.HasValue);
+                Debug.Assert(FlowBranchConditionKind == ControlFlowConditionKind.None);
                 
                 // Force true branch.
-                FlowBranchJumpIfTrue = true;
+                FlowBranchConditionKind = ControlFlowConditionKind.WhenTrue;
                 PerformPredicateAnalysis(operation);
-                FlowBranchJumpIfTrue = null;
+                FlowBranchConditionKind = ControlFlowConditionKind.None;
             }
 
             _pendingArgumentsToReset.Add(operation);

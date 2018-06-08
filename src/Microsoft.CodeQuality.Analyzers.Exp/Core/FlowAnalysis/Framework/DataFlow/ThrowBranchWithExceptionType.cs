@@ -3,7 +3,7 @@
 using System;
 using Analyzer.Utilities;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
     internal sealed class ThrowBranchWithExceptionType : IEquatable<ThrowBranchWithExceptionType>
     {

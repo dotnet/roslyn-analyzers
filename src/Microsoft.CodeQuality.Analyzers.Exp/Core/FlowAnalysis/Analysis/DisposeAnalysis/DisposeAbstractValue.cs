@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using Analyzer.Utilities;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
 {
     /// <summary>
     /// Abstract dispose data tracked by <see cref="DisposeAnalysis"/>.

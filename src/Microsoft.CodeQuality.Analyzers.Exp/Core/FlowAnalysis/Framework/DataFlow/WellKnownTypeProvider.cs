@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
 using Analyzer.Utilities;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
     /// <summary>
     /// Provides and caches well known types in a compilation for <see cref="DataFlowAnalysis"/>.

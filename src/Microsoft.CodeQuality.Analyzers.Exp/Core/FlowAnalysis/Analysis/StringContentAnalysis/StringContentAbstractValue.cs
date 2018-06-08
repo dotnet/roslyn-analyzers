@@ -7,7 +7,7 @@ using System.Globalization;
 using System.Linq;
 using Analyzer.Utilities;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.StringContentAnalysis
 {
     /// <summary>
     /// Abstract string content data value for <see cref="AnalysisEntity"/>/<see cref="IOperation"/> tracked by <see cref="StringContentAnalysis"/>.

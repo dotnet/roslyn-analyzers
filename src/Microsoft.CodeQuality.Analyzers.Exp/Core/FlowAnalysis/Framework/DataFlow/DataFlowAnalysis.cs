@@ -8,9 +8,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Analyzer.Utilities.Extensions;
-using static Microsoft.CodeAnalysis.Operations.ControlFlowGraph;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
     /// <summary>
     /// Subtype for all dataflow analyses on a control flow graph.
@@ -31,11 +30,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         protected AbstractAnalysisDomain<TAnalysisData> AnalysisDomain { get; }
         protected DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> OperationVisitor { get; }
-        private Dictionary<Region, TAnalysisData> MergedInputAnalysisDataForFinallyRegions { get; set; }
+        private Dictionary<ControlFlowRegion, TAnalysisData> MergedInputAnalysisDataForFinallyRegions { get; set; }
 
         protected DataFlowAnalysisResult<TAnalysisResult, TAbstractAnalysisValue> GetOrComputeResultCore(
             ControlFlowGraph cfg,
-            IOperation rootOperation,
             bool cacheResult)
         {
             if (cfg == null)
@@ -43,17 +41,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 throw new ArgumentNullException(nameof(cfg));
             }
 
-            if (rootOperation == null)
-            {
-                throw new ArgumentNullException(nameof(rootOperation));
-            }
-
             if (!cacheResult)
             {
                 return Run(cfg);
             }
 
-            var analysisResultsMap = s_resultCache.GetOrCreateValue(rootOperation);
+            var analysisResultsMap = s_resultCache.GetOrCreateValue(cfg.OriginalOperation);
             return analysisResultsMap.GetOrAdd(OperationVisitor, _ => Run(cfg));
         }
 
@@ -63,7 +56,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             var uniqueSuccessors = new HashSet<BasicBlock>();
             var ordinalToBlockMap = new Dictionary<int, BasicBlock>();
             var finallyBlockSuccessorsMap = new Dictionary<int, List<BranchWithInfo>>();
-            var catchBlockInputDataMap = new Dictionary<Region, TAnalysisData>();
+            var catchBlockInputDataMap = new Dictionary<ControlFlowRegion, TAnalysisData>();
 
             // Add each basic block to the result.
             foreach (var block in cfg.Blocks)
@@ -104,12 +97,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     Debug.Assert(needsAtLeastOnePass);
 
                     // For catch and filter regions, we track the initial input data in the catchBlockInputDataMap.
-                    Region enclosingTryAndCatchRegion = GetEnclosingTryAndCatchRegionIfStartsHandler(block);
+                    ControlFlowRegion enclosingTryAndCatchRegion = GetEnclosingTryAndCatchRegionIfStartsHandler(block);
                     if (enclosingTryAndCatchRegion != null)
                     {
-                        Debug.Assert(enclosingTryAndCatchRegion.Kind == RegionKind.TryAndCatch);
-                        Debug.Assert(block.Region.Kind == RegionKind.Catch || block.Region.Kind == RegionKind.Filter);
-                        Debug.Assert(block.Region.FirstBlockOrdinal == block.Ordinal);
+                        Debug.Assert(enclosingTryAndCatchRegion.Kind == ControlFlowRegionKind.TryAndCatch);
+                        Debug.Assert(block.EnclosingRegion.Kind == ControlFlowRegionKind.Catch || block.EnclosingRegion.Kind == ControlFlowRegionKind.Filter);
+                        Debug.Assert(block.EnclosingRegion.FirstBlockOrdinal == block.Ordinal);
                         input = catchBlockInputDataMap[enclosingTryAndCatchRegion];
                     }
                     else
@@ -122,11 +115,11 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
                 // Check if we are starting a try region which has one or more associated catch/filter regions.
                 // If so, we conservatively merge the input data for try region into the input data for the associated catch/filter regions.
-                if (block.Region?.Kind == RegionKind.Try &&
-                    block.Region?.Enclosing?.Kind == RegionKind.TryAndCatch &&
-                    block.Region.Enclosing.FirstBlockOrdinal == block.Ordinal)
+                if (block.EnclosingRegion?.Kind == ControlFlowRegionKind.Try &&
+                    block.EnclosingRegion?.EnclosingRegion?.Kind == ControlFlowRegionKind.TryAndCatch &&
+                    block.EnclosingRegion.EnclosingRegion.FirstBlockOrdinal == block.Ordinal)
                 {
-                    MergeIntoCatchInputData(block.Region.Enclosing, input);
+                    MergeIntoCatchInputData(block.EnclosingRegion.EnclosingRegion, input);
                 }
 
                 // Flow the new input through the block to get a new output.
@@ -228,9 +221,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 OperationVisitor.GetPredicateValueKindMap(), OperationVisitor.GetMergedDataForUnhandledThrowOperations(),
                 cfg, OperationVisitor.ValueDomain.UnknownOrMayBeValue);
 
-            void MergeIntoCatchInputData(Region tryAndCatchRegion, TAnalysisData dataToMerge)
+            void MergeIntoCatchInputData(ControlFlowRegion tryAndCatchRegion, TAnalysisData dataToMerge)
             {
-                Debug.Assert(tryAndCatchRegion.Kind == RegionKind.TryAndCatch);
+                Debug.Assert(tryAndCatchRegion.Kind == ControlFlowRegionKind.TryAndCatch);
 
                 if (!catchBlockInputDataMap.TryGetValue(tryAndCatchRegion, out var catchBlockInputData))
                 {
@@ -272,24 +265,24 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             }
 
             // If this block starts a catch/filter region, return the enclosing TryAndCatch region.
-            Region GetEnclosingTryAndCatchRegionIfStartsHandler(BasicBlock block)
+            ControlFlowRegion GetEnclosingTryAndCatchRegionIfStartsHandler(BasicBlock block)
             {
-                if (block.Region?.FirstBlockOrdinal == block.Ordinal)
+                if (block.EnclosingRegion?.FirstBlockOrdinal == block.Ordinal)
                 {
-                    switch (block.Region.Kind)
+                    switch (block.EnclosingRegion.Kind)
                     {
-                        case RegionKind.Catch:
-                            if (block.Region.Enclosing.Kind == RegionKind.TryAndCatch)
+                        case ControlFlowRegionKind.Catch:
+                            if (block.EnclosingRegion.EnclosingRegion.Kind == ControlFlowRegionKind.TryAndCatch)
                             {
-                                return block.Region.Enclosing;
+                                return block.EnclosingRegion.EnclosingRegion;
                             }
                             break;
 
-                        case RegionKind.Filter:
-                            if (block.Region.Enclosing.Kind == RegionKind.FilterAndHandler &&
-                                block.Region.Enclosing.Enclosing?.Kind == RegionKind.TryAndCatch)
+                        case ControlFlowRegionKind.Filter:
+                            if (block.EnclosingRegion.EnclosingRegion.Kind == ControlFlowRegionKind.FilterAndHandler &&
+                                block.EnclosingRegion.EnclosingRegion.EnclosingRegion?.Kind == ControlFlowRegionKind.TryAndCatch)
                             {
-                                return block.Region.Enclosing.Enclosing;
+                                return block.EnclosingRegion.EnclosingRegion.EnclosingRegion;
                             }
                             break;
                     }
@@ -305,7 +298,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     // If this is the last block of finally region, use the finallyBlockSuccessorsMap to get its successors.
                     if (finallyBlockSuccessorsMap.TryGetValue(basicBlock.Ordinal, out var finallySuccessors))
                     {
-                        Debug.Assert(basicBlock.Region.Kind == RegionKind.Finally);
+                        Debug.Assert(basicBlock.EnclosingRegion.Kind == ControlFlowRegionKind.Finally);
                         foreach (var successor in finallySuccessors)
                         {
                             yield return (successor, null);
@@ -313,13 +306,13 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                     }
                     else
                     {
-                        var preadjustSuccessorWithbranch = basicBlock.GetNextBranchWithInfo();
+                        var preadjustSuccessorWithbranch = new BranchWithInfo(basicBlock.FallThroughSuccessor);
                         var adjustedSuccessorWithBranch = AdjustBranchIfFinalizing(preadjustSuccessorWithbranch);
                         yield return (successorWithBranch: adjustedSuccessorWithBranch, preadjustSuccessorWithBranch: preadjustSuccessorWithbranch);
 
-                        if (basicBlock.Conditional.Branch.Destination != null)
+                        if (basicBlock.ConditionalSuccessor?.Destination != null)
                         {
-                            preadjustSuccessorWithbranch = basicBlock.GetConditionalBranchWithInfo();
+                            preadjustSuccessorWithbranch = new BranchWithInfo(basicBlock.ConditionalSuccessor);
                             adjustedSuccessorWithBranch = AdjustBranchIfFinalizing(preadjustSuccessorWithbranch);
                             yield return (successorWithBranch: adjustedSuccessorWithBranch, preadjustSuccessorWithBranch: preadjustSuccessorWithbranch);
                         }
@@ -334,8 +327,8 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 {
                     var firstFinally = branch.FinallyRegions[0];
                     var destination = ordinalToBlockMap[firstFinally.FirstBlockOrdinal];
-                    return branch.With(destination, enteringRegions: ImmutableArray<Region>.Empty,
-                        leavingRegions: ImmutableArray<Region>.Empty, finallyRegions: ImmutableArray<Region>.Empty);
+                    return branch.With(destination, enteringRegions: ImmutableArray<ControlFlowRegion>.Empty,
+                        leavingRegions: ImmutableArray<ControlFlowRegion>.Empty, finallyRegions: ImmutableArray<ControlFlowRegion>.Empty);
                 }
                 else
                 {
@@ -350,10 +343,10 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 // Compute and update finally successors.
                 if (branch.FinallyRegions.Length > 0)
                 {
-                    var successor = branch.With(conditionOpt: null, valueOpt: null, jumpIfTrue: null);
+                    var successor = branch.With(branchValueOpt: null, controlFlowConditionKind: ControlFlowConditionKind.None);
                     for (var i = branch.FinallyRegions.Length - 1; i >= 0; i--)
                     {
-                        Region finallyRegion = branch.FinallyRegions[i];
+                        ControlFlowRegion finallyRegion = branch.FinallyRegions[i];
                         UpdateFinallySuccessor(finallyRegion, successor);
                         successor = new BranchWithInfo(destination: ordinalToBlockMap[finallyRegion.FirstBlockOrdinal]);
                     }
@@ -362,9 +355,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 // Update catch input data.
                 if (branch.LeavingRegions.Length > 0)
                 {
-                    foreach (var tryAndCatchRegion in branch.LeavingRegions.Where(region => region.Kind == RegionKind.TryAndCatch))
+                    foreach (var tryAndCatchRegion in branch.LeavingRegions.Where(region => region.Kind == ControlFlowRegionKind.TryAndCatch))
                     {
-                        var catchRegion = tryAndCatchRegion.Regions.FirstOrDefault(region => region.Kind == RegionKind.Catch || region.Kind == RegionKind.FilterAndHandler);
+                        var catchRegion = tryAndCatchRegion.NestedRegions.FirstOrDefault(region => region.Kind == ControlFlowRegionKind.Catch || region.Kind == ControlFlowRegionKind.FilterAndHandler);
                         if (catchRegion != null)
                         {
                             MergeIntoCatchInputData(tryAndCatchRegion, branchData);
@@ -376,9 +369,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 }
             }
 
-            void UpdateFinallySuccessor(Region finallyRegion, BranchWithInfo successor)
+            void UpdateFinallySuccessor(ControlFlowRegion finallyRegion, BranchWithInfo successor)
             {
-                Debug.Assert(finallyRegion.Kind == RegionKind.Finally);
+                Debug.Assert(finallyRegion.Kind == ControlFlowRegionKind.Finally);
                 if (!finallyBlockSuccessorsMap.TryGetValue(finallyRegion.LastBlockOrdinal, out var lastBlockSuccessors))
                 {
                     lastBlockSuccessors = new List<BranchWithInfo>();
@@ -393,7 +386,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         {
             operationVisitor.OnStartBlockAnalysis(block, data);
 
-            foreach (var statement in block.Statements)
+            foreach (var statement in block.Operations)
             {
                 data = operationVisitor.Flow(statement, block, data);
             }

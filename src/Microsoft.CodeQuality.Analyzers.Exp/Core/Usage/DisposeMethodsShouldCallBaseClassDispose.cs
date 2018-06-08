@@ -84,7 +84,8 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Usage
 
                         var invocation = (IInvocationOperation)operationContext.Operation;
                         if (invocation.TargetMethod == containingMethod.OverriddenMethod &&
-                            invocation.Instance.GetInstanceReferenceKind() == InstanceReferenceKind.Base)
+                            invocation.Instance is IInstanceReferenceOperation instanceReference &&
+                            instanceReference.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
                         {
                             Debug.Assert(invocation.TargetMethod.GetDisposeMethodKind(disposeAnalysisHelper.IDisposable) == disposeMethodKind);
                             invokesBaseDispose = true;

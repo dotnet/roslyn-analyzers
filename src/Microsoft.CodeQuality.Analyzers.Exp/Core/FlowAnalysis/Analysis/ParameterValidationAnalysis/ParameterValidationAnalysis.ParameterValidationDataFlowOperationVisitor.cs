@@ -7,9 +7,10 @@ using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
+using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ParameterValidationAnalysis
 {
     using ParameterValidationAnalysisData = IDictionary<AbstractLocation, ParameterValidationAbstractValue>;
 

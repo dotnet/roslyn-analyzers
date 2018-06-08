@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
     internal abstract partial class PredicatedAnalysisData<TKey, TValue>
     {

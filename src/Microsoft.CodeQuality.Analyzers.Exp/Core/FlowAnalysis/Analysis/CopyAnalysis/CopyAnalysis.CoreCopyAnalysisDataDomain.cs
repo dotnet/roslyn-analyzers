@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
 {
     using CoreCopyAnalysisData = IDictionary<AnalysisEntity, CopyAbstractValue>;
 

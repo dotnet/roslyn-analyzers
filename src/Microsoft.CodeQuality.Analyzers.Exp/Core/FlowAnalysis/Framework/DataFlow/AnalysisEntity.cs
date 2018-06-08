@@ -6,9 +6,10 @@ using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
+using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
     /// <summary>
     /// <para>
@@ -36,7 +37,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             ISymbol symbolOpt,
             ImmutableArray<AbstractIndex> indices,
             SyntaxNode instanceReferenceOperationSyntaxOpt,
-            int? captureIdOpt,
+            CaptureId? captureIdOpt,
             PointsToAbstractValue location,
             ITypeSymbol type,
             AnalysisEntity parentOpt,
@@ -73,7 +74,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             Debug.Assert(instanceReferenceOperation != null);
         }
 
-        private AnalysisEntity(int captureId, ITypeSymbol capturedType)
+        private AnalysisEntity(CaptureId captureId, ITypeSymbol capturedType)
             : this(symbolOpt: null, indices: ImmutableArray<AbstractIndex>.Empty, instanceReferenceOperationSyntaxOpt: null,
                   captureIdOpt: captureId, location: PointsToAbstractValue.NoLocation, type: capturedType, parentOpt: null, isThisOrMeInstance: false)
         {
@@ -172,7 +173,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
         public ISymbol SymbolOpt { get; }
         public ImmutableArray<AbstractIndex> Indices { get; }
         public SyntaxNode InstanceReferenceOperationSyntaxOpt { get; }
-        public int? CaptureIdOpt { get; }
+        public CaptureId? CaptureIdOpt { get; }
         public PointsToAbstractValue InstanceLocation { get; }
         public ITypeSymbol Type { get; }
         public AnalysisEntity ParentOpt { get; }

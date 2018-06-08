@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
 {
     using DisposeAnalysisData = IDictionary<AbstractLocation, DisposeAbstractValue>;
 

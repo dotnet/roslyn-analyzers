@@ -215,11 +215,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 // statement. The last two are implicit in these scenarios.
 
                 // Filter out operation roots with no IOperation API support (OperationKind.None)
-                var operationBlocks = context.OperationBlocks;
-                if (operationBlocks.Any(operation => operation.IsOperationNoneRoot()))
-                {
-                    operationBlocks = operationBlocks.Where(operation => !operation.IsOperationNoneRoot()).ToImmutableArray();
-                }
+                var operationBlocks = context.OperationBlocks.WhereAsArray(operation => !operation.IsOperationNoneRoot());
 
                 // In the presence of parameter initializers, there will be multiple operation blocks. We assume that there
                 // is only one IBlockOperation, and that the rest are something else

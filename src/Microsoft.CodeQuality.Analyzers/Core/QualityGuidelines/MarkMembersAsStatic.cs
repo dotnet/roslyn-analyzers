@@ -247,20 +247,16 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             return builder?.ToImmutable() ?? ImmutableArray<INamedTypeSymbol>.Empty;
         }
 
-        private bool IsMethodNotImplemented(OperationBlockAnalysisContext context)
+        private static bool IsMethodNotImplemented(OperationBlockAnalysisContext context)
         {
             // Check to see if the method just throws a NotImplementedException
             // Mark Members as static should not trigger for methods containing only NotImplementedException 
-            
+
             // Note that VB method bodies with 1 action have 3 operations.
             // The first is the actual operation, the second is a label statement, and the third is a return
             // statement. The last two are implicit in these scenarios.
-                        
-            var operationBlocks = context.OperationBlocks;
-            if (operationBlocks.Any(operation => operation.IsOperationNoneRoot()))
-            {
-                operationBlocks = operationBlocks.Where(operation => !operation.IsOperationNoneRoot()).ToImmutableArray();
-            }
+
+            var operationBlocks = context.OperationBlocks.WhereAsArray(operation => !operation.IsOperationNoneRoot());
 
             IBlockOperation methodBlock = null;
             if (operationBlocks.Length == 1 && operationBlocks[0].Kind == OperationKind.Block)

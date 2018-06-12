@@ -5,7 +5,7 @@
 
   <PropertyGroup>
     <VersionPrefix>2.6.2</VersionPrefix>
-    <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
+    <PreReleaseVersionLabel>beta2</PreReleaseVersionLabel>
 
     <!-- Opt-in RepoToolset tools -->
     <UsingToolVSSDK>true</UsingToolVSSDK>

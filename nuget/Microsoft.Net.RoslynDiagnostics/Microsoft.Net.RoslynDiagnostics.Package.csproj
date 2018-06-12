@@ -22,6 +22,22 @@
     <AnalyzerNupkgFile Include="Microsoft.Net.RoslynDiagnostics.props" />
   </ItemGroup>
   
+  <!-- TODO: Can we figure out the AnalyzerNupkgAssembly items from the referenced projects instead of hardcoding them as AnalyzerRulesetAssembly items here? -->
+  <ItemGroup>
+    <AnalyzerRulesetAssembly Include="Microsoft.CodeQuality.Analyzers.dll" />
+    <AnalyzerRulesetAssembly Include="Microsoft.CodeQuality.CSharp.Analyzers.dll" />
+    <AnalyzerRulesetAssembly Include="Microsoft.CodeQuality.VisualBasic.Analyzers.dll" />
+    <AnalyzerRulesetAssembly Include="Microsoft.CodeAnalysis.Analyzers.dll" />
+    <AnalyzerRulesetAssembly Include="Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+    <AnalyzerRulesetAssembly Include="Microsoft.CodeAnalysis.VisualBasic.Analyzers.dll" />
+    <AnalyzerRulesetAssembly Include="Microsoft.NetCore.Analyzers.dll" />
+    <AnalyzerRulesetAssembly Include="Microsoft.NetCore.CSharp.Analyzers.dll" />
+    <AnalyzerRulesetAssembly Include="Microsoft.NetCore.VisualBasic.Analyzers.dll" />
+    <AnalyzerRulesetAssembly Include="Roslyn.Diagnostics.Analyzers.dll" />
+    <AnalyzerRulesetAssembly Include="Roslyn.Diagnostics.CSharp.Analyzers.dll" />
+    <AnalyzerRulesetAssembly Include="Roslyn.Diagnostics.VisualBasic.Analyzers.dll" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.Analyzers.Package.csproj" />
     <ProjectReference Include="..\Microsoft.CodeAnalysis.Analyzers\Microsoft.CodeAnalysis.Analyzers.Package.csproj" />

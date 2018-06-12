@@ -6,6 +6,8 @@ var metadataList = Args[4].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEn
 var fileList = Args[5].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 var assemblyList = Args[6].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 var dependencyList = Args[7].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+var rulesetsDir = Args[8];
+var legacyRulesets = Args[9].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
 var result = new StringBuilder();
 
@@ -120,6 +122,28 @@ if (fileList.Length > 0 || assemblyList.Length > 0)
 
     result.AppendLine(FileElement(Path.Combine(assetsDir, "Install.ps1"), "tools"));
     result.AppendLine(FileElement(Path.Combine(assetsDir, "Uninstall.ps1"), "tools"));
+}
+
+if (rulesetsDir.Length > 0 && Directory.Exists(rulesetsDir))
+{
+    foreach (string ruleset in Directory.EnumerateFiles(rulesetsDir))
+    {
+        if (Path.GetExtension(ruleset) == ".ruleset")
+        {
+            result.AppendLine(FileElement(Path.Combine(rulesetsDir, ruleset), "rulesets"));
+        }
+    }
+}
+
+if (legacyRulesets.Length > 0)
+{
+    foreach (string legacyRuleset in legacyRulesets)
+    {
+        if (Path.GetExtension(legacyRuleset) == ".ruleset")
+        {
+            result.AppendLine(FileElement(Path.Combine(projectDir, legacyRuleset), @"rulesets\legacy"));
+        }
+    }
 }
 
 result.AppendLine(FileElement(Path.Combine(assetsDir, "ThirdPartyNotices.rtf"), ""));

@@ -7,11 +7,22 @@
   <PropertyGroup>
     <NuspecFile>$(IntermediateOutputPath)$(NuspecPackageId).nuspec</NuspecFile>
     <NuspecBasePath>$(ArtifactsBinDir)</NuspecBasePath>
+    <AnalyzerRulesetsDir>"$(ArtifactsBinDir)Rulesets\$(NuspecPackageId)"</AnalyzerRulesetsDir>
   </PropertyGroup>
 
+  <Target Name="GenerateAnalyzerRulesets"
+          BeforeTargets="GenerateAnalyzerNuspecFile"
+          DependsOnTargets="InitializeSourceControlInformation" 
+          Condition="'@(AnalyzerNupkgAssembly)' != '' or '@(AnalyzerRulesetAssembly)' != ''">
+    <ItemGroup>
+      <AnalyzerRulesetAssembly Condition="'@(AnalyzerNupkgAssembly)' != '' And '@(AnalyzerRulesetAssembly)' == ''" Include="@(AnalyzerNupkgAssembly)"/>
+    </ItemGroup>
+    <Exec Command='"$(RepoRoot).dotnet\dotnet.exe" "$(ArtifactsBinDir)GenerateAnalyzerRulesets\netcoreapp2.0\GenerateAnalyzerRulesets.dll" "$(AnalyzerRulesetsDir)" "$(NuspecPackageId)" "$(TargetFramework)" "@(AnalyzerRulesetAssembly)"' />
+  </Target>
+  
   <Target Name="GenerateAnalyzerNuspecFile"
           BeforeTargets="$(PackDependsOn)"
-          DependsOnTargets="InitializeSourceControlInformation" 
+          DependsOnTargets="InitializeSourceControlInformation;GenerateAnalyzerRulesets" 
           Condition="'@(AnalyzerNupkgFile)' != '' or '@(AnalyzerNupkgAssembly)' != '' or'@(AnalyzerNupkgDependency)' != ''">
     <PropertyGroup>
       <PackageId>$(NuspecPackageId)</PackageId>
@@ -35,6 +46,6 @@
       <_NuspecMetadata Include="repositoryCommit=$(SourceRevisionId)" />
       <_NuspecMetadata Include="repositoryUrl=$(PrivateRepositoryUrl)" />
     </ItemGroup>
-    <Exec Command='"$(CscToolPath)\csi.exe" "$(RepoRoot)eng\GenerateAnalyzerNuspec.csx" "$(NuspecFile)" "$(AssetsDir)\" "$(MSBuildProjectDirectory)" "$(TargetFramework)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)"' />
+    <Exec Command='"$(CscToolPath)\csi.exe" "$(RepoRoot)eng\GenerateAnalyzerNuspec.csx" "$(NuspecFile)" "$(AssetsDir)\" "$(MSBuildProjectDirectory)" "$(TargetFramework)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)" "$(AnalyzerRulesetsDir)" "@(AnalyzerLegacyRuleset)"' />
   </Target>
 </Project>

@@ -10,6 +10,7 @@
     <!-- Opt-in RepoToolset tools -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
     <UsingToolNuGetRepack>true</UsingToolNuGetRepack>
+    <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
 
     <!-- Toolset -->
     <MicrosoftVSSDKVersion>15.0.26201-alpha</MicrosoftVSSDKVersion>

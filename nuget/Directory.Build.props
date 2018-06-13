@@ -5,5 +5,10 @@
   </PropertyGroup>
 
   <Import Project="..\Directory.Build.props"/>
-  <Import Project="$(RepoToolsetDir)Settings.props" Condition="Exists('$(RepoToolsetDir)Settings.props')" />
+
+  <PropertyGroup>
+    <ImportNetSdkFromRepoToolset>false</ImportNetSdkFromRepoToolset>
+  </PropertyGroup>
+
+  <Import Project="Sdk.props" Sdk="RoslynTools.RepoToolset" />
 </Project>

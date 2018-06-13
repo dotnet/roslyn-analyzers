@@ -227,6 +227,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             // MSTest attributes
             Add(WellKnownTypes.TestInitializeAttribute(compilation));
             Add(WellKnownTypes.TestMethodAttribute(compilation));
+            Add(WellKnownTypes.DataTestMethodAttribute(compilation));
             Add(WellKnownTypes.TestCleanupAttribute(compilation));
 
             // XUnit attributes

@@ -6,6 +6,8 @@ var metadataList = Args[4].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEn
 var fileList = Args[5].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 var assemblyList = Args[6].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 var dependencyList = Args[7].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+var rulesetsDir = Args[8];
+var legacyRulesets = Args[9].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
 var result = new StringBuilder();
 
@@ -14,12 +16,22 @@ result.AppendLine(@"<package xmlns=""http://schemas.microsoft.com/packaging/2011
 result.AppendLine(@"  <metadata>");
 
 string version = null;
+string repositoryType = null;
+string repositoryUrl = null;
+string repositoryCommit = null;
 
 foreach (string entry in metadataList)
 {
     int equals = entry.IndexOf('=');
     string name = entry.Substring(0, equals);
     string value = entry.Substring(equals + 1);
+    switch (name)
+    {
+        case "repositoryType": repositoryType = value; continue;
+        case "repositoryUrl": repositoryUrl = value; continue;
+        case "repositoryCommit": repositoryCommit = value; continue;
+    }
+    
     if (value != "")
     {
         result.AppendLine($"    <{name}>{value}</{name}>");
@@ -29,6 +41,11 @@ foreach (string entry in metadataList)
     {
         version = value;
     }
+}
+
+if (!string.IsNullOrEmpty(repositoryType))
+{
+    result.AppendLine($@"    <repository type=""{repositoryType}"" url=""{repositoryUrl}"" commit=""{repositoryCommit}""/>");
 }
 
 if (dependencyList.Length > 0)
@@ -105,6 +122,28 @@ if (fileList.Length > 0 || assemblyList.Length > 0)
 
     result.AppendLine(FileElement(Path.Combine(assetsDir, "Install.ps1"), "tools"));
     result.AppendLine(FileElement(Path.Combine(assetsDir, "Uninstall.ps1"), "tools"));
+}
+
+if (rulesetsDir.Length > 0 && Directory.Exists(rulesetsDir))
+{
+    foreach (string ruleset in Directory.EnumerateFiles(rulesetsDir))
+    {
+        if (Path.GetExtension(ruleset) == ".ruleset")
+        {
+            result.AppendLine(FileElement(Path.Combine(rulesetsDir, ruleset), "rulesets"));
+        }
+    }
+}
+
+if (legacyRulesets.Length > 0)
+{
+    foreach (string legacyRuleset in legacyRulesets)
+    {
+        if (Path.GetExtension(legacyRuleset) == ".ruleset")
+        {
+            result.AppendLine(FileElement(Path.Combine(projectDir, legacyRuleset), @"rulesets\legacy"));
+        }
+    }
 }
 
 result.AppendLine(FileElement(Path.Combine(assetsDir, "ThirdPartyNotices.rtf"), ""));

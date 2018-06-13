@@ -826,5 +826,41 @@ End Class",
             // Test0.vb(14,26): warning CA2215: Ensure that method 'Sub B.Dispose()' calls 'MyBase.Dispose()' in all possible control flow paths.
             GetBasicResultAt(14, 26, "Sub B.Dispose()", "MyBase.Dispose()"));
         }
+
+        [Fact, WorkItem(1671, "https://github.com/dotnet/roslyn-analyzers/issues/1671")]
+        public void ErrorCase_NoDiagnostic()
+        {
+            // Missing "using System;" causes "Equals" method be marked as IsOverride but with null OverriddenMethod.
+            VerifyCSharp(@"
+public class BaseClass<T> : IComparable<T>
+     where T : IComparable<T>
+{
+    public T Value { get; set; }
+
+
+    public int CompareTo(T other)
+    {
+        return Value.CompareTo(other);
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is BaseClass<T> other)
+        {
+            return Value.Equals(other.Value);
+        }
+
+        return false;
+    }
+
+    public override int GetHashCode() => Value?.GetHashCode() ?? 0;
+}
+
+public class DerivedClass<T> : BaseClass<T>
+    where T : IComparable<T>
+{
+}
+", TestValidationMode.AllowCompileErrors);
+        }
     }
 }

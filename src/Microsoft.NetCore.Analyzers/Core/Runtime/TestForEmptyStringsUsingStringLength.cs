@@ -45,15 +45,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            context.RegisterOperationAction(AnalyzeInvocationExpression, OperationKind.Invocation);
+            context.RegisterOperationAction(
+                operationAnalysisContext => AnalyzeInvocationExpression((IInvocationOperation)operationAnalysisContext.Operation, operationAnalysisContext.ReportDiagnostic),
+                OperationKind.Invocation);
+
+            context.RegisterOperationAction(
+                operationAnalysisContext => AnalyzeBinaryExpression((IBinaryOperation)operationAnalysisContext.Operation, operationAnalysisContext.ReportDiagnostic),
+                OperationKind.BinaryOperator);
         }
 
         /// <summary>
         /// Check to see if we have an invocation to string.Equals that has an empty string as an argument.
         /// </summary>
-        private static void AnalyzeInvocationExpression(OperationAnalysisContext context)
+        private static void AnalyzeInvocationExpression(IInvocationOperation invocationOperation, Action<Diagnostic> reportDiagnostic)
         {
-            var invocationOperation = (IInvocationOperation)context.Operation;
             if (invocationOperation.Arguments.Length > 0)
             {
                 IMethodSymbol methodSymbol = invocationOperation.TargetMethod;
@@ -61,10 +66,35 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     IsStringEqualsMethod(methodSymbol) &&
                     HasAnEmptyStringArgument(invocationOperation))
                 {
-                    context.ReportDiagnostic(invocationOperation.Syntax.CreateDiagnostic(s_rule));
+                    reportDiagnostic(invocationOperation.Syntax.CreateDiagnostic(s_rule));
                 }
             }
         }
+
+        /// <summary>
+        /// Check to see if we have a equals or not equals expression where an empty string is being
+        /// compared.
+        /// </summary>
+        private static void AnalyzeBinaryExpression(IBinaryOperation binaryOperation, Action<Diagnostic> reportDiagnostic)
+        {
+            if (binaryOperation.OperatorKind != BinaryOperatorKind.Equals &&
+                binaryOperation.OperatorKind != BinaryOperatorKind.NotEquals)
+            {
+                return;
+            }
+
+            if (binaryOperation.LeftOperand.Type?.SpecialType != SpecialType.System_String ||
+                binaryOperation.RightOperand.Type?.SpecialType != SpecialType.System_String)
+            {
+                return;
+            }
+
+            if (IsEmptyString(binaryOperation.LeftOperand) || IsEmptyString(binaryOperation.RightOperand))
+            {
+                reportDiagnostic(binaryOperation.Syntax.CreateDiagnostic(s_rule));
+            }
+        }
+
 
         /// <summary>
         /// Checks if the given method is the string.Equals method.

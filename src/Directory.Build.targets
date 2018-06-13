@@ -1,8 +1,5 @@
 <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project>
-  <PropertyGroup>
-    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-  </PropertyGroup>
 
   <!--  
     Resx files are already included by the SDK. 
@@ -20,12 +17,12 @@
 
     <!-- Include the shipping rules explicitly when they are imported by the non-shipping rules -->
     <!-- Additional workaround for https://github.com/dotnet/project-system/issues/2374 -->
-    <UpToDateCheckInput Include="$(MSBuildThisFileDirectory)..\build\Analyzers_ShippingRules.ruleset" Condition="'$(CodeAnalysisRuleSet)' == '$(MSBuildThisFileDirectory)..\build\Analyzers_NonShippingRules.ruleset'" />
+    <UpToDateCheckInput Include="$(MSBuildThisFileDirectory)..\eng\Analyzers_ShippingRules.ruleset" Condition="'$(CodeAnalysisRuleSet)' == '$(MSBuildThisFileDirectory)..\build\Analyzers_NonShippingRules.ruleset'" />
   </ItemGroup>
 
   <PropertyGroup>
     <!-- Workaround for https://github.com/dotnet/roslyn/issues/25041 -->
-    <MSBuildAllProjects Condition="'$(CodeAnalysisRuleSet)' == '$(MSBuildThisFileDirectory)..\build\Analyzers_NonShippingRules.ruleset'">$(MSBuildAllProjects);$(MSBuildThisFileDirectory)..\build\Analyzers_ShippingRules.ruleset</MSBuildAllProjects>
+    <MSBuildAllProjects Condition="'$(CodeAnalysisRuleSet)' == '$(MSBuildThisFileDirectory)..\eng\Analyzers_NonShippingRules.ruleset'">$(MSBuildAllProjects);$(MSBuildThisFileDirectory)..\build\Analyzers_ShippingRules.ruleset</MSBuildAllProjects>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,7 +30,7 @@
     <None Remove="$(NuGetPackageRoot)xunit.runner.visualstudio\$(XUnitRunnerVisualStudioVersion)\build\net20\..\_common\xunit.abstractions.dll" />
   </ItemGroup>
 
-  <Import Project="$(RepoToolsetDir)Imports.targets" Condition="Exists('$(RepoToolsetDir)Imports.targets')" />
+  <Import Project="Sdk.targets" Sdk="RoslynTools.RepoToolset" />
 
   <!-- Using Inputs/Outputs just to loop over test architectures -->
   <Target Name="InnerTest" Inputs="*%(_TestArchitectureItems.Identity)" Outputs="*%(_TestArchitectureItems.Identity)" Returns="@(_FailedTestRuns)">
@@ -48,8 +45,9 @@
       <_TestResultsOpenCoverPath>$(_TestOutPathNoExt).coverage</_TestResultsOpenCoverPath>
       <_RunOnCore>false</_RunOnCore>
       <_RunOnCore Condition="$(TargetFramework.StartsWith('netcoreapp'))">true</_RunOnCore>
-      <_UseOpenCover>$(UseOpenCover)</_UseOpenCover>
-      <_UseOpenCover Condition="'$(_RunOnCore)' == 'true'">false</_UseOpenCover>
+      
+      <_UseOpenCover>false</_UseOpenCover>
+      <_UseOpenCover Condition="'$(CODECOV_TOKEN)' != '' and '$(Configuration)' == 'Debug' and '$(_RunOnCore)' != 'true'">true</_UseOpenCover>
     </PropertyGroup>
 
     <Error Text="Architecture specified in TestArchitectures is not supported: '$(_TestArchitecture)'" File="XUnit"

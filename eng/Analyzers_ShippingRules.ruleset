@@ -13,5 +13,11 @@
     <!-- SpecifyIFormatProvider -->
     <Rule Id="CA1305" Action="None" />
   </Rules>
+  
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.Analyzers" RuleNamespace="Microsoft.CodeAnalysis.Analyzers">
+    <!-- Do not use types from Workspaces assembly in an analyzer -->
+    <!-- Skipped due to https://github.com/dotnet/roslyn-analyzers/issues/1711 -->
+    <Rule Id="RS1022" Action="None" />
+  </Rules>
 
 </RuleSet>

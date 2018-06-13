@@ -150,6 +150,56 @@ End Class
                 BasicResult(14, 9));
         }
 
+        [Fact]
+        public void CA1820OperatorOverloadTestCSharp()
+        {
+            VerifyCSharp(@"
+using System;
+
+class C
+{
+    void Method()
+    {
+        string a = null;
+        if (a == """") { }
+        if ("""" != a) { }
+        if (a == string.Empty) { }
+        if (string.Empty != a) { }
+    }
+}
+",
+                CSharpResult(9, 13),
+                CSharpResult(10, 13),
+                CSharpResult(11, 13),
+                CSharpResult(12, 13));
+        }
+
+        [Fact]
+        public void CA1820OperatorOverloadTestBasic()
+        {
+            VerifyBasic(@"
+Imports System
+
+Class C
+    Sub Method()
+        Dim a As String
+        If a = """" Then
+        End If
+        If """" <> a Then
+        End If
+        If a = String.Empty Then
+        End If
+        If String.Empty <> a Then
+        End If
+    End Sub
+End Class
+",
+                BasicResult(7, 12),
+                BasicResult(9, 12),
+                BasicResult(11, 12),
+                BasicResult(13, 12));
+        }
+
         #endregion
     }
 }

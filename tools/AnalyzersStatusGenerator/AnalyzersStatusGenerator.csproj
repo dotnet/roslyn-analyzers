@@ -1,7 +1,4 @@
 ﻿<Project>
-  <ImportGroup Label="Settings">
-    <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
-  </ImportGroup>
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
     <RootNamespace>AnalyzersStatusGenerator</RootNamespace>
@@ -25,7 +22,4 @@
     <PackageReference Include="Microsoft.CodeAnalysis" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="7.0.1" />
   </ItemGroup>
-  <ImportGroup Label="Targets">
-    <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />
-  </ImportGroup>
 </Project>

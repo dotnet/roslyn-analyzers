@@ -64,19 +64,5 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 
             return document;
         }
-
-        protected override bool IsInEqualsContext(SyntaxNode node)
-        {
-            return node.IsKind(SyntaxKind.EqualsExpression) || node.IsKind(SyntaxKind.NotEqualsExpression);
-        }
-
-        protected override async Task<Document> FixEquals(Document document, SyntaxGenerator generator, SyntaxNode root, SyntaxNode node, CancellationToken cancellationToken)
-        {
-            SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            var binaryExpression = (BinaryExpressionSyntax)node;
-            SyntaxNode invocation = CreateEqualsExpression(generator, model, binaryExpression.Left, binaryExpression.Right, node.Kind() == SyntaxKind.EqualsExpression).WithAdditionalAnnotations(Formatter.Annotation);
-            SyntaxNode newRoot = root.ReplaceNode(node, invocation);
-            return document.WithSyntaxRoot(newRoot);
-        }
     }
 }

@@ -4,68 +4,30 @@
 # User-specific files
 *.suo
 *.user
-*.sln.docstates
 .vs/
-*.VC.db
+.vscode/
 
 # Build results
-[Aa]rtifacts/
-[Dd]ebug/
-[Rr]elease/
-x64/
-[Bb]in/
-[Oo]bj/
+artifacts/
+Debug/
+Release/
+bin/
+obj/
 .dotnet/
 .tools/
+.packages/
 
 # Per-user project properties
-*_i.c
-*_p.c
-*.ilk
-*.meta
-*.obj
-*.pch
-*.pdb
-*.pgc
-*.pgd
-*.sbr
-*.tlb
-*.tli
-*.tlh
-*.tmp
-*.tmp_proj
-*.log
-*.wrn
-*.vspscc
-*.vssscc
-.builds
-*.pidb
-*.log
-*.scc
-
-# Visual C++ cache files
-ipch/
-*.aps
-*.ncb
-*.opensdf
-*.sdf
-*.cachefile
-*.VC.opendb
+launchSettings.json
 
 # Visual Studio profiler
 *.psess
 *.vsp
 *.vspx
 
-# Guidance Automation Toolkit
-*.gpState
-
 # ReSharper is a .NET coding add-in
 _ReSharper*/
 *.[Rr]e[Ss]harper
-
-# TeamCity is a build add-in
-_TeamCity*
 
 # DotCover is a Code Coverage Tool
 *.dotCover
@@ -73,36 +35,3 @@ _TeamCity*
 # NCrunch
 *.ncrunch*
 .*crunch*.local.xml
-
-# Others
-sql/
-*.Cache
-ClientBin/
-[Ss]tyle[Cc]op.*
-~$*
-*~
-*.dbmdl
-*.[Pp]ublish.xml
-*.pfx
-*.publishsettings
-
-# SQL Server files
-App_Data/*.mdf
-App_Data/*.ldf
-
-# =========================
-# Windows detritus
-# =========================
-
-# Windows image file caches
-Thumbs.db
-ehthumbs.db
-
-# Folder config file
-Desktop.ini
-
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
-
-# Mac desktop service store files
-.DS_Store

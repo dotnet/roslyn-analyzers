@@ -1227,6 +1227,77 @@ Enum MyEnum
 End Enum");
         }
 
+        [Fact, WorkItem(1671, "https://github.com/dotnet/roslyn-analyzers/issues/1671")]
+        public void CA1036BaseTypeComparable_NoWarningOnDerived_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class BaseClass : IComparable
+{
+    public int CompareTo(object obj)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override bool Equals(object obj)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override int GetHashCode()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class DerivedClass : BaseClass
+{
+}
+",
+            // Test0.cs(4,14): warning CA1036: BaseClass should define operator(s) '==, !=, <, <=, >, >=' since it implements IComparable.
+            GetCA1036CSharpOperatorsResultAt(4, 14, "BaseClass", @"==, !=, <, <=, >, >="));
+        }
+
+        [Fact, WorkItem(1671, "https://github.com/dotnet/roslyn-analyzers/issues/1671")]
+        public void CA1036BaseTypeGenericComparable_NoWarningOnDerived_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class BaseClass<T> : IComparable<T>
+     where T : IComparable<T>
+{
+    public T Value { get; set; }
+
+
+    public int CompareTo(T other)
+    {
+        return Value.CompareTo(other);
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is BaseClass<T> other)
+        {
+            return Value.Equals(other.Value);
+        }
+
+        return false;
+    }
+
+    public override int GetHashCode() => Value?.GetHashCode() ?? 0;
+}
+
+public class DerivedClass<T> : BaseClass<T>
+    where T : IComparable<T>
+{
+}
+",
+            // Test0.cs(4,14): warning CA1036: BaseClass should define operator(s) '==, !=, <, <=, >, >=' since it implements IComparable.
+            GetCA1036CSharpOperatorsResultAt(4, 14, "BaseClass", @"==, !=, <, <=, >, >="));
+        }
+
         private static DiagnosticResult GetCA1036CSharpEqualsResultAt(int line, int column, string typeName)
         {
             var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals, typeName);

@@ -19,17 +19,17 @@
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeDescription">
         <source>A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.</source>
-        <target state="new">A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.</target>
+        <target state="translated">Un tipo que implementa System.IDisposable hereda de otro tipo que también implementa IDisposable. El método Dispose del tipo que hereda no llama al método Dispose del tipo primario. Para corregir una infracción de esta regla, llame a base.Dispose en el método Dispose.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeMessage">
         <source>Ensure that method '{0}' calls '{1}' in all possible control flow paths.</source>
-        <target state="new">Ensure that method '{0}' calls '{1}' in all possible control flow paths.</target>
+        <target state="translated">Asegúrese de que el método "{0}" llama a "{1}" en todas las rutas de acceso de flujo de control posibles.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeTitle">
         <source>Dispose methods should call base class dispose</source>
-        <target state="new">Dispose methods should call base class dispose</target>
+        <target state="translated">Los métodos Dispose deben llamar al método Dispose de la clase base</target>
         <note />
       </trans-unit>
     </body>

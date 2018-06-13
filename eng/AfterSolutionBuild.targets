@@ -1,18 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project>
-  <PropertyGroup>
-    <RepoRoot>$(MSBuildThisFileDirectory)..\</RepoRoot>
-  </PropertyGroup>
 
-  <Import Project="Versions.props" />
-  <Import Project="RepoToolset\ProjectLayout.props" />
-
-  <Target Name="Codecov">
-    <PropertyGroup Condition="'$(UseCodecov)' == 'true'">
+  <Target Name="ReportCodeCoverage" AfterTargets="Test" Condition="'$(Configuration)' == 'Debug' and '$(CODECOV_TOKEN)' != ''">
+    <PropertyGroup>
       <_CodecovPath>$(NuGetPackageRoot)codecov\$(CodecovVersion)\tools\Codecov.exe</_CodecovPath>
     </PropertyGroup>
 
-    <ItemGroup Condition="'$(UseCodecov)' == 'true'">
+    <ItemGroup>
       <_CoverageReports Include="$(ArtifactsTestResultsDir)*.coverage" />
 
       <_CodecovArgs Include="-f;@(_CoverageReports)" />
@@ -25,7 +19,7 @@
       <_CodecovArgs Include="--flag;$(Configuration)" Condition="'$(Configuration)' != ''" />
     </ItemGroup>
 
-    <Exec Condition="'$(UseCodecov)' == 'true'"
-          Command="&quot;$(_CodecovPath)&quot; @(_CodecovArgs, ' ')" />
+    <Exec Command="&quot;$(_CodecovPath)&quot; @(_CodecovArgs, ' ')" />
   </Target>
+
 </Project>

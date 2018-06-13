@@ -38,58 +38,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         #region Code fix tests
 
         [Fact]
-        public void CA1309FixOperatorCSharp()
-        {
-            VerifyCSharpFix(@"
-class C
-{
-    void M(string a, string b)
-    {
-        if (a == b) { }
-        if (a != b) { }
-        var c = a == b/*comment*/;
-    }
-}
-", @"
-class C
-{
-    void M(string a, string b)
-    {
-        if (string.Equals(a, b, System.StringComparison.Ordinal)) { }
-        if (!string.Equals(a, b, System.StringComparison.Ordinal)) { }
-        var c = string.Equals(a, b, System.StringComparison.Ordinal)/*comment*/;
-    }
-}
-");
-        }
-
-        [Fact]
-        public void CA1309FixOperatorBasic()
-        {
-            VerifyBasicFix(@"
-Class C
-    Sub M(a As String, b As String)
-        If a = b Then
-        End If
-        If a <> b Then
-        End If
-        Dim c = a = b'comment
-    End Sub
-End Class
-", @"
-Class C
-    Sub M(a As String, b As String)
-        If String.Equals(a, b, System.StringComparison.Ordinal) Then
-        End If
-        If Not String.Equals(a, b, System.StringComparison.Ordinal) Then
-        End If
-        Dim c = String.Equals(a, b, System.StringComparison.Ordinal) 'comment
-    End Sub
-End Class
-");
-        }
-
-        [Fact]
         public void CA1309FixStaticEqualsOverloadCSharp()
         {
             VerifyCSharpFix(@"

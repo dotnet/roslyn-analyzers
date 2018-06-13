@@ -19,17 +19,17 @@
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeDescription">
         <source>A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.</source>
-        <target state="new">A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.</target>
+        <target state="translated">Тип, реализующий интерфейс System.IDisposable, наследует от типа, который также реализует IDisposable. Метод Dispose наследующего типа не вызывает метод Dispose родительского типа. Чтобы исправить нарушение этого правила, вызовите base.Dispose в методе Dispose.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeMessage">
         <source>Ensure that method '{0}' calls '{1}' in all possible control flow paths.</source>
-        <target state="new">Ensure that method '{0}' calls '{1}' in all possible control flow paths.</target>
+        <target state="translated">Убедитесь, что метод "{0}" вызывает "{1}" во всех возможных путях потока управления.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeTitle">
         <source>Dispose methods should call base class dispose</source>
-        <target state="new">Dispose methods should call base class dispose</target>
+        <target state="translated">Методы Dispose должны вызывать базовый класс Dispose</target>
         <note />
       </trans-unit>
     </body>

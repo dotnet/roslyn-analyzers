@@ -24,11 +24,5 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
             Return invocation.GetLocation()
         End Function
-
-        Protected Overrides Function GetOperatorTokenLocation(binaryOperationNode As SyntaxNode) As Location
-            Debug.Assert(TypeOf binaryOperationNode Is BinaryExpressionSyntax)
-
-            Return DirectCast(binaryOperationNode, BinaryExpressionSyntax).OperatorToken.GetLocation()
-        End Function
     End Class
 End Namespace

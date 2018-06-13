@@ -19,17 +19,17 @@
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeDescription">
         <source>A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.</source>
-        <target state="new">A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.</target>
+        <target state="translated">System.IDisposable을 구현하는 형식이 IDisposable도 구현하는 형식에서 상속됩니다. 상속 형식의 Dispose 메서드는 부모 형식의 Dispose 메서드를 호출하지 않습니다. 이 규칙 위반을 수정하려면 Dispose 메서드에서 base.Dispose를 호출하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeMessage">
         <source>Ensure that method '{0}' calls '{1}' in all possible control flow paths.</source>
-        <target state="new">Ensure that method '{0}' calls '{1}' in all possible control flow paths.</target>
+        <target state="translated">'{0}' 메서드가 모든 가능한 제어 흐름 경로에서 '{1}'을(를) 호출하는지 확인하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeTitle">
         <source>Dispose methods should call base class dispose</source>
-        <target state="new">Dispose methods should call base class dispose</target>
+        <target state="translated">Dispose 메서드는 기본 클래스 Dispose를 호출해야 합니다.</target>
         <note />
       </trans-unit>
     </body>

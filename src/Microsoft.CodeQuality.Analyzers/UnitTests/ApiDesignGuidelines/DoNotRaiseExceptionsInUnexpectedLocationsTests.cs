@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines;
+using Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines;
 using Test.Utilities;
 using Xunit;
 
@@ -10,12 +12,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer();
+            return new BasicDoNotRaiseExceptionsInUnexpectedLocationsAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer();
+            return new CSharpDoNotRaiseExceptionsInUnexpectedLocationsAnalyzer();
         }
 
         #region Property and Event Tests
@@ -37,6 +39,20 @@ public class C
 class NonPublic
 {
     public int PropWithException { get { throw new Exception(); } set { throw new NotSupportedException(); } }
+}
+";
+            VerifyCSharp(code);
+        }
+
+        [Fact]
+        public void CSharpPropertyWithDerivedExceptionNoDiagnostics()
+        {
+            var code = @"
+using System;
+
+public class C
+{
+    public int this[int x] { get { throw new ArgumentOutOfRangeException(); } set { throw new ArgumentOutOfRangeException(); } }
 }
 ";
             VerifyCSharp(code);
@@ -88,6 +104,26 @@ Class NonPublic
            Throw New Exception() 'Doesn't fire because it's not visible outside assembly
         End Get
         Set 
+        End Set
+    End Property
+End Class
+";
+            VerifyBasic(code);
+        }
+
+        [Fact]
+        public void BasicPropertyWithDerivedExceptionNoDiagnostics()
+        {
+            var code = @"
+Imports System
+
+Public Class C
+    Default Public Property Item(x As Integer) As Integer
+        Get
+           Throw New ArgumentOutOfRangeException()
+        End Get
+        Set
+            Throw New ArgumentOutOfRangeException()
         End Set
     End Property
 End Class

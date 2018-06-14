@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.StringContentAnalysis
 {
     using StringContentAnalysisDomain = PredicatedAnalysisDataDomain<StringContentAnalysisData, StringContentAbstractValue>;
 
@@ -20,7 +20,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
 
         public static DataFlowAnalysisResult<StringContentBlockAnalysisResult, StringContentAbstractValue> GetOrComputeResult(
             ControlFlowGraph cfg,
-            IOperation rootOperation,
             ISymbol owningSymbol,
             WellKnownTypeProvider wellKnownTypeProvider,
             DataFlowAnalysisResult<CopyAnalysis.CopyBlockAnalysisResult, CopyAnalysis.CopyAbstractValue> copyAnalysisResultOpt,
@@ -30,7 +29,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis
             var operationVisitor = new StringContentDataFlowOperationVisitor(StringContentAbstractValueDomain.Default, owningSymbol,
                 wellKnownTypeProvider, cfg, pessimisticAnalsysis, copyAnalysisResultOpt, pointsToAnalysisResultOpt);
             var nullAnalysis = new StringContentAnalysis(operationVisitor);
-            return nullAnalysis.GetOrComputeResultCore(cfg, rootOperation, cacheResult: false);
+            return nullAnalysis.GetOrComputeResultCore(cfg, cacheResult: false);
         }
 
         internal override StringContentBlockAnalysisResult ToResult(BasicBlock basicBlock, DataFlowAnalysisInfo<StringContentAnalysisData> blockAnalysisData) => new StringContentBlockAnalysisResult(basicBlock, blockAnalysisData);

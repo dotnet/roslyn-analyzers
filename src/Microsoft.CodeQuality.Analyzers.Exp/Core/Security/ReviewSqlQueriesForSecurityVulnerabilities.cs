@@ -7,10 +7,10 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
-using Microsoft.CodeAnalysis.Operations.DataFlow;
-using Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis;
-using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
-using Microsoft.CodeAnalysis.Operations.DataFlow.StringContentAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.StringContentAnalysis;
 
 namespace Microsoft.CodeQuality.Analyzers.Exp.Security
 {
@@ -209,22 +209,18 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Security
             if (argumentValue.Type.SpecialType != SpecialType.System_String || !argumentValue.ConstantValue.HasValue)
             {
                 // We have a candidate for diagnostic. perform more precise dataflow analysis.
-                var topmostBlock = argumentValue.GetTopmostParentBlock();
-                if (topmostBlock != null)
+                var cfg = argumentValue.GetEnclosingControlFlowGraph();
+                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation);
+                var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider);
+                var copyAnalysisResult = CopyAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider);
+                // Do another analysis pass to improve the results from PointsTo and Copy analysis.
+                pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, copyAnalysisResult);
+                var stringContentResult = StringContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
+                StringContentAbstractValue value = stringContentResult[argumentValue.Kind, argumentValue.Syntax];
+                if (value.NonLiteralState == StringContainsNonLiteralState.No)
                 {
-                    var cfg = SemanticModel.GetControlFlowGraph(topmostBlock);
-                    var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation);
-                    var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, wellKnownTypeProvider);
-                    var copyAnalysisResult = CopyAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, wellKnownTypeProvider);
-                    // Do another analysis pass to improve the results from PointsTo and Copy analysis.
-                    pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, wellKnownTypeProvider, copyAnalysisResult);
-                    var stringContentResult = StringContentAnalysis.GetOrComputeResult(cfg, topmostBlock, containingMethod, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
-                    StringContentAbstractValue value = stringContentResult[argumentValue.Kind, argumentValue.Syntax];
-                    if (value.NonLiteralState == StringContainsNonLiteralState.No)
-                    {
-                        // The value is a constant literal or default/unitialized, so avoid flagging this usage.
-                        return false;
-                    }
+                    // The value is a constant literal or default/unitialized, so avoid flagging this usage.
+                    return false;
                 }
 
                 // Review if the symbol passed to {invocation} in {method/field/constructor/etc} has user input.

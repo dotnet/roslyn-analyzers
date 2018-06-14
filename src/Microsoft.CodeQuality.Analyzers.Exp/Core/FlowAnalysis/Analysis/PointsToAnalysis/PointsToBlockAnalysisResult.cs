@@ -2,7 +2,7 @@
 
 using System.Collections.Immutable;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
 {
     /// <summary>
     /// Result from execution of <see cref="PointsToAnalysis"/> on a basic block.

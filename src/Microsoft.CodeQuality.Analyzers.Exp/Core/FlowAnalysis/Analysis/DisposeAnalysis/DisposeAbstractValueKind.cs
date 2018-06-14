@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
 {
     /// <summary>
     /// Abstract dispose value for <see cref="AbstractLocation"/>/<see cref="IOperation"/> tracked by <see cref="DisposeAnalysis"/>.

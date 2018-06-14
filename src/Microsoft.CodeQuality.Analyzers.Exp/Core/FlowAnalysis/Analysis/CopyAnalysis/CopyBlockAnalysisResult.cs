@@ -2,7 +2,7 @@
 
 using System.Collections.Immutable;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
 {
     /// <summary>
     /// Result from execution of <see cref="CopyAnalysis"/> on a basic block.

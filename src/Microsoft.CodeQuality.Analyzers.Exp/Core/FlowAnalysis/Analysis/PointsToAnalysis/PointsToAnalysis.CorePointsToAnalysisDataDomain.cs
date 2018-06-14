@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
 {
     using CorePointsToAnalysisData = IDictionary<AnalysisEntity, PointsToAbstractValue>;
 

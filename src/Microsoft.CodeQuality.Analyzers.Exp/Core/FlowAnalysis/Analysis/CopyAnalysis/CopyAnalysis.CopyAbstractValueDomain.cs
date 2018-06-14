@@ -2,7 +2,7 @@
 
 using System.Diagnostics;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
 {
     internal partial class CopyAnalysis : ForwardDataFlowAnalysis<CopyAnalysisData, CopyBlockAnalysisResult, CopyAbstractValue>
     {

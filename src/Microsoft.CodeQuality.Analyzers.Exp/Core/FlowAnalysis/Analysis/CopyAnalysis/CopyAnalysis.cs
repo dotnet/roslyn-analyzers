@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
 {
     using CopyAnalysisDomain = PredicatedAnalysisDataDomain<CopyAnalysisData, CopyAbstractValue>;
 
@@ -21,7 +21,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
 
         public static DataFlowAnalysisResult<CopyBlockAnalysisResult, CopyAbstractValue> GetOrComputeResult(
             ControlFlowGraph cfg,
-            IOperation rootOperation,
             ISymbol owningSymbol,
             WellKnownTypeProvider wellKnownTypeProvider,
             DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResultOpt = null,
@@ -30,7 +29,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis
             var operationVisitor = new CopyDataFlowOperationVisitor(CopyAbstractValueDomain.Default, owningSymbol, 
                 wellKnownTypeProvider, cfg, pessimisticAnalysis, pointsToAnalysisResultOpt);
             var copyAnalysis = new CopyAnalysis(operationVisitor);
-            return copyAnalysis.GetOrComputeResultCore(cfg, rootOperation, cacheResult: true);
+            return copyAnalysis.GetOrComputeResultCore(cfg, cacheResult: true);
         }
 
         [Conditional("DEBUG")]

@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow.ParameterValidationAnalysis
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ParameterValidationAnalysis
 {
     /// <summary>
     /// Abstract validation value for <see cref="AbstractLocation"/>/<see cref="IOperation"/> tracked by <see cref="ParameterValidationAnalysis"/>.

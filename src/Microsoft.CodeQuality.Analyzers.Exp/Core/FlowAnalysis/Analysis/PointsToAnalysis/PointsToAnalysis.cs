@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
 {
     /// <summary>
     /// Dataflow analysis to track locations pointed to by <see cref="AnalysisEntity"/> and <see cref="IOperation"/> instances.
@@ -18,7 +18,6 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
 
         public static DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> GetOrComputeResult(
             ControlFlowGraph cfg,
-            IOperation rootOperation,
             ISymbol owningSymbol,
             WellKnownTypeProvider wellKnownTypeProvider,
             DataFlowAnalysisResult<CopyAnalysis.CopyBlockAnalysisResult, CopyAnalysis.CopyAbstractValue> copyAnalysisResultOpt = null,
@@ -29,7 +28,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
             var operationVisitor = new PointsToDataFlowOperationVisitor(defaultPointsToValueGenerator, analysisDomain,
                 PointsToAbstractValueDomain.Default, owningSymbol, wellKnownTypeProvider, cfg, pessimisticAnalysis, copyAnalysisResultOpt);
             var pointsToAnalysis = new PointsToAnalysis(analysisDomain, operationVisitor);
-            return pointsToAnalysis.GetOrComputeResultCore(cfg, rootOperation, cacheResult: true);
+            return pointsToAnalysis.GetOrComputeResultCore(cfg, cacheResult: true);
         }
 
         internal override PointsToBlockAnalysisResult ToResult(BasicBlock basicBlock, DataFlowAnalysisInfo<PointsToAnalysisData> blockAnalysisData) => new PointsToBlockAnalysisResult(basicBlock, blockAnalysisData, ((PointsToAnalysisDomain)AnalysisDomain).DefaultPointsToValueGenerator.GetDefaultPointsToValueMap());

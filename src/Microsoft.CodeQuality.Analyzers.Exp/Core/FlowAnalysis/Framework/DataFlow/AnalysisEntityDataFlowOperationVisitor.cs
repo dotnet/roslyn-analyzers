@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeAnalysis.Operations.DataFlow.CopyAnalysis;
-using Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
+using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
     /// <summary>
     /// Operation visitor to flow the abstract dataflow analysis values for <see cref="AnalysisEntity"/> instances across a given statement in a basic block.
@@ -84,7 +85,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             }
         }
 
-        protected override void OnLeavingRegion(ControlFlowGraph.Region region)
+        protected override void OnLeavingRegion(ControlFlowRegion region)
         {
             base.OnLeavingRegion(region);
 

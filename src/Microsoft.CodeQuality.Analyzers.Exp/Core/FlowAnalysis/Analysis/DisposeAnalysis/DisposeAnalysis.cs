@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
 {
     using DisposeAnalysisData = IDictionary<AbstractLocation, DisposeAbstractValue>;
     using DisposeAnalysisDomain = MapAbstractDomain<AbstractLocation, DisposeAbstractValue>;
@@ -22,19 +22,17 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
 
         public static DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> GetOrComputeResult(
             ControlFlowGraph cfg,
-            IOperation rootOperation,
             ISymbol owningSymbol,
             WellKnownTypeProvider wellKnownTypeProvider,
             ImmutableHashSet<INamedTypeSymbol> disposeOwnershipTransferLikelyTypes,
             DataFlowAnalysisResult<PointsToAnalysis.PointsToBlockAnalysisResult, PointsToAnalysis.PointsToAbstractValue> pointsToAnalysisResult)
         {
-            return GetOrComputeResultCore(cfg, rootOperation, owningSymbol, wellKnownTypeProvider, disposeOwnershipTransferLikelyTypes, pointsToAnalysisResult,
+            return GetOrComputeResultCore(cfg, owningSymbol, wellKnownTypeProvider, disposeOwnershipTransferLikelyTypes, pointsToAnalysisResult,
                 trackInstanceFields: false, trackedInstanceFieldPointsToMap: out var _);
         }
 
         public static DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> GetOrComputeResult(
             ControlFlowGraph cfg,
-            IOperation rootOperation,
             ISymbol owningSymbol,
             WellKnownTypeProvider wellKnownTypeProvider,
             ImmutableHashSet<INamedTypeSymbol> disposeOwnershipTransferLikelyTypes,
@@ -42,13 +40,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
             bool trackInstanceFields,
             out ImmutableDictionary<IFieldSymbol, PointsToAnalysis.PointsToAbstractValue> trackedInstanceFieldPointsToMap)
         {
-            return GetOrComputeResultCore(cfg, rootOperation, owningSymbol, wellKnownTypeProvider, disposeOwnershipTransferLikelyTypes, pointsToAnalysisResult,
+            return GetOrComputeResultCore(cfg, owningSymbol, wellKnownTypeProvider, disposeOwnershipTransferLikelyTypes, pointsToAnalysisResult,
                 trackInstanceFields, out trackedInstanceFieldPointsToMap);
         }
 
         private static DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> GetOrComputeResultCore(
             ControlFlowGraph cfg,
-            IOperation rootOperation,
             ISymbol owningSymbol,
             WellKnownTypeProvider wellKnownTypeProvider,
             ImmutableHashSet<INamedTypeSymbol> disposeOwnershipTransferLikelyTypes,
@@ -64,7 +61,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
             var operationVisitor = new DisposeDataFlowOperationVisitor(DisposeAbstractValueDomain.Default, owningSymbol, wellKnownTypeProvider,
                 cfg, disposeOwnershipTransferLikelyTypes, trackInstanceFields, pointsToAnalysisResult);
             var disposeAnalysis = new DisposeAnalysis(DisposeAnalysisDomainInstance, operationVisitor);
-            var result = disposeAnalysis.GetOrComputeResultCore(cfg, rootOperation, cacheResult: false);
+            var result = disposeAnalysis.GetOrComputeResultCore(cfg, cacheResult: false);
             trackedInstanceFieldPointsToMap = trackInstanceFields ? operationVisitor.TrackedInstanceFieldPointsToMap : null;
             return result;
         }

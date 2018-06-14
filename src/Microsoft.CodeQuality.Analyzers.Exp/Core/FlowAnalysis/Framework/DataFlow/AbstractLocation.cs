@@ -4,7 +4,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using System.Diagnostics;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
     /// <summary>
     /// <para>

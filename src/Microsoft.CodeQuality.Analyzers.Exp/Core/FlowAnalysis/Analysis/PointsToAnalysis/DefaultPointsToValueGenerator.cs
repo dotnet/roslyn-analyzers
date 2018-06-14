@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.CodeAnalysis.Operations.DataFlow.PointsToAnalysis
+namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
 {
     /// <summary>
     /// Generates and stores the default <see cref="PointsToAbstractValue"/> for <see cref="AnalysisEntity"/> instances generated for member and element reference operations.

@@ -73,11 +73,6 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
                 Debug.Assert(value != null);
 
                 SetAbstractValue(CurrentAnalysisData, analysisEntity, value, fromPredicate: false);
-
-                if (IsCurrentlyPerformingPredicateAnalysis)
-                {
-                    SetAbstractValue(NegatedCurrentAnalysisDataStack.Peek(), analysisEntity, value, fromPredicate: false);
-                }
             }
 
             private static void SetAbstractValue(CopyAnalysisData copyAnalysisData, AnalysisEntity analysisEntity, CopyAbstractValue value, bool fromPredicate)
@@ -249,16 +244,12 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
             
             #endregion
 
-            // TODO: Remove these temporary methods once we move to compiler's CFG
-            // https://github.com/dotnet/roslyn-analyzers/issues/1567
-            #region Temporary methods to workaround lack of *real* CFG
             protected override CopyAnalysisData MergeAnalysisData(CopyAnalysisData value1, CopyAnalysisData value2)
                 => s_AnalysisDomain.Merge(value1, value2);
             protected override CopyAnalysisData GetClonedAnalysisData(CopyAnalysisData analysisData)
                 => (CopyAnalysisData)analysisData.Clone();
             protected override bool Equals(CopyAnalysisData value1, CopyAnalysisData value2)
                 => value1.Equals(value2);
-            #endregion
 
             #region Visitor overrides
             public override CopyAbstractValue DefaultVisit(IOperation operation, object argument)

@@ -99,12 +99,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             }
         }
 
-        // TODO: Remove these temporary methods once we move to compiler's CFG
-        // https://github.com/dotnet/roslyn-analyzers/issues/1567
-        #region Temporary methods to workaround lack of *real* CFG
         protected IDictionary<AbstractLocation, TAbstractAnalysisValue> GetClonedAnalysisDataHelper(IDictionary<AbstractLocation, TAbstractAnalysisValue> analysisData)
             => new Dictionary<AbstractLocation, TAbstractAnalysisValue>(analysisData);
-        #endregion
 
         #region Visitor methods
 

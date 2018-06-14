@@ -242,14 +242,14 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             return TryCreate(symbol, indices, type, instance, out analysisEntity);
         }
 
-        public bool TryCreateForElementInitializer(IOperation instance, ImmutableArray<AbstractIndex> indices, ITypeSymbol elementType, out AnalysisEntity analysisEntity)
+        public bool TryCreateForArrayElementInitializer(IArrayCreationOperation arrayCreation, ImmutableArray<AbstractIndex> indices, ITypeSymbol elementType, out AnalysisEntity analysisEntity)
         {
-            Debug.Assert(instance != null);
+            Debug.Assert(arrayCreation != null);
             Debug.Assert(!indices.IsEmpty);
             Debug.Assert(elementType != null);
 
             ISymbol symbol = null;
-            return TryCreate(symbol, indices, elementType, instance, out analysisEntity);
+            return TryCreate(symbol, indices, elementType, arrayCreation, out analysisEntity);
         }
 
         private bool TryCreate(ISymbol symbolOpt, ImmutableArray<AbstractIndex> indices,
@@ -339,7 +339,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 
         public AnalysisEntity CreateWithNewInstanceRoot(AnalysisEntity analysisEntity, AnalysisEntity newRootInstance)
         {
-            if (analysisEntity.InstanceLocation == newRootInstance.InstanceLocation)
+            if (analysisEntity.InstanceLocation == newRootInstance.InstanceLocation &&
+                analysisEntity.ParentOpt == newRootInstance.ParentOpt)
             {
                 return analysisEntity;
             }

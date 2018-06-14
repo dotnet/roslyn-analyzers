@@ -126,16 +126,12 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.StringContentAnalysis
 
             #endregion
 
-            // TODO: Remove these temporary methods once we move to compiler's CFG
-            // https://github.com/dotnet/roslyn-analyzers/issues/1567
-            #region Temporary methods to workaround lack of *real* CFG
             protected override StringContentAnalysisData MergeAnalysisData(StringContentAnalysisData value1, StringContentAnalysisData value2)
                 => s_AnalysisDomain.Merge(value1, value2);
             protected override StringContentAnalysisData GetClonedAnalysisData(StringContentAnalysisData analysisData)
                 => (StringContentAnalysisData)analysisData.Clone();
             protected override bool Equals(StringContentAnalysisData value1, StringContentAnalysisData value2)
                 => value1.Equals(value2);
-            #endregion
 
             #region Visitor methods
             public override StringContentAbstractValue DefaultVisit(IOperation operation, object argument)
@@ -197,17 +193,6 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.StringContentAnalysis
                     default:
                         return base.ComputeValueForCompoundAssignment(operation, targetValue, assignedValue);
                 }
-            }
-
-            public override StringContentAbstractValue VisitNameOf(INameOfOperation operation, object argument)
-            {
-                var nameofValue = base.VisitNameOf(operation, argument);
-                if (operation.ConstantValue.HasValue && operation.ConstantValue.Value is string value)
-                {
-                    return StringContentAbstractValue.Create(value);
-                }
-
-                return nameofValue;
             }
 
             public override StringContentAbstractValue VisitObjectCreation(IObjectCreationOperation operation, object argument)

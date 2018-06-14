@@ -48,6 +48,9 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
 
             private static bool ShouldBeTracked(ITypeSymbol typeSymbol) => typeSymbol.IsReferenceTypeOrNullableValueType();
 
+            private bool ShouldBeTracked(AnalysisEntity analysisEntity) => ShouldBeTracked(analysisEntity.Type) ||
+                analysisEntity.CaptureIdOpt.HasValue && IsLValueFlowCapture(analysisEntity.CaptureIdOpt.Value);
+
             protected override void AddTrackedEntities(ImmutableArray<AnalysisEntity>.Builder builder)
             {
                 _defaultPointsToValueGenerator.AddTrackedEntities(builder);
@@ -71,8 +74,9 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
 
             protected override PointsToAbstractValue GetAbstractValue(AnalysisEntity analysisEntity)
             {
-                if (!ShouldBeTracked(analysisEntity.Type))
+                if (!ShouldBeTracked(analysisEntity))
                 {
+                    Debug.Assert(!CurrentAnalysisData.HasAbstractValue(analysisEntity));
                     return PointsToAbstractValue.NoLocation;
                 }
 
@@ -92,19 +96,9 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
 
             protected override void SetAbstractValue(AnalysisEntity analysisEntity, PointsToAbstractValue value)
             {
-                SetAbstractValue(CurrentAnalysisData, analysisEntity, value);
-
-                if (IsCurrentlyPerformingPredicateAnalysis)
+                if (ShouldBeTracked(analysisEntity) || value.Kind == PointsToAbstractValueKind.KnownLValueCaptures)
                 {
-                    SetAbstractValue(NegatedCurrentAnalysisDataStack.Peek(), analysisEntity, value);
-                }
-            }
-
-            private static void SetAbstractValue(PointsToAnalysisData analysisData, AnalysisEntity analysisEntity, PointsToAbstractValue value)
-            {
-                if (ShouldBeTracked(analysisEntity.Type))
-                {
-                    analysisData.SetAbstactValue(analysisEntity, value);
+                    CurrentAnalysisData.SetAbstactValue(analysisEntity, value);
                 }
             }
 
@@ -174,7 +168,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
 
             protected override PointsToAbstractValue ComputeAnalysisValueForOutArgument(AnalysisEntity analysisEntity, IArgumentOperation operation, PointsToAbstractValue defaultValue)
             {
-                if (!ShouldBeTracked(analysisEntity.Type))
+                if (!ShouldBeTracked(analysisEntity))
                 {
                     return PointsToAbstractValue.NoLocation;
                 }
@@ -347,18 +341,12 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
             }
             #endregion
 
-            // TODO: Remove these temporary methods once we move to compiler's CFG
-            // https://github.com/dotnet/roslyn-analyzers/issues/1567
-            #region Temporary methods to workaround lack of *real* CFG
             protected override PointsToAnalysisData MergeAnalysisData(PointsToAnalysisData value1, PointsToAnalysisData value2)
                 => _pointsToAnalysisDomain.Merge(value1, value2);
-            protected override PointsToAnalysisData MergeAnalysisDataForBackEdge(PointsToAnalysisData forwardEdgeAnalysisData, PointsToAnalysisData backEdgeAnalysisData)
-                => _pointsToAnalysisDomain.MergeAnalysisDataForBackEdge(forwardEdgeAnalysisData, backEdgeAnalysisData, GetChildAnalysisEntities);
             protected override PointsToAnalysisData GetClonedAnalysisData(PointsToAnalysisData analysisData)
                 => (PointsToAnalysisData)analysisData.Clone();
             protected override bool Equals(PointsToAnalysisData value1, PointsToAnalysisData value2)
                 => value1.Equals(value2);
-            #endregion
 
             #region Visitor methods
 
@@ -395,12 +383,6 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
                 return PointsToAbstractValue.Unknown;
             }
 
-            public override PointsToAbstractValue VisitNameOf(INameOfOperation operation, object argument)
-            {
-                var _ = base.VisitNameOf(operation, argument);
-                return PointsToAbstractValue.NoLocation;
-            }
-
             public override PointsToAbstractValue VisitIsType(IIsTypeOperation operation, object argument)
             {
                 var _ = base.VisitIsType(operation, argument);
@@ -410,7 +392,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
             public override PointsToAbstractValue VisitInstanceReference(IInstanceReferenceOperation operation, object argument)
             {
                 var _ = base.VisitInstanceReference(operation, argument);
-                IOperation currentInstanceOperation = operation.GetInstance(IsInsideObjectInitializer);
+                IOperation currentInstanceOperation = operation.GetInstance(IsInsideAnonymousObjectInitializer);
                 var value = currentInstanceOperation != null ?
                     GetCachedAbstractValue(currentInstanceOperation) :
                     ThisOrMePointsToAbstractValue;
@@ -461,39 +443,6 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
             {
                 var arguments = ImmutableArray<IOperation>.Empty;
                 return VisitTypeCreationWithArgumentsAndInitializer(arguments, operation.Initializer, operation, argument);
-            }
-
-            public override PointsToAbstractValue VisitMemberInitializer(IMemberInitializerOperation operation, object argument)
-            {
-                if (operation.InitializedMember is IMemberReferenceOperation memberReference)
-                {
-                    IOperation objectCreation = operation.GetCreation();
-                    PointsToAbstractValue objectCreationLocation = GetCachedAbstractValue(objectCreation);
-                    Debug.Assert(objectCreationLocation.Kind == PointsToAbstractValueKind.KnownLocations);
-                    Debug.Assert(objectCreationLocation.Locations.Count == 1);
-
-                    PointsToAbstractValue memberInstanceLocation = PointsToAbstractValue.Create(AbstractLocation.CreateAllocationLocation(operation, memberReference.Type), mayBeNull: false);
-                    CacheAbstractValue(operation, memberInstanceLocation);
-                    CacheAbstractValue(operation.Initializer, memberInstanceLocation);
-
-                    var unusedInitializedMemberValue = Visit(memberReference, argument);
-                    var initializerValue = Visit(operation.Initializer, argument);
-                    Debug.Assert(operation.Initializer == null || initializerValue == memberInstanceLocation);
-                    SetAbstractValueForAssignment(memberReference, operation, memberInstanceLocation);
-
-                    return memberInstanceLocation;
-                }
-
-                var _ = base.Visit(operation, argument);
-                return PointsToAbstractValue.NoLocation;
-            }
-
-            public override PointsToAbstractValue VisitObjectOrCollectionInitializer(IObjectOrCollectionInitializerOperation operation, object argument)
-            {
-                var _ = base.VisitObjectOrCollectionInitializer(operation, argument);
-
-                // We should have created a new PointsTo value for the associated creation operation.
-                return GetCachedAbstractValue(operation.Parent);
             }
 
             public override PointsToAbstractValue VisitArrayInitializer(IArrayInitializerOperation operation, object argument)

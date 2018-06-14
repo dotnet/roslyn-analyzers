@@ -108,17 +108,9 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         }
 
         #region Helper methods to handle initialization/assignment operations
-        protected override void SetAbstractValueForSymbolDeclaration(ISymbol symbol, IOperation initializer, TAbstractAnalysisValue initializerValue)
+        protected override void SetAbstractValueForArrayElementInitializer(IArrayCreationOperation arrayCreation, ImmutableArray<AbstractIndex> indices, ITypeSymbol elementType, IOperation initializer, TAbstractAnalysisValue value)
         {
-            if (AnalysisEntityFactory.TryCreateForSymbolDeclaration(symbol, out AnalysisEntity analysisEntity))
-            {
-                SetAbstractValueForAssignment(analysisEntity, initializer, initializerValue);
-            }
-        }
-
-        protected override void SetAbstractValueForElementInitializer(IOperation instance, ImmutableArray<AbstractIndex> indices, ITypeSymbol elementType, IOperation initializer, TAbstractAnalysisValue value)
-        {
-            if (AnalysisEntityFactory.TryCreateForElementInitializer(instance, indices, elementType, out AnalysisEntity analysisEntity))
+            if (AnalysisEntityFactory.TryCreateForArrayElementInitializer(arrayCreation, indices, elementType, out AnalysisEntity analysisEntity))
             {
                 SetAbstractValueForAssignment(analysisEntity, initializer, value);
             }
@@ -317,12 +309,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         }
         #endregion
 
-        // TODO: Remove these temporary methods once we move to compiler's CFG
-        // https://github.com/dotnet/roslyn-analyzers/issues/1567
-        #region Temporary methods to workaround lack of *real* CFG
         protected IDictionary<AnalysisEntity, TAbstractAnalysisValue> GetClonedAnalysisDataHelper(IDictionary<AnalysisEntity, TAbstractAnalysisValue> analysisData)
             => new Dictionary<AnalysisEntity, TAbstractAnalysisValue>(analysisData);
-        #endregion
 
         #region Visitor methods
         protected override TAbstractAnalysisValue VisitAssignmentOperation(IAssignmentOperation operation, object argument)

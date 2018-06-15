@@ -96,7 +96,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
 
             protected override void SetAbstractValue(AnalysisEntity analysisEntity, PointsToAbstractValue value)
             {
-                if (ShouldBeTracked(analysisEntity) || value.Kind == PointsToAbstractValueKind.KnownLValueCaptures)
+                if (ShouldBeTracked(analysisEntity))
                 {
                     CurrentAnalysisData.SetAbstactValue(analysisEntity, value);
                 }

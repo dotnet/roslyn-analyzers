@@ -120,7 +120,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                 getPointsToAbstractValueOpt: (pointsToAnalysisResultOpt != null || IsPointsToAnalysis) ?
                     GetPointsToAbstractValue :
                     (Func<IOperation, PointsToAbstractValue>)null,
-                getIsInsideObjectInitializer: () => IsInsideAnonymousObjectInitializer,
+                getIsInsideAnonymousObjectInitializer: () => IsInsideAnonymousObjectInitializer,
                 containingTypeSymbol: owningSymbol.ContainingType);
         }
 

@@ -1929,7 +1929,7 @@ End Class",
             GetBasicResultAt(17, 28, "Sub Test.M1(a As A)", "New A()"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1567")]
+        [Fact]
         public void WhileLoop_DisposeOnBackEdge_NoDiagnostic()
         {
             // Need precise CFG to avoid false reports.
@@ -2092,7 +2092,7 @@ End Module",
             GetBasicResultAt(13, 18, "Sub Test.M1()", "New A()"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1567")]
+        [Fact]
         public void DoWhileLoop_DisposeOnBackEdge_NoDiagnostic()
         {
             // Need precise CFG to avoid false reports.
@@ -2138,7 +2138,7 @@ End Class
 Module Test
     Sub M1(flag As Boolean)
         Dim a As New A()
-        Do Until True
+        Do While True
             a.Dispose()
             If flag Then
                 Exit Do    ' All 'A' instances have been disposed on this path, so no diagnostic should be reported.
@@ -2255,7 +2255,7 @@ End Module",
             GetBasicResultAt(13, 18, "Sub Test.M1()", "New A()"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1567")]
+        [Fact]
         public void ForLoop_DisposeOnBackEdge_NoDiagnostic()
         {
             // Need precise CFG to avoid false reports.
@@ -2366,7 +2366,7 @@ End Module",
             GetBasicResultAt(16, 17, "Sub Test.M1()", "New A()"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1669")]
+        [Fact]
         public void ForLoop_MissingDisposeOnEntry_Diagnostic()
         {
             VerifyCSharp(@"

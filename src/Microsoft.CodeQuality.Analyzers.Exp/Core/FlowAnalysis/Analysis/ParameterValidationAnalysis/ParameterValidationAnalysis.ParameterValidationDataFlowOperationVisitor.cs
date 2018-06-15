@@ -98,15 +98,9 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ParameterValidationAnalys
                 // We are only tracking default parameter locations.
             }
 
-            protected override void SetAbstractValueForElementInitializer(IOperation instance, ImmutableArray<AbstractIndex> indices, ITypeSymbol elementType, IOperation initializer, ParameterValidationAbstractValue value)
+            protected override void SetAbstractValueForArrayElementInitializer(IArrayCreationOperation arrayCreation, ImmutableArray<AbstractIndex> indices, ITypeSymbol elementType, IOperation initializer, ParameterValidationAbstractValue value)
             {
                 // We are only tracking default parameter locations.
-            }
-
-            protected override void SetAbstractValueForSymbolDeclaration(ISymbol symbol, IOperation initializer, ParameterValidationAbstractValue initializerValue)
-            {
-                // We are only tracking parameter symbol locations.
-                Debug.Assert(symbol.Kind != SymbolKind.Parameter);
             }
 
             protected override void SetValueForParameterPointsToLocationOnEntry(IParameterSymbol parameter, PointsToAbstractValue pointsToAbstractValue)
@@ -189,17 +183,12 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ParameterValidationAnalys
                 }
             }
 
-            // TODO: Remove these temporary methods once we move to compiler's CFG
-            // https://github.com/dotnet/roslyn-analyzers/issues/1567
-            #region Temporary methods to workaround lack of *real* CFG
             protected override ParameterValidationAnalysisData MergeAnalysisData(ParameterValidationAnalysisData value1, ParameterValidationAnalysisData value2)
                 => ParameterValidationAnalysisDomainInstance.Merge(value1, value2);
             protected override ParameterValidationAnalysisData GetClonedAnalysisData(ParameterValidationAnalysisData analysisData)
                 => GetClonedAnalysisDataHelper(analysisData);
             protected override bool Equals(ParameterValidationAnalysisData value1, ParameterValidationAnalysisData value2)
                 => EqualsHelper(value1, value2);
-
-            #endregion
 
             #region Visit overrides
             public override ParameterValidationAbstractValue Visit(IOperation operation, object argument)

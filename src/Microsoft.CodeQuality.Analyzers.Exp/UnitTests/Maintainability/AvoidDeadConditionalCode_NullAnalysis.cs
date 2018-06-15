@@ -1512,7 +1512,7 @@ class C
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1669")]
+        [Fact]
         public void NullCompare_ForLoop_03()
         {
             VerifyCSharp(@"
@@ -1566,7 +1566,7 @@ End Class
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1669")]
+        [Fact]
         public void NullCompare_ForLoop_WithBreak()
         {
             VerifyCSharp(@"
@@ -1642,7 +1642,7 @@ End Module",
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1669")]
+        [Fact]
         public void NullCompare_ForLoop_WithContinue()
         {
             VerifyCSharp(@"
@@ -2024,7 +2024,7 @@ End Module",
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1669")]
+        [Fact]
         public void NullCompare_SwitchStatement_01_NoDiagnostic()
         {
             VerifyCSharp(@"
@@ -2079,7 +2079,7 @@ End Class
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1669")]
+        [Fact]
         public void NullCompare_SwitchStatement_02_NoDiagnostic()
         {
             VerifyCSharp(@"
@@ -2191,7 +2191,7 @@ End Class
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1669")]
+        [Fact]
         public void NullCompare_SwitchStatement_01_Diagnostic()
         {
             VerifyCSharp(@"
@@ -2251,7 +2251,7 @@ End Class
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1669")]
+        [Fact]
         public void NullCompare_SwitchStatement_02_Diagnostic()
         {
             VerifyCSharp(@"
@@ -4975,7 +4975,7 @@ End Class
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1567")]
+        [Fact]
         public void NullCheck_CollectionAddAndCount_NoDiagnostic()
         {
             VerifyCSharp(@"

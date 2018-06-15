@@ -157,13 +157,9 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 }
             }
 
-            protected override void SetAbstractValueForElementInitializer(IOperation instance, ImmutableArray<AbstractIndex> indices, ITypeSymbol elementType, IOperation initializer, DisposeAbstractValue value)
+            protected override void SetAbstractValueForArrayElementInitializer(IArrayCreationOperation arrayCreation, ImmutableArray<AbstractIndex> indices, ITypeSymbol elementType, IOperation initializer, DisposeAbstractValue value)
             {
-                HandlePossibleEscapingOperation(instance, initializer);
-            }
-
-            protected override void SetAbstractValueForSymbolDeclaration(ISymbol symbol, IOperation initializer, DisposeAbstractValue initializerValue)
-            {
+                HandlePossibleEscapingOperation(arrayCreation, initializer);
             }
 
             protected override void SetAbstractValueForAssignment(IOperation target, IOperation assignedValueOperation, DisposeAbstractValue assignedValue, bool mayBeAssignment = false)
@@ -216,16 +212,12 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 return base.ComputeAnalysisValueForOutArgument(operation, defaultValue);
             }
 
-            // TODO: Remove these temporary methods once we move to compiler's CFG
-            // https://github.com/dotnet/roslyn-analyzers/issues/1567
-            #region Temporary methods to workaround lack of *real* CFG
             protected override DisposeAnalysisData MergeAnalysisData(DisposeAnalysisData value1, DisposeAnalysisData value2)
                 => DisposeAnalysisDomainInstance.Merge(value1, value2);
             protected override DisposeAnalysisData GetClonedAnalysisData(DisposeAnalysisData analysisData)
                 => GetClonedAnalysisDataHelper(CurrentAnalysisData);
             protected override bool Equals(DisposeAnalysisData value1, DisposeAnalysisData value2)
                 => EqualsHelper(value1, value2);
-            #endregion
 
             #region Visitor methods
             public override DisposeAbstractValue DefaultVisit(IOperation operation, object argument)

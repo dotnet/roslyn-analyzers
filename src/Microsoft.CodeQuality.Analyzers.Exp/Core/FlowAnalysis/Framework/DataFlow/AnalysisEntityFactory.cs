@@ -14,22 +14,22 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
     /// <summary>
     /// Factory to create <see cref="AnalysisEntity"/> objects for operations, symbol declarations, etc.
     /// This factory also tracks analysis entities that share the same instance location (e.g. value type members).
-    /// NOTE: This factory must only be used from within an <see cref="OperationVisitor"/>, as it is tied to the visitor's state tracking via <see cref="_getIsInsideObjectInitializer"/> delegate.
+    /// NOTE: This factory must only be used from within an <see cref="OperationVisitor"/>, as it is tied to the visitor's state tracking via <see cref="_getIsInsideAnonymousObjectInitializer"/> delegate.
     /// </summary>
     internal sealed class AnalysisEntityFactory
     {
         private readonly Dictionary<IOperation, AnalysisEntity> _analysisEntityMap;
         private readonly Dictionary<ISymbol, PointsToAbstractValue> _instanceLocationsForSymbols;
         private readonly Func<IOperation, PointsToAbstractValue> _getPointsToAbstractValueOpt;
-        private readonly Func<bool> _getIsInsideObjectInitializer;
+        private readonly Func<bool> _getIsInsideAnonymousObjectInitializer;
 
         public AnalysisEntityFactory(
             Func<IOperation, PointsToAbstractValue> getPointsToAbstractValueOpt,
-            Func<bool> getIsInsideObjectInitializer,
+            Func<bool> getIsInsideAnonymousObjectInitializer,
             INamedTypeSymbol containingTypeSymbol)
         {
             _getPointsToAbstractValueOpt = getPointsToAbstractValueOpt;
-            _getIsInsideObjectInitializer = getIsInsideObjectInitializer;
+            _getIsInsideAnonymousObjectInitializer = getIsInsideAnonymousObjectInitializer;
             _analysisEntityMap = new Dictionary<IOperation, AnalysisEntity>();
             _instanceLocationsForSymbols = new Dictionary<ISymbol, PointsToAbstractValue>();
 
@@ -131,7 +131,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                 case IInstanceReferenceOperation instanceReference:
                     if (_getPointsToAbstractValueOpt != null)
                     {
-                        instanceOpt = instanceReference.GetInstance(_getIsInsideObjectInitializer());
+                        instanceOpt = instanceReference.GetInstance(_getIsInsideAnonymousObjectInitializer());
                         if (instanceOpt == null)
                         {
                             // Reference to this or base instance.
@@ -242,14 +242,14 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             return TryCreate(symbol, indices, type, instance, out analysisEntity);
         }
 
-        public bool TryCreateForElementInitializer(IOperation instance, ImmutableArray<AbstractIndex> indices, ITypeSymbol elementType, out AnalysisEntity analysisEntity)
+        public bool TryCreateForArrayElementInitializer(IArrayCreationOperation arrayCreation, ImmutableArray<AbstractIndex> indices, ITypeSymbol elementType, out AnalysisEntity analysisEntity)
         {
-            Debug.Assert(instance != null);
+            Debug.Assert(arrayCreation != null);
             Debug.Assert(!indices.IsEmpty);
             Debug.Assert(elementType != null);
 
             ISymbol symbol = null;
-            return TryCreate(symbol, indices, elementType, instance, out analysisEntity);
+            return TryCreate(symbol, indices, elementType, arrayCreation, out analysisEntity);
         }
 
         private bool TryCreate(ISymbol symbolOpt, ImmutableArray<AbstractIndex> indices,
@@ -339,7 +339,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 
         public AnalysisEntity CreateWithNewInstanceRoot(AnalysisEntity analysisEntity, AnalysisEntity newRootInstance)
         {
-            if (analysisEntity.InstanceLocation == newRootInstance.InstanceLocation)
+            if (analysisEntity.InstanceLocation == newRootInstance.InstanceLocation &&
+                analysisEntity.ParentOpt == newRootInstance.ParentOpt)
             {
                 return analysisEntity;
             }

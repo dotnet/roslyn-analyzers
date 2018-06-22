@@ -52,7 +52,7 @@ Microsoft.CodeQuality.Analyzers.Exp
 
 Experimental package based on Dataflow Analysis to provide code quality guidelines in executable code.
 
-[More info](src/Microsoft.CodeQuality.AnalyzersExp./Microsoft.CodeQuality.Analyzers.Exp.md)
+[More info](src/Microsoft.CodeQuality.Analyzers.Exp/Microsoft.CodeQuality.Analyzers.Exp.md)
 
 Microsoft.NetCore.Analyzers
 -----------------

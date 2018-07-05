@@ -2,6 +2,36 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="pt-BR" original="../SystemRuntimeAnalyzersResources.resx">
     <body>
+      <trans-unit id="DisposeObjectsBeforeLosingScopeDescription">
+        <source>If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</source>
+        <target state="new">If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposeObjectsBeforeLosingScopeMessage">
+        <source>In method '{0}', call System.IDisposable.Dispose on object created by '{1}' before all references to it are out of scope.</source>
+        <target state="new">In method '{0}', call System.IDisposable.Dispose on object created by '{1}' before all references to it are out of scope.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposeObjectsBeforeLosingScopeTitle">
+        <source>Dispose objects before losing scope</source>
+        <target state="new">Dispose objects before losing scope</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassLiteralsAsLocalizedParametersDescription">
+        <source>A method passes a string literal as a parameter to a constructor or method in the .NET Framework class library and that string should be localizable. To fix a violation of this rule, replace the string literal with a string retrieved through an instance of the ResourceManager class.</source>
+        <target state="new">A method passes a string literal as a parameter to a constructor or method in the .NET Framework class library and that string should be localizable. To fix a violation of this rule, replace the string literal with a string retrieved through an instance of the ResourceManager class.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassLiteralsAsLocalizedParametersMessage">
+        <source>Method '{0}' passes a literal string as parameter '{1}' of a call to '{2}'. Retrieve the following string(s) from a resource table instead: "{3}".</source>
+        <target state="new">Method '{0}' passes a literal string as parameter '{1}' of a call to '{2}'. Retrieve the following string(s) from a resource table instead: "{3}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassLiteralsAsLocalizedParametersTitle">
+        <source>Do not pass literals as localized parameters</source>
+        <target state="new">Do not pass literals as localized parameters</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseOrdinalStringComparisonTitle">
         <source>Use ordinal stringcomparison</source>
         <target state="translated">Usar comparação de cadeia de caracteres ordinal</target>
@@ -163,13 +193,13 @@
         <note />
       </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedDescription">
-        <source>A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type.</source>
-        <target state="translated">Um tipo que implementa System.IDisposable declara campos que são de tipos que também implementam IDisposable. O método Dispose do campo não é chamado pelo método Dispose do tipo declarativo.</target>
+        <source>A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type. To fix a violation of this rule, call Dispose on fields that are of types that implement IDisposable if you are responsible for allocating and releasing the unmanaged resources held by the field.</source>
+        <target state="needs-review-translation">Um tipo que implementa System.IDisposable declara campos que são de tipos que também implementam IDisposable. O método Dispose do campo não é chamado pelo método Dispose do tipo declarativo.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedMessage">
-        <source>Disposable fields should be disposed</source>
-        <target state="translated">Campos descartáveis devem ser descartados</target>
+        <source>'{0}' contains field '{1}' that is of IDisposable type '{2}', but it is never disposed. Change the Dispose method on '{0}' to call Close or Dispose on this field.</source>
+        <target state="needs-review-translation">Campos descartáveis devem ser descartados</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallOverridableMethodsInConstructorsTitle">
@@ -188,18 +218,18 @@
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeTitle">
-        <source>Dispose Methods Should Call Base Class Dispose</source>
-        <target state="translated">Métodos Dispose devem chamar a classe base dispose</target>
+        <source>Dispose methods should call base class dispose</source>
+        <target state="needs-review-translation">Métodos Dispose devem chamar a classe base dispose</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeDescription">
-        <source>If a type inherits from a disposable type, it must call the Dispose method of the base type from its own Dispose method.</source>
-        <target state="translated">Se um tipo for herdado de um tipo descartável, ele deverá chamar o método Dispose do tipo base de seu próprio método Dispose.</target>
+        <source>A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.</source>
+        <target state="needs-review-translation">Se um tipo for herdado de um tipo descartável, ele deverá chamar o método Dispose do tipo base de seu próprio método Dispose.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeMessage">
-        <source>Dispose Methods Should Call Base Class Dispose</source>
-        <target state="translated">Métodos Dispose devem chamar a classe base dispose</target>
+        <source>Ensure that method '{0}' calls '{1}' in all possible control flow paths.</source>
+        <target state="needs-review-translation">Métodos Dispose devem chamar a classe base dispose</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableTypesShouldDeclareFinalizerTitle">

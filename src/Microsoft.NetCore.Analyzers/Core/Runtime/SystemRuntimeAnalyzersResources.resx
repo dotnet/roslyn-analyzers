@@ -210,15 +210,6 @@
   <data name="InitializeStaticFieldsInlineMessage" xml:space="preserve">
     <value>Initialize all static fields in '{0}' when those fields are declared and remove the explicit static constructor</value>
   </data>
-  <data name="DisposableFieldsShouldBeDisposedTitle" xml:space="preserve">
-    <value>Disposable fields should be disposed</value>
-  </data>
-  <data name="DisposableFieldsShouldBeDisposedDescription" xml:space="preserve">
-    <value>A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type.</value>
-  </data>
-  <data name="DisposableFieldsShouldBeDisposedMessage" xml:space="preserve">
-    <value>Disposable fields should be disposed</value>
-  </data>
   <data name="DoNotCallOverridableMethodsInConstructorsTitle" xml:space="preserve">
     <value>Do not call overridable methods in constructors</value>
   </data>
@@ -227,15 +218,6 @@
   </data>
   <data name="DoNotCallOverridableMethodsInConstructorsMessage" xml:space="preserve">
     <value>Do not call overridable methods in constructors</value>
-  </data>
-  <data name="DisposeMethodsShouldCallBaseClassDisposeTitle" xml:space="preserve">
-    <value>Dispose Methods Should Call Base Class Dispose</value>
-  </data>
-  <data name="DisposeMethodsShouldCallBaseClassDisposeDescription" xml:space="preserve">
-    <value>If a type inherits from a disposable type, it must call the Dispose method of the base type from its own Dispose method.</value>
-  </data>
-  <data name="DisposeMethodsShouldCallBaseClassDisposeMessage" xml:space="preserve">
-    <value>Dispose Methods Should Call Base Class Dispose</value>
   </data>
   <data name="DisposableTypesShouldDeclareFinalizerTitle" xml:space="preserve">
     <value>Disposable types should declare finalizer</value>
@@ -380,5 +362,41 @@
   </data>
   <data name="UseArrayEmpty" xml:space="preserve">
     <value>Use Array.Empty</value>
+  </data>
+  <data name="DisposableFieldsShouldBeDisposedDescription" xml:space="preserve">
+    <value>A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type. To fix a violation of this rule, call Dispose on fields that are of types that implement IDisposable if you are responsible for allocating and releasing the unmanaged resources held by the field.</value>
+  </data>
+  <data name="DisposableFieldsShouldBeDisposedMessage" xml:space="preserve">
+    <value>'{0}' contains field '{1}' that is of IDisposable type '{2}', but it is never disposed. Change the Dispose method on '{0}' to call Close or Dispose on this field.</value>
+  </data>
+  <data name="DisposableFieldsShouldBeDisposedTitle" xml:space="preserve">
+    <value>Disposable fields should be disposed</value>
+  </data>
+  <data name="DisposeMethodsShouldCallBaseClassDisposeDescription" xml:space="preserve">
+    <value>A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.</value>
+  </data>
+  <data name="DisposeMethodsShouldCallBaseClassDisposeMessage" xml:space="preserve">
+    <value>Ensure that method '{0}' calls '{1}' in all possible control flow paths.</value>
+  </data>
+  <data name="DisposeMethodsShouldCallBaseClassDisposeTitle" xml:space="preserve">
+    <value>Dispose methods should call base class dispose</value>
+  </data>
+  <data name="DisposeObjectsBeforeLosingScopeDescription" xml:space="preserve">
+    <value>If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</value>
+  </data>
+  <data name="DisposeObjectsBeforeLosingScopeMessage" xml:space="preserve">
+    <value>In method '{0}', call System.IDisposable.Dispose on object created by '{1}' before all references to it are out of scope.</value>
+  </data>
+  <data name="DisposeObjectsBeforeLosingScopeTitle" xml:space="preserve">
+    <value>Dispose objects before losing scope</value>
+  </data>
+  <data name="DoNotPassLiteralsAsLocalizedParametersDescription" xml:space="preserve">
+    <value>A method passes a string literal as a parameter to a constructor or method in the .NET Framework class library and that string should be localizable. To fix a violation of this rule, replace the string literal with a string retrieved through an instance of the ResourceManager class.</value>
+  </data>
+  <data name="DoNotPassLiteralsAsLocalizedParametersMessage" xml:space="preserve">
+    <value>Method '{0}' passes a literal string as parameter '{1}' of a call to '{2}'. Retrieve the following string(s) from a resource table instead: "{3}".</value>
+  </data>
+  <data name="DoNotPassLiteralsAsLocalizedParametersTitle" xml:space="preserve">
+    <value>Do not pass literals as localized parameters</value>
   </data>
 </root>

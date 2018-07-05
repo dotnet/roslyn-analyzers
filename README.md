@@ -45,15 +45,6 @@ Provides common code quality guidelines.
 
 [More info](src/Microsoft.CodeQuality.Analyzers/Microsoft.CodeQuality.Analyzers.md)
 
-Microsoft.CodeQuality.Analyzers.Exp
---------------------------------
-
-*Latest pre-release version:* [![NuGet](https://img.shields.io/myget/v/Microsoft.CodeQuality.Analyzers.Exp.svg)](https://dotnet.myget.org/feed/roslyn-analyzers/package/nuget/Microsoft.CodeQuality.Analyzers.Exp)
-
-Experimental package based on Dataflow Analysis to provide code quality guidelines in executable code.
-
-[More info](src/Microsoft.CodeQuality.AnalyzersExp./Microsoft.CodeQuality.Analyzers.Exp.md)
-
 Microsoft.NetCore.Analyzers
 -----------------
 

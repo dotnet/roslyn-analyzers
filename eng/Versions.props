@@ -4,8 +4,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <VersionPrefix>2.6.2</VersionPrefix>
-    <PreReleaseVersionLabel>beta2</PreReleaseVersionLabel>
+    <VersionPrefix>2.9.0</VersionPrefix>
+    <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
 
     <!-- Opt-in RepoToolset tools -->
     <UsingToolVSSDK>true</UsingToolVSSDK>

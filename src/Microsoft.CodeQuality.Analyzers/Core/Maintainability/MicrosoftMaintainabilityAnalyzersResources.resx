@@ -189,4 +189,13 @@
   <data name="UseNameOfInPlaceOfStringTitle" xml:space="preserve">
     <value>Use nameof to express symbol names</value>
   </data>
+  <data name="AvoidDeadConditionalCodeAlwaysTruFalseOrNullMessage" xml:space="preserve">
+    <value>'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</value>
+  </data>
+  <data name="AvoidDeadConditionalCodeNeverNullMessage" xml:space="preserve">
+    <value>'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</value>
+  </data>
+  <data name="AvoidDeadConditionalCodeTitle" xml:space="preserve">
+    <value>Avoid dead conditional code</value>
+  </data>
 </root>

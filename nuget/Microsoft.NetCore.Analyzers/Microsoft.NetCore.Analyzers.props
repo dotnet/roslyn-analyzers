@@ -11,6 +11,7 @@
       $(CodeAnalysisRuleSetOverrides);
       -Microsoft.Interoperability#CA1401;
 
+      -Microsoft.Globalization#CA1303;
       -Microsoft.Globalization#CA1304;
       -Microsoft.Globalization#CA1305;
       -Microsoft.Globalization#CA1307;
@@ -19,10 +20,15 @@
       -Microsoft.Performance#CA1813;
       -Microsoft.Performance#CA1820;
 
+      -Microsoft.Reliability#CA2000;
       -Microsoft.Reliability#CA2002;
+
+      -Microsoft.Security#CA2100;
 
       -Microsoft.Usage#CA1816;
       -Microsoft.Usage#CA2208;
+      -Microsoft.Usage#CA2213;
+      -Microsoft.Usage#CA2215;
       -Microsoft.Usage#CA2216;
       -Microsoft.Usage#CA2241;
       -Microsoft.Usage#CA2242;

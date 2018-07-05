@@ -1,3 +1,15 @@
+System.Data
+--------------------------
+### CA2100: Review SQL queries for security vulnerabilities ###
+
+A method sets the System.Data.IDbCommand.CommandText property by using a string that is built from a string argument to the method. This rule assumes that the string argument contains user input. A SQL command string that is built from user input is vulnerable to SQL injection attacks.
+
+Category: Security
+
+Severity: Warning
+
+Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2100-review-sql-queries-for-security-vulnerabilities](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2100-review-sql-queries-for-security-vulnerabilities)
+
 System.Resources
 --------------------------
 ### CA1824: Mark assemblies with NeutralResourcesLanguageAttribute ###
@@ -12,6 +24,66 @@ Help: [https://msdn.microsoft.com/en-us/library/bb385967.aspx](https://msdn.micr
 
 System.Runtime
 --------------------------
+### CA1303: Do not pass literals as localized parameters ###
+
+A method passes a string literal as a parameter to a constructor or method in the .NET Framework class library and that string should be localizable.
+
+Category: Globalization
+
+Severity: Warning
+
+Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1303-do-not-pass-literals-as-localized-parameters](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1303-do-not-pass-literals-as-localized-parameters)
+
+### CA1304: Specify CultureInfo ###
+
+A method or constructor calls a member that has an overload that accepts a System.Globalization.CultureInfo parameter, and the method or constructor does not call the overload that takes the CultureInfo parameter.
+
+Category: Globalization
+
+Severity: Warning
+
+Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1304-specify-cultureinfo](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1304-specify-cultureinfo)
+
+### CA1305: Specify IFormatProvider ###
+
+A method or constructor calls one or more members that have overloads that accept a System.IFormatProvider parameter, and the method or constructor does not call the overload that takes the IFormatProvider parameter.
+
+Category: Globalization
+
+Severity: Warning
+
+Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1305-specify-iformatprovider](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1305-specify-iformatprovider)
+
+### CA1307: Specify StringComparison ###
+
+A string comparison operation uses a method overload that does not set a StringComparison parameter.
+
+Category: Globalization
+
+Severity: Warning
+
+Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1307-specify-stringcomparison](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1307-specify-stringcomparison)
+
+### CA1308: Normalize strings to uppercase ###
+
+Strings should be normalized to uppercase. A small group of characters, when they are converted to lowercase, cannot make a round trip. To make a round trip means to convert the characters from one locale to another locale that represents character data differently, and then to accurately retrieve the original characters from the converted characters.
+
+Category: Globalization
+
+Severity: Warning
+
+Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1308-normalize-strings-to-uppercase](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1308-normalize-strings-to-uppercase)
+
+### CA1508: Avoid dead conditional code ###
+
+Conditional expressions which are always true/false and null checks for operations that are always null/non-null lead to dead code. Such conditional expressions should be removed or refactored to avoid dead code.
+
+Category: Maintainability.
+
+Severity: Warning
+
+Help: <To be added>
+
 ### CA1309: Use ordinal stringcomparison ###
 
 A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.
@@ -58,6 +130,18 @@ Category: Performance
 
 Severity: Warning
 
+Help: [To Be Added]
+
+### CA2000: Dispose objects before losing scope ###
+
+A local object of a IDisposable type is created but the object is not disposed before all references to the object are out of scope.
+
+Category: Reliability
+
+Severity: Warning
+
+Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2000-dispose-objects-before-losing-scope](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2000-dispose-objects-before-losing-scope)
+
 ### CA2002: Do not lock on objects with weak identity ###
 
 Category: Reliability
@@ -95,6 +179,26 @@ Category: Usage
 Severity: Warning
 
 Help: [https://msdn.microsoft.com/en-us/library/ms182347.aspx](https://msdn.microsoft.com/en-us/library/ms182347.aspx)
+
+### CA2213: Disposable fields should be disposed ###
+
+A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type.
+
+Category: Usage
+
+Severity: Warning
+
+Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2213-disposable-fields-should-be-disposed](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2213-disposable-fields-should-be-disposed)
+
+### CA2215: Dispose methods should call base class dispose ###
+
+A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type.
+
+Category: Usage
+
+Severity: Warning
+
+Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2215-dispose-methods-should-call-base-class-dispose](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2215-dispose-methods-should-call-base-class-dispose)
 
 ### CA2216: Disposable types should declare finalizer ###
 

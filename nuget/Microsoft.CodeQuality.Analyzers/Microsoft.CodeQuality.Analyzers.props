@@ -33,6 +33,7 @@
       -Microsoft.Design#CA1055;
       -Microsoft.Design#CA1056;
       -Microsoft.Design#CA1060;
+      -Microsoft.Design#CA1062;
       -Microsoft.Design#CA1063;
       -Microsoft.Design#CA1064;
       -Microsoft.Design#CA1065;

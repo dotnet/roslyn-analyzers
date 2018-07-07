@@ -333,6 +333,8 @@ public class MembersTests
     public void SomeEventHandler(object sender, System.EventArgs args) { }
 
     public void SomeNotImplementedMethod() => throw new System.NotImplementedException();
+
+    public void SomeNotSupportedMethod() => throw new System.NotSupportedException();
 }
 
 public class Generic<T>
@@ -387,6 +389,10 @@ Public Class MembersTests
 
     Public Sub SomeNotImplementedMethod()
         Throw New System.NotImplementedException()
+    End Sub
+
+    Public Sub SomeNotSupportedMethod()
+        Throw New System.NotSupportedException()
     End Sub
 End Class
 

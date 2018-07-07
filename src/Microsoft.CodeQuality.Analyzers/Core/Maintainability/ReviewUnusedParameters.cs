@@ -208,69 +208,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             public void OperationBlockEndAction(OperationBlockAnalysisContext context)
             {
-                // Check to see if the method just throws a NotImplementedException/NotSupportedException. If it does,
-                // we shouldn't warn about parameters.
-                // Note that VB method bodies with 1 action have 3 operations.
-                // The first is the actual operation, the second is a label statement, and the third is a return
-                // statement. The last two are implicit in these scenarios.
-
-                // Filter out operation roots with no IOperation API support (OperationKind.None)
-                var operationBlocks = context.OperationBlocks.WhereAsArray(operation => !operation.IsOperationNoneRoot());
-
-                // In the presence of parameter initializers, there will be multiple operation blocks. We assume that there
-                // is only one IBlockOperation, and that the rest are something else
-                Debug.Assert(!(operationBlocks.Where(op => op.Kind == OperationKind.Block).Count() > 1));
-
-                IBlockOperation methodBlock = null;
-                if (operationBlocks.Length == 1 && operationBlocks[0].Kind == OperationKind.Block)
+                // Check to see if the method just throws a NotImplementedException/NotSupportedException
+                // We shouldn't warn about parameters in that case
+                if (context.IsMethodNotImplementedOrSupported())
                 {
-                    methodBlock = (IBlockOperation)operationBlocks[0];
-                }
-                else if (operationBlocks.Length > 1)
-                {
-                    foreach (var block in operationBlocks)
-                    {
-                        if (block.Kind == OperationKind.Block)
-                        {
-                            methodBlock = (IBlockOperation)block;
-                            break;
-                        }
-                    }
-                }
-
-                if (methodBlock != null)
-                {
-                    bool IsSingleStatementBody(IBlockOperation body)
-                    {
-                        return body.Operations.Length == 1 ||
-                            (body.Operations.Length == 3 && body.Syntax.Language == LanguageNames.VisualBasic &&
-                             body.Operations[1] is ILabeledOperation labeledOp && labeledOp.IsImplicit &&
-                             body.Operations[2] is IReturnOperation returnOp && returnOp.IsImplicit);
-                    }
-
-                    if (IsSingleStatementBody(methodBlock))
-                    {
-                        var innerOperation = methodBlock.Operations.First();
-
-                        // Because of https://github.com/dotnet/roslyn/issues/23152, there can be an expression-statement
-                        // wrapping expression-bodied throw operations. Compensate by unwrapping if necessary.
-                        if (innerOperation.Kind == OperationKind.ExpressionStatement &&
-                            innerOperation is IExpressionStatementOperation exprStatement)
-                        {
-                            innerOperation = exprStatement.Operation;
-                        }
-
-                        if (innerOperation.Kind == OperationKind.Throw &&
-                            innerOperation is IThrowOperation throwOperation &&
-                            throwOperation.Exception.Kind == OperationKind.ObjectCreation &&
-                            throwOperation.Exception is IObjectCreationOperation createdException)
-                        {
-                            if (_exceptionsToSkip.Contains(createdException.Type.OriginalDefinition))
-                            {
-                                return;
-                            }
-                        }
-                    }
+                    return;
                 }
 
                 // Do not raise warning for unused 'this' parameter of an extension method.

@@ -68,11 +68,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     onSerializedAttribute,
                     onSerializingAttribute,
                     obsoleteAttribute);
-
-                ImmutableHashSet<INamedTypeSymbol> exceptionsToSkip = ImmutableHashSet.Create(
-                    WellKnownTypes.NotImplementedException(compilationStartContext.Compilation),
-                    WellKnownTypes.NotSupportedException(compilationStartContext.Compilation));
-
+                
                 UnusedParameterDictionary unusedMethodParameters = new ConcurrentDictionary<IMethodSymbol, ISet<IParameterSymbol>>();
                 ISet<IMethodSymbol> methodsUsedAsDelegates = new HashSet<IMethodSymbol>();
 
@@ -139,7 +135,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     }
 
                     // Initialize local mutable state in the start action.
-                    var analyzer = new UnusedParametersAnalyzer(method, unusedMethodParameters, exceptionsToSkip);
+                    var analyzer = new UnusedParametersAnalyzer(method, unusedMethodParameters);
 
                     // Register an intermediate non-end action that accesses and modifies the state.
                     startOperationBlockContext.RegisterOperationAction(analyzer.AnalyzeOperation, OperationKind.ParameterReference);
@@ -166,8 +162,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         private class UnusedParametersAnalyzer
         {
             #region Per-CodeBlock mutable state
-
-            private readonly ImmutableHashSet<INamedTypeSymbol> _exceptionsToSkip;
+                       
             private readonly HashSet<IParameterSymbol> _unusedParameters;
             private readonly UnusedParameterDictionary _finalUnusedParameters;
             private readonly IMethodSymbol _method;
@@ -176,11 +171,10 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             #region State intialization
 
-            public UnusedParametersAnalyzer(IMethodSymbol method, UnusedParameterDictionary finalUnusedParameters, ImmutableHashSet<INamedTypeSymbol> exceptionsToSkip)
+            public UnusedParametersAnalyzer(IMethodSymbol method, UnusedParameterDictionary finalUnusedParameters)
             {
                 // Initialization: Assume all parameters are unused.
-                _unusedParameters = new HashSet<IParameterSymbol>(method.Parameters);
-                _exceptionsToSkip = exceptionsToSkip;
+                _unusedParameters = new HashSet<IParameterSymbol>(method.Parameters);                
                 _finalUnusedParameters = finalUnusedParameters;
                 _method = method;
             }

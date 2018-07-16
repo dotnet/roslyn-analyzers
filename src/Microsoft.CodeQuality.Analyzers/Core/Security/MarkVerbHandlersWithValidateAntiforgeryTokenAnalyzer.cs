@@ -87,7 +87,7 @@ namespace Microsoft.CodeQuality.Analyzers.Security
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(NoVerbsRule, NoVerbsNoTokenRule, GetAndTokenRule, GetAndOtherAndTokenRule, VerbsAndNoTokenRule);
 
         /// <summary>
-        /// Helper for System.Web.Mvc attributes.
+        /// Helper for examining System.Web.Mvc attributes on MVC controller methods.
         /// </summary>
         private class MvcAttributeSymbols
         {
@@ -122,7 +122,7 @@ namespace Microsoft.CodeQuality.Analyzers.Security
             /// <param name="attributeDatas">Attributes on the MVC controller action.</param>
             /// <param name="verbs">Information on which HTTP verbs are specified.</param>
             /// <param name="antiforgeryTokenDefined">Indicates that the ValidateAntiforgeryToken attribute was specified.</param>
-            /// <param name="isAction">Indicates that the MVC controller action doesn't have an attribute saying it's not really an action.</param>
+            /// <param name="isAction">Indicates that the MVC controller method doesn't have an attribute saying it's not really an action.</param>
             public void ComputeAttributeInfo(
                 ImmutableArray<AttributeData> attributeDatas, 
                 out MvcHttpVerbs verbs,
@@ -131,35 +131,35 @@ namespace Microsoft.CodeQuality.Analyzers.Security
             {
                 verbs = default(MvcHttpVerbs);
                 antiforgeryTokenDefined = false;
-                isAction = true;    // Presumed an action until proven otherwise.
+                isAction = true;    // Presumed an MVC controller action until proven otherwise.
 
                 foreach (AttributeData a in attributeDatas)
                 {
-                    if (this.IsAttributeClass(a, this.ValidateAntiforgeryTokenAttributeSymbol))
+                    if (IsAttributeClass(a, this.ValidateAntiforgeryTokenAttributeSymbol))
                     {
                         antiforgeryTokenDefined = true;
                     }
-                    else if (this.IsAttributeClass(a, this.HttpGetAttributeSymbol))
+                    else if (IsAttributeClass(a, this.HttpGetAttributeSymbol))
                     {
                         verbs |= MvcHttpVerbs.Get;
                     }
-                    else if (this.IsAttributeClass(a, this.HttpPostAttributeSymbol))
+                    else if (IsAttributeClass(a, this.HttpPostAttributeSymbol))
                     {
                         verbs |= MvcHttpVerbs.Post;
                     }
-                    else if (this.IsAttributeClass(a, this.HttpPutAttributeSymbol))
+                    else if (IsAttributeClass(a, this.HttpPutAttributeSymbol))
                     {
                         verbs |= MvcHttpVerbs.Put;
                     }
-                    else if (this.IsAttributeClass(a, this.HttpDeleteAttributeSymbol))
+                    else if (IsAttributeClass(a, this.HttpDeleteAttributeSymbol))
                     {
                         verbs |= MvcHttpVerbs.Delete;
                     }
-                    else if (this.IsAttributeClass(a, this.HttpPatchAttributeSymbol))
+                    else if (IsAttributeClass(a, this.HttpPatchAttributeSymbol))
                     {
                         verbs |= MvcHttpVerbs.Patch;
                     }
-                    else if (this.IsAttributeClass(a, this.AcceptVerbsAttributeSymbol))
+                    else if (IsAttributeClass(a, this.AcceptVerbsAttributeSymbol))
                     {
                         if (a.AttributeConstructor.Parameters != null
                             && a.AttributeConstructor.Parameters.Length == 1)
@@ -201,44 +201,73 @@ namespace Microsoft.CodeQuality.Analyzers.Security
                         
                         // If we reach here, then we didn't handle the [AcceptVerbs] constructor overload.
                     }
-                    else if (this.IsAttributeClass(a, this.NonActionAttributeSymbol)
-                        || this.IsAttributeClass(a, this.ChildActionOnlyAttributeSymbol))
+                    else if (IsAttributeClass(a, this.NonActionAttributeSymbol)
+                        || IsAttributeClass(a, this.ChildActionOnlyAttributeSymbol))
                     {
                         isAction = false;
                     }
                 }
             }
 
-            private bool IsAttributeClass(AttributeData attributeData, INamedTypeSymbol symbol)
+            /// <summary>
+            /// Determines if the .NET attribute is of the specified type.
+            /// </summary>
+            /// <param name="attributeData">The .NET attribute to check.</param>
+            /// <param name="symbol">The type of .NET attribute to compare.</param>
+            /// <returns>True if .NET attribute's type matches the specified type, false otherwise.</returns>
+            private static bool IsAttributeClass(AttributeData attributeData, INamedTypeSymbol symbol)
             {
                 return symbol != null && attributeData.AttributeClass == symbol;
             }
         }
 
-        /// <summary>ASP.NET MVC's implementation of HttpVerbs.</summary>
+        /// <summary>
+        /// ASP.NET MVC's implementation of HttpVerbs.
+        /// </summary>
         [Flags]
         private enum MvcHttpVerbs
         {
             None = 0,
-            /// <summary>Retrieves the information or entity that is identified by the URI of the request.</summary>
+
+            /// <summary>
+            /// Retrieves the information or entity that is identified by the URI of the request.
+            /// </summary>
             Get = 1,
-            /// <summary>Posts a new entity as an addition to a URI.</summary>
+
+            /// <summary>
+            /// Posts a new entity as an addition to a URI.
+            /// </summary>
             Post = 2,
-            /// <summary>Replaces an entity that is identified by a URI.</summary>
+
+            /// <summary>
+            /// Replaces an entity that is identified by a URI.
+            /// </summary>
             Put = 4,
-            /// <summary>Requests that a specified URI be deleted.</summary>
+
+            /// <summary>
+            /// Requests that a specified URI be deleted.
+            /// </summary>
             Delete = 8,
-            /// <summary>Retrieves the message headers for the information or entity that is identified by the URI of the request.</summary>
+
+            /// <summary>
+            /// Retrieves the message headers for the information or entity that is identified by the URI of the request.
+            /// </summary>
             Head = 0x10,
-            /// <summary>Requests that a set of changes described in the request entity be applied to the resource identified by the Request-URI.</summary>
+
+            /// <summary>
+            /// Requests that a set of changes described in the request entity be applied to the resource identified by the Request-URI.
+            /// </summary>
             Patch = 0x20,
-            /// <summary>Represents a request for information about the communication options available on the request/response chain identified by the Request-URI.</summary>
+
+            /// <summary>
+            /// Represents a request for information about the communication options available on the request/response chain identified by the Request-URI.
+            /// </summary>
             Options = 0x40
         }
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            //analysisContext.EnableConcurrentExecution();
+            analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
             analysisContext.RegisterCompilationStartAction(
@@ -289,20 +318,11 @@ namespace Microsoft.CodeQuality.Analyzers.Security
                                 if (isAntiforgeryTokenDefined)
                                 {
                                     // antiforgery token attribute is set, but verbs are not specified
-
-
                                     symbolContext.ReportDiagnostic(Diagnostic.Create(NoVerbsRule, methodSymbol.Locations[0], methodSymbol.MetadataName));
-
-                                    ////ReportConfigMessage(
-                                    ////    "Microsoft.CA3147",
-                                    ////    "HTTP verb attributes attributes are missing on controller action {0}. The ValidateAntiForgeryTokenAttribute will not be used when GET verb is used.",
-                                    ////    functionContext.Refine("HttpVerbAttributesMissing"));
-
                                 }
                                 else
                                 {
                                     // no verbs, no antiforgery token attribute
-
                                     symbolContext.ReportDiagnostic(Diagnostic.Create(NoVerbsNoTokenRule, methodSymbol.Locations[0], methodSymbol.MetadataName));
                                 }
                             }
@@ -315,21 +335,10 @@ namespace Microsoft.CodeQuality.Analyzers.Security
                                     {
                                         symbolContext.ReportDiagnostic(Diagnostic.Create(GetAndTokenRule, methodSymbol.Locations[0], methodSymbol.MetadataName));
 
-                                        ////ReportConfigMessage(
-                                        ////    "Microsoft.CA3147",
-                                        ////    "Using HttpVerbs.GET and ValidateAntiForgeryTokenAttribute is not supported by MVC.",
-                                        ////    functionContext.Refine("HttpVerbsGetValidateAntiForgeryTokenAttribute"));
-
                                         if ((verbs & (MvcHttpVerbs.Post | MvcHttpVerbs.Put | MvcHttpVerbs.Delete | MvcHttpVerbs.Patch)) != MvcHttpVerbs.None)
                                         {
                                             // both verbs, antiforgery token attribute
-
                                             symbolContext.ReportDiagnostic(Diagnostic.Create(GetAndOtherAndTokenRule, methodSymbol.Locations[0], methodSymbol.MetadataName));
-
-                                            ////ReportConfigMessage(
-                                            ////    "Microsoft.CA3147",
-                                            ////    "The ValidateAntiForgeryAttribute is defined with HttpVerbs.Get and at least one of HttpVerbs.Post, HttpVerbs.Put, HttpVerbs.Delete, or HttpVerbs.Patch. The attribute will not be used when GET verb is used.",
-                                            ////    functionContext.Refine("HttpVerbsGetPostValidateAntiForgeryTokenAttribute"));
                                         }
                                     }
                                 }
@@ -338,13 +347,7 @@ namespace Microsoft.CodeQuality.Analyzers.Security
                                     if ((verbs & (MvcHttpVerbs.Post | MvcHttpVerbs.Put | MvcHttpVerbs.Delete | MvcHttpVerbs.Patch)) != MvcHttpVerbs.None)
                                     {
                                         // HttpPost, no antiforgery token attribute
-
                                         symbolContext.ReportDiagnostic(Diagnostic.Create(VerbsAndNoTokenRule, methodSymbol.Locations[0], methodSymbol.MetadataName));
-
-                                        ////ReportConfigMessage(
-                                        ////    "Microsoft.CA3147",
-                                        ////    "Missing ValidateAntiForgeryTokenAttribute.",
-                                        ////    functionContext.Refine("ValidateAntiForgeryTokenAttributePostMissing"));
                                     }
                                 }
                             }

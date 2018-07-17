@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.CodeQuality.Analyzers.Security.UnitTests
+namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
     public class MarkVerbHandlersWithValidateAntiforgeryTokenTests : DiagnosticAnalyzerTestBase
     {

@@ -129,7 +129,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                         compilationContext.Options.AdditionalFiles,
                         compilationContext.CancellationToken,
                         out AdditionalText additionalTextOpt,
-                        out ImmutableDictionary<string, List<(SymbolKind?, uint)>> ruleIdToThresholdMap,
+                        out ImmutableDictionary<string, IReadOnlyList<(SymbolKind?, uint)>> ruleIdToThresholdMap,
                         out List<Diagnostic> invalidFileDiagnostics) &&
                     invalidFileDiagnostics != null)
                 {
@@ -138,10 +138,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                     {
                         compilationContext.ReportDiagnostic(diagnostic);
                     }
+
+                    return;
                 }
 
                 // Compute code metrics.
-                var computeTask = Task.Run(() => CodeAnalysisMetricData.ComputeAsync(compilationContext.Compilation, compilationContext.CancellationToken));
+                var computeTask = CodeAnalysisMetricData.ComputeAsync(compilationContext.Compilation, compilationContext.CancellationToken);
                 computeTask.Wait(compilationContext.CancellationToken);
 
                 // Analyze code metrics tree and report diagnostics.
@@ -214,7 +216,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                 {
                     // Check if we have custom threshold value for the given ruleId and symbolKind.
                     if (ruleIdToThresholdMap != null &&
-                        ruleIdToThresholdMap.TryGetValue(ruleId, out List<(SymbolKind? symbolKindOpt, uint threshold)> values))
+                        ruleIdToThresholdMap.TryGetValue(ruleId, out IReadOnlyList<(SymbolKind? symbolKindOpt, uint threshold)> values))
                     {
                         foreach ((SymbolKind? symbolKindOpt, uint threshold) in values)
                         {
@@ -311,7 +313,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
             ImmutableArray<AdditionalText> additionalFiles,
             CancellationToken cancellationToken,
             out AdditionalText additionalText,
-            out ImmutableDictionary<string, List<(SymbolKind?, uint)>> ruleIdToThresholdMap,
+            out ImmutableDictionary<string, IReadOnlyList<(SymbolKind?, uint)>> ruleIdToThresholdMap,
             out List<Diagnostic> invalidFileDiagnostics)
         {
             invalidFileDiagnostics = null;
@@ -344,7 +346,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
         private static bool TryParseCodeMetricsConfigurationFile(
             AdditionalText additionalText,
             CancellationToken cancellationToken,
-            out ImmutableDictionary<string, List<(SymbolKind?, uint)>> ruleIdToThresholdMap,
+            out ImmutableDictionary<string, IReadOnlyList<(SymbolKind?, uint)>> ruleIdToThresholdMap,
             out List<Diagnostic> invalidFileDiagnostics)
         {
             // Parse the additional file with Metric rule ID (which may contain an optional parenthesized SymbolKind suffix) and custom threshold.
@@ -354,7 +356,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
             ruleIdToThresholdMap = null;
             invalidFileDiagnostics = null;
 
-            var builder = ImmutableDictionary.CreateBuilder<string, List<(SymbolKind?, uint)>>(StringComparer.OrdinalIgnoreCase);
+            var builder = ImmutableDictionary.CreateBuilder<string, IReadOnlyList<(SymbolKind?, uint)>>(StringComparer.OrdinalIgnoreCase);
             var lines = additionalText.GetText(cancellationToken).Lines;
             foreach (var line in lines)
             {
@@ -447,7 +449,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                             builder.Add(keyParts[0], values);
                         }
 
-                        values.Add((symbolKindOpt, threshold));
+                        ((List<(SymbolKind?, uint)>)values).Add((symbolKindOpt, threshold));
                     }
                 }
 

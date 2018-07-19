@@ -607,6 +607,32 @@ CA1501    :    1
             VerifyCSharp(source, GetAdditionalFile(additionalText));
         }
 
+        [Fact]
+        public void CA1508_VerifyNoMetricDiagnostics()
+        {
+            // Ensure we don't report any code metric diagnostics when we have invalid entries in code metrics configuration file.
+            var source = @"
+class BaseClass { }
+class FirstDerivedClass : BaseClass { }
+class SecondDerivedClass : FirstDerivedClass { }
+class ThirdDerivedClass : SecondDerivedClass { }
+class FourthDerivedClass : ThirdDerivedClass { }
+
+// This class violates the CA1501 rule for default threshold.
+class FifthDerivedClass : FourthDerivedClass { }";
+
+            string additionalText = @"
+# FORMAT:
+# 'RuleId'(Optional 'SymbolKind'): 'Threshold'
+
+CA 1501: 10
+";
+            DiagnosticResult[] expected = new[] {
+                // CodeMetricsConfig.txt(5,1): warning CA1508: Invalid entry 'CA 1501: 10' in code metrics rule specification file 'CodeMetricsConfig.txt'
+                GetCA1508ExpectedDiagnostic(5, 1, "CA 1501: 10", AdditionalFileName)};
+            VerifyCSharp(source, GetAdditionalFile(additionalText), expected);
+        }
+
         #endregion
 
         #region Helpers

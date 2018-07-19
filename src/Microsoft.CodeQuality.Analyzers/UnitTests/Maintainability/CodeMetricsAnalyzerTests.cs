@@ -670,8 +670,6 @@ CA1501    :    1
             return GetCA1506ExpectedDiagnostic(LanguageNames.VisualBasic, line, column, symbolName, coupledTypesCount, namespaceCount, threshold);
         }
 
-
-
         // '{0}' has an object hierarchy '{1}' levels deep within the defining module. If possible, eliminate base classes within the hierarchy to decrease its hierarchy level below '{2}': '{3}'
         private static DiagnosticResult GetCA1501ExpectedDiagnostic(string language, int line, int column, string symbolName, int metricValue, int threshold, string baseTypes)
         {

@@ -37,6 +37,11 @@
       -Microsoft.Design#CA1064;
       -Microsoft.Design#CA1065;
 
+      -Microsoft.Maintainability#CA1501;
+      -Microsoft.Maintainability#CA1502;
+      -Microsoft.Maintainability#CA1505;
+      -Microsoft.Maintainability#CA1506;
+      
       -Microsoft.Naming#CA1707;
       -Microsoft.Naming#CA1708;
       -Microsoft.Naming#CA1710;

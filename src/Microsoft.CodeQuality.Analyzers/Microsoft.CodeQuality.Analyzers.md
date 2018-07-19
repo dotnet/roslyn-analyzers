@@ -490,6 +490,60 @@ Help: [Source](https://github.com/dotnet/roslyn-analyzers/blob/master/src/Micros
 
 Maintainability
 ----------------------------------
+### CA1501: Avoid excessive inheritance ###
+
+A type has deeply nested inheritance hierarchy.
+
+Category: Maintainability
+
+Severity: Warning
+
+Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1501-avoid-excessive-inheritance](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1501-avoid-excessive-inheritance)
+
+### CA1502: Avoid excessive complexity ###
+
+A symbol has an excessive cyclomatic complexity.
+
+Category: Maintainability
+
+Severity: Warning
+
+Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1502-avoid-excessive-complexity](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1502-avoid-excessive-complexity)
+
+### CA1505: Avoid unmaintainable code ###
+
+A symbol has a low maintainability index value.
+
+Category: Maintainability
+
+Severity: Warning
+
+Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1505-avoid-unmaintainable-code](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1505-avoid-unmaintainable-code)
+
+### CA1506: Avoid excessive class coupling ###
+
+A symbol is coupled with many other types.
+
+Category: Maintainability
+
+Severity: Warning
+
+Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1506-avoid-excessive-class-coupling](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1506-avoid-excessive-class-coupling)
+
+### CA1508: Invalid entry in code metrics rule specification file ###
+
+Invalid entry in code metrics rule specification file "CodeMetricsConfig.txt". Expected format example:
+     # FORMAT:
+     # 'RuleId'(Optional 'SymbolKind'): 'Threshold'
+
+     CA1501: 10
+
+Category: Maintainability
+
+Severity: Warning
+
+Help: [TBD]
+
 ### CA1801: Review unused parameters ###
 
 A method signature includes a parameter that is not used in the method body.

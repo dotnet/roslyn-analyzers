@@ -79,7 +79,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
                     blockStartContext.RegisterOperationBlockEndAction(blockEndContext =>
                     {
-                        if (!isInstanceReferenced)
+                        // Methods referenced by other non static methods 
+                        // and methods containing only NotImplementedException should not considered for marking them as static
+                        if (!isInstanceReferenced && !blockEndContext.IsMethodNotImplementedOrSupported())
                         {
                             ISymbol reportingSymbol = methodSymbol;
                             var isAccessor = methodSymbol.IsPropertyAccessor() || methodSymbol.IsEventAccessor();
@@ -245,6 +247,6 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             Add(WellKnownTypes.NunitTearDown(compilation));
 
             return builder?.ToImmutable() ?? ImmutableArray<INamedTypeSymbol>.Empty;
-        }
+        }       
     }
 }

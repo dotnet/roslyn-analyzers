@@ -6,7 +6,6 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -21,6 +20,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
     /// CA1502: Avoid excessive complexity
     /// CA1505: Avoid unmaintainable code
     /// CA1506: Avoid excessive class coupling
+    /// CA1509: Invalid entry in code metrics rule specification file
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class CodeMetricsAnalyzer : DiagnosticAnalyzer
@@ -38,12 +38,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
         ///     # 'RuleId'(Optional 'SymbolKind'): 'Threshold'
         ///
         ///     CA1501: 10
-        /// See CA1508 unit tests for more examples.
+        /// See CA1509 unit tests for more examples.
         /// </summary>
         private const string CodeMetricsConfigurationFile = "CodeMetricsConfig.txt";
         
         // New rule for invalid entries in CodeMetricsConfigurationFile.
-        internal const string CA1508RuleId = "CA1508";
+        internal const string CA1509RuleId = "CA1509";
 
         private static readonly LocalizableString s_localizableTitleCA1501 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveInheritanceTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageCA1501 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveInheritanceMessage), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
@@ -61,9 +61,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
         private static readonly LocalizableString s_localizableMessageCA1506 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveClassCouplingMessage), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
         private static readonly LocalizableString s_localizableDescriptionCA1506 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveClassCouplingDescription), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableTitleCA1508 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.InvalidEntryInCodeMetricsConfigFileTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA1508 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.InvalidEntryInCodeMetricsConfigFileMessage), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA1508 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.InvalidEntryInCodeMetricsConfigFileDescription), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitleCA1509 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.InvalidEntryInCodeMetricsConfigFileTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageCA1509 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.InvalidEntryInCodeMetricsConfigFileMessage), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionCA1509 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.InvalidEntryInCodeMetricsConfigFileDescription), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
 
         internal static DiagnosticDescriptor CA1501Rule = new DiagnosticDescriptor(CA1501RuleId,
                                                                      s_localizableTitleCA1501,
@@ -105,13 +105,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                                                                      helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1506-avoid-excessive-class-coupling",
                                                                      customTags: WellKnownDiagnosticTags.Telemetry);
 
-        internal static DiagnosticDescriptor InvalidEntryInCodeMetricsConfigFileRule = new DiagnosticDescriptor(CA1508RuleId,
-                                                                     s_localizableTitleCA1508,
-                                                                     s_localizableMessageCA1508,
+        internal static DiagnosticDescriptor InvalidEntryInCodeMetricsConfigFileRule = new DiagnosticDescriptor(CA1509RuleId,
+                                                                     s_localizableTitleCA1509,
+                                                                     s_localizableMessageCA1509,
                                                                      DiagnosticCategory.Maintainability,
                                                                      DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                      isEnabledByDefault: false,
-                                                                     description: s_localizableDescriptionCA1508,
+                                                                     description: s_localizableDescriptionCA1509,
                                                                      helpLinkUri: null, // TODO: Add help link
                                                                      customTags: WellKnownDiagnosticTags.Telemetry);
 

@@ -530,7 +530,7 @@ Severity: Warning
 
 Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1506-avoid-excessive-class-coupling](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1506-avoid-excessive-class-coupling)
 
-### CA1508: Invalid entry in code metrics rule specification file ###
+### CA1509: Invalid entry in code metrics rule specification file ###
 
 Invalid entry in code metrics rule specification file "CodeMetricsConfig.txt". Expected format example:
      # FORMAT:

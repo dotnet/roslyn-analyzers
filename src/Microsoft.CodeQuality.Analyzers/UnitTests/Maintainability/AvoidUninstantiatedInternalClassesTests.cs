@@ -262,6 +262,32 @@ End Class",
         }
 
         [Fact]
+        public void CA1812_CSharp_NoDiagnostic_TypeContainingAssemblyEntryPointReturningTask()
+        {
+            VerifyCSharp(
+@" using System.Threading.Tasks;
+internal static class C
+{
+    private static async Task Main() { await Task.Delay(1); }
+}",
+                parseOptions: CodeAnalysis.CSharp.CSharpParseOptions.Default.WithLanguageVersion(CodeAnalysis.CSharp.LanguageVersion.CSharp7_1),
+                compilationOptions: s_CSharpDefaultOptions.WithOutputKind(CodeAnalysis.OutputKind.ConsoleApplication));
+        }
+ 
+        [Fact]
+        public void CA1812_CSharp_NoDiagnostic_TypeContainingAssemblyEntryPointReturningTaskInt()
+        {
+            VerifyCSharp(
+@" using System.Threading.Tasks;
+internal static class C
+{
+    private static async Task<int> Main() { await Task.Delay(1); return 1; }
+}",
+                parseOptions: CodeAnalysis.CSharp.CSharpParseOptions.Default.WithLanguageVersion(CodeAnalysis.CSharp.LanguageVersion.CSharp7_1),
+                compilationOptions: s_CSharpDefaultOptions.WithOutputKind(CodeAnalysis.OutputKind.ConsoleApplication));
+        }
+
+        [Fact]
         public void CA1812_CSharp_Diagnostic_MainMethodIsNotStatic()
         {
             VerifyCSharp(

@@ -314,6 +314,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return false;
             }
 
+            var taskSymbol = compilation.GetTypeByMetadataName("System.Threading.Tasks.Task");
+            var genericTaskSymbol = compilation.GetTypeByMetadataName("System.Threading.Tasks.Task`1");
+
             // TODO: Handle the case where Compilation.Options.MainTypeName matches this type.
             // TODO: Test: can't have type parameters.
             // TODO: Main in nested class? If allowed, what name does it have?
@@ -321,17 +324,17 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             return type.GetMembers("Main")
                 .Where(m => m is IMethodSymbol)
                 .Cast<IMethodSymbol>()
-                .Any(IsEntryPoint);
+                .Any(m => IsEntryPoint(m, taskSymbol, genericTaskSymbol));
         }
 
-        private static bool IsEntryPoint(IMethodSymbol method)
+        private static bool IsEntryPoint(IMethodSymbol method, ITypeSymbol taskSymbol, ITypeSymbol genericTaskSymbol)
         {
             if (!method.IsStatic)
             {
                 return false;
             }
 
-            if (method.ReturnType.SpecialType != SpecialType.System_Int32 && !method.ReturnsVoid)
+            if (method.ReturnType.SpecialType != SpecialType.System_Int32 && !method.ReturnsVoid && method.ReturnType != taskSymbol && !(method.ReturnType.OriginalDefinition == genericTaskSymbol && ((INamedTypeSymbol)method.ReturnType).TypeArguments.Single().SpecialType == SpecialType.System_Int32))
             {
                 return false;
             }

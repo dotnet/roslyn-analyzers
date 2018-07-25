@@ -512,10 +512,10 @@ CA1506(Type): 10
 
         #endregion
 
-        #region CA1508
+        #region CA1509: Invalid entry in code metrics rule specification file
 
         [Fact]
-        public void CA1508_VerifyDiagnostics()
+        public void CA1509_VerifyDiagnostics()
         {
             var source = @"";
 
@@ -551,29 +551,29 @@ CA1501(Method)(Type): 1
 CA1501
 ";
             DiagnosticResult[] expected = new[] {
-                // CodeMetricsConfig.txt(6,1): warning CA1508: Invalid entry 'CA1501: 1 : 2' in code metrics rule specification file 'CodeMetricsConfig.txt'
-                GetCA1508ExpectedDiagnostic(6, 1, "CA1501: 1 : 2", AdditionalFileName),
-                // CodeMetricsConfig.txt(9,1): warning CA1508: Invalid entry 'CA 1501: 1' in code metrics rule specification file 'CodeMetricsConfig.txt'
-                GetCA1508ExpectedDiagnostic(9, 1, "CA 1501: 1", AdditionalFileName),
-                // CodeMetricsConfig.txt(12,1): warning CA1508: Invalid entry 'CA1600: 1' in code metrics rule specification file 'CodeMetricsConfig.txt'
-                GetCA1508ExpectedDiagnostic(12, 1, "CA1600: 1", AdditionalFileName),
-                // CodeMetricsConfig.txt(15,1): warning CA1508: Invalid entry 'CA1501: None' in code metrics rule specification file 'CodeMetricsConfig.txt'
-                GetCA1508ExpectedDiagnostic(15, 1, "CA1501: None", AdditionalFileName),
-                // CodeMetricsConfig.txt(18,1): warning CA1508: Invalid entry 'CA1501(Local): 1' in code metrics rule specification file 'CodeMetricsConfig.txt'
-                GetCA1508ExpectedDiagnostic(18, 1, "CA1501(Local): 1", AdditionalFileName),
-                // CodeMetricsConfig.txt(21,1): warning CA1508: Invalid entry 'CA1501(: 1' in code metrics rule specification file 'CodeMetricsConfig.txt'
-                GetCA1508ExpectedDiagnostic(21, 1, "CA1501(: 1", AdditionalFileName),
-                // CodeMetricsConfig.txt(24,1): warning CA1508: Invalid entry 'CA1501(Method: 1' in code metrics rule specification file 'CodeMetricsConfig.txt'
-                GetCA1508ExpectedDiagnostic(24, 1, "CA1501(Method: 1", AdditionalFileName),
-                // CodeMetricsConfig.txt(27,1): warning CA1508: Invalid entry 'CA1501(Method)(Type): 1' in code metrics rule specification file 'CodeMetricsConfig.txt'
-                GetCA1508ExpectedDiagnostic(27, 1, "CA1501(Method)(Type): 1", AdditionalFileName),
-                // CodeMetricsConfig.txt(30,1): warning CA1508: Invalid entry 'CA1501' in code metrics rule specification file 'CodeMetricsConfig.txt'
-                GetCA1508ExpectedDiagnostic(30, 1, "CA1501", AdditionalFileName)};
+                // CodeMetricsConfig.txt(6,1): warning CA1509: Invalid entry 'CA1501: 1 : 2' in code metrics rule specification file 'CodeMetricsConfig.txt'
+                GetCA1509ExpectedDiagnostic(6, 1, "CA1501: 1 : 2", AdditionalFileName),
+                // CodeMetricsConfig.txt(9,1): warning CA1509: Invalid entry 'CA 1501: 1' in code metrics rule specification file 'CodeMetricsConfig.txt'
+                GetCA1509ExpectedDiagnostic(9, 1, "CA 1501: 1", AdditionalFileName),
+                // CodeMetricsConfig.txt(12,1): warning CA1509: Invalid entry 'CA1600: 1' in code metrics rule specification file 'CodeMetricsConfig.txt'
+                GetCA1509ExpectedDiagnostic(12, 1, "CA1600: 1", AdditionalFileName),
+                // CodeMetricsConfig.txt(15,1): warning CA1509: Invalid entry 'CA1501: None' in code metrics rule specification file 'CodeMetricsConfig.txt'
+                GetCA1509ExpectedDiagnostic(15, 1, "CA1501: None", AdditionalFileName),
+                // CodeMetricsConfig.txt(18,1): warning CA1509: Invalid entry 'CA1501(Local): 1' in code metrics rule specification file 'CodeMetricsConfig.txt'
+                GetCA1509ExpectedDiagnostic(18, 1, "CA1501(Local): 1", AdditionalFileName),
+                // CodeMetricsConfig.txt(21,1): warning CA1509: Invalid entry 'CA1501(: 1' in code metrics rule specification file 'CodeMetricsConfig.txt'
+                GetCA1509ExpectedDiagnostic(21, 1, "CA1501(: 1", AdditionalFileName),
+                // CodeMetricsConfig.txt(24,1): warning CA1509: Invalid entry 'CA1501(Method: 1' in code metrics rule specification file 'CodeMetricsConfig.txt'
+                GetCA1509ExpectedDiagnostic(24, 1, "CA1501(Method: 1", AdditionalFileName),
+                // CodeMetricsConfig.txt(27,1): warning CA1509: Invalid entry 'CA1501(Method)(Type): 1' in code metrics rule specification file 'CodeMetricsConfig.txt'
+                GetCA1509ExpectedDiagnostic(27, 1, "CA1501(Method)(Type): 1", AdditionalFileName),
+                // CodeMetricsConfig.txt(30,1): warning CA1509: Invalid entry 'CA1501' in code metrics rule specification file 'CodeMetricsConfig.txt'
+                GetCA1509ExpectedDiagnostic(30, 1, "CA1501", AdditionalFileName)};
             VerifyCSharp(source, GetAdditionalFile(additionalText), expected);
         }
 
         [Fact]
-        public void CA1508_NoDiagnostics()
+        public void CA1509_NoDiagnostics()
         {
             var source = @"";
 
@@ -608,7 +608,7 @@ CA1501    :    1
         }
 
         [Fact]
-        public void CA1508_VerifyNoMetricDiagnostics()
+        public void CA1509_VerifyNoMetricDiagnostics()
         {
             // Ensure we don't report any code metric diagnostics when we have invalid entries in code metrics configuration file.
             var source = @"
@@ -628,8 +628,8 @@ class FifthDerivedClass : FourthDerivedClass { }";
 CA 1501: 10
 ";
             DiagnosticResult[] expected = new[] {
-                // CodeMetricsConfig.txt(5,1): warning CA1508: Invalid entry 'CA 1501: 10' in code metrics rule specification file 'CodeMetricsConfig.txt'
-                GetCA1508ExpectedDiagnostic(5, 1, "CA 1501: 10", AdditionalFileName)};
+                // CodeMetricsConfig.txt(5,1): warning CA1509: Invalid entry 'CA 1501: 10' in code metrics rule specification file 'CodeMetricsConfig.txt'
+                GetCA1509ExpectedDiagnostic(5, 1, "CA 1501: 10", AdditionalFileName)};
             VerifyCSharp(source, GetAdditionalFile(additionalText), expected);
         }
 
@@ -760,11 +760,11 @@ CA 1501: 10
             };
         }
 
-        private static DiagnosticResult GetCA1508ExpectedDiagnostic(int line, int column, string entry, string additionalFile)
+        private static DiagnosticResult GetCA1509ExpectedDiagnostic(int line, int column, string entry, string additionalFile)
         {
             return new DiagnosticResult
             {
-                Id = CodeMetricsAnalyzer.CA1508RuleId,
+                Id = CodeMetricsAnalyzer.CA1509RuleId,
                 Message = string.Format(MicrosoftMaintainabilityAnalyzersResources.InvalidEntryInCodeMetricsConfigFileMessage, entry, additionalFile),
                 Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
                 Locations = new[]

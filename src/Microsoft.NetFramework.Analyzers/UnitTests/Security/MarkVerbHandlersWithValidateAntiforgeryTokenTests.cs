@@ -294,6 +294,26 @@ namespace Blah
         }
 
         [Fact]
+        public void HttpGet_CSharp_NoDiagnostic()
+        {
+            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+namespace Blah
+{
+    using System.Web.Mvc;
+
+    public class ApiController : Controller
+    {
+        [HttpGet]
+        public ActionResult DoSomething(string input)
+        {
+            return null;
+        }
+    }
+}"
+            );
+        }
+
+        [Fact]
         public void ReturnsNonActionResult_Basic_NoDiagnostic()
         {
             VerifyBasic(SystemWebMvcNamespaceBasic + @"

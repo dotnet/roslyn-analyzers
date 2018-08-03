@@ -19,12 +19,24 @@ namespace Metrics
     {
         public static int Main(string[] args)
         {
-            var task = RunAsync(args);
-            task.Wait();
-            return (int)task.Result;
+            var tokenSource = new CancellationTokenSource();
+            Console.CancelKeyPress += delegate
+            {
+                tokenSource.Cancel();
+            };
+
+            try
+            {
+                return (int)RunAsync(args, tokenSource.Token).GetAwaiter().GetResult();
+            }
+            catch(OperationCanceledException)
+            {
+                Console.WriteLine("Operation Cancelled.");
+                return -1;
+            }
         }
 
-        private static async Task<ErrorCode> RunAsync(string[] args)
+        private static async Task<ErrorCode> RunAsync(string[] args, CancellationToken cancellationToken)
         {
             var projectsOrSolutions = new List<string>();
             string outputFile = null;
@@ -41,14 +53,17 @@ namespace Metrics
                 return errorCode;
             }
 
+            cancellationToken.ThrowIfCancellationRequested();
             MSBuildLocator.RegisterDefaults();
 
-            (ImmutableArray<(string, CodeAnalysisMetricData)> metricDatas, ErrorCode exitCode) = await GetMetricDatasAsync(projectsOrSolutions, quiet).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+            (ImmutableArray<(string, CodeAnalysisMetricData)> metricDatas, ErrorCode exitCode) = await GetMetricDatasAsync(projectsOrSolutions, quiet, cancellationToken).ConfigureAwait(false);
             if (exitCode != ErrorCode.None)
             {
                 return exitCode;
             }
 
+            cancellationToken.ThrowIfCancellationRequested();
             errorCode = writeOutput();
             if (!quiet && errorCode == ErrorCode.None)
             {
@@ -244,7 +259,7 @@ Display this help message.");
             }
         }
 
-        private static async Task<(ImmutableArray<(string, CodeAnalysisMetricData)>, ErrorCode)> GetMetricDatasAsync(List<string> projectsOrSolutions, bool quiet)
+        private static async Task<(ImmutableArray<(string, CodeAnalysisMetricData)>, ErrorCode)> GetMetricDatasAsync(List<string> projectsOrSolutions, bool quiet, CancellationToken cancellationToken)
         {
             var builder = ImmutableArray.CreateBuilder<(string, CodeAnalysisMetricData)>();
 
@@ -256,13 +271,13 @@ Display this help message.");
                     {
                         if (projectOrSolution.EndsWith(".sln", StringComparison.OrdinalIgnoreCase))
                         {
-                            await computeSolutionMetricDataAsync(workspace, projectOrSolution).ConfigureAwait(false);
+                            await computeSolutionMetricDataAsync(workspace, projectOrSolution, cancellationToken).ConfigureAwait(false);
                         }
                         else
                         {
                             Debug.Assert(projectOrSolution.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase) ||
                                 projectOrSolution.EndsWith(".vbproj", StringComparison.OrdinalIgnoreCase));
-                            await computeProjectMetricDataAsync(workspace, projectOrSolution).ConfigureAwait(false);
+                            await computeProjectMetricDataAsync(workspace, projectOrSolution, cancellationToken).ConfigureAwait(false);
                         }
                     }
                 }
@@ -275,8 +290,9 @@ Display this help message.");
                 return (ImmutableArray<(string, CodeAnalysisMetricData)>.Empty, ErrorCode.ComputeException);
             }
 
-            async Task computeProjectMetricDataAsync(MSBuildWorkspace workspace, string projectFile)
+            async Task computeProjectMetricDataAsync(MSBuildWorkspace workspace, string projectFile, CancellationToken cancellation)
             {
+                cancellation.ThrowIfCancellationRequested();
                 if (!quiet)
                 {
                     Console.WriteLine($"Loading {Path.GetFileName(projectFile)}...");
@@ -289,12 +305,14 @@ Display this help message.");
                     Console.WriteLine($"Computing code metrics for {Path.GetFileName(projectFile)}...");
                 }
 
+                cancellation.ThrowIfCancellationRequested();
                 var metricData = await CodeAnalysisMetricData.ComputeAsync(project, CancellationToken.None).ConfigureAwait(false);
                 builder.Add((projectFile, metricData));
             }
 
-            async Task computeSolutionMetricDataAsync(MSBuildWorkspace workspace, string solutionFile)
+            async Task computeSolutionMetricDataAsync(MSBuildWorkspace workspace, string solutionFile, CancellationToken cancellation)
             {
+                cancellation.ThrowIfCancellationRequested();
                 if (!quiet)
                 {
                     Console.WriteLine($"Loading {Path.GetFileName(solutionFile)}...");
@@ -314,6 +332,7 @@ Display this help message.");
                         Console.WriteLine($"    Computing code metrics for {Path.GetFileName(project.FilePath)}...");
                     }
 
+                    cancellation.ThrowIfCancellationRequested();
                     var metricData = await CodeAnalysisMetricData.ComputeAsync(project, CancellationToken.None).ConfigureAwait(false);
                     builder.Add((project.FilePath, metricData));
                 }

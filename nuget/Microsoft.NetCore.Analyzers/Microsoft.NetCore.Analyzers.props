@@ -30,6 +30,9 @@
       -Microsoft.Usage#CA2213;
       -Microsoft.Usage#CA2215;
       -Microsoft.Usage#CA2216;
+      -Microsoft.Usage#CA2229;
+      -Microsoft.Usage#CA2235;
+      -Microsoft.Usage#CA2237;
       -Microsoft.Usage#CA2241;
       -Microsoft.Usage#CA2242;
     </CodeAnalysisRuleSetOverrides>

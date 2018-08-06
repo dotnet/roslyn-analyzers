@@ -45,8 +45,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             analysisContext.RegisterCompilationStartAction(startContext =>
             {
-                var instantiatedTypes = new ConcurrentBag<INamedTypeSymbol>();
-                var internalTypes = new ConcurrentBag<INamedTypeSymbol>();
+                var instantiatedTypes = new ConcurrentDictionary<INamedTypeSymbol, object>();
+                var internalTypes = new ConcurrentDictionary<INamedTypeSymbol, object>();
 
                 var compilation = startContext.Compilation;
 
@@ -77,7 +77,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     var expr = (IObjectCreationOperation)context.Operation;
                     if (expr.Type is INamedTypeSymbol namedType)
                     {
-                        instantiatedTypes.Add(namedType);
+                        instantiatedTypes.TryAdd(namedType, null);
                     }
                 }, OperationKind.ObjectCreation);
 
@@ -94,13 +94,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             mef1ExportAttributeSymbol,
                             mef2ExportAttributeSymbol))
                     {
-                        internalTypes.Add(type);
+                        internalTypes.TryAdd(type, null);
                     }
 
                     // Instantiation from the subtype constructor initializer.
                     if (type.BaseType != null)
                     {
-                        instantiatedTypes.Add(type.BaseType);
+                        instantiatedTypes.TryAdd(type.BaseType, null);
                     }
                 }, SymbolKind.NamedType);
 
@@ -115,7 +115,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                         {
                             void ProcessNamedTypeParamConstraint(INamedTypeSymbol namedTypeArg)
                             {
-                                instantiatedTypes.Add(namedTypeArg);
+                                if (!instantiatedTypes.TryAdd(namedTypeArg, null))
+                                {
+                                    // Already processed.
+                                    return;
+                                }
 
                                 // We need to handle if this type param also has type params that have a generic constraint. Take the following example:
                                 // new Factory1<Factory2<InstantiatedType>>();
@@ -185,9 +189,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 startContext.RegisterCompilationEndAction(context =>
                 {
                     var uninstantiatedInternalTypes = internalTypes
-                        .Select(it => it.OriginalDefinition)
-                        .Except(instantiatedTypes.Select(it => it.OriginalDefinition))
-                        .Where(type => !HasInstantiatedNestedType(type, instantiatedTypes));
+                        .Select(it => it.Key.OriginalDefinition)
+                        .Except(instantiatedTypes.Select(it => it.Key.OriginalDefinition))
+                        .Where(type => !HasInstantiatedNestedType(type, instantiatedTypes.Keys));
 
                     foreach (var type in uninstantiatedInternalTypes)
                     {

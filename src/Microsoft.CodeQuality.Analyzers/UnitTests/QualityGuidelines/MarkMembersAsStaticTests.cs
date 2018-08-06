@@ -331,6 +331,10 @@ public class MembersTests
     public int GetterOnlyAutoProp { get; }
 
     public void SomeEventHandler(object sender, System.EventArgs args) { }
+
+    public void SomeNotImplementedMethod() => throw new System.NotImplementedException();
+
+    public void SomeNotSupportedMethod() => throw new System.NotSupportedException();
 }
 
 public class Generic<T>
@@ -381,6 +385,14 @@ Public Class MembersTests
     Public ReadOnly Property GetterOnlyAutoProp As Integer
 
     Public Sub SomeEventHandler(sender As Object, args As System.EventArgs)
+    End Sub
+
+    Public Sub SomeNotImplementedMethod()
+        Throw New System.NotImplementedException()
+    End Sub
+
+    Public Sub SomeNotSupportedMethod()
+        Throw New System.NotSupportedException()
     End Sub
 End Class
 

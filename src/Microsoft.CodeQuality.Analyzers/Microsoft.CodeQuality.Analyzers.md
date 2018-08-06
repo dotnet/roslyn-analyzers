@@ -500,15 +500,59 @@ Help: [Source](https://github.com/dotnet/roslyn-analyzers/blob/master/src/Micros
 
 Maintainability
 ----------------------------------
-### CA1508: Avoid dead conditional code ###
+### CA1501: Avoid excessive inheritance ###
 
-Conditional expressions which are always true/false and null checks for operations that are always null/non-null lead to dead code. Such conditional expressions should be removed or refactored to avoid dead code.
+A type has deeply nested inheritance hierarchy.
 
-Category: Maintainability.
+Category: Maintainability
 
 Severity: Warning
 
-Help: <To be added>
+Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1501-avoid-excessive-inheritance](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1501-avoid-excessive-inheritance)
+
+### CA1502: Avoid excessive complexity ###
+
+A symbol has an excessive cyclomatic complexity.
+
+Category: Maintainability
+
+Severity: Warning
+
+Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1502-avoid-excessive-complexity](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1502-avoid-excessive-complexity)
+
+### CA1505: Avoid unmaintainable code ###
+
+A symbol has a low maintainability index value.
+
+Category: Maintainability
+
+Severity: Warning
+
+Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1505-avoid-unmaintainable-code](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1505-avoid-unmaintainable-code)
+
+### CA1506: Avoid excessive class coupling ###
+
+A symbol is coupled with many other types.
+
+Category: Maintainability
+
+Severity: Warning
+
+Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1506-avoid-excessive-class-coupling](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1506-avoid-excessive-class-coupling)
+
+### CA1509: Invalid entry in code metrics rule specification file ###
+
+Invalid entry in code metrics rule specification file "CodeMetricsConfig.txt". Expected format example:
+     # FORMAT:
+     # 'RuleId'(Optional 'SymbolKind'): 'Threshold'
+
+     CA1501: 10
+
+Category: Maintainability
+
+Severity: Warning
+
+Help: [TBD]
 
 ### CA1801: Review unused parameters ###
 

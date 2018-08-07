@@ -144,8 +144,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                         if (doReportDiagnostic)
                         {
-                            // Don't report the diagnostic at a specific location. See dotnet/roslyn#8643.
-                            var diagnostic = Diagnostic.Create(NamespaceRule, Location.None, namespaceDisplayString, matchingKeyword);
+                            var diagnostic = Diagnostic.Create(NamespaceRule, containingNamespace.Locations[0], namespaceDisplayString, matchingKeyword);
                             context.ReportDiagnostic(diagnostic);
                         }
                     }

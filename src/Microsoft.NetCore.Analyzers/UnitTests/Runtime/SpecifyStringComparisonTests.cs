@@ -163,6 +163,40 @@ GetCA1307CSharpResultsAt(9, 9, "StringComparisonTests.DoNothing(string)",
         }
 
         [Fact]
+        public void CA1307_OverloadWithMismatchRefKind_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Globalization;
+
+public class StringComparisonTests
+{
+    public void MyMethod()
+    {
+        M("""");
+    }
+
+    public void M(string str)
+    {
+    }
+
+    public void M(string str, out StringComparison strCompare)
+    {
+        strCompare = StringComparison.Ordinal;
+    }
+
+    public void M(ref StringComparison strCompare, string str)
+    {
+        strCompare = StringComparison.Ordinal;
+    }
+
+    public void M(ref string str, StringComparison strCompare)
+    {
+    }
+}");
+        }
+
+        [Fact]
         public void CA1307_StringCompareTests_VisualBasic()
         {
             VerifyBasic(@"

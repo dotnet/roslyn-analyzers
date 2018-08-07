@@ -65,7 +65,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             IMethodSymbol method = operation.TargetMethod;
             if (method != null &&
                 (method.IsAbstract || method.IsVirtual) &&
-                method.ContainingType == containingType)
+                method.ContainingType == containingType &&
+                !operation.IsInsideAnonymousFunction())
             {
                 context.ReportDiagnostic(operation.Syntax.CreateDiagnostic(Rule));
             }

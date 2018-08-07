@@ -55,7 +55,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static void AnalyzeSymbol(INamedTypeSymbol symbol, INamedTypeSymbol attributeType, INamedTypeSymbol attributeUsageAttributeType, Action<Diagnostic> addDiagnostic)
         {
-            if (symbol.IsAbstract || !symbol.GetBaseTypesAndThis().Contains(attributeType))
+            if (symbol.IsAbstract || symbol.BaseType == null || !symbol.BaseType.Equals(attributeType))
             {
                 return;
             }

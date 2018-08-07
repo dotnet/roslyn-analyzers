@@ -26,7 +26,7 @@ namespace @namespace
     public class C {}
 }
 ",
-                GetResultNoLocation(IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "namespace", "namespace"));
+                GetCSharpResultAt(2, 11, IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "namespace", "namespace"));
         }
 
         [Fact]
@@ -38,7 +38,7 @@ Namespace [Namespace]
     End Class
 End Namespace
 ",
-                GetResultNoLocation(IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "Namespace", "Namespace"));
+            GetBasicResultAt(2, 11, IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "Namespace", "Namespace"));
         }
 
         [Fact]
@@ -94,8 +94,8 @@ namespace N1.@namespace.N2.@for.N3
     public class C {}
 }
 ",
-                GetResultNoLocation(IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "N1.namespace.N2.for.N3", "namespace"),
-                GetResultNoLocation(IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "N1.namespace.N2.for.N3", "for"));
+                GetCSharpResultAt(2, 33, IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "N1.namespace.N2.for.N3", "namespace"),
+                GetCSharpResultAt(2, 33, IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "N1.namespace.N2.for.N3", "for"));
         }
 
         [Fact]
@@ -107,8 +107,8 @@ Namespace N1.[Namespace].N2.[For].N3
     End Class
 End Namespace
 ",
-                GetResultNoLocation(IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "N1.Namespace.N2.For.N3", "Namespace"),
-                GetResultNoLocation(IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "N1.Namespace.N2.For.N3", "For"));
+                GetBasicResultAt(2, 35, IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "N1.Namespace.N2.For.N3", "Namespace"),
+                GetBasicResultAt(2, 35, IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "N1.Namespace.N2.For.N3", "For"));
         }
 
         [Fact]
@@ -142,7 +142,7 @@ namespace @namespace
     public class D {}
 }",
                 // Diagnostic for only one of the two occurrences.
-                GetResultNoLocation(IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "namespace", "namespace"));
+                GetCSharpResultAt(2, 11, IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "namespace", "namespace"));
         }
 
         [Fact]
@@ -159,8 +159,7 @@ Namespace [Namespace]
     End Class
 End Namespace
 ",
-                // Diagnostic for only one of the two occurrences.
-                GetResultNoLocation(IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "Namespace", "Namespace"));
+                GetBasicResultAt(2, 11, IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "Namespace", "Namespace"));
         }
 
         private DiagnosticResult GetResultNoLocation(DiagnosticDescriptor rule, params object[] messageArguments)

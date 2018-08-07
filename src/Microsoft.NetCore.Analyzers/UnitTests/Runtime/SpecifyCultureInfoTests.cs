@@ -106,6 +106,33 @@ public class CultureInfoTestClass2
         }
 
         [Fact]
+        public void CA1304_MethodOverloadHasCultureInfoAsFirstAndSecondArgument_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Globalization;
+
+public class CultureInfoTestClass2
+{
+    public static void Method(CultureInfo provider)
+    {
+        MethodOverloadHasCultureInfoAsFirstAndSecondArgument(ref provider);
+    }
+
+    public static void MethodOverloadHasCultureInfoAsFirstAndSecondArgument(ref CultureInfo provider)
+    {
+        MethodOverloadHasCultureInfoAsFirstAndSecondArgument(ref provider, CultureInfo.CurrentCulture);
+    }
+
+    public static void MethodOverloadHasCultureInfoAsFirstAndSecondArgument(ref CultureInfo provider, CultureInfo provider2)
+    {
+    }
+}",
+            // Test0.cs(9,9): warning CA1304: The behavior of 'CultureInfoTestClass2.MethodOverloadHasCultureInfoAsFirstAndSecondArgument(ref CultureInfo)' could vary based on the current user's locale settings. Replace this call in 'CultureInfoTestClass2.Method(CultureInfo)' with a call to 'CultureInfoTestClass2.MethodOverloadHasCultureInfoAsFirstAndSecondArgument(ref CultureInfo, CultureInfo)'.
+            GetCSharpResultAt(9, 9, SpecifyCultureInfoAnalyzer.Rule, "CultureInfoTestClass2.MethodOverloadHasCultureInfoAsFirstAndSecondArgument(ref CultureInfo)", "CultureInfoTestClass2.Method(CultureInfo)", "CultureInfoTestClass2.MethodOverloadHasCultureInfoAsFirstAndSecondArgument(ref CultureInfo, CultureInfo)"));
+        }
+
+        [Fact]
         public void CA1304_MethodOverloadHasCultureInfoAsFirstArgument_RefKindRef_CSharp()
         {
             VerifyCSharp(@"

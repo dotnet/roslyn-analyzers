@@ -108,14 +108,37 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 });
         }
 
-        private static void AddNamespacesFromCompilation(ConcurrentBag<string> namespaceNamesInCompilation, INamespaceSymbol @namespace)
+        private static bool AddNamespacesFromCompilation(ConcurrentBag<string> namespaceNamesInCompilation, INamespaceSymbol @namespace)
         {
-            namespaceNamesInCompilation.Add(@namespace.ToDisplayString());
+            bool hasExternallyVisibleType = false;
 
             foreach (INamespaceSymbol namespaceMember in @namespace.GetNamespaceMembers())
             {
-                AddNamespacesFromCompilation(namespaceNamesInCompilation, namespaceMember);
+                if (AddNamespacesFromCompilation(namespaceNamesInCompilation, namespaceMember))
+                {
+                    hasExternallyVisibleType = true;
+                }
             }
+
+            if (!hasExternallyVisibleType)
+            {
+                foreach (var type in @namespace.GetTypeMembers())
+                {
+                    if (type.IsExternallyVisible())
+                    {
+                        hasExternallyVisibleType = true;
+                        break;
+                    }
+                }
+            }
+
+            if (hasExternallyVisibleType)
+            {
+                namespaceNamesInCompilation.Add(@namespace.ToDisplayString());
+                return true;
+            }
+
+            return false;
         }
 
         private static void InitializeWellKnownSystemNamespaceTable()

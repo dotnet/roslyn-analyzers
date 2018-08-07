@@ -147,6 +147,11 @@ public static class IFormatProviderStringTest
     {
         IFormatProviderOverloads.UserDefinedParamsMismatchMethodOverload(""Bar"");
     }
+
+    public static void SpecifyIFormatProvider8()
+    {
+        IFormatProviderOverloads.MethodOverloadWithMismatchRefKind(""Bar"");
+    }
 }
 
 internal static class IFormatProviderOverloads
@@ -168,6 +173,22 @@ internal static class IFormatProviderOverloads
 
     public static string UserDefinedParamsMismatchMethodOverload(IFormatProvider provider, string format, params object[] objs)
     {
+        return null;
+    }
+
+    public static string MethodOverloadWithMismatchRefKind(string format)
+    {
+        return null;
+    }
+
+    public static string MethodOverloadWithMismatchRefKind(IFormatProvider provider, ref string format)
+    {
+        return null;
+    }
+
+    public static string MethodOverloadWithMismatchRefKind(out IFormatProvider provider, string format)
+    {
+        provider = null;
         return null;
     }
 }

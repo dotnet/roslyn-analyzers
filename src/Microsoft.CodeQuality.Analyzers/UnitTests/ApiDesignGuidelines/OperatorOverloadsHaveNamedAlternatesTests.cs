@@ -107,6 +107,30 @@ public class C
 ");
         }
 
+        [Fact, WorkItem(1717, "https://github.com/dotnet/roslyn-analyzers/issues/1717")]
+        public void HasAppropriateConversionAlternate02_CSharp()
+        {
+            VerifyCSharp(@"
+public class Bar
+{	
+	public int i {get; set;}
+
+	public Bar(int i) => this.i = i;	
+}
+
+public class Foo
+{	
+	public int i {get; set;}
+
+	public Foo(int i) => this.i = i;
+
+	public static implicit operator Foo(Bar b) => new Foo(b.i);
+
+	public static Foo FromBar(Bar b) => new Foo(b.i);
+}
+");
+        }
+
         [Fact]
         public void MissingAlternateMethod_CSharp()
         {

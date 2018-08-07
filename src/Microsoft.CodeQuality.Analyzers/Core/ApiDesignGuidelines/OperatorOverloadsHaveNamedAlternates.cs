@@ -111,7 +111,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
                 else
                 {
-                    ExpectedAlternateMethodGroup expectedGroup = GetExpectedAlternateMethodGroup(operatorName, methodSymbol.ReturnType);
+                    ExpectedAlternateMethodGroup expectedGroup = GetExpectedAlternateMethodGroup(operatorName, methodSymbol.ReturnType, methodSymbol.Parameters.FirstOrDefault()?.Type);
                     if (expectedGroup == null)
                     {
                         // no alternate methods required
@@ -190,7 +190,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
         }
 
-        internal static ExpectedAlternateMethodGroup GetExpectedAlternateMethodGroup(string operatorName, ITypeSymbol returnType)
+        internal static ExpectedAlternateMethodGroup GetExpectedAlternateMethodGroup(string operatorName, ITypeSymbol returnType, ITypeSymbol parameterType)
         {
             // list of operator alternate names: https://msdn.microsoft.com/en-us/library/ms182355.aspx
 
@@ -257,7 +257,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return createSingle("Plus");
                 case "op_Implicit":
                 case "op_Explicit":
-                    return new ExpectedAlternateMethodGroup(alternateMethod1: $"To{returnType.Name}", alternateMethod2: $"From{returnType.Name}");
+                    return new ExpectedAlternateMethodGroup(alternateMethod1: $"To{returnType.Name}", alternateMethod2: parameterType != null ? $"From{parameterType.Name}" : null);
                 default:
                     return null;
             }

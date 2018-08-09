@@ -62,36 +62,6 @@
         <target state="translated">Не помечайте обслуживаемые компоненты атрибутом WebMethod</target>
         <note />
       </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsTitle">
-        <source>Implement serialization constructors</source>
-        <target state="translated">Реализуйте конструкторы сериализации</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsDescription">
-        <source>To fix a violation of this rule, implement the serialization constructor. For a sealed class, make the constructor private; otherwise, make it protected.</source>
-        <target state="translated">Чтобы устранить нарушение этого правила, реализуйте конструктор сериализации. Для запечатанного класса сделайте этот конструктор закрытым, в противном случае сделайте его защищенным.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsMessageCreateMagicConstructor">
-        <source>Add a constructor to {0} with the following signature: 'protected {0}(SerializationInfo info, StreamingContext context)'.</source>
-        <target state="translated">Добавьте в {0} конструктор со следующей сигнатурой: "protected {0}(SerializationInfo info, StreamingContext context)".</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsMessageMakeUnsealedMagicConstructorFamily">
-        <source>Declare the serialization constructor of {0}, an unsealed type, as protected.</source>
-        <target state="translated">Объявите конструктор сериализации незапечатанного типа {0} в качестве защищенного.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate">
-        <source>Declare the serialization constructor of {0}, a sealed type, as private.</source>
-        <target state="translated">Объявите конструктор сериализации запечатанного типа {0} в качестве закрытого.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsCodeActionTitle">
-        <source>Implement Serialization constructor</source>
-        <target state="translated">Реализуйте конструктор сериализации</target>
-        <note />
-      </trans-unit>
       <trans-unit id="MarkWindowsFormsEntryPointsWithStaThreadTitle">
         <source>Mark Windows Forms entry points with STAThread</source>
         <target state="translated">Пометьте точки входа Windows Forms с помощью STAThread</target>
@@ -107,21 +77,6 @@
         <target state="translated">Пометьте точки входа Windows Forms с помощью STAThread</target>
         <note />
       </trans-unit>
-      <trans-unit id="MarkAllNonSerializableFieldsTitle">
-        <source>Mark all non-serializable fields</source>
-        <target state="translated">Пометьте все несериализуемые поля</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkAllNonSerializableFieldsDescription">
-        <source>An instance field of a type that is not serializable is declared in a type that is serializable.</source>
-        <target state="translated">Поле экземпляра несериализуемого типа объявлено в сериализуемом типе.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkAllNonSerializableFieldsMessage">
-        <source>Field {0} is a member of type {1} which is serializable but is of type {2} which is not serializable</source>
-        <target state="translated">Поле {0} является членом сериализуемого типа {1}, однако относится к несериализуемому типу {2}</target>
-        <note />
-      </trans-unit>
       <trans-unit id="CallBaseClassMethodsOnISerializableTypesTitle">
         <source>Call base class methods on ISerializable types</source>
         <target state="translated">Вызывайте методы базового класса для типов ISerializable</target>
@@ -135,111 +90,6 @@
       <trans-unit id="CallBaseClassMethodsOnISerializableTypesMessage">
         <source>Call base class methods on ISerializable types</source>
         <target state="translated">Вызывайте методы базового класса для типов ISerializable</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkISerializableTypesWithSerializableTitle">
-        <source>Mark ISerializable types with serializable</source>
-        <target state="translated">Пометьте типы ISerializable как сериализуемые</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkISerializableTypesWithSerializableDescription">
-        <source>To be recognized by the common language runtime as serializable, types must be marked by using the SerializableAttribute attribute even when the type uses a custom serialization routine through implementation of the ISerializable interface.</source>
-        <target state="translated">Чтобы среда CLR распознавала типы как сериализуемые, одни должны быть помечены с помощью атрибута SerializableAttribute, даже если они используют подпрограмму настраиваемой сериализации посредством реализации интерфейса ISerializable.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkISerializableTypesWithSerializableMessage">
-        <source>Add [Serializable] to {0} as this type implements ISerializable</source>
-        <target state="translated">Добавьте [Serializable] к {0}, так как этот тип реализует ISerializable</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AddSerializableAttributeCodeActionTitle">
-        <source>Add Serializable attribute</source>
-        <target state="translated">Добавьте атрибут Serializable</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AddNonSerializedAttributeCodeActionTitle">
-        <source>Add the 'NonSerialized' attribute to this field.</source>
-        <target state="translated">Добавьте для этого поля атрибут "NonSerialized".</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyTitle">
-        <source>Implement serialization methods correctly</source>
-        <target state="translated">Правильно реализуйте методы сериализации</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyDescription">
-        <source>A method that handles a serialization event does not have the correct signature, return type, or visibility.</source>
-        <target state="translated">У метода, обрабатывающего событие сериализации, нет правильной сигнатуры, типа возвращаемого сообщения или видимости.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageVisibility">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its accessibility to private.</source>
-        <target state="translated">Так как {0} помечен с помощью OnSerializing, OnSerialized, OnDeserializing или OnDeserialized, измените его область доступности на закрытую.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageReturnType">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its return type from {1} to void (Sub in Visual Basic).</source>
-        <target state="translated">Так как {0} помечен с помощью OnSerializing, OnSerialized, OnDeserializing или OnDeserialized, измените его тип возвращаемого значения с {1} на void (Sub в Visual Basic).</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageParameters">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it takes a single parameter of type 'System.Runtime.Serialization.StreamingContext'.</source>
-        <target state="translated">Так как {0} помечен с помощью OnSerializing, OnSerialized, OnDeserializing или OnDeserialized, измените его сигнатуру, чтобы он принимал один параметр типа "System.Runtime.Serialization.StreamingContext".</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageGeneric">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it is no longer generic.</source>
-        <target state="translated">Так как {0} помечен с помощью OnSerializing, OnSerialized, OnDeserializing или OnDeserialized, измените его сигнатуру, чтобы он перестал быть универсальным.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageStatic">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change it from static (Shared in Visual Basic) to an instance method.</source>
-        <target state="translated">Так как {0} помечен с помощью OnSerializing, OnSerialized, OnDeserializing или OnDeserialized, измените его со статического типа (Shared в Visual Basic) на метод экземпляра.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsTitle">
-        <source>Provide deserialization methods for optional fields</source>
-        <target state="translated">Обеспечьте наличие методов десериализации в необязательных полях</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsDescription">
-        <source>A type has a field that is marked by using the System.Runtime.Serialization.OptionalFieldAttribute attribute, and the type does not provide deserialization event handling methods.</source>
-        <target state="translated">Тип имеет поле, помеченное с помощью атрибута System.Runtime.Serialization.OptionalFieldAttribute, и не предоставляет методы для обработки событий десериализации.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserialized">
-        <source>Add a 'private void OnDeserialized(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializedAttribute.</source>
-        <target state="translated">Добавьте метод "private void OnDeserialized(StreamingContext)" для типа {0} и пометьте его атрибутом System.Runtime.Serialization.OnDeserializedAttribute.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserializing">
-        <source>Add a 'private void OnDeserializing(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializingAttribute.</source>
-        <target state="translated">Добавьте метод "private void OnDeserializing(StreamingContext)" для типа {0} и пометьте его атрибутом System.Runtime.Serialization.OnDeserializingAttribute.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementISerializableCorrectlyTitle">
-        <source>Implement ISerializable correctly</source>
-        <target state="translated">Правильно реализуйте ISerializable</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementISerializableCorrectlyDescription">
-        <source>To fix a violation of this rule, make the GetObjectData method visible and overridable, and make sure that all instance fields are included in the serialization process or explicitly marked by using the NonSerializedAttribute attribute.</source>
-        <target state="translated">Чтобы устранить нарушение этого правила, сделайте метод GetObjectData видимым и переопределяемым, а также включите все поля экземпляра в процесс сериализации или явно пометьте их с помощью атрибута NonSerializedAttribute.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementISerializableCorrectlyMessageDefault">
-        <source>Add an implementation of GetObjectData to type {0}.</source>
-        <target state="translated">Добавьте реализацию GetObjectData к типу {0}.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementISerializableCorrectlyMessageMakeVisible">
-        <source>Increase the accessibility of {0}.GetObjectData so that it is visible to derived types.</source>
-        <target state="translated">Увеличьте уровень доступности {0}.GetObjectData, чтобы он был видим для производных типов.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementISerializableCorrectlyMessageMakeOverridable">
-        <source>Make {0}.GetObjectData virtual and overridable.</source>
-        <target state="translated">Сделайте {0}.GetObjectData виртуальным и переопределяемым.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForDataSetReadXmlTitle">

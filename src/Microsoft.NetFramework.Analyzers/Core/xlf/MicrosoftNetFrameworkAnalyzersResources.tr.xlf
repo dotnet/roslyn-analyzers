@@ -62,36 +62,6 @@
         <target state="translated">Hizmet verilen bileşenleri WebMethod ile işaretlemeyin</target>
         <note />
       </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsTitle">
-        <source>Implement serialization constructors</source>
-        <target state="translated">Seri duruma getirme oluşturucularını uygulama</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsDescription">
-        <source>To fix a violation of this rule, implement the serialization constructor. For a sealed class, make the constructor private; otherwise, make it protected.</source>
-        <target state="translated">Bu kurala yönelik bir ihlali düzeltmek için, seri duruma getirme oluşturucusunu uygulayın. Mühürlü bir sınıf için oluşturucuyu özel yapın, aksi takdirde korumalı yapın.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsMessageCreateMagicConstructor">
-        <source>Add a constructor to {0} with the following signature: 'protected {0}(SerializationInfo info, StreamingContext context)'.</source>
-        <target state="translated">{0} için bu imzayla bir oluşturucu ekleyin: 'protected {0}(SerializationInfo info, StreamingContext context)'.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsMessageMakeUnsealedMagicConstructorFamily">
-        <source>Declare the serialization constructor of {0}, an unsealed type, as protected.</source>
-        <target state="translated">Mühürsüz bir tür olan {0} seri duruma getirme oluşturucusunu korumalı olarak bildirin.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate">
-        <source>Declare the serialization constructor of {0}, a sealed type, as private.</source>
-        <target state="translated">Mühürlü bir tür olan {0} seri duruma getirme oluşturucusunu özel olarak bildirin.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsCodeActionTitle">
-        <source>Implement Serialization constructor</source>
-        <target state="translated">Seri duruma getirme oluşturucularını uygulayın</target>
-        <note />
-      </trans-unit>
       <trans-unit id="MarkWindowsFormsEntryPointsWithStaThreadTitle">
         <source>Mark Windows Forms entry points with STAThread</source>
         <target state="translated">Windows Forms giriş noktalarını STAThread ile işaretleyin</target>
@@ -107,21 +77,6 @@
         <target state="translated">Windows Forms giriş noktalarını STAThread ile işaretleyin</target>
         <note />
       </trans-unit>
-      <trans-unit id="MarkAllNonSerializableFieldsTitle">
-        <source>Mark all non-serializable fields</source>
-        <target state="translated">Seri duruma getirilemeyen tüm alanları işaretleyin</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkAllNonSerializableFieldsDescription">
-        <source>An instance field of a type that is not serializable is declared in a type that is serializable.</source>
-        <target state="translated">Seri duruma getirilebilir olmayan bir türün örnek alanı seri duruma getirilebilir bir türde bildiriliyor.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkAllNonSerializableFieldsMessage">
-        <source>Field {0} is a member of type {1} which is serializable but is of type {2} which is not serializable</source>
-        <target state="translated">{0} alanı seri hale getirilebilir {1} türünün bir üyesidir, ancak seri hale getirilemeyen {2} türündendir</target>
-        <note />
-      </trans-unit>
       <trans-unit id="CallBaseClassMethodsOnISerializableTypesTitle">
         <source>Call base class methods on ISerializable types</source>
         <target state="translated">ISerializable türleri üzerinde temel sınıf yöntemlerini çağırın</target>
@@ -135,111 +90,6 @@
       <trans-unit id="CallBaseClassMethodsOnISerializableTypesMessage">
         <source>Call base class methods on ISerializable types</source>
         <target state="translated">ISerializable türleri üzerinde temel sınıf yöntemlerini çağırın</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkISerializableTypesWithSerializableTitle">
-        <source>Mark ISerializable types with serializable</source>
-        <target state="translated">ISerializable türlerini seri duruma getirilebilir olarak işaretleyin</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkISerializableTypesWithSerializableDescription">
-        <source>To be recognized by the common language runtime as serializable, types must be marked by using the SerializableAttribute attribute even when the type uses a custom serialization routine through implementation of the ISerializable interface.</source>
-        <target state="translated">Türlerin ortak dil çalışma zamanı tarafından seri duruma getirilebilir olarak tanınmak için, tür ISerializable arabirimi uygulaması aracılığıyla özel bir seri duruma getirme rutini kullandığında bile SerializableAttribute özniteliği kullanılarak işaretlenmesi gerekir.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkISerializableTypesWithSerializableMessage">
-        <source>Add [Serializable] to {0} as this type implements ISerializable</source>
-        <target state="translated">Bu tür ISerializable uyguladığından, [Serializable] öğesini {0} öğesine ekleyin</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AddSerializableAttributeCodeActionTitle">
-        <source>Add Serializable attribute</source>
-        <target state="translated">Seri duruma getirilebilir özniteliği ekleyin</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AddNonSerializedAttributeCodeActionTitle">
-        <source>Add the 'NonSerialized' attribute to this field.</source>
-        <target state="translated">Bu alana 'NonSerialized' özniteliğini ekleyin.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyTitle">
-        <source>Implement serialization methods correctly</source>
-        <target state="translated">Seri duruma getirme yöntemlerini doğru uygulayın</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyDescription">
-        <source>A method that handles a serialization event does not have the correct signature, return type, or visibility.</source>
-        <target state="translated">Bir seri hale getirme olayını işleyen bir yöntem doğru imzaya, dönüş türüne veya görünürlüğe sahip değil.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageVisibility">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its accessibility to private.</source>
-        <target state="translated">{0} OnSerializing, OnSerialized, OnDeserializing ya da OnDeserialized ile işaretli olduğu için, erişilebilirliğini private olarak değiştirin.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageReturnType">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its return type from {1} to void (Sub in Visual Basic).</source>
-        <target state="translated">{0} OnSerializing, OnSerialized, OnDeserializing ya da OnDeserialized ile işaretli olduğu için, dönüş türünü {1} yerine void (Visual Basic'te Sub) olarak değiştirin.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageParameters">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it takes a single parameter of type 'System.Runtime.Serialization.StreamingContext'.</source>
-        <target state="translated">{0} OnSerializing, OnSerialized, OnDeserializing, ya da OnDeserialized ile işaretli olduğu için, imzasını 'System.Runtime.Serialization.StreamingContext' türünde tek bir parametre alacak şekilde değiştirin.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageGeneric">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it is no longer generic.</source>
-        <target state="translated">{0} OnSerializing, OnSerialized, OnDeserializing ya da OnDeserialized ile işaretli olduğu için, imzasını genel olmayacak şekilde değiştirin.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageStatic">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change it from static (Shared in Visual Basic) to an instance method.</source>
-        <target state="translated">{0} OnSerializing, OnSerialized, OnDeserializing ya da OnDeserialized ile işaretli olduğu için, static (Visual Basic'te Shared) yerine bir örnek yöntemi olarak değiştirin.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsTitle">
-        <source>Provide deserialization methods for optional fields</source>
-        <target state="translated">İsteğe bağlı alanlar için seri durumdan çıkarma yöntemleri sağlayın</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsDescription">
-        <source>A type has a field that is marked by using the System.Runtime.Serialization.OptionalFieldAttribute attribute, and the type does not provide deserialization event handling methods.</source>
-        <target state="translated">Bir tür System.Runtime.Serialization.OptionalFieldAttribute özniteliği kullanılarak işaretlendi ve tür seri durumdan çıkarma olay işleme yöntemleri sağlamıyor.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserialized">
-        <source>Add a 'private void OnDeserialized(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializedAttribute.</source>
-        <target state="translated">{0} türüne 'private void OnDeserialized(StreamingContext)' yöntemini ekleyin ve System.Runtime.Serialization.OnDeserializedAttribute ile özniteliklendirin.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserializing">
-        <source>Add a 'private void OnDeserializing(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializingAttribute.</source>
-        <target state="translated">{0} türüne 'private void OnDeserializing(StreamingContext)' yöntemini ekleyin ve System.Runtime.Serialization.OnDeserializingAttribute ile özniteliklendirin.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementISerializableCorrectlyTitle">
-        <source>Implement ISerializable correctly</source>
-        <target state="translated">ISerializable’ı doğru uygulayın</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementISerializableCorrectlyDescription">
-        <source>To fix a violation of this rule, make the GetObjectData method visible and overridable, and make sure that all instance fields are included in the serialization process or explicitly marked by using the NonSerializedAttribute attribute.</source>
-        <target state="translated">Bu kurala yönelik bir ihlali düzeltmek için, GetObjectData yöntemini görünür ve geçersiz kılınabilir yapın ve tüm örnek alanlarının seri duruma getirme işlemine dahil edildiğinden veya NonSerializedAttribute özniteliği kullanılarak açıkça işaretlendiğinden emin olun.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementISerializableCorrectlyMessageDefault">
-        <source>Add an implementation of GetObjectData to type {0}.</source>
-        <target state="translated">{0} türüne bir GetObjectData uygulaması ekleyin.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementISerializableCorrectlyMessageMakeVisible">
-        <source>Increase the accessibility of {0}.GetObjectData so that it is visible to derived types.</source>
-        <target state="translated">{0}.GetObjectData erişilebilirliğini türetilmiş türlere de görünür olması için artırın.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementISerializableCorrectlyMessageMakeOverridable">
-        <source>Make {0}.GetObjectData virtual and overridable.</source>
-        <target state="translated">{0}.GetObjectData’yı sanal ve geçersiz kılınabilir yapın.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForDataSetReadXmlTitle">

@@ -62,36 +62,6 @@
         <target state="translated">不要使用 WebMethod 标记服务组件</target>
         <note />
       </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsTitle">
-        <source>Implement serialization constructors</source>
-        <target state="translated">实现序列化构造函数</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsDescription">
-        <source>To fix a violation of this rule, implement the serialization constructor. For a sealed class, make the constructor private; otherwise, make it protected.</source>
-        <target state="translated">要解决与该规则的冲突，请实现序列化构造函数。对于密封类，请将构造函数设置为 private；否则，将其设为 protected。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsMessageCreateMagicConstructor">
-        <source>Add a constructor to {0} with the following signature: 'protected {0}(SerializationInfo info, StreamingContext context)'.</source>
-        <target state="translated">使用以下签名向 {0} 添加构造函数: "protected {0}(SerializationInfo info, StreamingContext context)"。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsMessageMakeUnsealedMagicConstructorFamily">
-        <source>Declare the serialization constructor of {0}, an unsealed type, as protected.</source>
-        <target state="translated">将非密封类型 {0} 的序列化构造函数声明为 protected。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate">
-        <source>Declare the serialization constructor of {0}, a sealed type, as private.</source>
-        <target state="translated">将密封类型 {0} 的序列化构造函数声明为 private。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsCodeActionTitle">
-        <source>Implement Serialization constructor</source>
-        <target state="translated">实现序列化构造函数</target>
-        <note />
-      </trans-unit>
       <trans-unit id="MarkWindowsFormsEntryPointsWithStaThreadTitle">
         <source>Mark Windows Forms entry points with STAThread</source>
         <target state="translated">使用 STAThread 标记 Windows 窗体的入口点</target>
@@ -107,21 +77,6 @@
         <target state="translated">使用 STAThread 标记 Windows 窗体的入口点</target>
         <note />
       </trans-unit>
-      <trans-unit id="MarkAllNonSerializableFieldsTitle">
-        <source>Mark all non-serializable fields</source>
-        <target state="translated">标记所有不可序列化的字段</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkAllNonSerializableFieldsDescription">
-        <source>An instance field of a type that is not serializable is declared in a type that is serializable.</source>
-        <target state="translated">已在可序列化的类型中声明不可序列化的类型的实例字段。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkAllNonSerializableFieldsMessage">
-        <source>Field {0} is a member of type {1} which is serializable but is of type {2} which is not serializable</source>
-        <target state="translated">字段 {0} 是可序列化的类型 {1} 的成员，但该字段的类型是不可序列化的 {2}</target>
-        <note />
-      </trans-unit>
       <trans-unit id="CallBaseClassMethodsOnISerializableTypesTitle">
         <source>Call base class methods on ISerializable types</source>
         <target state="translated">对 ISerializable 类型调用基类方法</target>
@@ -135,111 +90,6 @@
       <trans-unit id="CallBaseClassMethodsOnISerializableTypesMessage">
         <source>Call base class methods on ISerializable types</source>
         <target state="translated">对 ISerializable 类型调用基类方法</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkISerializableTypesWithSerializableTitle">
-        <source>Mark ISerializable types with serializable</source>
-        <target state="translated">使用 Serializable 标记 ISerializable 类型</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkISerializableTypesWithSerializableDescription">
-        <source>To be recognized by the common language runtime as serializable, types must be marked by using the SerializableAttribute attribute even when the type uses a custom serialization routine through implementation of the ISerializable interface.</source>
-        <target state="translated">要被公共语言运行时识别为可序列化，必须使用 SerializableAttribute 特性来标记类型，即使该类型通过对 ISerializable 接口的实现来使用自定义序列化例程。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkISerializableTypesWithSerializableMessage">
-        <source>Add [Serializable] to {0} as this type implements ISerializable</source>
-        <target state="translated">将 [Serializable] 添加到 {0}，原因是此类型实现了 ISerializable</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AddSerializableAttributeCodeActionTitle">
-        <source>Add Serializable attribute</source>
-        <target state="translated">添加 Serializable 特性</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AddNonSerializedAttributeCodeActionTitle">
-        <source>Add the 'NonSerialized' attribute to this field.</source>
-        <target state="translated">添加 "NonSerialized" 特性到此字段。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyTitle">
-        <source>Implement serialization methods correctly</source>
-        <target state="translated">正确实现序列化方法</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyDescription">
-        <source>A method that handles a serialization event does not have the correct signature, return type, or visibility.</source>
-        <target state="translated">处理序列化事件的方法的签名、返回类型或可见性不正确。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageVisibility">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its accessibility to private.</source>
-        <target state="translated">由于 {0} 标记有 OnSerializing、OnSerialized、OnDeserializing 或 OnDeserialized，因此请将它的可访问性更改为 private。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageReturnType">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its return type from {1} to void (Sub in Visual Basic).</source>
-        <target state="translated">由于 {0} 标记有 OnSerializing、OnSerialized、OnDeserializing 或 OnDeserialized，因此请将它的返回类型从 {1} 更改为 void (Visual Basic 中为 Sub)。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageParameters">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it takes a single parameter of type 'System.Runtime.Serialization.StreamingContext'.</source>
-        <target state="translated">由于 {0} 标记有 OnSerializing、OnSerialized、OnDeserializing 或 OnDeserialized，因此请更改它的签名，使其采用类型为 "System.Runtime.Serialization.StreamingContext" 的单个参数。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageGeneric">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it is no longer generic.</source>
-        <target state="translated">由于 {0} 标记有 OnSerializing、OnSerialized、OnDeserializing 或 OnDeserialized，因此请更改它的签名，使其不再为泛型的。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageStatic">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change it from static (Shared in Visual Basic) to an instance method.</source>
-        <target state="translated">由于 {0} 标记有 OnSerializing、OnSerialized、OnDeserializing 或 OnDeserialized，因此请将它从 static (Visual Basic 中为 Shared)更改为实例方法。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsTitle">
-        <source>Provide deserialization methods for optional fields</source>
-        <target state="translated">为可选字段提供反序列化方法</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsDescription">
-        <source>A type has a field that is marked by using the System.Runtime.Serialization.OptionalFieldAttribute attribute, and the type does not provide deserialization event handling methods.</source>
-        <target state="translated">类型有一个使用 System.Runtime.Serialization.OptionalFieldAttribute 特性标记的字段，并且该类型没有提供反序列化事件处理方法。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserialized">
-        <source>Add a 'private void OnDeserialized(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializedAttribute.</source>
-        <target state="translated">向类型 {0} 添加 "private void OnDeserialized(StreamingContext)" 方法并使其具有 System.Runtime.Serialization.OnDeserializedAttribute 特性。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserializing">
-        <source>Add a 'private void OnDeserializing(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializingAttribute.</source>
-        <target state="translated">向类型 {0} 添加 "private void OnDeserializing(StreamingContext)" 方法并使其具有 System.Runtime.Serialization.OnDeserializingAttribute 特性。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementISerializableCorrectlyTitle">
-        <source>Implement ISerializable correctly</source>
-        <target state="translated">正确实现 ISerializable</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementISerializableCorrectlyDescription">
-        <source>To fix a violation of this rule, make the GetObjectData method visible and overridable, and make sure that all instance fields are included in the serialization process or explicitly marked by using the NonSerializedAttribute attribute.</source>
-        <target state="translated">要解决与该规则的冲突，请使 GetObjectData 方法可见且可重写，并确保所有实例字段均包含在序列化进程中或通过 NonSerializedAttribute 特性显式标记。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementISerializableCorrectlyMessageDefault">
-        <source>Add an implementation of GetObjectData to type {0}.</source>
-        <target state="translated">向类型 {0} 添加对 GetObjectData 的实现。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementISerializableCorrectlyMessageMakeVisible">
-        <source>Increase the accessibility of {0}.GetObjectData so that it is visible to derived types.</source>
-        <target state="translated">提高 {0}.GetObjectData 的可访问性，使其对派生类型可见。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementISerializableCorrectlyMessageMakeOverridable">
-        <source>Make {0}.GetObjectData virtual and overridable.</source>
-        <target state="translated">将 {0}.GetObjectData 设置为虚拟的和可重写的。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForDataSetReadXmlTitle">

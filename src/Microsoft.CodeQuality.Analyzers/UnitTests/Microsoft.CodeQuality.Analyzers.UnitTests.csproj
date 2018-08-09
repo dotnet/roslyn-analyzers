@@ -13,7 +13,4 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Globalization\" />
-  </ItemGroup>
 </Project>

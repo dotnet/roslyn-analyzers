@@ -31,6 +31,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             return new CSharpEnumsShouldHaveZeroValueFixer();
         }
 
+        // No trivial way to FixAll diagnostics for this code fix.
+        protected override bool TestFixAllByDefault => false;
+
         [Fact]
         public void CSharp_EnumsShouldZeroValueFlagsRename()
         {

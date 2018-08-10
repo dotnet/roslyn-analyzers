@@ -717,5 +717,89 @@ Namespace Blah
 End Namespace",
                 GetCA3147BasicVerbsAndNoToken(SystemWebMvcNamespaceBasicLineCount + 9, 25, "DoSomething"));
         }
+
+        [Fact]
+        public void DocumentationViolationPostExample_CSharp_Diagnostic()
+        {
+            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+namespace TestNamespace
+{
+    using System.Web.Mvc;
+
+    public class TestController : Controller
+    {
+        public ActionResult TransferMoney(string toAccount, string amount)
+        {
+            // You don't want an attacker specify to who and how much money to transfer.
+
+            return null;
+        }
+    }
+}",
+                GetCA3147CSharpNoVerbsNoToken(SystemWebMvcNamespaceCSharpLineCount + 8, 29, "TransferMoney"));
+        }
+
+        [Fact]
+        public void DocumentationFixPostExample_CSharp_NoDiagnostic()
+        {
+            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+namespace TestNamespace
+{
+    using System.Web.Mvc;
+
+    public class TestController : Controller
+    {
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult TransferMoney(string toAccount, string amount)
+        {
+            return null;
+        }
+    }
+}"
+            );
+        }
+
+        [Fact]
+        public void DocumentationViolationGetExample_CSharp_Diagnostic()
+        {
+            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+namespace TestNamespace
+{
+    using System.Web.Mvc;
+
+    public class TestController : Controller
+    {
+        public ActionResult Help(int topicId)
+        {
+            // This Help method is an example of a read-only operation with no harmful side effects.
+            return null;
+        }
+    }
+}",
+                GetCA3147CSharpNoVerbsNoToken(SystemWebMvcNamespaceCSharpLineCount + 8, 29, "Help"));
+        }
+
+        [Fact]
+        public void DocumentationFixGetExample_CSharp_NoDiagnostic()
+        {
+            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+namespace TestNamespace
+{
+    using System.Web.Mvc;
+
+    public class TestController : Controller
+    {
+        [HttpGet]
+        public ActionResult Help(int topicId)
+        {
+            return null;
+        }
+    }
+}"
+            );
+        }
+
+
     }
 }

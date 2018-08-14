@@ -1804,6 +1804,59 @@ End Class
             GetBasicResultAt(9, 12, "Sub Test.M1(c1 As C, c2 As C)", "c2"));
         }
 
+        [Fact, WorkItem(1707, "https://github.com/dotnet/roslyn-analyzers/issues/1707")]
+        public void HazardousUsageInInvokedMethod_PrivateMethod_Generic_Diagnostic()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public int X;
+}
+
+public class Test
+{
+    public void M1(C c1, C c2)
+    {
+        M2(c1); // No diagnostic
+        M3(c2); // Diagnostic
+    }
+
+    private static void M2<T>(T c) where T: C
+    {
+    }
+
+    private static void M3<T>(T c) where T: C
+    {
+        var x = c.X;
+    }
+}
+",
+            // Test0.cs(12,12): warning CA1062: In externally visible method 'void Test.M1(C c1, C c2)', validate parameter 'c2' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(12, 12, "void Test.M1(C c1, C c2)", "c2"));
+
+            VerifyBasic(@"
+Public Class C
+    Public X As Integer
+End Class
+
+Public Class Test
+    Public Sub M1(c1 As C, c2 As C)
+        M2(c1) ' No diagnostic
+        M3(c2) ' Diagnostic
+    End Sub
+
+    Private Shared Sub M2(Of T As C)(c As T)
+    End Sub
+
+    Private Shared Sub M3(Of T As C)(c As T)
+        Dim x = c.X
+    End Sub
+End Class
+",
+            // Test0.vb(9,12): warning CA1062: In externally visible method 'Sub Test.M1(c1 As C, c2 As C)', validate parameter 'c2' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetBasicResultAt(9, 12, "Sub Test.M1(c1 As C, c2 As C)", "c2"));
+        }
+
         [Fact]
         public void HazardousUsageInInvokedMethod_PublicMethod_Diagnostic()
         {
@@ -1842,19 +1895,72 @@ End Class
 Public Class Test
     Public Sub M1(c1 As C, c2 As C)
         M2(c1) ' No diagnostic
-        M3(c2) ' Diagnostic
+        M3(c2) ' No diagnostic here, diagnostic in M3
     End Sub
 
     Public Sub M2(c As C)
     End Sub
 
     Public Sub M3(c As C)
-        Dim x = c.X
+        Dim x = c.X     ' Diagnostic
     End Sub
 End Class
 ",
             // Test0.vb(16,17): warning CA1062: In externally visible method 'Sub Test.M3(c As C)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetBasicResultAt(16, 17, "Sub Test.M3(c As C)", "c"));
+        }
+
+        [Fact, WorkItem(1707, "https://github.com/dotnet/roslyn-analyzers/issues/1707")]
+        public void HazardousUsageInInvokedMethod_PublicMethod_Generic_Diagnostic()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public int X;
+}
+
+public class Test
+{
+    public void M1(C c1, C c2)
+    {
+        M2(c1); // No diagnostic
+        M3(c2); // No diagnostic here, diagnostic in M3
+    }
+
+    public void M2<T>(T c) where T: C
+    {
+    }
+
+    public void M3<T>(T c) where T: C
+    {
+        var x = c.X;    // Diagnostic
+    }
+}
+",
+            // Test0.cs(21,17): warning CA1062: In externally visible method 'void Test.M3<T>(T c)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(21, 17, "void Test.M3<T>(T c)", "c"));
+
+            VerifyBasic(@"
+Public Class C
+    Public X As Integer
+End Class
+
+Public Class Test
+    Public Sub M1(c1 As C, c2 As C)
+        M2(c1) ' No diagnostic
+        M3(c2) ' No diagnostic here, diagnostic in M3
+    End Sub
+
+    Public Sub M2(Of T As C)(c As T)
+    End Sub
+
+    Public Sub M3(Of T As C)(c As T)
+        Dim x = c.X
+    End Sub
+End Class
+",
+            // Test0.vb(16,17): warning CA1062: In externally visible method 'Sub Test.M3(Of T)(c As T)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetBasicResultAt(16, 17, "Sub Test.M3(Of T)(c As T)", "c"));
         }
 
         [Fact]
@@ -2050,6 +2156,56 @@ Public Class Test
     End Sub
 
     Private Shared Sub M2(c As C)
+        If c Is Nothing Then
+            Throw New ArgumentNullException(NameOf(c))
+        End If
+    End Sub
+End Class");
+        }
+
+        [Fact, WorkItem(1707, "https://github.com/dotnet/roslyn-analyzers/issues/1707")]
+        public void ValidatedInInvokedMethod_Generic_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public int X;
+}
+
+public class Test
+{
+    public void M1(C c)
+    {
+        M2(c); // Validation method
+        var x = c.X;    // No diagnostic here.
+    }
+
+    private static void M2<T>(T c) where T: class
+    {
+        if (c == null)
+        {
+            throw new ArgumentNullException(nameof(c));
+        }
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Public Class C
+    Public X As Integer
+End Class
+
+Public Class Test
+    Public Sub M1(c As C)
+        M2(c) ' Validation method
+        Dim x = c.X    ' No diagnostic here.
+    End Sub
+
+    Private Shared Sub M2(Of T As Class)(c As T)
         If c Is Nothing Then
             Throw New ArgumentNullException(NameOf(c))
         End If

@@ -378,6 +378,43 @@ End Class
 ");
         }
 
+        [Fact, WorkItem(1652, "https://github.com/dotnet/roslyn-analyzers/issues/1652")]
+        public void CA2214VirtualInvocationsInLambdaCSharp()
+        {
+            VerifyCSharp(@"
+using System;
+
+internal abstract class A
+{
+    private readonly Lazy<int> _lazyField;
+    protected A()
+    {
+        _lazyField = new Lazy<int>(() => M());
+    }
+
+    protected abstract int M();
+}
+");
+        }
+
+        [Fact, WorkItem(1652, "https://github.com/dotnet/roslyn-analyzers/issues/1652")]
+        public void CA2214VirtualInvocationsInLambdaBasic()
+        {
+            VerifyBasic(@"
+Imports System
+
+Friend MustInherit Class A
+    Private ReadOnly _lazyField As Lazy(Of Integer)
+
+    Protected Sub New()
+        _lazyField = New Lazy(Of Integer)(Function() M())
+    End Sub
+
+    Protected MustOverride Function M() As Integer
+End Class
+");
+        }
+
         private static DiagnosticResult GetCA2214CSharpResultAt(int line, int column)
         {
             return GetCSharpResultAt(line, column, DoNotCallOverridableMethodsInConstructorsAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.DoNotCallOverridableMethodsInConstructors);

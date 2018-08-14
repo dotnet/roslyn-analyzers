@@ -1,17 +1,17 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.StringContentAnalysis;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
@@ -56,10 +56,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             {
                 compilationContext.RegisterOperationBlockAction(operationBlockContext =>
                 {
-                    if (!(operationBlockContext.OwningSymbol is IMethodSymbol containingMethod))
-                    {
-                        return;
-                    }
+                    var owningSymbol = operationBlockContext.OwningSymbol;
+                    var processedOperationRoots = new HashSet<IOperation>();
 
                     foreach (var operationRoot in operationBlockContext.OperationBlocks)
                     {
@@ -72,13 +70,20 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                         if (operationRoot.HasAnyOperationDescendant(ShouldAnalyze))
                         {
-                            var cfg = operationRoot.GetEnclosingControlFlowGraph();
+                            // Skip duplicate analysis from operation blocks for constructor initializer and body.
+                            if (!processedOperationRoots.Add(operationRoot.GetRoot()))
+                            {
+                                // Already processed.
+                                continue;
+                            }
+
+                            var cfg = operationBlockContext.GetControlFlowGraph(operationRoot);
                             var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockContext.Compilation);
-                            var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider);
-                            var copyAnalysisResult = CopyAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, pointsToAnalysisResultOpt: pointsToAnalysisResult);
+                            var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider);
+                            var copyAnalysisResult = CopyAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, pointsToAnalysisResultOpt: pointsToAnalysisResult);
                             // Do another analysis pass to improve the results from PointsTo and Copy analysis.
-                            pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, copyAnalysisResult);
-                            var stringContentAnalysisResult = StringContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
+                            pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, copyAnalysisResult);
+                            var stringContentAnalysisResult = StringContentAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
 
                             foreach (var operation in cfg.DescendantOperations())
                             {

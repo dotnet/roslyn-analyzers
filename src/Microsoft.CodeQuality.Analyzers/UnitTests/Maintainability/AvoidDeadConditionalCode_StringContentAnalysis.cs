@@ -869,5 +869,79 @@ End Module",
             // Test0.vb(6,56): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
             GetBasicResultAt(6, 56, "param <> str", "False"));
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact, WorkItem(1650, "https://github.com/dotnet/roslyn-analyzers/issues/1650")]
+        public void StringCompare_InsideConstructorInitializer_Diagnostic()
+        {
+            VerifyCSharp(@"
+class C
+{
+    public bool Flag;
+}
+
+class Base
+{
+    protected Base(bool b) { }
+}
+
+class Test : Base
+{
+    public Test(string s1, string s2, string s3)
+        : base(s1 == s2 && s2 == s3 ? (s1 == s3) : false)
+    {
+        var x = s1 == s3;
+    }
+}
+",
+            // Test0.cs(15,40): warning CA1508: 's1 == s3' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(15, 40, "s1 == s3", "true"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact, WorkItem(1650, "https://github.com/dotnet/roslyn-analyzers/issues/1650")]
+        public void StringCompare_InsideFieldInitializer_Diagnostic()
+        {
+            VerifyCSharp(@"
+class C
+{
+    public bool Flag;
+}
+
+class Test
+{
+    private static string s1, s2, s3;
+    private bool b = s1 == s2 && s2 == s3 ? (s1 == s3) : false;
+}
+",
+            // Test0.cs(10,46): warning CA1508: 's1 == s3' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(10, 46, "s1 == s3", "true"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact, WorkItem(1650, "https://github.com/dotnet/roslyn-analyzers/issues/1650")]
+        public void StringCompare_InsidePropertyInitializer_ExpressionBody_Diagnostic()
+        {
+            VerifyCSharp(@"
+class C
+{
+    public bool Flag;
+}
+
+class Test
+{
+    private static string s1, s2, s3, s4, s5, s6;
+    private bool B1 => s1 == s2 && s2 == s3 ? (s1 == s3) : false;
+    private bool B2 { get; } = s4 == s5 && s5 == s6 ? (s4 == s6) : false;
+}
+",
+            // Test0.cs(10,48): warning CA1508: 's1 == s3' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(10, 48, "s1 == s3", "true"),
+            // Test0.cs(11,56): warning CA1508: 's4 == s6' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(11, 56, "s4 == s6", "true"));
+        }
     }
 }

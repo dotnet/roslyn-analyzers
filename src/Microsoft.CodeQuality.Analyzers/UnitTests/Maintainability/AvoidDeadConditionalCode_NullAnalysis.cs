@@ -783,7 +783,7 @@ Module Test
     Sub M1(args As C())
         Dim local As C = Nothing
         Dim i As Integer = 0
-        While args.Length
+        While i < args.Length
             ' local may or may not be null here.
             If local Is Nothing Then
                 local = New C()
@@ -5123,8 +5123,8 @@ class Test : Base
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1650")]
-        public void ConditionalAccessCheck_InsideInitializer_Diagnostic()
+        [Fact, WorkItem(1650, "https://github.com/dotnet/roslyn-analyzers/issues/1650")]
+        public void ConditionalAccessCheck_InsideConstructorInitializer_Diagnostic()
         {
             VerifyCSharp(@"
 class C
@@ -5147,7 +5147,50 @@ class Test : Base
 }
 ",
             // Test0.cs(15,29): warning CA1508: 'c' is never 'null'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(15, 29, "c", "null"));
+            GetCSharpNeverNullResultAt(15, 29, "c", "null"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(1650, "https://github.com/dotnet/roslyn-analyzers/issues/1650")]
+        public void ConditionalAccessCheck_InsideFieldInitializer_Diagnostic()
+        {
+            VerifyCSharp(@"
+class C
+{
+    public bool Flag;
+}
+
+class Test
+{
+    private static C c;
+    private bool b = c != null ? (c?.Flag == true) : false;
+}
+",
+            // Test0.cs(10,35): warning CA1508: 'c' is never 'null'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpNeverNullResultAt(10, 35, "c", "null"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(1650, "https://github.com/dotnet/roslyn-analyzers/issues/1650")]
+        public void ConditionalAccessCheck_InsidePropertyInitializer_ExpressionBody_Diagnostic()
+        {
+            VerifyCSharp(@"
+class C
+{
+    public bool Flag;
+}
+
+class Test
+{
+    private static C c1, c2;
+    private bool B1 => c1 != null ? (c1?.Flag == true) : false;
+    private bool B2 { get; } = c2 != null ? (c2?.Flag == true) : false;
+}
+",
+            // Test0.cs(10,38): warning CA1508: 'c1' is never 'null'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpNeverNullResultAt(10, 38, "c1", "null"),
+            // Test0.cs(11,46): warning CA1508: 'c2' is never 'null'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpNeverNullResultAt(11, 46, "c2", "null"));
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]

@@ -128,8 +128,8 @@ class C
 }
 ";
             DiagnosticResult[] expected = new[] {
-                // Test0.cs(4,10): warning CA1502: 'M' has a cyclomatic complexity of '27'. Rewrite or refactor the code to decrease its complexity below '26'.
-                GetCSharpCA1502ExpectedDiagnostic(4, 10, "M", 27, 26)};
+                // Test0.cs(4,10): warning CA1502: 'M' has a cyclomatic complexity of '28'. Rewrite or refactor the code to decrease its complexity below '26'.
+                GetCSharpCA1502ExpectedDiagnostic(4, 10, "M", 28, 26)};
             VerifyCSharp(source, expected);
         }
 
@@ -177,8 +177,8 @@ class C
 CA1502: 2
 ";
             DiagnosticResult[] expected = new[] {
-                // Test0.cs(4,10): warning CA1502: 'M1' has a cyclomatic complexity of '3'. Rewrite or refactor the code to decrease its complexity below '3'.                
-                GetCSharpCA1502ExpectedDiagnostic(4, 10, "M1", 3, 3)};
+                // Test0.cs(4,10): warning CA1502: 'M1' has a cyclomatic complexity of '4'. Rewrite or refactor the code to decrease its complexity below '3'.                
+                GetCSharpCA1502ExpectedDiagnostic(4, 10, "M1", 4, 3)};
             VerifyCSharp(source, GetAdditionalFile(additionalText), expected);
         }
 
@@ -230,14 +230,14 @@ class C
 # FORMAT:
 # 'RuleId'(Optional 'SymbolKind'): 'Threshold'
 
-CA1502(Type): 3
+CA1502(Type): 4
 CA1502(Method): 2
 ";
             DiagnosticResult[] expected = new[] {
-                // Test0.cs(2,7): warning CA1502: 'C' has a cyclomatic complexity of '4'. Rewrite or refactor the code to decrease its complexity below '4'.                
-                GetCSharpCA1502ExpectedDiagnostic(2, 7, "C", 4, 4),
-                // Test0.cs(4,10): warning CA1502: 'M1' has a cyclomatic complexity of '3'. Rewrite or refactor the code to decrease its complexity below '3'.
-                GetCSharpCA1502ExpectedDiagnostic(4, 10, "M1", 3, 3)};
+                // Test0.cs(2,7): warning CA1502: 'C' has a cyclomatic complexity of '6'. Rewrite or refactor the code to decrease its complexity below '5'.                
+                GetCSharpCA1502ExpectedDiagnostic(2, 7, "C", 6, 5),
+                // Test0.cs(4,10): warning CA1502: 'M1' has a cyclomatic complexity of '4'. Rewrite or refactor the code to decrease its complexity below '3'.
+                GetCSharpCA1502ExpectedDiagnostic(4, 10, "M1", 4, 3)};
             VerifyCSharp(source, GetAdditionalFile(additionalText), expected);
         }
 
@@ -294,10 +294,10 @@ class C
 CA1505: 95
 ";
             DiagnosticResult[] expected = new[] {
-                // Test0.cs(2,7): warning CA1505: 'C' has a maintainability index of '92'. Rewrite or refactor the code to increase its maintainability index (MI) above '94'.
-                GetCSharpCA1505ExpectedDiagnostic(2, 7, "C", 92, 94),
-                // Test0.cs(4,10): warning CA1505: 'M1' has a maintainability index of '92'. Rewrite or refactor the code to increase its maintainability index (MI) above '94'.
-                GetCSharpCA1505ExpectedDiagnostic(4, 10, "M1", 92, 94)};
+                // Test0.cs(2,7): warning CA1505: 'C' has a maintainability index of '91'. Rewrite or refactor the code to increase its maintainability index (MI) above '94'.
+                GetCSharpCA1505ExpectedDiagnostic(2, 7, "C", 91, 94),
+                // Test0.cs(4,10): warning CA1505: 'M1' has a maintainability index of '91'. Rewrite or refactor the code to increase its maintainability index (MI) above '94'.
+                GetCSharpCA1505ExpectedDiagnostic(4, 10, "M1", 91, 94)};
             VerifyCSharp(source, GetAdditionalFile(additionalText), expected);
         }
 
@@ -346,8 +346,8 @@ class C
 CA1505(Type): 95
 ";
             DiagnosticResult[] expected = new[] {
-                // Test0.cs(2,7): warning CA1505: 'C' has a maintainability index of '92'. Rewrite or refactor the code to increase its maintainability index (MI) above '94'.
-                GetCSharpCA1505ExpectedDiagnostic(2, 7, "C", 92, 94)};
+                // Test0.cs(2,7): warning CA1505: 'C' has a maintainability index of '91'. Rewrite or refactor the code to increase its maintainability index (MI) above '94'.
+                GetCSharpCA1505ExpectedDiagnostic(2, 7, "C", 91, 94)};
             VerifyCSharp(source, GetAdditionalFile(additionalText), expected);
         }
 

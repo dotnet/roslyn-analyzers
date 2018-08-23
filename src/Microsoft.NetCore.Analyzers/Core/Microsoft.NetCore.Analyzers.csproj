@@ -13,5 +13,10 @@
     <InternalsVisibleTo Include="Microsoft.NetCore.VisualBasic.Analyzers" />
     <InternalsVisibleTo Include="Microsoft.NetCore.Analyzers.UnitTests" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Security\MicrosoftNetCoreSecurityResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="..\..\Utilities\Analyzer.Utilities.projitems" Label="Shared" />
 </Project>

@@ -652,37 +652,37 @@ public class Test
             // Test0.cs(27,17): warning CA1062: In externally visible method 'void Test.M2(C c)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetCSharpResultAt(27, 17, "void Test.M2(C c)", "c"));
 
-            VerifyBasic(@"
-Imports System
+//            VerifyBasic(@"
+//Imports System
 
-Public Class C
-    Public X As Integer
-End Class
+//Public Class C
+//    Public X As Integer
+//End Class
 
-Public Class Test
-    Private _c As C
-    Private _t As Test
-    Public Sub M1(c As C)
-        _t._c = c
-        Dim z = _t._c.X
-        If c Is Nothing Then
-            Throw New ArgumentNullException(NameOf(c))
-        End If
-    End Sub
+//Public Class Test
+//    Private _c As C
+//    Private _t As Test
+//    Public Sub M1(c As C)
+//        _t._c = c
+//        Dim z = _t._c.X
+//        If c Is Nothing Then
+//            Throw New ArgumentNullException(NameOf(c))
+//        End If
+//    End Sub
 
-    Public Sub M2(c As C)
-        _c = c
-        _t._c = c
-        Dim z = _c.X + _t._c.X
-        If c Is Nothing Then
-            Throw New ArgumentNullException(NameOf(c))
-        End If
-    End Sub
-End Class",
-            // Test0.vb(13,17): warning CA1062: In externally visible method 'Sub Test.M1(c As C)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
-            GetBasicResultAt(13, 17, "Sub Test.M1(c As C)", "c"),
-            // Test0.vb(22,17): warning CA1062: In externally visible method 'Sub Test.M2(c As C)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
-            GetBasicResultAt(22, 17, "Sub Test.M2(c As C)", "c"));
+//    Public Sub M2(c As C)
+//        _c = c
+//        _t._c = c
+//        Dim z = _c.X + _t._c.X
+//        If c Is Nothing Then
+//            Throw New ArgumentNullException(NameOf(c))
+//        End If
+//    End Sub
+//End Class",
+//            // Test0.vb(13,17): warning CA1062: In externally visible method 'Sub Test.M1(c As C)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+//            GetBasicResultAt(13, 17, "Sub Test.M1(c As C)", "c"),
+//            // Test0.vb(22,17): warning CA1062: In externally visible method 'Sub Test.M2(c As C)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+//            GetBasicResultAt(22, 17, "Sub Test.M2(c As C)", "c"));
         }
 
         [Fact]

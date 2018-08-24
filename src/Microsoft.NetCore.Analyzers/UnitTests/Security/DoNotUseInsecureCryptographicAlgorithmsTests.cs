@@ -2870,8 +2870,8 @@ End Namespace" }
             return new CSharpDoNotUseInsecureCryptographicAlgorithmsAnalyzer();
         }
 
-        private const string CA5351RuleName = DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographicRuleId;
         private const string CA5350RuleName = DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographicRuleId;
+        private const string CA5351RuleName = DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographicRuleId;
 
         private readonly string _doNotUseMD5Message = SystemSecurityCryptographyResources.DoNotUseMD5;
         private readonly string _doNotUseSHA1Message = SystemSecurityCryptographyResources.DoNotUseSHA1;

@@ -19,17 +19,17 @@ namespace Microsoft.NetCore.Analyzers.Security
         private static readonly LocalizableString s_localizableDoNotUseSHA1Title = new LocalizableResourceString(nameof(SystemSecurityCryptographyResources.DoNotUseSHA1), SystemSecurityCryptographyResources.ResourceManager, typeof(SystemSecurityCryptographyResources));
         private static readonly LocalizableString s_localizableDoNotUseSHA1Description = new LocalizableResourceString(nameof(SystemSecurityCryptographyResources.DoNotUseSHA1Description), SystemSecurityCryptographyResources.ResourceManager, typeof(SystemSecurityCryptographyResources));
 
-        internal static DiagnosticDescriptor DoNotUseMD5SpecificRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographicRuleId,
+        internal static DiagnosticDescriptor DoNotUseBrokenCryptographicRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographicRuleId,
                                                                                           s_localizableDoNotUseMD5Title,
                                                                                           s_localizableDoNotUseMD5Description);
 
-        internal static DiagnosticDescriptor DoNotUseSHA1SpecificRule = CreateDiagnosticDescriptor(DoNotUseWeakCryptographicRuleId,
+        internal static DiagnosticDescriptor DoNotUseWeakCryptographicRule = CreateDiagnosticDescriptor(DoNotUseWeakCryptographicRuleId,
                                                                                            s_localizableDoNotUseSHA1Title,
                                                                                            s_localizableDoNotUseSHA1Description);
 
         protected abstract SyntaxNodeAnalyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes cryptTypes);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DoNotUseMD5SpecificRule, DoNotUseSHA1SpecificRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DoNotUseBrokenCryptographicRule, DoNotUseWeakCryptographicRule);
 
         private static DiagnosticDescriptor CreateDiagnosticDescriptor(string ruleId, LocalizableString title, LocalizableString description, string uri = null)
         {
@@ -66,7 +66,15 @@ namespace Microsoft.NetCore.Analyzers.Security
         {
             return types.MD5 != null
                 || types.SHA1 != null
-                || types.HMACSHA1 != null;
+                || types.HMACSHA1 != null
+                || types.DES != null
+                || types.DSA != null
+                || types.DSASignatureFormatter != null
+                || types.HMACMD5 != null
+                || types.RC2 != null
+                || types.TripleDES != null
+                || types.RIPEMD160 != null
+                || types.HMACRIPEMD160 != null;
         }
 
         protected class SyntaxNodeAnalyzer
@@ -95,12 +103,42 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                 if (type.DerivesFrom(_cryptTypes.MD5))
                 {
-                    rule = DoNotUseMD5SpecificRule;
+                    rule = DoNotUseBrokenCryptographicRule;
                 }
                 else if (type.DerivesFrom(_cryptTypes.SHA1) ||
                          type.DerivesFrom(_cryptTypes.HMACSHA1))
                 {
-                    rule = DoNotUseSHA1SpecificRule;
+                    rule = DoNotUseWeakCryptographicRule;
+                }
+                else if (type.DerivesFrom(_cryptTypes.DES))
+                {
+                    rule = DoNotUseBrokenCryptographicRule;
+                }
+                else if ((method.ContainingType.DerivesFrom(_cryptTypes.DSA) && method.MetadataName == SecurityMemberNames.CreateSignature) ||
+                         (type == _cryptTypes.DSASignatureFormatter &&
+                          method.ContainingType.DerivesFrom(_cryptTypes.DSASignatureFormatter) && method.MetadataName == WellKnownMemberNames.InstanceConstructorName))
+                {
+                    rule = DoNotUseBrokenCryptographicRule;
+                }
+                else if (type.DerivesFrom(_cryptTypes.HMACMD5))
+                {
+                    rule = DoNotUseBrokenCryptographicRule;
+                }
+                else if (type.DerivesFrom(_cryptTypes.RC2))
+                {
+                    rule = DoNotUseBrokenCryptographicRule;
+                }
+                else if (type.DerivesFrom(_cryptTypes.TripleDES))
+                {
+                    rule = DoNotUseWeakCryptographicRule;
+                }
+                else if (type.DerivesFrom(_cryptTypes.RIPEMD160))
+                {
+                    rule = DoNotUseWeakCryptographicRule;
+                }
+                else if (type.DerivesFrom(_cryptTypes.HMACRIPEMD160))
+                {
+                    rule = DoNotUseWeakCryptographicRule;
                 }
 
                 if (rule != null)

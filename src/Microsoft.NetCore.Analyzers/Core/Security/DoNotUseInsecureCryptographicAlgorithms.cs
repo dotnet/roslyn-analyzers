@@ -11,37 +11,65 @@ namespace Microsoft.NetCore.Analyzers.Security
 {
     public abstract class DoNotUseInsecureCryptographicAlgorithmsAnalyzer : DiagnosticAnalyzer
     {
-        internal const string DoNotUseWeakCryptographicRuleId = "CA5350";
-        internal const string DoNotUseBrokenCryptographicRuleId = "CA5351";
+        internal const string DoNotUseWeakCryptographyRuleId = "CA5350";
+        internal const string DoNotUseBrokenCryptographyRuleId = "CA5351";
 
-        private static readonly LocalizableString s_localizableDoNotUseMD5Title = new LocalizableResourceString(nameof(SystemSecurityCryptographyResources.DoNotUseMD5), SystemSecurityCryptographyResources.ResourceManager, typeof(SystemSecurityCryptographyResources));
-        private static readonly LocalizableString s_localizableDoNotUseMD5Description = new LocalizableResourceString(nameof(SystemSecurityCryptographyResources.DoNotUseMD5Description), SystemSecurityCryptographyResources.ResourceManager, typeof(SystemSecurityCryptographyResources));
-        private static readonly LocalizableString s_localizableDoNotUseSHA1Title = new LocalizableResourceString(nameof(SystemSecurityCryptographyResources.DoNotUseSHA1), SystemSecurityCryptographyResources.ResourceManager, typeof(SystemSecurityCryptographyResources));
-        private static readonly LocalizableString s_localizableDoNotUseSHA1Description = new LocalizableResourceString(nameof(SystemSecurityCryptographyResources.DoNotUseSHA1Description), SystemSecurityCryptographyResources.ResourceManager, typeof(SystemSecurityCryptographyResources));
+        internal const string CA5350HelpLink = "https://aka.ms/CA5350";
+        internal const string CA5351HelpLink = "https://aka.ms/CA5351";
 
-        internal static DiagnosticDescriptor DoNotUseBrokenCryptographicRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographicRuleId,
-                                                                                          s_localizableDoNotUseMD5Title,
-                                                                                          s_localizableDoNotUseMD5Description);
+        private static readonly LocalizableString s_localizableDoNotUseWeakAlgorithmsTitle = new LocalizableResourceString(
+            nameof(SystemSecurityCryptographyResources.DoNotUseWeakCryptographicAlgorithms),
+            SystemSecurityCryptographyResources.ResourceManager, 
+            typeof(SystemSecurityCryptographyResources));
+        private static readonly LocalizableString s_localizableDoNotUseWeakAlgorithmsMessage = new LocalizableResourceString(
+            nameof(SystemSecurityCryptographyResources.DoNotUseWeakCryptographicAlgorithmsMessage), 
+            SystemSecurityCryptographyResources.ResourceManager,
+            typeof(SystemSecurityCryptographyResources));
+        private static readonly LocalizableString s_localizableDoNotUseWeakAlgorithmsDescription = new LocalizableResourceString(
+            nameof(SystemSecurityCryptographyResources.DoNotUseWeakCryptographicAlgorithmsDescription),
+            SystemSecurityCryptographyResources.ResourceManager,
+            typeof(SystemSecurityCryptographyResources));
+        private static readonly LocalizableString s_localizableDoNotUseBrokenAlgorithmsTitle = new LocalizableResourceString(
+            nameof(SystemSecurityCryptographyResources.DoNotUseBrokenCryptographicAlgorithms),
+            SystemSecurityCryptographyResources.ResourceManager,
+            typeof(SystemSecurityCryptographyResources));
+        private static readonly LocalizableString s_localizableDoNotUseBrokenAlgorithmsMessage = new LocalizableResourceString(
+            nameof(SystemSecurityCryptographyResources.DoNotUseBrokenCryptographicAlgorithmsMessage),
+            SystemSecurityCryptographyResources.ResourceManager,
+            typeof(SystemSecurityCryptographyResources));
+        private static readonly LocalizableString s_localizableDoNotUseBrokenAlgorithmsDescription = new LocalizableResourceString(
+            nameof(SystemSecurityCryptographyResources.DoNotUseBrokenCryptographicAlgorithmsDescription),
+            SystemSecurityCryptographyResources.ResourceManager,
+            typeof(SystemSecurityCryptographyResources));
 
-        internal static DiagnosticDescriptor DoNotUseWeakCryptographicRule = CreateDiagnosticDescriptor(DoNotUseWeakCryptographicRuleId,
-                                                                                           s_localizableDoNotUseSHA1Title,
-                                                                                           s_localizableDoNotUseSHA1Description);
+        internal static DiagnosticDescriptor DoNotUseBrokenCryptographyRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographyRuleId,
+                                                                                          s_localizableDoNotUseBrokenAlgorithmsTitle,
+                                                                                          s_localizableDoNotUseBrokenAlgorithmsMessage,
+                                                                                          s_localizableDoNotUseBrokenAlgorithmsDescription,
+                                                                                          CA5351HelpLink);
+
+        internal static DiagnosticDescriptor DoNotUseWeakCryptographyRule = CreateDiagnosticDescriptor(DoNotUseWeakCryptographyRuleId,
+                                                                                          s_localizableDoNotUseWeakAlgorithmsTitle,
+                                                                                          s_localizableDoNotUseWeakAlgorithmsMessage,
+                                                                                          s_localizableDoNotUseWeakAlgorithmsDescription,
+                                                                                          CA5350HelpLink);
 
         protected abstract SyntaxNodeAnalyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes cryptTypes);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DoNotUseBrokenCryptographicRule, DoNotUseWeakCryptographicRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DoNotUseBrokenCryptographyRule, DoNotUseWeakCryptographyRule);
 
-        private static DiagnosticDescriptor CreateDiagnosticDescriptor(string ruleId, LocalizableString title, LocalizableString description, string uri = null)
+        private static DiagnosticDescriptor CreateDiagnosticDescriptor(string ruleId, LocalizableString title, LocalizableString message, LocalizableString description, string uri = null)
         {
-            return new DiagnosticDescriptor(ruleId,
-                                            title,
-                                            title,
-                                            DiagnosticCategory.Security,
-                                            DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-                                            description: description,
-                                            helpLinkUri: uri,
-                                            customTags: WellKnownDiagnosticTags.Telemetry);
+            return new DiagnosticDescriptor(
+                ruleId,
+                title,
+                message,
+                DiagnosticCategory.Security,
+                DiagnosticHelpers.DefaultDiagnosticSeverity,
+                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                description: description,
+                helpLinkUri: uri,
+                customTags: WellKnownDiagnosticTags.Telemetry);
         }
 
         public override void Initialize(AnalysisContext analysisContext)
@@ -90,9 +118,9 @@ namespace Microsoft.NetCore.Analyzers.Security
             {
                 SyntaxNode node = context.Node;
                 SemanticModel model = context.SemanticModel;
-
                 ISymbol symbol = node.GetDeclaredOrReferencedSymbol(model);
                 IMethodSymbol method = symbol as IMethodSymbol;
+
                 if (method == null)
                 {
                     return;
@@ -100,50 +128,90 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                 INamedTypeSymbol type = method.ContainingType;
                 DiagnosticDescriptor rule = null;
+                string[] messageArgs = new string[2];
+                string owningParentName = string.Empty;
+                SyntaxNode cur = node;
+
+                while (cur.Parent != null)
+                {
+                    SyntaxNode pNode = cur.Parent;
+                    ISymbol sym = pNode.GetDeclaredOrReferencedSymbol(model);
+
+                    if (sym != null &&
+                        !string.IsNullOrEmpty(sym.Name)
+                        && (
+                            sym.Kind == SymbolKind.Method ||
+                            sym.Kind == SymbolKind.NamedType
+                           )
+                    )
+                    {
+                        owningParentName = sym.Name;
+                        break;
+                    }
+
+                    cur = pNode;
+                }
+
+                messageArgs[0] = owningParentName;
 
                 if (type.DerivesFrom(_cryptTypes.MD5))
                 {
-                    rule = DoNotUseBrokenCryptographicRule;
+                    rule = DoNotUseBrokenCryptographyRule;
+                    messageArgs[1] = _cryptTypes.MD5.Name;
                 }
-                else if (type.DerivesFrom(_cryptTypes.SHA1) ||
-                         type.DerivesFrom(_cryptTypes.HMACSHA1))
+                else if (type.DerivesFrom(_cryptTypes.SHA1))
                 {
-                    rule = DoNotUseWeakCryptographicRule;
+                    rule = DoNotUseWeakCryptographyRule;
+                    messageArgs[1] = _cryptTypes.SHA1.Name;
+                }
+                else if (type.DerivesFrom(_cryptTypes.HMACSHA1))
+                {
+                    rule = DoNotUseWeakCryptographyRule;
+                    messageArgs[1] = _cryptTypes.HMACSHA1.Name;
                 }
                 else if (type.DerivesFrom(_cryptTypes.DES))
                 {
-                    rule = DoNotUseBrokenCryptographicRule;
+                    rule = DoNotUseBrokenCryptographyRule;
+                    messageArgs[1] = _cryptTypes.DES.Name;
                 }
-                else if ((method.ContainingType.DerivesFrom(_cryptTypes.DSA) && method.MetadataName == SecurityMemberNames.CreateSignature) ||
-                         (type == _cryptTypes.DSASignatureFormatter &&
-                          method.ContainingType.DerivesFrom(_cryptTypes.DSASignatureFormatter) && method.MetadataName == WellKnownMemberNames.InstanceConstructorName))
+                else if ((method.ContainingType.DerivesFrom(_cryptTypes.DSA)
+                          && method.MetadataName == SecurityMemberNames.CreateSignature) 
+                    || (type == _cryptTypes.DSASignatureFormatter
+                        && method.ContainingType.DerivesFrom(_cryptTypes.DSASignatureFormatter)
+                        && method.MetadataName == WellKnownMemberNames.InstanceConstructorName))
                 {
-                    rule = DoNotUseBrokenCryptographicRule;
+                    rule = DoNotUseBrokenCryptographyRule;
+                    messageArgs[1] = _cryptTypes.DSA.Name;
                 }
                 else if (type.DerivesFrom(_cryptTypes.HMACMD5))
                 {
-                    rule = DoNotUseBrokenCryptographicRule;
+                    rule = DoNotUseBrokenCryptographyRule;
+                    messageArgs[1] = _cryptTypes.HMACMD5.Name;
                 }
                 else if (type.DerivesFrom(_cryptTypes.RC2))
                 {
-                    rule = DoNotUseBrokenCryptographicRule;
+                    rule = DoNotUseBrokenCryptographyRule;
+                    messageArgs[1] = _cryptTypes.RC2.Name;
                 }
                 else if (type.DerivesFrom(_cryptTypes.TripleDES))
                 {
-                    rule = DoNotUseWeakCryptographicRule;
+                    rule = DoNotUseWeakCryptographyRule;
+                    messageArgs[1] = _cryptTypes.TripleDES.Name;
                 }
                 else if (type.DerivesFrom(_cryptTypes.RIPEMD160))
                 {
-                    rule = DoNotUseWeakCryptographicRule;
+                    rule = DoNotUseWeakCryptographyRule;
+                    messageArgs[1] = _cryptTypes.RIPEMD160.Name;
                 }
                 else if (type.DerivesFrom(_cryptTypes.HMACRIPEMD160))
                 {
-                    rule = DoNotUseWeakCryptographicRule;
+                    rule = DoNotUseWeakCryptographyRule;
+                    messageArgs[1] = _cryptTypes.HMACRIPEMD160.Name;
                 }
 
                 if (rule != null)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(rule, node.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(rule, node.GetLocation(), messageArgs));
                 }
             }
         }

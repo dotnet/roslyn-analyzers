@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.StringContentAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 
 namespace Microsoft.NetCore.Analyzers.Data
 {
@@ -215,9 +215,9 @@ namespace Microsoft.NetCore.Analyzers.Data
                 var copyAnalysisResult = CopyAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider);
                 // Do another analysis pass to improve the results from PointsTo and Copy analysis.
                 pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, copyAnalysisResult);
-                var stringContentResult = StringContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
-                StringContentAbstractValue value = stringContentResult[argumentValue.Kind, argumentValue.Syntax];
-                if (value.NonLiteralState == StringContainsNonLiteralState.No)
+                var valueContentResult = ValueContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
+                ValueContentAbstractValue value = valueContentResult[argumentValue.Kind, argumentValue.Syntax];
+                if (value.NonLiteralState == ValueContainsNonLiteralState.No)
                 {
                     // The value is a constant literal or default/unitialized, so avoid flagging this usage.
                     return false;

@@ -9,7 +9,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
-    [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+    [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
     public partial class DoNotPassLiteralsAsLocalizedParametersTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer() => new DoNotPassLiteralsAsLocalizedParameters();

@@ -8,7 +8,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
     public partial class AvoidDeadConditionalCodeTests : DiagnosticAnalyzerTestBase
     {
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Fact]
         public void SimpleStringCompare_NoDiagnostic()
         {
@@ -40,7 +40,111 @@ Module Test
 End Module");
         }
 
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void SimpleValueCompare_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M1(int param)
+    {
+        if (param == 0)
+        {
+        }
+
+        if (0 == param)
+        {
+        }
+    }
+}
+");
+
+            VerifyBasic(@"
+Module Test
+    Sub M1(param As Integer)
+        If param = 0 Then
+        End If
+
+        If 0 = param Then
+        End If
+    End Sub
+End Module");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void ValueCompareWithAdd_Diagnostic()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M1(int param, int param2, int param3)
+    {
+        param2 = 2;
+        if (param == 1 && (param3 == param + param2))
+        {
+            if (param3 == 3)
+            {
+            }
+        }
+    }
+}
+",
+            // Test0.cs(9,17): warning CA1508: 'param3 == 3' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(9, 17, "param3 == 3", "true"));
+
+            VerifyBasic(@"
+Module Test
+    Sub M1(param As Integer, param2 As Integer, param3 As Integer)
+        param2 = 2
+        If param = 1 AndAlso (param3 = param + param2) Then
+            If param3 = 3 Then
+            End If
+        End If
+    End Sub
+End Module",
+            // Test0.vb(6,16): warning CA1508: 'param3 = 3' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(6, 16, "param3 = 3", "True"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void ValueCompareWithSubtract_Diagnostic()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M1(int param, int param2, int param3)
+    {
+        param2 = 2;
+        if (param3 == 3 && (param3 - param2 == param))
+        {
+            if (param == 1)
+            {
+            }
+        }
+    }
+}
+",
+            // Test0.cs(9,17): warning CA1508: 'param == 1' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(9, 17, "param == 1", "true"));
+
+            VerifyBasic(@"
+Module Test
+    Sub M1(param As Integer, param2 As Integer, param3 As Integer)
+        param2 = 2
+        If param3 = 3 AndAlso (param3 - param2 = param) Then
+            If param = 1 Then
+            End If
+        End If
+    End Sub
+End Module",
+            // Test0.vb(6,16): warning CA1508: 'param = 1' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(6, 16, "param = 1", "True"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Fact]
         public void SimpleStringCompare_AfterAssignment_Diagnostic()
         {
@@ -82,7 +186,49 @@ End Module",
             GetBasicResultAt(8, 12, @""""" <> param", "False"));
         }
 
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void SimpleValueCompare_AfterAssignment_Diagnostic()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M1(int param)
+    {
+        param = 0;
+        if (param == 0)
+        {
+        }
+
+        if (0 != param)
+        {
+        }
+    }
+}
+",
+            // Test0.cs(7,13): warning CA1508: 'param == 0' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(7, 13, @"param == 0", "true"),
+            // Test0.cs(11,13): warning CA1508: '0 != param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(11, 13, @"0 != param", "false"));
+
+            VerifyBasic(@"
+Module Test
+    Sub M1(param As Integer)
+        param = 0
+        If param = 0 Then
+        End If
+
+        If 0 <> param Then
+        End If
+    End Sub
+End Module",
+            // Test0.vb(5,12): warning CA1508: 'param = 0' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(5, 12, @"param = 0", "True"),
+            // Test0.vb(8,12): warning CA1508: '0 <> param' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(8, 12, @"0 <> param", "False"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Fact]
         public void ElseIf_NestedIf_StringCompare_Diagnostic()
         {
@@ -133,7 +279,7 @@ End Module",
             GetBasicResultAt(10, 16, "param <> str", "False"));
         }
 
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Fact]
         public void ConditionaAndOrStringCompare_Diagnostic()
         {
@@ -175,7 +321,7 @@ End Module",
             GetBasicResultAt(8, 31, "param <> str", "False"));
         }
 
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Fact]
         public void ElseIf_NestedIf_StringCompare_DifferentLiteral_Diagnostic()
         {
@@ -226,7 +372,58 @@ End Module",
             GetBasicResultAt(10, 16, "param <> str", "True"));
         }
 
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void ElseIf_NestedIf_ValueCompare_DifferentLiteral_Diagnostic()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M1(int param)
+    {
+        long str = 0;
+        if (param != 1)
+        {
+        }
+        else if (param == str)
+        {
+        }
+
+        if (1 == param)
+        {
+            if (param != str)
+            {
+            }
+        }
+    }
+}
+",
+            // Test0.cs(10,18): warning CA1508: 'param == str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(10, 18, "param == str", "false"),
+            // Test0.cs(16,17): warning CA1508: 'param != str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(16, 17, "param != str", "true"));
+
+            VerifyBasic(@"
+Module Test
+    Sub M1(param As Integer)
+        Dim str As Long = 0
+        If param <> 1 Then
+        Else If param = str Then
+        End If
+
+        If 1 = param Then
+            If param <> str Then
+            End If
+        End If
+    End Sub
+End Module",
+            // Test0.vb(6,17): warning CA1508: 'param = str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(6, 17, "param = str", "False"),
+            // Test0.vb(10,16): warning CA1508: 'param <> str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(10, 16, "param <> str", "True"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Fact]
         public void ElseIf_NestedIf_StringCompare_DifferentLiterals_NoDiagnostic()
         {
@@ -269,7 +466,50 @@ Module Test
 End Module");
         }
 
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void ElseIf_NestedIf_ValueCompare_DifferentLiterals_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M1(ulong param, bool flag)
+    {
+        var str = (byte)(flag ? 0 : 1);
+        if (param != 1)
+        {
+        }
+        else if (param == str)
+        {
+        }
+
+        if (1 == param)
+        {
+            if (param != str)
+            {
+            }
+        }
+    }
+}
+");
+
+            VerifyBasic(@"
+Module Test
+    Sub M1(param As ULong, flag As Boolean)
+        Dim str As Short = If(flag, 0, 1)
+        If param <> 1 Then
+        Else If param = str Then
+        End If
+
+        If 1 = param Then
+            If param <> str Then
+            End If
+        End If
+    End Sub
+End Module");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Fact]
         public void StringCompare_WhileLoop()
         {
@@ -331,7 +571,69 @@ End Module",
             GetBasicResultAt(10, 16, "param <> str", "False"));
         }
 
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void ValueCompare_WhileLoop()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M(double param)
+    {
+        var str = (float)3.0;
+        while (param == str)
+        {
+            // param = str here
+            if (param == str)
+            {
+            }
+            if (param != str)
+            {
+            }
+        }
+
+        // param is unknown here
+        if (str == param)
+        {
+        }
+        if (str != param)
+        {
+        }
+    }
+}
+",
+            // Test0.cs(10,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(10, 17, "param == str", "true"),
+            // Test0.cs(13,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(13, 17, "param != str", "false"));
+
+            VerifyBasic(@"
+Module Test
+    ' While loop
+    Private Sub M1(ByVal param As Double)
+        Dim str As Single = 3.0
+        While param = str
+            ' param == str here
+            If param = str Then
+            End If
+            If param <> str Then
+            End If
+        End While
+
+        ' param is unknown here
+        If str = param Then
+            End If
+        If str <> param Then
+        End If
+    End Sub
+End Module",
+            // Test0.vb(8,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(8, 16, "param = str", "True"),
+            // Test0.vb(10,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(10, 16, "param <> str", "False"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Fact]
         public void StringCompare_DoWhileLoop()
         {
@@ -416,7 +718,7 @@ End Module",
             GetBasicResultAt(35, 12, "param2 <> str", "False"));
         }
 
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Fact]
         public void StringCompare_DoUntilLoop()
         {
@@ -468,7 +770,7 @@ End Module",
             GetBasicResultAt(35, 12, "param2 <> str", "False"));
         }
 
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Fact]
         public void StringCompare_ForLoop()
         {
@@ -529,7 +831,68 @@ class Test
             GetCSharpResultAt(38, 13, "str != param", "false"));
         }
 
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void IntegralValueCompare_ForLoop()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M(int param, uint param2)
+    {
+        int str = 1;
+        for (param = str; param2 != str;)
+        {
+            // param = str here
+            if (param == str)
+            {
+            }
+            if (param != str)
+            {
+            }
+
+            // param2 != str here, but we don't track not-contained values so no diagnostic.
+            if (param2 == str)
+            {
+            }
+            if (param2 != str)
+            {
+            }
+        }
+        
+        // param2 == str here
+        if (str == param2)
+        {
+        }
+        if (str != param2)
+        {
+        }
+        
+        // param == str here
+        if (str == param)
+        {
+        }
+        if (str != param)
+        {
+        }
+    }
+}
+",
+            // Test0.cs(10,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(10, 17, "param == str", "true"),
+            // Test0.cs(13,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(13, 17, "param != str", "false"),
+            // Test0.cs(27,13): warning CA1508: 'str == param2' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(27, 13, "str == param2", "true"),
+            // Test0.cs(30,13): warning CA1508: 'str != param2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(30, 13, "str != param2", "false"),
+            // Test0.cs(35,13): warning CA1508: 'str == param' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(35, 13, "str == param", "true"),
+            // Test0.cs(38,13): warning CA1508: 'str != param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(38, 13, "str != param", "false"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
         public void StringCompare_CopyAnalysis()
@@ -574,7 +937,52 @@ End Module",
             GetBasicResultAt(9, 32, "param2 <> str", "False"));
         }
 
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void ValueCompare_CopyAnalysis()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M1(int param, int param2)
+    {
+        int str = 0;
+        if (param == str && param2 == str && param == param2)
+        {
+        }
+
+        param = param2;
+        if (param != str || param2 != str)
+        {
+        }
+    }
+}
+",
+            // Test0.cs(7,46): warning CA1508: 'param == param2' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(7, 46, "param == param2", "true"),
+            // Test0.cs(12,29): warning CA1508: 'param2 != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(12, 29, "param2 != str", "false"));
+
+            VerifyBasic(@"
+Module Test
+    Sub M1(param As Integer, param2 As Integer)
+        Dim str As Integer = 1
+        If param = str AndAlso param2 = str AndAlso param = param2 Then
+        End If
+
+        param = param2
+        If param <> str OrElse param2 <> str Then
+        End If
+    End Sub
+End Module",
+            // Test0.vb(5,53): warning CA1508: 'param = param2' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(5, 53, "param = param2", "True"),
+            // Test0.vb(9,32): warning CA1508: 'param2 <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(9, 32, "param2 <> str", "False"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Fact]
         public void StringCompare_WithNonLiteral_ConditionalOr_NoDiagnostic()
         {
@@ -621,7 +1029,54 @@ Module Test
 End Module");
         }
 
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void ValueCompare_WithNonLiteral_ConditionalOr_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M1(uint param, uint param2, bool flag)
+    {
+        long str = 1;
+        ulong str2 = flag ? 2UL : 3UL;
+        ulong strMayBeConst = param2;
+
+        if (param == str || param == str2)
+        {
+        }
+
+        if (str2 != param || param == strMayBeConst)
+        {
+        }
+
+        if (param == strMayBeConst || str2 != param)
+        {
+        }
+    }
+}
+");
+
+            VerifyBasic(@"
+Module Test
+    Sub M1(param As UInteger, param2 As UInteger, flag As Boolean)
+        Dim str As Long = 1
+        Dim str2 As ULong = DirectCast(If(flag, 2UL, 3UL), ULong)
+        Dim strMayBeConst As Ulong = param2
+
+        If param = str OrElse param = str2 Then
+        End If
+
+        If str2 <> param OrElse param = strMayBeConst Then
+        End If
+
+        If param = strMayBeConst OrElse str2 <> param Then
+        End If
+    End Sub
+End Module");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Fact]
         public void StringCompare_WithNonLiteral_ConditionalAnd_NoDiagnostic()
         {
@@ -682,7 +1137,68 @@ Module Test
 End Module");
         }
 
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void ValueCompare_WithNonLiteral_ConditionalAnd_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M1(int param, int param2, bool flag)
+    {
+        int str = 1;
+        int str2 = flag ? 2 : 3;
+        int strMayBeConst = param2;
+
+        if (param == str && param2 == str2)
+        {
+        }
+
+        if (param == strMayBeConst && str2 == param)
+        {
+        }
+
+        if (param != str && param != str2)
+        {
+        }
+
+        if (param != str && param2 != str2)
+        {
+        }
+
+        if (str2 != param && param == strMayBeConst)
+        {
+        }
+    }
+}
+");
+
+            VerifyBasic(@"
+Module Test
+    Sub M1(param As Integer, param2 As Integer, flag As Boolean)
+        Dim str As Integer = 1
+        Dim str2 As Integer = If(flag, 2, 3)
+        Dim strMayBeConst As Integer = param2
+
+        If param = str AndAlso param2 = str2 Then
+        End If
+
+        If param = strMayBeConst AndAlso str2 = param Then
+        End If
+
+        If str2 <> param AndAlso param <> str Then
+        End If
+        
+        If str2 <> param AndAlso param2 <> str Then
+        End If
+        
+        If str2 <> param AndAlso param = strMayBeConst Then
+        End If
+    End Sub
+End Module");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Fact]
         public void StringCompare_ConditionalAndOrNegation_NoDiagnostic()
         {
@@ -729,7 +1245,7 @@ Module Test
 End Module");
         }
 
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Fact]
         public void StringCompare_ConditionalAndOrNegation_Diagnostic()
         {
@@ -798,7 +1314,7 @@ End Module",
             GetBasicResultAt(13, 67, "param = strConst", "True"));
         }
 
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Fact]
         public void StringCompare_ContractCheck_NoDiagnostic()
         {
@@ -840,7 +1356,7 @@ Module Test
 End Module");
         }
 
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Fact]
         public void StringCompare_ContractCheck_Diagnostic()
         {
@@ -870,7 +1386,7 @@ End Module",
             GetBasicResultAt(6, 56, "param <> str", "False"));
         }
 
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact, WorkItem(1650, "https://github.com/dotnet/roslyn-analyzers/issues/1650")]
         public void StringCompare_InsideConstructorInitializer_Diagnostic()
@@ -899,7 +1415,7 @@ class Test : Base
             GetCSharpResultAt(15, 40, "s1 == s3", "true"));
         }
 
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact, WorkItem(1650, "https://github.com/dotnet/roslyn-analyzers/issues/1650")]
         public void StringCompare_InsideFieldInitializer_Diagnostic()
@@ -920,7 +1436,7 @@ class Test
             GetCSharpResultAt(10, 46, "s1 == s3", "true"));
         }
 
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact, WorkItem(1650, "https://github.com/dotnet/roslyn-analyzers/issues/1650")]
         public void StringCompare_InsidePropertyInitializer_ExpressionBody_Diagnostic()

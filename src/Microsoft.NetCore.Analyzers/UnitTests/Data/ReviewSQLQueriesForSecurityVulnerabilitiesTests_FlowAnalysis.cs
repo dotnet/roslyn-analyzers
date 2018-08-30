@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Microsoft.NetCore.Analyzers.Data.UnitTests
 {
-    [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
+    [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
     public class ReviewSQLQueriesForSecurityVulnerabilitiesTests_FlowAnalysis : ReviewSQLQueriesForSecurityVulnerabilitiesTests
     {
         [Fact]

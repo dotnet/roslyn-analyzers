@@ -312,13 +312,10 @@ class B : IDisposable
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(14,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-                GetCSharpResultAt(14, 15, "B", "a", "A"),
-                // Test0.cs(15,24): warning CA2213: 'B' contains field 'a2' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-                GetCSharpResultAt(15, 24, "B", "a2", "A"),
-            });
+            // Test0.cs(14,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+            GetCSharpResultAt(14, 15, "B", "a", "A"),
+            // Test0.cs(15,24): warning CA2213: 'B' contains field 'a2' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+            GetCSharpResultAt(15, 24, "B", "a2", "A"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -339,13 +336,10 @@ Class B
     Public Sub Dispose() Implements IDisposable.Dispose
     End Sub
 End Class",
-            new[]
-            {
-                // Test0.vb(14,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-                GetBasicResultAt(14, 13, "B", "a", "A"),
-                // Test0.vb(15,22): warning CA2213: 'B' contains field 'a2' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-                GetBasicResultAt(15, 22, "B", "a2", "A"),
-            });
+            // Test0.vb(14,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+            GetBasicResultAt(14, 13, "B", "a", "A"),
+            // Test0.vb(15,22): warning CA2213: 'B' contains field 'a2' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+            GetBasicResultAt(15, 22, "B", "a2", "A"));
         }
 
         [Fact]
@@ -1306,17 +1300,14 @@ class A : IDisposable
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(8,20): warning CA2213: 'A' contains field 's' that is of IDisposable type 'Stream', but it is never disposed. Change the Dispose method on 'A' to call Close or Dispose on this field.
-                GetCSharpResultAt(8, 20, "A", "s", "Stream"),
-                // Test0.cs(9,24): warning CA2213: 'A' contains field 'tr' that is of IDisposable type 'TextReader', but it is never disposed. Change the Dispose method on 'A' to call Close or Dispose on this field.
-                GetCSharpResultAt(9, 24, "A", "tr", "TextReader"),
-                // Test0.cs(10,24): warning CA2213: 'A' contains field 'tw' that is of IDisposable type 'TextWriter', but it is never disposed. Change the Dispose method on 'A' to call Close or Dispose on this field.
-                GetCSharpResultAt(10, 24, "A", "tw", "TextWriter"),
-                // Test0.cs(11,29): warning CA2213: 'A' contains field 'rr' that is of IDisposable type 'IResourceReader', but it is never disposed. Change the Dispose method on 'A' to call Close or Dispose on this field.
-                GetCSharpResultAt(11, 29, "A", "rr", "IResourceReader"),
-            });
+            // Test0.cs(8,20): warning CA2213: 'A' contains field 's' that is of IDisposable type 'Stream', but it is never disposed. Change the Dispose method on 'A' to call Close or Dispose on this field.
+            GetCSharpResultAt(8, 20, "A", "s", "Stream"),
+            // Test0.cs(9,24): warning CA2213: 'A' contains field 'tr' that is of IDisposable type 'TextReader', but it is never disposed. Change the Dispose method on 'A' to call Close or Dispose on this field.
+            GetCSharpResultAt(9, 24, "A", "tr", "TextReader"),
+            // Test0.cs(10,24): warning CA2213: 'A' contains field 'tw' that is of IDisposable type 'TextWriter', but it is never disposed. Change the Dispose method on 'A' to call Close or Dispose on this field.
+            GetCSharpResultAt(10, 24, "A", "tw", "TextWriter"),
+            // Test0.cs(11,29): warning CA2213: 'A' contains field 'rr' that is of IDisposable type 'IResourceReader', but it is never disposed. Change the Dispose method on 'A' to call Close or Dispose on this field.
+            GetCSharpResultAt(11, 29, "A", "rr", "IResourceReader"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1351,17 +1342,14 @@ Class A
     End Sub
 End Class
 ",
-            new[]
-            {
-                // Test0.vb(9,13): warning CA2213: 'A' contains field 's' that is of IDisposable type 'Stream', but it is never disposed. Change the Dispose method on 'A' to call Close or Dispose on this field.
-                GetBasicResultAt(9, 13, "A", "s", "Stream"),
-                // Test0.vb(10,13): warning CA2213: 'A' contains field 'tr' that is of IDisposable type 'TextReader', but it is never disposed. Change the Dispose method on 'A' to call Close or Dispose on this field.
-                GetBasicResultAt(10, 13, "A", "tr", "TextReader"),
-                // Test0.vb(11,13): warning CA2213: 'A' contains field 'tw' that is of IDisposable type 'TextWriter', but it is never disposed. Change the Dispose method on 'A' to call Close or Dispose on this field.
-                GetBasicResultAt(11, 13, "A", "tw", "TextWriter"),
-                // Test0.vb(12,13): warning CA2213: 'A' contains field 'rr' that is of IDisposable type 'IResourceReader', but it is never disposed. Change the Dispose method on 'A' to call Close or Dispose on this field.
-                GetBasicResultAt(12, 13, "A", "rr", "IResourceReader"),
-            });
+            // Test0.vb(9,13): warning CA2213: 'A' contains field 's' that is of IDisposable type 'Stream', but it is never disposed. Change the Dispose method on 'A' to call Close or Dispose on this field.
+            GetBasicResultAt(9, 13, "A", "s", "Stream"),
+            // Test0.vb(10,13): warning CA2213: 'A' contains field 'tr' that is of IDisposable type 'TextReader', but it is never disposed. Change the Dispose method on 'A' to call Close or Dispose on this field.
+            GetBasicResultAt(10, 13, "A", "tr", "TextReader"),
+            // Test0.vb(11,13): warning CA2213: 'A' contains field 'tw' that is of IDisposable type 'TextWriter', but it is never disposed. Change the Dispose method on 'A' to call Close or Dispose on this field.
+            GetBasicResultAt(11, 13, "A", "tw", "TextWriter"),
+            // Test0.vb(12,13): warning CA2213: 'A' contains field 'rr' that is of IDisposable type 'IResourceReader', but it is never disposed. Change the Dispose method on 'A' to call Close or Dispose on this field.
+            GetBasicResultAt(12, 13, "A", "rr", "IResourceReader"));
         }
 
         [Fact]
@@ -1640,13 +1628,10 @@ class B : IDisposable
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(14,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
-                GetCSharpResultAt(14, 15, "B", "a", "A"),
-                // Test0.cs(15,15): warning CA2213: 'B' contains field 'b' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
-                GetCSharpResultAt(15, 15, "B", "b", "A"),
-            });
+            // Test0.cs(14,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
+            GetCSharpResultAt(14, 15, "B", "a", "A"),
+            // Test0.cs(15,15): warning CA2213: 'B' contains field 'b' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
+            GetCSharpResultAt(15, 15, "B", "b", "A"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1682,13 +1667,10 @@ Class B
         End If
     End Sub
 End Class",
-            new[]
-            {
-                // Test0.vb(14,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
-                GetBasicResultAt(14, 13, "B", "a", "A"),
-                // Test0.vb(15,13): warning CA2213: 'B' contains field 'b' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
-                GetBasicResultAt(15, 13, "B", "b", "A"),
-            });
+            // Test0.vb(14,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
+            GetBasicResultAt(14, 13, "B", "a", "A"),
+            // Test0.vb(15,13): warning CA2213: 'B' contains field 'b' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
+            GetBasicResultAt(15, 13, "B", "b", "A"));
         }
 
         [Fact]

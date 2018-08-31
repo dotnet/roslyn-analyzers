@@ -862,23 +862,20 @@ public class DerivedClass<T> : BaseClass<T>
 {
 }
 ",
-            new[]
-            {
-                // Test0.cs(2,29): error CS0246: The type or namespace name 'IComparable<>' could not be found (are you missing a using directive or an assembly reference?)
-                DiagnosticResult.CompilerError("CS0246").WithLocation(2,29).WithMessage("The type or namespace name 'IComparable<>' could not be found (are you missing a using directive or an assembly reference?)"),
-                // Test0.cs(3,16): error CS0246: The type or namespace name 'IComparable<>' could not be found (are you missing a using directive or an assembly reference?)
-                DiagnosticResult.CompilerError("CS0246").WithLocation(3,16).WithMessage("The type or namespace name 'IComparable<>' could not be found (are you missing a using directive or an assembly reference?)"),
-                // Test0.cs(10,22): error CS1061: 'T' does not contain a definition for 'CompareTo' and no extension method 'CompareTo' accepting a first argument of type 'T' could be found (are you missing a using directive or an assembly reference?)
-                DiagnosticResult.CompilerError("CS1061").WithLocation(10,22).WithMessage("'T' does not contain a definition for 'CompareTo' and no extension method 'CompareTo' accepting a first argument of type 'T' could be found (are you missing a using directive or an assembly reference?)"),
-                // Test0.cs(13,26): error CS0115: 'BaseClass<T>.Equals(object)': no suitable method found to override
-                DiagnosticResult.CompilerError("CS0115").WithLocation(13,26).WithMessage("'BaseClass<T>.Equals(object)': no suitable method found to override"),
-                // Test0.cs(23,25): error CS0115: 'BaseClass<T>.GetHashCode()': no suitable method found to override
-                DiagnosticResult.CompilerError("CS0115").WithLocation(23,25).WithMessage("'BaseClass<T>.GetHashCode()': no suitable method found to override"),
-                // Test0.cs(26,14): error CS0314: The type 'T' cannot be used as type parameter 'T' in the generic type or method 'BaseClass<T>'. There is no boxing conversion or type parameter conversion from 'T' to 'IComparable<T>'.
-                DiagnosticResult.CompilerError("CS0314").WithLocation(26,14).WithMessage("The type 'T' cannot be used as type parameter 'T' in the generic type or method 'BaseClass<T>'. There is no boxing conversion or type parameter conversion from 'T' to 'IComparable<T>'."),
-                // Test0.cs(27,15): error CS0246: The type or namespace name 'IComparable<>' could not be found (are you missing a using directive or an assembly reference?)
-                DiagnosticResult.CompilerError("CS0246").WithLocation(27,15).WithMessage("The type or namespace name 'IComparable<>' could not be found (are you missing a using directive or an assembly reference?)"),
-            });
+            // Test0.cs(2,29): error CS0246: The type or namespace name 'IComparable<>' could not be found (are you missing a using directive or an assembly reference?)
+            DiagnosticResult.CompilerError("CS0246").WithLocation(2,29).WithMessage("The type or namespace name 'IComparable<>' could not be found (are you missing a using directive or an assembly reference?)"),
+            // Test0.cs(3,16): error CS0246: The type or namespace name 'IComparable<>' could not be found (are you missing a using directive or an assembly reference?)
+            DiagnosticResult.CompilerError("CS0246").WithLocation(3,16).WithMessage("The type or namespace name 'IComparable<>' could not be found (are you missing a using directive or an assembly reference?)"),
+            // Test0.cs(10,22): error CS1061: 'T' does not contain a definition for 'CompareTo' and no extension method 'CompareTo' accepting a first argument of type 'T' could be found (are you missing a using directive or an assembly reference?)
+            DiagnosticResult.CompilerError("CS1061").WithLocation(10,22).WithMessage("'T' does not contain a definition for 'CompareTo' and no extension method 'CompareTo' accepting a first argument of type 'T' could be found (are you missing a using directive or an assembly reference?)"),
+            // Test0.cs(13,26): error CS0115: 'BaseClass<T>.Equals(object)': no suitable method found to override
+            DiagnosticResult.CompilerError("CS0115").WithLocation(13,26).WithMessage("'BaseClass<T>.Equals(object)': no suitable method found to override"),
+            // Test0.cs(23,25): error CS0115: 'BaseClass<T>.GetHashCode()': no suitable method found to override
+            DiagnosticResult.CompilerError("CS0115").WithLocation(23,25).WithMessage("'BaseClass<T>.GetHashCode()': no suitable method found to override"),
+            // Test0.cs(26,14): error CS0314: The type 'T' cannot be used as type parameter 'T' in the generic type or method 'BaseClass<T>'. There is no boxing conversion or type parameter conversion from 'T' to 'IComparable<T>'.
+            DiagnosticResult.CompilerError("CS0314").WithLocation(26,14).WithMessage("The type 'T' cannot be used as type parameter 'T' in the generic type or method 'BaseClass<T>'. There is no boxing conversion or type parameter conversion from 'T' to 'IComparable<T>'."),
+            // Test0.cs(27,15): error CS0246: The type or namespace name 'IComparable<>' could not be found (are you missing a using directive or an assembly reference?)
+            DiagnosticResult.CompilerError("CS0246").WithLocation(27,15).WithMessage("The type or namespace name 'IComparable<>' could not be found (are you missing a using directive or an assembly reference?)"));
         }
     }
 }

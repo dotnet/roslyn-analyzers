@@ -66,13 +66,10 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(7,13): warning CA1508: 'param == ""' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(7, 13, @"param == """"", "true"),
-                // Test0.cs(11,13): warning CA1508: '"" != param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(11, 13, @""""" != param", "false"),
-            });
+            // Test0.cs(7,13): warning CA1508: 'param == ""' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(7, 13, @"param == """"", "true"),
+            // Test0.cs(11,13): warning CA1508: '"" != param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(11, 13, @""""" != param", "false"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
@@ -85,13 +82,10 @@ Module Test
         End If
     End Sub
 End Module",
-            new[]
-            {
-                // Test0.vb(5,12): warning CA1508: 'param = ""' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(5, 12, @"param = """"", "True"),
-                // Test0.vb(8,12): warning CA1508: '"" <> param' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(8, 12, @""""" <> param", "False"),
-            });
+            // Test0.vb(5,12): warning CA1508: 'param = ""' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(5, 12, @"param = """"", "True"),
+            // Test0.vb(8,12): warning CA1508: '"" <> param' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(8, 12, @""""" <> param", "False"));
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
@@ -120,13 +114,10 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(10,18): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(10, 18, "param == str", "true"),
-                // Test0.cs(16,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(16, 17, "param != str", "false"),
-            });
+            // Test0.cs(10,18): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(10, 18, "param == str", "true"),
+            // Test0.cs(16,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(16, 17, "param != str", "false"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
@@ -142,13 +133,10 @@ Module Test
         End If
     End Sub
 End Module",
-            new[]
-            {
-                // Test0.vb(6,17): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(6, 17, "param = str", "True"),
-                // Test0.vb(10,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(10, 16, "param <> str", "False"),
-            });
+            // Test0.vb(6,17): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(6, 17, "param = str", "True"),
+            // Test0.vb(10,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(10, 16, "param <> str", "False"));
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
@@ -171,13 +159,10 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(7,28): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(7, 28, "param == str", "true"),
-                // Test0.cs(11,28): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(11, 28, "param != str", "false"),
-            });
+            // Test0.cs(7,28): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(7, 28, "param == str", "true"),
+            // Test0.cs(11,28): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(11, 28, "param != str", "false"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
@@ -190,13 +175,10 @@ Module Test
         End If
     End Sub
 End Module",
-            new[]
-            {
-                // Test0.vb(5,31): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(5, 31, "param = str", "True"),
-                // Test0.vb(8,31): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(8, 31, "param <> str", "False"),
-            });
+            // Test0.vb(5,31): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(5, 31, "param = str", "True"),
+            // Test0.vb(8,31): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(8, 31, "param <> str", "False"));
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
@@ -225,13 +207,10 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(10,18): warning CA1508: 'param == str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(10, 18, "param == str", "false"),
-                // Test0.cs(16,17): warning CA1508: 'param != str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(16, 17, "param != str", "true"),
-            });
+            // Test0.cs(10,18): warning CA1508: 'param == str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(10, 18, "param == str", "false"),
+            // Test0.cs(16,17): warning CA1508: 'param != str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(16, 17, "param != str", "true"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
@@ -247,13 +226,10 @@ Module Test
         End If
     End Sub
 End Module",
-            new[]
-            {
-                // Test0.vb(6,17): warning CA1508: 'param = str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(6, 17, "param = str", "False"),
-                // Test0.vb(10,16): warning CA1508: 'param <> str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(10, 16, "param <> str", "True"),
-            });
+            // Test0.vb(6,17): warning CA1508: 'param = str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(6, 17, "param = str", "False"),
+            // Test0.vb(10,16): warning CA1508: 'param <> str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(10, 16, "param <> str", "True"));
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
@@ -330,13 +306,10 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(10,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(10, 17, "param == str", "true"),
-                // Test0.cs(13,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(13, 17, "param != str", "false"),
-            });
+            // Test0.cs(10,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(10, 17, "param == str", "true"),
+            // Test0.cs(13,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(13, 17, "param != str", "false"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
@@ -358,13 +331,10 @@ Module Test
         End If
     End Sub
 End Module",
-            new[]
-            {
-                // Test0.vb(8,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(8, 16, "param = str", "True"),
-                // Test0.vb(10,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(10, 16, "param <> str", "False"),
-            });
+            // Test0.vb(8,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(8, 16, "param = str", "True"),
+            // Test0.vb(10,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(10, 16, "param <> str", "False"));
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
@@ -399,13 +369,10 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(20,13): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(20, 13, "param == str", "true"),
-                // Test0.cs(23,13): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(23, 13, "param != str", "false"),
-            });
+            // Test0.cs(20,13): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(20, 13, "param == str", "true"),
+            // Test0.cs(23,13): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(23, 13, "param != str", "false"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
@@ -445,17 +412,14 @@ Module Test
         End If
     End Sub
 End Module",
-            new[]
-            {
-                // Test0.vb(15,12): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(15, 12, "param = str", "True"),
-                // Test0.vb(17,12): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(17, 12, "param <> str", "False"),
-                // Test0.vb(33,12): warning CA1508: 'param2 = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(33, 12, "param2 = str", "True"),
-                // Test0.vb(35,12): warning CA1508: 'param2 <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(35, 12, "param2 <> str", "False"),
-            });
+            // Test0.vb(15,12): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(15, 12, "param = str", "True"),
+            // Test0.vb(17,12): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(17, 12, "param <> str", "False"),
+            // Test0.vb(33,12): warning CA1508: 'param2 = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(33, 12, "param2 = str", "True"),
+            // Test0.vb(35,12): warning CA1508: 'param2 <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(35, 12, "param2 <> str", "False"));
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
@@ -500,17 +464,14 @@ Module Test
         End If
     End Sub
 End Module",
-            new[]
-            {
-                // Test0.vb(8,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(8, 16, "param = str", "True"),
-                // Test0.vb(10,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(10, 16, "param <> str", "False"),
-                // Test0.vb(33,12): warning CA1508: 'param2 = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(33, 12, "param2 = str", "True"),
-                // Test0.vb(35,12): warning CA1508: 'param2 <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(35, 12, "param2 <> str", "False"),
-            });
+            // Test0.vb(8,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(8, 16, "param = str", "True"),
+            // Test0.vb(10,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(10, 16, "param <> str", "False"),
+            // Test0.vb(33,12): warning CA1508: 'param2 = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(33, 12, "param2 = str", "True"),
+            // Test0.vb(35,12): warning CA1508: 'param2 <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(35, 12, "param2 <> str", "False"));
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
@@ -560,21 +521,18 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(10,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(10, 17, "param == str", "true"),
-                // Test0.cs(13,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(13, 17, "param != str", "false"),
-                // Test0.cs(27,13): warning CA1508: 'str == param2' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(27, 13, "str == param2", "true"),
-                // Test0.cs(30,13): warning CA1508: 'str != param2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(30, 13, "str != param2", "false"),
-                // Test0.cs(35,13): warning CA1508: 'str == param' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(35, 13, "str == param", "true"),
-                // Test0.cs(38,13): warning CA1508: 'str != param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(38, 13, "str != param", "false"),
-            });
+            // Test0.cs(10,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(10, 17, "param == str", "true"),
+            // Test0.cs(13,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(13, 17, "param != str", "false"),
+            // Test0.cs(27,13): warning CA1508: 'str == param2' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(27, 13, "str == param2", "true"),
+            // Test0.cs(30,13): warning CA1508: 'str != param2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(30, 13, "str != param2", "false"),
+            // Test0.cs(35,13): warning CA1508: 'str == param' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(35, 13, "str == param", "true"),
+            // Test0.cs(38,13): warning CA1508: 'str != param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(38, 13, "str != param", "false"));
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
@@ -599,13 +557,10 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(7,46): warning CA1508: 'param == param2' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(7, 46, "param == param2", "true"),
-                // Test0.cs(12,29): warning CA1508: 'param2 != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(12, 29, "param2 != str", "false"),
-            });
+            // Test0.cs(7,46): warning CA1508: 'param == param2' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(7, 46, "param == param2", "true"),
+            // Test0.cs(12,29): warning CA1508: 'param2 != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(12, 29, "param2 != str", "false"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
@@ -619,13 +574,10 @@ Module Test
         End If
     End Sub
 End Module",
-            new[]
-            {
-                // Test0.vb(5,53): warning CA1508: 'param = param2' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(5, 53, "param = param2", "True"),
-                // Test0.vb(9,32): warning CA1508: 'param2 <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(9, 32, "param2 <> str", "False"),
-            });
+            // Test0.vb(5,53): warning CA1508: 'param = param2' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(5, 53, "param = param2", "True"),
+            // Test0.vb(9,32): warning CA1508: 'param2 <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(9, 32, "param2 <> str", "False"));
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
@@ -817,13 +769,10 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(11,58): warning CA1508: 'param != strConst' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(11, 58, "param != strConst", "false"),
-                // Test0.cs(16,58): warning CA1508: 'param == strConst' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-                GetCSharpResultAt(16, 58, "param == strConst", "true"),
-            });
+            // Test0.cs(11,58): warning CA1508: 'param != strConst' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(11, 58, "param != strConst", "false"),
+            // Test0.cs(16,58): warning CA1508: 'param == strConst' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(16, 58, "param == strConst", "true"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
@@ -849,13 +798,10 @@ Module Test
         End If
     End Sub
 End Module",
-            new[]
-            {
-                // Test0.vb(9,67): warning CA1508: 'param <> strConst' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(9, 67, "param <> strConst", "False"),
-                // Test0.vb(13,67): warning CA1508: 'param = strConst' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-                GetBasicResultAt(13, 67, "param = strConst", "True"),
-            });
+            // Test0.vb(9,67): warning CA1508: 'param <> strConst' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(9, 67, "param <> strConst", "False"),
+            // Test0.vb(13,67): warning CA1508: 'param = strConst' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(13, 67, "param = strConst", "True"));
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]

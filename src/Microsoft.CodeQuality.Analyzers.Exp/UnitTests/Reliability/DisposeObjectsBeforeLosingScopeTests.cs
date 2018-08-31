@@ -378,17 +378,14 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(32,12): warning CA2000: In method 'void Test.Method()', call System.IDisposable.Dispose on object created by 'out a' before all references to it are out of scope.
-                GetCSharpResultAt(32, 12, "void Test.Method()", "out a"),
-                // Test0.cs(34,12): warning CA2000: In method 'void Test.Method()', call System.IDisposable.Dispose on object created by 'out a' before all references to it are out of scope.
-                GetCSharpResultAt(34, 12, "void Test.Method()", "out a"),
-                // Test0.cs(36,12): warning CA2000: In method 'void Test.Method()', call System.IDisposable.Dispose on object created by 'out var a2' before all references to it are out of scope.
-                GetCSharpResultAt(36, 12, "void Test.Method()", "out var a2"),
-                // Test0.cs(39,12): warning CA2000: In method 'void Test.Method()', call System.IDisposable.Dispose on object created by 'out a3' before all references to it are out of scope.
-                GetCSharpResultAt(39, 12, "void Test.Method()", "out a3"),
-            });
+            // Test0.cs(32,12): warning CA2000: In method 'void Test.Method()', call System.IDisposable.Dispose on object created by 'out a' before all references to it are out of scope.
+            GetCSharpResultAt(32, 12, "void Test.Method()", "out a"),
+            // Test0.cs(34,12): warning CA2000: In method 'void Test.Method()', call System.IDisposable.Dispose on object created by 'out a' before all references to it are out of scope.
+            GetCSharpResultAt(34, 12, "void Test.Method()", "out a"),
+            // Test0.cs(36,12): warning CA2000: In method 'void Test.Method()', call System.IDisposable.Dispose on object created by 'out var a2' before all references to it are out of scope.
+            GetCSharpResultAt(36, 12, "void Test.Method()", "out var a2"),
+            // Test0.cs(39,12): warning CA2000: In method 'void Test.Method()', call System.IDisposable.Dispose on object created by 'out a3' before all references to it are out of scope.
+            GetCSharpResultAt(39, 12, "void Test.Method()", "out a3"));
         }
 
         [Fact]
@@ -500,13 +497,10 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(17,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(17, 13, "void Test.M1()", "new A()"),
-                // Test0.cs(20,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(20, 13, "void Test.M1()", "new A()"),
-            });
+            // Test0.cs(17,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(17, 13, "void Test.M1()", "new A()"),
+            // Test0.cs(20,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(20, 13, "void Test.M1()", "new A()"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -527,13 +521,10 @@ Class Test
         a = New A()
     End Sub
 End Class",
-            new[]
-            {
-                // Test0.vb(14,13): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-                GetBasicResultAt(14, 13, "Sub Test.M1()", "New A()"),
-                // Test0.vb(17,13): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-                GetBasicResultAt(17, 13, "Sub Test.M1()", "New A()"),
-            });
+            // Test0.vb(14,13): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(14, 13, "Sub Test.M1()", "New A()"),
+            // Test0.vb(17,13): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(17, 13, "Sub Test.M1()", "New A()"));
         }
 
         [Fact]
@@ -1587,13 +1578,10 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(20,22): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(20, 22, "void Test.M1()", "new A()"),
-                // Test0.cs(21,18): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new B()' before all references to it are out of scope.
-                GetCSharpResultAt(21, 18, "void Test.M1()", "new B()"),
-            });
+            // Test0.cs(20,22): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(20, 22, "void Test.M1()", "new A()"),
+            // Test0.cs(21,18): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new B()' before all references to it are out of scope.
+            GetCSharpResultAt(21, 18, "void Test.M1()", "new B()"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1615,13 +1603,10 @@ Class Test
         Dim a As A = DirectCast(New B(), A)     ' Explicit conversion from B to A
     End Sub
 End Class",
-            new[]
-            {
-                // Test0.vb(17,29): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-                GetBasicResultAt(17, 29, "Sub Test.M1()", "New A()"),
-                // Test0.vb(18,33): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New B()' before all references to it are out of scope.
-                GetBasicResultAt(18, 33, "Sub Test.M1()", "New B()"),
-            });
+            // Test0.vb(17,29): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(17, 29, "Sub Test.M1()", "New A()"),
+            // Test0.vb(18,33): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New B()' before all references to it are out of scope.
+            GetBasicResultAt(18, 33, "Sub Test.M1()", "New B()"));
         }
 
         [Fact]
@@ -1791,13 +1776,10 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(16,15): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(16, 15, "void Test.M1()", "new A()"),
-                // Test0.cs(17,12): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'out a' before all references to it are out of scope.
-                GetCSharpResultAt(17, 12, "void Test.M1()", "out a"),
-            });
+            // Test0.cs(16,15): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(16, 15, "void Test.M1()", "new A()"),
+            // Test0.cs(17,12): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'out a' before all references to it are out of scope.
+            GetCSharpResultAt(17, 12, "void Test.M1()", "out a"));
         }
 
         [Fact]
@@ -1917,13 +1899,10 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(16,20): warning CA2000: In method 'void Test.M1(A a)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(16, 20, "void Test.M1(A a)", "new A()"),
-                // Test0.cs(20,20): warning CA2000: In method 'void Test.M1(A a)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(20, 20, "void Test.M1(A a)", "new A()"),
-            });
+            // Test0.cs(16,20): warning CA2000: In method 'void Test.M1(A a)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(16, 20, "void Test.M1(A a)", "new A()"),
+            // Test0.cs(20,20): warning CA2000: In method 'void Test.M1(A a)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(20, 20, "void Test.M1(A a)", "new A()"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1945,13 +1924,10 @@ Class Test
         c.Dispose()
     End Sub
 End Class",
-            new[]
-            {
-                // Test0.vb(13,28): warning CA2000: In method 'Sub Test.M1(a As A)', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-                GetBasicResultAt(13, 28, "Sub Test.M1(a As A)", "New A()"),
-                // Test0.vb(17,28): warning CA2000: In method 'Sub Test.M1(a As A)', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-                GetBasicResultAt(17, 28, "Sub Test.M1(a As A)", "New A()"),
-            });
+            // Test0.vb(13,28): warning CA2000: In method 'Sub Test.M1(a As A)', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(13, 28, "Sub Test.M1(a As A)", "New A()"),
+            // Test0.vb(17,28): warning CA2000: In method 'Sub Test.M1(a As A)', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(17, 28, "Sub Test.M1(a As A)", "New A()"));
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1567")]
@@ -2689,15 +2665,12 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(33,16): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new B()' before all references to it are out of scope.
-                GetCSharpResultAt(33, 16, "void Test.M1(A a, string param, string param2)", "new B()"),
-                // Test0.cs(38,17): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.
-                GetCSharpResultAt(38, 17, "void Test.M1(A a, string param, string param2)", "new C()"),
-                // Test0.cs(43,17): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new D()' before all references to it are out of scope.
-                GetCSharpResultAt(43, 17, "void Test.M1(A a, string param, string param2)", "new D()"),
-            });
+            // Test0.cs(33,16): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new B()' before all references to it are out of scope.
+            GetCSharpResultAt(33, 16, "void Test.M1(A a, string param, string param2)", "new B()"),
+            // Test0.cs(38,17): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.
+            GetCSharpResultAt(38, 17, "void Test.M1(A a, string param, string param2)", "new C()"),
+            // Test0.cs(43,17): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new D()' before all references to it are out of scope.
+            GetCSharpResultAt(43, 17, "void Test.M1(A a, string param, string param2)", "new D()"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -2756,15 +2729,12 @@ Class Test
         b.Dispose()         ' b points to either a1 or d.
     End Sub
 End Class",
-            new[]
-            {
-                // Test0.vb(30,23): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New B()' before all references to it are out of scope.
-                GetBasicResultAt(30, 23, "Sub Test.M1(a As A, param As String, param2 As String)", "New B()"),
-                // Test0.vb(35,17): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New C()' before all references to it are out of scope.
-                GetBasicResultAt(35, 17, "Sub Test.M1(a As A, param As String, param2 As String)", "New C()"),
-                // Test0.vb(38,17): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New D()' before all references to it are out of scope.
-                GetBasicResultAt(38, 17, "Sub Test.M1(a As A, param As String, param2 As String)", "New D()"),
-            });
+            // Test0.vb(30,23): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New B()' before all references to it are out of scope.
+            GetBasicResultAt(30, 23, "Sub Test.M1(a As A, param As String, param2 As String)", "New B()"),
+            // Test0.vb(35,17): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New C()' before all references to it are out of scope.
+            GetBasicResultAt(35, 17, "Sub Test.M1(a As A, param As String, param2 As String)", "New C()"),
+            // Test0.vb(38,17): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New D()' before all references to it are out of scope.
+            GetBasicResultAt(38, 17, "Sub Test.M1(a As A, param As String, param2 As String)", "New D()"));
         }
 
         [Fact]
@@ -2856,15 +2826,12 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(32,16): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new B()' before all references to it are out of scope.
-                GetCSharpResultAt(32, 16, "void Test.M1(A a, string param, string param2)", "new B()"),
-                // Test0.cs(33,16): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.
-                GetCSharpResultAt(33, 16, "void Test.M1(A a, string param, string param2)", "new C()"),
-                // Test0.cs(42,21): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new D()' before all references to it are out of scope.
-                GetCSharpResultAt(42, 21, "void Test.M1(A a, string param, string param2)", "new D()"),
-            });
+            // Test0.cs(32,16): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new B()' before all references to it are out of scope.
+            GetCSharpResultAt(32, 16, "void Test.M1(A a, string param, string param2)", "new B()"),
+            // Test0.cs(33,16): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.
+            GetCSharpResultAt(33, 16, "void Test.M1(A a, string param, string param2)", "new C()"),
+            // Test0.cs(42,21): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new D()' before all references to it are out of scope.
+            GetCSharpResultAt(42, 21, "void Test.M1(A a, string param, string param2)", "new D()"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -2934,15 +2901,12 @@ Class Test
         b.Dispose()
     End Sub
 End Class",
-            new[]
-            {
                 // Test0.vb(30,23): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New B()' before all references to it are out of scope.
                 GetBasicResultAt(30, 23, "Sub Test.M1(a As A, param As String, param2 As String)", "New B()"),
                 // Test0.vb(31,23): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New C()' before all references to it are out of scope.
                 GetBasicResultAt(31, 23, "Sub Test.M1(a As A, param As String, param2 As String)", "New C()"),
                 // Test0.vb(37,21): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New E()' before all references to it are out of scope.
-                GetBasicResultAt(37, 21, "Sub Test.M1(a As A, param As String, param2 As String)", "New D()"),
-            });
+                GetBasicResultAt(37, 21, "Sub Test.M1(a As A, param As String, param2 As String)", "New D()"));
         }
 
         [Fact]
@@ -3627,13 +3591,10 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(9,20): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'File.Open(filePath, fileMode)' before all references to it are out of scope.
-                GetCSharpResultAt(9, 20, "void Test.M1(string filePath, FileMode fileMode)", "File.Open(filePath, fileMode)"),
-                // Test0.cs(10,21): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'File.CreateText(filePath)' before all references to it are out of scope.
-                GetCSharpResultAt(10, 21, "void Test.M1(string filePath, FileMode fileMode)", "File.CreateText(filePath)"),
-            });
+            // Test0.cs(9,20): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'File.Open(filePath, fileMode)' before all references to it are out of scope.
+            GetCSharpResultAt(9, 20, "void Test.M1(string filePath, FileMode fileMode)", "File.Open(filePath, fileMode)"),
+            // Test0.cs(10,21): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'File.CreateText(filePath)' before all references to it are out of scope.
+            GetCSharpResultAt(10, 21, "void Test.M1(string filePath, FileMode fileMode)", "File.CreateText(filePath)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -3646,13 +3607,10 @@ Class Test
     End Sub
 End Class
 ",
-            new[]
-            {
-                // Test0.vb(7,17): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'File.Open(filePath, fileMode)' before all references to it are out of scope.
-                GetBasicResultAt(7, 17, "Sub Test.M1(filePath As String, fileMode As FileMode)", "File.Open(filePath, fileMode)"),
-                // Test0.vb(8,18): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'File.CreateText(filePath)' before all references to it are out of scope.
-                GetBasicResultAt(8, 18, "Sub Test.M1(filePath As String, fileMode As FileMode)", "File.CreateText(filePath)"),
-            });
+            // Test0.vb(7,17): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'File.Open(filePath, fileMode)' before all references to it are out of scope.
+            GetBasicResultAt(7, 17, "Sub Test.M1(filePath As String, fileMode As FileMode)", "File.Open(filePath, fileMode)"),
+            // Test0.vb(8,18): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'File.CreateText(filePath)' before all references to it are out of scope.
+            GetBasicResultAt(8, 18, "Sub Test.M1(filePath As String, fileMode As FileMode)", "File.CreateText(filePath)"));
         }
 
         [Fact]
@@ -3838,15 +3796,12 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(21,9): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(21, 9, "void Test.M1()", "new A()"),
-                // Test0.cs(22,9): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(22, 9, "void Test.M1()", "new A()"),
-                // Test0.cs(23,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(23, 17, "void Test.M1()", "new A()"),
-            });
+            // Test0.cs(21,9): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(21, 9, "void Test.M1()", "new A()"),
+            // Test0.cs(22,9): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(22, 9, "void Test.M1()", "new A()"),
+            // Test0.cs(23,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(23, 17, "void Test.M1()", "new A()"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -3870,15 +3825,12 @@ Class Test
         Dim x = New A().X
     End Sub
 End Class",
-            new[]
-            {
-                // Test0.vb(18,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-                GetBasicResultAt(18, 17, "Sub Test.M1()", "New A()"),
-                // Test0.vb(19,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-                GetBasicResultAt(19, 17, "Sub Test.M1()", "New A()"),
-                // Test0.vb(20,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-                GetBasicResultAt(20, 17, "Sub Test.M1()", "New A()"),
-            });
+            // Test0.vb(18,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(18, 17, "Sub Test.M1()", "New A()"),
+            // Test0.vb(19,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(19, 17, "Sub Test.M1()", "New A()"),
+            // Test0.vb(20,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(20, 17, "Sub Test.M1()", "New A()"));
         }
 
         [Fact]
@@ -3946,15 +3898,12 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(30,23): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(30, 23, "void Test.M1()", "new A()"),
-                // Test0.cs(33,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(33, 17, "void Test.M1()", "new A()"),
-                // Test0.cs(47,18): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(47, 18, "void Test.M1()", "new A()"),
-            });
+            // Test0.cs(30,23): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(30, 23, "void Test.M1()", "new A()"),
+            // Test0.cs(33,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(33, 17, "void Test.M1()", "new A()"),
+            // Test0.cs(47,18): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(47, 18, "void Test.M1()", "new A()"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -4007,15 +3956,12 @@ Class Test
     End Sub
 End Class
 ",
-            new[]
-            {
-                // Test0.vb(28,23): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-                GetBasicResultAt(28, 23, "Sub Test.M1()", "New A()"),
-                // Test0.vb(30,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-                GetBasicResultAt(30, 17, "Sub Test.M1()", "New A()"),
-                // Test0.vb(40,18): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-                GetBasicResultAt(40, 18, "Sub Test.M1()", "New A()"),
-            });
+            // Test0.vb(28,23): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(28, 23, "Sub Test.M1()", "New A()"),
+            // Test0.vb(30,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(30, 17, "Sub Test.M1()", "New A()"),
+            // Test0.vb(40,18): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(40, 18, "Sub Test.M1()", "New A()"));
         }
 
         [Fact]
@@ -4345,17 +4291,14 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(34,25): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'new FileStream(filePath, fileMode)' before all references to it are out of scope.
-                GetCSharpResultAt(34, 25, "void Test.M1(string filePath, FileMode fileMode)", "new FileStream(filePath, fileMode)"),
-                // Test0.cs(52,29): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'File.OpenText(filePath)' before all references to it are out of scope.
-                GetCSharpResultAt(52, 29, "void Test.M1(string filePath, FileMode fileMode)", "File.OpenText(filePath)"),
-                // Test0.cs(70,29): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'File.CreateText(filePath)' before all references to it are out of scope.
-                GetCSharpResultAt(70, 29, "void Test.M1(string filePath, FileMode fileMode)", "File.CreateText(filePath)"),
-                // Test0.cs(88,18): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'new FileStream(filePath, fileMode)' before all references to it are out of scope.
-                GetCSharpResultAt(88, 18, "void Test.M1(string filePath, FileMode fileMode)", "new FileStream(filePath, fileMode)"),
-            });
+            // Test0.cs(34,25): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'new FileStream(filePath, fileMode)' before all references to it are out of scope.
+            GetCSharpResultAt(34, 25, "void Test.M1(string filePath, FileMode fileMode)", "new FileStream(filePath, fileMode)"),
+            // Test0.cs(52,29): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'File.OpenText(filePath)' before all references to it are out of scope.
+            GetCSharpResultAt(52, 29, "void Test.M1(string filePath, FileMode fileMode)", "File.OpenText(filePath)"),
+            // Test0.cs(70,29): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'File.CreateText(filePath)' before all references to it are out of scope.
+            GetCSharpResultAt(70, 29, "void Test.M1(string filePath, FileMode fileMode)", "File.CreateText(filePath)"),
+            // Test0.cs(88,18): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'new FileStream(filePath, fileMode)' before all references to it are out of scope.
+            GetCSharpResultAt(88, 18, "void Test.M1(string filePath, FileMode fileMode)", "new FileStream(filePath, fileMode)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 
@@ -4443,17 +4386,14 @@ Class Test
     End Sub
 End Class
 ",
-            new[]
-            {
-                // Test0.vb(30,32): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'New FileStream(filePath, fileMode)' before all references to it are out of scope.
-                GetBasicResultAt(30, 32, "Sub Test.M1(filePath As String, fileMode As FileMode)", "New FileStream(filePath, fileMode)"),
-                // Test0.vb(42,36): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'File.OpenText(filePath)' before all references to it are out of scope.
-                GetBasicResultAt(42, 36, "Sub Test.M1(filePath As String, fileMode As FileMode)", "File.OpenText(filePath)"),
-                // Test0.vb(54,36): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'File.CreateText(filePath)' before all references to it are out of scope.
-                GetBasicResultAt(54, 36, "Sub Test.M1(filePath As String, fileMode As FileMode)", "File.CreateText(filePath)"),
-                // Test0.vb(66,18): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'New FileStream(filePath, fileMode)' before all references to it are out of scope.
-                GetBasicResultAt(66, 18, "Sub Test.M1(filePath As String, fileMode As FileMode)", "New FileStream(filePath, fileMode)"),
-            });
+            // Test0.vb(30,32): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'New FileStream(filePath, fileMode)' before all references to it are out of scope.
+            GetBasicResultAt(30, 32, "Sub Test.M1(filePath As String, fileMode As FileMode)", "New FileStream(filePath, fileMode)"),
+            // Test0.vb(42,36): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'File.OpenText(filePath)' before all references to it are out of scope.
+            GetBasicResultAt(42, 36, "Sub Test.M1(filePath As String, fileMode As FileMode)", "File.OpenText(filePath)"),
+            // Test0.vb(54,36): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'File.CreateText(filePath)' before all references to it are out of scope.
+            GetBasicResultAt(54, 36, "Sub Test.M1(filePath As String, fileMode As FileMode)", "File.CreateText(filePath)"),
+            // Test0.vb(66,18): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'New FileStream(filePath, fileMode)' before all references to it are out of scope.
+            GetBasicResultAt(66, 18, "Sub Test.M1(filePath As String, fileMode As FileMode)", "New FileStream(filePath, fileMode)"));
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1580")]
@@ -4513,15 +4453,12 @@ class Test
         throw new NotImplementedException();
     }
 }",
-            new[]
-            {
-                // Test0.cs(16,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(16, 17, "void Test.M1()", "new A()"),
-                // Test0.cs(23,17): warning CA2000: In method 'void Test.M2()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(23, 17, "void Test.M2()", "new A()"),
-                // Test0.cs(37,17): warning CA2000: In method 'void Test.M3()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(37, 17, "void Test.M3()", "new A()"),
-            });
+            // Test0.cs(16,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(16, 17, "void Test.M1()", "new A()"),
+            // Test0.cs(23,17): warning CA2000: In method 'void Test.M2()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(23, 17, "void Test.M2()", "new A()"),
+            // Test0.cs(37,17): warning CA2000: In method 'void Test.M3()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(37, 17, "void Test.M3()", "new A()"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -4568,15 +4505,12 @@ Class Test
     End Sub
 End Class
 ",
-            new[]
-            {
-                // Test0.vb(15,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-                GetBasicResultAt(15, 17, "Sub Test.M1()", "New A()"),
-                // Test0.vb(21,17): warning CA2000: In method 'Sub Test.M2()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-                GetBasicResultAt(21, 17, "Sub Test.M2()", "New A()"),
-                // Test0.vb(31,17): warning CA2000: In method 'Sub Test.M3()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-                GetBasicResultAt(31, 17, "Sub Test.M3()", "New A()"),
-            });
+            // Test0.vb(15,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(15, 17, "Sub Test.M1()", "New A()"),
+            // Test0.vb(21,17): warning CA2000: In method 'Sub Test.M2()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(21, 17, "Sub Test.M2()", "New A()"),
+            // Test0.vb(31,17): warning CA2000: In method 'Sub Test.M3()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(31, 17, "Sub Test.M3()", "New A()"));
         }
 
         [Fact]
@@ -4659,17 +4593,14 @@ class Test
         throw new NotImplementedException();
     }
 }",
-            new[]
-            {
-                // Test0.cs(16,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(16, 17, "void Test.M1()", "new A()"),
-                // Test0.cs(29,17): warning CA2000: In method 'void Test.M2()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(29, 17, "void Test.M2()", "new A()"),
-                // Test0.cs(42,17): warning CA2000: In method 'void Test.M3()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(42, 17, "void Test.M3()", "new A()"),
-                // Test0.cs(59,17): warning CA2000: In method 'void Test.M4(bool flag)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(59, 17, "void Test.M4(bool flag)", "new A()"),
-            });
+            // Test0.cs(16,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(16, 17, "void Test.M1()", "new A()"),
+            // Test0.cs(29,17): warning CA2000: In method 'void Test.M2()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(29, 17, "void Test.M2()", "new A()"),
+            // Test0.cs(42,17): warning CA2000: In method 'void Test.M3()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(42, 17, "void Test.M3()", "new A()"),
+            // Test0.cs(59,17): warning CA2000: In method 'void Test.M4(bool flag)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(59, 17, "void Test.M4(bool flag)", "new A()"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -4729,17 +4660,14 @@ Class Test
     End Sub
 End Class
 ",
-            new[]
-            {
-                // Test0.vb(15,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-                GetBasicResultAt(15, 17, "Sub Test.M1()", "New A()"),
-                // Test0.vb(24,17): warning CA2000: In method 'Sub Test.M2()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-                GetBasicResultAt(24, 17, "Sub Test.M2()", "New A()"),
-                // Test0.vb(33,17): warning CA2000: In method 'Sub Test.M3()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-                GetBasicResultAt(33, 17, "Sub Test.M3()", "New A()"),
-                // Test0.vb(44,17): warning CA2000: In method 'Sub Test.M4(flag As Boolean)', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-                GetBasicResultAt(44, 17, "Sub Test.M4(flag As Boolean)", "New A()"),
-            });
+            // Test0.vb(15,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(15, 17, "Sub Test.M1()", "New A()"),
+            // Test0.vb(24,17): warning CA2000: In method 'Sub Test.M2()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(24, 17, "Sub Test.M2()", "New A()"),
+            // Test0.vb(33,17): warning CA2000: In method 'Sub Test.M3()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(33, 17, "Sub Test.M3()", "New A()"),
+            // Test0.vb(44,17): warning CA2000: In method 'Sub Test.M4(flag As Boolean)', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(44, 17, "Sub Test.M4(flag As Boolean)", "New A()"));
         }
 
         [Fact]
@@ -4890,15 +4818,12 @@ class B : IDisposable
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(16,15): warning CA2000: In method 'void B.Dispose()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(16, 15, "void B.Dispose()", "new A()"),
-                // Test0.cs(16,23): error CS1525: Invalid expression term '='
-                DiagnosticResult.CompilerError("CS1525").WithLocation(16, 23).WithMessage("Invalid expression term '='"),
-                // Test0.cs(17,12): error CS1002: ; expected
-                DiagnosticResult.CompilerError("CS1002").WithLocation(17, 12).WithMessage("; expected"),
-            });
+            // Test0.cs(16,15): warning CA2000: In method 'void B.Dispose()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(16, 15, "void B.Dispose()", "new A()"),
+            // Test0.cs(16,23): error CS1525: Invalid expression term '='
+            DiagnosticResult.CompilerError("CS1525").WithLocation(16, 23).WithMessage("Invalid expression term '='"),
+            // Test0.cs(17,12): error CS1002: ; expected
+            DiagnosticResult.CompilerError("CS1002").WithLocation(17, 12).WithMessage("; expected"));
         }
 
         [Fact, WorkItem(1597, "https://github.com/dotnet/roslyn-analyzers/issues/1597")]
@@ -4932,13 +4857,10 @@ class Test
     }
 }
 ",
-            new[]
-            {
-                // Test0.cs(19,16): error CS1525: Invalid expression term ')'
-                DiagnosticResult.CompilerError("CS1525").WithLocation(19, 16).WithMessage("Invalid expression term ')'"),
-                // Test0.cs(20,22): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new StringWriter(builder)' before all references to it are out of scope.
-                GetCSharpResultAt(20, 22, "void Test.M1()", "new StringWriter(builder)"),
-            });
+            // Test0.cs(19,16): error CS1525: Invalid expression term ')'
+            DiagnosticResult.CompilerError("CS1525").WithLocation(19, 16).WithMessage("Invalid expression term ')'"),
+            // Test0.cs(20,22): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new StringWriter(builder)' before all references to it are out of scope.
+            GetCSharpResultAt(20, 22, "void Test.M1()", "new StringWriter(builder)"));
         }
 
         [Fact]
@@ -5530,13 +5452,10 @@ public class Test
         (A, int) b = (a, 0);
     }
 }",
-            new[]
-            {
-                // Test0.cs(16,15): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(16, 15, "void Test.M1()", "new A()"),
-                // Test0.cs(22,15): warning CA2000: In method 'void Test.M2()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-                GetCSharpResultAt(22, 15, "void Test.M2()", "new A()"),
-            });
+            // Test0.cs(16,15): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(16, 15, "void Test.M1()", "new A()"),
+            // Test0.cs(22,15): warning CA2000: In method 'void Test.M2()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(22, 15, "void Test.M2()", "new A()"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -5562,13 +5481,10 @@ Public Class Test
     End Sub
 End Class
 ",
-            new[]
-            {
-                // Test0.vb(15,22): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-                GetBasicResultAt(15, 22, "Sub Test.M1()", "New A()"),
-                // Test0.vb(20,22): warning CA2000: In method 'Sub Test.M2()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-                GetBasicResultAt(20, 22, "Sub Test.M2()", "New A()"),
-            });
+            // Test0.vb(15,22): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(15, 22, "Sub Test.M1()", "New A()"),
+            // Test0.vb(20,22): warning CA2000: In method 'Sub Test.M2()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(20, 22, "Sub Test.M2()", "New A()"));
         }
 
         [Fact]
